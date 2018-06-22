@@ -142,7 +142,7 @@
 				<antcall target="set_property">
 				    <param name="file" value="${build}/tmp/validazione.properties"/>
 					<param name="token" value="org.openspcoop2.datasource.tracciamento"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.tracciamento"/>
 				</antcall>
 			</then>
 		</if>

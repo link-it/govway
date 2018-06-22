@@ -96,7 +96,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private EsitoUtils esitoUtils;
 
-	private PddMonitorProperties pddMonitorProperties;
+	private PddMonitorProperties govwayMonitorProperties;
 	
 	public StatisticheGiornaliereService() {
 
@@ -115,7 +115,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			this.esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log);
 			
-			this.pddMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
+			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -286,8 +286,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexAndamentoTemporaleCount(tipologia, 
-										this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexAndamentoTemporaleCount(tipologia, 
+										this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -371,8 +371,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexAndamentoTemporaleGroupBy(tipologia, 
-										this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexAndamentoTemporaleGroupBy(tipologia, 
+										this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -1313,8 +1313,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexEsitiLiveGroupBy(tipologia, 
-										this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexEsitiLiveGroupBy(tipologia, 
+										this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}			
@@ -1615,7 +1615,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneSoggettoCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneSoggettoCount(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -2137,7 +2137,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try{
 			forceIndexes = 
 					this.convertForceIndexList(model, 
-							this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneSoggettoGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+							this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneSoggettoGroupBy(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 		}catch(Exception e){
 			throw new ServiceException(e.getMessage(),e);
 		}
@@ -3150,7 +3150,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(model, this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model, this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneServizioCount(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -3228,7 +3228,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(model, this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model, this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneServizioGroupBy(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -3754,7 +3754,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneCount(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -4138,7 +4138,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneGroupBy(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -4402,7 +4402,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try{
 				forceIndexes = 
 						this.convertForceIndexList(model, 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
+								this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoCount(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -4523,7 +4523,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(model,	this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model,	this.govwayMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(this.govwayMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -5315,14 +5315,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(isCount){
 					forceIndexes = 
 							this.convertForceIndexList(model, 
-									this.pddMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneCount(tipologia, 
-											this.pddMonitorProperties.getExternalForceIndexRepository()));
+									this.govwayMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneCount(tipologia, 
+											this.govwayMonitorProperties.getExternalForceIndexRepository()));
 				}
 				else{
 					forceIndexes = 
 							this.convertForceIndexList(model, 
-									this.pddMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneGroupBy(tipologia, 
-											this.pddMonitorProperties.getExternalForceIndexRepository()));
+									this.govwayMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneGroupBy(tipologia, 
+											this.govwayMonitorProperties.getExternalForceIndexRepository()));
 				}
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
@@ -5544,8 +5544,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try{
 			forceIndexes = 
 					this.convertForceIndexList(model, 
-							this.pddMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneCount(tipologia, 
-									this.pddMonitorProperties.getExternalForceIndexRepository()));
+							this.govwayMonitorProperties.getStatisticheForceIndexPersonalizzataDistribuzioneCount(tipologia, 
+									this.govwayMonitorProperties.getExternalForceIndexRepository()));
 		}catch(Exception e){
 			throw new ServiceException(e.getMessage(),e);
 		}
@@ -5688,14 +5688,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(isCount){
 					forceIndexes = 
 							this.convertForceIndexList(model, 
-									this.pddMonitorProperties.getStatisticheForceIndexPersonalizzataAndamentoTemporaleCount(tipologia, 
-											this.pddMonitorProperties.getExternalForceIndexRepository()));
+									this.govwayMonitorProperties.getStatisticheForceIndexPersonalizzataAndamentoTemporaleCount(tipologia, 
+											this.govwayMonitorProperties.getExternalForceIndexRepository()));
 				}
 				else{
 					forceIndexes = 
 							this.convertForceIndexList(model, 
-									this.pddMonitorProperties.getStatisticheForceIndexPersonalizzataAndamentoTemporaleGroupBy(tipologia, 
-											this.pddMonitorProperties.getExternalForceIndexRepository()));
+									this.govwayMonitorProperties.getStatisticheForceIndexPersonalizzataAndamentoTemporaleGroupBy(tipologia, 
+											this.govwayMonitorProperties.getExternalForceIndexRepository()));
 				}
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);

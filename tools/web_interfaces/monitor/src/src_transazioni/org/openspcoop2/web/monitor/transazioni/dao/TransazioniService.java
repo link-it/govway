@@ -127,19 +127,19 @@ public class TransazioniService implements ITransazioniService {
 	private List<Index> forceIndexIdTransazioneFindAll;
 	private List<Index> forceIndexIdTransazioneCount;
 	private List<Index> forceIndexGetByIdTransazione;
-	private void initForceIndex(PddMonitorProperties pddMonitorProperties) throws Exception{
-		Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
-		this.forceIndexAndamentoTemporaleFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexAndamentoTemporaleFindAll(repositoryExternal));
-		this.forceIndexAndamentoTemporaleCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexAndamentoTemporaleCount(repositoryExternal));
-		this.forceIndexIdApplicativoFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdApplicativoFindAll(repositoryExternal));
-		this.forceIndexIdApplicativoCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdApplicativoCount(repositoryExternal));
-		this.forceIndexIdMessaggioRichiestaFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaFindAll(repositoryExternal));
-		this.forceIndexIdMessaggioRichiestaCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaCount(repositoryExternal));
-		this.forceIndexIdMessaggioRispostaFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaFindAll(repositoryExternal));
-		this.forceIndexIdMessaggioRispostaCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaCount(repositoryExternal));
-		this.forceIndexIdTransazioneFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdTransazioneFindAll(repositoryExternal));
-		this.forceIndexIdTransazioneCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexIdTransazioneCount(repositoryExternal));
-		this.forceIndexGetByIdTransazione = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexGetByIdTransazione(repositoryExternal));
+	private void initForceIndex(PddMonitorProperties govwayMonitorProperties) throws Exception{
+		Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+		this.forceIndexAndamentoTemporaleFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleFindAll(repositoryExternal));
+		this.forceIndexAndamentoTemporaleCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexAndamentoTemporaleCount(repositoryExternal));
+		this.forceIndexIdApplicativoFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoFindAll(repositoryExternal));
+		this.forceIndexIdApplicativoCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdApplicativoCount(repositoryExternal));
+		this.forceIndexIdMessaggioRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaFindAll(repositoryExternal));
+		this.forceIndexIdMessaggioRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRichiestaCount(repositoryExternal));
+		this.forceIndexIdMessaggioRispostaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaFindAll(repositoryExternal));
+		this.forceIndexIdMessaggioRispostaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdMessaggioRispostaCount(repositoryExternal));
+		this.forceIndexIdTransazioneFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneFindAll(repositoryExternal));
+		this.forceIndexIdTransazioneCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneCount(repositoryExternal));
+		this.forceIndexGetByIdTransazione = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexGetByIdTransazione(repositoryExternal));
 	}
 	private List<Index> convertForceIndexList(List<String> l){
 		if(l!=null && l.size()>0){
@@ -597,9 +597,9 @@ public class TransazioniService implements ITransazioniService {
 			pagExpr.limit(this.liveMaxResults);
 
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
-			Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
-			List<Index> forceIndexFindAll = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexLiveFindAll(repositoryExternal));
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(this.log);
+			Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+			List<Index> forceIndexFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexLiveFindAll(repositoryExternal));
 			if(forceIndexFindAll!=null && forceIndexFindAll.size()>0){
 				for (Index index : forceIndexFindAll) {
 					pagExpr.addForceIndex(index);	
@@ -668,9 +668,9 @@ public class TransazioniService implements ITransazioniService {
 			}
 
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
-			Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
-			List<Index> forceIndexEsitiCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexEsitiCount(repositoryExternal));
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(this.log);
+			Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+			List<Index> forceIndexEsitiCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexEsitiCount(repositoryExternal));
 			if(forceIndexEsitiCount!=null && forceIndexEsitiCount.size()>0){
 				for (Index index : forceIndexEsitiCount) {
 					exprOk.addForceIndex(index);
@@ -1506,9 +1506,9 @@ public class TransazioniService implements ITransazioniService {
 			exprKo.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
 			
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
-			Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
-			List<Index> forceIndexEsitiCount = convertForceIndexList(pddMonitorProperties.getTransazioniForceIndexEsitiCount(repositoryExternal));
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(this.log);
+			Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+			List<Index> forceIndexEsitiCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexEsitiCount(repositoryExternal));
 			if(forceIndexEsitiCount!=null && forceIndexEsitiCount.size()>0){
 				for (Index index : forceIndexEsitiCount) {
 					exprOk.addForceIndex(index);

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="OpenSPCoopLoader" basedir=".">
+<project name="GovWayLoader" basedir=".">
 	<description>
-        File di Script per la compilazione dell'interfaccia OpenSPCoopLoader
+        File di Script per la compilazione dell'interfaccia GovWayLoader
     </description>
 
 	<import file="local_env.xml" />
 	<import file="./local_env.xml" />
-	<import file="./ant/openspcoop2-loaderConsole-build.xml" />
-	<import file="./ant/openspcoop2-loaderConsole-war.xml" />
+	<import file="./ant/openspcoop2-govwayLoader-build.xml" />
+	<import file="./ant/openspcoop2-govwayLoader-war.xml" />
 	<import file="${mvc}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -198,10 +198,10 @@
 	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users" description="compila le dipendenze" />
 
 	<!-- Compilazione della LoaderConsole-->
-	<target name="compile_loaderConsole" depends="init_compile_loaderConsole,compile_dipendenze,compile_openspcoop2_loaderConsole" description="compila loaderConsole"/>
+	<target name="compile_loaderConsole" depends="init_compile_loaderConsole,compile_dipendenze,compile_govway_loaderConsole" description="compila loaderConsole"/>
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_loaderConsole" depends="compile_loaderConsole,war_openspcoop2_loaderConsole" description="Crea la struttura del modulo WAR" />
+	<target name="build_loaderConsole" depends="compile_loaderConsole,war_govway_loaderConsole" description="Crea la struttura del modulo WAR" />
 		
 	<!-- alias -->
 	<target name="build" depends="build_loaderConsole"/>

@@ -254,7 +254,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 				
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Risorsa per la configurazione dell'accesso ai registri dei servizi utilizzati a RunTime dalla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
+		String description = "Risorsa per la configurazione dell'accesso al registri dei servizi ("+OpenSPCoop2Properties.getInstance().getVersione()+")";
 
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;
@@ -262,7 +262,7 @@ public class AccessoRegistroServizi extends NotificationBroadcasterSupport imple
 		// MetaData per l'attributo registriServizi
 		MBeanAttributeInfo registriServiziVAR 
 			= new MBeanAttributeInfo(AccessoRegistroServizi.REGISTRI_SERVIZI,String[].class.getName(),
-						"Elenco dei registri dei servizi utilizzati a RunTime dalla Porta di Dominio",
+						"Elenco dei registri dei servizi utilizzati a RunTime da GovWay",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'operazione resetCache

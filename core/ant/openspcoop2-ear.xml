@@ -106,7 +106,7 @@
 	
 	
 	
-	<!-- Creazione del modulo OpenSPCoop2.jar -->
+	<!-- Creazione del modulo govway.jar -->
 	<target name="make_openspcoop2_ejb" description="Crea il modulo EJB">
 		<delete dir="${build}/tmpEJB" />
 		<mkdir dir="${build}/tmpEJB" />
@@ -174,10 +174,10 @@
 								<equals arg1="${as}" arg2="wildfly9"/>
 							</or>
 							<then>
-								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-openspcoop2"/>
+								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="hornetq-ra-govway"/>
 							</then>
 							<else>
-								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-openspcoop2"/>
+								<replace file="${build}/tmpEJB/META-INF/jboss-ejb3.xml" token="RA_OPENSPCOOP2" value="activemq-ra-govway"/>
 							</else>
 						</if>
 					</then>
@@ -197,7 +197,7 @@
 			</then>
 		</if>
 		
-		<jar jarfile="${dist}/OpenSPCoop2.jar">
+		<jar jarfile="${dist}/govway.jar">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
 			</manifest>
@@ -215,7 +215,7 @@
 	
 	
 	<!-- Creazione del modulo OpenSPCoop2PropertiesLoader.jar -->
-	<target name="make_openspcoop2_loaderProperties" description="Crea il modulo necessario per caricare far 'vedere' ai moduli web in assenza del modulo ejb">
+	<target name="make_govway_loaderProperties" description="Crea il modulo necessario per caricare far 'vedere' ai moduli web in assenza del modulo ejb">
 
 		<!-- mailcap -->
 		<var name="mailcap_info" value=""/>
@@ -241,7 +241,7 @@
 	</target>
 	
 
-	<!-- Creazione del modulo OpenSPCoop2.war -->
+	<!-- Creazione del modulo govway.war -->
 	<target name="make_openspcoop2_web" description="Crea il modulo WEB">
 		<delete dir="${build}/web-module" />
 		<mkdir dir="${build}/web-module" />
@@ -275,7 +275,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist}/OpenSPCoop2.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
+		<war destfile="${dist}/govway.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
 			</manifest>
@@ -296,7 +296,7 @@
 		<replace file="${build}/web-module/web.xml" token="start Security Constraint Authentication Container" value="start Security Constraint Authentication Container -->"/>
 		<replace file="${build}/web-module/web.xml" token="end Security Constraint Authentication Container" value="&lt;!--  end Security Constraint Authentication Container"/>
 
-		<war destfile="${dist}/OpenSPCoop2Sec.war" webxml="${build}/web-module/web.xml">
+		<war destfile="${dist}/govwaySec.war" webxml="${build}/web-module/web.xml">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
 			</manifest>
@@ -337,7 +337,7 @@
 				<runtarget target="make_openspcoop2_ejb" />
 			</then>
 			<else>
-				<runtarget target="make_openspcoop2_loaderProperties" />
+				<runtarget target="make_govway_loaderProperties" />
 			</else>
 		</if>	
 		<runtarget target="make_openspcoop2_web" />
@@ -425,42 +425,42 @@
 		</if>
 
 		<!-- OpenSPCoop2 Properties -->
-		<copy file="${properties_dir}/openspcoop2.properties" todir="${build}/tmp" />
+		<copy file="${properties_dir}/govway.properties" todir="${build}/tmp" />
 		<if>
 			<equals arg1="${build_openspcoop_with_linkit_threads}" arg2="true" />
 			<then>
-				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
 # ----- Personalizzazione LinkItThread -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.nodeSender"/>
 					<param name="value" value="db"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.stateless.default.oneway"/>
 					<param name="value" value="disabilitato"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.stateless.default.sincrono"/>
 					<param name="value" value="disabilitato"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.stateful.oneway"/>
 					<param name="value" value="1.0"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.stateless.router"/>
 					<param name="value" value="disabilitato"/>
 				</antcall>				
 				<antcall target="dos2unix">
 					<param name="dir" value="${build}/tmp"/>
-				    <param name="file" value="openspcoop2.properties"/>
+				    <param name="file" value="govway.properties"/>
 				</antcall>
 			</then>
 		</if>
@@ -470,51 +470,51 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
 # ----- Personalizzazione per JBoss7.x/WildFly -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load"/>
 					<param name="value" value="true"/>
 				</antcall>	
-				<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+				<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
 # ----- Personalizzazione Timer EJB Name per JBoss7.x/WildFly -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.timer.autoStart.stop"/>
 					<param name="value" value="false"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate"/>
-					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreBusteNonRiscontrate!org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateHome"/>
+					<param name="value" value="java:global/govway/govway.jar/GestoreBusteNonRiscontrate!org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateHome"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi"/>
-					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreMessaggi!org.openspcoop2.pdd.timers.TimerGestoreMessaggiHome"/>
+					<param name="value" value="java:global/govway/govway.jar/GestoreMessaggi!org.openspcoop2.pdd.timers.TimerGestoreMessaggiHome"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali"/>
-					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestorePuliziaMessaggiAnomali!org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliHome"/>
+					<param name="value" value="java:global/govway/govway.jar/GestorePuliziaMessaggiAnomali!org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliHome"/>
 				</antcall>
 				<antcall target="set_property">
-				    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+				    <param name="file" value="${build}/tmp/govway.properties"/>
 					<param name="token" value="org.openspcoop2.pdd.timer.gestoreRepositoryBuste"/>
-					<param name="value" value="java:global/OpenSPCoop2/OpenSPCoop2.jar/GestoreRepositoryBuste!org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteHome"/>
+					<param name="value" value="java:global/govway/govway.jar/GestoreRepositoryBuste!org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteHome"/>
 				</antcall>
 			</then>
 		</if>
 
-		<!-- openspcoop2.msgDiagnostici.properties -->
+		<!-- govway.msgDiagnostici.properties -->
 		<mkdir dir="${build}/tmpNative2ASCII_src" />
 		<mkdir dir="${build}/tmpNative2ASCII_dest" />
-		<copy file="${properties_dir}/openspcoop2.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
+		<copy file="${properties_dir}/govway.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 					
 		<!-- application server (jars e jboss-app.xml) -->
@@ -639,7 +639,7 @@
 					<istrue value="${forceDisableJ2eeMode}"/>
 					<then>
 						<replace file="${build}/tmp/jboss-deployment-structure.xml" 
-								 token="OpenSPCoop2.jar" 
+								 token="govway.jar" 
 								 value="OpenSPCoop2PropertiesLoader.jar" />
 					</then>
 				</if>	
@@ -716,7 +716,7 @@
 		<!-- build ear -->
 		<echo message="Costruisco per application server [${as}]"/>
 		<mkdir dir="${build}/classes_tmp"/>
-		<ear destfile="${dist}/OpenSPCoop2.ear" appxml="${build}/application.xml">
+		<ear destfile="${dist}/govway.ear" appxml="${build}/application.xml">
 			<!-- Informazioni sulla versione -->
 			<zipfileset dir="${rootDir}">
 				<include name="README.txt" />
@@ -734,9 +734,9 @@
 			</zipfileset>
 			<!-- Applicazioni proprietarie di OpenSPCoop -->
 			<zipfileset dir="${dist}">
-				<include name="OpenSPCoop2.war" />
-				<include name="OpenSPCoop2Sec.war" />
-				<include name="OpenSPCoop2.jar" />
+				<include name="govway.war" />
+				<include name="govwaySec.war" />
+				<include name="govway.jar" />
 				<include name="OpenSPCoop2PropertiesLoader.jar" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmp">
@@ -850,20 +850,20 @@
 			</zipfileset>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<zipfileset dir="${properties_dir}" prefix="properties">
-				<include name="openspcoop2.jcs.properties" />
-				<include name="openspcoop2.classRegistry.properties" />
-				<include name="openspcoop2.jmsPublisher.properties" />
+				<include name="govway.jcs.properties" />
+				<include name="govway.classRegistry.properties" />
+				<include name="govway.jmsPublisher.properties" />
 				<include name="openspcoop2.autorizzazionePdDConsole.properties" />
-				<include name="openspcoop2.pdd.properties" />
-				<include name="openspcoop2.log4j2.properties" />
-				<include name="openspcoop2.protocolAdjunct.log4j2.properties" />
+				<include name="govway.pdd.properties" />
+				<include name="govway.log4j2.properties" />
+				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmp" prefix="properties">
-				<include name="openspcoop2.properties" />
+				<include name="govway.properties" />
 			</zipfileset>
 			<zipfileset dir="${build}/tmpNative2ASCII_dest" prefix="properties">
-				<include name="openspcoop2.msgDiagnostici.properties" />
+				<include name="govway.msgDiagnostici.properties" />
 			</zipfileset>
 			<zipfileset dir="${properties_dir}/crypto" prefix="properties" />
 			<!-- Properties di LinkITThreads -->
@@ -898,18 +898,18 @@
 		</ear>
 		
 		<!-- Elimino file temporanei -->
-		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
+		<delete file="${build}/tmp/govway.properties" deleteonexit="true"/>
 		<delete file="${build}/tmp/jboss-app.xml" deleteonexit="true"/>
 		<delete dir="${build}/tmp" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_dest/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/govway.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_src/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/govway.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
 
 		<!-- Elimino archivi intermedi -->
-		<delete file="${dist}/OpenSPCoop2.war" />
-		<delete file="${dist}/OpenSPCoop2Sec.war" />
-		<delete file="${dist}/OpenSPCoop2.jar" />
+		<delete file="${dist}/govway.war" />
+		<delete file="${dist}/govwaySec.war" />
+		<delete file="${dist}/govway.jar" />
 		<delete file="${dist}/OpenSPCoop2Threads.war" failonerror="false" />
 		
 	</target>

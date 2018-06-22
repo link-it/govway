@@ -243,7 +243,7 @@ public class MTOMUtilities {
 	    		@SuppressWarnings("unchecked")
 	    		Map<String,java.util.List<String>> headers = (Map<String,java.util.List<String>>)((BindingProvider)port).getResponseContext().
 	    				get(MessageContext.HTTP_RESPONSE_HEADERS);
-	    		String id = headers.get("X-OpenSPCoop2-IdMessaggio").get(0);
+	    		String id = headers.get("X-GovWay-IdMessaggio").get(0);
 	    	
 	    		
 	    		DatabaseComponent data = null;
@@ -285,14 +285,14 @@ public class MTOMUtilities {
 				Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
 				if(portaDelegata){
 					if(soap11){
-						Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "OPENSPCOOP2_ORG_500");
+						Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "GOVWAY_ORG_500");
 					}
 					else{
 						Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
-						Assert.assertEquals(sub, "OPENSPCOOP2_ORG_500");
+						Assert.assertEquals(sub, "GOVWAY_ORG_500");
 					}
 					Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
-					Assert.assertEquals(fault.getFault().getFaultActor(), "OpenSPCoop2");
+					Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integrazione");
 				}
 				else{
 					if(soap11){
@@ -310,7 +310,7 @@ public class MTOMUtilities {
 	    				get(MessageContext.HTTP_RESPONSE_HEADERS);
 	    		String id = null;
 	    		if(portaDelegata){
-	    			id = headers.get("X-OpenSPCoop2-IdMessaggio").get(0);
+	    			id = headers.get("X-GovWay-IdMessaggio").get(0);
 	    			Reporter.log("ID ["+id+"]");
 	    		}
 				

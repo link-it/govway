@@ -2088,7 +2088,7 @@ public class MsgDiagnostico {
 			MsgDiagnostico.motivoMalfunzionamentoDiagnostici=e;
 			logError("Il Sistema di gestione della diagnostica ha rilevato un errore durante la registrazione di un messaggio diagnostico,"+
 					" tutti i servizi/moduli della porta di dominio sono sospesi. Si richiede un intervento sistemistico per la risoluzione del problema "+
-					"e il riavvio della Porta di Dominio. Errore rilevato: ",e);
+					"e il riavvio di GovWay. Errore rilevato: ",e);
 		}
 		
 	}

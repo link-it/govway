@@ -410,7 +410,7 @@ public class StatisticsJMXResource extends NotificationBroadcasterSupport implem
 
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Stato dei servizi attivi sulla Porta di Dominio";
+		String description = "Stato dei servizi attivi";
 
 		// MetaData per gli attributi
 		MBeanAttributeInfo intervalloStatistico_VAR 

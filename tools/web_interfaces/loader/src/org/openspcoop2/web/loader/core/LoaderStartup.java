@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie alla
- * pddConsole.
+ * govwayConsole.
  * 
  * 
  * @author Andrea Poli (apoli@link.it)
@@ -62,7 +62,7 @@ public class LoaderStartup implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		if(LoaderStartup.log==null){
-			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+			LoaderStartup.log = LoggerWrapperFactory.getLogger("govway.loader");
 		}
 		LoaderStartup.log.info("Undeploy loader in corso...");
 
@@ -106,7 +106,7 @@ public class LoaderStartup implements ServletContextListener {
 		
 		try{
 			LoaderLogger.initialize(LoaderStartup.log, confDir, null, appendActualConfiguration);
-			LoaderStartup.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+			LoaderStartup.log = LoggerWrapperFactory.getLogger("govway.loader");
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}

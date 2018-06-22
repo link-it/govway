@@ -119,11 +119,11 @@ public class AutenticazionePortaDelegata {
 		return new Object[][]{
 				{CredenzialiInvocazione.getAutenticazioneDisabilitata(), 
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/openspcoop2/keys/client1_trasparente.jks", "openspcoopjks", "openspcoop"), 
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client1_trasparente.jks", "openspcoopjks", "openspcoop"), 
 						null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/openspcoop2/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), 
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), 
 							null, -1,true, 200}, // crendeziali corrette
-				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/openspcoop2/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), 
+				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/govway/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), 
 								null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
 		};
 	}

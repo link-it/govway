@@ -45,8 +45,8 @@
 			     descrizione="Esempio di Servizio MTOMT"
 			     versione="1"
 			     profilo-collaborazione="sincrono"
-			     wsdl-concettuale="/etc/openspcoop2/mtom/concettuale.wsdl"
-			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl"
+			     wsdl-concettuale="/etc/govway/mtom/concettuale.wsdl"
+			     wsdl-logico-erogatore="/etc/govway/mtom/logicoErogatore.wsdl"
 			     service-binding="soap">
 		<soggetto-referente tipo="gw" nome="MinisteroErogatore" />
 		<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
@@ -54,7 +54,7 @@
 		   <azione nome="packageUnpackage" />
 		   <azione nome="unpackagePackage" />
 		</port-type>
-		<allegato tipo="XML" file="/etc/openspcoop2/mtom/MTOMExample.xsd"/>
+		<allegato tipo="XML" file="/etc/govway/mtom/MTOMExample.xsd"/>
 	</accordo-servizio-parte-comune>
 
 
@@ -223,13 +223,13 @@
                 <accordo-servizio-parte-specifica tipo="gw" nome="API" versione="1" accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioREST:1">
 		        <configurazione-servizio>
 		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
-		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
+		                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente"/>
 		                </connettore>
 
 				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeBasicPdD">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
 				    <azione>invokeBasicPdD</azione>
@@ -237,7 +237,7 @@
 				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeBasicPdD_credenzialiNonBruciate">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
 				    <azione>invokeBasicPdD_credenzialiNonBruciate</azione>
@@ -245,7 +245,7 @@
 				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeWithBasicAuth">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
 				    <azione>invokeWithBasicAuth</azione>
@@ -253,7 +253,7 @@
 				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeWithBasicAuthDomain">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"
+				            valore="http://localhost:8080/govwayTestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"
 				        />
 				    </connettore>
 				    <azione>invokeWithBasicAuthDomain</azione>
@@ -268,7 +268,7 @@
 			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
 			<configurazione-servizio>
 			        <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Oneway">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?traceIsArrived=mittente"/>
 			        </connettore>
 			</configurazione-servizio>
 		</accordo-servizio-parte-specifica>
@@ -277,16 +277,16 @@
 			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Sincrono">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/testfiles/OpenSPCoop2TestSuitePolicy.xml"/>
+			<specifica-sicurezza tipo="XACML-Policy" file="/etc/govway/testfiles/govwayTestSuitePolicy.xml"/>
 		</accordo-servizio-parte-specifica>
 
 		<accordo-servizio-parte-specifica tipo="gw" nome="MTOMServiceExampleSOAP11" versione="1" 
 			 accordo-servizio-parte-comune="gw/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 			 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
-			 wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap11.wsdl">
+			 wsdl-implementativo-erogatore="/etc/govway/mtom/implementazioneErogatoreSoap11.wsdl">
 			<configurazione-servizio>
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65000/MTOMExample/soap11" />
@@ -295,7 +295,7 @@
 			     <configurazione-azione>
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
 				    <azione>unpackagePackage</azione>
@@ -306,7 +306,7 @@
 		<accordo-servizio-parte-specifica tipo="gw" nome="MTOMServiceExampleSOAP12" versione="1" 
 		         accordo-servizio-parte-comune="gw/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 		         descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
-		         wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap12.wsdl">
+		         wsdl-implementativo-erogatore="/etc/govway/mtom/implementazioneErogatoreSoap12.wsdl">
 			<configurazione-servizio>
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65001/MTOMExample/soap12" />
@@ -315,7 +315,7 @@
 			     <configurazione-azione>
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
-				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
+				            valore="http://localhost:8080/govwayTestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
 				    <azione>unpackagePackage</azione>
@@ -336,27 +336,27 @@
 			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Oneway">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
 			<fruitore tipo="gw" nome="ClientSoapFault11">
 			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
-			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;traceIsArrived=mittente"/>
+			        <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="gw" nome="ClientSoapFault11500">
 			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
-			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
+			        <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="gw" nome="ClientSoapFault12">
 			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
-			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
+			        <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
 			<fruitore tipo="gw" nome="ClientSoapFault12500">
 			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
-			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
+			        <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
                 </accordo-servizio-parte-specifica>
@@ -365,30 +365,30 @@
 			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Sincrono">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
                         <fruitore tipo="gw" nome="ClientSoapFault11">
                             <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;traceIsArrived=mittente"/>
+                                <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="gw" nome="ClientSoapFault11500">
                             <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
+                                <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="gw" nome="ClientSoapFault12">
                             <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
+                                <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
                         <fruitore tipo="gw" nome="ClientSoapFault12500">
                             <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
-                                <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
+                                <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
-			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/testfiles/OpenSPCoop2TestSuitePolicy.xml"/>
+			<specifica-sicurezza tipo="XACML-Policy" file="/etc/govway/testfiles/govwayTestSuitePolicy.xml"/>
                 </accordo-servizio-parte-specifica>
 	
 	</soggetto>

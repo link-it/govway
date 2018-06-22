@@ -16,35 +16,35 @@
 	<target name="make_openspcoop_web" description="Crea il modulo WEB per server non j2ee">
 
 		<!-- OpenSPCoop Properties -->
-		<copy file="${properties_dir}/openspcoop2.properties" todir="${build}/tmp" />
-		<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+		<copy file="${properties_dir}/govway.properties" todir="${build}/tmp" />
+		<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
 # ----- Personalizzazione Tomcat -------------
 		</concat>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.server"/>
 			<param name="value" value="web"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.dataSource"/>
-			<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
+			<param name="value" value="java:/comp/env/org.govway.datasource"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.logger.dump.allAttachments"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="dos2unix">
 			<param name="dir" value="${build}/tmp"/>
-		    <param name="file" value="openspcoop2.properties"/>
+		    <param name="file" value="govway.properties"/>
 		</antcall>
 
-		<!-- openspcoop2.msgDiagnostici.properties -->
+		<!-- govway.msgDiagnostici.properties -->
 		<mkdir dir="${build}/tmpNative2ASCII_src" />
 		<mkdir dir="${build}/tmpNative2ASCII_dest" />
-		<copy file="${properties_dir}/openspcoop2.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
+		<copy file="${properties_dir}/govway.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
@@ -59,7 +59,7 @@
 
 		<!-- Creazione war normale -->
 		<antcall target="-create_openspcoop_web">
-			<param name="openspcoopWeb.warName" value="${dist}/openspcoop2.war"/>
+			<param name="openspcoopWeb.warName" value="${dist}/govway.war"/>
 			<param name="openspcoopWeb.webXml" value="${deploy_web_dir}/web_app/WEB-INF/web.xml"/>
 		</antcall>
 
@@ -73,53 +73,53 @@
 		<copy file="${deploy_web_dir}/web_app/WEB-INF/web.xml" todir="${build}/web-module" />
 		<replace file="${build}/web-module/web.xml" token="start Security Constraint Authentication Container" value="start Security Constraint Authentication Container -->"/>
 		<replace file="${build}/web-module/web.xml" token="end Security Constraint Authentication Container" value="&lt;!--  end Security Constraint Authentication Container"/>
-		<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+		<concat destfile="${build}/tmp/govway.properties" append="yes" >
 
-# ----- Personalizzazione Per esecuzione insieme a openspcoop2.war -------------
+# ----- Personalizzazione per esecuzione insieme a govway.war -------------
 		</concat>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="set_property">
-		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+		    <param name="file" value="${build}/tmp/govway.properties"/>
 			<param name="token" value="org.openspcoop2.pdd.core.jmx.enable"/>
 			<param name="value" value="false"/>
 		</antcall>
 		<antcall target="-create_openspcoop_web">
-			<param name="openspcoopWeb.warName" value="${dist}/openspcoop2sec.war"/>
+			<param name="openspcoopWeb.warName" value="${dist}/govwaySec.war"/>
 			<param name="openspcoopWeb.webXml" value="${build}/web-module/web.xml"/>
 		</antcall>
 		<delete dir="${build}/web-module"/>
 		
 		
 		<!-- Elimino file temporanei -->
-		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
+		<delete file="${build}/tmp/govway.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmp" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_dest/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/govway.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_src/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/govway.msgDiagnostici.properties" deleteonexit="true"/>
 		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
 		
 	</target>
@@ -248,20 +248,20 @@
 			</lib>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<classes dir="${properties_dir}">
-				<include name="openspcoop2.jcs.properties" />
-				<include name="openspcoop2.classRegistry.properties" />
-				<include name="openspcoop2.jmsPublisher.properties" />
+				<include name="govway.jcs.properties" />
+				<include name="govway.classRegistry.properties" />
+				<include name="govway.jmsPublisher.properties" />
 				<include name="openspcoop2.autorizzazionePdDConsole.properties" />
-				<include name="openspcoop2.pdd.properties" />
-				<include name="openspcoop2.log4j2.properties" />
-				<include name="openspcoop2.protocolAdjunct.log4j2.properties" />
+				<include name="govway.pdd.properties" />
+				<include name="govway.log4j2.properties" />
+				<include name="govway.protocolAdjunct.log4j2.properties" />
 				<include name="log4j2.properties" />
 			</classes>
 			<classes dir="${build}/tmp">
-				<include name="openspcoop2.properties" />
+				<include name="govway.properties" />
 			</classes>
 			<classes dir="${build}/tmpNative2ASCII_dest">
-				<include name="openspcoop2.msgDiagnostici.properties" />
+				<include name="govway.msgDiagnostici.properties" />
 			</classes>
 			<classes dir="${properties_dir}/crypto"/>
 			<!-- WSDL -->

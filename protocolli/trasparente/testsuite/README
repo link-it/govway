@@ -8,7 +8,7 @@ location: protocolli/trasparente/testsuite
 L'applicazione permette di testare le funzionalita' base di GovWay con il protocollo Trasparente
 
 L'applicazione e' suddivisa in
-- Servizio Applicativo OpenSPCoop2TestSuiteServer (server fornito con la testsuite base di OpenSPCoop2)
+- Servizio Applicativo govwayTestSuiteServer (server fornito con la testsuite base di OpenSPCoop2)
 - Batteria di test (TestNG) che verificano le varie funzionalita'
 
 
@@ -22,10 +22,10 @@ Deve essere attivata la registrazione delle tracce e dei msg diagnostici per mez
 Un esempio lo si puo' trovare in ./protocolli/trasparente/testsuite/deploy/config_file/configurazioneDefault.xml 
 
 
-Installare l'applicazione OpenSPCoop2TestSuiteServer copiando il file testsuite/dist/OpenSPCoop2TestSuite.war nell'Application Server in JBOSS/server/default/deploy/
+Installare l'applicazione govwayTestSuiteServer copiando il file testsuite/dist/govwayTestSuite.war nell'Application Server in JBOSS/server/default/deploy/
 L'applicazione richiede l'installazione dei datasource
-- org.openspcoop2.dataSource: database di gestione dei messaggi della Porta di Dominio
-- org.openspcoop2.dataSource.tracciamento: database di tracciamento della Porta di Dominio
+- org.govway.datasource: database di gestione dei messaggi della Porta di Dominio
+- org.govway.datasource.tracciamento: database di tracciamento della Porta di Dominio
 
 L'esecuzione dei test comporta una fase di pre-configurazione dove vengono installati in /etc/openspcoop le configurazioni necessarie per i test
 Per configurare la porta con gli scenari di esempio utilizzare il comando:
@@ -45,22 +45,22 @@ L'elenco completo delle funzionalita' da testare sono descritte nel paragrafo 1.
 
 
 
-1.2 Servizio Applicativo OpenSPCoop2TestSuiteServer
+1.2 Servizio Applicativo govwayTestSuiteServer
 
 Il servizio applicativo e' una servlet che fornisce i servizi funzionali ai test del protocollo Trasparente
 
-L'applicazione necessita di accedere al database dei messaggi della porta di dominio ( org.openspcoop2.dataSource ) e al database del tracciamento ( org.openspcoop2.dataSource.tracciamento )
+L'applicazione necessita di accedere al database dei messaggi della porta di dominio ( org.govway.datasource ) e al database del tracciamento ( org.govway.datasource.tracciamento )
 Le configurazioni di accesso ai dataSource possono essere indicati:
 - versione sorgente, ./testsuite/deploy/properties/database.properties prima della compilazione
-- versione binaria, file database.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+- versione binaria, file database.properties presente in govwayTestSuite.war/WEB-INF/classes
 
 L'applicazione puo' essere configurata nei parametri di integrazione con la porta di dominio attraverso:
 - versione sorgente, ./testsuite/deploy/properties/testsuite.properties prima della compilazione
-- versione binaria, file testsuite.properties presente in OpenSPCoop2TestSuite.war/WEB-INF/classes
+- versione binaria, file testsuite.properties presente in govwayTestSuite.war/WEB-INF/classes
 
-L'applicazione produce un file di log che registra le operazioni effettuate, in /var/openspcoop2/log/openspcoop2_testsuite.log. 
+L'applicazione produce un file di log che registra le operazioni effettuate, in /var/govway/log/govway_testsuite.log. 
 È possibile personalizzare la produzione dei log attraverso la modifica del file ./testsuite/deploy/properties/testsuite.log4j2.properties
-prima della compilazione dei sorgenti o modificando il file all'interno dell'applicazione OpenSPCoop2TestSuite.war
+prima della compilazione dei sorgenti o modificando il file all'interno dell'applicazione govwayTestSuite.war
 
 Prerequisito:
 La porta di dominio deve essere configurata in maniera che le tracce e i messaggi diagnostici vengano registrati su Database
@@ -119,9 +119,9 @@ Le batterie di test fornite permettono di testare diverse funzionalita' elencate
 Requisiti globali:
 1) JMX protocolli/trasparente/testsuite/deploy/jmx/README
 2) Configurazione PdD. La configurazione della PdD richiesta dai test deve essere attuata attraverso i seguenti step:
-	2.a) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/openspcoop2_local.classRegistry.properties in /etc/openspcoop2
-	2.b) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/openspcoop2_local.properties in /etc/openspcoop2
-        2.c) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/testsuite_local.properties in /etc/openspcoop2
+	2.a) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/govway_local.classRegistry.properties in /etc/govway
+	2.b) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/govway_local.properties in /etc/govway
+        2.c) Deve essere copiato il contenuto del file ./protocolli/trasparente/testsuite/src/testsuite_local.properties in /etc/govway
 3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
    (<attribute name="RedeliveryDelay">15000</attribute>)
 
@@ -181,11 +181,11 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 a. Aggiunta di connettori https specifici per i test nella configurazione web (in jboss in server.xml del tomcat integrato)
 - Un connettore HTTPS che non esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8445)
   Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_noClientAuth.xml
-  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/govway/keys
 - un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
   Esempio in ./protocolli/trasparente/testsuite/deploy/https_examples/ConnettoreHTTPS_withClientAuth.xml
-  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/openspcoop2/keys
-b. Installazione dei keystore in /etc/openspcoop2/keys
+  La configurazione del connettore assume che il keystore ./protocolli/spcoop/testsuite/deploy/https_examples/jks/erogatore.jks sia stato copiato in /etc/govway/keys
+b. Installazione dei keystore in /etc/govway/keys
 - ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client1.jks
 - ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client2.jks
 - ./protocolli/spcoop/testsuite/deploy/https_examples/jks/client3.jks
@@ -207,7 +207,7 @@ Batterie di test:
 
 Prerequisito: 
 copiare tutti gli xsd e wsdl presenti in ./protocolli/trasparente/example/server/MTOMExample/configurazionePdD/wsdl/ 
-nella directory /etc/openspcoop2/mtom/
+nella directory /etc/govway/mtom/
 
 (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
@@ -225,9 +225,9 @@ Batterie di test che verificano la gestione di MTOM all'interno della PdD
 
 Per creare il servizio applicativo di test, eseguire in testsuite/ il comando 'ant build'.
 Verra creato:
-- OpenSPCoop2TestSuite.war
-Copiare il file OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/
-Inoltre copiare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente'.
+- govwayTestSuite.war
+Copiare il file govwayTestSuite.war in JBOSS/server/default/deploy/
+Inoltre copiare in govwayTestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente'.
 Tale jar lo si puo' produrre eseguendo in protocolli/trasparente il comando 'ant build'.
 
 Per creare i binari della batteria di test eseguire in protocolli/trasparente/testsuite il comando 'ant build'.
@@ -236,4 +236,4 @@ Per creare i binari della batteria di test eseguire in protocolli/trasparente/te
 
 2.2 Versione Binaria
 
-Copiare il file testsuite/OpenSPCoop2TestSuite.war in JBOSS/server/default/deploy/ ed installare in OpenSPCoop2TestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente' situato in protocolli/trasparente/dist/
+Copiare il file testsuite/govwayTestSuite.war in JBOSS/server/default/deploy/ ed installare in govwayTestSuite.war/WEB-INF/lib il jar relativo al protocollo 'trasparente' situato in protocolli/trasparente/dist/

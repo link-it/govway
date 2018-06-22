@@ -50,10 +50,10 @@ public class TracceExporter extends HttpServlet{
 	@Override
 	public void init() throws ServletException {
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TracceExporter.log);
-			TracceExporter.enableHeaderInfo = pddMonitorProperties.isAttivoTransazioniExportHeader();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TracceExporter.log);
+			TracceExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			
-			this.tracciamentoService = pddMonitorProperties.getDriverTracciamento();
+			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 		}catch(Exception e){
 			TracceExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}

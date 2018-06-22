@@ -139,7 +139,7 @@ public class RestUtilities {
 		if(redirectLocationUrl.startsWith(r)) {
 			
 			// Context path rappresenta il prefisso della richiesta contenente il contesto dell'applicazione (es. /openspcoop2),
-			// il protocollo e il servizio. Ad esempio /openspcoop2/spcoop/PD
+			// il protocollo e il servizio. Ad esempio /govway/spcoop/PD
 			String contextPath = transportRequestContext.getWebContext();
 			if(contextPath.endsWith("/")==false) {
 				contextPath = contextPath + "/";

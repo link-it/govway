@@ -327,7 +327,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 				
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Risorsa per la gestione del Controllo del Traffico attivo sulla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
+		String description = "Risorsa per la gestione del Controllo del Traffico ("+OpenSPCoop2Properties.getInstance().getVersione()+")";
 		
 		// *** Attributi ***
 		
@@ -343,7 +343,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		
 		// MetaData per l'attributo activeThreads
 		MBeanAttributeInfo activeThreadsVAR = new MBeanAttributeInfo(JMXConstants.CC_ATTRIBUTE_ACTIVE_THREADS,long.class.getName(),
-						"Numero di threads attivi sulla Porta di Dominio",
+						"Numero di threads attivi",
 						JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo pddCongestionata
@@ -512,7 +512,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 				throw new Exception("GestorePolicyAttive non abilitato");
 			return this.gestorePolicyAttive.printKeysPolicy("\n");
 		}catch(PolicyShutdownException notFound){
-			return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -528,9 +528,9 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			try{
 				return this.gestorePolicyAttive.printInfoPolicy(id, "================================================================");
 			}catch(PolicyNotFoundException notFound){
-				return "Informazioni sulla Policy non disponibili; non sono ancora transitate sulla Porta di Dominio richieste che soddisfano i criteri di filtro impostati";
+				return "Informazioni sulla Policy non disponibili; non sono ancora transitate richieste che soddisfano i criteri di filtro impostati";
 			}catch(PolicyShutdownException notFound){
-				return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+				return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 			}
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -545,7 +545,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			this.gestorePolicyAttive.removeAllActiveThreadsPolicy();
 			return "Operazione 'remove' effettuata con successo";
 		}catch(PolicyShutdownException notFound){
-			return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -559,7 +559,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			this.gestorePolicyAttive.resetCountersAllActiveThreadsPolicy();
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(PolicyShutdownException notFound){
-			return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -575,7 +575,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			this.gestorePolicyAttive.removeActiveThreadsPolicy(id);
 			return "Operazione 'remove' effettuata con successo";
 		}catch(PolicyShutdownException notFound){
-			return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -591,7 +591,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 			this.gestorePolicyAttive.resetCountersActiveThreadsPolicy(id);
 			return JMXUtils.MSG_RESET_CACHE_EFFETTUATO_SUCCESSO;
 		}catch(PolicyShutdownException notFound){
-			return "GestorePolicyAttive in shutdown; controllare lo stato della Porta di Dominio";
+			return "GestorePolicyAttive in shutdown; controllare lo stato di GovWay";
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

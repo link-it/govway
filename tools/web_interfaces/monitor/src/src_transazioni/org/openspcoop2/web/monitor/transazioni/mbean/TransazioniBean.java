@@ -75,10 +75,10 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		super();
 
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniBean.log);
-			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
-			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
-			this.visualizzaDataAccettazione = pddMonitorProperties.isAttivoTransazioniDataAccettazione();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TransazioniBean.log);
+			List<String> govwayMonitorare = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
+			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
+			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 			
 			this.applicationBean = new ApplicationBean();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 

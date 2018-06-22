@@ -2182,7 +2182,7 @@
                 <servizio-applicativo nome="api">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/API">
-                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api"/>
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api"/>
                                 </connettore>     
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2190,7 +2190,7 @@
                 <servizio-applicativo nome="api_authBasic">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="api_authBasic">
-                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678"/>
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678"/>
                                 </connettore>     
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2198,7 +2198,7 @@
                 <servizio-applicativo nome="api_authBasicWithDomain">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="api_authBasicWithDomain">
-                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"/>
+                                        <property nome="location" valore="http://localhost:8080/govwayTestSuite/api?basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"/>
                                 </connettore>     
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2214,7 +2214,7 @@
                 <servizio-applicativo nome="ping">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_pingAPIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2222,7 +2222,7 @@
 		<servizio-applicativo nome="pingSenzaVerifica">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_pingSenzaVerificaAPIMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?checkTraccia=false"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?checkTraccia=false"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -2230,7 +2230,7 @@
 		<servizio-applicativo nome="faultPingSoap11">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11APIMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -2238,7 +2238,7 @@
 		<servizio-applicativo nome="faultPingSoap11_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11_500APIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2246,7 +2246,7 @@
                 <servizio-applicativo nome="faultPingSoap12">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12APIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2254,7 +2254,7 @@
                 <servizio-applicativo nome="faultPingSoap12_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12_500APIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2265,7 +2265,7 @@
                 <servizio-applicativo nome="echo">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2273,7 +2273,7 @@
 		<servizio-applicativo nome="echoSenzaVerifica">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_echoSenzaVerificaAPIMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?checkTraccia=false"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?checkTraccia=false"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>	
@@ -2281,7 +2281,7 @@
 		<servizio-applicativo nome="faultSoap11">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11APIMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
 		</servizio-applicativo>
@@ -2289,7 +2289,7 @@
 		<servizio-applicativo nome="faultSoap11_500">
     			<invocazione-servizio>
 			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11_500APIMinisteroErogatore">
-			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500"/>
+			            <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;returnCode=500"/>
 			        </connettore>
 			    </invocazione-servizio>
 		</servizio-applicativo>
@@ -2297,7 +2297,7 @@
                 <servizio-applicativo nome="faultSoap12">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultSoap12APIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>
@@ -2305,7 +2305,7 @@
                 <servizio-applicativo nome="faultSoap12_500">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_faultSoap12_500APIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                             </invocazione-servizio>
                 </servizio-applicativo>
@@ -2332,7 +2332,7 @@
  		<servizio-applicativo nome="MTOMecho">
                         <invocazione-servizio>
                                 <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
-                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"/>
+                                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"/>
                                 </connettore>
                         </invocazione-servizio>
                 </servizio-applicativo>

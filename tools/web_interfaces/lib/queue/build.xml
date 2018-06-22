@@ -129,18 +129,18 @@
 		</copy>
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql_queue}"/>
-			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsOpenSPCoop2.sql"/>
+			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsGovWay.sql"/>
 			<param name="SQLSourceFiles" value="Operations.sql DBInfo.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Operazioni effettuate sul database di GovWay');"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_queue}"/>
-			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsOpenSPCoop2_delete.sql"/>
+			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsgovway_delete.sql"/>
 			<param name="SQLSourceFiles" value="Operations_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_queue}"/>
-			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsOpenSPCoop2_drop.sql"/>
+			<param name="SQLDestFile" value="${dist_queue}/RepositoryOperationsgovway_drop.sql"/>
 			<param name="SQLSourceFiles" value="Operations_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 		<delete dir="${sql_queue}">

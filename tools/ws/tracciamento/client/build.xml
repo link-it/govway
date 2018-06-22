@@ -96,7 +96,7 @@
 			<fileset dir="${dist_tracciamento_ws_client}" includes="*.jar" />
 		</copy> -->
 		<copy tofile="${stub_tracciamento_ws_client}/openspcoop2_tracciamentoStub_cxf.jar">
-			<fileset dir="${dist_tracciamento_ws_client}" includes="openspcoop2_ws-tracciamento-client-search*.jar" />
+			<fileset dir="${dist_tracciamento_ws_client}" includes="govway_ws-tracciamento-client-search*.jar" />
 		</copy>
 	</target>
 	<target name="build_jar_stub" depends="build,copyStub" /> <!-- alias -->

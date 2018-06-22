@@ -15104,7 +15104,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 	/**
-	 * Reset delle tabelle del db pddConsole gestito da questo driver
+	 * Reset delle tabelle del db govwayConsole gestito da questo driver
 	 */
 	public void resetCtrlstat() throws DriverRegistroServiziException {
 		Connection con = null;
@@ -21846,8 +21846,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// casoSpecialeValoreNull
 				ISQLQueryObject sqlQueryObjectPropertyNotExists = null;
 				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
-				// 1) Passando via pddConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
-				// 2) Passando via pddLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
 				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
 					
 					ISQLQueryObject sqlQueryObjectPropertyNotExistsInternal = sqlQueryObject.newSQLQueryObject();
@@ -21945,8 +21945,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				// casoSpecialeValoreNull
 				// in un caso dove il valore non e' definito nel database ci possono essere due casistiche:
-				// 1) Passando via pddConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
-				// 2) Passando via pddLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
+				// 1) Passando via govwayConsole, la proprieta' esiste con il nome ('name') ed e' valorizzata null in tutte le colonne (value_string,value_number,value_boolean)
+				// 2) Passando via govwayLoader, in una configurazione xml, non si definisce la proprietà senza il valore, quindi la riga con il nome non esistera proprio nel db.
 				if(f.getValueAsString()==null && f.getValueAsLong()==null && f.getValueAsBoolean()==null){
 					this.log.debug("FiltroRicercaProtocolProperty["+i+"] Name stmt.setString("+f.getName()+")");
 					stmt.setString(index++, f.getName());

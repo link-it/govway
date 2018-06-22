@@ -393,7 +393,7 @@ Se attivo le regole specifiche di trattamento della richiesta e/o della risposta
 - 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
 - 'wsdl': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
 - 'openspcoop': validazione equivalente a quella 'wsdl' dove tutte le informazioni prelevate tipicamente in un wsdl (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi della PdD]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[wsdl/openspcoop/xsd]]></linkit:sql-column-comment>
+                                <linkit:sql-column-comment><![CDATA[wsdl/interface/xsd]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -417,7 +417,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="integrazione"/>
-                                <linkit:sql-ddl-column-comment>Lista di interfacce (tipi separati da virgola) per l'integrazione verso l'applicativo erogatore. I tipi indicati devono essere stati registrati nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Lista di interfacce (tipi separati da virgola) per l'integrazione verso l'applicativo erogatore. I tipi indicati devono essere stati registrati nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[lista di tipi separati dalla virgola]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -488,7 +488,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-ddl-column-comment>Implementazione di una gestione ad hoc della consegna da parte della PdD verso l'applicativo erogatore. Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Implementazione di una gestione ad hoc della consegna da parte della PdD verso l'applicativo erogatore. Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-mapping name="behaviour"/>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -501,7 +501,7 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autenticazione"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Modalità di identificazione dei soggetti che desiderano fruire del servizio tramite la porta applicativa (non tutti i protocolli supportano l'autenticazione dei soggetti).
-Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'. Di seguito alcune implementazioni di default:
+Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.properties'. Di seguito alcune implementazioni di default:
 - 'disabilitato': autenticazione non attiva sulla porta
 - 'basic': autenticazione http basic composta da username e password
 - 'ssl': autenticazione ssl dove viene utilizzato il subject del certificato client
@@ -662,7 +662,7 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-ddl-column-comment><![CDATA[Modalità di autorizzazione a fruire del servizio tramite la porta applicativa.
-Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'. Di seguito alcune implementazioni di default:
+Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.properties'. Di seguito alcune implementazioni di default:
 - 'disabilitato': nessuna autorizzazione attiva sulla porta
 - 'authenticated': solo i soggetti autenticati (identificati tramite autenticazione dove supportato dai protocolli, oppure attraverso l'identità indicata nell'header) e definiti come fruitori del servizio  sono autorizzati.
 - 'roles': solo i soggetti che possiedono i ruoli associati alla porta applicativa (tramite tabella pa_ruoli) vengono autorizzati
@@ -678,7 +678,7 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-ddl-column-comment>Tipo di autorizzazione del contenuto effettuata dalla PdD; il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Tipo di autorizzazione del contenuto effettuata dalla PdD; il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-mapping name="autorizzazione_contenuto"/>
                             </linkit:generator>
                         </xsd:appinfo>

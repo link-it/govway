@@ -21,11 +21,11 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 		super.contextInitialized(evt);
 
 		@SuppressWarnings("unused")
-		PddMonitorProperties pddMonitorProperties = null;
+		PddMonitorProperties govwayMonitorProperties = null;
 		try{
-			pddMonitorProperties = PddMonitorProperties.getInstance(AbstractConsoleStartupListener.log);
+			govwayMonitorProperties = PddMonitorProperties.getInstance(AbstractConsoleStartupListener.log);
 		} catch (Exception e) {
-			String msgErrore = "Errore durante l'inizializzazione delle proprietà della pddMonitor: " + e.getMessage();
+			String msgErrore = "Errore durante l'inizializzazione delle proprietà della govwayMonitor: " + e.getMessage();
 			AbstractConsoleStartupListener.log.error(
 					//					throw new ServletException(
 					msgErrore,e);

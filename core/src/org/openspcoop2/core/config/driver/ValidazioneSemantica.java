@@ -573,7 +573,7 @@ public class ValidazioneSemantica {
 			this.validaConnettore(connettore, null, sogg);
 		}
 		
-		// Il tipo del soggetto deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiSoggetti()
+		// Il tipo del soggetto deve essere uno tra quelli definiti in govway.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiSoggetti()
 		if(this.tipoSoggetti.contains(sogg.getTipo())==false){
 			this.errori.add("Il tipo del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" non è valido (Tipi utilizzabili: "+this.getTipoSoggetti()+")");
 		}

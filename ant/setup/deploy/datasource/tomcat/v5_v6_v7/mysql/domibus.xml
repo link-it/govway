@@ -1,6 +1,6 @@
 	<!-- Datasource di Domibus -->
 
-	<Resource name="org.openspcoop2.dataSource.domibus" auth="Container"
+	<Resource name="org.govway.datasource.domibus" auth="Container"
 	          type="javax.sql.DataSource"
 	          driverClassName="com.mysql.jdbc.Driver"
 	          url="jdbc:mysql://@HOST@:@PORT@/@DATABASE@?zeroDateTimeBehavior=convertToNull"

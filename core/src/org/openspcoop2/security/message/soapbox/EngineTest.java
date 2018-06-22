@@ -154,12 +154,12 @@ public class EngineTest {
 			
 			// AsymmetricKeystore
 			KeyStore pdKsAsymmetric = KeyStore.getInstance(KeyStore.getDefaultType());
-			pdKsAsymmetric.load(new FileInputStream("/var/openspcoop2/keys/pd.jks"), "keypd".toCharArray());
+			pdKsAsymmetric.load(new FileInputStream("/var/govway/keys/pd.jks"), "keypd".toCharArray());
 			org.openspcoop2.security.message.soapbox.SecurityConfig pdSecConfigAsymmetric = new org.openspcoop2.security.message.soapbox.SecurityConfig(pdKsAsymmetric, pdKsAsymmetric, pdPasswordMap);
 			
 			// SymmetricKeystore
 			KeyStore pdKsSymmetric = KeyStore.getInstance("JCEKS");
-			pdKsSymmetric.load(new FileInputStream("/var/openspcoop2/keys/symmetricStore.jks"), "changeit".toCharArray());
+			pdKsSymmetric.load(new FileInputStream("/var/govway/keys/symmetricStore.jks"), "changeit".toCharArray());
 			org.openspcoop2.security.message.soapbox.SecurityConfig pdSecConfigSymmetric = new org.openspcoop2.security.message.soapbox.SecurityConfig(pdKsSymmetric, pdKsSymmetric, pdPasswordMap);
 			pdSecConfigSymmetric.setSymmetricSharedKey(true);
 			
@@ -287,12 +287,12 @@ public class EngineTest {
 			
 			// AsymmetricKeystore
 			KeyStore paKsAsymmetric = KeyStore.getInstance(KeyStore.getDefaultType());
-			paKsAsymmetric.load(new FileInputStream("/var/openspcoop2/keys/pa.jks"), "keypa".toCharArray());
+			paKsAsymmetric.load(new FileInputStream("/var/govway/keys/pa.jks"), "keypa".toCharArray());
 			org.openspcoop2.security.message.soapbox.SecurityConfig paSecConfigAsymmetric = new org.openspcoop2.security.message.soapbox.SecurityConfig(paKsAsymmetric, paKsAsymmetric, paPasswordMap);
 			
 			// SymmetricKeystore
 			KeyStore paKsSymmetric = KeyStore.getInstance("JCEKS");
-			paKsSymmetric.load(new FileInputStream("/var/openspcoop2/keys/symmetricStore.jks"), "changeit".toCharArray());
+			paKsSymmetric.load(new FileInputStream("/var/govway/keys/symmetricStore.jks"), "changeit".toCharArray());
 			org.openspcoop2.security.message.soapbox.SecurityConfig paSecConfigSymmetric = new org.openspcoop2.security.message.soapbox.SecurityConfig(paKsSymmetric, paKsSymmetric, paPasswordMap);
 			paSecConfigSymmetric.setSymmetricSharedKey(true);
 			paMsgSecCtx.getEncryptionRequest().setCertAlias("symmetric");

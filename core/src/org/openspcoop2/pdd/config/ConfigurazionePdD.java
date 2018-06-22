@@ -115,7 +115,7 @@ public class ConfigurazionePdD  {
 	private Logger log = null;
 
 
-	/** Variabili statiche contenenti le configurazioni della Porta di Dominio
+	/** Variabili statiche contenenti le configurazioni
 	 *  - ConfigurazioneGenerale
 	 *  - GestioneErrore
 	 *  - RoutingTable
@@ -3150,7 +3150,7 @@ public class ConfigurazionePdD  {
 	
 	
 	
-	public static String _getKey_ElencoIdPolicyAttive(){ // usato anche per resettare la cache puntualmente via jmx, tramite la pddConsole
+	public static String _getKey_ElencoIdPolicyAttive(){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
 		return "ElencoIdPolicyAttive";
 	}
 	public ElencoIdPolicyAttive getElencoIdPolicyAttive(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -3188,7 +3188,7 @@ public class ConfigurazionePdD  {
 	}
 	
 	
-	public static String _getKey_AttivazionePolicy(String id){ // usato anche per resettare la cache puntualmente via jmx, tramite la pddConsole
+	public static String _getKey_AttivazionePolicy(String id){ // usato anche per resettare la cache puntualmente via jmx, tramite la govwayConsole
 		return "AttivazionePolicy_"+id;
 	}
 	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -3226,7 +3226,7 @@ public class ConfigurazionePdD  {
 	}
 	
 	
-	public static String _getKey_ElencoIdPolicy(){ // utilizzabile per resettare la cache puntualmente via jmx, tramite la pddConsole
+	public static String _getKey_ElencoIdPolicy(){ // utilizzabile per resettare la cache puntualmente via jmx, tramite la govwayConsole
 		return "ElencoIdPolicy";
 	}
 	public ElencoIdPolicy getElencoIdPolicy(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -3264,7 +3264,7 @@ public class ConfigurazionePdD  {
 	}
 	
 	
-	public static String _getKey_ConfigurazionePolicy(String id){ // utilizzabile per resettare la cache puntualmente via jmx, tramite la pddConsole
+	public static String _getKey_ConfigurazionePolicy(String id){ // utilizzabile per resettare la cache puntualmente via jmx, tramite la govwayConsole
 		return "ConfigurazionePolicy_"+id;
 	}
 	public ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

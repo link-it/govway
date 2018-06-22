@@ -339,7 +339,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
 - 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
 - 'wsdl': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
 - 'openspcoop': validazione equivalente a quella 'wsdl' dove tutte le informazioni prelevate tipicamente in un wsdl (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi della PdD]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[wsdl/openspcoop/xsd]]></linkit:sql-column-comment>
+                                <linkit:sql-column-comment><![CDATA[wsdl/interface/xsd]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -909,7 +909,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
-                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1001,7 +1001,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
-                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1095,7 +1095,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
-                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'govway.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

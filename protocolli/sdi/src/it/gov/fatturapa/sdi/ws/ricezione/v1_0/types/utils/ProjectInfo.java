@@ -33,7 +33,7 @@ public class ProjectInfo implements IProjectInfo {
 
 	@Override
 	public String getProjectName(){
-		return "openspcoop2_protocol_sdi_ws_ricezione_types_v1.0";
+		return "govway_protocol_sdi_ws_ricezione_types_v1.0";
 	}
 	
 	@Override

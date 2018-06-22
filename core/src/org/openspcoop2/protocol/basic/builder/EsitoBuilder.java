@@ -327,7 +327,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					
 					if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility){
 
-						// L'errore puo' essere generato dalla Porta di Dominio, l'errore puo' essere un :
+						// L'errore puo' essere generato da GovWay, l'errore puo' essere un :
 						// msg di errore 4XX
 						// msg di errore 5xx
 						// msg dovuto alla ricezione di una busta.
@@ -339,7 +339,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						else{
 							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
 							if(prefixFaultCode==null){
-								prefixFaultCode="OPENSPCOOP2_ORG_";
+								prefixFaultCode="GOVWAY_ORG_";
 							}
 							boolean prefixOpv2 = codice.startsWith(prefixFaultCode);
 							

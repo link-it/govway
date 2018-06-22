@@ -56,9 +56,9 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 
 	public BaseStatsMBean() {
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DynamicPdDBean.log);
-			this.isVisualizzaPerDimensioneEnabled = pddMonitorProperties.isAttivoStatisticheVisualizzazioneDimensione();
-			this.direzioneLabel = pddMonitorProperties.getOrientamentoDefaultLabelGrafici();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DynamicPdDBean.log);
+			this.isVisualizzaPerDimensioneEnabled = govwayMonitorProperties.isAttivoStatisticheVisualizzazioneDimensione();
+			this.direzioneLabel = govwayMonitorProperties.getOrientamentoDefaultLabelGrafici();
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}

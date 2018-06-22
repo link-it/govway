@@ -393,7 +393,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Stato dei servizi attivi sulla Porta di Dominio";
+		String description = "Stato dei servizi attivi";
 
 		// MetaData per gli attributi
 		MBeanAttributeInfo componentePD_VAR 
@@ -445,7 +445,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		MBeanOperationInfo abilitazioneCompleta_OP 
-		= new MBeanOperationInfo(StatoServiziJMXResource.ABILITA_SERVIZI,"Abilitazione completa di tutti i servizi della Porta di Dominio",
+		= new MBeanOperationInfo(StatoServiziJMXResource.ABILITA_SERVIZI,"Abilitazione completa di tutti i servizi",
 				null,
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
@@ -466,7 +466,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);
 		MBeanOperationInfo disabilitazioneCompleta_OP 
-		= new MBeanOperationInfo(StatoServiziJMXResource.DISABILITA_SERVIZI,"Disabilitazione completa di tutti i servizi della Porta di Dominio",
+		= new MBeanOperationInfo(StatoServiziJMXResource.DISABILITA_SERVIZI,"Disabilitazione completa di tutti i servizi",
 				null,
 				String.class.getName(),
 				MBeanOperationInfo.ACTION);

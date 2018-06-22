@@ -4,7 +4,7 @@ Esempio di connettore da impostare in apache tomcat 5.x, 6.x, 7.x e 8.x (per tom
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
-           keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
+           keystoreFile="/etc/govway/keys/erogatore.jks"
            keystorePass="openspcoop"/>
 
 
@@ -15,7 +15,7 @@ Esempio di connettore da impostare in apache tomcat 8.5.x e 9.x (viene aggiunto 
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
 	   keyAlias="erogatore"
-           keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
+           keystoreFile="/etc/govway/keys/erogatore.jks"
            keystorePass="openspcoop"/>
 
 
@@ -26,7 +26,7 @@ Esempio di connettore da impostare nel file server.xml del Tomcat presente nelle
            maxThreads="120" strategy="ms" maxHttpHeaderSize="8192"
            emptySessionPath="true"
            scheme="https" secure="true" clientAuth="true" sslProtocol = "TLS"
-           keystoreFile="/etc/openspcoop2/keys/erogatore.jks"
+           keystoreFile="/etc/govway/keys/erogatore.jks"
            keystorePass="openspcoop"/>
 
 
@@ -37,7 +37,7 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
             <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/>
             ...
             <connector name="httpsBilanciato" protocol="HTTP/1.1" scheme="https" socket-binding="httpsBilanciato" secure="true">
-                <ssl name="httpsBilanciato" password="openspcoop" certificate-key-file="/etc/openspcoop2/keys/erogatore.jks" verify-client="true"/>
+                <ssl name="httpsBilanciato" password="openspcoop" certificate-key-file="/etc/govway/keys/erogatore.jks" verify-client="true"/>
             </connector>
 	    ...
 	    <virtual-server ...
@@ -63,11 +63,11 @@ Esempio di connettore da impostare nel file standalone/configuration/standalone.
             <security-realm name="openspcoop2withClientAuth">
                 <server-identities>
                         <ssl>
-                                <keystore path="/etc/openspcoop2/keys/erogatore.jks" keystore-password="openspcoop" alias="erogatore" key-password="openspcoop" />
+                                <keystore path="/etc/govway/keys/erogatore.jks" keystore-password="openspcoop" alias="erogatore" key-password="openspcoop" />
                         </ssl>
                 </server-identities>
                 <authentication>
-                        <truststore path="/etc/openspcoop2/keys/erogatore.jks" keystore-password="openspcoop"/>
+                        <truststore path="/etc/govway/keys/erogatore.jks" keystore-password="openspcoop"/>
                 </authentication>
             </security-realm>
             ...

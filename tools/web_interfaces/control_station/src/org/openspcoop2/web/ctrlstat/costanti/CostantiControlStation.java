@@ -115,8 +115,7 @@ public class CostantiControlStation {
 	public final static String LABEL_AGGIORNAMENTO_CONFIGURAZIONE_PROPERTIES_EFFETTUATO_CON_SUCCESSO = "Aggiornamento effettuato con successo";
 	public final static String LABEL_STRUMENTI = "Strumenti";
 	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
-	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
-	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop.org";
+	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.govway.org";
 	public final static String LABEL_PARAMETRO_ID = "Id";
 	public final static String LABEL_PARAMETRO_ID_SOGGETTO = "IdSogg";
 	public final static String LABEL_PARAMETRO_ID_PORTA = "IdPorta";

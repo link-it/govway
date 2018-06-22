@@ -19,8 +19,8 @@ public class ConfigurazioniGeneraliSearchForm extends BaseSearchForm implements 
 	public ConfigurazioniGeneraliSearchForm(){
 		super();
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
-			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStatisticheListaConfigurazioni()); 
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
+			this.setUseCount(govwayMonitorProperties.isAttivoUtilizzaCountStatisticheListaConfigurazioni()); 
 		}catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

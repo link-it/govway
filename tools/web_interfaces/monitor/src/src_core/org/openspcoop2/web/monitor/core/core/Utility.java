@@ -145,10 +145,10 @@ public class Utility {
 	private static ArrayList<String> loadAndOrderProps(String prefix) {
 		try {
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
 
 
-			Enumeration<?> keys = pddMonitorProperties.keys();
+			Enumeration<?> keys = govwayMonitorProperties.keys();
 			HashMap<String, String> matched = new HashMap<String, String>();
 			ArrayList<String> matchedKeys = new ArrayList<String>();
 			while (keys.hasMoreElements()) {
@@ -157,7 +157,7 @@ public class Utility {
 					// recupero le properties ke matchano e rimuovo il prefisso
 					// aggiungo 0 davanti per poter fare il sort
 					String mk = "0" + (key.substring(prefix.length()));
-					String val = pddMonitorProperties.getProperty(key,false,false);
+					String val = govwayMonitorProperties.getProperty(key,false,false);
 					matched.put(mk, val);
 					matchedKeys.add(mk);
 				}
@@ -225,16 +225,16 @@ public class Utility {
 			if (label == null || prefix == null)
 				return 0;
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
 
-			Enumeration<?> keys = pddMonitorProperties.keys();
+			Enumeration<?> keys = govwayMonitorProperties.keys();
 			while (keys.hasMoreElements()) {
 				String key = (String) keys.nextElement();
 
 				if (!key.startsWith(prefix))
 					continue;
 				// controllo il label
-				String prop = pddMonitorProperties.getProperty(key,false,false);
+				String prop = govwayMonitorProperties.getProperty(key,false,false);
 				if (label.equals(prop)) {
 					// ho trovato l'elemento che cercavo
 					// adesso ricavo l'integer dalla key
@@ -256,10 +256,10 @@ public class Utility {
 	private static String getLabelFromValue(String prefix, int value) {
 		try {
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(Utility.log);
 
 			String key = prefix + "" + value;
-			String label = pddMonitorProperties.getProperty(key,false,false);
+			String label = govwayMonitorProperties.getProperty(key,false,false);
 
 			if (label == null)
 				return "";

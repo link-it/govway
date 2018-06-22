@@ -47,8 +47,8 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 	public EventiSearchForm(){
 		super();
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
-			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountListaEventi()); 
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
+			this.setUseCount(govwayMonitorProperties.isAttivoUtilizzaCountListaEventi()); 
 		}catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

@@ -55,7 +55,7 @@ public class EchoService extends ServletTestService {
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		Properties headerTrasporto = new Properties();
-		headerTrasporto.put("X-OpenSPCoop2", "EchoService");
+		headerTrasporto.put("X-GovWay", "EchoService");
 		this.doEngine(req, res, false, headerTrasporto);
 	}
 }

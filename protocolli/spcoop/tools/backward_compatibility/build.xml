@@ -14,7 +14,7 @@
 	
 	<!-- set properties for this build -->
 	<property name="src_backwardCompatibility" location="src/" />
-	<property name="build_backwardCompatibility" location="build/pddConsole" />
+	<property name="build_backwardCompatibility" location="build/govwayConsole" />
 	<property name="dist_backwardCompatibility" location="dist" />
 	<property name="doc_backwardCompatibility" location="doc" />
 	<property name="deploy_backwardCompatibility" location="deploy" />

@@ -562,7 +562,7 @@ public class XMLDataConverter {
 		convertXML(reset,new PdDConfig(),mantieniFruitoriEsistenti,aggiornamentoSoggetti,statoAccordo);
 	}
 	
-	// pddEsterne da impostare solo nel caso di conversione per pddConsole
+	// pddEsterne da impostare solo nel caso di conversione per govwayConsole
 	public void convertXML(boolean reset, PdDConfig pddConfig, boolean mantieniFruitoriEsistenti,boolean aggiornamentoSoggetti,StatiAccordo statoAccordo) throws DriverRegistroServiziException{
 		
 		// Reset

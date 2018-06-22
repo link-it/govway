@@ -50,7 +50,7 @@ public class ConnettoreJMSProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.jmsPublisher.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.jmsPublisher.properties' */
 	private Properties reader;
 
 	/** Copia Statica */
@@ -70,11 +70,11 @@ public class ConnettoreJMSProperties {
 		this.reader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-		    properties = ConnettoreJMSProperties.class.getResourceAsStream("/openspcoop2.jmsPublisher.properties");
+		    properties = ConnettoreJMSProperties.class.getResourceAsStream("/govway.jmsPublisher.properties");
 		    this.reader.load(properties);
 		    properties.close();
 		}catch(java.io.IOException e) {
-		    ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.jmsPublisher.properties': \n\n"+e.getMessage());
+		    ConnettoreJMSProperties.log.error("Riscontrato errore durante la lettura del file 'govway.jmsPublisher.properties': \n\n"+e.getMessage());
 		    try{
 			if(properties!=null)
 			    properties.close();

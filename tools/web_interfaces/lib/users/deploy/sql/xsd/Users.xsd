@@ -133,7 +133,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo_pddconsole" />
-                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sul protocollo attivo per l'utenza nella console 'pddConsole'. Se non definito viene supportato qualsiasi protocollo.]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sul protocollo attivo per l'utenza nella console 'govwayConsole'. Se non definito viene supportato qualsiasi protocollo.]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -144,7 +144,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo_pddmonitor" />
-                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sul protocollo attivo per l'utenza nella console 'pddMonitor'. Se non definito viene supportato qualsiasi protocollo.]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sul protocollo attivo per l'utenza nella console 'govwayMonitor'. Se non definito viene supportato qualsiasi protocollo.]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -5,7 +5,7 @@
 <!-- JBoss Specifying Isolation dell'ear -->
 <jboss-app>
    <loader-repository>
-   org.openspcoop2.pdd:loader=OpenSPCoop2.ear
+   org.openspcoop2.pdd:loader=govway.ear
    <!-- Disabilitiamo il java2ParentDelegation per impedire a OpenSPCoop di utilizzare le librerie non presenti nell'ear -->
    <loader-repository-config> 
        java2ParentDelegation=false 

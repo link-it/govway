@@ -7,9 +7,9 @@
 	<property name="lib" value="../../lib"/>
 	
 	<!-- Nella nuova versione lasciamo separate dal core della PdD gli archivi -->
-	<property name="build_pddConsole_consoleIntegrataEAR" value="false" />
-	<property name="build_pddMonitor_consoleIntegrataEAR" value="false" />
-	<property name="build_pddLoader_consoleIntegrataEAR" value="false" />
+	<property name="build_govwayConsole_consoleIntegrataEAR" value="false" />
+	<property name="build_govwayMonitor_consoleIntegrataEAR" value="false" />
+	<property name="build_govwayLoader_consoleIntegrataEAR" value="false" />
 
 </project>
 

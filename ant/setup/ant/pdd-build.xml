@@ -7,12 +7,12 @@
 
 	<import file="../../commons/utils.xml" />
 	
-	<!-- openspcoop2.properties -->
-	<target name="pdd_openspcoop2_properties_settings">
+	<!-- govway.properties -->
+	<target name="pdd_govway_properties_settings">
 		
 		<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 		
 		<!-- WORKING DIR -->
@@ -374,47 +374,47 @@
 	</target>
 	
 	
-	<!-- openspcoop2.log4j2.properties -->
+	<!-- govway.log4j2.properties -->
 	<target name="pdd_openspcoop2_log4j_properties_settings">
 		
 		<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 		
 		<!-- WORKING DIR -->
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="/var/openspcoop2/log"/>
+			<param name="token" value="/var/govway/log"/>
 			<param name="value" value="${log_dir}"/>
 		</antcall>
 		
 		<!-- TIPI DI LOG -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="logger.openspcoop2_tracciamento.level"/>
+			<param name="token" value="logger.govway_tracciamento.level"/>
 			<param name="value" value="OFF"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="logger.openspcoop2_msgDiagnostico.level"/>
+			<param name="token" value="logger.govway_diagnostici.level"/>
 			<param name="value" value="OFF"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="logger.openspcoop2_core.level"/>
+			<param name="token" value="logger.govway_core.level"/>
 			<param name="value" value="ERROR"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="logger.openspcoop2_resources.level"/>
+			<param name="token" value="logger.govway_resources.level"/>
 			<param name="value" value="ERROR"/>
 		</antcall>
 		
 		<!-- DATASOURCE -->
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.dataSource"/>
+			<param name="token" value="org.govway.datasource"/>
 			<param name="value" value="${datasource_pdd_name}"/>
 		</antcall>
 	
@@ -430,12 +430,12 @@
 			<then>
 				<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 				</concat>
 				<!-- WORKING DIR -->
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="/var/openspcoop2/log"/>
+					<param name="token" value="/var/govway/log"/>
 					<param name="value" value="${log_dir}"/>
 				</antcall>
 			</then>
@@ -443,8 +443,8 @@
 		
 	</target>
 	
-	<!-- openspcoop2.classRegistry.properties -->
-	<target name="pdd_openspcoop2_classRegistry_properties_settings">
+	<!-- govway.classRegistry.properties -->
+	<target name="pdd_govway.classRegistry.properties_settings">
 		
 		<available file="${file}" property="file.present"/>
 		
@@ -453,7 +453,7 @@
 			<then>
 				<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 				</concat>
 				
 				<!-- PROTOCOL BACKWARD COMPATIBILITY -->

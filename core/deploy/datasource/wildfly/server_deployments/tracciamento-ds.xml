@@ -1,17 +1,17 @@
 <datasources xmlns="http://www.jboss.org/deployments/schema">
 
 	<!-- Maggiori informazioni: http://docs.jboss.org/deployments/userguide/1.0/en-US/html_single/#datasources -->
-	<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource.tracciamento" pool-name="org.openspcoop2.dataSource.tracciamento">
+	<datasource jta="false" use-ccm="false" jndi-name="java:/org.govway.datasource.tracciamento" pool-name="org.govway.datasource.tracciamento">
 
 		<!-- Connection URL -->
 		<connection-url>ConnectionURL</connection-url>
 		<!-- esempi -->
-		<!-- <connection-url>jdbc:postgresql://localhost/tracciamento</connection-url> -->
-		<!-- <connection-url>jdbc:mysql://localhost/tracciamento?zeroDateTimeBehavior=convertToNull</connection-url> -->
+		<!-- <connection-url>jdbc:postgresql://localhost/govway</connection-url> -->
+		<!-- <connection-url>jdbc:mysql://localhost/govway?zeroDateTimeBehavior=convertToNull</connection-url> -->
 		<!-- <connection-url>jdbc:oracle:thin:@localhost:1521:XE</connection-url> -->
-		<!-- <connection-url>jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/tracciamento]</connection-url> -->
-		<!-- <connection-url>jdbc:sqlserver://localhost:1433;databaseName=tracciamento</connection-url> -->
-		<!-- <connection-url>jdbc:db2://localhost:50000/tracciamento</connection-url> -->
+		<!-- <connection-url>jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/govway]</connection-url> -->
+		<!-- <connection-url>jdbc:sqlserver://localhost:1433;databaseName=govway</connection-url> -->
+		<!-- <connection-url>jdbc:db2://localhost:50000/govway</connection-url> -->
 
 		<!-- DriverJDBC -->
 		<driver>NOME_DRIVER_JDBC.jar</driver>
@@ -26,8 +26,8 @@
 
 		<!-- Credenziali -->
 		<security>
-			<user-name>openspcoop2</user-name>
-			<password>openspcoop2</password>
+			<user-name>govway</user-name>
+			<password>govway</password>
 		</security>
 
 		<!-- Livello di Isolamento delle Transazioni -->
@@ -82,9 +82,9 @@
 
 		<!-- esempio hsql -->
 		<!--
-		<new-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</new-connection-sql>
+		<new-connection-sql>SELECT 1</new-connection-sql>
 		<validation>
-			<check-valid-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</check-valid-connection-sql>
+			<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 			<validate-on-match>true</validate-on-match>
 		</validation>
 		-->

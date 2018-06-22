@@ -45,7 +45,7 @@
     </init-param>
     <init-param>
       <param-name>url</param-name>
-      <param-value>/pddConsole</param-value>
+      <param-value>/govwayConsole</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

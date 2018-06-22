@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="WebInterfacePddMonitor" basedir=".">
+<project name="GovWayMonitor" basedir=".">
 	<description>
-        File di Script per la compilazione dell'interfaccia PddMonitor
+        File di Script per la compilazione dell'interfaccia GovWayMonitor
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="./ant/openspcoop2-pddMonitor_core-build.xml" />
-	<import file="./ant/openspcoop2-pddMonitor_transazioni-build.xml" />
-	<import file="./ant/openspcoop2-pddMonitor_statistiche-build.xml" />
-	<import file="./ant/openspcoop2-pddMonitor_eventi-build.xml" />
-	<import file="./ant/openspcoop2-pddMonitor-war.xml" />
-	<import file="./ant/openspcoop2-pddMonitor-codeGen.xml" />
-	<import file="./ant/openspcoop2-pddMonitor-resource.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor_core-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor_transazioni-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor_statistiche-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor_eventi-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor-war.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor-codeGen.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor-resource.xml" />
 	<import file="${mvc}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${audit}/build.xml" />
@@ -22,22 +22,22 @@
 	<property name="svn_rootDir" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
-	<property name="pddMonitor" location="${basedir}" />
-	<property name="src_pddMonitor" value="${pddMonitor}/src" />
-	<property name="src_webinf_pddMonitor" value="${src_pddMonitor}/WEB-INF" />
-	<property name="src_core_pddMonitor" value="${src_pddMonitor}/src_core" />
-	<property name="src_stat_pddMonitor" value="${src_pddMonitor}/src_stat" />
-	<property name="src_transazioni_pddMonitor" value="${src_pddMonitor}/src_transazioni" />
-	<property name="src_eventi_pddMonitor" value="${src_pddMonitor}/src_eventi" />
-	<property name="build_pddMonitor" location="build/pddMonitor" />
-	<property name="build_pddMonitor_war" location="build/pddMonitorWar" />
-	<property name="dist_pddMonitor" location="dist" />
-	<property name="doc_pddMonitor" location="doc" />
-	<property name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins/config" />
-	<property name="plugins_pddMonitor_pages" value="${pddMonitor}/deploy/plugins/pages" /> <!-- xhtml e tutto il resto del materiale che deve finire dentro l'archivio -->
-	<property name="properties_pddMonitor" value="${pddMonitor}/deploy/properties" />
-	<property name="deploy_pddMonitor" value="${pddMonitor}/deploy" />
-	<property name="commons_temaConsole" value="${deploy_pddMonitor}/tema_css" />
+	<property name="govwayMonitor" location="${basedir}" />
+	<property name="src_govwayMonitor" value="${govwayMonitor}/src" />
+	<property name="src_webinf_govwayMonitor" value="${src_govwayMonitor}/WEB-INF" />
+	<property name="src_core_govwayMonitor" value="${src_govwayMonitor}/src_core" />
+	<property name="src_stat_govwayMonitor" value="${src_govwayMonitor}/src_stat" />
+	<property name="src_transazioni_govwayMonitor" value="${src_govwayMonitor}/src_transazioni" />
+	<property name="src_eventi_govwayMonitor" value="${src_govwayMonitor}/src_eventi" />
+	<property name="build_govwayMonitor" location="build/govwayMonitor" />
+	<property name="build_govwayMonitor_war" location="build/govwayMonitorWar" />
+	<property name="dist_govwayMonitor" location="dist" />
+	<property name="doc_govwayMonitor" location="doc" />
+	<property name="plugins_govwayMonitor" value="${govwayMonitor}/deploy/plugins/config" />
+	<property name="plugins_govwayMonitor_pages" value="${govwayMonitor}/deploy/plugins/pages" /> <!-- xhtml e tutto il resto del materiale che deve finire dentro l'archivio -->
+	<property name="properties_govwayMonitor" value="${govwayMonitor}/deploy/properties" />
+	<property name="deploy_govwayMonitor" value="${govwayMonitor}/deploy" />
+	<property name="commons_temaConsole" value="${deploy_govwayMonitor}/tema_css" />
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
@@ -293,108 +293,108 @@
 	</path>	
 	
 	<!-- Ripulisce la distribuzione -->
-	<target name="clean_pddMonitor">
-		<delete dir="${build_pddMonitor}" />
-		<delete dir="${build_pddMonitor_war}" />
+	<target name="clean_govwayMonitor">
+		<delete dir="${build_govwayMonitor}" />
+		<delete dir="${build_govwayMonitor_war}" />
 		<delete dir="build" />
-		<delete dir="${dist_pddMonitor}" />
-		<delete dir="${doc_pddMonitor}" />
+		<delete dir="${dist_govwayMonitor}" />
+		<delete dir="${doc_govwayMonitor}" />
 	</target>
 
 	<!-- Create the build directory structure used by compile -->
-	<target name="init_compile_pddMonitor">
-		<mkdir dir="${build_pddMonitor}" />
-		<mkdir dir="${build_pddMonitor}/tmp" />
-		<mkdir dir="${build_pddMonitor}/tmp_css" />
-		<mkdir dir="${build_pddMonitor_war}" />
-		<mkdir dir="${dist_pddMonitor}" />
+	<target name="init_compile_govwayMonitor">
+		<mkdir dir="${build_govwayMonitor}" />
+		<mkdir dir="${build_govwayMonitor}/tmp" />
+		<mkdir dir="${build_govwayMonitor}/tmp_css" />
+		<mkdir dir="${build_govwayMonitor_war}" />
+		<mkdir dir="${dist_govwayMonitor}" />
 	</target>
 	
 	
 
 	<!-- Creazione Plugins di ControlStation -->
-	<target name="plugins_pddMonitor" description="Crea l'elenco dei jar/properties installati come plugins della pddMonitor">
+	<target name="plugins_govwayMonitor" description="Crea l'elenco dei jar/properties installati come plugins della govwayMonitor">
 		<!-- jar -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.jar">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.jar">
 			<include name="**/*.jar" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath" refid="plugins.jar">
-			<map from="${plugins_pddMonitor}/" to="lib/" />
+			<map from="${plugins_govwayMonitor}/" to="lib/" />
 		</pathconvert>
 		<pathconvert pathsep=" " property="plugins.classpath.jar" refid="plugins.jar">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-jar della PddMonitor: ${plugins.classpath.jar}" />
 
 		<!-- properties -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.properties">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.properties">
 			<include name="**/*.properties" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties" refid="plugins.properties">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-properties della PdDMonitor: ${plugins.classpath.properties}" />
 
 		<!-- dao properties -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.properties.dao">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.properties.dao">
 			<include name="**/daoFactory_local.properties.adjunct" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties.dao" refid="plugins.properties.dao">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-properties (DAO-Adjunct) della PdDMonitor: ${plugins.classpath.properties.dao}" />
 
 		<!-- monitor properties -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.properties.monitor">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.properties.monitor">
 			<include name="**/monitor.properties.adjunct" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties.monitor" refid="plugins.properties.monitor">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-properties (Monitor-Adjunct) della PdDMonitor: ${plugins.classpath.properties.monitor}" />
 
 		<!-- WEB-INF/<nome>.web.xml.params -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.params">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.web.xml.params">
 			<include name="**/*.web.xml.params" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.web.xml.params" refid="plugins.web.xml.params">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (params) della PdDMonitor: ${plugins.classpath.web.xml.params}" />
 
 		<!-- WEB-INF/<nome>.web.xml.filters -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.filters">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.web.xml.filters">
 			<include name="**/*.web.xml.filters" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.web.xml.filters" refid="plugins.web.xml.filters">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (filters) della PdDMonitor: ${plugins.classpath.web.xml.filters}" />
 
 		<!-- WEB-INF/<nome>.web.xml.listeners -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.listeners">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.web.xml.listeners">
 			<include name="**/*.web.xml.listeners" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.web.xml.listeners" refid="plugins.web.xml.listeners">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (listeners) della PdDMonitor: ${plugins.classpath.web.xml.listeners}" />
 
 		<!-- WEB-INF/<nome>.web.xml.servlet -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.servlet">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.web.xml.servlet">
 			<include name="**/*.web.xml.servlet" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.web.xml.servlet" refid="plugins.web.xml.servlet">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (servlet) della PdDMonitor: ${plugins.classpath.web.xml.servlet}" />
 
 		<!-- WEB-INF/<nome>.web.xml.servlet.mapping -->
-		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.servlet.mapping">
+		<fileset dir="${plugins_govwayMonitor}" id="plugins.web.xml.servlet.mapping">
 			<include name="**/*.web.xml.servlet.mapping" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.web.xml.servlet.mapping" refid="plugins.web.xml.servlet.mapping">
-			<map from="${plugins_pddMonitor}/" to="" />
+			<map from="${plugins_govwayMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (servlet.mapping) della PdDMonitor: ${plugins.classpath.web.xml.servlet.mapping}" />
 
@@ -414,11 +414,11 @@
 	<target name="compile_dipendenze_invoke" depends="compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddMonitor-->
-	<target name="compile_pddMonitor" depends="init_compile_pddMonitor,compile_dipendenze,compile_openspcoop2_pddMonitor_core,compile_openspcoop2_pddMonitor_transazioni,compile_openspcoop2_pddMonitor_statistiche,compile_openspcoop2_pddMonitor_eventi" description="compila pddMonitor"/>
+	<target name="compile_govwayMonitor" depends="init_compile_govwayMonitor,compile_dipendenze,compile_openspcoop2_govwayMonitor_core,compile_openspcoop2_govwayMonitor_transazioni,compile_openspcoop2_govwayMonitor_statistiche,compile_openspcoop2_govwayMonitor_eventi" description="compila govwayMonitor"/>
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_pddMonitor" depends="plugins_pddMonitor,compile_dipendenze,compile_pddMonitor,-prepare,war_openspcoop2_pddMonitor" description="Crea la struttura del modulo WAR" >
+	<target name="build_govwayMonitor" depends="plugins_govwayMonitor,compile_dipendenze,compile_govwayMonitor,-prepare,war_openspcoop2_govwayMonitor" description="Crea la struttura del modulo WAR" >
 		<!-- Per wildfly devo fornire  il modulo jsf 1.2 da installare. -->
 		<if> 
 			<or>
@@ -430,8 +430,8 @@
 					    	<equals arg1="${buildJsfAsModule}" arg2="true"/>
 					</and>
 					<then>
-						<copy todir="${dist_pddMonitor}/modulo-jsf12">
-    							<fileset dir="${deploy_pddMonitor}/modulo-jsf12"/>
+						<copy todir="${dist_govwayMonitor}/modulo-jsf12">
+    							<fileset dir="${deploy_govwayMonitor}/modulo-jsf12"/>
     						</copy>
 					</then>
 				</if>
@@ -440,8 +440,8 @@
 	</target>
 	
 	<!-- alias -->
-	<target name="build" depends="build_pddMonitor"/>
-	<target name="clean" depends="clean_pddMonitor"/>
+	<target name="build" depends="build_govwayMonitor"/>
+	<target name="clean" depends="clean_govwayMonitor"/>
 
 
 

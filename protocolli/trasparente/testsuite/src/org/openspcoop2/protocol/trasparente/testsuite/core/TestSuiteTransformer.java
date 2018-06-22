@@ -60,7 +60,7 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			ConfigurazionePdD config = new ConfigurazionePdD();
 			config.setLoader(new Loader());
 			LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_trasparente.log4j2.properties"));
-			Logger log = LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
+			Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
 			config.setLog(log);
 			ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
 		}catch(Exception e){

@@ -120,7 +120,7 @@ public abstract class AbstractIdentificazionePorta {
 			if(this.location==null || "".equals(this.location)){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente("nella url di invocazione alla Porta di Dominio non e' stata fornita il nome di una Porta");
+							getErrore401_PortaInesistente("nella url di invocazione non e' stata fornita il nome di una Porta");
 				return false;
 			}
 			

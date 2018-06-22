@@ -219,7 +219,7 @@ public class GestoreControlloTraffico {
 		double t = dActiveT / 100d;
 		Double tt = t * dThreshold;
 		int numeroThreadSoglia = tt.intValue();
-		return this.activeThreads > numeroThreadSoglia;  // non ci vuole >=, nella pddConsole si dice chiaramente 'Il controllo del traffico verrà attivato oltre le <numeroThreadSoglia> richieste '
+		return this.activeThreads > numeroThreadSoglia;  // non ci vuole >=, nella govwayConsole si dice chiaramente 'Il controllo del traffico verrà attivato oltre le <numeroThreadSoglia> richieste '
 	}
 	private String _buildDescription(Long maxThreads, Integer threshold, MsgDiagnostico msgDiag){
 		StringBuffer bf = new StringBuffer();

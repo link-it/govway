@@ -7,7 +7,7 @@
              ...
 	     <drivers>
 		     ...
-		    <driver name="openspcoop2-modulo-driver-jdbc" module="org.openspcoop2.jdbc">
+		    <driver name="govway-modulo-driver-jdbc" module="org.govway.jdbc">
 		           <!-- Indicare il DriverJDBC -->
 		           <!-- 
 		           	Questa definizione risolve il problema di installare non-JDBC-compliant driver (es. mysql)

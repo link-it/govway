@@ -4,4 +4,4 @@ jboss 7.x: JBOSS_DIR/bin/standalone.conf
 wildfly: WILDFLY_DIR/bin/standalone.conf
 tomcat: TOMCAT_DIR/bin/setenv.sh
 
-JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/openspcoop2/keys/erogatore.jks -Djavax.net.ssl.trustStorePassword=openspcoop"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/etc/govway/keys/erogatore.jks -Djavax.net.ssl.trustStorePassword=openspcoop"

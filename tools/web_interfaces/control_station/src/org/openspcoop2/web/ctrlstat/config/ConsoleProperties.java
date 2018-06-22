@@ -829,7 +829,7 @@ public class ConsoleProperties {
 	}
 
 	
-	/* ---------------- Gestione pddConsole centralizzata ----------------------- */
+	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
 	public Boolean isGestioneCentralizzata_SincronizzazionePdd() throws UtilsException{
 		return this.readBooleanProperty(true, "sincronizzazionePdd");
@@ -977,7 +977,7 @@ public class ConsoleProperties {
 	
 	
 	
-	/* ---------------- Gestione pddConsole locale ----------------------- */
+	/* ---------------- Gestione govwayConsole locale ----------------------- */
 
 	public Boolean isSinglePdD_GestionePdd() throws UtilsException{
 		return this.readBooleanProperty(true, "singlePdD.pdd.enabled");

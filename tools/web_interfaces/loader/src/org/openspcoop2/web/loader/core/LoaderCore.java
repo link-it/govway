@@ -86,14 +86,14 @@ public class LoaderCore{
 		String pVersion = null;
 		if(this.loaderNomeEstesoSuffix!=null){
 			if(this.loaderNomeEstesoSuffix.trim().startsWith("-")){
-				pVersion = "PdDOpenSPCoopEnterprise "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
+				pVersion = "GovWay "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
 				pVersion = this.loaderNomeEstesoSuffix;
 			}
 		}
 		else {
-			pVersion = "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+			pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
 		}
 		String buildVersion = null;
 		try {
@@ -128,7 +128,7 @@ public class LoaderCore{
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
 	public LoaderCore() throws Exception{
 		// Log4J caricato tramite LoaderStartup
-		LoaderCore.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+		LoaderCore.log = LoggerWrapperFactory.getLogger("govway.loader");
 
 		this.initCore();
 

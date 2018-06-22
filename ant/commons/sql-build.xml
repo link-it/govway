@@ -45,7 +45,7 @@
 				               regexp="/"
 				               replace="_" />
 				
-				<property name="pddDetails" value="OpenSPCoop_${pddVersion} Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />
+				<property name="pddDetails" value="GovWay_${pddVersion} Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />
 				
 				<propertyregex property="pddVersionMajorMinorTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
 				<propertyregex property="pddVersionMajor" input="${pddVersionMajorMinorTmp}" regexp="(branches|tags)/(\d)\.(\d).*" replace="\2" />
@@ -91,7 +91,7 @@
 				</concat>
 				<concat destfile="${SQLDestFile}" append="yes">
 
--- openspcoop2
+-- govway
 		  		
 </concat>
 			</sequential>
@@ -109,7 +109,7 @@
 						</concat>
 						<concat destfile="${SQLDestFile}" append="yes">
 
--- openspcoop2
+-- govway
 			  		
 </concat>
 					</sequential>
@@ -148,7 +148,7 @@ ${SQLInsertDBInfo}
 				</concat>
 				<concat destfile="${SQLDestFile}" append="yes">
 
--- openspcoop2
+-- govway
 		  		
 </concat>
 			</sequential>

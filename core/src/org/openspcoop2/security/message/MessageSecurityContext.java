@@ -230,7 +230,7 @@ public abstract class MessageSecurityContext{
 			}
 		}
 		if(mustUnderstandTrue && actorDefinito==false && this.useActorDefaultIfNotDefined ){
-			// Aggiungo actor 'openspcoop' Porta di Dominio
+			// Aggiungo actor 'govway'
 			this.actor = this.actorDefault;
 		}
     }

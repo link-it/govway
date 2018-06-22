@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsd:schema xmlns="http://www.openspcoop2.org/core/integrazione"
-        targetNamespace="http://www.openspcoop2.org/core/integrazione"
+<xsd:schema xmlns="http://govway.org/integrazione"
+        targetNamespace="http://govway.org/integrazione"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
         xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
         attributeFormDefault="unqualified">

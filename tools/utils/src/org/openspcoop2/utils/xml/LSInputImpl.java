@@ -45,7 +45,7 @@ public class LSInputImpl implements LSInput {
 	private String namespaceURI;
 	private String publicId;
 	private String systemId; // es. esempio.xsd
-	private String baseURI; // es. /etc/openspcoop2/esempio.xsd
+	private String baseURI; // es. /etc/govway/esempio.xsd
 	private byte[] resource;
 	private String encoding = Charset.defaultCharset().name();
 

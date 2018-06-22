@@ -82,7 +82,7 @@ public class GestorePdDInitThread extends Thread {
 			this.initGestore();
 
 			if (this.singlePdD) {
-				log.warn("GestorePdDInitThread non avviato: pddConsole avviata in singlePdD mode.");
+				log.warn("GestorePdDInitThread non avviato: govwayConsole avviata in singlePdD mode.");
 				return;
 			}
 

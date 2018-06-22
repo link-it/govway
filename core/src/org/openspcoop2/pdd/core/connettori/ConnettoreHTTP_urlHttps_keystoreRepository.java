@@ -94,12 +94,12 @@ public class ConnettoreHTTP_urlHttps_keystoreRepository {
 		
 		// Esempio di file properties
 		/*
-		 trustStoreLocation=/etc/openspcoop2/keys/soggetto1.jks
+		 trustStoreLocation=/etc/govway/keys/soggetto1.jks
 		 trustStorePassword=123456
 	   	 trustManagementAlgorithm=PKIX
 	     trustStoreType=JKS
 	    
-	     keyStoreLocation=/etc/openspcoop2/keys/soggetto1.jks
+	     keyStoreLocation=/etc/govway/keys/soggetto1.jks
 	     keyStorePassword=123456
 	     keyManagementAlgorithm=SunX509
 	     keyStoreType=JKS

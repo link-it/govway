@@ -34,7 +34,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 
 /**
  * Questo file permette ridefinire alcune configurazioni della porta di dominio, 
- * definite normalmente in openspcoop2.properties o nella configurazione xml/db della porta,
+ * definite normalmente in govway.properties o nella configurazione xml/db della porta,
  * con lo scopo di far interoperare correttamente la porta di dominio openspcoop con altre implementazioni.
  * L'implementazione di una pdd associata ad un soggetto viene indicata nella definizione della porta di dominio presente
  * nel registro dei servizi di OpenSPCoop. Tale informazione verra' utilizzata dalla PdD a runtime, per accedere a questo file di properties,
@@ -55,7 +55,7 @@ public class PddProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.pdd.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.pdd.properties' */
 	private PddInstanceProperties reader;
 
 	/** Copia Statica */
@@ -83,14 +83,14 @@ public class PddProperties {
 			if(location!=null){
 				properties = new FileInputStream(location);
 			}else{
-				properties = PddProperties.class.getResourceAsStream("/openspcoop2.pdd.properties");
+				properties = PddProperties.class.getResourceAsStream("/govway.pdd.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/openspcoop2.pdd.properties' not found");
+				throw new Exception("File '/govway.pdd.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.pdd.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'govway.pdd.properties': \n\n"+e.getMessage());
 		    throw new Exception("PddProperties initialize error: "+e.getMessage());
 		}finally{
 		    try{

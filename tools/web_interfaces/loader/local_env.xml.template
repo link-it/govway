@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="OpenSPCoop2Loader_LocalEnv" basedir=".">
+<project name="GovWayLoader_LocalEnv" basedir=".">
 
 	  <!-- root di OpenSPCoop -->
       <property name="openspcoop2" location="../../.."/>

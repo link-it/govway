@@ -96,13 +96,13 @@
 			<fileset dir="${dist_config_ws_client}" includes="*.jar" />
 		</copy> -->
 		<copy tofile="${stub_config_ws_client}/openspcoop2_configStub_cxf.jar">
-			<fileset dir="${dist_config_ws_client}" includes="openspcoop2_ws-config-client-all*.jar" />
+			<fileset dir="${dist_config_ws_client}" includes="govway_ws-config-client-all*.jar" />
 		</copy>
 		<copy tofile="${stub_config_ws_client}/openspcoop2_configSearchStub_cxf.jar">
-			<fileset dir="${dist_config_ws_client}" includes="openspcoop2_ws-config-client-search*.jar" />
+			<fileset dir="${dist_config_ws_client}" includes="govway_ws-config-client-search*.jar" />
 		</copy>
 		<copy tofile="${stub_config_ws_client}/openspcoop2_configCRUDStub_cxf.jar">
-			<fileset dir="${dist_config_ws_client}" includes="openspcoop2_ws-config-client-crud*.jar" />
+			<fileset dir="${dist_config_ws_client}" includes="govway_ws-config-client-crud*.jar" />
 		</copy>
 	</target>
 	<target name="build_jar_stub" depends="build,copyStub" /> <!-- alias -->

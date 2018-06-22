@@ -707,7 +707,7 @@ public class Dump {
 			}catch(Exception eMsg){}
 			OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Il Sistema di dump dei contenuti applicativi ha rilevato un errore "+
 					"durante la registrazione di un contenuto applicativo, tutti i servizi/moduli della porta di dominio sono sospesi."+
-					" Si richiede un intervento sistemistico per la risoluzione del problema e il riavvio della Porta di Dominio. "+
+					" Si richiede un intervento sistemistico per la risoluzione del problema e il riavvio di GovWay. "+
 					"Errore rilevato: ",e);
 		}
 		

@@ -201,24 +201,24 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 
 			// inizializzo il logger
 			if(appendActualConfiguration){
-				System.out.println("[PddMonitor] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+				System.out.println("[govwayMonitor] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");
 				int i=0;
 				int limit = 60;
 				while(OpenSPCoop2Startup.initialize==false && i<limit){
 					Utilities.sleep(1000);
 					i++;
 					if(i%10==0){
-						System.out.println("[PddMonitor] Attendo inizializzazione PdDOpenSPCoop ...");
+						System.out.println("[govwayMonitor] Attendo inizializzazione GovWay ...");
 					}
 				}
 				
 				if(OpenSPCoop2Startup.initialize==false){
-					throw new UtilsException("[PddMonitor] Inizializzazione OpenSPCoop non rilevata");
+					throw new UtilsException("[govwayMonitor] Inizializzazione GovWay non rilevata");
 				}
 				
-				System.out.println("[PddMonitor] Configurazione Log4J ...");
+				System.out.println("[govwayMonitor] Configurazione Log4J ...");
 				LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
-				System.out.println("[PddMonitor] Configurazione Log4J aggiunta");
+				System.out.println("[govwayMonitor] Configurazione Log4J aggiunta");
 			}
 			else{
 				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
@@ -311,10 +311,10 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		if(AbstractConsoleStartupListener.log!=null)
-			AbstractConsoleStartupListener.log.info("Undeploy pddMonitor Console in corso...");
+			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console in corso...");
 
 		if(AbstractConsoleStartupListener.log!=null)
-			AbstractConsoleStartupListener.log.info("Undeploy pddMonitor Console effettuato.");
+			AbstractConsoleStartupListener.log.info("Undeploy govwayMonitor Console effettuato.");
 
 	}
 

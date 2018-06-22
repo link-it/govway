@@ -97,7 +97,7 @@ public class ConnectorUtils {
 		requestInfo.setProtocolServiceBinding(protocolServiceBinding);
 		requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
 		requestInfo.setBindingConfig(bindingConfig);
-		requestInfo.setIdentitaPdD(op2Properties.getIdentitaPortaDefault(pf.getProtocol()));
+		requestInfo.setIdentitaPdD(op2Properties!=null ? op2Properties.getIdentitaPortaDefault(pf.getProtocol()) : null );
 		
 		return requestInfo;
 	}
@@ -227,9 +227,9 @@ public class ConnectorUtils {
 		
 		
 		// versione
-		String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+		String versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
 		if(op2Properties!=null){
-			versione = "Porta di Dominio "+op2Properties.getPddDetailsForServices();
+			versione = op2Properties.getPddDetailsForServices();
 		}
 		if(htmlMessage){
 			versione = StringEscapeUtils.escapeHtml(versione);
@@ -270,7 +270,7 @@ public class ConnectorUtils {
 		String function = null;
 		String parameters = null;
 		try{
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, true, op2Properties.getCustomContexts());
+			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, true, (op2Properties!=null ? op2Properties.getCustomContexts() : null));
 			String url = protocolContext.getUrlInvocazione_formBased();
 			if(url.endsWith("?wsdl=")){
 				// richiesta di un wsdl
@@ -392,7 +392,7 @@ public class ConnectorUtils {
 				risposta.append("<i>Enabled services: PD, PA, PDtoSOAP, checkPdD, IntegrationManager</i><br/><br/>\n");
 			
 				// web site
-				risposta.append("<i>Official website: http://www.openspcoop.org</i><br/><br/>\n");
+				risposta.append("<i>Official website: http://www.govway.org</i><br/><br/>\n");
 			}
 			break;
 		}

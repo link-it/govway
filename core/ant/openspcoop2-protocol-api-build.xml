@@ -16,7 +16,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop.protocol.*' -->
-	<target name="compile_openspcoop2_protocol-api" description="compila la libreria org.openspcoop.protocol.sdk.*">
+	<target name="compile_govway_protocol-api" description="compila la libreria org.openspcoop.protocol.sdk.*">
 
 		<if>
 			<istrue value="${buildProtocolAPI}"/>

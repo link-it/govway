@@ -93,14 +93,14 @@ public class ServerTunnelSOAP extends ServerCore{
 			}
 			
 			// opzioni tunnel SOAP
-            String tunnelSoap = request.getParameter("OpenSPCoop2TunnelSOAP");
+            String tunnelSoap = request.getParameter("govWayTunnelSOAP");
             boolean tunnel = false;
             if(tunnelSoap!=null){
                     tunnelSoap = tunnelSoap.trim();
                     if("true".equals(tunnelSoap))
                             tunnel = true;
             }
-            String tunnelSoapMimeType = request.getParameter("OpenSPCoop2TunnelSOAPMimeType");
+            String tunnelSoapMimeType = request.getParameter("govwayTunnelSOAPMimeType");
             if(tunnelSoapMimeType!=null){
                     tunnelSoapMimeType = tunnelSoapMimeType.trim();
             }
@@ -122,9 +122,9 @@ public class ServerTunnelSOAP extends ServerCore{
 			} 
 
 			if(tunnel){
-				response.setHeader("X-OpenSPCoop2-TunnelSOAP", "true");
+				response.setHeader("X-GovWay-TunnelSOAP", "true");
                 if(tunnelSoapMimeType!=null)
-                	response.setHeader("X-OpenSPCoop2-TunnelSOAP-MimeType",tunnelSoapMimeType);
+                	response.setHeader("X-GovWay-TunnelSOAP-MimeType",tunnelSoapMimeType);
 			}
 			
 			if(produciMsgSoap){

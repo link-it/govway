@@ -41,12 +41,12 @@ public class TransazioniExporter extends HttpServlet{
 	@Override
 	public void init() throws ServletException {
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniExporter.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TransazioniExporter.log);
 
-			TransazioniExporter.enableHeaderInfo = pddMonitorProperties.isAttivoTransazioniExportHeader();
-			TransazioniExporter.mimeThrowExceptionIfNotFound=pddMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
-			this.tracciamentoService = pddMonitorProperties.getDriverTracciamento();
-			this.diagnosticiService = pddMonitorProperties.getDriverMsgDiagnostici();
+			TransazioniExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
+			TransazioniExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
+			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
 			TransazioniExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}

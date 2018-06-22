@@ -70,7 +70,7 @@ CREATE TABLE porte_delegate
 	ricevuta_asincrona_asim VARCHAR2(255),
 	-- abilitato/disabilitato/warningOnly
 	validazione_contenuti_stato VARCHAR2(255),
-	-- wsdl/openspcoop/xsd
+	-- wsdl/interface/xsd
 	validazione_contenuti_tipo VARCHAR2(255),
 	-- abilitato/disabilitato
 	validazione_contenuti_mtom VARCHAR2(255),

@@ -1,0 +1,91 @@
+<server>
+   ...
+   <profile>
+        ...
+        <subsystem xmlns="urn:jboss:domain:messaging:1.1">
+		...
+                <address-settings>
+		    ...
+
+		    <!--  toSmistatoreConfigurazioni -->
+                    <address-setting match="jms.queue.toSmistatoreConfigurazioni">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+		    <!--  toSmistatoreConfigurazioni -->
+
+		    <!--  GestoreRegistroServizi -->
+                    <address-setting match="jms.queue.toConfigurazioneRegistro">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+		    <!--  GestoreRegistroServizi -->
+
+		    <!--  Gestore Eventi (Propagazione) -->
+                    <address-setting match="jms.queue.toConfigurazioneGestoreEventi">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+		    <!--  Gestore Eventi (Propagazione) -->
+
+		    <!--  Porte di Dominio -->
+                    <address-setting match="jms.queue.pdd1">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+                    <address-setting match="jms.queue.pdd2">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+		    <!-- ... -->
+                    <address-setting match="jms.queue.pddN">
+                        <redelivery-delay>120000</redelivery-delay>
+                        <max-delivery-attempts>-1</max-delivery-attempts>
+                    </address-setting>
+		    <!--  Porte di Dominio -->
+
+                </address-settings>
+		...
+                <jms-destinations>
+		    ...
+
+		    <!--  toSmistatoreConfigurazioni -->
+                    <jms-queue name="toSmistatoreConfigurazioni">
+                        <entry name="/queue/toSmistatoreConfigurazioni"/>
+                    </jms-queue>
+		    <!--  toSmistatoreConfigurazioni -->
+
+		    <!--  GestoreRegistroServizi -->
+                    <jms-queue name="toConfigurazioneRegistro">
+                        <entry name="/queue/toConfigurazioneRegistro"/>
+                    </jms-queue>
+		    <!--  GestoreRegistroServizi -->
+
+		    <!--  Gestore Eventi (Propagazione) -->
+                    <jms-queue name="toConfigurazioneGestoreEventi">
+                        <entry name="/queue/toConfigurazioneGestoreEventi"/>
+                    </jms-queue>
+		    <!--  Gestore Eventi (Propagazione) -->
+
+		    <!--  Porte di Dominio -->
+                    <jms-queue name="pdd1">
+                        <entry name="/queue/pdd1"/>
+                    </jms-queue>
+                    <jms-queue name="pdd2">
+                        <entry name="/queue/pdd2"/>
+                    </jms-queue>
+		    <!-- ... -->
+                    <jms-queue name="pddN">
+                        <entry name="/queue/pddN"/>
+                    </jms-queue>
+		    <!--  Porte di Dominio -->
+
+                    <jms-topic ...>
+		    ...
+                </jms-destinations>
+		...
+        </subsystem>
+        ...
+   </profile>
+   ...
+</server>

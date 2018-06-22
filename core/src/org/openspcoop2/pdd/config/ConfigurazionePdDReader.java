@@ -171,7 +171,7 @@ public class ConfigurazionePdDReader {
 			}
 			return false;
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("IsCacheAbilitata, recupero informazione della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("IsCacheAbilitata, recupero informazione della cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void resetCache() throws DriverConfigurazioneException{
@@ -181,7 +181,7 @@ public class ConfigurazionePdDReader {
 				configurazionePdDReader.configurazionePdD.resetCache();
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Reset della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Reset della cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void prefillCache() throws DriverConfigurazioneException{
@@ -192,7 +192,7 @@ public class ConfigurazionePdDReader {
 				configurazionePdDReader.configurazionePdD.prefillCacheConInformazioniRegistro(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Prefill della cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Prefill della cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String printStatsCache(String separator) throws DriverConfigurazioneException{
@@ -205,7 +205,7 @@ public class ConfigurazionePdDReader {
 				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Visualizzazione Statistiche riguardante la cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Visualizzazione Statistiche riguardante la cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws DriverConfigurazioneException{
@@ -215,7 +215,7 @@ public class ConfigurazionePdDReader {
 				configurazionePdDReader.configurazionePdD.abilitaCache();
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond) throws DriverConfigurazioneException{
@@ -225,7 +225,7 @@ public class ConfigurazionePdDReader {
 				configurazionePdDReader.configurazionePdD.abilitaCache(dimensioneCache,algoritmoCacheLRU,itemIdleTime,itemLifeSecond);
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Abilitazione cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void disabilitaCache() throws DriverConfigurazioneException{
@@ -235,7 +235,7 @@ public class ConfigurazionePdDReader {
 				configurazionePdDReader.configurazionePdD.disabilitaCache();
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Disabilitazione cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Disabilitazione cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String listKeysCache(String separator) throws DriverConfigurazioneException{
@@ -248,7 +248,7 @@ public class ConfigurazionePdDReader {
 				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 
@@ -262,7 +262,7 @@ public class ConfigurazionePdDReader {
 				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 
@@ -276,7 +276,7 @@ public class ConfigurazionePdDReader {
 				throw new Exception("ConfigurazionePdD Non disponibile");
 			}
 		}catch(Exception e){
-			throw new DriverConfigurazioneException("Rimozione oggetto presente nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new DriverConfigurazioneException("Rimozione oggetto presente nella cache della Configurazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 
@@ -450,7 +450,7 @@ public class ConfigurazionePdDReader {
 						tipiIntegrazionePD,tipiIntegrazionePA,validaConfigurazione);
 				validazioneSemantica.validazioneSemantica(false);
 				if(logConsole!=null){
-					logConsole.info("Validazione semantica della configurazione della Porta di Dominio effettuata.");
+					logConsole.info("Validazione semantica della configurazione effettuata.");
 				}
 			}
 		}catch(Exception e){
@@ -927,7 +927,7 @@ public class ConfigurazionePdDReader {
 	/**
 	 * Restituisce l'identita della PdD nel caso debba funzionare come router.
 	 *
-	 * @return idSoggetto Identita della Porta di Dominio 
+	 * @return idSoggetto Identita
 	 * 
 	 */
 	protected IDSoggetto getRouterIdentity(Connection connectionPdD,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -4295,7 +4295,7 @@ public class ConfigurazionePdDReader {
 					for(int i=0; i<values.length; i++){
 						values[i] = values[i].trim();
 						if(classNameProperties.getAutenticazionePortaDelegata(values[i])==null){
-							this.log.error("Meccanismo di autenticazione ["+values[i]+"] non registrato nella Porta di Dominio");
+							this.log.error("Meccanismo di autenticazione ["+values[i]+"] non registrato in GovWay");
 						}else{
 							v.add(values[i]);
 						}

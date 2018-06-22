@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="OpenSPCoopWebInterfaceMonitor_LocalEnv" basedir=".">
+<project name="GovWayMonitor_LocalEnv" basedir=".">
 
       <!-- root di OpenSPCoop -->
       <property name="openspcoop2" location="../../.."/>
@@ -9,8 +9,8 @@
       <!-- ApplicationServer version -->
       <property name="as" value="jboss/wildfly/tomcat" />
 
-      <property name="required_lib_pddMonitor" location="${openspcoop2}/lib/"/>
-      <property name="required_lib" value="${required_lib_pddMonitor}"/>
+      <property name="required_lib_govwayMonitor" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_govwayMonitor}"/>
       <property name="sql" value="${openspcoop2}/core/deploy/sql"/>
       <property name="data_content_handler_dir" value="${openspcoop2}/core/deploy/data_content_handler" />
 

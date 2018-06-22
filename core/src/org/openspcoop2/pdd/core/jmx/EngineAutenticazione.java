@@ -236,7 +236,7 @@ public class EngineAutenticazione extends NotificationBroadcasterSupport impleme
 		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Configurazione dei dati di autenticazione ai servizi esposti sulla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
+		String description = "Configurazione dei dati di autenticazione ai servizi esposti ("+OpenSPCoop2Properties.getInstance().getVersione()+")";
 		
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;

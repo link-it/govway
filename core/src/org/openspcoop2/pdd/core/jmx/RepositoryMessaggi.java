@@ -221,12 +221,12 @@ public class RepositoryMessaggi extends NotificationBroadcasterSupport implement
 		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Repository dei Messaggi della Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
+		String description = "Repository dei Messaggi ("+OpenSPCoop2Properties.getInstance().getVersione()+")";
 
 		// MetaData per l'attributo tipoRepositoryMessaggi
 		MBeanAttributeInfo tipoRepositoryVAR 
 			= new MBeanAttributeInfo(RepositoryMessaggi.TIPO_REPOSITORY,String.class.getName(),
-						"Tipo di repository messaggi della Porta di Dominio",
+						"Tipo di repository messaggi",
 							READABLE,!WRITABLE,!IS_GETTER);
 		
 		// MetaData per l'attributo abilitaCache

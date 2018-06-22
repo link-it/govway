@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.FunctionContextsCustom;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
@@ -160,14 +161,21 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	private void dispatch(HttpServletRequest req, HttpServletResponse res,HttpRequestMethod method) throws ServletException, IOException {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		Logger logOpenSPCoop2Servlet = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+		Logger logOpenSPCoop2Servlet = LoggerWrapperFactory.getLogger("govway.startup");
 		
 		OpenSPCoop2Properties op2Properties = null;
 		try {
 			
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate(), op2Properties.getCustomContexts());
+			boolean printCertificate = false;
+			FunctionContextsCustom customContexts = null;
+			if(op2Properties!=null) {
+				printCertificate = op2Properties.isPrintInfoCertificate();
+				customContexts = op2Properties.getCustomContexts();
+			}
+			
+			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, printCertificate, customContexts);
 			String function = protocolContext.getFunction();
 			IDService idServiceCustom = protocolContext.getIdServiceCustom();
 			

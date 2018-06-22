@@ -35,8 +35,8 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 
-// int idx =gd.getUrl().indexOf("/pddConsole");
-// int l = "/pddConsole".length();
+// int idx =gd.getUrl().indexOf("/govwayConsole");
+// int l = "/govwayConsole".length();
 
 //   if(idx > -1){
 //   	String ap1 = gd.getUrl().substring(0,idx);

@@ -16,7 +16,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop2.pdd.monitor.ws.server.*' -->
-	<target name="compile_openspcoop2_monitor_ws" description="compila la libreria org.openspcoop2.pdd.monitor.ws.server.*">
+	<target name="compile_govway_monitor_ws" description="compila la libreria org.openspcoop2.pdd.monitor.ws.server.*">
 
 		<if>
 			<istrue value="${buildMonitorWS}"/>
@@ -136,11 +136,11 @@
 				<mkdir dir="${build_monitor_ws}/classes" />
 				<unzip dest="${build_monitor_ws}/classes">
 					<fileset dir="${dist_monitor_ws}">
-						<include name="openspcoop2_ws-monitor-server*.jar"/>
+						<include name="govway_ws-monitor-server*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_monitor_ws}" >
-					<include name="openspcoop2_ws-monitor-server*.jar"/>
+					<include name="govway_ws-monitor-server*.jar"/>
 				</delete>
 				
 				<!-- Jar Complessivo -->

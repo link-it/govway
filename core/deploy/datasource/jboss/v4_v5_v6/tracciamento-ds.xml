@@ -3,18 +3,18 @@
 	<no-tx-datasource>
 
 		<!-- JNDI Name -->
-		<jndi-name>org.openspcoop2.dataSource.tracciamento</jndi-name>
+		<jndi-name>org.govway.datasource.tracciamento</jndi-name>
 		<use-java-context>false</use-java-context>
 
 		<!-- Connection URL -->
 		<connection-url>ConnectionURL</connection-url>
 		<!-- esempi -->
-		<!-- <connection-url>jdbc:postgresql://localhost/tracciamento</connection-url> -->
-		<!-- <connection-url>jdbc:mysql://localhost/tracciamento?zeroDateTimeBehavior=convertToNull</connection-url> -->
+		<!-- <connection-url>jdbc:postgresql://localhost/govway</connection-url> -->
+		<!-- <connection-url>jdbc:mysql://localhost/govway?zeroDateTimeBehavior=convertToNull</connection-url> -->
 		<!-- <connection-url>jdbc:oracle:thin:@localhost:1521:XE</connection-url> -->
-		<!-- <connection-url>jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/tracciamento]</connection-url> -->
-		<!-- <connection-url>jdbc:sqlserver://localhost:1433;databaseName=tracciamento</connection-url> -->
-		<!-- <connection-url>jdbc:db2://localhost:50000/tracciamento</connection-url> -->
+		<!-- <connection-url>jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/govway]</connection-url> -->
+		<!-- <connection-url>jdbc:sqlserver://localhost:1433;databaseName=govway</connection-url> -->
+		<!-- <connection-url>jdbc:db2://localhost:50000/govway</connection-url> -->
 
 		<!-- DriverJDBC -->
 		<driver-class>DriverJDBC</driver-class>
@@ -27,8 +27,8 @@
 		<!-- <driver-class>com.ibm.db2.jcc.DB2Driver</driver-class> -->
 
 		<!-- Credenziali -->
-		<user-name>openspcoop2</user-name>
-		<password>openspcoop2</password>
+		<user-name>govway</user-name>
+		<password>govway</password>
 
 		<!-- Livello di Isolamento delle Transazioni -->
 		<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
@@ -78,8 +78,8 @@
 		-->
 		<!-- esempio hsql -->
 		<!--
-		    <new-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</new-connection-sql>
-		    <check-valid-connection-sql>SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS</check-valid-connection-sql>
+		    <new-connection-sql>SELECT 1</new-connection-sql>
+		    <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
 		-->
 		<!-- esempio sqlserver -->
 		<!--
@@ -120,7 +120,7 @@
 			<value-factory bean="ServiceBindingManager" method="getStringBinding" parameter="jboss:service=Hypersonic"/>
 		</attribute>
 		<attribute name="Silent">true</attribute>
-		<attribute name="Database">tracciamento</attribute>
+		<attribute name="Database">govway</attribute>
 		<attribute name="Trace">false</attribute>
 		<attribute name="No_system_exit">true</attribute>
 	</mbean>

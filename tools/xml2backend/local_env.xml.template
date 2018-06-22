@@ -59,10 +59,10 @@
 	<property name="mantieniFruitoriServiziEsistentiRegistroServizi" value="true" />
 	<!-- Gestione dei mapping della fruizione e della erogazione -->
 	<property name="gestioneMappingErogazioneFruizioneRegistroServizi" value="true" />
-	<!-- PddOperativa in caso di conversione su control station, es. PdDOpenSPCoop
+	<!-- PddOperativa in caso di conversione su control station
 	   Usare string vuota per non usare questa funzionalita'
 	-->
-	<property name="pddOperativa" value="PddOpenSPCoop" />
+	<property name="pddOperativa" value="GovWay" />
 	<!-- Stato degli accordi importati: bozza,operativo,finale -->
 	<property name="statoAccordi" value="operativo" /> 
      

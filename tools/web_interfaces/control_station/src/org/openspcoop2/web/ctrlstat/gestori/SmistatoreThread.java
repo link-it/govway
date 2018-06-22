@@ -169,7 +169,7 @@ public class SmistatoreThread extends Thread {
 		}
 		
 		if (singlePdD) {
-			SmistatoreThread.log.info("Smistatore non avviato: pddConsole avviata in singlePdD mode.");
+			SmistatoreThread.log.info("Smistatore non avviato: govwayConsole avviata in singlePdD mode.");
 			return;
 		}
 

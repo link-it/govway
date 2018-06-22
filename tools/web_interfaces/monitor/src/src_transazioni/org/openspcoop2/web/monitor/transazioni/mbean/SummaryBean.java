@@ -128,9 +128,9 @@ public class SummaryBean implements Serializable{
 		this.lastRequest = new Date();
 
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(SummaryBean.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(SummaryBean.log);
 
-			this.intervalloRefresh = pddMonitorProperties.getIntervalloRefreshEsitiLive();
+			this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshEsitiLive();
 
 			this.intervalloRefresh = (Integer.parseInt(this.intervalloRefresh) ) + ""; //* 1000
 

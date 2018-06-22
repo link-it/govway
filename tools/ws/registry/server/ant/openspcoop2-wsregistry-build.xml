@@ -136,11 +136,11 @@
 				<mkdir dir="${build_registry_ws}/classes" />
 				<unzip dest="${build_registry_ws}/classes">
 					<fileset dir="${dist_registry_ws}">
-						<include name="openspcoop2_ws-registry-server*.jar"/>
+						<include name="govway_ws-registry-server*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_registry_ws}" >
-					<include name="openspcoop2_ws-registry-server*.jar"/>
+					<include name="govway_ws-registry-server*.jar"/>
 				</delete>
 				
 				<!-- Jar Complessivo -->

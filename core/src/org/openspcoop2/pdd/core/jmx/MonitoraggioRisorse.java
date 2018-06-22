@@ -352,7 +352,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Monitoraggio delle risorse utilizzate dalla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione()+", premi pulsante (apply changes) per aggiornare i dati";
+		String description = "Monitoraggio delle risorse utilizzate ("+OpenSPCoop2Properties.getInstance().getVersione()+"), premi pulsante (apply changes) per aggiornare i dati";
 
 		// MetaData per l'attributo numMsgInConsegna
 		MBeanAttributeInfo numMsgInConsegnaVAR 
@@ -531,7 +531,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	
-	public static final String MESSAGGIO_RISORSE_ADEGUATE = "La Porta di Dominio possiede le adeguate risorse di sistema";
+	public static final String MESSAGGIO_RISORSE_ADEGUATE = "GovWay possiede le adeguate risorse di sistema";
 	
 	public void refreshDatiMonitoraggioPdD(){
 
@@ -598,8 +598,8 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			
 				this.datiMonitoraggioPdD = "Aggiornati al "+DateManager.getDate().toString();
 			}else{
-				this.datiMonitoraggioPdD = "Non disponibili: e' necessario indicare il tipo di database in openspcoop2.properties";
-				throw new Exception("Per il monitoraggio della porta di dominio e' necessario indicare il tipo di database in openspcoop2.properties");
+				this.datiMonitoraggioPdD = "Non disponibili: e' necessario indicare il tipo di database in govway.properties";
+				throw new Exception("Per il monitoraggio della porta di dominio e' necessario indicare il tipo di database in govway.properties");
 			}
 		}catch(Throwable e){
 			this.log.error("DriverMonitoraggio non inizializzato",e);

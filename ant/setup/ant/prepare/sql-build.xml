@@ -55,15 +55,15 @@
 			<param name="sql" value="${core}/deploy/sql"/>
 			<param name="dist" value="${deploy_sql}/${TIPO_DB}/"/>
 		</antcall>
-		<antcall target="build_script_sql_pddConsole_singlePdD" >
-			<param name="pddConsole" value="${pddConsole}"/>
+		<antcall target="build_script_sql_govwayConsole_singlePdD" >
+			<param name="govwayConsole" value="${govwayConsole}"/>
 			<param name="tipoDatabase" value="${TIPO_DB}"/>
 			<param name="sql" value="${core}/deploy/sql"/>
-			<param name="sql_pddConsole" value="${pddConsole}/deploy/sql"/>
+			<param name="sql_govwayConsole" value="${govwayConsole}/deploy/sql"/>
 			<param name="sql_queue" value="${sql_queue}"/>
 			<param name="sql_audit" value="${sql_audit}"/>
 			<param name="sql_users" value="${sql_users}"/>
-			<param name="dist_pddConsole" value="${deploy_sql}/${TIPO_DB}/"/>
+			<param name="dist_govwayConsole" value="${deploy_sql}/${TIPO_DB}/"/>
 		</antcall>
 		
 		<!-- Pulizia file non utilizzati -->
@@ -82,119 +82,119 @@
 		
 		<!-- gestione db_info -->
 		
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE TABLE db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="CREATE TABLE db_info" 
 				                                 value="CREATE TABLE db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="CONSTRAINT pk_db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="CONSTRAINT pk_db_info" 
 						                         value="CONSTRAINT pk_db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql" token="INSERT INTO db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="INSERT INTO db_info" 
 								                 value="INSERT INTO db_info_console"/>
 		
 		<antcall target="_correctSQL_${TIPO_DB}" />
 		
-		<!-- creo OpenSPCoop2.sql -->
+		<!-- creo GovWay.sql -->
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWay.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWay.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryOpenSPCoop2.sql RepositoryPddConsoleOpenSPCoop2.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2.sql"/>
+                           files="RepositoryGovWay.sql RepositoryPddConsoleGovWay.sql RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"/>
 		
-		<!-- creo OpenSPCoop2_drop.sql -->
+		<!-- creo govway_drop.sql -->
 				
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/govway_drop.sql"/>
 
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP TABLE db_info_init_seq" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP TABLE db_info_init_seq" 
 				                                 value="DROP TABLE db_info_init_seq_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP TABLE db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP TABLE db_info" 
 				                                 value="DROP TABLE db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql" token="DROP SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP SEQUENCE seq_db_info" 
 				                                 value="DROP SEQUENCE seq_db_info_console"/>
 		
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_drop.sql" append="yes" >
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_drop.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryOpenSPCoop2_drop.sql RepositoryPddConsoleOpenSPCoop2_drop.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_drop.sql"/>
+                           files="Repositorygovway_drop.sql RepositoryPddConsolegovway_drop.sql RepositoryPddConsole-SinglePdDAdjunct-govway_drop.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2_drop.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_drop.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_drop.sql"/>
 		
-		<!-- creo OpenSPCoop2_delete.sql -->
+		<!-- creo govway_delete.sql -->
 				
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_runtime_delete.sql"/>		
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_runtime_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/govway_runtime_delete.sql"/>		
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_runtime_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryOpenSPCoop2_delete.sql"/>
+                           files="Repositorygovway_delete.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_tracceDiagnostici_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_tracceDiagnostici_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/govway_tracceDiagnostici_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_tracceDiagnostici_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
                            files="RepositoryTracceDiagnostici_delete.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_registro_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_registro_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/govway_registro_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_registro_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryPddConsoleOpenSPCoop2_delete.sql"/>
+                           files="RepositoryPddConsolegovway_delete.sql"/>
 		</concat>		
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_configPdD_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/OpenSPCoop2_configPdD_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/govway_configPdD_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_configPdD_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryPddConsoleOpenSPCoop2_config_delete.sql RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_config_delete.sql"/>
+                           files="RepositoryPddConsolegovway_config_delete.sql RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql"/>
 		</concat>
 		
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryOpenSPCoop2_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleOpenSPCoop2_config_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-OpenSPCoop2_config_delete.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_config_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql" />
 		
 		
 	</target>
 	
 	<!-- Postgresql -->
 	<target name="_correctSQL_postgresql">
-		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleOpenSPCoop2.sql" token="id BIGINT DEFAULT nextval('seq_db_info')" 
+		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleGovWay.sql" token="id BIGINT DEFAULT nextval('seq_db_info')" 
 						                         value="id BIGINT DEFAULT nextval('seq_db_info_console')"/>
 	</target>
 	
@@ -204,21 +204,21 @@
 	
 	<!-- Oracle -->
 	<target name="_correctSQL_oracle">
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="insert on db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="insert on db_info" 
 						                         value="insert on db_info_console"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="SELECT seq_db_info.nextval" 
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="SELECT seq_db_info.nextval" 
 								                 value="SELECT seq_db_info_console.nextval"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE TRIGGER trg_db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="CREATE TRIGGER trg_db_info" 
 								                 value="CREATE TRIGGER trg_db_info_console"/>
 	</target>
 	
 	<!-- Hsql -->
 	<target name="_correctSQL_hsql">
-		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleOpenSPCoop2.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleOpenSPCoop2.sql" token="(NEXT VALUE FOR seq_db_info)" 
+		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleGovWay.sql" token="(NEXT VALUE FOR seq_db_info)" 
 						                         value="(NEXT VALUE FOR seq_db_info_console)"/>
 	</target>
 	

@@ -105,7 +105,7 @@ public class InformazioniStatoPorta {
 		
 		bf.append("\n");
 		bf.append("================================\n");
-		bf.append("Stato Servizi Porta di Dominio\n");
+		bf.append("Stato Servizi\n");
 		bf.append("================================\n");
 		bf.append("\n");
 		format(bf, statoServizioPD, "Porta Delegata");
@@ -129,7 +129,7 @@ public class InformazioniStatoPorta {
 		bf.append("\n");
 		format(bf, livelloSeveritaDiagnostici, "Severità");
 		format(bf, livelloSeveritaDiagnosticiLog4j, "Severità Log4j");
-		format(bf, log4j_diagnostica ? "abilitato" : "disabilitato", "Log4J openspcoop2_msgDiagnostico.log");
+		format(bf, log4j_diagnostica ? "abilitato" : "disabilitato", "Log4J govway_diagnostici.log");
 		format(bf, log4j_openspcoop ? "abilitato" : "disabilitato", "Log4J openspcoop2.log");
 		format(bf, log4j_integrationManager ? "abilitato" : "disabilitato", "Log4J openspcoop2_integrationManager.log");
 		bf.append("\n");
@@ -141,7 +141,7 @@ public class InformazioniStatoPorta {
 		format(bf, tracciamento ? "abilitato" : "disabilitato", "Buste");
 		format(bf, dumpPD ? "abilitato" : "disabilitato", "Dump Binario Porta Delegata");
 		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
-		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J openspcoop2_tracciamento.log");
+		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J govway_tracciamento.log");
 		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
 		bf.append("\n");
 		

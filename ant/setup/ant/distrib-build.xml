@@ -9,7 +9,7 @@
 	
 	<target name="make-distrib">
 		
-		<!-- Istruzioni -->
+		<!-- Installazione GovWay -->
 		<if>
 			<matches string="${antinstaller_as}" pattern="jboss.*"/>
 			<then>
@@ -101,7 +101,7 @@
 				<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
 			</then>
 		</if>
-		<replace file="${dist}/INSTALL.txt" token="/etc/openspcoop2/" value="${work_dir}"/>
+		<replace file="${dist}/INSTALL.txt" token="/etc/govway/" value="${work_dir}"/>
 		
 		<!-- Datasource -->
 		<mkdir dir="${dist}/datasource"/>
@@ -135,12 +135,12 @@
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>
-		<copy file="${tmp_sql}/OpenSPCoop2.sql" todir="${dist}/sql"/>
+		<copy file="${tmp_sql}/GovWay.sql" todir="${dist}/sql"/>
 		<mkdir dir="${dist}/sql/utilities"/>
 		<copy todir="${dist}/sql/utilities">
 			<fileset dir="${tmp_sql}">
-		    	<include name="OpenSPCoop2_*drop.sql"/>
-				<include name="OpenSPCoop2_*delete.sql"/>
+		    	<include name="govway_*drop.sql"/>
+				<include name="govway_*delete.sql"/>
 			</fileset>
 		</copy>
 		
@@ -163,154 +163,154 @@
 	
 	<target name="_prepareArchivioJboss">
 		<copy todir="${dist}/archivi/OpenSPCoop2">
-		    <fileset dir="${tmp_archivi}/OpenSPCoop2.ear"/>
+		    <fileset dir="${tmp_archivi}/govway.ear"/>
 		</copy>
 		
-		<!-- *** Aggiunta dell'applicazione pddConsole ***-->
+		<!-- *** Aggiunta dell'applicazione govwayConsole ***-->
 		<if>
-			<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+			<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 			<then>
-				<fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/lib" id="pddConsole.jar">
+				<fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib" id="govwayConsole.jar">
 					<include name="*.jar"/>
 				</fileset>
-				<pathconvert pathsep=" " property="pddConsole.classpath" refid="pddConsole.jar">
-					<map from="${tmp_archivi}/pddConsole.war/WEB-INF/lib/" to="lib/"/>
+				<pathconvert pathsep=" " property="govwayConsole.classpath" refid="govwayConsole.jar">
+					<map from="${tmp_archivi}/govwayConsole.war/WEB-INF/lib/" to="lib/"/>
 				</pathconvert>
-				<var name="manifest.classpath.pddConsole" value="${pddConsole.classpath}" />	
+				<var name="manifest.classpath.govwayConsole" value="${govwayConsole.classpath}" />	
 				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/lib"/>
+				    <fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib"/>
 				</move>
 				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+				    <fileset dir="${tmp_archivi}/govwayConsole.war/WEB-INF/classes"/>
 				</move>
-				<war destfile="${dist}/archivi/OpenSPCoop2/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war">
+				<war destfile="${dist}/archivi/OpenSPCoop2/govwayConsole.war" basedir="${tmp_archivi}/govwayConsole.war">
 					<manifest>
-						<attribute name="Class-Path" value="${manifest.classpath.pddConsole} properties/" />
+						<attribute name="Class-Path" value="${manifest.classpath.govwayConsole} properties/" />
 					</manifest>
 				</war>
 			</then>
 			<else>
-				<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
+				<zip destfile="${dist}/archivi/govwayConsole.war" basedir="${tmp_archivi}/govwayConsole.war"/>
 			</else>
 		</if>
 
-		<!-- *** Aggiunta dell'applicazione pddMonitor ***-->
+		<!-- *** Aggiunta dell'applicazione govwayMonitor ***-->
 		<if>
-			<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+			<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
 			<then>
-				<fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib" id="pddMonitor.jar">
+				<fileset dir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib" id="govwayMonitor.jar">
 					<include name="*.jar"/>
 				</fileset>
-				<pathconvert pathsep=" " property="pddMonitor.classpath" refid="pddMonitor.jar">
-					<map from="${tmp_archivi}/pddMonitor.war/WEB-INF/lib/" to="lib/"/>
+				<pathconvert pathsep=" " property="govwayMonitor.classpath" refid="govwayMonitor.jar">
+					<map from="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib/" to="lib/"/>
 				</pathconvert>
-				<var name="manifest.classpath.pddMonitor" value="${pddMonitor.classpath}" />	
+				<var name="manifest.classpath.govwayMonitor" value="${govwayMonitor.classpath}" />	
 				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib"/>
+				    <fileset dir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib"/>
 				</move>
 				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+				    <fileset dir="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes"/>
 				</move>
-				<war destfile="${dist}/archivi/OpenSPCoop2/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war">
+				<war destfile="${dist}/archivi/OpenSPCoop2/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war">
 					<manifest>
-						<attribute name="Class-Path" value="${manifest.classpath.pddMonitor} properties/" />
+						<attribute name="Class-Path" value="${manifest.classpath.govwayMonitor} properties/" />
 					</manifest>
 				</war>
 			</then>
 			<else>
-				<zip destfile="${dist}/archivi/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war"/>
+				<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
 			</else>
 		</if>
 				
-		<!-- *** Aggiunta dell'applicazione pddLoader ***-->
+		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
 		<if>
-			<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+			<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 			<then>
-				<fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/lib" id="openspcoop2_loader.jar">
+				<fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib" id="govway_loader.jar">
 					<include name="*.jar"/>
 				</fileset>
-				<pathconvert pathsep=" " property="openspcoop2_loader.classpath" refid="openspcoop2_loader.jar">
-					<map from="${tmp_archivi}/pddLoader.war/WEB-INF/lib/" to="lib/"/>
+				<pathconvert pathsep=" " property="govway_loader.classpath" refid="govway_loader.jar">
+					<map from="${tmp_archivi}/govwayLoader.war/WEB-INF/lib/" to="lib/"/>
 				</pathconvert>
-				<var name="manifest.classpath.openspcoop2_loader" value="${openspcoop2_loader.classpath}" />	
+				<var name="manifest.classpath.govway_loader" value="${govway_loader.classpath}" />	
 				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/lib"/>
+				    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib"/>
 				</move>
 				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
-				    <fileset dir="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>
+				    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
 				</move>
-				<war destfile="${dist}/archivi/OpenSPCoop2/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war">
+				<war destfile="${dist}/archivi/OpenSPCoop2/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war">
 					<manifest>
-						<attribute name="Class-Path" value="${manifest.classpath.openspcoop2_loader} properties/" />
+						<attribute name="Class-Path" value="${manifest.classpath.govway_loader} properties/" />
 					</manifest>
 				</war>
 			</then>
 			<else>
-				<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
+				<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
 			</else>
 		</if>
 				
 		<!-- *** Correzione Application.xml ***-->
 		<if>
 			<or>
-				<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
-				<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
-				<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+				<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
+				<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
+				<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 			</or>
 			<then>
 		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
 				<if>
-					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
 
-	<!-- Start MODULE pddConsole -->
+	<!-- Start MODULE govwayConsole -->
 	<module>
 		<web>
-			<web-uri>pddConsole.war</web-uri>
-			<context-root>pddConsole</context-root>
+			<web-uri>govwayConsole.war</web-uri>
+			<context-root>govwayConsole</context-root>
 		</web>
 	</module>
-	<!-- End MODULE pddConsole -->
+	<!-- End MODULE govwayConsole -->
 		        				
 ]]>
 		        		</concat>
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
 
-	<!-- Start MODULE pddMonitor -->
+	<!-- Start MODULE govwayMonitor -->
 	<module>
 		<web>
-			<web-uri>pddMonitor.war</web-uri>
-			<context-root>pddMonitor</context-root>
+			<web-uri>govwayMonitor.war</web-uri>
+			<context-root>govwayMonitor</context-root>
 		</web>
 	</module>
-	<!-- End MODULE pddMonitor -->
+	<!-- End MODULE govwayMonitor -->
 		        				
 ]]>
 		        		</concat>
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
 	
-	<!-- Start MODULE pddLoader -->
+	<!-- Start MODULE govwayLoader -->
 	<module>
 		<web>
-			<web-uri>pddLoader.war</web-uri>
-			<context-root>pddLoader</context-root>
+			<web-uri>govwayLoader.war</web-uri>
+			<context-root>govwayLoader</context-root>
 		</web>
 	</module>
-	<!-- End MODULE pddLoader -->
+	<!-- End MODULE govwayLoader -->
 		        			
 ]]>
 		        		</concat>
@@ -336,21 +336,21 @@
 					<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 				</or>
 				<or>
-					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
-					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
-					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 				</or>
 			</and>
 			<then>
 				<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
 				<if>
-					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
-	<!-- Start MODULE pddConsole -->
-	<sub-deployment name="pddConsole.war">
+	<!-- Start MODULE govwayConsole -->
+	<sub-deployment name="govwayConsole.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
@@ -359,20 +359,20 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
-	<!-- End MODULE pddConsole -->
+	<!-- End MODULE govwayConsole -->
 								
 ]]>
 						</concat>
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
-	<!-- Start MODULE pddMonitor -->
-	<sub-deployment name="pddMonitor.war">
+	<!-- Start MODULE govwayMonitor -->
+	<sub-deployment name="govwayMonitor.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
@@ -381,20 +381,20 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
-	<!-- End MODULE pddMonitor -->
+	<!-- End MODULE govwayMonitor -->
 								
 ]]>
 						</concat>
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
+					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
 
-	<!-- Start MODULE pddLoader -->
-    <sub-deployment name="pddLoader.war">
+	<!-- Start MODULE govwayLoader -->
+    <sub-deployment name="govwayLoader.war">
         <exclusions>
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
@@ -403,7 +403,7 @@
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
-	<!-- End MODULE pddLoader -->
+	<!-- End MODULE govwayLoader -->
 
 ]]>
 						</concat>
@@ -488,23 +488,23 @@
 		</if>
 		
 		<!-- ** end ** -->
-		<zip destfile="${dist}/archivi/OpenSPCoop2.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
+		<zip destfile="${dist}/archivi/govway.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
 		<delete dir="${dist}/archivi/OpenSPCoop2"/>
 		
 	</target>
 	
 	<target name="_prepareArchivioTomcat">
-		<zip destfile="${dist}/archivi/openspcoop2.war" basedir="${tmp_archivi}/openspcoop2.war"/>
+		<zip destfile="${dist}/archivi/govway.war" basedir="${tmp_archivi}/govway.war"/>
 		<!-- openspcoop2sec -->
 		<if>
 			<istrue value="${build_openspcoop_sec_archive}" />
 			<then>
-				<zip destfile="${dist}/archivi/openspcoop2sec.war" basedir="${tmp_archivi}/openspcoop2sec.war"/>
+				<zip destfile="${dist}/archivi/govwaySec.war" basedir="${tmp_archivi}/govwaySec.war"/>
 			</then>
 		</if>
-		<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
-		<zip destfile="${dist}/archivi/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war"/>
-		<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
+		<zip destfile="${dist}/archivi/govwayConsole.war" basedir="${tmp_archivi}/govwayConsole.war"/>
+		<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
+		<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
 	</target>
 		
 </project>

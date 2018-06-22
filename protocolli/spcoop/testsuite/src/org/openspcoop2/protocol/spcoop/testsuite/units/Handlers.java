@@ -245,8 +245,8 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/openspcoop2/spcoop/PA");
-			test.setLocationPA("http://localhost:8080/OpenSPCoop2TestSuite/server");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
 			ProtocolContext egovContext = new ProtocolContext();
@@ -264,7 +264,7 @@ public class Handlers {
 			test.setCorrelazioneApplicativaPDReq(null);
 			test.setCorrelazioneApplicativaPAReq(null);
 			test.setServizioApplicativoFruitore(org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO);
-			test.setServizioApplicativoErogatore("OpenSPCoop2TestSuite");
+			test.setServizioApplicativoErogatore("govwayTestSuite");
 			test.setStatelessPD(false);
 			test.setStatelessPA(false);
 			Properties testP = new Properties();
@@ -387,8 +387,8 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/openspcoop2/spcoop/PA");
-			test.setLocationPA("http://localhost:8080/OpenSPCoop2TestSuite/server");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
 			ProtocolContext egovContext = new ProtocolContext();
@@ -406,7 +406,7 @@ public class Handlers {
 			test.setCorrelazioneApplicativaPDReq(null);
 			test.setCorrelazioneApplicativaPAReq(null);
 			test.setServizioApplicativoFruitore(org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO);
-			test.setServizioApplicativoErogatore("OpenSPCoop2TestSuite");
+			test.setServizioApplicativoErogatore("govwayTestSuite");
 			test.setStatelessPD(true);
 			test.setStatelessPA(true);
 			Properties testP = new Properties();
@@ -522,8 +522,8 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/openspcoop2/spcoop/PA");
-			test.setLocationPA("http://localhost:8080/OpenSPCoop2TestSuite/server?generazioneRisposta=false");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPA("http://localhost:8080/govwayTestSuite/server?generazioneRisposta=false");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
 			ProtocolContext egovContext = new ProtocolContext();
@@ -541,7 +541,7 @@ public class Handlers {
 			test.setCorrelazioneApplicativaPDReq(null);
 			test.setCorrelazioneApplicativaPAReq(null);
 			test.setServizioApplicativoFruitore(org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO);
-			test.setServizioApplicativoErogatore("OpenSPCoop2TestSuite_InputOnly");
+			test.setServizioApplicativoErogatore("govwayTestSuite_InputOnly");
 			test.setStatelessPD(true);
 			test.setStatelessPA(true);
 			Properties testP = new Properties();
@@ -655,8 +655,8 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/openspcoop2/spcoop/PA");
-			test.setLocationPA("http://localhost:8080/OpenSPCoop2TestSuite/server");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
 			ProtocolContext egovContext = new ProtocolContext();
@@ -674,7 +674,7 @@ public class Handlers {
 			test.setCorrelazioneApplicativaPDReq(null);
 			test.setCorrelazioneApplicativaPAReq(null);
 			test.setServizioApplicativoFruitore(org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO);
-			test.setServizioApplicativoErogatore("OpenSPCoop2TestSuite");
+			test.setServizioApplicativoErogatore("govwayTestSuite");
 			test.setStatelessPD(false);
 			test.setStatelessPA(false);
 			Properties testP = new Properties();
@@ -795,8 +795,8 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/openspcoop2/spcoop/PA");
-			test.setLocationPA("http://localhost:8080/OpenSPCoop2TestSuite/server");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
 			ProtocolContext egovContext = new ProtocolContext();
@@ -814,7 +814,7 @@ public class Handlers {
 			test.setCorrelazioneApplicativaPDReq(null);
 			test.setCorrelazioneApplicativaPAReq(null);
 			test.setServizioApplicativoFruitore(org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO);
-			test.setServizioApplicativoErogatore("OpenSPCoop2TestSuite");
+			test.setServizioApplicativoErogatore("govwayTestSuite");
 			test.setStatelessPD(true);
 			test.setStatelessPA(true);
 			Properties testP = new Properties();

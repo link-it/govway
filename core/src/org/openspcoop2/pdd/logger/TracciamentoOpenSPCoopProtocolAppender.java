@@ -99,7 +99,7 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciaProducer{
 	/**
 	 * Registra una traccia prodotta da una porta di dominio, utilizzando le informazioni definite dalla specifica SPC.
 	 * 
-	 * @param conOpenSPCoopPdD Connessione verso il database della Porta di Dominio
+	 * @param conOpenSPCoopPdD Connessione verso il database
 	 * @param traccia Traccia
 	 * @throws TracciamentoException
 	 */

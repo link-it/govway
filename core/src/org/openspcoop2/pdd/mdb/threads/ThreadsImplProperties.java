@@ -51,7 +51,7 @@ public class ThreadsImplProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.properties' */
 	private PropertiesReader reader;
 
 

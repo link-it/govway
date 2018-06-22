@@ -1,10 +1,5 @@
 package org.openspcoop2.web.monitor.transazioni.exporter;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.export;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

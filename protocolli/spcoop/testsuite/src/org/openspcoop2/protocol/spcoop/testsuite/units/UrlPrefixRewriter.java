@@ -179,7 +179,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPDNonEsistente]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"(location: http://urlPDNonEsistente/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"(location: http://urlPDNonEsistente/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD1StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente"));
 			
 		}catch(Exception e){
@@ -362,7 +362,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPANonEsistente]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente"));
 			
 		}catch(Exception e){
@@ -471,7 +471,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPDNonEsistente/]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"(location: http://urlPDNonEsistente/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"(location: http://urlPDNonEsistente/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD2StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPDNonEsistente"));
 			
 		}catch(Exception e){
@@ -654,7 +654,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [http://urlPANonEsistente/]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://urlPANonEsistente/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'urlPANonEsistente"));
 			
 		}catch(Exception e){
@@ -752,7 +752,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/openspcoop/testPD/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/openspcoop/testPD/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404)"));
 			
 		}catch(Exception e){
@@ -927,7 +927,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/openspcoop/testPA/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/openspcoop/testPA/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404)"));
 			
 		}catch(Exception e){
@@ -1234,7 +1234,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [http://localhostPD:6789]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"(location: http://localhostPD:6789/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"(location: http://localhostPD:6789/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD5StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'localhostPD"));
 			
 		}catch(Exception e){
@@ -1416,8 +1416,8 @@ public class UrlPrefixRewriter {
 			//Reporter.log("Controllo che la busta abbia generato l'eccezione " + Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO + " rappresentante un servizio applicativo non disponibile");
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
-			Reporter.log("Controllo esistenza diagnostico [ http://localhostPA:6789/OpenSPCoop2TestSuite/server]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhostPA:6789/OpenSPCoop2TestSuite/server)"));
+			Reporter.log("Controllo esistenza diagnostico [ http://localhostPA:6789/govwayTestSuite/server]");
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhostPA:6789/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'localhostPA"));
 			
 		}catch(Exception e){
@@ -1527,7 +1527,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"(location: https://verificaSSLTestPD/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"(location: https://verificaSSLTestPD/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD6StartTime,"Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPD"));
 			
 		}catch(Exception e){
@@ -1710,7 +1710,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: https://verificaSSLTestPA/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: https://verificaSSLTestPA/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown host 'verificaSSLTestPA"));
 			
 		}catch(Exception e){
@@ -1775,8 +1775,8 @@ public class UrlPrefixRewriter {
 			
 			if(checkServizioApplicativo == false){
 				// fruitore
-				Reporter.log("Controllo esistenza diagnostico [http://127.0.0.1:8080/openspcoop2/spcoop/PA]");
-				Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.1:8080/openspcoop2/spcoop/PA)"));
+				Reporter.log("Controllo esistenza diagnostico [http://127.0.0.1:8080/govway/spcoop/PA]");
+				Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.1:8080/govway/spcoop/PA)"));
 			}
 			
 		}catch(Exception e){
@@ -1931,8 +1931,8 @@ public class UrlPrefixRewriter {
 					CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE, null,
 					true));
 				
-			Reporter.log("Controllo esistenza diagnostico [http://127.0.0.1:8080/OpenSPCoop2TestSuite/server]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.1:8080/OpenSPCoop2TestSuite/server)"));
+			Reporter.log("Controllo esistenza diagnostico [http://127.0.0.1:8080/govwayTestSuite/server]");
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.1:8080/govwayTestSuite/server)"));
 			
 		}catch(Exception e){
 			throw e;
@@ -2049,7 +2049,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2232,7 +2232,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2347,7 +2347,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"(location: http://127.0.0.3:567/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"(location: http://127.0.0.3:567/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2530,7 +2530,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3:567/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3:567/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: Connection refused"));
 			
 		}catch(Exception e){
@@ -2644,7 +2644,7 @@ public class UrlPrefixRewriter {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"(location: otherProtocol://hostnamePD/openspcoop2/spcoop/PA)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"(location: otherProtocol://hostnamePD/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD10StartTime,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol"));
 			
 		}catch(Exception e){
@@ -2827,7 +2827,7 @@ public class UrlPrefixRewriter {
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: otherProtocol://hostnamePA/OpenSPCoop2TestSuite/server)"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: otherProtocol://hostnamePA/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: unknown protocol: otherprotocol"));
 			
 		}catch(Exception e){

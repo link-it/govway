@@ -3620,7 +3620,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				this.uddiLib.updateAccordoServizio(idServizioOLD,this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 					
 				//if(idServizioOLD_string.equals(idServizioNEW_string) == false){
-				// Lo faccio cmq per non incasinare la pddConsole
+				// Lo faccio cmq per non incasinare la govwayConsole
 				
 				// refresh url XML
 				this.uddiLib.updateUrlXmlServizio(idServizioOLD,urlXML);

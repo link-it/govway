@@ -188,7 +188,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
         	
     		List<Map<String, Object>> returnMap = null;
     		try{
-    			// non usare true altrimenti non funzionano alcuni meccanismi di ricerca, ad es. la valorizzazione dei select field nel servizio della pddMonitor.
+    			// non usare true altrimenti non funzionano alcuni meccanismi di ricerca, ad es. la valorizzazione dei select field nel servizio della govwayMonitor.
     			// Tanto le join non comportano righe multiple uguali
     			boolean distinct = false; 
     			returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));

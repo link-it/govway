@@ -1,0 +1,289 @@
+<project name="openspcoop2-war-govwayMonitor">
+    <description>
+        Produzione del war della PddMonitor
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<import file="../../../../ant/commons/utils.xml" />
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="war_openspcoop2_govwayMonitor" depends="css_openspcoop2_govwayMonitor">
+
+		<!-- Properties -->
+		<copy file="${properties_govwayMonitor}/daoFactory_local.properties" todir="${build_govwayMonitor}/tmp" />
+		<copy file="${properties_govwayMonitor}/monitor.properties" todir="${build_govwayMonitor}/tmp" />
+				
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes" >
+
+# ----- Personalizzazione Tomcat -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayMonitor}/tmp/daoFactory_local.properties"/>
+					<param name="token" value="db.datasource.jndiName"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.console"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${build_govwayMonitor}/tmp"/>
+				    <param name="file" value="monitor.datasource.properties"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.properties.dao}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes" >
+
+# ----- Personalizzazione Plugins -------------
+				</concat>
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes">
+					<filelist dir="${plugins_govwayMonitor}" files="${plugins.classpath.properties.dao}"/>
+				</concat>
+			</then>
+		</if>
+
+		<!--
+		<antcall target="replace_token">
+		    <param name="file" value="${build_govwayMonitor}/tmp/monitor.properties"/>
+			<param name="token" value="risorseJmxPdd.aliases"/>
+			<param name="value" value="#risorseJmxPdd.aliases"/>
+		</antcall>
+		-->
+
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.properties.monitor}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_govwayMonitor}/tmp/monitor.properties" append="yes" >
+
+# ----- Personalizzazione Plugins -------------
+				</concat>
+				<concat destfile="${build_govwayMonitor}/tmp/monitor.properties" append="yes">
+					<filelist dir="${plugins_govwayMonitor}" files="${plugins.classpath.properties.monitor}"/>
+				</concat>
+			</then>
+		</if>
+		<antcall target="dos2unix">
+			<param name="dir" value="${build_govwayMonitor}/tmp"/>
+		    <param name="file" value="monitor.properties"/>
+		</antcall>
+		
+		
+		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<!-- <if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then> --> <!-- Aggiungo sempre, serve anche per allarmi -->
+				<unzip src="${required_lib}/shared/mailapi-1.5.6.jar" dest="${build_govwayMonitor}/tmp/mailapi"/>
+				<concat destfile="${build_govwayMonitor}/tmp/mailapi/META-INF/mailcap" append="yes">
+					<filelist dir="${data_content_handler_dir}"
+		                           files="mailcap"/>
+				</concat>
+				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.5.6-openspcoop_ext.jar">
+					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
+				</jar>
+		<!--	</then>
+		</if> -->
+		
+		<war destfile="${dist_govwayMonitor}/govwayMonitor.war" webxml="${build_govwayMonitor_war}/WEB-INF/web.xml">
+
+			<!-- Informazioni sulla versione -->
+			<fileset dir="${openspcoop2}">
+				<include name="README.txt" />
+				<include name="COPYING" />
+			</fileset>
+
+			<zipfileset dir="${commons_webcontent}/css" prefix="css" />
+			<zipfileset dir="${commons_webcontent}/fonts" prefix="fonts" />
+			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
+			<zipfileset dir="${build_govwayMonitor}/tmp_css" prefix="css" />
+
+			<!-- <zipfileset dir="${jsplib}" prefix="jsplib" /> -->
+			<!-- <zipfileset dir="${jslib}" prefix="js" /> -->
+
+			<fileset dir="${deploy_govwayMonitor}/web-content">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${deploy_govwayMonitor}/pages">
+				<include name="**/*" />
+			</fileset>
+
+			<webinf dir="${src_govwayMonitor}/WEB-INF">
+				<include name="struts-config.xml" />
+				<include name="${jboss_classloading}" />
+				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${build_govwayMonitor_war}/WEB-INF">
+				<include name="${jboss_deployment_structure}" />
+				<include name="jboss-web.xml" />
+			</webinf>
+			<classes dir="${properties_govwayMonitor}">
+				<include name="monitor.log4j2.properties" />
+				<include name="log4j2.properties" />
+				<include name="messages_it.properties" />
+			</classes>
+			<classes dir="${build_govwayMonitor}/tmp">
+				<include name="daoFactory_local.properties" />
+				<include name="monitor.properties" />
+			</classes>
+			<lib dir="${required_lib_govwayMonitor}/commons">
+				<include name="commons-beanutils-1.9.2.jar" />
+				<include name="commons-chain-1.2.jar" />
+				<include name="commons-collections-3.2.2.jar" />
+				<include name="commons-digester-2.1.jar"/>
+				<include name="commons-discovery-0.5.jar"/>
+				<include name="commons-fileupload-1.3.2.jar" />
+				<include name="commons-io-2.5.jar" />
+				<include name="commons-lang-2.6.jar" />
+				<include name="${commons_logging_jar}"/>
+				<include name="commons-lang3-3.4.jar"/>
+				<include name="commons-codec-1.10.jar" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/shared">
+				<include name="wsdl4j-1.6.3.jar" />
+				<include name="struts-core-1.3.10.jar" />
+				<include name="xmldb.jar" />
+				<include name="ezmorph-1.0.6.jar" />
+				<include name="xom-1.2.10.jar" />
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>	
+				<include name="soap.jar" />
+				<include name="xmlunit-1.6.jar" />
+				<include name="snakeyaml-1.19.jar" />
+				<include name="freemarker-2.3.25.jar" />
+				<include name="activation-1.1.1.jar" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/cxf">
+				<include name="cxf-core-*.jar" />
+				<include name="cxf-rt-*.jar" />
+				<include name="${geronimo_jaxws_spec_jar}" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/saaj">
+				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/faces">
+				<include name="richfaces-api-3.3.4.Final.jar" />
+				<include name="richfaces-ui-3.3.4.Final.jar" />
+				<include name="richfaces-impl-3.3.4.Final.jar" />
+				<include name="jsf-facelets-1.1.15.jar" />
+				<include name="aopalliance-1.0.jar" />
+				<include name="cglib-nodep-2.2.3.jar" />
+				<include name="${jsr311-api_jar}" />
+				<include name="${javax_servlet_jsp_jstl_jar}" />
+				<include name="${javax_servlet_jsp_jstl_api_jar}" />
+				<include name="${jsf_impl_jar}" />
+				<include name="${jsf_api_jar}" />
+				<include name="${el_impl_jar}" />
+			</lib>
+			<lib dir="${required_lib_govwayMonitor}/jax">
+				<include name="jaxws-*.jar" />
+				<include name="${jaxp_ri_jar}" />
+				<include name="jaxb-core-2.2.11.jar" /> <!-- serve al wadl -->
+				<include name="jaxb-xjc-2.2.11.jar" /> <!-- serve al wadl -->
+			</lib>
+			<lib dir="${required_lib}/log">
+				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="log4j*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/javax">
+				<include name="${javax_jms_jar}"/>
+				<include name="${javax_el_jar}"/>
+			</lib>
+			<lib dir="${required_lib}/security">
+				<include name="xmlsec-2.0.7.jar"/>
+				<include name="neethi-3.0.3.jar" />
+				<include name="bcprov-ext-jdk15on-155.jar" />
+			</lib>
+			<lib dir="${required_lib}/json">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/jackson">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/wadl">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/spring">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/swagger">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->
+				<include name="dynamicreports-core-4.1.1.jar"/>
+				<include name="itext-2.1.7.js5.jar"/>
+				<include name="jcommon-1.0.23.jar"/>
+				<include name="jasperreports-6.2.2.jar"/>
+				<include name="poi-3.10.1.jar"/>
+				<include name="${ecj_jar}"/>
+			</lib>
+			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15">
+				<include name="${jsf_module_jar}"/>
+			</lib>
+			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/javax/faces/api/mojarra-1.2_15">
+				<include name="${jsf_module_jar}"/>
+			</lib>
+			<lib dir="${deploy_govwayMonitor}/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15">
+				<include name="${wildfly_module_jar}"/>
+			</lib>
+			<lib dir="${dist_govwayMonitor}">
+				<include name="openspcoop2*.jar" />
+			</lib>
+			<lib dir="${openspcoop2_jars}">
+				<include name="openspcoop2*.jar" />
+			</lib>
+			<lib dir="${required_lib}/stub/cxf/">
+				<include name="${stub_registry}"/>
+				<include name="${stub_config}"/>
+				<include name="${stub_monitor}"/>
+			</lib>
+			<!-- Mail api esteso con activation data handler openspcoop -->
+			<lib dir="${build_govwayMonitor}/tmp">
+				<include name="mailapi-1.5.6-openspcoop_ext.jar" />
+			</lib>
+			<!-- Plugins -->
+			<lib dir="${plugins_govwayMonitor}">
+				<include name="**/*.jar" />
+			</lib>
+			<classes dir="${plugins_govwayMonitor}">
+				<include name="**/*.properties" />
+			</classes>
+			<fileset dir="${plugins_govwayMonitor_pages}">
+				<include name="**/*" />
+			</fileset>
+		</war>
+		<delete dir="${build_govwayMonitor}/tmp" />
+		
+	</target>
+	
+	<target name="css_openspcoop2_govwayMonitor">
+		<mkdir dir="${build_govwayMonitor}/tmp_css"/>
+		<copy todir="${build_govwayMonitor}/tmp_css">
+			<fileset dir="${commons_temaConsole}/css"/>
+		</copy>
+		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" prefix="temalink."/>
+		<propertyselector property="cssProperties" match="temalink\.(.*)" select="\1"/>
+		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" />
+		<for list="${cssProperties}" param="cssKey">
+			<sequential>
+				<!--  <echo message="key[@{cssKey}] value[${@{cssKey}}]"/>  -->
+				<replace dir="${build_govwayMonitor}/tmp_css" 
+	                     token="$${@{cssKey}}" 
+	                     value="${@{cssKey}}"/>
+	       	</sequential>
+		</for>
+	</target>
+	
+</project>

@@ -161,7 +161,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 				try{
 					for(int i=0; i< this.tipiMsgDiagnosticiPersonalizzati.size(); i++){
 						tipoMsgDiagnostico = this.tipiMsgDiagnosticiPersonalizzati.get(i);
-						this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"] di OpenSPCoop");
+						this.logger.debug("Controllo MsgDiagnosticoPersonalizzato ["+tipoMsgDiagnostico+"]");
 						this.msgDiagnosticiPersonalizzati.get(i).isAlive();
 					}
 				}catch(Exception e){
@@ -174,10 +174,10 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 			// Database
 			if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseDB()){
 				try{
-					this.logger.debug("Controllo Database di OpenSPCoop");
+					this.logger.debug("Controllo Database");
 					this.dbManager.isAlive();
 				}catch(Exception e){
-					risorsaNonDisponibile = "[Database della Porta di Dominio]";
+					risorsaNonDisponibile = "[Database]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
@@ -187,10 +187,10 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 			if(this.propertiesReader.isServerJ2EE()){
 				if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseJMS()){
 					try{
-						this.logger.debug("Controllo BrokerJMS di OpenSPCoop");
+						this.logger.debug("Controllo BrokerJMS");
 						this.queueManager.isAlive();
 					}catch(Exception e){
-						risorsaNonDisponibile = "[Broker JMS della Porta di Dominio]";
+						risorsaNonDisponibile = "[Broker JMS]";
 						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 						checkRisorseDisponibili = false;
@@ -200,10 +200,10 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 			// Configurazione
 			if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloRisorseConfigurazione()){
 				try{
-					this.logger.debug("Controllo Configurazione di OpenSPCoop");
+					this.logger.debug("Controllo Configurazione");
 					this.configPdDReader.isAlive();
 				}catch(Exception e){
-					risorsaNonDisponibile = "[Configurazione della Porta di Dominio]";
+					risorsaNonDisponibile = "[Configurazione]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
@@ -212,7 +212,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 			// Configurazione, validazione semantica
 			if(checkRisorseDisponibili && this.propertiesReader.isAbilitatoControlloValidazioneSemanticaConfigurazione()){
 				try{
-					this.logger.debug("Controllo Validazione semantica della Configurazione di OpenSPCoop");
+					this.logger.debug("Controllo Validazione semantica della Configurazione");
 					ClassNameProperties classNameReader = ClassNameProperties.getInstance();
 					this.configPdDReader.validazioneSemantica(classNameReader.getConnettore(), 
 							classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
@@ -227,7 +227,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 							true,
 							true, null);
 				}catch(Exception e){
-					risorsaNonDisponibile = "[Validazione semantica della Configurazione della Porta di Dominio]";
+					risorsaNonDisponibile = "[Validazione semantica della Configurazione]";
 					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
@@ -272,7 +272,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 				try{
 					for(int i=0; i< this.tipiTracciamentiPersonalizzati.size(); i++){
 						tipoTracciamento = this.tipiTracciamentiPersonalizzati.get(i);
-						this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"] di OpenSPCoop");
+						this.logger.debug("Controllo TracciamentoPersonalizzato ["+tipoTracciamento+"]");
 						this.tracciamentiPersonalizzati.get(i).isAlive();
 					}
 				}catch(Exception e){

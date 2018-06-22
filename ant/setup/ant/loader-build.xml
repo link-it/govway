@@ -12,7 +12,7 @@
 
 		<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 
 		<!-- WORKING DIR -->
@@ -97,7 +97,7 @@
 		<if>
 			<or>
 				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
-				<isfalse value="${build_pddLoader_consoleIntegrataEAR}"/>
+				<isfalse value="${build_govwayLoader_consoleIntegrataEAR}"/>
 			</or>
 			<then>
 				<antcall target="set_property">
@@ -140,7 +140,7 @@
 		
 		<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 				
 		<!-- TIPO DATABASE -->
@@ -175,13 +175,13 @@
 		
 		<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 		
 		<!-- WORKING DIR -->
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="/var/openspcoop2/log"/>
+			<param name="token" value="/var/govway/log"/>
 			<param name="value" value="${log_dir}"/>
 		</antcall>
 		
@@ -204,12 +204,12 @@
 			<then>
 				<concat destfile="${file}" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 				</concat>
 				<!-- WORKING DIR -->
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="/var/openspcoop2/log"/>
+					<param name="token" value="/var/govway/log"/>
 					<param name="value" value="${log_dir}"/>
 				</antcall>
 			</then>

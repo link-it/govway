@@ -129,15 +129,15 @@ public final class Monitor extends Action {
 					tipoDatabase = datasourceProperties.getSinglePdD_MonitorTipoDatabase();
 	
 				} catch (java.lang.Exception e) {
-					ControlStationLogger.getPddConsoleCoreLogger().error("[pddConsole] Lettura proprieta' non riuscita : " + e.getMessage());
-					throw new Exception("[pddConsole] Lettura proprieta' non riuscita : " + e.getMessage());
+					ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Lettura proprieta' non riuscita : " + e.getMessage());
+					throw new Exception("[govwayConsole] Lettura proprieta' non riuscita : " + e.getMessage());
 				} 
 	
 				try {
 					Monitor.driverMonitoraggioLocale = new DriverMonitoraggio(jndiName, tipoDatabase, jndiProp);
 				} catch (java.lang.Exception e) {
-					ControlStationLogger.getPddConsoleCoreLogger().error("[pddConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
-					throw new Exception("[pddConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
+					ControlStationLogger.getPddConsoleCoreLogger().error("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
+					throw new Exception("[govwayConsole] Inizializzazione DriverMonitoraggio non riuscita : " + e.getMessage());
 				}
 				
 			}

@@ -87,7 +87,7 @@ public class ServerCore extends HttpServlet{
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
+		this.log=LoggerWrapperFactory.getLogger("govway.testsuite");
 		
 		// Istanza di DatabaseProperties
 		this.databaseProperties = DatabaseProperties.getInstance();

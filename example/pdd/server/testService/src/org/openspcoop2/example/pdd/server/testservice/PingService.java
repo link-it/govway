@@ -55,7 +55,7 @@ public class PingService extends ServletTestService {
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		Properties headerTrasporto = new Properties();
-		headerTrasporto.put("X-OpenSPCoop2", "PingService");
+		headerTrasporto.put("X-GovWay", "PingService");
 		this.doEngine(req, res, true, headerTrasporto);
 	}
 }

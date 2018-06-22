@@ -1869,7 +1869,7 @@ public class RicezioneContenutiApplicativi {
 					if (this.msgContext.isGestioneRisposta()) {
 						this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.AUTHENTICATION,
 								ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.
-								getErrore402_AutenticazioneFallita("L'identità del servizio applicativo fornita ["+servizioApplicativo+"] non esiste nella configurazione della Porta di Dominio"),
+								getErrore402_AutenticazioneFallita("L'identità del servizio applicativo fornita ["+servizioApplicativo+"] non esiste nella configurazione"),
 								null,null)));
 					}
 					return;

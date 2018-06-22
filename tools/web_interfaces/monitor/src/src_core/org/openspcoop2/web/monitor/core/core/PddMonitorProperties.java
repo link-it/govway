@@ -24,21 +24,21 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 public class PddMonitorProperties {
 
 	/** Copia Statica */
-	private static PddMonitorProperties pddMonitorProperties = null;
+	private static PddMonitorProperties govwayMonitorProperties = null;
 
 	private static synchronized void initialize(org.slf4j.Logger log) throws Exception{
 
-		if(PddMonitorProperties.pddMonitorProperties==null)
-			PddMonitorProperties.pddMonitorProperties = new PddMonitorProperties(log);	
+		if(PddMonitorProperties.govwayMonitorProperties==null)
+			PddMonitorProperties.govwayMonitorProperties = new PddMonitorProperties(log);	
 
 	}
 
 	public static PddMonitorProperties getInstance(org.slf4j.Logger log) throws Exception{
 
-		if(PddMonitorProperties.pddMonitorProperties==null)
+		if(PddMonitorProperties.govwayMonitorProperties==null)
 			PddMonitorProperties.initialize(log);
 
-		return PddMonitorProperties.pddMonitorProperties;
+		return PddMonitorProperties.govwayMonitorProperties;
 	}
 
 

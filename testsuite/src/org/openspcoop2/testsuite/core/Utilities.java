@@ -328,7 +328,7 @@ public class Utilities {
 			javax.xml.soap.MimeHeader header = (javax.xml.soap.MimeHeader) it.next();
 			mimes.append("["+header.getName()+"="+header.getValue()+"]");
 		}
-		//Logger log=LogUtilities.getLogger("openspcoop2.testsuite");
+		//Logger log=LogUtilities.getLogger("govway.testsuite");
 		//log.info("mimes: "+mimes.toString());
 		String[] header = headers.getHeader(idName);
 		String ret = null;

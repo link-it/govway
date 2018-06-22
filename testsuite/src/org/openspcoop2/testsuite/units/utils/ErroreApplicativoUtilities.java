@@ -462,7 +462,7 @@ public class ErroreApplicativoUtilities {
 	}
 	
 	public static String toString(CodiceErroreIntegrazione codiceErrore) throws ProtocolException{
-		return "OPENSPCOOP2_ORG_"+codiceErrore.getCodice();
+		return "GOVWAY_ORG_"+codiceErrore.getCodice();
 	}
 	public static String toString(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
 		return "ECCEZIONE_PROTOCOLLO_"+codiceErrore.getCodice();

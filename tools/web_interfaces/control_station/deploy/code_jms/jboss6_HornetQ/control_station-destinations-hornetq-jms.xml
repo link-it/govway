@@ -8,11 +8,11 @@
         </queue>
 	<!--  toSmistatoreConfigurazioni -->
 
-	<!--  GestoreRegistroServizi di OpenSPCoop -->	
+	<!--  GestoreRegistroServizi -->	
 	<queue name="toConfigurazioneRegistro">
   	   <entry name="/queue/toConfigurazioneRegistro"/>  
 	</queue>
-	<!--  GestoreRegistroServizi di OpenSPCoop -->
+	<!--  GestoreRegistroServizi -->
 
 	<!--  Gestore Eventi (Propagazione) -->
         <queue name="toConfigurazioneGestoreEventi">

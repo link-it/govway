@@ -167,7 +167,7 @@
     
     <configurazione>
         <accesso-registro>
-            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            <registro nome="registroXML" tipo="xml" location="/etc/govway/registroServizi.xml"
             />
         </accesso-registro>
         <inoltro-buste-non-riscontrate cadenza="60"/>

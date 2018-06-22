@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie alla
- * pddConsole.
+ * govwayConsole.
  * 
  * 
  * @author Andrea Poli (apoli@link.it)
@@ -76,7 +76,7 @@ public class InitListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		InitListener.log.info("Undeploy pddConsole in corso...");
+		InitListener.log.info("Undeploy govwayConsole in corso...");
 
 		InitListener.initialized = false;
 		
@@ -94,7 +94,7 @@ public class InitListener implements ServletContextListener {
 			}
 		}
 
-		InitListener.log.info("Undeploy pddConsole effettuato.");
+		InitListener.log.info("Undeploy govwayConsole effettuato.");
 
 	}
 
@@ -150,7 +150,7 @@ public class InitListener implements ServletContextListener {
 		}
 		
 		
-		InitListener.log.info("Inizializzazione resources pddConsole in corso...");
+		InitListener.log.info("Inizializzazione resources govwayConsole in corso...");
 		ConsoleProperties consoleProperties = null;
 		try{
 		
@@ -182,7 +182,7 @@ public class InitListener implements ServletContextListener {
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}
-		InitListener.log.info("Inizializzazione resources pddConsole effettuata con successo.");
+		InitListener.log.info("Inizializzazione resources govwayConsole effettuata con successo.");
 
 		
 		InitListener.log.info("Inizializzazione ExtendedInfoManager in corso...");
@@ -207,12 +207,12 @@ public class InitListener implements ServletContextListener {
 
 		try{
 			if(consoleProperties.isSinglePdD()==false){
-				InitListener.log.info("Inizializzazione Gestori, della pddConsole Centralizzata, in corso...");
+				InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, in corso...");
 			
                 this.gestoriStartupThread = new GestoriStartupThread();
                 new Thread(this.gestoriStartupThread).start();
 				
-				InitListener.log.info("Inizializzazione Gestori, della pddConsole Centralizzata, effettuata con successo.");
+				InitListener.log.info("Inizializzazione Gestori, della govwayConsole Centralizzata, effettuata con successo.");
 			}
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);

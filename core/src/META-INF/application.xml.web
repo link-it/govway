@@ -1,14 +1,14 @@
 	<module>
 		<web>
-			<web-uri>OpenSPCoop2.war</web-uri>
-			<context-root>openspcoop2</context-root>
+			<web-uri>govway.war</web-uri>
+			<context-root>govway</context-root>
 		</web>
 	</module>
 	<!-- start Security Constraint Authentication Container -->
 	<module>
 		<web>
-			<web-uri>OpenSPCoop2Sec.war</web-uri>
-			<context-root>openspcoop2sec</context-root>
+			<web-uri>govwaySec.war</web-uri>
+			<context-root>govwaySec</context-root>
 		</web>
 	</module>
 	<!-- end Security Constraint Authentication Container -->

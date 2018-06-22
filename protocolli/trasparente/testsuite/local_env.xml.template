@@ -13,7 +13,7 @@
 
       <!-- ** Parametri necessari per eseguire al completo la testsuite ** -->
       <!-- Log della Porta di Dominio -->
-      <property name="openspcoop_log" location="/var/openspcoop2/log" />
+      <property name="openspcoop_log" location="/var/govway/log" />
       <!-- Log dell'application server -->
       <property name="server_log" location="JBOSS/server/default/log/server.log" />
       <!-- Database Messaggi di OpenSPCoop -->
@@ -37,7 +37,7 @@
 	  <property name="testsuite_transformer" value="org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteTransformer" /> 
 
       <!-- openspcoop config dir -->
-      <property name="openspcoop_configuration_dir" location="/etc/openspcoop2"/>      
+      <property name="openspcoop_configuration_dir" location="/etc/govway"/>      
       <property name="openspcoop_configuration_dir_backup" location="backup_openspcoop2" />
 
       <!-- files di test -->
@@ -52,11 +52,11 @@
       <property name="openspcoop2_lib" location="${openspcoop2}/lib" />
       <property name="required_lib" location="${openspcoop2_lib}" />
       <!-- OpenSPCoop2 TestSuite LIB -->
-      <property name="openspcoop2_testsuite" location="${openspcoop2}/testsuite" />
-      <property name="openspcoop2_testsuite_dist" location="${openspcoop2_testsuite}/dist" />
-      <property name="openspcoop2_testsuite_properties" location="${openspcoop2_testsuite}/deploy/properties" />
+      <property name="govway_testsuite" location="${openspcoop2}/testsuite" />
+      <property name="govway_testsuite_dist" location="${govway_testsuite}/dist" />
+      <property name="govway_testsuite_properties" location="${govway_testsuite}/deploy/properties" />
       <!-- Trasparente Protocol Plugin -->
-      <property name="openspcoop2_protocol_trasparente" location="${openspcoop2}/protocolli/trasparente/dist/" />
+      <property name="govway_protocol_trasparente" location="${openspcoop2}/protocolli/trasparente/dist/" />
       <!-- Protocollo (Per XML Loader) -->
 	  <property name="protocolloDefault" location="trasparente" />
 

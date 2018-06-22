@@ -53,7 +53,7 @@ public class ClassNameProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.classRegistry.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.classRegistry.properties' */
 	private ClassNameInstanceProperties reader;
 
 	/** Copia Statica */
@@ -78,13 +78,13 @@ public class ClassNameProperties {
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-		    properties = ClassNameProperties.class.getResourceAsStream("/openspcoop2.classRegistry.properties");
+		    properties = ClassNameProperties.class.getResourceAsStream("/govway.classRegistry.properties");
 			if(properties==null){
-				throw new Exception("File '/openspcoop2.classRegistry.properties' not found");
+				throw new Exception("File '/govway.classRegistry.properties' not found");
 			}
 		    propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.classRegistry.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'govway.classRegistry.properties': \n\n"+e.getMessage());
 		    throw new Exception("ClassName initialize error: "+e.getMessage());
 		}finally{
 		    try{

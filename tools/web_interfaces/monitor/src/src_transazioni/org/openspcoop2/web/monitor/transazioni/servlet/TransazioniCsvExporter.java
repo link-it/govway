@@ -44,12 +44,12 @@ public class TransazioniCsvExporter extends HttpServlet{
 	@Override
 	public void init() throws ServletException {
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniCsvExporter.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TransazioniCsvExporter.log);
 
-			TransazioniCsvExporter.enableHeaderInfo = pddMonitorProperties.isAttivoTransazioniExportHeader();
-			TransazioniCsvExporter.mimeThrowExceptionIfNotFound=pddMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
-			this.tracciamentoService = pddMonitorProperties.getDriverTracciamento();
-			this.diagnosticiService = pddMonitorProperties.getDriverMsgDiagnostici();
+			TransazioniCsvExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
+			TransazioniCsvExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
+			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
+			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
 			TransazioniCsvExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}

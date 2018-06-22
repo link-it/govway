@@ -4103,7 +4103,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
 		}
 		

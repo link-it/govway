@@ -238,11 +238,11 @@ public class ClientTest {
 			
 			
 			java.util.Properties loggerProperties = new java.util.Properties();
-			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/openspcoop2.log4j2.properties"));
+			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/govway.log4j2.properties"));
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			Logger log = LoggerWrapperFactory.getLogger("openspcoop2.core");
 			
-			DriverRegistroServiziXML driver = new DriverRegistroServiziXML("/etc/openspcoop2/registroServizi.xml", log);
+			DriverRegistroServiziXML driver = new DriverRegistroServiziXML("/etc/govway/registroServizi.xml", log);
 			IRegistryReader registryReader = new RegistryReader(driver, log);
 			
 			XMLUtils xmlSICAUtilities = new XMLUtils(context,log);

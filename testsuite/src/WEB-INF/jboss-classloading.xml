@@ -1,5 +1,5 @@
 <classloading xmlns="urn:jboss:classloading:1.0"
-                    domain="OpenSPCoop2TestSuite.war"
+                    domain="govwayTestSuite.war"
 					parent-first="false"
                     export-all="NON_EMPTY"
                     import-all="true">

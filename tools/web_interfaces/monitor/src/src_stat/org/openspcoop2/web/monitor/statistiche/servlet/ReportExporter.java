@@ -56,8 +56,8 @@ public class ReportExporter extends HttpServlet{
 	@Override
 	public void init() throws ServletException {
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(ReportExporter.log);
-			this.serviceEnabled = pddMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ReportExporter.log);
+			this.serviceEnabled = govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
 		}catch(Exception e){
 			ReportExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}

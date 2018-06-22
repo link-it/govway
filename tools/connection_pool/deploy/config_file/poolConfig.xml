@@ -7,7 +7,7 @@
 
    <!-- Postgres v8: DB di riferimento nello sviluppo -->
    <!-- -->
-   <datasource jndi-name="org.openspcoop2.dataSource" 
+   <datasource jndi-name="org.govway.datasource" 
                connection-url="jdbc:postgresql://localhost/openspcoop2"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -22,7 +22,7 @@
 
    <!-- Postgres v7: non supporta il livello readUncommitted -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource"
+   <datasource jndi-name="org.govway.datasource"
                connection-url="jdbc:postgresql://localhost/openspcoop2"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -37,7 +37,7 @@
 
    <!-- Oracle -->
    <!--  
-   <datasource jndi-name="org.openspcoop2.dataSource"
+   <datasource jndi-name="org.govway.datasource"
                connection-url="jdbc:oracle:thin:@localhost:1521:XE"
                driver-class="oracle.jdbc.OracleDriver"
                username="openspcoop2" password="openspcoop2"
@@ -52,7 +52,7 @@
 
    <!-- MySQL  -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource" 
+   <datasource jndi-name="org.govway.datasource" 
                connection-url="jdbc:mysql://localhost/openspcoop2"
                driver-class="com.mysql.jdbc.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -67,7 +67,7 @@
 
    <!-- HSQL  -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource" 
+   <datasource jndi-name="org.govway.datasource" 
                connection-url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/openspcoop2]"
                driver-class="org.hsqldb.jdbcDriver"
                username="openspcoop2" password="openspcoop2"
@@ -82,7 +82,7 @@
 
    <!-- SQLSERVER  -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource" 
+   <datasource jndi-name="org.govway.datasource" 
                connection-url="jdbc:sqlserver://localhost:1433;databaseName=openspcoop2"
                driver-class="com.microsoft.sqlserver.jdbc.SQLServerDriver"
                username="openspcoop2" password="openspcoop2"
@@ -97,7 +97,7 @@
 
    <!-- DB2  -->
    <!--
-   <datasource jndi-name="org.openspcoop2.dataSource"
+   <datasource jndi-name="org.govway.datasource"
                connection-url="jdbc:db2://localhost:50000/openspcoop2"
                driver-class="com.ibm.db2.jcc.DB2Driver"
                username="openspcoop2" password="openspcoop2"
@@ -113,8 +113,8 @@
 
    <!-- Postgres v8: DB per interfaccia di Gestione Centralizzata (PddConsole) --> 
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource.pddConsole" 
-               connection-url="jdbc:postgresql://localhost/pddConsole"
+   <datasource jndi-name="org.govway.datasource.console" 
+               connection-url="jdbc:postgresql://localhost/govway"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
                prepared-statement-pool="true"
@@ -129,7 +129,7 @@
 
    <!-- Postgres v8: DB per tracciamento: N.B. per usare il tracciamento con interfaccia PDD usare stesso Database -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource.tracciamento" 
+   <datasource jndi-name="org.govway.datasource.tracciamento" 
                connection-url="jdbc:postgresql://localhost/tracciamento"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -144,7 +144,7 @@
 
    <!-- Postgres v8: DB per msgDiagnostico: N.B. per usare il msgDiagnostico con interfaccia PDD usare stesso Database -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource.msgDiagnostici" 
+   <datasource jndi-name="org.govway.datasource.tracciamento" 
                connection-url="jdbc:postgresql://localhost/msgdiagnostici"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -159,7 +159,7 @@
 
    <!-- Postgres v8: GestoreEventi -->
    <!-- 
-   <datasource jndi-name="org.openspcoop2.dataSource.ge" 
+   <datasource jndi-name="org.govway.datasource.ge" 
                connection-url="jdbc:postgresql://localhost/ge"
                driver-class="org.postgresql.Driver"
                username="openspcoop2" password="openspcoop2"
@@ -175,7 +175,7 @@
 
    <!-- JBossMQ: BrokerMQ di riferimento nello sviluppo -->
    <!-- -->
-   <connection-factory jndi-name="org.openspcoop2.jmsPool"
+   <connection-factory jndi-name="org.govway.jmsPool"
                         connection-factory="ConnectionFactory"
                         auto-commit="true" acknowledgment-type="autoAcknowledgment" >
        <pool-size initial="10" min="10" max="50" />
@@ -186,7 +186,7 @@
 
     <!-- Configurazione BrokerJMS ActiveMQ -->
     <!--
-    <connection-factory jndi-name="org.openspcoop2.jmsPoolExternalAMQ"
+    <connection-factory jndi-name="org.govway.jmsPoolExternalAMQ"
                         connection-factory="queueConnectionFactory"
                         auto-commit="true" acknowledgment-type="autoAcknowledgment" >
        <context-property name="java.naming.factory.initial" value="org.apache.activemq.jndi.ActiveMQInitialContextFactory" />

@@ -38,7 +38,7 @@ public class Costanti {
 	/** ERRORE APPLICATIVO */
 	public static final String ERRORE_INTEGRAZIONE_NAMESPACE = "http://www.openspcoop2.org/core/errore_integrazione";
 	public static final String ERRORE_INTEGRAZIONE_PREFIX = "eccIntegrazione";
-	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "OPENSPCOOP2_ORG_";
+	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY_ORG_";
 	
 	public static final String ERRORE_PROTOCOLLO_PREFIX = "eccProtocollo";
 	public static final String ERRORE_PROTOCOLLO_NAMESPACE = "http://www.openspcoop2.org/core/errore_protocollo";

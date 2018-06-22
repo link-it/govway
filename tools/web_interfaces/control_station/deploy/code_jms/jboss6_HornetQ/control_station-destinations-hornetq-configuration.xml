@@ -20,12 +20,12 @@
         </address-setting>
 	<!--  toSmistatoreConfigurazioni -->
 
-	<!--  GestoreRegistroServizi di OpenSPCoop -->
+	<!--  GestoreRegistroServizi -->
         <address-setting match="jms.queue.toConfigurazioneRegistro">
                 <max-delivery-attempts>-1</max-delivery-attempts>
                 <redelivery-delay>120000</redelivery-delay>
         </address-setting>
-	<!--  GestoreRegistroServizi di OpenSPCoop -->
+	<!--  GestoreRegistroServizi -->
 
 	<!--  Gestore Eventi (Propagazione) -->
         <address-setting match="jms.queue.toConfigurazioneGestoreEventi">

@@ -117,7 +117,7 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 			}catch(Exception e){}
 			
 			if(appendActualConfiguration){
-				System.out.println("[OpenSPCoop2Pools] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+				System.out.println("[govwayPools] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");
 				int i=0;
 				int limit = 60;
 				Class<?> openspcoop2Startup = Class.forName("org.openspcoop2.pdd.services.OpenSPCoop2Startup");
@@ -138,30 +138,30 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 					
 					i++;
 					if(i%10==0){
-						System.out.println("[OpenSPCoop2Pools] Attendo inizializzazione PdDOpenSPCoop ...");
+						System.out.println("[govwayPools] Attendo inizializzazione GovWay ...");
 					}
 				}
 				
 				if(initialize==false){
-					throw new Exception("[OpenSPCoop2Pools] Inizializzazione OpenSPCoop non rilevata");
+					throw new Exception("[govwayPools] Inizializzazione GovWay non rilevata");
 				}
 				
-				System.out.println("[OpenSPCoop2Pools] Configurazione Log4J ...");
+				System.out.println("[govwayPools] Configurazione Log4J ...");
 				LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
-				System.out.println("[OpenSPCoop2Pools] Configurazione Log4J aggiunta");
+				System.out.println("[govwayPools] Configurazione Log4J aggiunta");
 			}
 			else{
 				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			}		
 						
 		}catch(Exception e){
-			OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("govwayPools");
 			OpenSPCoop2PoolsStartup.loggerConsole.error("Inizializzazione logger non riuscita",e);
 		}
 			
 		
-		OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
-		OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+		OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("govwayPools");
+		OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("govwayPools");
 
 		
 		

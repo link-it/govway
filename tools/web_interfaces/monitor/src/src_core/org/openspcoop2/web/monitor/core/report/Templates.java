@@ -22,7 +22,7 @@ import net.sf.dynamicreports.report.constant.VerticalTextAlignment;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 
 public class Templates {
-	private static final String TITOLO_REPORT = "Fruizione Servizi in Cooperazione Applicativa PdD MEF";
+	private static final String TITOLO_REPORT = "Fruizione Servizi in Cooperazione Applicativa";
 	public static final StyleBuilder rootStyle;
 	public static final StyleBuilder boldStyle;
 	public static final StyleBuilder italicStyle;

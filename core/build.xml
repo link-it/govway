@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="OpenSPCoop2">
+<project name="GovWay">
 	
 	<description>
-        Ambiente di compilazione della porta di dominio OpenSPCoop2
+        Ambiente di compilazione di GovWay
     </description>
 
 	<import file="./local_env.xml" />
@@ -134,7 +134,7 @@
 		
 	
 
-	<!-- Compilazione dei JAR dei progetto di utilità di OpenSPCoop 2 -->
+	<!-- Compilazione dei JAR dei progetto di utility -->
 	<target name="build_openspcoop2_utils_jar">
 		<delete>
 			<fileset dir="${dist}" includes="openspcoop2_utils_*.jar"/>
@@ -178,21 +178,21 @@
 			<param name="buildCore" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_openspcoop2_protocol-api_jar">
+	<target name="build_govway_protocol-api_jar">
 		<delete>
-			<fileset dir="${dist}" includes="openspcoop2_protocol-api_*.jar"/>
+			<fileset dir="${dist}" includes="govway_protocol-api_*.jar"/>
 			<fileset dir="${dist}" includes="protocol-api/*"/>
 		</delete>
-		<antcall target="compile_openspcoop2_protocol-api">
+		<antcall target="compile_govway_protocol-api">
 			<param name="buildProtocolAPI" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_openspcoop2_monitor-api_jar">
+	<target name="build_govway_monitor-api_jar">
 		<delete>
-			<fileset dir="${dist}" includes="openspcoop2_monitor-api_*.jar"/>
+			<fileset dir="${dist}" includes="govway_monitor-api_*.jar"/>
 			<fileset dir="${dist}" includes="monitor-api/*"/>
 		</delete>
-		<antcall target="compile_openspcoop2_monitor-api">
+		<antcall target="compile_govway_monitor-api">
 			<param name="buildMonitorAPI" value="true"/>
 		</antcall>
 	</target>
@@ -205,21 +205,21 @@
 			<param name="buildSecurity" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_openspcoop2_protocol_jar">
+	<target name="build_govway_protocol_jar">
 		<delete>
-			<fileset dir="${dist}" includes="openspcoop2_protocol_*.jar"/>
+			<fileset dir="${dist}" includes="govway_protocol_*.jar"/>
 			<fileset dir="${dist}" includes="protocol/*"/>
 		</delete>
-		<antcall target="compile_openspcoop2_protocol">
+		<antcall target="compile_govway_protocol">
 			<param name="buildProtocolEngine" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_openspcoop2_monitor_jar">
+	<target name="build_govway_monitor_jar">
 		<delete>
-			<fileset dir="${dist}" includes="openspcoop2_monitor_*.jar"/>
+			<fileset dir="${dist}" includes="govway_monitor_*.jar"/>
 			<fileset dir="${dist}" includes="monitor/*"/>
 		</delete>
-		<antcall target="compile_openspcoop2_monitor">
+		<antcall target="compile_govway_monitor">
 			<param name="buildMonitorEngine" value="true"/>
 		</antcall>
 	</target>
@@ -233,7 +233,7 @@
 		</antcall>
 	</target>
 	<target name="build_openspcoop2_all" 
-		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,compile_openspcoop2_monitor-api,compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_monitor,compile_openspcoop2_pdd">
+		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_govway_protocol-api,compile_govway_monitor-api,compile_openspcoop2_security,compile_govway_protocol,compile_govway_monitor,compile_openspcoop2_pdd">
 	
 		<if>
 			<istrue value="${buildAPI}"/>
@@ -377,14 +377,14 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<copy file="${dist}/OpenSPCoop2.ear" todir="${appServer_deploy_dir}" />
+				<copy file="${dist}/govway.ear" todir="${appServer_deploy_dir}" />
 			</then>
 			<elseif>
 				<or>
 					<matches string="${as}" pattern="tomcat.*"/>
 				</or>
 				<then>
-					<copy file="${dist}/openspcoop2.war" todir="${appServer_deploy_dir}" />
+					<copy file="${dist}/govway.war" todir="${appServer_deploy_dir}" />
 				</then>	
 			</elseif>
 		</if>
@@ -405,14 +405,14 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<touch file="${appServer_deploy_dir}/OpenSPCoop2.ear"/>
+				<touch file="${appServer_deploy_dir}/govway.ear"/>
 			</then>
 			<elseif>
 				<or>
 					<matches string="${as}" pattern="tomcat.*"/>
 				</or>
 				<then>
-					<touch file="${appServer_deploy_dir}/openspcoop2.war"/>
+					<touch file="${appServer_deploy_dir}/govway.war"/>
 				</then>	
 			</elseif>
 		</if>
@@ -451,19 +451,19 @@
 		<!-- Repository Messaggi e Buste -->
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql}"/>
-			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2.sql"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryGovWay.sql"/>
 			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste.sql runtimePdD/RepositoryIdSerial.sql runtimePdD/RepositoryMessaggi.sql runtimePdD/Semaphore.sql DBInfo.sql"/>
 			<param name="SQLDataFiles" value="init/runtimePdD/Semaphore_data.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database di GovWay');"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
-			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2_delete.sql"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryGovWay_delete.sql"/>
 			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_delete.sql runtimePdD/RepositoryIdSerial_delete.sql runtimePdD/RepositoryMessaggi_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
-			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2_drop.sql"/>
+			<param name="SQLDestFile" value="${dist}/RepositoryGovWay_drop.sql"/>
 			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_drop.sql runtimePdD/RepositoryIdSerial_drop.sql runtimePdD/RepositoryMessaggi_drop.sql runtimePdD/Semaphore_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 		
@@ -491,7 +491,7 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/ConfigurazionePdD.sql"/>
 			<param name="SQLSourceFiles" value="configurazionePdD/configurazionePdD_Connettori.sql configurazionePdD/configurazionePdD_ConnettoriGestioneErrore.sql configurazionePdD/configurazionePdD_Soggetti.sql configurazionePdD/configurazionePdD_ServiziApplicativi.sql configurazionePdD/configurazionePdD_PorteDelegate.sql configurazionePdD/configurazionePdD_PorteApplicative.sql configurazionePdD/configurazionePdD.sql configurazionePdD/configurazionePdD_ControlloTraffico.sql DBInfo.sql"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Configurazione della PdD OpenSPCoop2');" />
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Configurazione di GovWay');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
@@ -510,7 +510,7 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RegistroServizi.sql"/>
 			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Connettori.sql registroServizi/registroServizi_PorteDominio.sql registroServizi/registroServizi_Ruoli.sql registroServizi/registroServizi_Scope.sql registroServizi/registroServizi_ProtocolProperties.sql registroServizi/registroServizi_Soggetti.sql registroServizi/registroServizi_Accordi.sql registroServizi/registroServizi_MonitorPluginsBase.sql registroServizi/registroServizi_MonitorPluginsTransazioni.sql registroServizi/registroServizi_MonitorPluginsRicerche.sql registroServizi/registroServizi_MonitorPluginsStatistiche.sql DBInfo.sql"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Registro dei Servizi di OpenSPCoop2');" />
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Registro dei Servizi di GovWay');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>

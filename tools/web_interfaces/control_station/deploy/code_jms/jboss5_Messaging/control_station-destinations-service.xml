@@ -13,7 +13,7 @@
     </mbean> 
     <!--  toSmistatoreConfigurazioni  -->
 
-    <!--  GestoreRegistroServizi di OpenSPCoop -->
+    <!--  GestoreRegistroServizi -->
     <mbean code="org.jboss.jms.server.destination.QueueService"
          name="jboss.messaging.destination:service=Queue,name=toConfigurazioneRegistro"
       xmbean-dd="xmdesc/Queue-xmbean.xml">
@@ -22,7 +22,7 @@
       <attribute name="RedeliveryDelay">120000</attribute>
          <!--<attribute name="MaxDeliveryAttempts">200</attribute>-->
     </mbean>
-    <!--  GestoreRegistroServizi di OpenSPCoop --> 
+    <!--  GestoreRegistroServizi --> 
 
     <!--  Gestore Eventi (Propagazione) -->
     <mbean code="org.jboss.jms.server.destination.QueueService"

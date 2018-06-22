@@ -59,7 +59,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
- * Driver per il Monitoraggio della Porta di Dominio OpenSPCoop
+ * Driver per il Monitoraggio di GovWay
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$

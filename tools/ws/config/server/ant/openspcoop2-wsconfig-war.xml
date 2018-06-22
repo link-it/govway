@@ -137,7 +137,7 @@
 				<antcall target="set_property">
 				    <param name="file" value="${build_config_ws}/properties/wsconfig.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.console"/>
 				</antcall>
 			</then>
 		</if>
@@ -161,7 +161,7 @@
 				<include name="openspcoop2_core_*.jar"/>
 			</lib>
 			<lib dir="${dist_config_ws}">
-				<include name="openspcoop2_ws-config-server*.jar"/>
+				<include name="govway_ws-config-server*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>

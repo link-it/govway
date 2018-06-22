@@ -163,8 +163,8 @@
 			<copy file="${openspcoop_log}/openspcoop2.log" tofile="openspcoop2.log.tmp" overwrite="true" />
 			<copy file="${openspcoop_log}/openspcoop2_core.log" tofile="openspcoop2_core.log.tmp" overwrite="true" />
 			<copy file="${openspcoop_log}/openspcoop2_integrationManager.log" tofile="openspcoop2_integrationManager.log.tmp" overwrite="true" />
-			<copy file="${openspcoop_log}/openspcoop2_tracciamento.log" tofile="openspcoop2_tracciamento.log.tmp" overwrite="true" />
-			<copy file="${openspcoop_log}/openspcoop2_msgDiagnostico.log" tofile="openspcoop2_msgDiagnostico.log.tmp" overwrite="true" />
+			<copy file="${openspcoop_log}/govway_tracciamento.log" tofile="govway_tracciamento.log.tmp" overwrite="true" />
+			<copy file="${openspcoop_log}/govway_diagnostici.log" tofile="govway_diagnostici.log.tmp" overwrite="true" />
 			<copy file="${openspcoop_log}/openspcoop2_dump.log" tofile="openspcoop2_dump.log.tmp" overwrite="true" />
 		
 			<!-- Pulisco il database -->
@@ -228,16 +228,16 @@ delete from tracce;
 				<arg value="openspcoop2_integrationManager.log.tmp"/>
 			</exec>
 			<copy tofile="risultati-testsuite-completa/${nomeTest}/openspcoop_log/openspcoop2_integrationManager.log" file="openspcoop2_integrationManager.log.tmp.diff" />
-			<exec executable="diff" output="openspcoop2_tracciamento.log.tmp.diff">
-				<arg value="${openspcoop_log}/openspcoop2_tracciamento.log"/>
-				<arg value="openspcoop2_tracciamento.log.tmp"/>
+			<exec executable="diff" output="govway_tracciamento.log.tmp.diff">
+				<arg value="${openspcoop_log}/govway_tracciamento.log"/>
+				<arg value="govway_tracciamento.log.tmp"/>
 			</exec>
-			<copy tofile="risultati-testsuite-completa/${nomeTest}/openspcoop_log/openspcoop2_tracciamento.log" file="openspcoop2_tracciamento.log.tmp.diff" />
-			<exec executable="diff" output="openspcoop2_msgDiagnostico.log.tmp.diff">
-				<arg value="${openspcoop_log}/openspcoop2_msgDiagnostico.log"/>
-				<arg value="openspcoop2_msgDiagnostico.log.tmp"/>
+			<copy tofile="risultati-testsuite-completa/${nomeTest}/openspcoop_log/govway_tracciamento.log" file="govway_tracciamento.log.tmp.diff" />
+			<exec executable="diff" output="govway_diagnostici.log.tmp.diff">
+				<arg value="${openspcoop_log}/govway_diagnostici.log"/>
+				<arg value="govway_diagnostici.log.tmp"/>
 			</exec>
-			<copy tofile="risultati-testsuite-completa/${nomeTest}/openspcoop_log/openspcoop2_msgDiagnostico.log" file="openspcoop2_msgDiagnostico.log.tmp.diff" />
+			<copy tofile="risultati-testsuite-completa/${nomeTest}/openspcoop_log/govway_diagnostici.log" file="govway_diagnostici.log.tmp.diff" />
 			<exec executable="diff" output="openspcoop2_dump.log.tmp.diff">
 				<arg value="${openspcoop_log}/openspcoop2_dump.log"/>
 				<arg value="openspcoop2_dump.log.tmp"/>

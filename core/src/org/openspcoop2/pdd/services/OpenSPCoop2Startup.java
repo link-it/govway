@@ -165,7 +165,7 @@ import org.slf4j.Logger;
 public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Logger utilizzato per segnalazione di errori. */
-	private static Logger log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+	private static Logger log = LoggerWrapperFactory.getLogger("govway.startup");
 
 	/** Variabile che indica il Nome del modulo attuale di OpenSPCoop */
 	private static final String ID_MODULO = "InizializzazioneRisorse";
@@ -290,7 +290,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(OpenSPCoop2Logger.initializeLogConsole(OpenSPCoop2Startup.log) == false){
 				return;
 			}
-			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("govway.startup");
 			
 			
 			
@@ -304,7 +304,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Inizializzo ClassNameProperties di OpenSPCoop --------------- */
 			if( ClassNameProperties.initialize() == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.classRegistry.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.classRegistry.properties'");
 				return;
 			}
 			ClassNameProperties classNameReader = ClassNameProperties.getInstance();
@@ -360,7 +360,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Verifica Proprieta' di OpenSPCoop --------------- */
 			if( OpenSPCoop2Properties.initialize(openspcoopP) == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.properties'");
 				return;
 			}
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
@@ -465,7 +465,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("govway.startup");
 			
 			Utilities.log = logCore;
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
@@ -483,7 +483,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				locationPddProperties = propertiesReader.getLocationPddProperties();
 			}
 			if( PddProperties.initialize(locationPddProperties,propertiesReader.getRootDirectory()) == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.pdd.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.pdd.properties'");
 				return;
 			}
 			if(o!=null){
@@ -509,7 +509,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- MsgDiagnostici.properties --------------- */
 			if( MsgDiagnosticiProperties.initialize(null,propertiesReader.getRootDirectory()) == false){
-				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'openspcoop2.msgDiagnostici.properties'");
+				this.logError("Riscontrato errore durante l'inizializzazione del reader di 'govway.msgDiagnostici.properties'");
 				return;
 			}
 			if(o!=null){
@@ -1259,7 +1259,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ---------------- Validazione semantica -----------------------*/
 
-			// Configurazione della Porta di Dominio
+			// Configurazione
 			boolean validazioneSemanticaConfigurazione = false;
 			if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(accessoConfigurazione.getTipo())){
 				validazioneSemanticaConfigurazione = propertiesReader.isValidazioneSemanticaConfigurazioneStartupXML();
@@ -1362,11 +1362,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		
 		
 		
-			/* ----------- Inizializzazione Servizi Porta di Dominio ------------ */
+			/* ----------- Inizializzazione Servizi ------------ */
 			try{
 				StatoServiziPdD.initialize();
 			}catch(Exception e){
-				msgDiag.logStartupError(e,"Inizializzazione stato servizi Porta di Dominio");
+				msgDiag.logStartupError(e,"Inizializzazione stato servizi");
 				return;
 			}
 			try{
@@ -1443,6 +1443,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 
+				// messageRepository
+				if(propertiesReader.isRepositoryOnFS()) {
+					File dir = new File(propertiesReader.getRepositoryDirectory());
+					FileSystemUtilities.mkdir(dir, configMkdir);
+				}
+				
 				// https
 				if(propertiesReader.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
 					File dir = propertiesReader.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
@@ -1622,7 +1628,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConfigurazionePdD();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - configurazione della Porta di Dominio");
+					msgDiag.logStartupError(e,"RisorsaJMX - configurazione");
 				}
 				// MBean Registro dei Servizi
 				try{
@@ -1664,32 +1670,32 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanStatoServiziPdD();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - stato servizi della Porta di Dominio");
+					msgDiag.logStartupError(e,"RisorsaJMX - stato servizi");
 				}
 				// MBean StatistichePdD
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanStatistichePdD();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - statistiche della Porta di Dominio");
+					msgDiag.logStartupError(e,"RisorsaJMX - statistiche");
 				}
 				// MBean SystemPropertiesPdD
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanSystemPropertiesPdD();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - proprietà di sistema della Porta di Dominio");
+					msgDiag.logStartupError(e,"RisorsaJMX - proprietà di sistema");
 				}
 				// MBean ConfigurazioneSistema
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConfigurazioneSistema();
 				}catch(Exception e){
-					msgDiag.logStartupError(e,"RisorsaJMX - configurazione di sistema della Porta di Dominio");
+					msgDiag.logStartupError(e,"RisorsaJMX - configurazione di sistema");
 				}
 				if(propertiesReader.isControlloTrafficoEnabled()){
 					// MBean ControlloTraffico
 					try{
 						OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanControlloTraffico();
 					}catch(Exception e){
-						msgDiag.logStartupError(e,"RisorsaJMX - Controllo del Traffico della Porta di Dominio");
+						msgDiag.logStartupError(e,"RisorsaJMX - Controllo del Traffico");
 					}
 				}
 				
@@ -2305,10 +2311,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP);
 			msgDiag.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");
-			OpenSPCoop2Startup.log.info("Porta di Dominio "+propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
+			OpenSPCoop2Startup.log.info(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			if(OpenSPCoop2Logger.isLoggerOpenSPCoopConsoleStartupAgganciatoLog()){
 				// per farlo finire anche sul server.log
-				System.out.println("Porta di Dominio "+propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
+				System.out.println(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			}
 			msgDiag.logPersonalizzato("pdd");
 			MsgDiagnostico msgIM = new MsgDiagnostico(IntegrationManager.ID_MODULO);

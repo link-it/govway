@@ -48,10 +48,10 @@ public class DiagnosticiExporter extends HttpServlet{
 	@Override
 	public void init() throws ServletException {
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiExporter.log);
-			DiagnosticiExporter.enableHeaderInfo = pddMonitorProperties.isAttivoTransazioniExportHeader();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiExporter.log);
+			DiagnosticiExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 
-			this.diagnosticiService = pddMonitorProperties.getDriverMsgDiagnostici();
+			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
 			DiagnosticiExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}

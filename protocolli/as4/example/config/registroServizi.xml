@@ -50,8 +50,8 @@
 	</port-type>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-SOAP" />
-	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/xmlProfile.xml"/>
-	<protocol-property name="ebmsServiceProperties" file="/etc/openspcoop2/as4/properties/requiredProperties.xml"/>
+	<protocol-property name="ebmsServicePayloadProfile" file="/etc/govway/as4/payloadProfiles/xmlProfile.xml"/>
+	<protocol-property name="ebmsServiceProperties" file="/etc/govway/as4/properties/requiredProperties.xml"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
@@ -147,8 +147,8 @@
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess" />
 	<!-- <protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" /> -->
-	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/jsonProfile.xml"/>
-	<protocol-property name="ebmsServiceProperties" file="/etc/openspcoop2/as4/properties/requiredProperties.xml"/>
+	<protocol-property name="ebmsServicePayloadProfile" file="/etc/govway/as4/payloadProfiles/jsonProfile.xml"/>
+	<protocol-property name="ebmsServiceProperties" file="/etc/govway/as4/properties/requiredProperties.xml"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="RestExampleForResponse" profilo-collaborazione="oneway"
@@ -163,8 +163,8 @@
         </resource>
 	<protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocessResponse" />
 	<!-- <protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="TEST-REST" /> -->
-	<protocol-property name="ebmsServicePayloadProfile" file="/etc/openspcoop2/as4/payloadProfiles/jsonProfile.xml"/>
-	<protocol-property name="ebmsServiceProperties" file="/etc/openspcoop2/as4/properties/requiredProperties.xml"/>
+	<protocol-property name="ebmsServicePayloadProfile" file="/etc/govway/as4/payloadProfiles/jsonProfile.xml"/>
+	<protocol-property name="ebmsServiceProperties" file="/etc/govway/as4/properties/requiredProperties.xml"/>
     </accordo-servizio-parte-comune>
 
 

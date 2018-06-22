@@ -51,21 +51,21 @@ public class StatusBean implements Serializable {
 			
 			try {
 
-				PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(StatusBean.log);
+				PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(StatusBean.log);
 
-				this.intervalloRefresh = pddMonitorProperties.getIntervalloRefreshStatusPdD();
+				this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshStatusPdD();
 
-				this.enable = pddMonitorProperties.isStatusPdDEnabled();
+				this.enable = govwayMonitorProperties.isStatusPdDEnabled();
 
 				this.sondePdd = SondaPddManager.getInstance(log).getSondePdd();
 
 				log.debug("Verranno monitorate ["+this.sondePdd.size()+"] Sonde.");
 				//
-				//			List<String> nomiPdD = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
+				//			List<String> nomiPdD = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
 				//			for (String nome : nomiPdD) {
 				//				StatusBean.PddBean pddBean = new PddBean();
 				//				pddBean.setNome(nome);
-				//				pddBean.setUrl(pddMonitorProperties.getUrlCheckStatusPdD(nome));
+				//				pddBean.setUrl(govwayMonitorProperties.getUrlCheckStatusPdD(nome));
 				//				this.listaPdd.add(pddBean);
 				//			}
 

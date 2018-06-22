@@ -755,8 +755,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -902,8 +902,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -1773,8 +1773,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -1910,8 +1910,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -2764,8 +2764,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -2901,8 +2901,8 @@ public class LetturaCredenzialiIngresso {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");

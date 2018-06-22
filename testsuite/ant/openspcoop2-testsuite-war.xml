@@ -14,7 +14,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
-	<target name="war_openspcoop2_testsuite">
+	<target name="war_govway_testsuite">
 		
 		<!-- DataSource Properties -->
 		<copy file="${cfg_testsuite}/database.properties" todir="${build_testsuite}/tmp" />
@@ -24,22 +24,22 @@
 				<antcall target="set_property">
 				    <param name="file" value="${build_testsuite}/tmp/database.properties"/>
 					<param name="token" value="org.openspcoop2.datasource.tracciamento.erogatore"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.tracciamento"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${build_testsuite}/tmp/database.properties"/>
 					<param name="token" value="org.openspcoop2.datasource.tracciamento.fruitore"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.tracciamento"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${build_testsuite}/tmp/database.properties"/>
 					<param name="token" value="org.openspcoop2.datasource.openspcoop.erogatore"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${build_testsuite}/tmp/database.properties"/>
 					<param name="token" value="org.openspcoop2.datasource.openspcoop.fruitore"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource.tracciamento"/>
 				</antcall>
 			</then>
 		</if>
@@ -75,7 +75,7 @@
 		</if>
 
 		
-		<war destfile="${dist_testsuite}/OpenSPCoop2TestSuite.war" webxml="${src_testsuite}/WEB-INF/web.xml">
+		<war destfile="${dist_testsuite}/govwayTestSuite.war" webxml="${src_testsuite}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
 			<fileset dir="${openspcoop2}">

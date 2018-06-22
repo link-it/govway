@@ -329,7 +329,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Risorsa per la configurazione della Porta di Dominio "+this.openspcoopProperties.getVersione();
+		String description = "Risorsa per la configurazione ("+this.openspcoopProperties.getVersione()+")";
 
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;
@@ -337,25 +337,25 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		// MetaData per l'attributo livelloMsgDiagnostici
 		MBeanAttributeInfo livelloMsgDiagnosticiVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.MSG_DIAGNOSTICI_SEVERITA_LIVELLO,String.class.getName(),
-						"Livello dei messaggi diagnostici emessi dalla Porta di Dominio \n[off,fatal,errorProtocol,errorIntegration,infoProtocol,infoIntegration,debugLow,debugMedium,debugHigh,all]",
+						"Livello dei messaggi diagnostici emessi\n[off,fatal,errorProtocol,errorIntegration,infoProtocol,infoIntegration,debugLow,debugMedium,debugHigh,all]",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo livelloMsgDiagnosticiHumanReadable
 		MBeanAttributeInfo livelloMsgDiagnosticiLog4JVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.MSG_DIAGNOSTICI_SEVERITA_LIVELLO_LOG4J,String.class.getName(),
-						"Livello dei messaggi diagnostici human readable emessi dalla Porta di Dominio \n[off,fatal,errorProtocol,errorIntegration,infoProtocol,infoIntegration,debugLow,debugMedium,debugHigh,all]",
+						"Livello dei messaggi diagnostici human readable emessi\n[off,fatal,errorProtocol,errorIntegration,infoProtocol,infoIntegration,debugLow,debugMedium,debugHigh,all]",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo msgDiagnosticiAppender
 		MBeanAttributeInfo msgDiagnosticiAppenderVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.MSG_DIAGNOSTICI_APPENDER,String[].class.getName(),
-						"Appender personalizzati per la registrazione dei messaggi diagnostici emessi dalla Porta di Dominio",
+						"Appender personalizzati per la registrazione dei messaggi diagnostici emessi",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 							
 		// MetaData per l'attributo tracciamentoAbilitato
 		MBeanAttributeInfo tracciamentoAbilitatoVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.TRACCIAMENTO_ABILITATO,boolean.class.getName(),
-						"Indicazione se e' abilito il tracciamento delle buste emesse/ricevute dalla Porta di Dominio",
+						"Indicazione se e' abilito il tracciamento delle buste emesse/ricevute",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo dumpBinarioPDAbilitato
@@ -373,13 +373,13 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		// MetaData per l'attributo tracciamentoAppender
 		MBeanAttributeInfo tracciamentoAppenderVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.TRACCIAMENTO_APPENDER,String[].class.getName(),
-						"Appender personalizzati per la registrazione delle buste emesse/ricevute dalla Porta di Dominio",
+						"Appender personalizzati per la registrazione delle buste emesse/ricevute",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo log4jDiagnosticaAbilitato
 		MBeanAttributeInfo log4jDiagnosticaAbilitatoVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.LOG4J_DIAGNOSTICA_ABILITATO,boolean.class.getName(),
-						"Indicazione se è abilitato il logging su file openspcoop2_msgDiagnostico.log",
+						"Indicazione se è abilitato il logging su file govway_diagnostici.log",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo log4jOpenSPCoopAbilitato
@@ -397,7 +397,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		// MetaData per l'attributo log4jTracciamentoAbilitato
 		MBeanAttributeInfo log4jTracciamentoAbilitatoVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.LOG4J_DIAGNOSTICA_ABILITATO,boolean.class.getName(),
-						"Indicazione se è abilitato il logging su file openspcoop2_tracciamento.log",
+						"Indicazione se è abilitato il logging su file govway_tracciamento.log",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
 		// MetaData per l'attributo log4jDumpAbilitato

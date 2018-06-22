@@ -123,8 +123,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public TipiDatabase _getTipoDatabase(org.openspcoop2.generic_project.beans.IProjectInfo pfInfo) {
 		if(this.tipoDatabase == null){
 			try {
-				PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
-				this.tipoDatabase = pddMonitorProperties.tipoDatabase(pfInfo);
+				PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
+				this.tipoDatabase = govwayMonitorProperties.tipoDatabase(pfInfo);
 			} catch (Exception e) {
 				log.error("Errore la get Tipo Database: " + e.getMessage(),e);
 			}
@@ -162,12 +162,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.sortOrders = new HashMap<String, Ordering>();
 
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
 
-			this.intervalloRefresh = pddMonitorProperties.getIntervalloRefreshTransazioniLive();
-			this.tempoMassimoRefreshLive = pddMonitorProperties.getTempoMassimoRefreshLive();
-			this.setRicerchePersonalizzateAttive(pddMonitorProperties.isAttivoModuloRicerchePersonalizzate());
-			this.setStatistichePersonalizzateAttive(pddMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate());			
+			this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshTransazioniLive();
+			this.tempoMassimoRefreshLive = govwayMonitorProperties.getTempoMassimoRefreshLive();
+			this.setRicerchePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloRicerchePersonalizzate());
+			this.setStatistichePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate());			
 		} catch (Exception e) {
 			log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}

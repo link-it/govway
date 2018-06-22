@@ -45,7 +45,7 @@ public class TrasparenteTestsuiteLogger {
 					loggerProperties.load(TrasparenteTestsuiteLogger.class.getResourceAsStream("/testsuite_trasparente.log4j2.properties"));
 				}
 				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
-				logger = LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
+				logger = LoggerWrapperFactory.getLogger("govway.testsuite");
 			}catch(Exception e){
 				System.err.println("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop: "
 						+e.getMessage());

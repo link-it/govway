@@ -65,12 +65,12 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>	
-		<antcall target="build_openspcoop2_protocol-api_jar" >
+		<antcall target="build_govway_protocol-api_jar" >
 	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>
-		<antcall target="build_openspcoop2_monitor-api_jar" >
+		<antcall target="build_govway_monitor-api_jar" >
 	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
@@ -80,12 +80,12 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>	
-		<antcall target="build_openspcoop2_protocol_jar" >
+		<antcall target="build_govway_protocol_jar" >
 	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>
-		<antcall target="build_openspcoop2_monitor_jar" >
+		<antcall target="build_govway_monitor_jar" >
 	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>

@@ -47,11 +47,11 @@
 				<mkdir dir="${build_transazioni_ws_client}/classes" />
 				<unzip dest="${build_transazioni_ws_client}/classes">
 					<fileset dir="${dist_transazioni_ws_client}">
-						<include name="openspcoop2_ws-transazioni-client*.jar"/>
+						<include name="govway_ws-transazioni-client*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_transazioni_ws_client}" >
-					<include name="openspcoop2_ws-transazioni-client*.jar"/>
+					<include name="govway_ws-transazioni-client*.jar"/>
 				</delete>
 				<mkdir dir="${build_transazioni_ws_client}/classes/transazioni" />
 				<copy todir="${build_transazioni_ws_client}/classes/transazioni">

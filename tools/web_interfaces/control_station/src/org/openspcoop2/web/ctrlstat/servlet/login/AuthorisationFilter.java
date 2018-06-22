@@ -102,7 +102,7 @@ public final class AuthorisationFilter implements Filter {
 //			System.out.println("SERVLET PATH INFO ["+request.getPathInfo()+"]");
 //			System.out.println("SERVLET QUERY STRING ["+request.getQueryString()+"]");
 //			System.out.println("SERVLET URL ["+request.getRequestURL()+"]");
-			String contextPath = request.getContextPath(); // '/pddConsole'
+			String contextPath = request.getContextPath(); // '/govwayConsole'
 			
 			// Non faccio il filtro sulla pagina di login e sulle immagini
 			String urlRichiesta = request.getRequestURI();

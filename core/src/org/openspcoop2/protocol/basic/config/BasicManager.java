@@ -143,12 +143,12 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 	
 	@Override
 	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo(){
-		return null; // default in openspcoop2.properties
+		return null; // default in govway.properties
 	}
 	
 	@Override
 	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD(){
-		return null; // default in openspcoop2.properties
+		return null; // default in govway.properties
 	}
 	
 	

@@ -90,7 +90,7 @@ public class LoaderHelper {
 
 		this.session = session;
 
-		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+		this.log = LoggerWrapperFactory.getLogger("govway.loader");
 		try {
 			this.core = new LoaderCore();
 			this.aboutCore = new AboutCore(this.core);

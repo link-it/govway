@@ -1778,9 +1778,9 @@ public class CostantiTestSuite {
 	public static final String INTERFACCIA_GUI_PDD="pdd";
 	/** Tipo interfaccia GUI: regserv  */
 	public static final String INTERFACCIA_GUI_REGSERV="regserv";
-	/** Tipo interfaccia GUI: pddConsole  */
-	public static final String INTERFACCIA_GUI_CONTROL_STATION="pddConsole";
-	/** Tipo interfaccia GUI: pddConsoleSinglePdD  */
-	public static final String INTERFACCIA_GUI_CONTROL_STATION_SINGLE_PDD="pddConsoleSinglePdD";
+	/** Tipo interfaccia GUI: govwayConsole  */
+	public static final String INTERFACCIA_GUI_CONTROL_STATION="govwayConsole";
+	/** Tipo interfaccia GUI: govwayConsoleSinglePdD  */
+	public static final String INTERFACCIA_GUI_CONTROL_STATION_SINGLE_PDD="govwayConsoleSinglePdD";
 	
 }

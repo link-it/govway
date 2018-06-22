@@ -33,7 +33,7 @@ public class ProjectInfo implements IProjectInfo {
 
 	@Override
 	public String getProjectName(){
-		return "openspcoop2_protocol_as4_ebms_v3.0";
+		return "govway_protocol_as4_ebms_v3.0";
 	}
 	
 	@Override

@@ -117,7 +117,7 @@ public class ClientCore {
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
+		this.log=LoggerWrapperFactory.getLogger("govway.testsuite");
 			
 	}
 	

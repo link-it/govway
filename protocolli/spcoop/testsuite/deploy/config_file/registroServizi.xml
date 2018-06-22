@@ -389,10 +389,10 @@
          applicativo, secondo i wsdl forniti nell'accordo di servizio.
       -->
     <accordo-servizio-parte-comune nome="ASMultiPortTypeValidazioneWSDL"
-        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
-        wsdl-concettuale="/etc/openspcoop2/concettuale.wsdl"
-        wsdl-logico-erogatore="/etc/openspcoop2/logicoErogatore.wsdl"
-        wsdl-logico-fruitore="/etc/openspcoop2/logicoFruitore.wsdl" utilizzo-senza-azione="false" service-binding="soap">
+        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/govway/definitorio.xsd"
+        wsdl-concettuale="/etc/govway/concettuale.wsdl"
+        wsdl-logico-erogatore="/etc/govway/logicoErogatore.wsdl"
+        wsdl-logico-fruitore="/etc/govway/logicoFruitore.wsdl" utilizzo-senza-azione="false" service-binding="soap">
         <port-type nome="GestioneUtentiWrappedDocumentLiteral">
             <azione nome="registrazioneUtenteWDL"/>
             <azione nome="eliminazioneUtenteWDL"/>
@@ -433,10 +433,10 @@
             <azione nome="registrazioneUtenteRPCL"/>
             <azione nome="registrazioneUtenteRPCE"/>
         </port-type>
-        <allegato tipo="XML" file="/etc/openspcoop2/types.xsd"/>
-        <allegato tipo="XML" file="/etc/openspcoop2/wrappedDocumentLiteralEsempio1.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/types.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/wrappedDocumentLiteralEsempio1.xsd"/>
         <specifica-semiformale tipo="XML"
-            file="/etc/openspcoop2/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
+            file="/etc/govway/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
     </accordo-servizio-parte-comune>
 
     <!-- 
@@ -447,7 +447,7 @@
          Unico wsdl necessario per la validazione e' quello definitorio.
       -->
     <accordo-servizio-parte-comune nome="ASMultiPortTypeValidazioneOpenSPCoop"
-        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
+        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/govway/definitorio.xsd"
         utilizzo-senza-azione="false" service-binding="soap">
         <port-type nome="GestioneUtentiWrappedDocumentLiteral" style="document">
             <azione nome="registrazioneUtenteWDL" soap-action="registrazioneUtenteWDL">
@@ -723,10 +723,10 @@
                 </message-output>
             </azione>
         </port-type>
-        <allegato tipo="XML" file="/etc/openspcoop2/types.xsd"/>
-        <allegato tipo="XML" file="/etc/openspcoop2/wrappedDocumentLiteralEsempio1.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/types.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/wrappedDocumentLiteralEsempio1.xsd"/>
         <specifica-semiformale tipo="XML"
-            file="/etc/openspcoop2/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
+            file="/etc/govway/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione" versione="1"
@@ -738,12 +738,12 @@
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="TestValidazioneApplicativaErrata"
-        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
+        profilo-collaborazione="sincrono" wsdl-definitorio="/etc/govway/definitorio.xsd"
         utilizzo-senza-azione="true" service-binding="soap">
-        <allegato tipo="XML" file="/etc/openspcoop2/types.xsd"/>
-        <allegato tipo="XML" file="/etc/openspcoop2/wrappedDocumentLiteralEsempio1.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/types.xsd"/>
+        <allegato tipo="XML" file="/etc/govway/wrappedDocumentLiteralEsempio1.xsd"/>
         <specifica-semiformale tipo="XML"
-            file="/etc/openspcoop2/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
+            file="/etc/govway/wrappedDocumentLiteralEsempio2_importDaWsdl.xsd"/>
     </accordo-servizio-parte-comune>
 
 
@@ -774,17 +774,17 @@
 
     <soggetto tipo="spc" nome="Soggetto1" porta-dominio="PdDSoggetto1">
         <connettore tipo="http" nome="PdDSoggetto1">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
     </soggetto>
     <soggetto tipo="spc" nome="Soggetto2" porta-dominio="PdDSoggetto2">
         <connettore tipo="http" nome="PdDSoggetto2">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
     </soggetto>
     <soggetto tipo="spc" nome="SoggettoNonAutenticato" porta-dominio="PdDSoggettoNonAutenticato">
         <connettore tipo="http" nome="PdDSoggettoNonAutenticato">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
     </soggetto>
 
@@ -795,13 +795,13 @@
 
     <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore" porta-dominio="PdDEsempioSoapBoxFruitore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
     </soggetto>
 
     <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxErogatore" porta-dominio="PdDEsempioSoapBoxErogatore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -817,7 +817,7 @@
     <!-- Soggetto Mittente degli esempi -->
     <soggetto tipo="spc" nome="MinisteroFruitore" codice-ipa="o=MinisteroFruitore,c=it">
         <connettore tipo="http" nome="PdDMinisteroFruitore">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay, per esempio di Loopback -->
@@ -858,7 +858,7 @@
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneFruitore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -868,7 +868,7 @@
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneFruitore.wsdl">
              <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -879,7 +879,7 @@
     <soggetto tipo="spc" nome="MinisteroErogatore" codice-ipa="o=MinisteroErogatore,c=it">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -892,10 +892,10 @@
 	    <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
-                    <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
-                    <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
@@ -908,10 +908,10 @@
 	    <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore rilevato, poiche' client-auth=abilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
-                    <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
-                    <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
@@ -927,7 +927,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/PA"
                         />
                     </connettore>
 		    <azione>WSSEncryptError</azione>
@@ -935,7 +935,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/PA"
                         />
                     </connettore>
 		    <azione>WSSSignatureError</azione>
@@ -944,12 +944,12 @@
                 <!-- TEST HTTPS -->
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                            valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="keyStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                            valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="keyStorePassword" valore="openspcoopjks"/>
                         <property nome="keyPassword" valore="openspcoop"/>
                         <property nome="hostnameVerifier" valore="false"/>
@@ -958,12 +958,12 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto2.jks"/>
+                            valore="/etc/govway/keys/soggetto2.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="keyStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto2.jks"/>
+                            valore="/etc/govway/keys/soggetto2.jks"/>
                         <property nome="keyStorePassword" valore="openspcoopjks"/>
                         <property nome="keyPassword" valore="openspcoop"/>
                         <property nome="hostnameVerifier" valore="false"/>
@@ -972,9 +972,9 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth_error">
-                        <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                            valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
@@ -982,9 +982,9 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_without_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                            valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
@@ -992,9 +992,9 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_ca_non_presente">
-                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1_senzaCA.jks"/>
+                            valore="/etc/govway/keys/soggetto1_senzaCA.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
@@ -1002,9 +1002,9 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_hostname_verify">
-                        <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
                         <property nome="trustStoreLocation"
-                            valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                            valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="true"/>
                     </connettore>
@@ -1015,7 +1015,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_allega_body">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaFunzionalitaAllegaBody?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaAllegaBody?forward=http://127.0.0.1:8080/govway/spcoop/PA"
                         />
                     </connettore>
 		    <azione>allegaBody</azione>
@@ -1023,7 +1023,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_scarta_body">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaFunzionalitaScartaBody?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaScartaBody?forward=http://127.0.0.1:8080/govway/spcoop/PA"
                         />
                     </connettore>
 		    <azione>scartaBody</azione>
@@ -1033,7 +1033,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneXMLHeaderEGov">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?headerEGov=true"
+                            valore="http://localhost:8080/govwayTestSuite/verificaXMLMalformati?headerEGov=true"
                         />
                     </connettore>
 		    <azione>malformazioneXMLHeaderEGov</azione>
@@ -1041,7 +1041,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneXMLBody">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?body=body"
+                            valore="http://localhost:8080/govwayTestSuite/verificaXMLMalformati?body=body"
                         />
                     </connettore>
 		    <azione>malformazioneXMLBody</azione>
@@ -1049,7 +1049,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneContentTypeRisposta">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?contentTypeRisposta=true"
+                            valore="http://localhost:8080/govwayTestSuite/verificaXMLMalformati?contentTypeRisposta=true"
                         />
                     </connettore>
 		    <azione>malformazioneContentTypeRisposta</azione>
@@ -1059,7 +1059,7 @@
 		<configurazione-azione>
                     <connettore tipo="http" nome="soapFaultPdDConPrefixErrato">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultPrefixErrato.xml"
+                            valore="http://localhost:8080/govwayTestSuite/echoService?returnCode=500&amp;destFile=/etc/govway/testfiles/soapFaultPrefixErrato.xml"
                         />
                     </connettore>
 		    <azione>soapFaultPdDConPrefixErrato</azione>
@@ -1067,7 +1067,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="soapFaultPdDSenzaPrefix">
                         <property nome="location"
-                            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultSenzaPrefix.xml"
+                            valore="http://localhost:8080/govwayTestSuite/echoService?returnCode=500&amp;destFile=/etc/govway/testfiles/soapFaultSenzaPrefix.xml"
                         />
                     </connettore>
 		    <azione>soapFaultPdDSenzaPrefix</azione>
@@ -1081,10 +1081,10 @@
             <fruitore tipo="spc" nome="Soggetto1">
                 <!-- Viene utilizzato come identita il soggetto1: corretto -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
-                    <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
-                    <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
@@ -1093,10 +1093,10 @@
             <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: scorretto -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
-                    <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
-                    <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
@@ -1105,10 +1105,10 @@
             <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
-                    <property nome="trustStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
-                    <property nome="keyStoreLocation" valore="/etc/openspcoop2/keys/soggetto1.jks"/>
+                    <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="keyStorePassword" valore="openspcoopjks"/>
                     <property nome="keyPassword" valore="openspcoop"/>
                     <property nome="hostnameVerifier" valore="false"/>
@@ -1129,7 +1129,7 @@
             <fruitore tipo="spc" nome="TestUrlPrefixRewriter10"/>
 	    -->
 
-	    <specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/xacmlPolicy/SAMLPolicy.xml"/>
+	    <specifica-sicurezza tipo="XACML-Policy" file="/etc/govway/xacmlPolicy/SAMLPolicy.xml"/>
 
         </accordo-servizio-parte-specifica>
 
@@ -1215,57 +1215,57 @@
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoUtentiWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiRPCLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiRPCLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiRPCEncoded"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiRPCEncoded"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiOverloadedOperations"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiOverloadedOperations"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiStileIbrido"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiStileIbrido"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -1274,63 +1274,63 @@
            tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoUtentiWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
 	    tipo="spc" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
 	    tipo="spc" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiRPCLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
 	    tipo="spc" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiRPCEncoded"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
             tipo="spc" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiOverloadedOperations"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
 	    tipo="spc" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiStileIbrido"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneErogatore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -1380,7 +1380,7 @@
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneFruitore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -1390,7 +1390,7 @@
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
-            wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
+            wsdl-implementativo-erogatore="/etc/govway/implementazioneFruitore.wsdl">
             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
@@ -1471,7 +1471,7 @@
     <soggetto tipo="spc" nome="SoggettoConnettoreErrato">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-            <property nome="location" valore="http://localhost:82/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:82/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1514,7 +1514,7 @@
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location"
-                valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaReadTimeout"/>
+                valore="http://localhost:8080/govwayTestSuite/verificaReadTimeout"/>
         </connettore>
 
         <!-- Profilo di collaborazione Sincrono -->
@@ -1530,7 +1530,7 @@
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location"
-                valore="http://127.0.2.2:7777/OpenSPCoop2TestSuite/qualsiasiContest"/>
+                valore="http://127.0.2.2:7777/govwayTestSuite/qualsiasiContest"/>
         </connettore>
 
         <!-- Profilo di collaborazione Sincrono -->
@@ -1546,7 +1546,7 @@
     <soggetto tipo="spc" nome="SoggettoConnettoreSOAPFaultServer">
 
         <connettore tipo="http" nome="PdDSOAPFaultServer">
-            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/soapfault"/>
+            <property nome="location" valore="http://localhost:8080/govwayTestSuite/soapfault"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1590,7 +1590,7 @@
     <soggetto tipo="spc" nome="SoggettoConfigurazionePdDErrata">
 
         <connettore tipo="http" nome="PdDConfigurazioneErrata">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1634,7 +1634,7 @@
     <soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroFruitoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1664,7 +1664,7 @@
     <soggetto tipo="spc" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1723,7 +1723,7 @@
     <soggetto tipo="test" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1756,7 +1756,7 @@
     <soggetto tipo="spc" nome="MinisteroTmp">
 
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: test per profilo -->
@@ -1780,7 +1780,7 @@
 
         <connettore tipo="http" nome="PdDSoggettoTestConsegnaInOrdine">
             <property nome="location"
-                valore="http://localhost:8080/OpenSPCoop2TestSuite/congelamentoBusta?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA&#38;secondiCongelamento=60"
+                valore="http://localhost:8080/govwayTestSuite/congelamentoBusta?forward=http://127.0.0.1:8080/govway/spcoop/PA&#38;secondiCongelamento=60"
             />
         </connettore>
 
@@ -1797,7 +1797,7 @@
     <soggetto tipo="spc" nome="TestRichiesteScorrette">
 
         <connettore tipo="http" nome="PdDTestRichiesteScorrette">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
     </soggetto>
@@ -1816,7 +1816,7 @@
     <soggetto tipo="spc" nome="SOAPFaultSenzaDetails">
         <connettore tipo="http" nome="PdDSOAPFaultSenzaDetails">
             <property nome="location"
-                valore="http://localhost:8080/OpenSPCoop2TestSuite/soapfault?details=false"/>
+                valore="http://localhost:8080/govwayTestSuite/soapfault?details=false"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1829,7 +1829,7 @@
     <!-- Test UrlPrefixRewriter -->
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter1">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1838,7 +1838,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter2">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1847,7 +1847,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter3">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1856,7 +1856,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter4">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1874,7 +1874,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter6">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1883,7 +1883,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter7">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1901,7 +1901,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter9">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1910,7 +1910,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter10">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">

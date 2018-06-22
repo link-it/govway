@@ -124,7 +124,7 @@ public class DatabaseComponent {
 		int giriMax = 300;
 		String query = "select "+TRACCE+"."+TRACCE_COLUMN_GDO+" from "+TRACCE+" where "+TRACCE+"."+TRACCE_COLUMN_ID_MESSAGGIO+"='"+id+"' AND "+
 			 	TRACCE_COLUMN_IS_ARRIVED+"='0' AND "+TRACCE_COLUMN_PDD_CODICE+" LIKE '"+destinatario+"%"+"' ORDER BY "+TRACCE+"."+TRACCE_COLUMN_GDO+"";
-		LoggerWrapperFactory.getLogger("openspcoop2.testsuite").debug("Query in corso...:  "+query);
+		LoggerWrapperFactory.getLogger("govway.testsuite").debug("Query in corso...:  "+query);
 		while(giro<giriMax){
 			try {
 				//System.out.println("SELECT [select tracce.gdo from tracce where tracce.id_egov="+id+" AND "+CostantiDatabase.IS_ARRIVED+"=0 AND "+CostantiDatabase.ID_PORTA+" LIKE "+destinatario+"%"+" ORDER BY tracce.gdo]");

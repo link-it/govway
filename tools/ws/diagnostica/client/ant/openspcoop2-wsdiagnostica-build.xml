@@ -46,11 +46,11 @@
 				<mkdir dir="${build_diagnostica_ws_client}/classes" />
 				<unzip dest="${build_diagnostica_ws_client}/classes">
 					<fileset dir="${dist_diagnostica_ws_client}">
-						<include name="openspcoop2_ws-diagnostica-client*.jar"/>
+						<include name="govway_ws-diagnostica-client*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_diagnostica_ws_client}" >
-					<include name="openspcoop2_ws-diagnostica-client*.jar"/>
+					<include name="govway_ws-diagnostica-client*.jar"/>
 				</delete>
 				<mkdir dir="${build_diagnostica_ws_client}/classes/diagnostica" />
 				<copy todir="${build_diagnostica_ws_client}/classes/diagnostica">

@@ -2,7 +2,7 @@
           
           <accesso-registro>
   	       <cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
-               <registro nome="RegistroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml" />
+               <registro nome="RegistroXML" tipo="xml" location="/etc/govway/registroServizi.xml" />
           </accesso-registro>
 
           <!-- Configurazione dell'engine per la validazione delle buste eGov -->
@@ -30,10 +30,10 @@
           <messaggi-diagnostici severita="infoIntegration" severita-log4j="infoIntegration">    
               <openspcoop-appender tipo="protocol">
 		    <!-- jbossDatasource -->
-                    <property nome="datasource" valore="org.openspcoop2.dataSource.msgDiagnostici" /> 
+                    <property nome="datasource" valore="org.govway.datasource.tracciamento" /> 
 		    <!-- fineJbossDatasource -->
 		    <!-- tomcatDatasource 
-                    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.msgDiagnostici" />
+                    <property nome="datasource" valore="java:/comp/env/org.govway.datasource.tracciamento" />
                     fineTomcatDatasource -->
               </openspcoop-appender>
           </messaggi-diagnostici>
@@ -42,10 +42,10 @@
 	  <tracciamento stato="abilitato">
               <openspcoop-appender tipo="protocol">
 		    <!-- jbossDatasource -->
-                    <property nome="datasource" valore="org.openspcoop2.dataSource.tracciamento" />
+                    <property nome="datasource" valore="org.govway.datasource.tracciamento" />
 		    <!-- fineJbossDatasource -->
 		    <!-- tomcatDatasource
-		    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.tracciamento" />
+		    <property nome="datasource" valore="java:/comp/env/org.govway.datasource.tracciamento" />
 		    fineTomcatDatasource -->
                     <property nome="tipoDatabase" valore="@TIPO_DATABASE@" /> 
               </openspcoop-appender>
@@ -55,10 +55,10 @@
 	  <dump stato="abilitato" dump-binario-porta-delegata="disabilitato" dump-binario-porta-applicativa="disabilitato">
               <openspcoop-appender tipo="protocol">
 		    <!-- jbossDatasource -->
-                    <property nome="datasource" valore="org.openspcoop2.dataSource.tracciamento" />
+                    <property nome="datasource" valore="org.govway.datasource.tracciamento" />
 		    <!-- fineJbossDatasource -->
 		    <!-- tomcatDatasource
-		    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.tracciamento" />
+		    <property nome="datasource" valore="java:/comp/env/org.govway.datasource.tracciamento" />
 		    fineTomcatDatasource -->
                     <property nome="tipoDatabase" valore="@TIPO_DATABASE@" /> 
               </openspcoop-appender>

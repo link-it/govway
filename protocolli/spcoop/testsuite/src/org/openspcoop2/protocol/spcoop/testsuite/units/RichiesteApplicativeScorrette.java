@@ -170,7 +170,7 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]");
+		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/PD/"+portaDelegata+"]");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
@@ -3353,13 +3353,13 @@ public class RichiesteApplicativeScorrette {
 	
 	/*
 	
-	OPENSPCOOP2_ORG_436: Tipo del Soggetto Fruitore non supportato dal Protocollo
+	GOVWAY_ORG_436: Tipo del Soggetto Fruitore non supportato dal Protocollo
 
-	OPENSPCOOP2_ORG_437: Tipo del Soggetto Erogatore non supportato dal Protocollo
+	GOVWAY_ORG_437: Tipo del Soggetto Erogatore non supportato dal Protocollo
 
-	OPENSPCOOP2_ORG_438: Tipo di Servizio non supportato dal Protocollo
+	GOVWAY_ORG_438: Tipo di Servizio non supportato dal Protocollo
 
-	OPENSPCOOP2_ORG_439: Funzionalità non supportato dal Protocollo (es. profiloAsincrono sul protocollo trasparente
+	GOVWAY_ORG_439: Funzionalità non supportato dal Protocollo (es. profiloAsincrono sul protocollo trasparente
 	
 	NON VERIFICABILI
 	

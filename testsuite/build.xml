@@ -184,10 +184,10 @@
 	
 	
 	<!-- Compilazione della testsuite-->
-	<target name="compile_testsuite" depends="init_compile_testsuite,compile_openspcoop2_testsuite" description="compila la testsuite"/>
+	<target name="compile_testsuite" depends="init_compile_testsuite,compile_govway_testsuite" description="compila la testsuite"/>
 	
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_testsuite" depends="compile_testsuite,war_openspcoop2_testsuite" description="Crea la struttura del modulo WAR" />
+	<target name="build_testsuite" depends="compile_testsuite,war_govway_testsuite" description="Crea la struttura del modulo WAR" />
 	
 	<!-- alias -->
 	<target name="build" depends="build_testsuite"/>

@@ -50,14 +50,14 @@ public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBea
 
 		// inizializzazione
 		try {
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(EventiBean.log);
-			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
-			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
-			this.visualizzaIdClusterAsSelectList = pddMonitorProperties.isAttivoTransazioniUtilizzoSondaPdDListAsClusterId();
-			if(pddMonitorare!=null && pddMonitorare.size()>1){
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(EventiBean.log);
+			List<String> govwayMonitorare = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
+			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
+			this.visualizzaIdClusterAsSelectList = govwayMonitorProperties.isAttivoTransazioniUtilizzoSondaPdDListAsClusterId();
+			if(govwayMonitorare!=null && govwayMonitorare.size()>1){
 				this.listIdCluster = new ArrayList<String>();
 				this.listIdCluster.add("--");
-				this.listIdCluster.addAll(pddMonitorare);
+				this.listIdCluster.addAll(govwayMonitorare);
 			}
 		} catch (Exception e) {
 			EventiBean.log

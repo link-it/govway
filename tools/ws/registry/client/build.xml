@@ -96,13 +96,13 @@
 			<fileset dir="${dist_registry_ws_client}" includes="*.jar" />
 		</copy> -->
 		<copy tofile="${stub_registry_ws_client}/openspcoop2_registryStub_cxf.jar">
-			<fileset dir="${dist_registry_ws_client}" includes="openspcoop2_ws-registry-client-all*.jar" />
+			<fileset dir="${dist_registry_ws_client}" includes="govway_ws-registry-client-all*.jar" />
 		</copy>
 		<copy tofile="${stub_registry_ws_client}/openspcoop2_registrySearchStub_cxf.jar">
-			<fileset dir="${dist_registry_ws_client}" includes="openspcoop2_ws-registry-client-search*.jar" />
+			<fileset dir="${dist_registry_ws_client}" includes="govway_ws-registry-client-search*.jar" />
 		</copy>
 		<copy tofile="${stub_registry_ws_client}/openspcoop2_registryCRUDStub_cxf.jar">
-			<fileset dir="${dist_registry_ws_client}" includes="openspcoop2_ws-registry-client-crud*.jar" />
+			<fileset dir="${dist_registry_ws_client}" includes="govway_ws-registry-client-crud*.jar" />
 		</copy>
 	</target>
 	<target name="build_jar_stub" depends="build,copyStub" /> <!-- alias -->

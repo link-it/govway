@@ -239,17 +239,17 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Risorsa per la gestione delle proprietà di sistema utilizzate dalla Porta di Dominio "+this.openspcoopProperties.getVersione();
+		String description = "Risorsa per la gestione delle proprietà di sistema ("+this.openspcoopProperties.getVersione()+")";
 
 		// MetaData per l'attributo propertiesVAR
 		MBeanAttributeInfo propertiesVAR 
 			= new MBeanAttributeInfo(SysPropsJMXResource.OPENSPCOOP2_SYSTEM_PROPERTIES,String.class.getName(),
-						"proprietà di sistema impostate tramite la configurazione della Porta di Dominio",
+						"proprietà di sistema impostate tramite la configurazione",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,!JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 
 		// MetaData per l'operazione refreshPersistentConfigurazioneOP
 		MBeanOperationInfo refreshPersistentConfigurazioneOP 
-			= new MBeanOperationInfo(SysPropsJMXResource.REFRESH_PERSISTENT_SYSTEM_PROPERTIES,"Reimposta le proprietà di sistema indicate nella configurazione della Porta di Dominio",
+			= new MBeanOperationInfo(SysPropsJMXResource.REFRESH_PERSISTENT_SYSTEM_PROPERTIES,"Reimposta le proprietà di sistema indicate nella configurazione",
 					null,
 					//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 					String.class.getName(),
@@ -265,7 +265,7 @@ public class SysPropsJMXResource extends NotificationBroadcasterSupport implemen
 		
 		// MetaData per l'operazione readOpenSPCoop2PropertiesOP
 		MBeanOperationInfo readOpenSPCoop2PropertiesOP 
-			= new MBeanOperationInfo(SysPropsJMXResource.READ_OPENSPCOOP2_SYSTEM_PROPERTIES,"Visualizza le proprietà di sistema impostate tramite la configurazione della Porta di Dominio",
+			= new MBeanOperationInfo(SysPropsJMXResource.READ_OPENSPCOOP2_SYSTEM_PROPERTIES,"Visualizza le proprietà di sistema impostate tramite la configurazione",
 					null,
 					//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 					String.class.getName(),

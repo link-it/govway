@@ -61,16 +61,16 @@
 	<property name="commons_webcontent_properties" value="${commons_webcontent}/properties" />
 	
 	<!-- PddConsole -->
-	<property name="pddConsole" value="${rootDir}/tools/web_interfaces/control_station/" />
-	<property name="src_pddConsole" value="${pddConsole}/src" />
-	<property name="required_lib_pddConsole" value="${required_lib}"/>
-	<import file="${pddConsole}/build.xml"/>
+	<property name="govwayConsole" value="${rootDir}/tools/web_interfaces/control_station/" />
+	<property name="src_govwayConsole" value="${govwayConsole}/src" />
+	<property name="required_lib_govwayConsole" value="${required_lib}"/>
+	<import file="${govwayConsole}/build.xml"/>
 
 	<!-- PddMonitor -->
-	<property name="pddMonitor" value="${rootDir}/tools/web_interfaces/monitor/" />
-	<property name="src_pddMonitor" value="${pddMonitor}/src" />
-	<property name="required_lib_pddMonitor" value="${required_lib}"/>
-	<import file="${pddMonitor}/build.xml"/>
+	<property name="govwayMonitor" value="${rootDir}/tools/web_interfaces/monitor/" />
+	<property name="src_govwayMonitor" value="${govwayMonitor}/src" />
+	<property name="required_lib_govwayMonitor" value="${required_lib}"/>
+	<import file="${govwayMonitor}/build.xml"/>
 
 	<!-- Loader -->
 	<property name="loaderConsole" value="${rootDir}/tools/web_interfaces/loader/" />

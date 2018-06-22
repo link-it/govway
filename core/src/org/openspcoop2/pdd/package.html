@@ -5,7 +5,7 @@
 <!--
   @(#)package.html      $Rev$, $Date$
  
-OpenSPCoop - Customizable API Gateway 
+GovWay - Customizable API Gateway 
 http://www.openspcoop2.org
  
 Copyright (c) 2005-2018 Link.it srl (http://link.it). 
@@ -27,65 +27,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body bgcolor="white">
 
-Fornisce diversi package che formano l'infrastruttura di OpenSPCoop.
+Fornisce diversi package che formano l'infrastruttura di GovWay.
 <p>  
 Questo package e' suddiviso nei seguenti package :
 <ul>
-<li>Servizi di OpenSPCoop
-<li>Message Driven Bean di OpenSPCoop 
-<li>Configurazione di OpenSPCoop
-<li>Logger di OpenSPCoop
-<li>Timer di OpenSPCoop
-<li>Configurazione risorse esterne di OpenSPCoop
-<li>Utility di OpenSPCoop
+<li>Servizi di GovWay
+<li>Message Driven Bean di GovWay 
+<li>Configurazione di GovWay
+<li>Logger di GovWay
+<li>Timer di GovWay
+<li>Configurazione risorse esterne di GovWay
+<li>Utility di GovWay
 </ul>
 <p>
 
 
-<h3>Servizi di OpenSPCoop</h3>
+<h3>Servizi di GovWay</h3>
 
 
 In questo package sono fornite classi che definiscono servizi. Esistono i seguenti servizi :
 <ul>
-<li>RicezioneContenutiApplicativi; servizio che si occupa di ricevere richieste Soap, e di inoltrarle all'infrastruttura OpenSPCoop.
+<li>RicezioneContenutiApplicativi; servizio che si occupa di ricevere richieste Soap, e di inoltrarle all'infrastruttura GovWay.
     Si occupa anche di aspettare e consegnare una risposta.
-<li>RicezioneBuste; servizio che si occupa di ricevere buste, e di inoltrarle all'infrastruttura OpenSPCoop.
+<li>RicezioneBuste; servizio che si occupa di ricevere buste, e di inoltrarle all'infrastruttura GovWay.
     Eventualmente, in caso di profilo di collaborazione sincrono, si occupa anche della gestione di una risposta.
-<li>IntegrationManager; servizio che si occupa di recuperare all'interno dell'infrastruttura OpenSPCoop, 
+<li>IntegrationManager; servizio che si occupa di recuperare all'interno dell'infrastruttura GovWay, 
     eventuali risposte applicative destinate
     ad uno specifico cliente, il quale aveva precedentemente effettuato la richiesta, senza mai ricevere la risposta. 
 </ul>
 <p>
-Inoltre sono definiti messaggi che possono essere spediti da altri componenti dell'infrastruttura OpenSPCoop, ai servizi definiti
+Inoltre sono definiti messaggi che possono essere spediti da altri componenti dell'infrastruttura GovWay, ai servizi definiti
 all'interno di questo package.
 <p>
  
 
-<h3>MDB di OpenSPCoop</h3>
+<h3>MDB di GovWay</h3>
 
 In questo package sono fornite classi che definiscono Message Driven Bean. Esistono i seguenti bean :
 <ul>
 <li>Imbustamento, ImbustamentoRisposte; si occupa di ricevere richieste/risposte Soap, e di mapparle in porte delegate registrate
-    precedentemente all'interno dell'infrastruttura OpenSPCoop.
+    precedentemente all'interno dell'infrastruttura GovWay.
     Inoltre si occupa di imbustarle con un header Soap, definito dalla specifica del protocollo e di gestire le varie funzionalita' del protocollo.
 <li>InoltroBuste, InoltroRisposte; si occupa di consegnare le buste create dal precedente MDB, ad un altra porta di dominio, 
     a cui il destinatario della busta e' associato.
 <li>Sbustamento, SbustamentoRisposte; si occupa di ricevere buste, e di sbustarle dall'header del protocollo. 
     Inoltre si occupa di gestire le varie funzionalita' e di mapparle in porte applicative registrate
-    precedentemente all'interno dell'infrastruttura OpenSPCoop.
+    precedentemente all'interno dell'infrastruttura GovWay.
 <li>ConsegnaContenutiApplicativi; si occupa di consegnare le buste soap, all'applicazione destinataria (Server).
     I possibili tipi di consegna sono implementati attraversi connettori diversi che implementano una interfaccia comune, 
     <code>org.openspcoop.utils.Connettore</code>
 </ul>
 <p>
-Inoltre sono definiti messaggi che possono essere spediti da altri componenti dell'infrastruttura OpenSPCoop, ai MDB  definiti
+Inoltre sono definiti messaggi che possono essere spediti da altri componenti dell'infrastruttura GovWay, ai MDB  definiti
 all'interno di questo package.
 <p>
 
 
-<h3>Configurazione di OpenSPCoop</h3>
+<h3>Configurazione di GovWay</h3>
 
-OpenSPCoop dispone di una configurazione, dove sono
+GovWay dispone di una configurazione, dove sono
 registrate le seguenti informazioni :
 <ul>
 <li> Porte Delegate.
@@ -96,62 +96,62 @@ registrate le seguenti informazioni :
 <p>
 All'interno di questo package sono definite classi che sono il mapping delle informazioni presenti nel file di configurazione.
 <p>
-Vengono fornite classi per la gestione delle risorse esterne utilizzata da OpenSPCoop:
+Vengono fornite classi per la gestione delle risorse esterne utilizzata da GovWay:
 <ul>
 <li> <code>DBManager</code>: gestisce le connessioni al DB
 <li> <code>QueueManager</code>: gestisce le connessioni al broker JMS
 </ul>
 Altre classi fornite gestiscono pool alle risorse DB e JMS.
 <p>
-Vengono forniti reader di file properties utilizzati da OpenSPCoop:
+Vengono forniti reader di file properties utilizzati da GovWay:
 <ul>
-<li> <code>OpenSPCoopProperties</code>: gestisce le proprieta' di configurazione di OpenSPCoop
-<li> <code>ClassNameProperties</code>: gestisce i nomi di classi istanziate dinamicamente da OpenSPCoop
+<li> <code>GovWayProperties</code>: gestisce le proprieta' di configurazione di GovWay
+<li> <code>ClassNameProperties</code>: gestisce i nomi di classi istanziate dinamicamente da GovWay
 </ul>
 <p>
 
-<h3>Logger di OpenSPCoop</h3>
+<h3>Logger di GovWay</h3>
 
 Fornisce la classe <code>Logger</code>
 che definisce un logger utilizzato per registrare su file e su db 
 i tracciamenti e i messaggi diagnostici generati dalla porta di dominio.
-Le impostazioni del Logger sono settabili all'interno del file 'openspcoop2.log4j2.properties'.
+Le impostazioni del Logger sono settabili all'interno del file 'govway.log4j2.properties'.
 La classe <code>MsgDiagnostico</code> permette di emettere messaggi diagnostici secondo specifica.
 La classe <code>Tracciamento</code> permette di tracciare buste secondo specifica
 <p>
 
-<h3>Timer di OpenSPCoop</h3>
+<h3>Timer di GovWay</h3>
 
 Fornisce EJB utilizzati come timer avviati ad intervalli di tempo regolare:
 <ul>
 <li> <code>TimerHistoryBuste</code>: gestisce l'history delle buste ricevute (eliminando quelle scadute)
                                      e quello delle buste inviate (re-inviando le buste per le quali non si e' ricevuto un riscontro)
-<li> <code>TimerEliminatoreMessaggi</code>: gestisce l'eliminazione dei messaggi completamente gestiti da OpenSPCoop (o scaduti)
+<li> <code>TimerEliminatoreMessaggi</code>: gestisce l'eliminazione dei messaggi completamente gestiti da GovWay (o scaduti)
 </ul>
 <p>
 
 
-<h3>Configurazione di risorse esterne a OpenSPCoop</h3>
+<h3>Configurazione di risorse esterne a GovWay</h3>
 
-OpenSPCoop dispone di un file di configurazione xml  (sysconfig.xml) che permette la definizione di pool per risorse esterne.
+GovWay dispone di un file di configurazione xml  (sysconfig.xml) che permette la definizione di pool per risorse esterne.
 Attualmente viene fornita la possibilita' di definire pool di risorse verso DB e verso broker JMS
 <p>
 
 
-<h3>Utility di OpenSPCoop</h3>
+<h3>Utility di GovWay</h3>
 
 Fornisce classi che svolgono diverse funzioni: 
 <ul>
-<li> <code>Autenticazione</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da OpenSPCoop per effettuare processo di autenticazione. Implementazioni esistenti sono fornite nelle classi <code>AutenticazioneBASIC</code> e <code>AutenticazioneSSL</code>. Ogni classe prende come argomento le credenziali utilizzate nell'autenticazione, rappresentate dalla classe <code>Credenziali</code>
-<li> <code>Autorizzazione</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da OpenSPCoop per effettuare processo di autorizzazione. Implementazioni esistenti sono fornite nelle classi <code>AutorizzazioneOpenSPCoop</code>
-<li> <code>Connettore</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da OpenSPCoop per effettuare la consegna di una busta o di un contenuto applicativo. Implementazioni esistenti sono fornite nelle classi <code>ConnettoreHTTP</code>, <code>ConnettoreSAAJ</code> e <code>ConnettoreJMS</code>. Ogni classe prende come argomento il messaggio da spedire, rappresentato dalla classe <code>ConnettoreMsg</code>
-<li> <code>EJBUtils</code>: Contiente metodi utilizzabile per la spedizione di messaggi tra i vari nodi dell'infrastruttura OpenSPCoop
+<li> <code>Autenticazione</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da GovWay per effettuare processo di autenticazione. Implementazioni esistenti sono fornite nelle classi <code>AutenticazioneBASIC</code> e <code>AutenticazioneSSL</code>. Ogni classe prende come argomento le credenziali utilizzate nell'autenticazione, rappresentate dalla classe <code>Credenziali</code>
+<li> <code>Autorizzazione</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da GovWay per effettuare processo di autorizzazione. Implementazioni esistenti sono fornite nelle classi <code>AutorizzazioneGovWay</code>
+<li> <code>Connettore</code>: Rappresenta una interfaccia di una potenziale classe utilizzabile da GovWay per effettuare la consegna di una busta o di un contenuto applicativo. Implementazioni esistenti sono fornite nelle classi <code>ConnettoreHTTP</code>, <code>ConnettoreSAAJ</code> e <code>ConnettoreJMS</code>. Ogni classe prende come argomento il messaggio da spedire, rappresentato dalla classe <code>ConnettoreMsg</code>
+<li> <code>EJBUtils</code>: Contiente metodi utilizzabile per la spedizione di messaggi tra i vari nodi dell'infrastruttura GovWay
 <li> <code>GestoreJNDI</code>: Contiente metodi per la gestione di un albero JNDI
-<li> <code>GestoreMessaggi</code>: Contiente metodi per la gestione (salvataggio/lettura/eliminazione) dei messaggi gestiti da OpenSPCoop
+<li> <code>GestoreMessaggi</code>: Contiente metodi per la gestione (salvataggio/lettura/eliminazione) dei messaggi gestiti da GovWay
 <li> <code>IdentificazionePortaDelegata</code>: Gestisce l'identificazione di una porta delegata, implementando anche metodo url e content based.
-<li> <code>JMSSender e JMSReceiver</code>: Classi utilizzate per effettuare spedizioni e ricezione su protocollo JMS tra i nodi dell'infrastruttura OpenSPCoop
-<li> <code>PdDUtils</code>: Contiene costanti utilizzate dalle classi della Porta di Dominio
-<li> <code>TransactionManager</code>: Gestisce il flusso di messaggi scambiati tra i vari nodi dell'infrastruttura OpenSPCoop
+<li> <code>JMSSender e JMSReceiver</code>: Classi utilizzate per effettuare spedizioni e ricezione su protocollo JMS tra i nodi dell'infrastruttura GovWay
+<li> <code>PdDUtils</code>: Contiene costanti utilizzate dalle classi di GovWay
+<li> <code>TransactionManager</code>: Gestisce il flusso di messaggi scambiati tra i vari nodi dell'infrastruttura GovWay
 </ul>
 <p>
 
@@ -161,7 +161,7 @@ Fornisce classi che svolgono diverse funzioni:
 <p>
 Per altra documentazione, tutorials, esempi, guide guarda :
 <ul>
-  <li><a href="http://www.openspcoop2.org">Sito ufficiale del progetto OpenSPCoop2</a>
+  <li><a href="http://www.openspcoop2.org">Sito ufficiale del progetto GovWay2</a>
 </ul>
 <br>
 

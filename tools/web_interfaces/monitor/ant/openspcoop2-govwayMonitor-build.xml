@@ -1,0 +1,26 @@
+<project name="openspcoop2-compile-govwayMonitor-utils">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.web.monitor
+    </description>
+
+
+	<target name="buildFacesConfig" >
+
+		<!-- Creo faces-config.xml -->
+		<delete file="${srcFacesConfigDir}/faces-config.xml" />
+		<concat destfile="${srcFacesConfigDir}/faces-config.xml" append="yes">
+			<filelist dir="${srcFacesConfigDir}" files="faces-config.xml.start"/>
+		</concat>
+		<concat destfile="${srcFacesConfigDir}/faces-config.xml" append="yes">
+			<filelist dir="${srcFacesConfigDir}" files="faces-config.xml.beandef"/>
+		</concat>
+		<concat destfile="${srcFacesConfigDir}/faces-config.xml" append="yes">
+			<filelist dir="${srcFacesConfigDir}" files="faces-config.xml.application"/>
+		</concat>
+		<concat destfile="${srcFacesConfigDir}/faces-config.xml" append="yes">
+			<filelist dir="${srcFacesConfigDir}" files="faces-config.xml.end"/>
+		</concat>
+		
+	</target>
+	
+</project>

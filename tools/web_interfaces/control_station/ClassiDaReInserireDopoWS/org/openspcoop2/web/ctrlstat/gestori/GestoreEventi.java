@@ -158,7 +158,7 @@ public class GestoreEventi extends GestoreGeneral {
 			this.initGestore();
 
 			if (this.singlePdD) {
-				this.log.warn("GestoreGE non avviato: pddConsole avviata in singlePdD mode.");
+				this.log.warn("GestoreGE non avviato: govwayConsole avviata in singlePdD mode.");
 				return;
 			}
 
@@ -413,7 +413,7 @@ public class GestoreEventi extends GestoreGeneral {
 								soggetto = this.core.getSoggettoRegistro(idTable);
 								this.log.debug("Caricato soggetto :" + soggetto.getNome());
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto: " + e.toString(), e);
@@ -496,7 +496,7 @@ public class GestoreEventi extends GestoreGeneral {
 							try {
 								servizio = this.core.getServizioSpcoop(idTable);
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del servizio: " + e.getMessage(), e);
@@ -644,7 +644,7 @@ public class GestoreEventi extends GestoreGeneral {
 								try {
 									servizio = driver.getDriverRegistroServiziDB().getServizioSpcoop(ps.getIdServizio());
 								} catch (DriverRegistroServiziNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del servizio: " + e.getMessage(), e);
@@ -653,7 +653,7 @@ public class GestoreEventi extends GestoreGeneral {
 								try {
 									soggFruitore = driver.getDriverRegistroServiziDB().getSoggettoRegistro(ps.getIdFruitore());
 								} catch (DriverRegistroServiziNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Fruitore non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Fruitore non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto(fruitore): " + e.getMessage(), e);
@@ -684,7 +684,7 @@ public class GestoreEventi extends GestoreGeneral {
 								try {
 									servizio = driver.getDriverRegistroServiziDB().getServizioSpcoop(idServizio);
 								} catch (DriverRegistroServiziNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del servizio: " + e.getMessage(), e);
@@ -695,7 +695,7 @@ public class GestoreEventi extends GestoreGeneral {
 								try {
 									soggFruitore = driver.getDriverRegistroServiziDB().getSoggettoRegistro(idFruitore);
 								} catch (DriverRegistroServiziNotFound de) {
-									operazioneInGestione.invalid("Fruitore non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.invalid("Fruitore non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto(fruitore): " + e.getMessage(), e);

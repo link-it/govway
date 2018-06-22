@@ -103,7 +103,7 @@ public class ExternalPWCallback
     }
     
     
-    private static String propertiesFilePath = "/etc/openspcoop2/wssPassword.properties";
+    private static String propertiesFilePath = "/etc/govway/wssPassword.properties";
     private static Properties wssProperties = null;
     
     private static String wssRefreshProps = "refresh";

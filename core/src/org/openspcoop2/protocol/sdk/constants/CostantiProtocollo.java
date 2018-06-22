@@ -54,9 +54,9 @@ public class CostantiProtocollo {
     
     /** String che rappresenta il messaggio per un qualsiasi errore di processamento: SistemaNonDisponibile*/
     public final static String SISTEMA_NON_DISPONIBILE = "Sistema non disponibile";
-    /** Keyword per indicare 'Porta di Dominio non disponibile' */
+    /** Keyword per indicare 'Gateway non disponibile' */
     public final static String KEYWORDPDD_NON_DISPONIBILE = "@NOMEPDD@";
-    public final static String PDD_NON_DISPONIBILE = "Porta di Dominio del soggetto "+CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE+" non disponibile";
+    public final static String PDD_NON_DISPONIBILE = "Servizio erogato dal Soggetto "+CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE+" non disponibile";
     public final static String SERVIZIO_APPLICATIVO_NON_DISPONIBILE = "Servizio Applicativo non disponibile";
     
     /** Definisce una richiesta da registrare in un tracciamento */

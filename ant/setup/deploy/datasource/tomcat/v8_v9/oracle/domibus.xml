@@ -1,6 +1,6 @@
 	<!-- Datasource di Domibus -->
 
-	<Resource name="org.openspcoop2.dataSource" auth="Container"
+	<Resource name="org.govway.datasource" auth="Container"
 	          type="javax.sql.DataSource"
 	          driverClassName="oracle.jdbc.OracleDriver"
 	          url="jdbc:oracle:thin:@@HOST@:@PORT@:@INSTANCE@"

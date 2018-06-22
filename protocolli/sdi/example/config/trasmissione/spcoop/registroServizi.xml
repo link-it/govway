@@ -200,7 +200,7 @@
     <soggetto tipo="SPC" nome="ENTE">
 
         <connettore tipo="http" nome="PdDENTE">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
         <accordo-servizio-parte-specifica nome="TrasmissioneFatture"
@@ -216,7 +216,7 @@
 
         <connettore tipo="http" nome="PdDENTE">
             <property nome="location"
-                valore="http://localhost:8080/openspcoop2/sdi/PA/SDIENTE/SDITrasmissioneFatture"/>
+                valore="http://localhost:8080/govway/sdi/PA/SDIENTE/SDITrasmissioneFatture"/>
         </connettore>
 
         <accordo-servizio-parte-specifica nome="TrasmissioneFatture"

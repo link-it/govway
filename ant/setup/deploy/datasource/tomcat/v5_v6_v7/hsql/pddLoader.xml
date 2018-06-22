@@ -10,9 +10,9 @@
 
 
 
-	<!-- Datasouce utilizzato dall'applicazione grafica pddConsole della PdD OpenSPCoop2 -->
+	<!-- Datasouce utilizzato dall'applicazione grafica govwayConsole della PdD OpenSPCoop2 -->
 
-	<Resource name="org.openspcoop2.dataSource.pddConsole" auth="Container"
+	<Resource name="org.govway.datasource.console" auth="Container"
 	          type="javax.sql.DataSource"
 	          driverClassName="org.hsqldb.jdbcDriver"
 	          url="jdbc:hsqldb:hsql://@HOST@:@PORT@/@DATABASE@"

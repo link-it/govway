@@ -218,7 +218,7 @@ public class GestoreMessaggi  {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new GestoreMessaggiException("Visualizzazione Statistiche riguardante la cache dei messaggi gestiti dalla Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new GestoreMessaggiException("Visualizzazione Statistiche riguardante la cache dei messaggi gestiti non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws GestoreMessaggiException{

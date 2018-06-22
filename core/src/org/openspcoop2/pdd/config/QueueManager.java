@@ -49,7 +49,7 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
 /**
  * Contiene la gestione delle connessioni al broker delle code JMS.
  * Il nome della risorsa JNDI da cui e' possibili attingere connessioni verso il Provider JMS, 
- * viene selezionato attraverso le impostazioni lette dal file 'openspcoop2.properties'
+ * viene selezionato attraverso le impostazioni lette dal file 'govway.properties'
  * e gestite attraverso l'utilizzo della classe  {@link org.openspcoop2.pdd.config.OpenSPCoop2Properties}.
  *
  *

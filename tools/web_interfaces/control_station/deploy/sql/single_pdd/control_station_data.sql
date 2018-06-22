@@ -8,7 +8,7 @@ INSERT INTO ct_config (max_threads,pd_connection_timeout,pd_read_timeout,pd_avg_
 insert INTO routing (tiporotta,registrorotta,is_default) VALUES ('registro',0,1);
 
 -- Registro locale
-insert INTO registri (nome,location,tipo) VALUES ('RegistroDB','org.openspcoop2.dataSource.pddConsole','db');
+insert INTO registri (nome,location,tipo) VALUES ('RegistroDB','org.govway.datasource.console','db');
 
 -- Porta di Dominio locale
-INSERT INTO pdd (nome,tipo,superuser) VALUES ('PddOpenSPCoop','operativo','amministratore');
+INSERT INTO pdd (nome,tipo,superuser) VALUES ('GovWay','operativo','amministratore');

@@ -3,15 +3,15 @@
    Copiare il file as4_local.properties nella directory di configurazione della PdD.
    La directory di configurazione DEVE essere impostata attraverso la variabile 'GOVWAY_HOME' 
    tramite il seguente comando:
-	JAVA_OPTS="$JAVA_OPTS -DGOVWAY_HOME=/etc/openspcoop2/" 
+	JAVA_OPTS="$JAVA_OPTS -DGOVWAY_HOME=/etc/govway/" 
 
    Configurare come la PdD accede al servizio di backend dove spedire messaggi AS4 con ruolo Sender tramite la seguente configurazione presente nel file 'as4_local.properties':
    - org.openspcoop2.protocol.as4.domibusGateway.config.default.url: url del servizio (es. http://127.0.0.1:8080/domibus/services/backend)
    - org.openspcoop2.protocol.as4.domibusGateway.config.default.https.enabled (true/false): indicazione se utilizzare una configurazione ssl custom
    - Se si abilita l'https si possono fornire i seguenti valori (con esempi):
-	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.trustStoreLocation=/etc/openspcoop2/keys/soggetto1.jks
+	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.trustStoreLocation=/etc/govway/keys/soggetto1.jks
 	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.trustStorePassword=openspcoopjks
-	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.keyStoreLocation=/etc/openspcoop2/keys/soggetto1.jks
+	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.keyStoreLocation=/etc/govway/keys/soggetto1.jks
 	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.keyStorePassword=openspcoopjks
 	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.keyPassword=openspcoop
 	org.openspcoop2.protocol.as4.domibusGateway.config.default.https.property.hostnameVerifier=false
@@ -26,7 +26,7 @@
 2.2) Se l'installazione della PdD risiede su una macchina differente da quella di domibus,
      copiare le policy, che si trovano nella directory 'securityPolicies', 
      all'interno della directory indicata nella proprietà 'org.openspcoop2.protocol.as4.securityPolicies.folder' del file 'as4_local.properties'.
-     Default value:  /etc/openspcoop2/as4/securityPolicies
+     Default value:  /etc/govway/as4/securityPolicies
     
 2.3) Verificare che la policy 'eDeliveryPolicy' esista tra le policy di domibus.
      Se non esiste crearla copiando il file che si trova nella directory 'securityPolicies/eDeliveryPolicy.xml'
@@ -56,7 +56,7 @@
      'org.openspcoop2.protocol.as4.payloadProfiles.defaultPayloadProfiles' nel file 'as4_local.properties'.
 
 3.2) Alcuni payload profile, utili per i test, vengono ridefiniti all'interno dei files presenti nella directory 'payloadProfiles'.
-     Copiare la directory in /etc/openspcoop2/as4 poichè tali files vengono indirizzati dalle configurazioni definite dal file registroServizi.xml
+     Copiare la directory in /etc/govway/as4 poichè tali files vengono indirizzati dalle configurazioni definite dal file registroServizi.xml
 
 
 =====================
@@ -72,7 +72,7 @@
      'org.openspcoop2.protocol.as4.properties.defaultPropertySet' nel file 'as4_local.properties'.
 
 4.2) Alcuni propertySet, utili per i test, vengono ridefiniti all'interno dei files presenti nella directory 'properties'.
-     Copiare la directory in /etc/openspcoop2/as4 poichè tali files vengono indirizzati dalle configurazioni definite dal file registroServizi.xml
+     Copiare la directory in /etc/govway/as4 poichè tali files vengono indirizzati dalle configurazioni definite dal file registroServizi.xml
 
 
 =====================
@@ -96,13 +96,13 @@
 =====================
 6) Caricamento Configurazioni sulla PdD
 
-6.1) Caricare il file 'registroServizi.xml' tramite la console pddLoader
+6.1) Caricare il file 'registroServizi.xml' tramite la console govwayLoader
 
-6.2) Accedere alla pddConsole ed impostare il dominio 'interno' per i soggetti che si desidera gestire sui domibus a propria disposizione.
+6.2) Accedere alla govwayConsole ed impostare il dominio 'interno' per i soggetti che si desidera gestire sui domibus a propria disposizione.
      NOTA: Se si desidera utilizzare entrambi i soggetti, utilizzare la modalità multi-tenant dei soggetti
-     NOTA2: Fino al termine del caricamento delle configurazioni (voce successiva) la sezione 'Erogazioni' della pddConsole non funziona
+     NOTA2: Fino al termine del caricamento delle configurazioni (voce successiva) la sezione 'Erogazioni' della govwayConsole non funziona
 
-6.3) Caricare le configurazioni dei soggetti resi 'interni' al punto precedente tramite la console pddLoader.
+6.3) Caricare le configurazioni dei soggetti resi 'interni' al punto precedente tramite la console govwayLoader.
      Le configurazioni sono rispettivamente 'config_red.xml' e 'config_blue.xml'  per i soggetto Red e Blue.
 
 

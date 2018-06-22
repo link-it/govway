@@ -178,11 +178,11 @@ public class OpenSPCoop2DBConfigurationUtility {
 		
 		
 		// Indicazione se siamo in un caso di ControlStation
-		String pddConsole = reader.getProperty("openspcoop2.pddConsole");
+		String govwayConsole = reader.getProperty("openspcoop2.govwayConsole");
 		String tipoDatabase = null;
-		boolean pddConsoleMode = false;
-		if(pddConsole!=null){
-			pddConsoleMode = Boolean.parseBoolean(pddConsole.trim());
+		boolean govwayConsoleMode = false;
+		if(govwayConsole!=null){
+			govwayConsoleMode = Boolean.parseBoolean(govwayConsole.trim());
 		}
 		
 		
@@ -291,8 +291,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 				dataSource = dataSource.trim();
 				java.util.Properties context = Utilities.readProperties("openspcoop2.registroServizi.db.context.",reader);
 				
-				// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-				if(!pddConsoleMode){
+				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+				if(!govwayConsoleMode){
 					GestoreJNDI gestoreJNDI = new GestoreJNDI(context);
 					javax.sql.DataSource ds = (javax.sql.DataSource) gestoreJNDI.lookup(dataSource);
 					connectionRegistroServizi = ds.getConnection();
@@ -318,8 +318,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 					password = password.trim();
 				}
 				
-				// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-				if(!pddConsoleMode){
+				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+				if(!govwayConsoleMode){
 					Loader.getInstance().newInstance(driver);
 					if(username!=null && password!=null){
 						connectionRegistroServizi = DriverManager.getConnection(connection,username,password);
@@ -329,7 +329,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 				}
 			}
 
-			if(pddConsoleMode){
+			if(govwayConsoleMode){
 				driverRegistroServizi = new DriverRegistroServiziDB(connectionConfigurazione, null, tipoDatabase);
 			}else{
 				driverRegistroServizi = new DriverRegistroServiziDB(connectionRegistroServizi, null, tipoDatabase);
@@ -351,8 +351,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 			
 			log.debug("Imposto auto-commit a false");
 			connectionConfigurazione.setAutoCommit(false);
-			// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-			if(!pddConsoleMode){
+			// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+			if(!govwayConsoleMode){
 				connectionRegistroServizi.setAutoCommit(false);
 			}else{
 				connectionRegistroServizi = connectionConfigurazione;
@@ -399,7 +399,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					//org.openspcoop2.core.config.Soggetto soggettoConfig = driverConfigurazione.getSoggetto(soggettoFruitore);
 					
 					// FRUITORE DAL SERVIZIO (+ mapping fruizioni)
-					if(pddConsoleMode){
+					if(govwayConsoleMode){
 						log.debug("\t- eliminazione mapping fruizioni ...");
 						DBMappingUtils.deleteMappingFruizione(idServizio, soggettoFruitore, connectionConfigurazione, tipoDatabase);
 						log.debug("\t- eliminazione mapping fruizioni effettuata");
@@ -463,7 +463,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 				else{
 					
 					// FRUITORI (+ mapping fruizioni)
-					if(pddConsoleMode){
+					if(govwayConsoleMode){
 						for (int i = 0; i < asps.sizeFruitoreList(); i++) {
 							Fruitore fr = asps.getFruitore(i);
 							IDSoggetto soggettoFruitore = new IDSoggetto(fr.getTipo(),fr.getNome());
@@ -542,7 +542,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					
 					
 					// SERVIZI (mapping erogazioni)
-					if(pddConsoleMode){
+					if(govwayConsoleMode){
 						log.debug("\t- eliminazione mapping erogazione ...");
 						DBMappingUtils.deleteMappingErogazione(idServizio, connectionConfigurazione, tipoDatabase);
 						log.debug("\t- eliminazione mapping erogazione effettuata");
@@ -601,8 +601,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 			
 			log.debug("Commit...");
 			connectionConfigurazione.commit();
-			// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-			if(!pddConsoleMode){
+			// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+			if(!govwayConsoleMode){
 				connectionRegistroServizi.commit();
 			}
 			log.debug("Commit effettuato");
@@ -612,8 +612,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 				connectionConfigurazione.rollback();
 			}catch(Exception eRollback){}
 			try{
-				// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-				if(!pddConsoleMode){
+				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+				if(!govwayConsoleMode){
 					connectionRegistroServizi.rollback();
 				}
 			}catch(Exception eRollback){}
@@ -625,8 +625,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 				connectionConfigurazione.setAutoCommit(true);
 			}catch(Exception e){}
 			try{
-				// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-				if(!pddConsoleMode){
+				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+				if(!govwayConsoleMode){
 					connectionRegistroServizi.setAutoCommit(true);
 				}
 			}catch(Exception e){}
@@ -634,8 +634,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 				connectionConfigurazione.close();
 			}catch(Exception e){}
 			try{
-				// NOTA: Se sono in pddConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
-				if(!pddConsoleMode){
+				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
+				if(!govwayConsoleMode){
 					connectionRegistroServizi.close();
 				}
 			}catch(Exception e){}

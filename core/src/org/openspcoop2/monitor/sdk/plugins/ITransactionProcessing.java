@@ -15,6 +15,6 @@ public interface ITransactionProcessing {
 	public void postProcessTransaction(Transaction transaction) throws TransactionException;
 	
 	public void processRealTimeResourcesBeforeSaveOnDatabase(Transaction transaction) throws TransactionException; // pdd
-	public void processRealTimeResourcesAfterReadFromDatabase(Transaction transaction) throws TransactionException; // pddMonitor
+	public void processRealTimeResourcesAfterReadFromDatabase(Transaction transaction) throws TransactionException; // govwayMonitor
 
 }

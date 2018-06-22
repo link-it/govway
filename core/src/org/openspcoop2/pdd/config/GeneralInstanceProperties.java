@@ -90,7 +90,7 @@ public class GeneralInstanceProperties {
 		// Lookup
 		File fClasspath = null;
 		try{
-			URL urlClasspath = GeneralInstanceProperties.class.getResource("/openspcoop2.log4j2.properties");
+			URL urlClasspath = GeneralInstanceProperties.class.getResource("/govway.log4j2.properties");
 			if(urlClasspath!=null){
 				URI uri = urlClasspath.toURI();
 				String uriS = uri.toString();
@@ -111,8 +111,8 @@ public class GeneralInstanceProperties {
 				}
 				File f = (new File(uriS)).getParentFile();
 				if(f!=null){					
-					// OpenSPCoop.ear/properties/openspcoop2.log4j2.properties
-					// openspcoop.war/WEB-INF/classes/openspcoop2.log4j2.properties
+					// OpenSPCoop.ear/properties/govway.log4j2.properties
+					// openspcoop.war/WEB-INF/classes/govway.log4j2.properties
 					if("properties".equals(f.getName())){
 						fClasspath = f.getParentFile().getParentFile();
 					}else if("classes".equals(f.getName())){

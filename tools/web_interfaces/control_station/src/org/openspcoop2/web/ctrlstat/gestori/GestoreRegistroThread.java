@@ -170,7 +170,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 			this.initGestore();
 
 			if (this.singlePdD) {
-				this.log.warn("GestoreRegistroServizi non avviato: pddConsole avviata in singlePdD mode.");
+				this.log.warn("GestoreRegistroServizi non avviato: govwayConsole avviata in singlePdD mode.");
 				return;
 			}
 
@@ -567,7 +567,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 								soggetto = this.soggettiCore.getSoggettoRegistro(idTable);
 								this.log.debug("Caricato soggetto :" + soggetto.getNome());
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto: " + e.toString(), e);
@@ -650,7 +650,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 							try {
 								accordoServizioParteSpecifica = this.apsCore.getAccordoServizioParteSpecifica(idTable,true);
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Servizio non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del servizio: " + e.getMessage(), e);
@@ -703,7 +703,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 										}
 									}
 									
-									// NOTA: Il soggetto del servizio, nella pddConsole non e' modificabile.
+									// NOTA: Il soggetto del servizio, nella govwayConsole non e' modificabile.
 									this.accordoServizioParteSpecificaPort.update(idAccordoServizioParteSpecifica, accordoServizioParteSpecifica);
 
 								} 
@@ -768,7 +768,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 							try {
 								accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComune,true);
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Accordo di Servizio non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Accordo di Servizio non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine dell'accordo: " + e.getMessage(), e);
@@ -857,7 +857,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 							try {
 								accordoCooperazione = this.acCore.getAccordoCooperazione(idAccordoCooperazione,true);
 							} catch (DriverRegistroServiziNotFound de) {
-								operazioneInGestione.waitBeforeInvalid("Accordo di Cooperazione non esistente nel database della pddConsole: " + de.toString());
+								operazioneInGestione.waitBeforeInvalid("Accordo di Cooperazione non esistente nel database della govwayConsole: " + de.toString());
 								continue;
 							} catch (Exception e) {
 								operazioneInGestione.error("Riscontrato errore durante la get dell'immagine dell'accordo di cooperazione: " + e.getMessage(), e);

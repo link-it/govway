@@ -36,9 +36,9 @@ public class DiagnosticiDM extends
 	public DiagnosticiDM(){
 		try {
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiDM.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DiagnosticiDM.log);
 
-			this.setDataProvider(pddMonitorProperties.getDriverMsgDiagnostici());
+			this.setDataProvider(govwayMonitorProperties.getDriverMsgDiagnostici());
 
 
 		} catch (Exception e) {

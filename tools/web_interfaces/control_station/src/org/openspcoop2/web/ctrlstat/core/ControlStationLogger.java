@@ -107,24 +107,24 @@ public class ControlStationLogger {
 		}
 
 		if(appendActualConfiguration){
-			System.out.println("[PddConsole] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+			System.out.println("[govwayConsole] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");
 			int i=0;
 			int limit = 60;
 			while(OpenSPCoop2Startup.initialize==false && i<limit){
 				Utilities.sleep(1000);
 				i++;
 				if(i%10==0){
-					System.out.println("[PddConsole] Attendo inizializzazione PdDOpenSPCoop ...");
+					System.out.println("[govwayConsole] Attendo inizializzazione GovWay ...");
 				}
 			}
 			
 			if(OpenSPCoop2Startup.initialize==false){
-				throw new UtilsException("[PddConsole] Inizializzazione OpenSPCoop non rilevata");
+				throw new UtilsException("[govwayConsole] Inizializzazione GovWay non rilevata");
 			}
 			
-			System.out.println("[PddConsole] Configurazione Log4J ...");
+			System.out.println("[govwayConsole] Configurazione Log4J ...");
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
-			System.out.println("[PddConsole] Configurazione Log4J aggiunta");
+			System.out.println("[govwayConsole] Configurazione Log4J aggiunta");
 		}
 		else{
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
@@ -134,27 +134,27 @@ public class ControlStationLogger {
 	}
 
 	public static Logger getPddConsoleCoreLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.core");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.core");
 	}
 	
 	public static Logger getSmistatoreLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.smistatore");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.smistatore");
 	}
 	
 	public static Logger getGestorePddLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.config");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.config");
 	}
 	
 	public static Logger getGestoreGELogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.gestoreEventi");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.gestoreEventi");
 	}
 	
 	public static Logger getGestoreRegistroLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.registry");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.registry");
 	}
 	
 	public static Logger getGestoreAutorizzazioneLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.gestori.auth");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.gestori.auth");
 	}
 	
 	public static Logger getDriverDBPddConsoleLogger(){
@@ -162,7 +162,7 @@ public class ControlStationLogger {
 	}
 	
 	public static Logger getSincronizzatoreLogger(){
-		 return LoggerWrapperFactory.getLogger("pddConsole.sincronizzatore");
+		 return LoggerWrapperFactory.getLogger("govwayConsole.sincronizzatore");
 	}
 	
 }

@@ -79,7 +79,7 @@
         </dependencies>
     </module>
 	
-	<sub-deployment name="OpenSPCoop2.war">
+	<sub-deployment name="govway.war">
 		<exclusions>
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />
@@ -88,7 +88,7 @@
 			<module name="org.jboss.logging"/>
 		</exclusions>
 	</sub-deployment>
-	<sub-deployment name="OpenSPCoop2Sec.war">
+	<sub-deployment name="govwaySec.war">
 		<exclusions>
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />
@@ -97,7 +97,7 @@
 			<module name="org.jboss.logging"/>
 		</exclusions>
 	</sub-deployment>	
-	<sub-deployment name="OpenSPCoop2.jar">
+	<sub-deployment name="govway.jar">
 		<exclusions>
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />

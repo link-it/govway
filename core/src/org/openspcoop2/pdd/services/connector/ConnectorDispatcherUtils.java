@@ -150,9 +150,9 @@ public class ConnectorDispatcherUtils {
 	public static void doWsdl(HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method, IDService idService ) throws IOException{
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+		String versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
 		if(op2Properties!=null){
-			versione = "Porta di Dominio "+op2Properties.getPddDetailsForServices();
+			versione = op2Properties.getPddDetailsForServices();
 		}
 		
 		

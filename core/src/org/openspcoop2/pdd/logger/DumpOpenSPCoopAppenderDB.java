@@ -73,7 +73,7 @@ public class DumpOpenSPCoopAppenderDB implements IDumpProducer{
 	/**
 	 * Dump di un messaggio
 	 * 
-	 * @param conOpenSPCoopPdD Connessione verso il database della Porta di Dominio
+	 * @param conOpenSPCoopPdD Connessione verso il database
 	 * @param messaggio
 	 * @throws DumpException
 	 */

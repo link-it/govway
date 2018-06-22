@@ -91,7 +91,7 @@ public class GestoreToken {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new TokenException("Visualizzazione Statistiche riguardante la cache sulla gestione dei token della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new TokenException("Visualizzazione Statistiche riguardante la cache sulla gestione dei token non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws TokenException{

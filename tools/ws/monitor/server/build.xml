@@ -144,7 +144,7 @@
 
 	<target name="build_monitor_ws" depends="init_compile_monitor_ws" description="compila la libreria">
 		
-		<antcall target="compile_openspcoop2_monitor_ws">
+		<antcall target="compile_govway_monitor_ws">
 			<param name="war_type" value="${war_type}"/>
 		</antcall>
 		

@@ -736,7 +736,7 @@ public class HTTPS {
 	public Object[][] credenzialiScorrette(){
 		return new Object[][]{
 				{null,null,null},// nessuna credenziale
-				{"/etc/openspcoop2/keys/sil3.jks","openspcoopjks","openspcoop"}, // crendeziali non corrette
+				{"/etc/govway/keys/sil3.jks","openspcoopjks","openspcoop"}, // crendeziali non corrette
 		};
 	}
 	Repository repositoryHTTPSautenticazioneSSL=new Repository();
@@ -883,8 +883,8 @@ public class HTTPS {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -1008,8 +1008,8 @@ public class HTTPS {
 			// Contesto SSL
 			java.util.Hashtable<String, String> sslContext = null;
 			sslContext = new Hashtable<String, String>();
-			sslContext.put("trustStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
-			sslContext.put("keyStoreLocation", "/etc/openspcoop2/keys/sil1.jks");
+			sslContext.put("trustStoreLocation", "/etc/govway/keys/sil1.jks");
+			sslContext.put("keyStoreLocation", "/etc/govway/keys/sil1.jks");
 			sslContext.put("trustStorePassword", "openspcoopjks");
 			sslContext.put("keyStorePassword", "openspcoopjks");
 			sslContext.put("keyPassword", "openspcoop");
@@ -1108,7 +1108,7 @@ public class HTTPS {
 	@DataProvider(name="autorizzazioneFallita")
 	public Object[][] autorizzazioneFallita(){
 		return new Object[][]{
-				{"/etc/openspcoop2/keys/sil2.jks","openspcoopjks","openspcoop"}, 
+				{"/etc/govway/keys/sil2.jks","openspcoopjks","openspcoop"}, 
 		};
 	}
 	Repository repositoryHTTPSautorizzazioneFallita=new Repository();

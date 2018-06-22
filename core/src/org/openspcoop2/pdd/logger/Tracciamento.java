@@ -92,7 +92,7 @@ public class Tracciamento {
 	/**  Logger log4j utilizzato per scrivere i tracciamenti */
 	protected Logger loggerTracciamento = null;
 
-	/** Tipo Porta di Dominio */
+	/** Tipo Gateway */
 	private TipoPdD tipoPdD;
 	
 	/** Soggetto che richiede il logger */
@@ -933,7 +933,7 @@ public class Tracciamento {
 			}catch(Exception eMsg){}
 			logError("Il Sistema di tracciamento ha rilevato un errore durante la registrazione di una traccia legale,"+
 					" tutti i servizi/moduli della porta di dominio sono sospesi. Si richiede un intervento sistemistico per la risoluzione del problema "+
-					"e il riavvio della Porta di Dominio. Errore rilevato: ",e);
+					"e il riavvio di GovWay. Errore rilevato: ",e);
 		}
 		
 		if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){

@@ -46,11 +46,11 @@
 				<mkdir dir="${build_tracciamento_ws_client}/classes" />
 				<unzip dest="${build_tracciamento_ws_client}/classes">
 					<fileset dir="${dist_tracciamento_ws_client}">
-						<include name="openspcoop2_ws-tracciamento-client*.jar"/>
+						<include name="govway_ws-tracciamento-client*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_tracciamento_ws_client}" >
-					<include name="openspcoop2_ws-tracciamento-client*.jar"/>
+					<include name="govway_ws-tracciamento-client*.jar"/>
 				</delete>
 				<mkdir dir="${build_tracciamento_ws_client}/classes/tracciamento" />
 				<copy todir="${build_tracciamento_ws_client}/classes/tracciamento">

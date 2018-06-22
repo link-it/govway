@@ -17,8 +17,8 @@
 	<import file="./ant/pdd-build.xml" />
 	<import file="./ant/sql-build.xml" />
 	<import file="./ant/ds-build.xml" />
-	<import file="./ant/pddConsole-build.xml" />
-	<import file="./ant/pddMonitor-build.xml" />
+	<import file="./ant/govwayConsole-build.xml" />
+	<import file="./ant/govwayMonitor-build.xml" />
 	<import file="./ant/loader-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/jar-build.xml" />
@@ -56,8 +56,8 @@
 		Impostazione variabili prelevate da SETUP antinstaller, esempio:
 		
 		Informazioni preliminari
-			antinstaller_directory_lavoro_openspcoop=/var/openspcoop2
-			antinstaller_directory_log_openspcoop=/var/openspcoop2/log
+			antinstaller_directory_lavoro_openspcoop=/var/govway
+			antinstaller_directory_log_openspcoop=/var/govway/log
 			antinstaller_tipo_database=postgresql
 			antinstaller_as=jboss5  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
 			
@@ -103,14 +103,14 @@
 			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="datasource_pdd_name" value="org.openspcoop2.dataSource"/>
-			<var name="datasource_console_name" value="org.openspcoop2.dataSource.pddConsole"/>
-			<var name="datasource_domibus_name" value="org.openspcoop2.dataSource.domibus"/>
+			<var name="datasource_pdd_name" value="org.govway.datasource"/>
+			<var name="datasource_console_name" value="org.govway.datasource.console"/>
+			<var name="datasource_domibus_name" value="org.govway.datasource.domibus"/>
 		</then>
 		<else>
-			<var name="datasource_pdd_name" value="java:/comp/env/org.openspcoop2.dataSource"/>
-			<var name="datasource_console_name" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
-			<var name="datasource_domibus_name" value="java:/comp/env/org.openspcoop2.dataSource.domibus"/>
+			<var name="datasource_pdd_name" value="java:/comp/env/org.govway.datasource"/>
+			<var name="datasource_console_name" value="java:/comp/env/org.govway.datasource.console"/>
+			<var name="datasource_domibus_name" value="java:/comp/env/org.govway.datasource.domibus"/>
 		</else>
 	</if>
 	<if>
@@ -344,7 +344,7 @@
 		<unzip src="${deploy_sw}/${archiveProtocol_name.txt}" dest="${tmp_cfg}/JAR_${protocolName}"/>
 		<concat destfile="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties" append="yes" >
 
-# ----- Personalizzazione Setup OpenSPCoop2 -------------
+# ----- Personalizzazione Setup GovWay -------------
 		</concat>
 		<antcall target="set_property">
 			<param name="file" value="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties"/>
@@ -434,22 +434,22 @@
 			</or>
 			<then>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoop2_${build_openspcoop_archive_suffix}.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
+				<unzip src="${deploy_sw}/${build_for_as}/govway_${build_openspcoop_archive_suffix}.ear" dest="${tmp_archivi}/govway.ear"/>
 				<!-- configuration -->
-				<antcall target="pdd_openspcoop2_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.properties"/>
+				<antcall target="pdd_govway_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.properties"/>
 				</antcall>
 				<antcall target="pdd_openspcoop2_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.log4j2.properties"/>
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.log4j2.properties"/>
 				</antcall>
 				<antcall target="pdd_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/log4j2.properties"/>
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/log4j2.properties"/>
 				</antcall>
-				<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
-				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.classRegistry.properties"/>
+				<antcall target="pdd_govway.classRegistry.properties_settings">
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.classRegistry.properties"/>
 				</antcall>
 				<antcall target="dos2unix">
-					<param name="dir" value="${tmp_archivi}/OpenSPCoop2.ear/properties"/>
+					<param name="dir" value="${tmp_archivi}/govway.ear/properties"/>
 				    <param name="file" value="*.properties"/>
 				</antcall>
 				
@@ -457,7 +457,7 @@
 				<if>
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 						    </fileset>
@@ -468,7 +468,7 @@
 				<if>
 					<istrue value="${antinstaller_protocollo_spcoop}" />
 					<then>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
 						    </fileset>
@@ -479,12 +479,12 @@
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_as4-protocol_*.jar"/>
 						    </fileset>
 						</copy>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}/jars">
 						    	<include name="activemq-client-*.jar"/>
 							<include name="hawtbuf-*.jar"/>
@@ -498,7 +498,7 @@
 				<if>
 					<istrue value="${antinstaller_protocollo_sdi}" />
 					<then>
-						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<copy todir="${tmp_archivi}/govway.ear/lib">
 						    <fileset dir="${deploy_sw}">
 						      <include name="openspcoop2_sdi-protocol_*.jar"/>
 						    </fileset>
@@ -513,29 +513,29 @@
 						<istrue value="${build_openspcoop_sec_archive}" />
 					</not>
 					<then>
-						<delete file="${tmp_archivi}/OpenSPCoop2.ear/OpenSPCoop2Sec.war" />
-						<replace file="${tmp_archivi}/OpenSPCoop2.ear/META-INF/application.xml" token="start Security Constraint Authentication Container -->" value="start Security Constraint Authentication Container"/>
-						<replace file="${tmp_archivi}/OpenSPCoop2.ear/META-INF/application.xml" token="&lt;!-- end Security Constraint Authentication Container" value="end Security Constraint Authentication Container"/>
+						<delete file="${tmp_archivi}/govway.ear/govwaySec.war" />
+						<replace file="${tmp_archivi}/govway.ear/META-INF/application.xml" token="start Security Constraint Authentication Container -->" value="start Security Constraint Authentication Container"/>
+						<replace file="${tmp_archivi}/govway.ear/META-INF/application.xml" token="&lt;!-- end Security Constraint Authentication Container" value="end Security Constraint Authentication Container"/>
 					</then>
 				</if>	
 				
 							
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
-				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoop2.ear"/>
+				    <param name="archiveFile" value="${tmp_archivi}/govway.ear"/>
 					<param name="as" value="${build_for_as}"/>
 				</antcall>
 			</then>
 			<else>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/openspcoop2.war"/>
+				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govway.war"/>
 				<!-- configuro openspcoopp2.war -->
 				<antcall target="-create_tomcat_war">
-				    <param name="tomcat_war" value="${tmp_archivi}/openspcoop2.war"/>
+				    <param name="tomcat_war" value="${tmp_archivi}/govway.war"/>
 				</antcall>
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
-				    <param name="archiveFile" value="${tmp_archivi}/openspcoop2.war"/>
+				    <param name="archiveFile" value="${tmp_archivi}/govway.war"/>
 					<param name="as" value="${build_for_as}"/>
 				</antcall>
 
@@ -545,14 +545,14 @@
 					<istrue value="${build_openspcoop_sec_archive}" />
 					<then>
 						<!-- unzip -->
-						<unzip src="${deploy_sw}/${build_for_as}/openspcoop2sec_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/openspcoop2sec.war"/>
+						<unzip src="${deploy_sw}/${build_for_as}/openspcoop2sec_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govwaySec.war"/>
 						<!-- configuro openspcoopp2.war -->
 						<antcall target="-create_tomcat_war">
-						    <param name="tomcat_war" value="${tmp_archivi}/openspcoop2sec.war"/>
+						    <param name="tomcat_war" value="${tmp_archivi}/govwaySec.war"/>
 						</antcall>
 						<!-- Ripristino jar -->
 						<antcall target="ripristina_jar">
-						    <param name="archiveFile" value="${tmp_archivi}/openspcoop2sec.war"/>
+						    <param name="archiveFile" value="${tmp_archivi}/govwaySec.war"/>
 							<param name="as" value="${build_for_as}"/>
 						</antcall>
 					</then>
@@ -562,17 +562,17 @@
 	</target>
 	<target name="-create_tomcat_war">
 		<!-- configuration -->
-		<antcall target="pdd_openspcoop2_properties_settings">
-		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.properties"/>
+		<antcall target="pdd_govway_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.properties"/>
 		</antcall>
 		<antcall target="pdd_openspcoop2_log4j_properties_settings">
-		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.log4j2.properties"/>
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.log4j2.properties"/>
 		</antcall>
 		<antcall target="pdd_log4j_properties_settings">
 		    <param name="file" value="${tomcat_war}/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
-		<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
-		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.classRegistry.properties"/>
+		<antcall target="pdd_govway.classRegistry.properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.classRegistry.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
 		    <param name="dir" value="${tomcat_war}/WEB-INF/classes"/>
@@ -635,15 +635,15 @@
 		
 		<copy todir="${tmp_sql}">
 			<fileset dir="${deploy_sql}/${antinstaller_tipo_database}">
-		    	<include name="OpenSPCoop2_*drop.sql"/>
-				<include name="OpenSPCoop2_*delete.sql"/>
+		    	<include name="govway_*drop.sql"/>
+				<include name="govway_*delete.sql"/>
 			</fileset>
 		</copy>
 		
 		<if>
 			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
 			<then>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes">
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes">
 <![CDATA[-- Livello Isolamento
 ALTER DATABASE @DATABASE@ SET ALLOW_SNAPSHOT_ISOLATION ON
 ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
@@ -651,14 +651,14 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			</then>
 		</if>
 		
-		<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+		<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- OpenSPCoop2
+-- GovWay
 	      	
 	      </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/OpenSPCoop2.sql init.sql"/>
+                           files="${antinstaller_tipo_database}/GovWay.sql init.sql"/>
 		</concat>
 		
 		<!-- trasparente -->
@@ -674,7 +674,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol trasparente
@@ -700,7 +700,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="sql_codiceipa" value="o=${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="eGov1.1-lineeGuida1.1"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol spcoop
@@ -726,7 +726,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_as4}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol as4
@@ -735,8 +735,8 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_as4.sql"/>
 				</concat>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/openspcoop2/as4/PD/','${antinstaller_as4_msh}');
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/govway/as4/PD/','${antinstaller_as4_msh}');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>
@@ -756,7 +756,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_sdi}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol sdi
@@ -771,10 +771,10 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			
 		<!-- Imposto corretti valori nei threshold -->
 		<antcall target="sql_settings">
-		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
+		    <param name="file" value="${tmp_sql}/GovWay.sql"/>
 		</antcall>
 		
-		<!-- password cifrata per l'utenza pddConsole -->
+		<!-- password cifrata per l'utenza govwayConsole -->
 		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddconsole_password_md5">
 			<arg value="${antinstaller_pddconsole_password}" />
 			<classpath>
@@ -785,7 +785,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</java>
 		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" tofile="${tmp_sql}/init_utenzaPddConsole.sql" overwrite="true"/>
 
-		<!-- password cifrata per l'utenza pddMonitor -->
+		<!-- password cifrata per l'utenza govwayMonitor -->
 		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddmonitor_password_md5">
 			<arg value="${antinstaller_pddmonitor_password}" />
 			<classpath>
@@ -798,7 +798,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 
 		<!-- Registro modifiche delle utenze sul file SQL -->
 		<antcall target="sql_settings_users">
-		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
+		    <param name="file" value="${tmp_sql}/GovWay.sql"/>
 		</antcall>
 		
 	</target>
@@ -822,19 +822,19 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 						<var name="jboss_datasource_dir_name" value="v7"/>
 					</else>
 				</if>		
-				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/openspcoop2-ds.xml"/>
+				    <param name="file" value="${tmp_ds}/govway-ds.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2_console-ds.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
+				    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
 				</antcall>
 
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
-						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_as4_tipo_database}/openspcoop2-ds.xml" 
+						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_as4_tipo_database}/govway-ds.xml" 
 							tofile="${tmp_ds}/domibus-ds.xml"/>
 						<antcall target="as4_ds_settings">
 						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
@@ -846,19 +846,19 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<matches string="${build_for_as}" pattern="wildfly.*"/>
 			<then>		
-				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/openspcoop2-ds.xml"/>
+				    <param name="file" value="${tmp_ds}/govway-ds.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/openspcoop2_console-ds.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
+				    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
 				</antcall>
 
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
-						<copy file="${deploy_ds}/wildfly/${antinstaller_as4_tipo_database}/openspcoop2-ds.xml" 
+						<copy file="${deploy_ds}/wildfly/${antinstaller_as4_tipo_database}/govway-ds.xml" 
 							tofile="${tmp_ds}/domibus-ds.xml"/>
 						<antcall target="as4_ds_settings">
 						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
@@ -884,27 +884,29 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 						<var name="tomcat_datasource_dir_name" value="v8_v9"/>
 					</else>
 				</if>		
-				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govway.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/openspcoop2.xml"/>
+				    <param name="file" value="${tmp_ds}/govway.xml"/>
 				</antcall>
 				<!-- openspcoop2sec -->
 				<if>
 					<istrue value="${build_openspcoop_sec_archive}" />
 					<then>
-						<copy file="${tmp_ds}/openspcoop2.xml" tofile="${tmp_ds}/openspcoop2sec.xml"/>
+						<copy file="${tmp_ds}/govway.xml" tofile="${tmp_ds}/govwaySec.xml"/>
 					</then>
 				</if>
-				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/pddLoader.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayLoader.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/pddLoader.xml"/>
+				    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/pddConsole.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayConsole.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
+				    <param name="file" value="${tmp_ds}/govwayConsole.xml"/>
 				</antcall>
-				<!-- pddMonitor (copio da loader) -->
-				<copy file="${tmp_ds}/pddLoader.xml" tofile="${tmp_ds}/pddMonitor.xml"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayMonitor.xml" todir="${tmp_ds}"/>
+				<antcall target="ds_settings">
+				    <param name="file" value="${tmp_ds}/govwayMonitor.xml"/>
+				</antcall>
 
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
@@ -914,13 +916,13 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 						<antcall target="as4_ds_settings">
 						    <param name="file" value="${tmp_ds}/domibus.xml"/>
 						</antcall>
-						<replace file="${tmp_ds}/openspcoop2.xml" token="&lt;/Context>" value=""/>
-						<concat destfile="${tmp_ds}/openspcoop2.xml" append="yes" >
+						<replace file="${tmp_ds}/govway.xml" token="&lt;/Context>" value=""/>
+						<concat destfile="${tmp_ds}/govway.xml" append="yes" >
 						  <filelist dir="${tmp_ds}"
 							   files="domibus.xml"/>
 						</concat>
 						<delete file="${tmp_ds}/domibus.xml"/>
-						<concat destfile="${tmp_ds}/openspcoop2.xml" append="yes">
+						<concat destfile="${tmp_ds}/govway.xml" append="yes">
 <![CDATA[</Context>]]></concat>
 					</then>
 				</if>
@@ -928,36 +930,36 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</if>
 	</target>
 
-	<target name="setup_pddConsole" depends="_setup_pddConsole"/>
-	<target name="_setup_pddConsole">
+	<target name="setup_govwayConsole" depends="_setup_govwayConsole"/>
+	<target name="_setup_govwayConsole">
 		<!-- unzip -->
-		<unzip src="${deploy_sw}/${build_for_as}/pddConsole.war" dest="${tmp_archivi}/pddConsole.war"/>
+		<unzip src="${deploy_sw}/${build_for_as}/govwayConsole.war" dest="${tmp_archivi}/govwayConsole.war"/>
 		<!-- configuration -->
-		<antcall target="pddConsole_console_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.properties"/>
+		<antcall target="govwayConsole_console_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/console.properties"/>
 		</antcall>
-		<antcall target="pddConsole_console_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.log4j2.properties"/>
+		<antcall target="govwayConsole_console_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/console.log4j2.properties"/>
 		</antcall>
-		<antcall target="pddConsole_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/log4j2.properties"/>
+		<antcall target="govwayConsole_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
-		<antcall target="pddConsole_datasource_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.datasource.properties"/>
+		<antcall target="govwayConsole_datasource_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/console.datasource.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
-			<param name="dir" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+			<param name="dir" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes"/>
 		    <param name="file" value="*.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
-			<param name="dir" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes"/>
+			<param name="dir" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes"/>
 		    <param name="file" value="*.cfg"/>
 		</antcall>
 		<!-- trasparente -->
 		<if>
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
@@ -968,7 +970,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
 				    </fileset>
@@ -979,7 +981,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				        <include name="openspcoop2_as4-protocol_*.jar"/>
 					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
@@ -991,7 +993,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
 				    </fileset>
@@ -1000,42 +1002,42 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</if>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
-		    <param name="archiveFile" value="${tmp_archivi}/pddConsole.war"/>
+		    <param name="archiveFile" value="${tmp_archivi}/govwayConsole.war"/>
 			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
 	</target>
 
-	<target name="setup_pddMonitor" depends="_setup_pddMonitor"/>
-	<target name="_setup_pddMonitor">
+	<target name="setup_govwayMonitor" depends="_setup_govwayMonitor"/>
+	<target name="_setup_govwayMonitor">
 		<!-- unzip -->
-		<unzip src="${deploy_sw}/${build_for_as}/pddMonitor.war" dest="${tmp_archivi}/pddMonitor.war"/>
+		<unzip src="${deploy_sw}/${build_for_as}/govwayMonitor.war" dest="${tmp_archivi}/govwayMonitor.war"/>
 		<!-- configuration -->
-		<antcall target="pddMonitor_monitor_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/monitor.properties"/>
+		<antcall target="govwayMonitor_monitor_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/monitor.properties"/>
 		</antcall>
-		<antcall target="pddMonitor_monitor_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/monitor.log4j2.properties"/>
+		<antcall target="govwayMonitor_monitor_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/monitor.log4j2.properties"/>
 		</antcall>
-		<antcall target="pddMonitor_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/log4j2.properties"/>
+		<antcall target="govwayMonitor_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
-		<antcall target="pddMonitor_datasource_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/daoFactory_local.properties"/>
+		<antcall target="govwayMonitor_datasource_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/daoFactory_local.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
-			<param name="dir" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+			<param name="dir" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes"/>
 		    <param name="file" value="*.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
-			<param name="dir" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+			<param name="dir" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes"/>
 		    <param name="file" value="*.cfg"/>
 		</antcall>
 		<!-- trasparente -->
 		<if>
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
@@ -1046,7 +1048,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
 				    </fileset>
@@ -1057,7 +1059,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				        <include name="openspcoop2_as4-protocol_*.jar"/>
 					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
@@ -1069,7 +1071,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
 				    </fileset>
@@ -1078,7 +1080,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</if>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
-		    <param name="archiveFile" value="${tmp_archivi}/pddMonitor.war"/>
+		    <param name="archiveFile" value="${tmp_archivi}/govwayMonitor.war"/>
 			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
@@ -1086,28 +1088,28 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	
 	<target name="setup_loader" depends="_setup_loader"/>
 	<target name="_setup_loader">
-		<unzip src="${deploy_sw}/${build_for_as}/pddLoader.war" dest="${tmp_archivi}/pddLoader.war"/>
+		<unzip src="${deploy_sw}/${build_for_as}/govwayLoader.war" dest="${tmp_archivi}/govwayLoader.war"/>
 		<antcall target="loader_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.properties"/>
+		    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.properties"/>
 		</antcall>
 		<antcall target="loader_datasource_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.datasource.properties"/>
+		    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.datasource.properties"/>
 		</antcall>
 		<antcall target="loader_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.log4j2.properties"/>
+		    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/loader.log4j2.properties"/>
 		</antcall>
 		<antcall target="loader_default_log4j_properties_settings">
-		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/log4j2.properties"/>
+		    <param name="file" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
-			<param name="dir" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes"/>
+			<param name="dir" value="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
 		    <param name="file" value="*.properties"/>
 		</antcall>
 		<!-- trasparente -->
 		<if>
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
 				    </fileset>
@@ -1118,7 +1120,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
 				    </fileset>
@@ -1129,7 +1131,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
-				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				        <include name="openspcoop2_as4-protocol_*.jar"/>
 					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
@@ -1141,7 +1143,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<if>
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
-				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
+				<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_sdi-protocol_*.jar"/>
 				    </fileset>
@@ -1150,7 +1152,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</if>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
-		    <param name="archiveFile" value="${tmp_archivi}/pddLoader.war"/>
+		    <param name="archiveFile" value="${tmp_archivi}/govwayLoader.war"/>
 			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
@@ -1181,24 +1183,24 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 						<matches string="${build_for_as}" pattern="wildfly.*"/>
 					</or>
 					<then>
-						<move todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						<move todir="${tmp_archivi}/govway.ear/lib">
 							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
 						    	<include name="*.jar"/>
 							</fileset>
 						</move>
-						<move todir="${tmp_archivi}/OpenSPCoop2.ear/properties">
+						<move todir="${tmp_archivi}/govway.ear/properties">
 							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
 						    	<include name="*.properties"/>
 							</fileset>
 						</move>
 					</then>
 					<else>
-						<move todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
+						<move todir="${tmp_archivi}/govway.war/WEB-INF/lib">
 							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
 						    	<include name="*.jar"/>
 							</fileset>
 						</move>
-						<move todir="${tmp_archivi}/openspcoop2.war/WEB-INF/classes">
+						<move todir="${tmp_archivi}/govway.war/WEB-INF/classes">
 							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
 						    	<include name="*.properties"/>
 							</fileset>

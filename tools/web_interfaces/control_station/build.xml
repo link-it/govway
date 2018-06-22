@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
-<project name="WebInterfacePddConsole" basedir=".">
+<project name="GovWayConsole" basedir=".">
 	<description>
-        File di Script per la compilazione dell'interfaccia PddConsole
+        File di Script per la compilazione dell'interfaccia GovWayConsole
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="./ant/openspcoop2-pddConsole-build.xml" />
-	<import file="./ant/openspcoop2-pddConsole-war.xml" />
-	<import file="./ant/openspcoop2-pddConsole-sql.xml" />
+	<import file="./ant/openspcoop2-govwayConsole-build.xml" />
+	<import file="./ant/openspcoop2-govwayConsole-war.xml" />
+	<import file="./ant/openspcoop2-govwayConsole-sql.xml" />
 	<import file="${mvc}/build.xml" />
 	<import file="${queue}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${audit}/build.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
-	<import file="./ant/openspcoop2-pddConsole-sincronizzatore.xml" />
+	<import file="./ant/openspcoop2-govwayConsole-sincronizzatore.xml" />
 	
 	<!-- directory root -->
 	<property name="svn_rootDir" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
-	<property name="src_pddConsole" location="src/" />
-	<property name="build_pddConsole" location="build/pddConsole" />
-	<property name="dist_pddConsole" location="dist" />
-	<property name="doc_pddConsole" location="doc" />
-	<property name="sql_pddConsole" location="deploy/sql" />
-	<property name="plugins_pddConsole" location="deploy/plugins" />
+	<property name="src_govwayConsole" location="src/" />
+	<property name="build_govwayConsole" location="build/govwayConsole" />
+	<property name="dist_govwayConsole" location="dist" />
+	<property name="doc_govwayConsole" location="doc" />
+	<property name="sql_govwayConsole" location="deploy/sql" />
+	<property name="plugins_govwayConsole" location="deploy/plugins" />
 	<property name="cfg" location="${basedir}/deploy/properties" />
 	<property name="deploy.dir" location="${basedir}/deploy" />
 
@@ -206,43 +206,43 @@
 	</path>	
 	
 	<!-- Ripulisce la distribuzione -->
-	<target name="clean_pddConsole">
-		<delete dir="${build_pddConsole}" />
+	<target name="clean_govwayConsole">
+		<delete dir="${build_govwayConsole}" />
 		<delete dir="build" />
-		<delete dir="${dist_pddConsole}" />
-		<delete dir="${doc_pddConsole}" />
+		<delete dir="${dist_govwayConsole}" />
+		<delete dir="${doc_govwayConsole}" />
 	</target>
 
 	<!-- Create the build directory structure used by compile -->
-	<target name="init_compile_pddConsole">
-		<mkdir dir="${build_pddConsole}" />
-		<mkdir dir="${build_pddConsole}/tmp" />
-		<mkdir dir="${build_pddConsole}/tmp_css" />
-		<mkdir dir="${dist_pddConsole}" />
+	<target name="init_compile_govwayConsole">
+		<mkdir dir="${build_govwayConsole}" />
+		<mkdir dir="${build_govwayConsole}/tmp" />
+		<mkdir dir="${build_govwayConsole}/tmp_css" />
+		<mkdir dir="${dist_govwayConsole}" />
 	</target>
 	
 	
 
 	<!-- Creazione Plugins di ControlStation -->
-	<target name="plugins_pddConsole" description="Crea l'elenco dei jar/properties installati come plugins della ControlStation">
+	<target name="plugins_govwayConsole" description="Crea l'elenco dei jar/properties installati come plugins della ControlStation">
 		<!-- jar -->
-		<fileset dir="${plugins_pddConsole}" id="plugins.jar">
+		<fileset dir="${plugins_govwayConsole}" id="plugins.jar">
 			<include name="**/*.jar" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath" refid="plugins.jar">
-			<map from="${plugins_pddConsole}/" to="lib/" />
+			<map from="${plugins_govwayConsole}/" to="lib/" />
 		</pathconvert>
 		<pathconvert pathsep=" " property="plugins.classpath.jar" refid="plugins.jar">
-			<map from="${plugins_pddConsole}/" to="" />
+			<map from="${plugins_govwayConsole}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-jar della PdDConsole: ${plugins.classpath.jar}" />
 
 		<!-- properties -->
-		<fileset dir="${plugins_pddConsole}" id="plugins.properties">
+		<fileset dir="${plugins_govwayConsole}" id="plugins.properties">
 			<include name="**/*.properties" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties" refid="plugins.properties">
-			<map from="${plugins_pddConsole}/" to="" />
+			<map from="${plugins_govwayConsole}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-properties della PdDConsole: ${plugins.classpath.properties}" />
 	</target>
@@ -261,44 +261,44 @@
 	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users,compile_queue,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddConsole-->
-	<target name="compile_pddConsole" depends="init_compile_pddConsole,compile_dipendenze,compile_openspcoop2_pddConsole" description="compila pddConsole"/>
+	<target name="compile_govwayConsole" depends="init_compile_govwayConsole,compile_dipendenze,compile_openspcoop2_govwayConsole" description="compila govwayConsole"/>
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_pddConsole" depends="plugins_pddConsole,compile_dipendenze,compile_pddConsole,war_openspcoop2_pddConsole" description="Crea la struttura del modulo WAR" />
-	<target name="build_pddConsole_singlePdD">
+	<target name="build_govwayConsole" depends="plugins_govwayConsole,compile_dipendenze,compile_openspcoop2_govwayConsole,war_openspcoop2_govwayConsole" description="Crea la struttura del modulo WAR" />
+	<target name="build_govwayConsole_singlePdD">
 		<var name="singlePdD" value="true" />
-		<runtarget target="build_pddConsole" />
+		<runtarget target="build_govwayConsole" />
 	</target>
-	<target name="build_pddConsole_onlyConfig">
+	<target name="build_govwayConsole_onlyConfig">
 		<var name="singlePdD" value="true" />
 		<var name="singlePdD.registroServizi.locale" value="false" />
-		<runtarget target="build_pddConsole" />
+		<runtarget target="build_govwayConsole" />
 	</target>
 	
 	<!-- alias -->
-	<target name="build" depends="build_pddConsole"/>
-	<target name="build_singlePdD" depends="build_pddConsole_singlePdD"/>
-	<target name="build_onlyConfig" depends="build_pddConsole_onlyConfig"/>
-	<target name="clean" depends="clean_pddConsole"/>
+	<target name="build" depends="build_govwayConsole"/>
+	<target name="build_singlePdD" depends="build_govwayConsole_singlePdD"/>
+	<target name="build_onlyConfig" depends="build_govwayConsole_onlyConfig"/>
+	<target name="clean" depends="clean_govwayConsole"/>
 
 	<!-- Resources -->
 	<target name="build_resources_zip">
-		<mkdir dir="${dist_pddConsole}" />
-		<antcall target="war_openspcoop2_pddConsole_resources">
-		    <param name="build_pddConsole_resourceDIR" value="${dist_pddConsole}"/>
+		<mkdir dir="${dist_govwayConsole}" />
+		<antcall target="war_openspcoop2_govwayConsole_resources">
+		    <param name="build_govwayConsole_resourceDIR" value="${dist_govwayConsole}"/>
 		</antcall>
 	</target>
 
 	<!-- Script Sincronizzatore -->
-	<target name="sincronizzatore" depends="runSincronizzatore_openspcoop2_pddConsole" description="Esegue lo script di sincronizzazione"/>
+	<target name="sincronizzatore" depends="runSincronizzatore_openspcoop2_govwayConsole" description="Esegue lo script di sincronizzazione"/>
 
 
 
 
 	<!-- SCRIPT SQL -->
-	<target name="build_script_sql_pddConsole" depends="init_compile_pddConsole,buildSql_openspcoop2_pddConsole"/>
-	<target name="build_script_sql_pddConsole_singlePdD" depends="init_compile_pddConsole,buildSql_openspcoop2_pddConsole_singlePdD"/>
+	<target name="build_script_sql_govwayConsole" depends="init_compile_govwayConsole,buildSql_openspcoop2_govwayConsole"/>
+	<target name="build_script_sql_govwayConsole_singlePdD" depends="init_compile_govwayConsole,buildSql_openspcoop2_govwayConsole_singlePdD"/>
 
 
 </project>

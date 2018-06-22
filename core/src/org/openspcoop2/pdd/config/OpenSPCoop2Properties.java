@@ -154,7 +154,7 @@ public class OpenSPCoop2Properties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.properties' */
 	private OpenSPCoop2InstanceProperties reader;
 	private PddProperties pddReader;
 
@@ -174,19 +174,19 @@ public class OpenSPCoop2Properties {
 		if(OpenSPCoop2Startup.initialize)
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		else
-			this.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+			this.log = LoggerWrapperFactory.getLogger("govway.startup");
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 		Properties propertiesReader = new Properties();
 		java.io.InputStream properties = null;
 		try{  
-			properties = OpenSPCoop2Properties.class.getResourceAsStream("/openspcoop2.properties");
+			properties = OpenSPCoop2Properties.class.getResourceAsStream("/govway.properties");
 			if(properties==null){
-				throw new Exception("File '/openspcoop2.properties' not found");
+				throw new Exception("File '/govway.properties' not found");
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'govway.properties': \n\n"+e.getMessage());
 			throw new Exception("OpenSPCoopProperties initialize error: "+e.getMessage(),e);
 		}finally{
 		    try{
@@ -313,10 +313,11 @@ public class OpenSPCoop2Properties {
 				if (getRepositoryDirectory() == null)	{						
 					return false;
 				}
-				if( (new File(getRepositoryDirectory())).exists() == false ){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
-					return false;
-				}
+				// Verra' creata se non esiste in openspcoop startup
+//				if( (new File(getRepositoryDirectory())).exists() == false ){
+//					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
+//					return false;
+//				}
 			}else if(CostantiConfigurazione.REPOSITORY_DB.equals(tipoRepository)){
 				if (getRepositoryJDBCAdapter() == null)	{						
 					return false;
@@ -840,7 +841,7 @@ public class OpenSPCoop2Properties {
 			if(checkTipiIntegrazione(headerDefault.toArray(new String[1]))==false)
 				return false;
 			
-			// Integrazione tra Servizi Applicativi e Porta di Dominio
+			// Integrazione tra Servizi Applicativi e GovWay
 			if ( this.getTipoIntegrazionePD() == null ){
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
 				return false;
@@ -905,7 +906,7 @@ public class OpenSPCoop2Properties {
 				}
 			}
 
-			// Integrazione tra Porta di Dominio e Servizi Applicativi
+			// Integrazione tra GovWay e Servizi Applicativi
 			if ( this.getTipoIntegrazionePA() == null ){
 				String[] tipiIntegrazionePA = this.getTipoIntegrazionePA();
 
@@ -1292,8 +1293,18 @@ public class OpenSPCoop2Properties {
 			// Accesso registro servizi
 			this.isReadObjectStatoBozza();
 			
+			// Tracce
+			this.isTracciaturaFallita_BloccaCooperazioneInCorso();
+			this.isTracciaturaFallita_BloccoServiziPdD();
+			
+			// Diagnostici
+			this.isRegistrazioneDiagnosticaFile_intestazione_formatValues();
+			this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD();
+			
 			// Dump
 			this.isDumpAllAttachments();
+			this.isDumpFallito_BloccaCooperazioneInCorso();
+			this.isDumpFallito_BloccoServiziPdD();
 
 			// DumpNotRealtime
 			this.getDumpNonRealtime_inMemoryThreshold();
@@ -2945,7 +2956,7 @@ public class OpenSPCoop2Properties {
 	}
 
 	/**
-	 * Restituisce l'indicazione se la configurazione della Porta di Dominio
+	 * Restituisce l'indicazione se la configurazione di GovWay
 	 * e' letta una sola volta (statica) o letta ai refresh della sorgente (dinamica) 
 	 *
 	 * @return Restituisce indicazione se la configurazione e' statica (false) o dinamica (true)
@@ -5342,7 +5353,7 @@ public class OpenSPCoop2Properties {
 				if(faultPrefix!=null)
 					faultPrefix = faultPrefix.trim();		
 			}catch(java.lang.Exception e) {
-				// proprieta' che puo' non essere definita (default OPENSPCOOP2_ORG_)
+				// proprieta' che puo' non essere definita (default GOVWAY_ORG_)
 			}
 
 			ProprietaErroreApplicativo gestione = new ProprietaErroreApplicativo();
@@ -7618,9 +7629,9 @@ public class OpenSPCoop2Properties {
 
 
 	/**
-	 * Restituisce l'eventuale location del file openspcoop2.pdd.properties
+	 * Restituisce l'eventuale location del file govway.pdd.properties
 	 * 
-	 * @return Restituisce la location del file openspcoop2.pdd.properties
+	 * @return Restituisce la location del file govway.pdd.properties
 	 */
 	private static String filePddProperties = null;
 	private static boolean filePddPropertiesLetto = false;
@@ -12168,9 +12179,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isTracciaturaFallita_BloccaCooperazioneInCorso;
 	}
 	/**
-	 * Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 *   
-	 * @return Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * @return Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 * 
 	 */
 	private static Boolean isTracciaturaFallita_BloccoServiziPdD = null;
@@ -12209,10 +12220,34 @@ public class OpenSPCoop2Properties {
 	
 	/* ----------- MsgDiagnostici --------------------- */
 	
+	private static Boolean isRegistrazioneDiagnosticaFile_intestazione_formatValues = null;
+	public boolean isRegistrazioneDiagnosticaFile_intestazione_formatValues(){
+
+		if(OpenSPCoop2Properties.isRegistrazioneDiagnosticaFile_intestazione_formatValues==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isRegistrazioneDiagnosticaFile_intestazione_formatValues = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isRegistrazioneDiagnosticaFile_intestazione_formatValues = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isRegistrazioneDiagnosticaFile_intestazione_formatValues = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isRegistrazioneDiagnosticaFile_intestazione_formatValues;
+	}
+	
 	/**
-	 * Indica se in caso di rilevamento di un errore di emissione di un messaggio diagnostico (es. salvataggio su database non riuscito) devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * Indica se in caso di rilevamento di un errore di emissione di un messaggio diagnostico (es. salvataggio su database non riuscito) devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 *   
-	 * @return Indica se in caso di rilevamento di un errore di emissione di un messaggio diagnostico (es. salvataggio su database non riuscito) devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * @return Indica se in caso di rilevamento di un errore di emissione di un messaggio diagnostico (es. salvataggio su database non riuscito) devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 * 
 	 */
 	private static Boolean isRegistrazioneDiagnosticaFallita_BloccoServiziPdD = null;
@@ -12307,9 +12342,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDumpFallito_BloccaCooperazioneInCorso;
 	}
 	/**
-	 * Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 *   
-	 * @return Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti dalla Porta di Dominio, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
+	 * @return Indica se in caso di rilevamento di un errore di tracciatura devono essere bloccati tutti i servizi esposti da GovWay, in modo da non permettere alla PdD di gestire ulteriori richieste fino ad un intervento sistemistico.
 	 * 
 	 */
 	private static Boolean isDumpFallito_BloccoServiziPdD = null;

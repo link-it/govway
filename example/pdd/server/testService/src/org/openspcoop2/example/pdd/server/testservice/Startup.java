@@ -56,11 +56,11 @@ public class Startup implements ServletContextListener {
 		try{
 			
 			LoggerWrapperFactory.setLogConfiguration(Startup.class.getResource("/testService.log4j2.properties"));			
-			logPing = LoggerWrapperFactory.getLogger("openspcoop2.ping");
+			logPing = LoggerWrapperFactory.getLogger("govway.ping");
 			logPing.info("avviato con successo");
-			logEcho = LoggerWrapperFactory.getLogger("openspcoop2.echo");
+			logEcho = LoggerWrapperFactory.getLogger("govway.echo");
 			logEcho.info("avviato con successo");
-			logStressTest = LoggerWrapperFactory.getLogger("openspcoop2.stress");
+			logStressTest = LoggerWrapperFactory.getLogger("govway.stress");
 			logStressTest.info("avviato con successo");
 			
 			Properties p = new Properties();

@@ -53,10 +53,10 @@ public class EventiService implements IEventiService{
 
 	private List<Index> forceIndexFindAll;
 	private List<Index> forceIndexCount;
-	private void initForceIndex(PddMonitorProperties pddMonitorProperties) throws Exception{
-		Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
-		this.forceIndexFindAll = convertForceIndexList(pddMonitorProperties.getEventiForceIndexFindAll(repositoryExternal));
-		this.forceIndexCount = convertForceIndexList(pddMonitorProperties.getEventiForceIndexCount(repositoryExternal));
+	private void initForceIndex(PddMonitorProperties govwayMonitorProperties) throws Exception{
+		Properties repositoryExternal = govwayMonitorProperties.getExternalForceIndexRepository();
+		this.forceIndexFindAll = convertForceIndexList(govwayMonitorProperties.getEventiForceIndexFindAll(repositoryExternal));
+		this.forceIndexCount = convertForceIndexList(govwayMonitorProperties.getEventiForceIndexCount(repositoryExternal));
 	}
 	private List<Index> convertForceIndexList(List<String> l){
 		if(l!=null && l.size()>0){

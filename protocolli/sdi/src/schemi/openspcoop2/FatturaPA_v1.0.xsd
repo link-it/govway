@@ -8,7 +8,7 @@
 	<xs:annotation>
 		<xs:appinfo>
 			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
-				<linkit:info version="1.0" project-name="openspcoop2_protocol_sdi_fatturapa_v1.0">
+				<linkit:info version="1.0" project-name="govway_protocol_sdi_fatturapa_v1.0">
 					<linkit:authors>
 						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
 					</linkit:authors>

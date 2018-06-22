@@ -176,7 +176,7 @@ public class FileSystemUtilities {
 	public static void verificaMsgDiagnosticiXML(String logDirectory,ValidatoreXSD validatoreXSD) throws Exception{
 
 
-		Reporter.log("Controllo Errori su openspcoop2_msgDiagnostico.log ...");
+		Reporter.log("Controllo Errori su govway_diagnostici.log ...");
 		File logDir = new File(logDirectory);
 		Assert.assertTrue(logDir.exists());
 		Assert.assertTrue(logDir.canRead());
@@ -193,7 +193,7 @@ public class FileSystemUtilities {
 
 			//Reporter.log("Trovato file ["+log.getName()+"] ...");
 			
-			if(log.isFile() && log.getName().startsWith("openspcoop2_msgDiagnostico.log")){
+			if(log.isFile() && log.getName().startsWith("govway_diagnostici.log")){
 
 				Reporter.log("esamina ["+log.getAbsolutePath()+"] ...");
 				boolean findLogs = false;
@@ -295,7 +295,7 @@ public class FileSystemUtilities {
 	public static void verificaTracciaturaXML(String logDirectory,ValidatoreXSD validatoreXSD) throws Exception{
 
 
-		Reporter.log("Controllo Errori su openspcoop2_tracciamento.log ...");
+		Reporter.log("Controllo Errori su govway_tracciamento.log ...");
 		File logDir = new File(logDirectory);
 		Assert.assertTrue(logDir.exists());
 		Assert.assertTrue(logDir.canRead());
@@ -313,7 +313,7 @@ public class FileSystemUtilities {
 
 			//Reporter.log("Trovato file ["+log.getName()+"] ...");
 			
-			if(log.isFile() && log.getName().startsWith("openspcoop2_tracciamento.log")){
+			if(log.isFile() && log.getName().startsWith("govway_tracciamento.log")){
 
 				Reporter.log("esamina ["+log.getAbsolutePath()+"] ...");
 				boolean findLogs = false;

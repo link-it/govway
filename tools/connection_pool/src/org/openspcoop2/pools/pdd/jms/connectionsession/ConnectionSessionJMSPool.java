@@ -86,9 +86,9 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 //				java.util.Properties loggerProperties = new java.util.Properties();
 //				loggerProperties.load(ConnectionSessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
 //				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
-				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("govwayPools");
 			}catch(Exception e){
-				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("govwayPools");
 			}
 		}
 		

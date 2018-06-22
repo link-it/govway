@@ -1,4 +1,4 @@
-<project name="openspcoop2-compile-pddConsole">
+<project name="openspcoop2-compile-govwayConsole">
     <description>
         Produzione dei jar relativi al package org.openspcoop2.testsuite
     </description>
@@ -16,7 +16,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop.testsuite.*' -->
-	<target name="compile_openspcoop2_testsuite" description="compila la libreria org.openspcoop.testsuite.*">
+	<target name="compile_govway_testsuite" description="compila la libreria org.openspcoop.testsuite.*">
 
 		<if>
 			<istrue value="${buildTestsuite}"/>

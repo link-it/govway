@@ -174,7 +174,7 @@ public class GestorePdDThread extends GestoreGeneral {
 			this.initGestore();
 
 			if (this.singlePdD) {
-				this.log.warn(this.nomeThread + " non avviato: pddConsole avviata in singlePdD mode.");
+				this.log.warn(this.nomeThread + " non avviato: govwayConsole avviata in singlePdD mode.");
 				return;
 			}
 
@@ -549,7 +549,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									soggetto = this.soggettiCore.getSoggetto(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto: " + e.toString(), e);
@@ -563,7 +563,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									soggetto = this.soggettiCore.getSoggetto(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Soggetto non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto: " + e.toString(), e);
@@ -619,7 +619,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									pa = this.paCore.getPortaApplicativa(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Porta Applicativa non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Porta Applicativa non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine della Porta Applicativa: " + e.toString(), e);
@@ -633,7 +633,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									pa = this.paCore.getPortaApplicativa(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Porta Applicativa non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Porta Applicativa non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine della Porta Applicativa: " + e.toString(), e);
@@ -645,7 +645,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									soggettoProprietario = this.soggettiCore.getSoggetto(pa.getIdSoggetto());
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Soggetto proprietario: " + e.toString(), e);
@@ -700,7 +700,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									pd = this.pdCore.getPortaDelegata(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Porta Delegata non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Porta Delegata non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine della Porta Delegata: " + e.toString(), e);
@@ -711,7 +711,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									soggettoProprietario = this.soggettiCore.getSoggetto(pd.getIdSoggetto());
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Soggetto proprietario: " + e.toString(), e);
@@ -728,7 +728,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									pd = this.pdCore.getPortaDelegata(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Porta Delegata non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Porta Delegata non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine della Porta Delegata: " + e.toString(), e);
@@ -740,7 +740,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									soggettoProprietario = this.soggettiCore.getSoggetto(pd.getIdSoggetto());
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Soggetto proprietario non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Soggetto proprietario: " + e.toString(), e);
@@ -804,7 +804,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									servizioApplicativo = this.saCore.getServizioApplicativo(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Servizio Applicativo non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Servizio Applicativo non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Servizio Applicativo: " + e.toString(), e);
@@ -818,7 +818,7 @@ public class GestorePdDThread extends GestoreGeneral {
 								try {
 									servizioApplicativo = this.saCore.getServizioApplicativo(idTable);
 								} catch (DriverConfigurazioneNotFound de) {
-									operazioneInGestione.waitBeforeInvalid("Servizio Applicativo non esistente nel database della pddConsole: " + de.toString());
+									operazioneInGestione.waitBeforeInvalid("Servizio Applicativo non esistente nel database della govwayConsole: " + de.toString());
 									continue;
 								} catch (Exception e) {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Servizio Applicativo: " + e.toString(), e);

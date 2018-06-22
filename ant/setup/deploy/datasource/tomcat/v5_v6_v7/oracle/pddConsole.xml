@@ -10,9 +10,9 @@
 
 
 
-	<!-- Datasouce utilizzato dall'applicazione grafica pddConsole della PdD OpenSPCoop2 -->
+	<!-- Datasouce utilizzato dall'applicazione grafica govwayConsole della PdD OpenSPCoop2 -->
 
-	<Resource name="org.openspcoop2.dataSource.pddConsole" auth="Container"
+	<Resource name="org.govway.datasource.console" auth="Container"
 	          type="javax.sql.DataSource"
 	          driverClassName="oracle.jdbc.OracleDriver"
 	          url="jdbc:oracle:thin:@@HOST@:@PORT@:@INSTANCE@"
@@ -33,7 +33,7 @@
 
 	<!-- Datasource per i dati della porta di dominio OpenSPCoop2 -->
 
-	<Resource name="org.openspcoop2.dataSource" auth="Container"
+	<Resource name="org.govway.datasource" auth="Container"
 	          type="javax.sql.DataSource"
 	          driverClassName="oracle.jdbc.OracleDriver"
 	          url="jdbc:oracle:thin:@@HOST@:@PORT@:@INSTANCE@"

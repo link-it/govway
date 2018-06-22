@@ -537,7 +537,7 @@ public class TransactionServiceLibrary implements Serializable {
 
 		if(dumpMessaggio!=null){
 
-			// Risorse contenuto (configurate via pddMonitor)
+			// Risorse contenuto (configurate via govwayMonitor)
 			if(dumpMessaggio.sizeContenutoList()>0){
 				for (DumpContenuto dumpContenuto : dumpMessaggio.getContenutoList()) {
 
@@ -615,7 +615,7 @@ public class TransactionServiceLibrary implements Serializable {
 
 		if(dumpMessaggio!=null){
 
-			// Risorse contenuto (configurate via pddMonitor)
+			// Risorse contenuto (configurate via govwayMonitor)
 			if(dumpMessaggio.sizeContenutoList()>0){
 				for (DumpContenuto dumpContenuto : dumpMessaggio.getContenutoList()) {
 

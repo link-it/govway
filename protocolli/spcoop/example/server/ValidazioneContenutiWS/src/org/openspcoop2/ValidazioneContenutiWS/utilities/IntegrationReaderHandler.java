@@ -74,21 +74,21 @@ public class IntegrationReaderHandler extends BasicHandler
 			
 			if(nomeProperty!=null){
 				// Egov
-				if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-TipoMittente"))
+				if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoMittente"))
 					tipoMittente = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-Mittente"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Mittente"))
 					mittente = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-TipoDestinatario"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoDestinatario"))
 					tipoDestinatario = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-Destinatario"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Destinatario"))
 					destinatario = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-TipoServizio"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoServizio"))
 					tipoServizio = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-Servizio"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Servizio"))
 					servizio = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-Azione"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Azione"))
 					azione = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-OpenSPCoop2-IdMessaggio"))
+				else if(nomeProperty.equalsIgnoreCase("X-GovWay-IdMessaggio"))
 					idEGov = req.getHeader(nomeProperty); 
 			}
 		}

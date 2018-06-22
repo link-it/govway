@@ -86,7 +86,7 @@ public class OpenSPCoop2TestsuiteStartup implements ServletContextListener {
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
 		
 		// Istanza di logger
-		this.log=LoggerWrapperFactory.getLogger("openspcoop2.testsuite");
+		this.log=LoggerWrapperFactory.getLogger("govway.testsuite");
 		
 		
 		if(this.testsuiteProperties.loadMailcap()){

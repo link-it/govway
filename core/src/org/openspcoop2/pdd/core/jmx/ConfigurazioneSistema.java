@@ -270,10 +270,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Configurazione di Sistema della Porta di Dominio "+this.openspcoopProperties.getVersione();
+		String description = "Configurazione di Sistema ("+this.openspcoopProperties.getVersione()+")";
 
 		// VERSIONE_PDD
-		MBeanOperationInfo versionePddOp = new MBeanOperationInfo(VERSIONE_PDD,"Visualizza la versione della Porta di Dominio",
+		MBeanOperationInfo versionePddOp = new MBeanOperationInfo(VERSIONE_PDD,"Visualizza la versione di GovWay",
 						null,
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),

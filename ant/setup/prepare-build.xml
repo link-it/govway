@@ -14,8 +14,8 @@
 	<import file="./ant/prepare/as4-build.xml" />
 	<import file="./ant/prepare/sdi-build.xml" />
 	<import file="./ant/prepare/loader-build.xml" />
-	<import file="./ant/prepare/pddConsole-build.xml" />
-	<import file="./ant/prepare/pddMonitor-build.xml" />
+	<import file="./ant/prepare/govwayConsole-build.xml" />
+	<import file="./ant/prepare/govwayMonitor-build.xml" />
 	<import file="./ant/prepare/backwardCompatibility-build.xml" />
 
 	<property name="build" location="build" />
@@ -34,8 +34,8 @@
 		<antcall target="prepare_as4_setup" />
 		<antcall target="prepare_sdi_setup" />
 		<antcall target="prepare_loader_setup" />
-		<antcall target="prepare_pddConsole_setup" />
-		<antcall target="prepare_pddMonitor_setup" />
+		<antcall target="prepare_govwayConsole_setup" />
+		<antcall target="prepare_govwayMonitor_setup" />
 		<antcall target="prepare_backwardCompatibility_setup" />
 		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->

@@ -24,13 +24,13 @@
     <page name="preinstallazione2" type="input" displayText="Informazioni preliminari">
                        
         <!-- <comment displayText="Directory di lavoro" bold="true"/>  sotto come display c'era path -->
-        <directory defaultValue="/var/openspcoop2" defaultValueWin="C:\openspcoop2" displayText="Directory di lavoro"
+        <directory defaultValue="/var/govway" defaultValueWin="C:\govway" displayText="Directory di lavoro"
             property="antinstaller_directory_lavoro_openspcoop" checkExists="false" />
         
         <comment displayText=""/>
 
         <!-- <comment displayText="Directory di log" bold="true"/>  sotto come display c'era path -->
-        <directory defaultValue="/var/openspcoop2/log" defaultValueWin="C:\openspcoop2\log" displayText="Directory di log"
+        <directory defaultValue="/var/govway/log" defaultValueWin="C:\govway\log" displayText="Directory di log"
             property="antinstaller_directory_log_openspcoop" checkExists="false" />
         
         <comment displayText=""/>
@@ -40,7 +40,7 @@
             <option value="postgresql" text="PostgreSQL"/>
             <option value="mysql" text="MySQL"/>
 	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <option value="mysql" text="MariaDB"/>
+  	    <!-- <option value="mysql" text="MariaDB"/> -->
             <option value="oracle" text="Oracle"/>
             <option value="hsql" text="HyperSQL"/>
             <option value="sqlserver" text="SQLServer"/>
@@ -52,7 +52,8 @@
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="wildfly12" property="antinstaller_as" displayText="Application Server">
       
-		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica --> 
+		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
+		<option value="wildfly10" text="WildFly 13.x"/>
 		<option value="wildfly10" text="WildFly 12.x"/> 
 		<option value="wildfly10" text="WildFly 11.x"/> 
 		<option value="wildfly10" text="WildFly 10.x"/>
@@ -100,13 +101,13 @@
         <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname"
             displayText="Nome Database" regex=".+"/>
 
-        <validated defaultValue="openspcoop2" property="antinstaller_dbusername"
+        <validated defaultValue="govway" property="antinstaller_dbusername"
             displayText="Username" regex=".+"/>
-        <validated defaultValue="openspcoop2" property="antinstaller_dbpassword"
+        <validated defaultValue="govway" property="antinstaller_dbpassword"
             displayText="Password" regex=".+"/>
-        <!--<password property="antinstaller_dbpassword" defaultValue="openspcoop2"
+        <!--<password property="antinstaller_dbpassword" defaultValue="govway"
                 displayText="Password:" regex="^.+$" textMask="true"/>
-         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="openspcoop2" regex="^.+$" textMask="true"/>-->
+         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
     </page>
 
  <page name="infoDB_notOracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}!=oracle">
@@ -114,27 +115,27 @@
             regex=".+"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
             <hidden property="porta-db" value="5432"/>
-            <hidden property="TABLESPACE" value="openspcoop2"/>
+            <hidden property="TABLESPACE" value="govway"/>
             <hidden property="antinstaller_driver_jdbc" value="org.postgresql.Driver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=mysql">
             <hidden property="porta-db" value="3306"/>
-            <hidden property="TABLESPACE" value="openspcoop2"/>
+            <hidden property="TABLESPACE" value="govway"/>
             <hidden property="antinstaller_driver_jdbc" value="com.mysql.jdbc.Driver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=hsql">
             <hidden property="porta-db" value="9001"/>
-            <hidden property="TABLESPACE" value="openspcoop2"/>
+            <hidden property="TABLESPACE" value="govway"/>
             <hidden property="antinstaller_driver_jdbc" value="org.hsqldb.jdbcDriver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=sqlserver">
             <hidden property="porta-db" value="1433"/>
-            <hidden property="TABLESPACE" value="openspcoop2"/>
+            <hidden property="TABLESPACE" value="govway"/>
             <hidden property="antinstaller_driver_jdbc" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
         </conditional>
 		<conditional ifProperty="${antinstaller_tipo_database}=db2">
             <hidden property="porta-db" value="50000"/>
-            <hidden property="TABLESPACE" value="openspcoop2"/>
+            <hidden property="TABLESPACE" value="govway"/>
             <hidden property="antinstaller_driver_jdbc" value="com.ibm.db2.jcc.DB2Driver"/>
         </conditional>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport"
@@ -143,23 +144,23 @@
         <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname"
             displayText="Nome Database" regex=".+"/>
 
-        <validated defaultValue="openspcoop2" property="antinstaller_dbusername"
+        <validated defaultValue="govway" property="antinstaller_dbusername"
             displayText="Username" regex=".+"/>
-        <validated defaultValue="openspcoop2" property="antinstaller_dbpassword"
+        <validated defaultValue="govway" property="antinstaller_dbpassword"
             displayText="Password" regex=".+"/>
-        <!--<password property="antinstaller_dbpassword" defaultValue="openspcoop2"
+        <!--<password property="antinstaller_dbpassword" defaultValue="govway"
                 displayText="Password:" regex="^.+$" textMask="true"/>
-         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="openspcoop2" regex="^.+$" textMask="true"/>-->
+         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
     </page>
 
  	<page name="utenzeConsole" type="input" displayText="Configurazione Utenze">
 
-		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore (pddConsole)" regex="^[0-9A-Za-z]+$"/>
+		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore (govwayConsole)" regex="^[0-9A-Za-z]+$"/>
 		<validated property="antinstaller_pddconsole_password" displayText="Password Amministratore" regex="^[^ ]+$" />
 
 		<comment displayText=""/>	
 		
-		<validated defaultValue="operatore" property="antinstaller_pddmonitor_username" displayText="Username Operatore (pddMonitor)" regex="^[0-9A-Za-z]+$"/>
+		<validated defaultValue="operatore" property="antinstaller_pddmonitor_username" displayText="Username Operatore (govwayMonitor)" regex="^[0-9A-Za-z]+$"/>
 		<validated property="antinstaller_pddmonitor_password" displayText="Password Operatore" regex="^[^ ]+$" />
 
 		<comment displayText=""/>	
@@ -171,9 +172,9 @@
 
     </page>
 
-    <page name="preinstallazione4" type="input" displayText="Cooperazione Applicativa">
+    <page name="preinstallazione4" type="input" displayText="Modalità Operativa">
 
-        <comment displayText="Protocolli attivi" bold="true"/>
+        <comment displayText="Modalità" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
@@ -186,7 +187,7 @@
         <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
         <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
-        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto della PdD" regex="^[0-9A-Za-z]+$"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
         
         <!--
         <comment displayText=""/>
@@ -201,7 +202,7 @@
 
 	<comment displayText=""/>
 	<comment displayText="Endpoint protetto tramite Security Constraint"/>
-	<checkbox defaultValue="true" property="antinstaller_sec_container" displayText="Contesto 'openspcoop2sec'"/>
+	<checkbox defaultValue="true" property="antinstaller_sec_container" displayText="Contesto 'govwaySec'"/>
 
     </page>
 
@@ -217,7 +218,7 @@
 
 	<comment displayText=""/>
 	<comment displayText="Endpoint protetto tramite Security Constraint"/>
-	<checkbox defaultValue="false" property="antinstaller_sec_container" displayText="Contesto 'openspcoop2sec'"/>
+	<checkbox defaultValue="false" property="antinstaller_sec_container" displayText="Contesto 'govwaySec'"/>
 
     </page>
 
@@ -284,7 +285,7 @@
 
     </page>
 
-
+<!--
     <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
         
          <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
@@ -302,8 +303,9 @@
 	<checkbox defaultValue="false" property="antinstaller_backward_compatibility" force="true" displayText="Compatibilità interfacce OpenSPCoop-v1"/>
 
     </page>
+-->
 
     <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_pddConsole,setup_pddMonitor,setup_loader,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_backward_compatibility,setup_finished"/>
 
 </installer>

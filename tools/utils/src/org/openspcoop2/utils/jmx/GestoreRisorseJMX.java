@@ -117,7 +117,7 @@ public class GestoreRisorseJMX {
 		
 		// logConsole
 		if(loggerConsole==null){
-			loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2.startup");
+			loggerConsole = LoggerWrapperFactory.getLogger("govway.startup");
 		}
 		
 		try{

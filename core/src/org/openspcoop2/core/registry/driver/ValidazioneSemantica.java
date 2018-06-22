@@ -943,7 +943,7 @@ public class ValidazioneSemantica {
 			validaAccordoServizioParteSpecifica(serv, sogg);
 		}
 
-		// Il tipo del soggetto deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiSoggetti()
+		// Il tipo del soggetto deve essere uno tra quelli definiti in govway.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiSoggetti()
 		if(this.tipoSoggetti.contains(sogg.getTipo())==false){
 			this.errori.add("Il tipo del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" non è valido (Tipi utilizzabili: "+this.getTipoSoggetti()+")");
 		}
@@ -1300,7 +1300,7 @@ public class ValidazioneSemantica {
 		}
 		
 		
-		// Il tipo deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiServizi()
+		// Il tipo deve essere uno tra quelli definiti in govway.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiServizi()
 		ServiceBinding binding = this.mappingAccordiToServiceBinding.get(this.idAccordoFactory.normalizeUri(asps.getAccordoServizioParteComune()));
 		if(binding==null){
 			this.errori.add("Il servizio "+uriServizio+" implementa un accordo parte comune ["+asps.getAccordoServizioParteComune()+"] non esistente");

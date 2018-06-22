@@ -103,24 +103,24 @@ public class LoaderLogger {
 		}
 
 		if(appendActualConfiguration){
-			System.out.println("[LoaderConsole] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+			System.out.println("[govwayLoader] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");
 			int i=0;
 			int limit = 60;
 			while(OpenSPCoop2Startup.initialize==false && i<limit){
 				Utilities.sleep(1000);
 				i++;
 				if(i%10==0){
-					System.out.println("[LoaderConsole] Attendo inizializzazione PdDOpenSPCoop ...");
+					System.out.println("[govwayLoader] Attendo inizializzazione GovWay ...");
 				}
 			}
 			
 			if(OpenSPCoop2Startup.initialize==false){
-				throw new UtilsException("[LoaderConsole] Inizializzazione OpenSPCoop non rilevata");
+				throw new UtilsException("[govwayLoader] Inizializzazione GovWay non rilevata");
 			}
 			
-			System.out.println("[LoaderConsole] Configurazione Log4J ...");
+			System.out.println("[govwayLoader] Configurazione Log4J ...");
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
-			System.out.println("[LoaderConsole] Configurazione Log4J aggiunta");
+			System.out.println("[govwayLoader] Configurazione Log4J aggiunta");
 		}
 		else{
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);

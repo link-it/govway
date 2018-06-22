@@ -1,0 +1,97 @@
+<project name="openspcoop2-compile-govwayConsole">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.web.ctrlstat
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="compile_openspcoop2_govwayConsole" description="compila la libreria org.openspcoop.web.ctrlstat.*">
+
+		<if>
+			<istrue value="${buildPddConsole}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				
+				<!-- org.openspcoop2.web.ctrlstat -->
+				<var name="packagesCompiled" value="org.openspcoop2.web.ctrlstat" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.config" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.core" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.costanti" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.dao" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.driver" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.dto" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.ac" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.apc" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.aps" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.archivi" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.audit" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.config" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.connettori" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.login" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.monitor" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.operazioni" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pa" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pdd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.ruoli" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.sa" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.soggetti" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.utenti" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_govwayConsole}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-govwayConsole"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.ctrlstat"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayConsole}"/>
+					<param name="build" value="${build_govwayConsole}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<!--<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-govwayConsole"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayConsole}"/>
+					<param name="build" value="${build_govwayConsole}"/>
+				</antcall>-->
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_govwayConsole}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="web-govwayConsole"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_govwayConsole}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="src" value="${src_govwayConsole}"/>
+					<param name="doc" value="${doc_govwayConsole}"/>
+					<param name="dist" value="${dist_govwayConsole}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

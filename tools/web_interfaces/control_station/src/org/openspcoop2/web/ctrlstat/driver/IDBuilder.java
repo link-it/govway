@@ -68,7 +68,7 @@ import org.openspcoop2.web.lib.users.dao.User;
 
 
 /**
- * Classe utilizzata per generare gli identificatori degli oggetti presenti nella pddConsole.
+ * Classe utilizzata per generare gli identificatori degli oggetti presenti nella govwayConsole.
  *
  * 
  * @author Andrea Poli (apoli@link.it)

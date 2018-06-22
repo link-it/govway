@@ -44,7 +44,6 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
-import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;

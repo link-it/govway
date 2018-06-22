@@ -337,14 +337,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni tunnel SOAP
-			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "OpenSPCoop2TunnelSOAP");
+			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "govwayTunnelSOAP");
 			boolean tunnel = false;
 			if(tunnelSoap!=null){
 				tunnelSoap = tunnelSoap.trim();
 				if("true".equals(tunnelSoap))
 					tunnel = true;
 			}
-			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "OpenSPCoop2TunnelSOAPMimeType");
+			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "govwayTunnelSOAPMimeType");
 			if(tunnelSoapMimeType!=null){
 				tunnelSoapMimeType = tunnelSoapMimeType.trim();
 			}
@@ -607,9 +607,9 @@ public class ServletTestService extends HttpServlet {
 				}
 				
 				if(tunnel){
-					res.setHeader("X-OpenSPCoop2-TunnelSOAP", "true");
+					res.setHeader("X-GovWay-TunnelSOAP", "true");
 					if(tunnelSoapMimeType!=null)
-						res.setHeader("X-OpenSPCoop2-TunnelSOAP-MimeType",tunnelSoapMimeType);
+						res.setHeader("X-GovWay-TunnelSOAP-MimeType",tunnelSoapMimeType);
 				}
 				
 				

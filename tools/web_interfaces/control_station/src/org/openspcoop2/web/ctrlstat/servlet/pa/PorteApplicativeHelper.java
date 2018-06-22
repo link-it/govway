@@ -278,7 +278,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				 * definito, questo diventa il soggetto erogatore.
 				 * 
 				 * Note: Vengono inoltre effettuati controlli
-				 * sull'univocita' del nome la pddConsole non permette
+				 * sull'univocita' del nome la govwayConsole non permette
 				 * di inserire porte applicative con stesso nome;
 				 */
 

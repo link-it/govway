@@ -14635,7 +14635,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 
 	/**
-	 * Reset delle tabelle del db pddConsole gestito da questo driver
+	 * Reset delle tabelle del db govwayConsole gestito da questo driver
 	 */
 	public void resetCtrlstat() throws DriverConfigurazioneException {
 		Connection con = null;

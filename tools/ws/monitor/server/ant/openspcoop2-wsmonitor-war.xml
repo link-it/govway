@@ -91,7 +91,7 @@
 				<antcall target="set_property">
 				    <param name="file" value="${build_monitor_ws}/properties/wsmonitor.datasource.properties"/>
 					<param name="token" value="db.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource"/>
 				</antcall>
 			</then>
 		</if>
@@ -113,7 +113,7 @@
 				<include name="openspcoop2_*.jar"/>
 			</lib>
 			<lib dir="${dist_monitor_ws}">
-				<include name="openspcoop2_ws-monitor-server*.jar"/>
+				<include name="govway_ws-monitor-server*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>

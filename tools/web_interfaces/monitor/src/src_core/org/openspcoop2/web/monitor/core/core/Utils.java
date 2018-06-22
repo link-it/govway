@@ -167,9 +167,9 @@ public class Utils {
 	public static boolean isContentAuthorizationRequiredForThisResource(HttpServletRequest httpServletRequest, List<String> excludedPaths) {
 		String requestPath = httpServletRequest.getRequestURI();
 
-		String contextPath = httpServletRequest.getContextPath(); // '/pddMonitor'
+		String contextPath = httpServletRequest.getContextPath(); // '/govwayMonitor'
 
-		// caso limite, pddMonitor/
+		// caso limite, govwayMonitor/
 		if(StringUtils.equals(requestPath, (contextPath + "/")))
 			return false;
 

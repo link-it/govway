@@ -158,7 +158,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_MESSAGGIO+" da parte del SOAPEngine: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR),
 			
-	ERRORE_427_MUSTUNDERSTAND_ERROR("La Porta di Dominio non è in grado di processare i seguenti \"MustUnderstand\" header(s): "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MUST_UNDERSTAND_HEADERS,
+	ERRORE_427_MUSTUNDERSTAND_ERROR("Riscontrati header(s) \"MustUnderstand\" non processabili: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MUST_UNDERSTAND_HEADERS,
 			CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR),
 			
 	ERRORE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA("Servizio non invocabile con il contenuto applicativo fornito dal servizio applicativo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO,
@@ -176,7 +176,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO_GESTORE_CREDENZIALI+"]: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR),
 
-	ERRORE_432_PARSING_EXCEPTION_RICHIESTA("Il contenuto applicativo della richiesta ricevuta non è processabile dalla Porta di Dominio: "+
+	ERRORE_432_PARSING_EXCEPTION_RICHIESTA("Il contenuto applicativo della richiesta ricevuta non è processabile: "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA),
 			
@@ -211,7 +211,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL),
 	
-	ERRORE_440_PARSING_EXCEPTION_RISPOSTA("Il contenuto applicativo della risposta ricevuta non è processabile dalla Porta di Dominio: "+
+	ERRORE_440_PARSING_EXCEPTION_RISPOSTA("Il contenuto applicativo della risposta ricevuta non è processabile: "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA),
 	

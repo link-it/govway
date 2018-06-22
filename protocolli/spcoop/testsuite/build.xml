@@ -4,8 +4,8 @@
 	<import file="./ant/openspcoop2-spcoop-testsuite-build.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
 	<import file="${openspcoop2}/ant/commons/utils.xml" />
-	<import file="${openspcoop2_testsuite}/ant/openspcoop2-commons-testsuite-config.xml" />
-	<import file="${openspcoop2_testsuite}/ant/openspcoop2-commons-testsuite-run.xml" />
+	<import file="${govway_testsuite}/ant/openspcoop2-commons-testsuite-config.xml" />
+	<import file="${govway_testsuite}/ant/openspcoop2-commons-testsuite-run.xml" />
 
 
 	<!-- estensione di ant (if .... ) -->
@@ -67,10 +67,10 @@
 		<fileset dir="${openspcoop2}/core/dist" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_testsuite_dist}" >
+		<fileset dir="${govway_testsuite_dist}" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_protocol_spcoop}" >
+		<fileset dir="${govway_protocol_spcoop}" >
 			<include name="*.jar"/>
 		</fileset>	
 	</path>	
@@ -82,11 +82,11 @@
 			<include name="*.jar"/>
 		</fileset>
 		
-		<fileset dir="${openspcoop2_testsuite_dist}" >
+		<fileset dir="${govway_testsuite_dist}" >
 			<include name="*.jar"/>
 		</fileset>
 		
-		<fileset dir="${openspcoop2_protocol_spcoop}" >
+		<fileset dir="${govway_protocol_spcoop}" >
 			<include name="*.jar"/>
 		</fileset>
 				
@@ -167,7 +167,7 @@
 	
 	
 	<!-- Compilazione della testsuite -->
-	<target name="compile_testunits" depends="init_compile_testunits,compile_openspcoop2_testsuite_spcoop" description="compila la testsuite">
+	<target name="compile_testunits" depends="init_compile_testunits,compile_govway_testsuite_spcoop" description="compila la testsuite">
 		<unjar dest="${build_testunits}/NG_UNITS" >
 		    <fileset dir="${dist_testunits}">
 		        <include name="openspcoop2_spcoop-testsuite_BUILD-*.jar"/>
@@ -189,7 +189,7 @@
 		<copy file="deploy/properties/testsuite_testunits.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="deploy/properties/testsuite_spcoop.log4j2.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="deploy/properties/testsuite_spcoop.log4j2.properties" todir="${build_testunits}/NG_UNITS/log4j2.properties" />
-		<copy file="${openspcoop2_testsuite_properties}/testsuite.properties" todir="${build_testunits}/NG_UNITS" />
+		<copy file="${govway_testsuite_properties}/testsuite.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="deploy/properties/testsuiteClient-crypto.properties" todir="${build_testunits}/NG_UNITS" />
 		<copy file="${openspcoop2}/testsuite/deploy/properties/testsuite.log4j2.properties" todir="${build_testunits}/NG_UNITS" />
 		

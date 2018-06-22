@@ -73,7 +73,7 @@ public class MsgDiagnosticiProperties {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	/** Reader delle proprieta' impostate nel file 'openspcoop2.msgDiagnostici.properties' */
+	/** Reader delle proprieta' impostate nel file 'govway.msgDiagnostici.properties' */
 	private MsgDiagnosticiInstanceProperties reader;
 
 	/** Copia Statica */
@@ -101,14 +101,14 @@ public class MsgDiagnosticiProperties {
 			if(location!=null){
 				properties = new FileInputStream(location);
 			}else{
-				properties = MsgDiagnosticiProperties.class.getResourceAsStream("/openspcoop2.msgDiagnostici.properties");
+				properties = MsgDiagnosticiProperties.class.getResourceAsStream("/govway.msgDiagnostici.properties");
 			}
 			if(properties==null){
-				throw new Exception("File '/openspcoop2.msgDiagnostici.properties' not found");
+				throw new Exception("File '/govway.msgDiagnostici.properties' not found");
 			}
 			propertiesReader.load(properties);		    
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'openspcoop2.msgDiagnostici.properties': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file 'govway.msgDiagnostici.properties': \n\n"+e.getMessage());
 			throw new Exception("MsgDiagnosticiProperties initialize error: "+e.getMessage());
 		}finally{
 			try{

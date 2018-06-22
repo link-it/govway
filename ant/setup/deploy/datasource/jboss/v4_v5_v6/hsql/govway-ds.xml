@@ -1,0 +1,72 @@
+<datasources>
+
+	<no-tx-datasource>
+
+		<!-- JNDI Name -->
+		<jndi-name>org.govway.datasource</jndi-name>
+		<use-java-context>false</use-java-context>
+
+		<!-- Connection URL -->
+		<connection-url>jdbc:hsqldb:hsql://@HOST@:@PORT@/@DATABASE@</connection-url>
+
+		<!-- DriverJDBC -->
+		<driver-class>org.hsqldb.jdbcDriver</driver-class>
+
+		<!-- Credenziali -->
+		<user-name>@USERNAME@</user-name>
+		<password>@PASSWORD@</password>
+
+		<!-- Livello di Isolamento delle Transazioni -->
+		<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+
+		<!-- Minimo/Massimo numero di connessioni che un pool deve mantenere -->
+		<min-pool-size>10</min-pool-size>
+		<max-pool-size>50</max-pool-size>
+
+		<!-- Massimo ammontare di minuti che una connessione puo' rimanere 'idle' prima di essere chiusa -->
+		<idle-timeout-minutes>5</idle-timeout-minutes>
+
+		<!--
+		Controllo degli Statements/ResultSet non chiusi. Viene effettuato quando una connessione viene ritornata al pool
+		o quando una PreparedStatement viene chiusa e quindi ritornata alla cache delle prepared statements
+		-->
+		<track-statements>true</track-statements>
+
+		<!-- Cache PreparedStatement -->
+		<prepared-statement-cache-size>100</prepared-statement-cache-size>
+
+		<!--
+		Validazione della Connessione SQL.
+		Effettuata quando una connessione viene creata o su una esistente connessione quando questa viene ottenuta dal pool
+		-->
+		    <new-connection-sql>SELECT 1</new-connection-sql>
+		    <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+
+		<metadata>
+
+			<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+			<type-mapping>Hypersonic SQL</type-mapping>
+
+		</metadata>
+
+		<!-- NOTA : Decommentare in caso si utilizzi hypersonic (hsql su jboss) -->
+		<!-- <depends>jboss:service=Hypersonic</depends> -->
+
+	</no-tx-datasource>
+
+	<!-- NOTA : Decommentare in caso si utilizzi hypersonic (hsql su jboss)
+	<mbean code="org.jboss.jdbc.HypersonicDatabase" name="jboss:service=Hypersonic">
+		<attribute name="Port">
+			<value-factory bean="ServiceBindingManager" method="getIntBinding" parameter="jboss:service=Hypersonic"/>
+		</attribute>
+		<attribute name="BindAddress">
+			<value-factory bean="ServiceBindingManager" method="getStringBinding" parameter="jboss:service=Hypersonic"/>
+		</attribute>
+		<attribute name="Silent">true</attribute>
+		<attribute name="Database">@DATABASE@</attribute>
+		<attribute name="Trace">false</attribute>
+		<attribute name="No_system_exit">true</attribute>
+	</mbean>
+	-->
+
+</datasources>

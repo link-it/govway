@@ -1,0 +1,65 @@
+<project name="openspcoop2-sincronizzatore-govwayConsole">
+    <description>
+        Avvia il sincronizzatore
+    </description>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+	<var name="jboss_jars" value="applicationServer/${as}"/>
+	<if>
+		<matches string="${as}" pattern="tomcat.*"/>
+		<then>
+			<var name="jboss_jars" value="applicationServer"/> <!-- In modo da non rilevare nessun jar -->
+		</then>
+	</if>
+	
+	<path id="classpath_script">
+		<fileset dir="${required_lib_govwayConsole}/${jboss_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib_govwayConsole}/log" >
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement path="${required_lib_govwayConsole}/commons/commons-logging-1.2.jar" />
+		<pathelement path="${required_lib_govwayConsole}/commons/commons-discovery-0.5.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/xercesImpl-2.11.0.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/wsdl4j-1.6.3.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/soap.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/uddi4j-2.0.5.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/mailapi-1.5.6.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/activation-1.1.1.jar" />
+	</path>
+	
+	
+	<target name="runSincronizzatore_openspcoop2_govwayConsole">
+
+		<java classname="org.openspcoop2.web.ctrlstat.core.Sincronizzatore" fork="false">
+			<classpath>
+				<path refid="classpath_script" />
+				<fileset dir="${dist_govwayConsole}" includes="**/*.jar" />
+				<pathelement path="${Jdbclib}" />
+				<pathelement path="deploy/cfg" />
+				<pathelement path="${ws_stub_gestore_eventi}/openspcoop_gestoreEventi_stub.jar" />
+				<pathelement path="${ws_stub_management}/openspcoop_management_configurazione_stub.jar" />
+				<pathelement path="${ws_stub_management}/openspcoop_management_registro_stub.jar" />
+			</classpath>
+		</java>
+		
+	</target>
+	
+</project>

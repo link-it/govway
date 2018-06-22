@@ -9,8 +9,8 @@ function postBack() {
 	postBack(null);
 }
 function postBack(dataElementName) {
-    // document.form.action vale http://localhost:8080/pddConsole/servlet.do
-    // A me serve solo il pezzo /pddConsole/servlet.do
+    // document.form.action vale http://localhost:8080/govwayConsole/servlet.do
+    // A me serve solo il pezzo /govwayConsole/servlet.do
     var firstSlash = document.form.action.indexOf("/");
     var secondSlash = document.form.action.indexOf("/", firstSlash+1);
     var thirdSlash = document.form.action.indexOf("/", secondSlash+1);

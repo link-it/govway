@@ -70,10 +70,10 @@ public class GeneralHelper {
 			this.loaderCore = new LoaderCore();
 			this.size = LoaderProperties.getInstance().getConsoleLunghezzaLabel();
 		} catch (Exception e) {
-			this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");
+			this.log = LoggerWrapperFactory.getLogger("govway.loader");
 			this.log.error("Exception: " + e.getMessage(), e);
 		}
-		this.log = LoggerWrapperFactory.getLogger("openspcoop2.loader");	
+		this.log = LoggerWrapperFactory.getLogger("govway.loader");	
 	}
 
 

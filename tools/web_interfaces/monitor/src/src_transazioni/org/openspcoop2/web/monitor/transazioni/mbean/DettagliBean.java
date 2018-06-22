@@ -86,9 +86,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	static {
 		try {
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
 
-			DettagliBean.enableHeaderInfo = pddMonitorProperties.isAttivoTransazioniExportHeader();
+			DettagliBean.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 
 		} catch (Exception e) {
 			DettagliBean.log
@@ -101,11 +101,11 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public DettagliBean(){
 		try {
 
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
 
-			this.driver  = pddMonitorProperties.getDriverTracciamento();
+			this.driver  = govwayMonitorProperties.getDriverTracciamento();
 			
-			this.visualizzaDataAccettazione = pddMonitorProperties.isAttivoTransazioniDataAccettazione();
+			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
 
 		} catch (Exception e) {
 			DettagliBean.log

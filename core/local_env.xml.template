@@ -2,7 +2,7 @@
 
 <!-- Durante il deploy, l'application server deve essere in esecuzione -->
 
-<project name="OpenSPCoop2_LocalEnv" basedir=".">
+<project name="GovWay_LocalEnv" basedir=".">
 
 	<!-- RootDir (per file Licensa,Copying...) -->
 	<property name="rootDir" location="../" />

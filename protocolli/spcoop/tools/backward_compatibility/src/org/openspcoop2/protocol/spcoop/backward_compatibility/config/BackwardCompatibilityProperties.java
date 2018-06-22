@@ -120,7 +120,7 @@ public class BackwardCompatibilityProperties {
 		return getInstance(false);
 	}
 	// Viene inizializzato in modo da permettere di installare sempre il modulo BackwardCompatibilty e per disabiltarlo basta eliminarlo/commentarlo dal META-INF/application.xml
-	// Tutte le classi cmq agganciate via openspcoop2.properties vengono utilizzate lo stesso (handler, integrazione ...)
+	// Tutte le classi cmq agganciate via govway.properties vengono utilizzate lo stesso (handler, integrazione ...)
 	// Però non arrivando dal canale di backward compatibility sono semplici NOP
 	public static BackwardCompatibilityProperties getInstance(boolean inizializeIfNotExists) throws OpenSPCoop2ConfigurationException{
 	    if(BackwardCompatibilityProperties.backwardCompatibilityProperties==null){

@@ -6,34 +6,34 @@
 	<!-- Moduli di Imbustamento -->
         <p:pool>
             <ejb-name>Imbustamento</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
         <p:pool>
             <ejb-name>ImbustamentoRisposte</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
 	<!-- Moduli di Sbustamento -->
         <p:pool>
             <ejb-name>Sbustamento</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
         <p:pool>
             <ejb-name>SbustamentoRisposte</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
 	<!-- Moduli di Inoltro buste -->
         <p:pool>
             <ejb-name>InoltroBuste</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
         <p:pool>
             <ejb-name>InoltroRisposte</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
 	<!-- Moduli di consegna contenuti applicativi -->
         <p:pool>
             <ejb-name>ConsegnaContenutiApplicativi</ejb-name>
-            <p:bean-instance-pool-ref>mdb-openspcoop2-pool</p:bean-instance-pool-ref>
+            <p:bean-instance-pool-ref>mdb-govway-pool</p:bean-instance-pool-ref>
         </p:pool>
 
 	<!-- Moduli di Imbustamento -->

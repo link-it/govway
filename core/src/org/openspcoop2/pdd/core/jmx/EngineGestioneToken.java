@@ -236,7 +236,7 @@ public class EngineGestioneToken extends NotificationBroadcasterSupport implemen
 		
 		// Descrizione della classe nel MBean
 		String className = this.getClass().getName();
-		String description = "Gestione dei token transitati sulla Porta di Dominio "+OpenSPCoop2Properties.getInstance().getVersione();
+		String description = "Gestione dei token transitati sul Gateway ("+OpenSPCoop2Properties.getInstance().getVersione()+")";
 		
 		// MetaData per l'attributo abilitaCache
 		MBeanAttributeInfo cacheAbilitataVAR = JMXUtils.MBEAN_ATTRIBUTE_INFO_CACHE_ABILITATA;

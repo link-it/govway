@@ -223,9 +223,9 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 //			java.util.Properties loggerProperties = new java.util.Properties();
 //			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
 //			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
-			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			this.logger = LoggerWrapperFactory.getLogger("govwayPools");
 		}catch(Exception e){
-			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			this.logger = LoggerWrapperFactory.getLogger("govwayPools");
 		}
 		
 		if(context==null)

@@ -280,7 +280,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_diagnostici.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_diagnostica = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		

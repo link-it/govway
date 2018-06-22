@@ -32,9 +32,9 @@ public class CostantiJMX {
     public static final String JMX_DOMINIO = "org.openspcoop2.pdd";
     /** Tipo utilizzato per le risorse JMX */
     public static final String JMX_TYPE = "type";
-    /** Nome Loader OpenSPCoop2.ear */
+    /** Nome Loader govway.ear */
     public static final String JMX_OPENSPCOOP2_LOADER = "loader";
-    public static final String JMX_OPENSPCOOP2_NOME_ARCHIVIO = "OpenSPCoop2.ear";
+    public static final String JMX_OPENSPCOOP2_NOME_ARCHIVIO = "govway.ear";
     public static final String JMX_OPENSPCOOP2_LOADER_ATTRIBUTE_URLS = "URLs";
 
 }

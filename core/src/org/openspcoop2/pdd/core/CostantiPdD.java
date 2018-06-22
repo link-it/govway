@@ -70,23 +70,23 @@ public class CostantiPdD {
     public final static String OPENSPCOOP2_LOADER = "OPENSPCOOP2_LOADER";
     public final static String OPENSPCOOP2_LOADER_PROPERTIES = "OPENSPCOOP2_LOADER_PROPERTIES";
     
-    public final static String OPENSPCOOP2_PROPERTIES_LOCAL_PATH = "openspcoop2_local.properties";
+    public final static String OPENSPCOOP2_PROPERTIES_LOCAL_PATH = "govway_local.properties";
     public final static String OPENSPCOOP2_PROPERTIES = "OPENSPCOOP2_PROPERTIES";
     
-    public final static String OPENSPCOOP2_CLASSNAME_LOCAL_PATH = "openspcoop2_local.classRegistry.properties";
+    public final static String OPENSPCOOP2_CLASSNAME_LOCAL_PATH = "govway_local.classRegistry.properties";
     public final static String OPENSPCOOP2_CLASSNAME_PROPERTIES = "OPENSPCOOP2_CLASSREGISTRY_PROPERTIES";
     
-    public final static String OPENSPCOOP2_PDD_LOCAL_PATH = "openspcoop2_local.pdd.properties";
+    public final static String OPENSPCOOP2_PDD_LOCAL_PATH = "govway_local.pdd.properties";
     public final static String OPENSPCOOP2_PDD_PROPERTIES = "OPENSPCOOP2_PDD_PROPERTIES";
     
-    public final static String OPENSPCOOP2_MSGDIAGNOSTICI_LOCAL_PATH = "openspcoop2_local.msgDiagnostici.properties";
+    public final static String OPENSPCOOP2_MSGDIAGNOSTICI_LOCAL_PATH = "govway_local.msgDiagnostici.properties";
     public final static String OPENSPCOOP2_MSGDIAGNOSTICI_PROPERTIES = "OPENSPCOOP2_MSGDIAGNOSTICI_PROPERTIES";
        
-    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "openspcoop2_local.log4j2.properties";
+    public final static String OPENSPCOOP2_LOGGER_LOCAL_PATH = "govway_local.log4j2.properties";
     public final static String OPENSPCOOP2_LOGGER_PROPERTIES = "OPENSPCOOP2_LOGGER_PROPERTIES";
     
     public final static String OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO = "IDPROTOCOLLO";
-    private final static String OPENSPCOOP2_LOGGER_PROTOCOL_LOCAL_PATH = "openspcoop2_local.protocol_"+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO+".log4j2.properties";
+    private final static String OPENSPCOOP2_LOGGER_PROTOCOL_LOCAL_PATH = "govway_local.protocol_"+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO+".log4j2.properties";
     public static String getOpenspcoop2LoggerProtocolLocalPath(String protocol) {
 		return OPENSPCOOP2_LOGGER_PROTOCOL_LOCAL_PATH.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
 	}
@@ -94,16 +94,16 @@ public class CostantiPdD {
     public static String getOpenspcoop2LoggerProtocolProperties(String protocol) {
 		return OPENSPCOOP2_LOGGER_PROTOCOL_PROPERTIES.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
 	}
-    private final static String OPENSPCOOP2_LOGGER_FACTORY_NAME = "openspcoop2."+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO;
+    private final static String OPENSPCOOP2_LOGGER_FACTORY_NAME = "govway."+OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO;
     public static String getOpenspcoop2LoggerFactoryName(String protocol) {
 		return OPENSPCOOP2_LOGGER_FACTORY_NAME.replace(OPENSPCOOP2_LOGGER_PROTOCOL_ID_PROTOCOLLO, protocol);
 	}
      
-	public final static String OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME = "openspcoop2.jcs.properties";
-    public final static String OPENSPCOOP2_CACHE_LOCAL_PATH = "openspcoop2_local.jcs.properties";
+	public final static String OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME = "govway.jcs.properties";
+    public final static String OPENSPCOOP2_CACHE_LOCAL_PATH = "govway_local.jcs.properties";
     public final static String OPENSPCOOP2_CACHE_PROPERTIES = "OPENSPCOOP2_CACHE_PROPERTIES";
     
-    public final static String OPENSPCOOP2_CONFIG_LOCAL_PATH = "openspcoop2_local.config.properties";
+    public final static String OPENSPCOOP2_CONFIG_LOCAL_PATH = "govway_local.config.properties";
     public final static String OPENSPCOOP2_CONFIG_PROPERTIES = "OPENSPCOOP2_CONFIG_PROPERTIES";
     
     /** Costante per l'indicazione dell'imbustamento con Attachments */
@@ -186,19 +186,19 @@ public class CostantiPdD {
     /** Costante che indica il valore dell'header User-Agent*/
     public final static String HEADER_HTTP_USER_AGENT = "User-Agent";
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String HEADER_HTTP_X_PDD = "X-OpenSPCoop2-Pdd";
+    public final static String HEADER_HTTP_X_PDD = "X-GovWay-Pdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String HEADER_HTTP_X_PDD_DETAILS = "X-OpenSPCoop2-PddDetails";
+    public final static String HEADER_HTTP_X_PDD_DETAILS = "X-GovWay-PddDetails";
     
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String URL_BASED_PDD = "OpenSPCoop2Pdd";
+    public final static String URL_BASED_PDD = "govwayPdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String URL_BASED_PDD_DETAILS = "OpenSPCoop2PddDetails";
+    public final static String URL_BASED_PDD_DETAILS = "govwayPddDetails";
     
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
-    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "OpenSPCoop2Pdd";
+    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "govwayPdd";
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica il dettaglio della versione della PdD*/
-    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "OpenSPCoop2PddDetails";
+    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "govwayPddDetails";
 
     
     /** Costante che indica il valore dell'header di integrazione per i token*/

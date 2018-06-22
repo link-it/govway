@@ -165,7 +165,7 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
 
 /**
- * Questa classe e' l'entrypoint alla pddConsole, fornisce cioe' ai
+ * Questa classe e' l'entrypoint alla govwayConsole, fornisce cioe' ai
  * chiamanti la possibilita' di effettuare le operazioni che verranno riflesse
  * sia in locale che in remoto.
  * 
@@ -259,14 +259,14 @@ public class ControlStationCore {
 		String pVersion = null;
 		if(this.consoleNomeEstesoSuffix!=null){
 			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)){
-				pVersion = "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
+				pVersion = "GovWay "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
 			}
 			else{
 				pVersion = this.consoleNomeEstesoSuffix;
 			}
 		}
 		else {
-			pVersion = "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+			pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
 		}
 		String buildVersion = null;
 		try {
@@ -1677,7 +1677,7 @@ public class ControlStationCore {
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
 			
-			// Gestione pddConsole centralizzata
+			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){
 				this.sincronizzazionePddEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
 				this.sincronizzazionePddEngineEnabled_prefissoNomeCodaConfigurazionePdd = consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
@@ -1700,7 +1700,7 @@ public class ControlStationCore {
 				this.portaGestione = consoleProperties.getGestioneCentralizzata_PddPortaGestione();
 			}
 			
-			// Gestione pddConsole locale
+			// Gestione govwayConsole locale
 			if(this.singlePdD){
 				this.gestionePddAbilitata = consoleProperties.isSinglePdD_GestionePdd();
 				
@@ -3780,7 +3780,7 @@ public class ControlStationCore {
 	}
 
 	/**
-	 * Crea un nuovo oggetto nella pddConsole e si occupa di inoltrare
+	 * Crea un nuovo oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
 	public void performCreateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
@@ -3819,7 +3819,7 @@ public class ControlStationCore {
 	}
 
 	/**
-	 * Aggiorna un oggetto nella pddConsole e si occupa di inoltrare
+	 * Aggiorna un oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
 	public void performUpdateOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
@@ -3860,7 +3860,7 @@ public class ControlStationCore {
 	}
 
 	/**
-	 * Cancella un oggetto nella pddConsole e si occupa di inoltrare
+	 * Cancella un oggetto nella govwayConsole e si occupa di inoltrare
 	 * l'operazione nella coda dello Smistatore
 	 */
 	public void performDeleteOperation(String superUser, boolean smista, Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {

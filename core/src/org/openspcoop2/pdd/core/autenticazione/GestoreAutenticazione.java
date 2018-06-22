@@ -111,7 +111,7 @@ public class GestoreAutenticazione {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new AutenticazioneException("Visualizzazione Statistiche riguardante la cache dell'autenticazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new AutenticazioneException("Visualizzazione Statistiche riguardante la cache dell'autenticazione non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws AutenticazioneException{

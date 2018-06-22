@@ -652,7 +652,7 @@ public class ClientHttpGenerico extends ClientCore{
 											 *   <env:Code>
 										            <env:Value>env:Sender</env:Value>
 										            <env:Subcode>
-										               <env:Value xmlns:eccIntegrazione="http://www.openspcoop2.org/core/errore_integrazione">eccIntegrazione:OPENSPCOOP2_ORG_429</env:Value>
+										               <env:Value xmlns:eccIntegrazione="http://www.openspcoop2.org/core/errore_integrazione">eccIntegrazione:GOVWAY_ORG_429</env:Value>
 										            </env:Subcode>
 										         </env:Code>
 											 */

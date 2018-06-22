@@ -101,7 +101,7 @@ public class GestoreAutorizzazione {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new AutorizzazioneException("Visualizzazione Statistiche riguardante la cache delle autorizzazioni della Porta di Dominio non riuscita: "+e.getMessage(),e);
+			throw new AutorizzazioneException("Visualizzazione Statistiche riguardante la cache delle autorizzazioni non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws AutorizzazioneException{

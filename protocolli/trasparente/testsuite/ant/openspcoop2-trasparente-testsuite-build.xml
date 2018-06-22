@@ -16,7 +16,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop2.protocol.trasparente.testsuite.*' -->
-	<target name="compile_openspcoop2_testsuite_trasparente" description="compila la libreria org.openspcoop.testsuite.*">
+	<target name="compile_govway_testsuite_trasparente" description="compila la libreria org.openspcoop.testsuite.*">
 
 		<if>
 			<istrue value="${buildTestsuite}"/>
