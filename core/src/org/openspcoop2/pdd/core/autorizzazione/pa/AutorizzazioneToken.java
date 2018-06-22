@@ -26,8 +26,8 @@ package org.openspcoop2.pdd.core.autorizzazione.pa;
  * Interfaccia che definisce un processo di autorizzazione sui token
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 14113 $, $Date: 2018-06-08 12:32:37 +0200 (Fri, 08 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class AutorizzazioneToken extends AbstractAutorizzazioneBase {
