@@ -50,6 +50,7 @@
 		<xsd:attribute name="type" type="itemType" use="required"/>
 		<xsd:attribute name="name" type="xsd:string" use="required"/>
 		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+		<xsd:attribute name="note" type="xsd:string" use="optional"/>
 		<xsd:attribute name="required" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="reloadOnChange" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="default" type="xsd:string" use="optional"/>

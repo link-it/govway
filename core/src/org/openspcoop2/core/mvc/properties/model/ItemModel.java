@@ -46,6 +46,7 @@ public class ItemModel extends AbstractModel<Item> {
 		this.TYPE = new Field("type",java.lang.String.class,"item",Item.class);
 		this.NAME = new Field("name",java.lang.String.class,"item",Item.class);
 		this.LABEL = new Field("label",java.lang.String.class,"item",Item.class);
+		this.NOTE = new Field("note",java.lang.String.class,"item",Item.class);
 		this.REQUIRED = new Field("required",boolean.class,"item",Item.class);
 		this.RELOAD_ON_CHANGE = new Field("reloadOnChange",boolean.class,"item",Item.class);
 		this.DEFAULT = new Field("default",java.lang.String.class,"item",Item.class);
@@ -67,6 +68,7 @@ public class ItemModel extends AbstractModel<Item> {
 		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"item",Item.class);
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"item",Item.class);
 		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"item",Item.class);
+		this.NOTE = new ComplexField(father,"note",java.lang.String.class,"item",Item.class);
 		this.REQUIRED = new ComplexField(father,"required",boolean.class,"item",Item.class);
 		this.RELOAD_ON_CHANGE = new ComplexField(father,"reloadOnChange",boolean.class,"item",Item.class);
 		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"item",Item.class);
@@ -91,6 +93,8 @@ public class ItemModel extends AbstractModel<Item> {
 	public IField NAME = null;
 	 
 	public IField LABEL = null;
+	 
+	public IField NOTE = null;
 	 
 	public IField REQUIRED = null;
 	 

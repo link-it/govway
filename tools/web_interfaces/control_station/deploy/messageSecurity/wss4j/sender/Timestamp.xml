@@ -1,4 +1,4 @@
-<config id="messageSecurity.wss4j.sender.timestamp" label="WSSecurity Timestamp" sortLabel="0_Timestamp" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+<config id="messageSecurity.wss4j.sender.timestamp" label="WSSec Timestamp" sortLabel="0_Timestamp" xmlns="http://www.openspcoop2.org/core/mvc/properties">
 
         <compatibility not="false" and="false">
                 <tags and="true">
@@ -30,7 +30,8 @@
 		</item>
 				
 		<subsection label="Timestamp">
-			<item type="number" name="timeToLive" label="TimeToLive" min="1" max="10000000">
+			<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
+				note="The time difference between creation and expiry time in seconds ">
 				<property name="timeToLive" />
 			</item>
 		</subsection>

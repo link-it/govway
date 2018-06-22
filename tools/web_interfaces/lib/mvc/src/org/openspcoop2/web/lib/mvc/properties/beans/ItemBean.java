@@ -103,6 +103,7 @@ public class ItemBean extends BaseItemBean<Item>{
 		de.setLabel(this.getItem().getLabel()); 
 		de.setPostBack(this.getItem().getReloadOnChange());
 		de.setRequired(this.getItem().isRequired()); 
+		de.setNote(this.getItem().getNote());
 
 		switch(this.getItem().getType()) {
 		case CHECKBOX:
@@ -307,8 +308,25 @@ public class ItemBean extends BaseItemBean<Item>{
 			case NUMBER:
 				if(StringUtils.isNotEmpty(itemValue)) {
 					boolean numeric = NumberUtils.isParsable(itemValue);
-					if(!numeric)
+					if(!numeric) {
 						throw new UserInputValidationException("Il Campo "+this.getLabel()+" non contiene un valore di tipo numerico");
+					}
+					int number = -1;
+					try {
+						number = Integer.valueOf(itemValue);
+					}catch(Exception e) {
+						throw new UserInputValidationException("Il Campo "+this.getLabel()+" non contiene un valore di tipo numerico");
+					}
+					if(this.getItem().getMin()!=null) {
+						if(number<this.getItem().getMin().intValue()) {
+							throw new UserInputValidationException("Il Campo "+this.getLabel()+" deve contenere un valore >= "+this.getItem().getMin().intValue());
+						}
+					}
+					if(this.getItem().getMax()!=null) {
+						if(number>this.getItem().getMax().intValue()) {
+							throw new UserInputValidationException("Il Campo "+this.getLabel()+" deve contenere un valore <= "+this.getItem().getMax().intValue());
+						}
+					}
 				}
 				break;
 			case SELECT:

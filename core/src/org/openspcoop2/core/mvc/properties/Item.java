@@ -43,6 +43,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/core/mvc/properties}itemType" use="required"/>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="note" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="reloadOnChange" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -133,6 +134,14 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   public void setLabel(java.lang.String label) {
     this.label = label;
+  }
+
+  public java.lang.String getNote() {
+    return this.note;
+  }
+
+  public void setNote(java.lang.String note) {
+    this.note = note;
   }
 
   public boolean isRequired() {
@@ -237,6 +246,10 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=false)
   protected java.lang.String label;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="note",required=false)
+  protected java.lang.String note;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="required",required=false)
