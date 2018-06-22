@@ -2,7 +2,7 @@
 # Gli application server jboss4, jboss5 e jboss6 sono stati deprecati dalla versione 2.3
 # L'application server jboss7 è stato deprecato dalla versione 3.0 per motivi di jdk minimo (v8) non supportato da jboss7
 # L'application server tomcat6, wildfly8 e wildfly9 sono stati deprecati dalla versione 3.0 per motivi di test non più verificati su tali versioni
-#AS_VERSION=wildfly10,wildfly11,wildfly12,tomcat7,tomcat8,tomcat9
+#AS_VERSION=wildfly10,wildfly11,wildfly12,wildfly13,tomcat7,tomcat8,tomcat9
 # Vengono usati dei valori unici per diverse versioni, poiche' la compilazione non varia in funzione della versione:
 # wildfly10: supporta le versioni 10.x, 11.x, 12.x e 13.x
 # tomcat7: supporta la versione 7.x

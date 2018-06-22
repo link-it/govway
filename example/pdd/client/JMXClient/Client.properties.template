@@ -32,7 +32,7 @@ accessoRegistroServizi.resetCache=true
 # ----- org.openspcoop2.pdd:ConfigurazionePdD --------
 
 # Lettura proprieta' (elencare i nomi separati da virgole)
-configurazionePdD.readProperties=cacheAbilitata,msgDiagnosticiLivelloSeverita,msgDiagnosticiLivelloSeveritaLog4J,tracciamentoAbilitato,dumpApplicativoAbilitato,msgDiagnosticiAppender,tracciamentoAppender
+configurazionePdD.readProperties=cacheAbilitata,msgDiagnosticiLivelloSeverita,msgDiagnosticiLivelloSeveritaLog4J,tracciamentoAbilitato,msgDiagnosticiAppender,tracciamentoAppender
 
 # Invocazione 'resetCache'
 configurazionePdD.resetCache=true
