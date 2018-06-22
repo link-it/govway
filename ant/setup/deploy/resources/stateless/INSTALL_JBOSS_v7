@@ -21,7 +21,7 @@ Per completare il processo di installazione si devono effettuare i seguenti pass
    8. Editare i datasources installati al punto 5. sostituendo la keyword 'NOME_DRIVER_JDBC.jar' con il nome del driver jdbc gestito al punto 7.
 
    9. Se il setup ha una directory cfg, copiarne il contenuto nella directory di lavoro indicato durante la fase di setup.
-      Es. cp -r dist/cfg/* /etc/govway/
+      Es. cp -r cfg/* /etc/govway/
 
    10. Avviare JBoss (ad esempio su Linux con il comando <JBOSS_HOME>/bin/standalone.sh oppure utilizzando il relativo service)
 
