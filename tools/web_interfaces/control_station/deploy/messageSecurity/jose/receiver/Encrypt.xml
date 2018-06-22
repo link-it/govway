@@ -18,7 +18,7 @@
 		<collection name="decryptionPropRefId"/>
 	</properties>
 	
-	<section label="Encryption">
+	<section label="Decryption">
 		
 		<item type="hidden" name="securityEngine" value="jose">
 			<property name="securityEngine" force="true"/>

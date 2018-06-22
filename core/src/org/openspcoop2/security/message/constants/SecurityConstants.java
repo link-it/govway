@@ -184,6 +184,9 @@ public class SecurityConstants {
     public static final String DECRYPTION_USER = "decryptionUser";
     public static final String DECRYPTION_PASSWORD = "decryptionPassword";
     public static final String DECRYPTION_SYMMETRIC = "decryptionSymmetricKey";
+    public static final String DECRYPTION_SYMMETRIC_WRAPPED = "decryptionSymmetricKeyWrapped";
+    public static final String DECRYPTION_SYMMETRIC_WRAPPED_TRUE = "true";
+    public static final String DECRYPTION_SYMMETRIC_WRAPPED_FALSE = "false";
     public static final String DECRYPTION_MODE = "decryptionMode";
     public static final String DECRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
     public static final String DECRYPTION_MODE_DETACHED = MODE_DETACHED;

@@ -78,6 +78,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -182,6 +184,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
+import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -2072,7 +2075,7 @@ public class ConsoleHelper {
 		}
 	}
 
-	public Vector<DataElement> addMessageSecurityToDati(Vector<DataElement> dati,
+	public Vector<DataElement> addMessageSecurityToDati(Vector<DataElement> dati,boolean delegata,long idPorta,
                 String messageSecurity, String url1, String url2, Boolean contaListe, int numWSreq, int numWSres, boolean showApplicaMTOMReq, String applicaMTOMReq,
                 boolean showApplicaMTOMRes, String applicaMTOMRes,String idPropConfigReq, String idPropConfigRes, 
                 String[] propConfigReqLabelList, String[] propConfigReqList, String[] propConfigResLabelList, String[] propConfigResList,String oldIdPropConfigReq, String oldIdPropConfigRes) {
@@ -2150,7 +2153,52 @@ public class ConsoleHelper {
 					else
 						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
 				} else {
-					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+					if(numWSreq<=0) {
+						boolean editModeInProgress = true;
+						try {
+							editModeInProgress = this.isEditModeInProgress();
+						}catch(Exception e) {}
+						if(!editModeInProgress) {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_PROCEDI);
+						}
+						else {
+							
+							DataElement note = new DataElement();
+							note.setBold(true);
+							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
+							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
+							note.setType(DataElementType.NOTE);
+							dati.addElement(note);
+							
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
+						}
+					}
+					else {
+						// Se cambia l'xml potrebbe succedere
+						boolean valida = false;
+						try {
+							PropertiesSourceConfiguration propertiesSourceConfiguration = this.core.getMessageSecurityPropertiesSourceConfiguration();
+							ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
+							Config configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, idPropConfigReq);
+							Map<String, Properties> mappaDB = null;
+							if(delegata) {
+								mappaDB = this.porteDelegateCore.readMessageSecurityRequestPropertiesConfiguration(idPorta); 
+							}
+							else {
+								mappaDB = this.porteApplicativeCore.readMessageSecurityRequestPropertiesConfiguration(idPorta); 
+							}
+							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, configurazione);
+						}catch(Exception e) {
+							this.log.error(e.getMessage(),e);
+						}
+						if(valida) {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+						}
+						else {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
+						}
+					}
 				}
 				dati.addElement(de);
 			}
@@ -2201,7 +2249,52 @@ public class ConsoleHelper {
 					else
 						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
 				} else {
-					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+					if(numWSres<=0) {
+						boolean editModeInProgress = true;
+						try {
+							editModeInProgress = this.isEditModeInProgress();
+						}catch(Exception e) {}
+						if(!editModeInProgress) {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_PROCEDI);
+						}
+						else {
+							
+							DataElement note = new DataElement();
+							note.setBold(true);
+							note.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL);
+							note.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_INCOMPLETA);
+							note.setType(DataElementType.NOTE);
+							dati.addElement(note);
+							
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
+						}
+					}
+					else {
+						// Se cambia l'xml potrebbe succedere
+						boolean valida = false;
+						try {
+							PropertiesSourceConfiguration propertiesSourceConfiguration = this.core.getMessageSecurityPropertiesSourceConfiguration();
+							ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
+							Config configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, idPropConfigRes);
+							Map<String, Properties> mappaDB = null;
+							if(delegata) {
+								mappaDB = this.porteDelegateCore.readMessageSecurityResponsePropertiesConfiguration(idPorta); 
+							}
+							else {
+								mappaDB = this.porteApplicativeCore.readMessageSecurityResponsePropertiesConfiguration(idPorta); 
+							}
+							ConfigBean configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, mappaDB);
+							valida = this.checkPropertiesConfigurationData(TipoOperazione.OTHER, configurazioneBean, configurazione);
+						}catch(Exception e) {
+							this.log.error(e.getMessage(),e);
+						}
+						if(valida) {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+						}
+						else {
+							de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA);
+						}
+					}
 				}
 				dati.addElement(de);
 			}

@@ -312,7 +312,7 @@ public final class PorteDelegateWS extends Action {
 					applicaMTOMRisposta = "";
 				}
 				
-				dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
+				dati = porteDelegateHelper.addMessageSecurityToDati(dati,  true, idInt, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
@@ -334,7 +334,7 @@ public final class PorteDelegateWS extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addMessageSecurityToDati(dati, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
+				dati = porteDelegateHelper.addMessageSecurityToDati(dati, true, idInt, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
@@ -450,7 +450,7 @@ public final class PorteDelegateWS extends Action {
 				applicaMTOMRisposta = "";
 			}
 
-			dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , 
+			dati = porteDelegateHelper.addMessageSecurityToDati(dati,  true, idInt, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , 
 					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,
 					idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 					oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);

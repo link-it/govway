@@ -29,11 +29,11 @@
 			<property name="action" force="true"/>
 		</item>
 		
-		<item type="checkbox" name="encryptionSymmetricKey" label="Symmetric Key" default="false" reloadOnChange="true" >
+		<item type="checkbox" name="encryptionSymmetricKey" label="Symmetric Key" defaultSelected="false" reloadOnChange="true" >
 			<property name="encryptionSymmetricKey" />
 		</item>
 		
-		<item type="checkbox" name="encryptionSymmetricKeyWrapped" label="Wrapped Key" default="true">
+		<item type="checkbox" name="encryptionSymmetricKeyWrapped" label="Wrapped Key" defaultSelected="true" reloadOnChange="true" >
 			<conditions>
 	            <condition>
 	                    <selected name="encryptionSymmetricKey" />
@@ -54,7 +54,7 @@
            	</conditions>
 			<property name="encryptionKeyAlgorithm" />
 		</item>
-		<item type="select" name="encryptionSymAlgorithm" label="Key Wrap Algorithm (Symmetric)">
+		<item type="select" name="encryptionSymAlgorithm" label="Key Wrap Algorithm">
 			<conditions>
 	            <condition and="true">
 	                    <selected name="encryptionSymmetricKey" />
@@ -63,7 +63,7 @@
            	</conditions>
 			<property name="encryptionSymAlgorithm" />
 		</item>
-		<item type="select" name="encryptionKeyTransportAlgorithm" label="Key Wrap Algorithm (Transport)">
+		<item type="select" name="encryptionKeyTransportAlgorithm" label="Key Wrap Algorithm">
 			<conditions>
 	            <condition not="true">
 	                    <selected name="encryptionSymmetricKey" />

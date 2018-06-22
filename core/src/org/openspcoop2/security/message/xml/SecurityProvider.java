@@ -169,7 +169,7 @@ public class SecurityProvider implements IProvider {
 			List<String> l = new ArrayList<>();
 			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
 			for (int i = 0; i < tmp.length; i++) {
-				l.add(this.convertEnumName(tmp[i].name()));
+				l.add(tmp[i].getLabel());
 			}
 			return l;
 		}

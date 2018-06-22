@@ -41,6 +41,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.security.SymmetricKeyWrappedMode;
 import org.openspcoop2.utils.security.VerifyXmlSignature;
 import org.openspcoop2.utils.security.XmlDecrypt;
+import org.w3c.dom.Element;
 
 
 
@@ -168,12 +169,12 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 				String aliasEncryptPassword = bean.getPassword();
 
 				if(encryptionSymmetric) {
-					String encryptionSymmetricWrapped = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED);
+					String encryptionSymmetricWrapped = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_SYMMETRIC_WRAPPED);
 					if(encryptionSymmetricWrapped!=null) {
-						if(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED_TRUE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
+						if(SecurityConstants.DECRYPTION_SYMMETRIC_WRAPPED_TRUE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
 							encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY;
 						}
-						else if(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED_FALSE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
+						else if(SecurityConstants.DECRYPTION_SYMMETRIC_WRAPPED_FALSE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
 							encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED;
 						}
 					}
@@ -201,13 +202,28 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 
 				this.xmlDecrypt = new XmlDecrypt(encryptionKS, encryptionSymmetric, encryptionSymmetricWrappedMode, aliasEncryptUser, aliasEncryptPassword);
 
+				boolean detach = true;
+				String encryptionSymmetricWrapped = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DETACH_SECURITY_INFO);
+				if(encryptionSymmetricWrapped!=null) {
+					if(SecurityConstants.FALSE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
+						detach = false;
+					}
+				}
+				Element xmlEncrypted = null;
+				if(!detach) {
+					xmlEncrypted = (Element) restXmlMessage.getContent().cloneNode(true);
+				}
 	
 				
 				// **************** Process **************************
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
-				this.xmlDecrypt.decrypt(restXmlMessage.getContent());
-		
+				if(detach) {
+					this.xmlDecrypt.decrypt(restXmlMessage.getContent());
+				}
+				else {
+					this.xmlDecrypt.decrypt(xmlEncrypted);
+				}
 			
 			} // fine encrypt
 			
@@ -280,7 +296,7 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 				this.xmlVerifierSignature.detach(restXmlMessage.getContent());
 			}
 			else if(this.xmlDecrypt!=null) {
-				// nop
+				// nop: già fatto prima
 			}
 			else {
 				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (detach method) usable only after one function beetwen encrypt or signature");

@@ -1,0 +1,96 @@
+<config id="messageSecurity.xml.receiver.encrypt" label="XML Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.xml.SecurityProvider">
+
+	 <compatibility not="false" and="false">
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>RESPONSE</tag>
+                <tag>PD</tag>
+        </tags>
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>REQUEST</tag>
+                <tag>PA</tag>
+        </tags>
+	 </compatibility>
+	
+	<properties>
+		<collection name="decryptionPropRefId"/>
+	</properties>
+	
+	<section label="Decryption">
+		
+		<item type="hidden" name="securityEngine" value="xml">
+			<property name="securityEngine" force="true"/>
+		</item>
+				
+		<item type="hidden" name="encryptionAction" value="Encrypt">
+			<property name="action" force="true"/>
+		</item>
+		
+		<item type="checkbox" name="decryptionSymmetricKey" label="Symmetric Key" defaultSelected="false" reloadOnChange="true" >
+			<property name="decryptionSymmetricKey" />
+		</item>
+		
+		<item type="checkbox" name="decryptionSymmetricKeyWrapped" label="Wrapped Key" defaultSelected="true" >
+			<conditions>
+	            <condition>
+	                    <selected name="decryptionSymmetricKey" />
+	            </condition>
+           	</conditions>
+			<property name="decryptionSymmetricKeyWrapped" />
+		</item>
+		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+
+		<subsection label="KeyStore">
+           	
+			<item type="select" name="keystoreTypeSymmetric" label="Tipo" default="jceks">
+				<conditions>
+                   <condition>
+                           <selected name="decryptionSymmetricKey" />
+                   </condition>
+           		</conditions>
+				<values>
+					<!-- <value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/> -->
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="select" name="keystoreTypeAsymmetric" label="Tipo" default="jks" >
+				<conditions>
+                   <condition not="true">
+                           <selected name="decryptionSymmetricKey" />
+                   </condition>
+           		</conditions>
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			    <property name="decryptionUser" /> 
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			    <property name="decryptionPassword" />
+			</item>
+
+		</subsection>
+		
+	</section>
+
+</config>
+
+
+

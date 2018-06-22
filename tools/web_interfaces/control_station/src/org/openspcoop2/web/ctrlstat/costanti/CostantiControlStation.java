@@ -231,6 +231,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_LABEL = "Attenzione";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA = "Configurazione della sicurezza incompleta";
+	public final static String LABEL_CONFIGURAZIONE_PROPERTIES_PROCEDI = "Procedi con la configurazione";
+	public final static String LABEL_CONFIGURAZIONE_PROPERTIES_COMPLETA = "Completa la configurazione";
 	public final static String LABEL_CONFIGURAZIONE_PROPERTIES = "Configurazione";
 	public final static String LABEL_CONFIGURAZIONE_PROPERTIES_CONFIGURAZIONE_MANUALE = "Configurazione Manuale";
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN = "Stato";

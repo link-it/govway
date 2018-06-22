@@ -241,7 +241,7 @@ public class KeystoreUtils {
 		// 0.a TrustStore
 		String decryptionTrustStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_TRUSTSTORE_PROPERTY_FILE);
 		// 0.b TrustStore as properties
-		Object oDecryptionTrustStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_TRUSTSTORE_PROPERTY_REF_ID);
+		Object oDecryptionTrustStoreProperties = messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_TRUSTSTORE_PROPERTY_REF_ID);
 		Properties decryptionTrustStoreProperties = null;
 		if(oDecryptionTrustStoreProperties!=null) {
 			decryptionTrustStoreProperties = (Properties) oDecryptionTrustStoreProperties;
@@ -249,7 +249,7 @@ public class KeystoreUtils {
 		// 1.a Property Merlin
 		String decryptionStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_PROPERTY_FILE);
 		// 1.b Property Merlin as properties
-		Object oDecryptionStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_PROPERTY_REF_ID);
+		Object oDecryptionStoreProperties = messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_PROPERTY_REF_ID);
 		Properties decryptionStoreProperties = null;
 		if(oDecryptionStoreProperties!=null) {
 			decryptionStoreProperties = (Properties) oDecryptionStoreProperties;
@@ -577,7 +577,7 @@ public class KeystoreUtils {
 		// 1.a Property Merlin
 		String signatureStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_FILE);
 		// 1.b Property Merlin as properties
-		Object oSignatureStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
+		Object oSignatureStoreProperties = messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
 		Properties signatureStoreProperties = null;
 		if(oSignatureStoreProperties!=null) {
 			signatureStoreProperties = (Properties) oSignatureStoreProperties;

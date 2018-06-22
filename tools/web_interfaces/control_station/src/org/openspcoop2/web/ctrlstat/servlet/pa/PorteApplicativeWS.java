@@ -309,7 +309,7 @@ public final class PorteApplicativeWS extends Action {
 				}
 				
 				
-				dati = porteApplicativeHelper.addMessageSecurityToDati(dati, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
+				dati = porteApplicativeHelper.addMessageSecurityToDati(dati, false, idInt, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
@@ -331,7 +331,7 @@ public final class PorteApplicativeWS extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, idAsps, dati);
 
-				dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
+				dati = porteApplicativeHelper.addMessageSecurityToDati(dati,  false, idInt,  statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
 						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
@@ -451,7 +451,7 @@ public final class PorteApplicativeWS extends Action {
 		 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, idAsps, dati);
 			
-			dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), 
+			dati = porteApplicativeHelper.addMessageSecurityToDati(dati, false, idInt,   statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), 
 					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,
 					idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
 					oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
