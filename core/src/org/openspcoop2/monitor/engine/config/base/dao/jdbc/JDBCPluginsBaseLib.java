@@ -1,6 +1,8 @@
 /*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2018 Link.it srl (http://link.it).
  * 
@@ -36,6 +38,13 @@ import org.openspcoop2.monitor.engine.config.base.Plugin;
 import org.openspcoop2.monitor.engine.config.base.constants.TipoPlugin;
 import org.openspcoop2.monitor.engine.config.base.dao.IDBPluginServiceSearch;
 
+/**     
+ * JDBCPluginsBaseLib
+ *
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class JDBCPluginsBaseLib {
 
 	
