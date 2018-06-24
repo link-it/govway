@@ -1,6 +1,8 @@
 /*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
  * 
@@ -51,7 +53,7 @@ public abstract class Sonda {
 	/**
 	 * @author Bussu Giovanni (bussu@link.it)
 	 * @author  $Author$
-	 * @version $ Rev: 12563 $, $Date$
+	 * @version $Rev$, $Date$
 	 * 
 	 */
 	public class StatoSonda {

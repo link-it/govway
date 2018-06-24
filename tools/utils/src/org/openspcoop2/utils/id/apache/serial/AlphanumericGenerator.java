@@ -20,8 +20,10 @@
  * - Gestione caratteri massimi per numeri e cifre
  * - Possibilita' di utilizzare lowerCase e/o upperCase
  * 
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
  * 
