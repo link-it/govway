@@ -63,12 +63,12 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.slf4j.Logger;
 
-/***
- * 
- * 
- * 
- * @author pintori
+/**     
+ * RegistroCore
  *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RegistroCore {
 	

@@ -23,6 +23,13 @@ package org.openspcoop2.core.mvc.properties.utils;
 
 import java.util.List;
 
+/**     
+ * PropertiesSourceConfiguration
+ *
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class PropertiesSourceConfiguration {
 
 	private String id;

@@ -24,11 +24,12 @@ package org.openspcoop2.core.controllo_traffico.beans;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 
 
-/***
- * 
- * 
- * @author pintori
+/**     
+ * InfoPolicy
  *
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class InfoPolicy {
 

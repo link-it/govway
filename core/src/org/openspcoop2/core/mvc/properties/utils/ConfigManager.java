@@ -38,12 +38,12 @@ import org.openspcoop2.core.mvc.properties.utils.serializer.JaxbDeserializer;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.slf4j.Logger;
 
-/***
- * 
+/**     
  * Manager delle configurazioni disponibili.
- * 
- * @author pintori
  *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ConfigManager {
 
