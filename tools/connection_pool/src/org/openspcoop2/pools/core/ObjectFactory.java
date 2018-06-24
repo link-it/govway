@@ -45,6 +45,11 @@ import javax.xml.bind.annotation.XmlRegistry;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
+ * 
+ * @version $Rev$, $Date$
+ * 
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
  */
 @XmlRegistry
 public class ObjectFactory {

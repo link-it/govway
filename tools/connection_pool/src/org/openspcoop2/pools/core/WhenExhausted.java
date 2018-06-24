@@ -60,6 +60,10 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
+ * @version $Rev$, $Date$
+ * 
+ * @author Poli Andrea (poli@link.it)
+ * @author $Author$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
