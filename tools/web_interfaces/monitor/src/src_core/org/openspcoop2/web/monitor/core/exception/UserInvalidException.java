@@ -25,7 +25,9 @@ package org.openspcoop2.web.monitor.core.exception;
  * 
  * Exception che viene lanciata quando l'utente letto dal db non rispetta le condizioni previste.  
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class UserInvalidException extends Exception {

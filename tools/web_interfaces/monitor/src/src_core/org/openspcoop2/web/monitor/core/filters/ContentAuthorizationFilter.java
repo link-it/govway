@@ -47,6 +47,14 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
 import org.slf4j.Logger;
 
+/**
+ * ContentAuthorizationFilter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ContentAuthorizationFilter implements Filter {
 
 	/** Logger utilizzato per debug. * */

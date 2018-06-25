@@ -41,7 +41,9 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
  * Filtro che gestisce l'eccezione di tipo javax.faces.application.ViewExpiredException
  * 
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ViewExpiredListener  implements PhaseListener {

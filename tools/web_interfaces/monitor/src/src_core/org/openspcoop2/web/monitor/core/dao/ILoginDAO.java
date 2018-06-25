@@ -32,6 +32,14 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 
+/**
+ * ILoginDAO
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface ILoginDAO extends Serializable{
 
 	public boolean login(String username, String pwd) throws ServiceException;

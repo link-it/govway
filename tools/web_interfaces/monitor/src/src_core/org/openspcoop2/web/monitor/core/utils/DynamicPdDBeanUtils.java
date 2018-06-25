@@ -58,6 +58,14 @@ import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.slf4j.Logger;
 
+/**
+ * DynamicPdDBeanUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DynamicPdDBeanUtils implements Serializable {
 
 	/**

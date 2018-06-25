@@ -44,6 +44,14 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 
+/**
+ * UtentiBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, String>> {
 
 	/**

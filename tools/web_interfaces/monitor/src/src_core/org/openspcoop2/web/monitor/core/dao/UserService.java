@@ -33,6 +33,14 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
+/**
+ * UserService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class UserService implements IUserService {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();

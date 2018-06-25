@@ -41,6 +41,14 @@ import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 
+/**
+ * InitServlet
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class InitServlet extends HttpServlet {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(InitServlet.class);

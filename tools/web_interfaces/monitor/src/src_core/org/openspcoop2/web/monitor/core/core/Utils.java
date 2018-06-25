@@ -42,7 +42,14 @@ import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.slf4j.Logger;
 
-
+/**
+ * Utils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Utils {
 
 

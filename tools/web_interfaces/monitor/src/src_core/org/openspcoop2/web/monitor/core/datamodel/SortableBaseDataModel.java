@@ -48,7 +48,9 @@ import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 /***
  * SortableBaseDataModel Estende la classe {@link BaseDataModel} aggiungendo la funzionalita' di ordinamento delle colonne della tabella.
  *  
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  * @param <K> Tipo della chiave del bean da visualizzare
  * @param <T> Tipo del bean da visualizzare

@@ -37,6 +37,14 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 
+/**
+ * PermessiUtenteOperatore
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class PermessiUtenteOperatore {
 
 	public static boolean CHECK_UNIQUE_SOGGETTO_SERVIZIO_UTENTE = false;

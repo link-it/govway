@@ -26,6 +26,14 @@ import java.util.Date;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 
+/**
+ * Calendar
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Calendar extends BaseComponent<Date> {
 
 	public Calendar(Parameter<Date> parameter, IDynamicLoader loader) {

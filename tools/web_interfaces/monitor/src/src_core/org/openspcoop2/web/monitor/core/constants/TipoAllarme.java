@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+/**
+ * TipoAllarme
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum TipoAllarme {
 	ATTIVO, PASSIVO, ATTIVO_PASSIVO;
 }

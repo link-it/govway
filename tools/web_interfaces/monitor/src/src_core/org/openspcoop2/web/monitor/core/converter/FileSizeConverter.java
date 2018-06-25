@@ -27,6 +27,14 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
+/**
+ * FileSizeConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class FileSizeConverter implements Converter {
 	
 	private final static double KB = 1024;

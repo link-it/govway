@@ -28,6 +28,14 @@ import javax.faces.convert.ConverterException;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * EnumTypeConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class EnumTypeConverter implements Converter {
 
 	@Override

@@ -23,11 +23,12 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
 
-/***
+/****
+ * InformazioniProtocollo
  * 
- * 
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class InformazioniProtocollo implements Serializable {

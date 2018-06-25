@@ -34,9 +34,9 @@ import org.slf4j.Logger;
  * 
  * Implementa funzionalita' di gestione dei bean.
  * 
- * 
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public class BeanUtils {

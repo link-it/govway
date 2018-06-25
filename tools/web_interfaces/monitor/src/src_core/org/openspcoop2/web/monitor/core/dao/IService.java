@@ -22,7 +22,14 @@
 package org.openspcoop2.web.monitor.core.dao;
 
 
-
+/**
+ * IService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IService<T,K> extends IPaginatedList<T, K>{
 	
 

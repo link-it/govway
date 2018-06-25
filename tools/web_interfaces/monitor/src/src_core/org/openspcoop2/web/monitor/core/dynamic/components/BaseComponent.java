@@ -35,6 +35,14 @@ import org.openspcoop2.monitor.sdk.constants.Constants;
 import org.openspcoop2.monitor.sdk.exceptions.ParameterException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 
+/**
+ * BaseComponent
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class BaseComponent<T> extends Parameter<T>{
 
 	protected static final String CONTANER_SUFFIX = "-ctr";

@@ -39,6 +39,14 @@ import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
 import org.slf4j.Logger;
 
+/****
+ * ApplicationBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ApplicationBean implements Serializable {
 
 	/**

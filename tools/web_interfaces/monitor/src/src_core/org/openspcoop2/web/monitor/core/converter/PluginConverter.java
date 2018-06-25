@@ -29,6 +29,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 
+/**
+ * PluginConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class PluginConverter implements Converter {
 	
 	protected final static String NONE_STRING = "[Nessuno]";

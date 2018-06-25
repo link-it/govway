@@ -34,6 +34,14 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * PdDBaseBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class PdDBaseBean<T,K,ServiceType extends IService> extends BaseBean<T, K, ServiceType>{
 		

@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import javax.faces.event.ActionEvent;
 
+/**
+ * AbstractCoreSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class AbstractCoreSearchForm {
 	
 	private Integer numeroPagine = 1;

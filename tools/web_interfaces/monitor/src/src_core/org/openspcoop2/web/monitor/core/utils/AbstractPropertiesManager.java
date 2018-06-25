@@ -33,6 +33,14 @@ import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.slf4j.Logger;
 
+/**
+ * AbstractPropertiesManager
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class AbstractPropertiesManager {
 	
 	//private  HashMap<String, String> map = null;

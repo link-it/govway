@@ -33,6 +33,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * SelectItemConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SelectItemConverter implements Converter {
 	
 	@SuppressWarnings("unchecked")

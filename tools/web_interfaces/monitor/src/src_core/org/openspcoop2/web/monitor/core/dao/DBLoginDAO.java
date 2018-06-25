@@ -39,6 +39,14 @@ import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.slf4j.Logger;
 
+/**
+ * DBLoginDAO
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DBLoginDAO implements ILoginDAO {
 
 	/**

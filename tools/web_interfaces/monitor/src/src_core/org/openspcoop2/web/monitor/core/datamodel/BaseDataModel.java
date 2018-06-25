@@ -40,8 +40,11 @@ import org.ajax4jsf.model.SerializableDataModel;
 import org.slf4j.Logger;
 
 /**
+ * BaseDataModel
  * 
- * @author corallo
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  * @param <K> Il tipo della chiave (Integer, Long ...)
  * @param <T> Il tipo di dato che rappresenta una righa della tabella

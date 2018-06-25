@@ -33,6 +33,14 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 
+/**
+ * IGenericService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IGenericService {
 
 

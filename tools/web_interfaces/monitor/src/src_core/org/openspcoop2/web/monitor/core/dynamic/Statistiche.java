@@ -31,6 +31,14 @@ import org.apache.commons.lang.StringUtils;
 
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 
+/**
+ * Statistiche
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Statistiche implements Serializable {
 
 	/**

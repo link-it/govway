@@ -30,6 +30,14 @@ import javax.el.ValueExpression;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 
+/**
+ * MessageManager
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class MessageManager {
 	
 	private static PddMonitorProperties props;

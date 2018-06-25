@@ -32,6 +32,14 @@ import org.openspcoop2.web.monitor.core.bean.AbstractLoginBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.slf4j.Logger;
 
+/**
+ * HttpSessionCheckListener
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class HttpSessionCheckListener implements HttpSessionListener {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(HttpSessionCheckListener.class);

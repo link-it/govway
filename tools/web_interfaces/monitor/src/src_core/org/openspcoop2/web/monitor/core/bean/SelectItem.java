@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
 
+/****
+ * SelectItem
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SelectItem implements Serializable {
 
 	/**

@@ -41,6 +41,14 @@ import org.slf4j.Logger;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
+/**
+ * MultipartFilter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class MultipartFilter  implements Filter{
 
 	/** Logger utilizzato per debug. * */

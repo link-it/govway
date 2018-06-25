@@ -32,6 +32,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 
+/**
+ * JmxUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class JmxUtils {
 
 	private PddMonitorProperties monitorProperties = null;

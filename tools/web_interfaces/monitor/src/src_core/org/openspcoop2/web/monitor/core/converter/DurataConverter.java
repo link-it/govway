@@ -27,6 +27,14 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
+/**
+ * DurataConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DurataConverter implements Converter {
 
 	//	private final static String patternDurata = "dd'g' hh'h' mm'm' ss's'";

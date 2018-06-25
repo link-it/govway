@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.dao;
 
 import java.util.List;
 
+/**
+ * ICrudDAO
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface ICrudDAO<T,K> {
 
 	public void store(T obj) throws Exception;

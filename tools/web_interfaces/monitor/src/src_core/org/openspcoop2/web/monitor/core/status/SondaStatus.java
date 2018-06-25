@@ -25,6 +25,14 @@ import java.io.Serializable;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
 
+/**
+ * SondaStatus
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum SondaStatus implements IEnumeration , Serializable , Cloneable{
 
 	OK ("ok"), WARNING ("warning"), ERROR ("error"), UNDEFINED("undefined");

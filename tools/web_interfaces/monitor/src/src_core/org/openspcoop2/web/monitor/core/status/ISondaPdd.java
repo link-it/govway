@@ -24,6 +24,14 @@ package org.openspcoop2.web.monitor.core.status;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * ISondaPdd
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface ISondaPdd extends Serializable{
 	
 	// Aggiorna e restituisce lo stato della sonda

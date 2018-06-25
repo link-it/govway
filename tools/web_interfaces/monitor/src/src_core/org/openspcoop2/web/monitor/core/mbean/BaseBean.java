@@ -39,6 +39,14 @@ import javax.faces.event.ActionEvent;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
+/**
+ * BaseBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 @SuppressWarnings("rawtypes")
 public abstract class BaseBean<T,K, ServiceType extends IService> implements Serializable{
 

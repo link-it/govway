@@ -32,7 +32,14 @@ import javax.servlet.ServletContextEvent;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 
-
+/**
+ * ConsoleStartupListener
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 
 

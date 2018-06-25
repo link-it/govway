@@ -51,6 +51,14 @@ import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
 import org.openspcoop2.web.monitor.core.utils.Costanti;
 import org.slf4j.Logger;
 
+/**
+ * BrowserFilter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class BrowserFilter implements Filter {
 
 	/** Logger utilizzato per debug. * */

@@ -25,6 +25,14 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
+/**
+ * Utils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Utils {
 	
 	public static void throwValidatorException(FacesContext context, String errorMessage){

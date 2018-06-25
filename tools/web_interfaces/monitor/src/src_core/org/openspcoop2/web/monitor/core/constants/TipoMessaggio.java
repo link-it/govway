@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+/**
+ * TipoMessaggio
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum TipoMessaggio {
 
 	Richiesta, Risposta;

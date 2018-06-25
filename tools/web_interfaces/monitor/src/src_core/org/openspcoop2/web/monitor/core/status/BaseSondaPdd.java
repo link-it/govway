@@ -26,6 +26,14 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 
+/**
+ * BaseSondaPdd
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class BaseSondaPdd implements ISondaPdd{
 
 

@@ -33,6 +33,8 @@ import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
  * @param <S> bean della ricerca paginata.
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface ISearchFormService<T, K, S extends AbstractCoreSearchForm> extends IService<T, K> {
 

@@ -25,6 +25,14 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
+/**
+ * Utils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Utils {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(Utils.class);

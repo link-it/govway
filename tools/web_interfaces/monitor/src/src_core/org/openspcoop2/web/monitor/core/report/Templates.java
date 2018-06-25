@@ -42,6 +42,14 @@ import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.constant.VerticalTextAlignment;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 
+/**
+ * Templates
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Templates {
 	private static final String TITOLO_REPORT = "Fruizione Servizi in Cooperazione Applicativa";
 	public static final StyleBuilder rootStyle;

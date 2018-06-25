@@ -25,7 +25,9 @@ package org.openspcoop2.web.monitor.core.utils;
  * 
  * Metodi che definiscono le autorizzazioni sui contenuti della console
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public interface IContentAuthorizationManager {

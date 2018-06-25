@@ -55,6 +55,14 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.slf4j.Logger;
 
+/**
+ * Utility
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Utility {
 
 	private static final String REPORTISTICA_DIAGNOSTICI_FREQ_INVIO = "reportistica.diagnostici.freq_invio.";

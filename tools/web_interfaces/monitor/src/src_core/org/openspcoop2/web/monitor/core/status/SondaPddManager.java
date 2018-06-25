@@ -32,6 +32,14 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.resources.MapReader;
 
+/**
+ * SondaPddManager
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SondaPddManager {
 
 	public static final int STATO_OK = 0;

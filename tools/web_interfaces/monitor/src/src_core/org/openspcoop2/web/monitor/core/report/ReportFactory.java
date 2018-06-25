@@ -33,7 +33,9 @@ import org.springframework.web.jsf.FacesContextUtils;
  * 
  * Classe di Factory per la gestione dei generatori di report Live.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ReportFactory {

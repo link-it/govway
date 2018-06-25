@@ -43,6 +43,14 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.slf4j.Logger;
 
+/**
+ * DynamicPdDBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBean<T, K, ServiceType>{
 

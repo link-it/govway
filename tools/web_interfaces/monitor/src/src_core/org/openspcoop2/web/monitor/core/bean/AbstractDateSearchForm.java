@@ -28,7 +28,14 @@ import java.util.Locale;
 
 import javax.faces.event.ActionEvent;
 
-
+/****
+ * AbstractDateSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 
 	private String lastPeriodo;

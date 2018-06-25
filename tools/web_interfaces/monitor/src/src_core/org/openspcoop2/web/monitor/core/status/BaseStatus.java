@@ -21,7 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.status;
 
-
+/**
+ * BaseStatus
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class BaseStatus implements IStatus {
 	
 	/**

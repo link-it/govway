@@ -27,7 +27,9 @@ package org.openspcoop2.web.monitor.core.constants;
  * Classe per gestire l'enumerazione dei ruoli utente possibili
  * 
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public enum RuoliUtente {

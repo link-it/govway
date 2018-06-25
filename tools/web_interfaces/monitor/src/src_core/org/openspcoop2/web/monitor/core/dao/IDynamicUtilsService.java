@@ -43,7 +43,9 @@ import org.openspcoop2.core.id.IDSoggetto;
  * 
  * Interfaccia che definisce i metodi per il supporto ai componenti dinamici dell'interfaccia grafica
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public interface IDynamicUtilsService {

@@ -21,6 +21,15 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+
+/**
+ * CaseSensitiveMatch
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum CaseSensitiveMatch {
 
 	SENSITIVE, INSENSITIVE;

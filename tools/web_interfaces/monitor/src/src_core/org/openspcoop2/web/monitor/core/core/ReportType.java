@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.core;
 
+/**
+ * ReportType
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum ReportType {
 	MSG_DIAGNOSTICI,TRACCE,DUMP,AUDITING;
 	

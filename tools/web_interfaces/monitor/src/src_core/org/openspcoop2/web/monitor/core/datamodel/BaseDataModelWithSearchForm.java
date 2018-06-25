@@ -43,8 +43,11 @@ import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 
 /**
+ * BaseDataModelWithSearchForm
  * 
- * @author corallo
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  * @param <K> Il tipo della chiave (Integer, Long ...)
  * @param <T> Il tipo di dato che rappresenta una righa della tabella

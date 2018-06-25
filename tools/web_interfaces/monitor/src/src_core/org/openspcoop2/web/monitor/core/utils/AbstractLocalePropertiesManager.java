@@ -28,6 +28,14 @@ import javax.faces.context.FacesContext;
 
 import org.slf4j.Logger;
 
+/**
+ * AbstractLocalePropertiesManager
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class AbstractLocalePropertiesManager extends AbstractPropertiesManager{
 	
 	//private  HashMap<String, String> map = null;

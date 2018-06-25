@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+/**
+ * TipoPerido
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum TipoPerido {
 	g, h, m;
 }

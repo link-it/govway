@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.report;
 
+/**
+ * CostantiReport
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class CostantiReport {
 
 	public static final String ULTIME_24_ORE = "Ultime 24 ore";

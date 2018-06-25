@@ -40,6 +40,14 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
+/**
+ * LoginPhaseListener
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class LoginPhaseListener implements PhaseListener {
 
 	public static final String PRINCIPAL_ERROR_MSG = "principalErrorMsg";

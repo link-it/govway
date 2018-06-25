@@ -44,6 +44,14 @@ import org.openspcoop2.web.monitor.core.dynamic.components.RadioButton;
 import org.openspcoop2.web.monitor.core.dynamic.components.SelectList;
 import org.openspcoop2.web.monitor.core.dynamic.components.TextArea;
 
+/**
+ * DynamicComponentUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DynamicComponentUtils {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(DynamicComponentUtils.class);

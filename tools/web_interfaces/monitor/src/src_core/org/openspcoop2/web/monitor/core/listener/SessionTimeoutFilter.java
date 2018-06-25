@@ -36,6 +36,14 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
+/**
+ * SessionTimeoutFilter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SessionTimeoutFilter implements Filter {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(SessionTimeoutFilter.class);

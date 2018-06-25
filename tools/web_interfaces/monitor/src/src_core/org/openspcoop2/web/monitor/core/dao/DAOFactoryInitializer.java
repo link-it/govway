@@ -27,6 +27,14 @@ import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
+/**
+ * DAOFactoryInitializer
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DAOFactoryInitializer {
 
 	private static Logger log = LoggerWrapperFactory.getLogger(DAOFactoryInitializer.class);  // per poter associare il package 'dao' al logger 'sql'

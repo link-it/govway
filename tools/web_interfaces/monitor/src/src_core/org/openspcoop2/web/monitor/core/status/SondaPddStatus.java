@@ -31,6 +31,14 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
 import org.slf4j.Logger;
 
+/**
+ * SondaPddStatus
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 	/**

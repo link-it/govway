@@ -66,6 +66,14 @@ import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.richfaces.model.Ordering;
 import org.slf4j.Logger;
 
+/****
+ * BaseSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	// private String nomeMittente;

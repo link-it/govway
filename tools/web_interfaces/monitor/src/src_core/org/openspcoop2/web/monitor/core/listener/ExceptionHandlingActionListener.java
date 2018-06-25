@@ -33,6 +33,14 @@ import javax.faces.event.ActionListener;
 
 import com.sun.faces.application.ActionListenerImpl;
 
+/**
+ * ExceptionHandlingActionListener
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ExceptionHandlingActionListener extends ActionListenerImpl
 		implements ActionListener {
 

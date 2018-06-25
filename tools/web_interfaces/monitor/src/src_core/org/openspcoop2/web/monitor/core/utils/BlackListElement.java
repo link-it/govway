@@ -36,8 +36,9 @@ import java.io.Serializable;
  * Elenco dei tipi dei parametri del metodo;
  * 
  * 
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class BlackListElement implements Serializable {

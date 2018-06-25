@@ -25,6 +25,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * ResLive
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ResLive extends Res implements Serializable {
 
 	/**

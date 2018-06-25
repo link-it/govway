@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.utils;
 
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 
+/**
+ * ContentAuthorizationCostanti
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ContentAuthorizationCostanti {
 
 	// Elenco dei path che sono disponibili sempre

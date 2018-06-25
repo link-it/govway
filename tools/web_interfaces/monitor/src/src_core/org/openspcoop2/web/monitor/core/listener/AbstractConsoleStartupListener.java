@@ -46,7 +46,14 @@ import org.openspcoop2.web.monitor.core.core.InitServlet;
 import org.openspcoop2.web.monitor.core.utils.Costanti;
 import org.slf4j.Logger;
 
-
+/**
+ * AbstractConsoleStartupListener
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class AbstractConsoleStartupListener implements ServletContextListener{
 
 	protected static Logger log = LoggerWrapperFactory.getLogger(AbstractConsoleStartupListener.class); 

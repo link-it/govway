@@ -29,7 +29,9 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 /***
  * Interfaccia che descrive i metodi per avere i report Live.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public interface ILiveReport {

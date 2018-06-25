@@ -30,6 +30,14 @@ import org.slf4j.Logger;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
+/**
+ * EsitoContestoConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class EsitoContestoConverter implements Converter {
 	
 	private EsitoUtils esitoUtils;

@@ -30,6 +30,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * BrowserInfo
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class BrowserInfo implements Serializable{
 
 	public static final String USER_AGENT_HEADER_NAME = "User-Agent";

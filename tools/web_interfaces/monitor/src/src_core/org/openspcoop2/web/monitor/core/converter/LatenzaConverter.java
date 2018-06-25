@@ -31,6 +31,14 @@ import javax.faces.convert.Converter;
 
 import org.slf4j.Logger;
 
+/**
+ * LatenzaConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class LatenzaConverter  implements Converter {
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();

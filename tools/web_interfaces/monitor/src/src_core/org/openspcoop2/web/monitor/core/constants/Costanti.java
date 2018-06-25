@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+/**
+ * Costanti
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Costanti {
 
 	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = "Modalità: {0}";

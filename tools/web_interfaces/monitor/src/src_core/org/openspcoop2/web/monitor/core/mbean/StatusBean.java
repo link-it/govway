@@ -37,7 +37,9 @@ import org.slf4j.Logger;
  * 
  * Definisce un Bean per il controllo dello stato della PdD
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class StatusBean implements Serializable {

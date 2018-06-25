@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+/**
+ * CostantiGrafici
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class CostantiGrafici {
 
 	public static final String DAL_AL_PATTERN = " (dal {0} al {1} )";

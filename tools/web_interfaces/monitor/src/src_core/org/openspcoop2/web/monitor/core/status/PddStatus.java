@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.core.status;
 
+/**
+ * PddStatus
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class PddStatus extends BaseStatus{
 
 	/**

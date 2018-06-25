@@ -39,6 +39,14 @@ import org.openspcoop2.web.monitor.core.dao.ILoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 
+/****
+ * AbstractLoginBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class AbstractLoginBean implements Serializable{
 
 	/**

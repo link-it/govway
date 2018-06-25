@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.utils;
 
 import java.util.HashMap;
 
+/**
+ * MessageProvider
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class MessageProvider extends HashMap{
 	

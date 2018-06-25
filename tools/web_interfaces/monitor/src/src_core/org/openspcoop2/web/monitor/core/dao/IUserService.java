@@ -26,6 +26,14 @@ import java.util.List;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 
+/**
+ * IUserService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IUserService extends IService<User, String>{
 
 	public List<String> getTipiNomiSoggettiAssociati(User utente);

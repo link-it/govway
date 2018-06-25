@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.core.status;
 
 import java.io.Serializable;
 
+/**
+ * IStatus
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IStatus extends Serializable{
 
 	// Nome dell'oggetto di cui si vuole visualizzare lo stato

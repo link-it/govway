@@ -29,6 +29,14 @@ import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 
 import javax.faces.model.SelectItem;
 
+/**
+ * Ricerche
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Ricerche implements Serializable {
 
 	private static final long serialVersionUID = -630512519085994905L;

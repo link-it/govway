@@ -31,6 +31,14 @@ import org.slf4j.Logger;
 
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
+/**
+ * MimeTypeUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class MimeTypeUtils {
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();	

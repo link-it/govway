@@ -27,6 +27,14 @@ import javax.faces.convert.Converter;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * ShortyConverter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ShortyConverter implements Converter {
 
 	private static int MAX=25;

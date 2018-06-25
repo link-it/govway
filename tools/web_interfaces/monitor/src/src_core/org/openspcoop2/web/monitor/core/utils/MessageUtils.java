@@ -28,7 +28,10 @@ import org.openspcoop2.generic_project.beans.InUse;
 
 /**
  * Classe di utilita' per i @{link {@link FacesMessage}
- * @author corallo
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class MessageUtils {

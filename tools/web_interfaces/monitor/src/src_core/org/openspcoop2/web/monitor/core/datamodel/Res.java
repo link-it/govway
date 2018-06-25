@@ -26,6 +26,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Res
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class Res extends ResBase implements Serializable{
 	
 	private static final long serialVersionUID = 4601647394984864541L;

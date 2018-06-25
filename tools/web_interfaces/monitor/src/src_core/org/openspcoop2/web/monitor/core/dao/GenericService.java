@@ -52,6 +52,14 @@ import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
+/**
+ * GenericService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class GenericService implements IGenericService {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();

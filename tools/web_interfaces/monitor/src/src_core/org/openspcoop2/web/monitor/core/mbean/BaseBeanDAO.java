@@ -40,6 +40,14 @@ import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
 
+/**
+ * BaseBeanDAO
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class BaseBeanDAO<T,K, ServiceType extends IServiceWithId<T, K>> implements Serializable {
 
 	/**

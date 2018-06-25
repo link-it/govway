@@ -29,7 +29,12 @@ import org.slf4j.Logger;
 
 
 /**
- * @author Poli Andrea (apoli@link.it)
+ * ApplicationInstanceProperties
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
  */
 public class ApplicationInstanceProperties extends InstanceProperties {
 

@@ -27,7 +27,14 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 
 
-
+/**
+ * ParseUtility
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ParseUtility {
 
 	public static String parseNomeServizio(String servizio) {

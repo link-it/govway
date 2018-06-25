@@ -33,7 +33,14 @@ import org.slf4j.Logger;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 
-
+/**
+ * XPathValidator
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class XPathValidator implements Validator {
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
