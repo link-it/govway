@@ -38,6 +38,13 @@ import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
+/**     
+ * ConditionException
+ *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class Test {
 	public static void main(String[] args) {
 		try {

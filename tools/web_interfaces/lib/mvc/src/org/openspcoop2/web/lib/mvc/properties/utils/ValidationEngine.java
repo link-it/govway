@@ -50,7 +50,9 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
  * 
  * ValidationEngine validatore delle configurazioni
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ValidationEngine {

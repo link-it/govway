@@ -45,7 +45,9 @@ import org.openspcoop2.web.lib.mvc.properties.utils.ConditionsEngine;
  * 
  * ConfigBean memorizza le informazioni relative ai bean della configurazione
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ConfigBean {

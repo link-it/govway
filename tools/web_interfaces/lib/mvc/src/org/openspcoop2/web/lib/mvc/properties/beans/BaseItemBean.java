@@ -33,9 +33,9 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
  * 
  * Classe astratta che definisce le informazioni relative alla grafica degli elementi della configurazione.
  * 
- * @author pintori
- *
- * @param <T>
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class BaseItemBean<T> {
 	

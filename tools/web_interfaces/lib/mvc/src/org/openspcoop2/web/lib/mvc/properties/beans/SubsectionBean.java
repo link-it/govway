@@ -34,7 +34,9 @@ import org.openspcoop2.core.mvc.properties.provider.IProvider;
  * 
  * Bean di tipo Subsection arricchito delle informazioni grafiche.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class SubsectionBean extends BaseItemBean<Subsection>{

@@ -44,7 +44,9 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
  * 
  * ReadPropertiesUtilities utilities per la lettura della configurazione.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ReadPropertiesUtilities {

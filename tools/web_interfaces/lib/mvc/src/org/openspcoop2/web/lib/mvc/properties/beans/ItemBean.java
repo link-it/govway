@@ -44,7 +44,9 @@ import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationExcep
 /**
  * Bean di tipo Item arricchito delle informazioni grafiche.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ItemBean extends BaseItemBean<Item>{

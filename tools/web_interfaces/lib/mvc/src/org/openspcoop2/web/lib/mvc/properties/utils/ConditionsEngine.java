@@ -41,7 +41,9 @@ import org.openspcoop2.web.lib.mvc.properties.exception.ConditionException;
  * 
  * Motore che serve a decidere le condizioni di visualizzazione di un elemento
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class ConditionsEngine {

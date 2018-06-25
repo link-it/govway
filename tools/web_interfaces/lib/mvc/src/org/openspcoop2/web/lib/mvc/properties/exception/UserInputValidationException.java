@@ -21,10 +21,12 @@
  */
 package org.openspcoop2.web.lib.mvc.properties.exception;
 
-/***
- * 
- * @author pintori
+/**     
+ * UserInputValidationException
  *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class UserInputValidationException extends Exception{
 
