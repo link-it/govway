@@ -68,7 +68,9 @@ import javax.xml.bind.annotation.XmlValue;
  * &lt;/complexType>
  * </pre>
  * 
- * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ricerca-personalizzata", namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/search", propOrder = {

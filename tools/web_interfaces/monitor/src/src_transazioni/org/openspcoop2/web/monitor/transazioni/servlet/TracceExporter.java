@@ -60,6 +60,14 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+/**
+ * TracceExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TracceExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;

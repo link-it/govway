@@ -69,6 +69,14 @@ import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 
+/**
+ * MultiFileExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class MultiFileExporter implements IExporter{
 
 	private transient Logger log = null;

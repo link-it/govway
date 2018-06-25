@@ -38,6 +38,14 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 
+/**
+ * LiveBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class LiveBean extends DynamicPdDBean<Transazione,String,ISearchFormService<TransazioneBean, String, TransazioniSearchForm>>{
 
 	/**

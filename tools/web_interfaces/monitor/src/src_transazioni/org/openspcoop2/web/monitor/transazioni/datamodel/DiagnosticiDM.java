@@ -46,6 +46,14 @@ import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPagin
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 
+/**
+ * DiagnosticiDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DiagnosticiDM extends
 		BaseDataModel<Integer, MsgDiagnostico, IDiagnosticDriver> {
 

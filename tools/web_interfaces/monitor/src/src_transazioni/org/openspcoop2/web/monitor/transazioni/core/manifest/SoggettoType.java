@@ -53,7 +53,9 @@ import javax.xml.bind.annotation.XmlValue;
  * &lt;/complexType>
  * </pre>
  * 
- * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "soggetto_type", namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/manifest", propOrder = {

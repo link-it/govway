@@ -25,7 +25,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 
-
+/**
+ * MsgDiagnosticoBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class MsgDiagnosticoBean extends MsgDiagnostico {
 
 	/**

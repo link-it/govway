@@ -77,6 +77,14 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
 
+/**
+ * SingleCsvFileExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SingleCsvFileExporter implements IExporter{
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();

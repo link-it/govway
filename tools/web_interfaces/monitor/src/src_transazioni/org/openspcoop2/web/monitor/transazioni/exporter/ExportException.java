@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.transazioni.exporter;
 
+/**
+ * ExportException
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ExportException extends Exception {
 
 	private static final long serialVersionUID = -4194056094835622653L;

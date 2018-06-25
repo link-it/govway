@@ -29,6 +29,14 @@ import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.BlackListElement;
 
+/**
+ * DumpContenutoBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DumpContenutoBean extends DumpContenuto {
 
 	/**

@@ -73,6 +73,14 @@ import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
 import org.richfaces.model.Ordering;
 import org.slf4j.Logger;
 
+/**
+ * TransazioniSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniSearchForm extends BaseSearchForm implements
 Context, Cloneable {
 

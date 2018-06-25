@@ -44,6 +44,14 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 
+/**
+ * ITransazioniService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface ITransazioniService extends ISearchFormService<TransazioneBean, String, TransazioniSearchForm> {
 
 	public List<TransazioneBean> findAllLive();

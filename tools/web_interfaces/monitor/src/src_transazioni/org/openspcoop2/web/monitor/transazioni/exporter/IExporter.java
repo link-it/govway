@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.transazioni.exporter;
 
+/**
+ * IExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IExporter {
 
 	public String getFileName();

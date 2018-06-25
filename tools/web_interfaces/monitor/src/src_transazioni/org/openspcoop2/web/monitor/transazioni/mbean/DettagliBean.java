@@ -64,6 +64,14 @@ import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 
+/**
+ * DettagliBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DettagliBean extends
 PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 

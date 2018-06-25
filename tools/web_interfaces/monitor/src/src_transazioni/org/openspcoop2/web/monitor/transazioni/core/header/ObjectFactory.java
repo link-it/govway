@@ -48,6 +48,9 @@ import javax.xml.namespace.QName;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlRegistry
 public class ObjectFactory {

@@ -39,6 +39,14 @@ import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.slf4j.Logger;
 
+/**
+ * TransazioniDuplicatiDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniDuplicatiDM extends
 		BaseDataModel<Long, Transazione, ITransazioniService> {
 

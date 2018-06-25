@@ -87,6 +87,14 @@ import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
+/**
+ * UtilityTransazioni
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class UtilityTransazioni {
 	private final static double KB = 1024;
 	private final static double MB = 1048576;

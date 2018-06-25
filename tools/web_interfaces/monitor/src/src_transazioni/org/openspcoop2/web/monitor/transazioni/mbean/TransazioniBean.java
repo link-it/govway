@@ -65,7 +65,14 @@ import org.slf4j.Logger;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
+/**
+ * TransazioniBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISearchFormService<TransazioneBean, String, TransazioniSearchForm>> {
 
 	public static final String COLUMNS_VISIBILITY_STATO_TABELLE_KEY = "columnsVisibility";

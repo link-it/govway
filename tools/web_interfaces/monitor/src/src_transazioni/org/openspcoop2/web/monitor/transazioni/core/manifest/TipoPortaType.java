@@ -50,6 +50,9 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/simpleType>
  * </pre>
  * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlType(name = "tipo_porta_type", namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/manifest")
 @XmlEnum

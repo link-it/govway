@@ -99,6 +99,14 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
 
+/**
+ * TransazioniService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniService implements ITransazioniService {
 
 	private transient Logger log = null;

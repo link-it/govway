@@ -53,6 +53,14 @@ import org.openspcoop2.web.monitor.transazioni.bean.DumpContenutoBean;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.slf4j.Logger;
 
+/**
+ * DettagliDump
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniService>{
 
 	/**

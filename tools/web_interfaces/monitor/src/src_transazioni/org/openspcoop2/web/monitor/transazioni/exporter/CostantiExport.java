@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.transazioni.exporter;
 
+/**
+ * CostantiExport
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class CostantiExport {
 	
 	

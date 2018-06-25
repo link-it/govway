@@ -28,6 +28,14 @@ import java.util.Map;
 
 import org.openspcoop2.web.monitor.core.bean.SelectItem;
 
+/**
+ * ColonnaExportManager
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ColonnaExportManager {
 
 	private static ColonnaExportManager instance = null;

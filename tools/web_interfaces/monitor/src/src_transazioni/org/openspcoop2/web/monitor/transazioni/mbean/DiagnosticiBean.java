@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 
 import java.io.Serializable;
 
+/**
+ * DiagnosticiBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DiagnosticiBean implements Serializable {
 
 	/**

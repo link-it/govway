@@ -37,7 +37,9 @@ import org.slf4j.Logger;
  * 
  * Classe per la lettura degli esiti a partire dalla tabella transazioni.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class TransazioniReportManager implements ILiveReport,Serializable {

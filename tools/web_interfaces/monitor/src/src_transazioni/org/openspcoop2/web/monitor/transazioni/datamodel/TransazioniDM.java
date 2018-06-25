@@ -37,6 +37,14 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 
+/**
+ * TransazioniDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniDM extends
 SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniSearchForm> {
 

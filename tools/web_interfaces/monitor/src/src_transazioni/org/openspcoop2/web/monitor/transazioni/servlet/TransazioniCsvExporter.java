@@ -52,6 +52,14 @@ import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 import org.openspcoop2.web.monitor.transazioni.exporter.ExporterCsvProperties;
 import org.openspcoop2.web.monitor.transazioni.exporter.SingleCsvFileExporter;
 
+/**
+ * TransazioniCsvExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class TransazioniCsvExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;

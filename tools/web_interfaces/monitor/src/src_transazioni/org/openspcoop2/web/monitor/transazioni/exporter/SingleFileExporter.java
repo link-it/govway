@@ -72,6 +72,14 @@ import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 
+/**
+ * SingleFileExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SingleFileExporter implements IExporter{
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();

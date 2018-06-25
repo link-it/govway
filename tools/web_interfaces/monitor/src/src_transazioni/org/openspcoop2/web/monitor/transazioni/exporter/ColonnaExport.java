@@ -25,6 +25,14 @@ import java.io.Serializable;
 
 import org.openspcoop2.web.monitor.core.bean.SelectItem;
 
+/**
+ * ColonnaExport
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ColonnaExport implements Serializable {
 
 	/**

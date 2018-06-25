@@ -23,6 +23,14 @@ package org.openspcoop2.web.monitor.transazioni.exporter;
 
 import java.util.List;
 
+/**
+ * ExporterCsvProperties
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ExporterCsvProperties extends ExporterProperties {
 
 	

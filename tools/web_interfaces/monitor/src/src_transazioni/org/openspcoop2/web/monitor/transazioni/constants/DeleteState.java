@@ -21,6 +21,14 @@
  */
 package org.openspcoop2.web.monitor.transazioni.constants;
 
+/**
+ * DeleteState
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public enum DeleteState {
 
 	undefined

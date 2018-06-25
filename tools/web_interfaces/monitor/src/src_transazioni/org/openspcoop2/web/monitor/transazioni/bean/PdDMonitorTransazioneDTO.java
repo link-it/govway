@@ -28,7 +28,14 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
  
-
+/**
+ * PdDMonitorTransazioneDTO
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class PdDMonitorTransazioneDTO {
 
 	private Transazione transazione;

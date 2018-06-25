@@ -49,6 +49,9 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/simpleType>
  * </pre>
  * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlType(name = "tipologia-ricerca-transazioni_type", namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/search")
 @XmlEnum

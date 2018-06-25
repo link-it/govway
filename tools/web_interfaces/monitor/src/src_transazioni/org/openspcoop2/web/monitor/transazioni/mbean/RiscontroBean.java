@@ -36,7 +36,9 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
  * 
  * Bean per che incapsula un oggetto di tipo Riscontro, per la visualizzazione nella pagina web.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class RiscontroBean extends Riscontro {

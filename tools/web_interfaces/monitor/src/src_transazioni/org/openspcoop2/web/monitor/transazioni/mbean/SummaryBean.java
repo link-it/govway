@@ -88,6 +88,14 @@ import org.slf4j.Logger;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+/**
+ * SummaryBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class SummaryBean implements Serializable{
 
 	private static final String STATO_PERIODO = NomiTabelle.WELCOME_SCREEN.toString();

@@ -40,7 +40,9 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
  * 
  * Bean per che incapsula un oggetto di tipo Traccia, per la visualizzazione nella pagina web.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class TracciaBean extends Traccia {
