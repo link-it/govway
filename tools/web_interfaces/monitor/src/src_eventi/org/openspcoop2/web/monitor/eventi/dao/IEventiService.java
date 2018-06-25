@@ -25,6 +25,14 @@ import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 
+/**
+ * IEventiService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IEventiService extends ISearchFormService<EventoBean,Long,EventiSearchForm> {
 
 }

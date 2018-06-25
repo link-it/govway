@@ -36,6 +36,14 @@ import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 
+/**
+ * BaseStatsMBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K, org.openspcoop2.web.monitor.core.dao.IService<T, K>>{
 
 	/**

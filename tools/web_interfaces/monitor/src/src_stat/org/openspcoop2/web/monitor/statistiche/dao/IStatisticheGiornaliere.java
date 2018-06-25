@@ -32,6 +32,14 @@ import java.util.Map;
 
 import org.openspcoop2.generic_project.exception.ServiceException;
 
+/**
+ * IStatisticheGiornaliere
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IStatisticheGiornaliere extends IService<ResBase, Integer>,ILiveReport {
 
 	//Andamento Temporale

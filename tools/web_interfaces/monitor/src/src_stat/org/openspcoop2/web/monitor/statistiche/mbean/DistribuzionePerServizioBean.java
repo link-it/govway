@@ -59,6 +59,14 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.json.JSONObject;
 
+/**
+ * DistribuzionePerServizioBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DistribuzionePerServizioBean<T extends ResBase> extends
 BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 

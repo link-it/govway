@@ -72,6 +72,14 @@ import org.openspcoop2.web.monitor.statistiche.dao.IStatisticaPersonalizzataServ
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
 import org.slf4j.Logger;
 
+/**
+ * StatistichePersonalizzateSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class StatistichePersonalizzateSearchForm extends StatsSearchForm
 implements StatisticsContext{
 

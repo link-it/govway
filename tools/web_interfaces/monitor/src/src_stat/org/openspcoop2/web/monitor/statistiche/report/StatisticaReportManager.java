@@ -36,7 +36,9 @@ import org.slf4j.Logger;
  * 
  * Restituisce gli esiti delle transazioni calcolandoli in base ai dati salvati nella tabella delle statistiche.
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class StatisticaReportManager implements ILiveReport {

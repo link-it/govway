@@ -53,6 +53,14 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearch
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
 
+/**
+ * ConfigurazioniGeneraliBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGenerale, ConfigurazioneGeneralePK,IConfigurazioniGeneraliService> { 
 
 

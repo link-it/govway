@@ -38,6 +38,14 @@ import org.ajax4jsf.model.SequenceRange;
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
+/**
+ * StatsPersonalizzateDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class StatsPersonalizzateDM extends BaseDataModel<String, ResDistribuzione, IStatisticheGiornaliere> {
 
 	private static final long serialVersionUID = 500153520162806619L;

@@ -56,6 +56,14 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.json.JSONObject;
 
+/**
+ * AndamentoTemporaleBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class AndamentoTemporaleBean extends
 BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 

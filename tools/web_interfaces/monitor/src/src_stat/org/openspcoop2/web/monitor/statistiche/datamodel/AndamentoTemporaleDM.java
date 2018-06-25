@@ -40,6 +40,14 @@ import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.SortOrder;
 
+/**
+ * AndamentoTemporaleDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class AndamentoTemporaleDM extends BaseDataModel<Long, Res, IStatisticheGiornaliere> {
 
 	private static final long serialVersionUID = 500153520162806619L;

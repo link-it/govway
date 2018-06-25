@@ -25,7 +25,14 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 
-
+/**
+ * ConfigurazioneGeneralePK
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioneGeneralePK implements Serializable {
 
 	/**

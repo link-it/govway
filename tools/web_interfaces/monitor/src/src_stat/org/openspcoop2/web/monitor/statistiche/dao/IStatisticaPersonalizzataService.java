@@ -37,6 +37,14 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
+/**
+ * IStatisticaPersonalizzataService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IStatisticaPersonalizzataService extends
 		org.openspcoop2.web.monitor.core.dao.IService<ConfigurazioneStatistica, Long> {
 

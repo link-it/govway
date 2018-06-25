@@ -79,6 +79,14 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 
+/**
+ * ConfigurazioniUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioniUtils {
 
 	public static void fillAzioniPD(DettaglioPD dettaglioPD, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {

@@ -31,6 +31,14 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
 
+/**
+ * ConfigurazioniDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioniDM extends BaseDataModelWithSearchForm<ConfigurazioneGeneralePK, ConfigurazioneGenerale, 
 	IConfigurazioniGeneraliService,ConfigurazioniGeneraliSearchForm>  {
 

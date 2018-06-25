@@ -31,6 +31,14 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 
+/**
+ * IConfigurazioniGeneraliService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public interface IConfigurazioniGeneraliService extends ISearchFormService<ConfigurazioneGenerale, ConfigurazioneGeneralePK,
 ConfigurazioniGeneraliSearchForm> {
 

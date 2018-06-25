@@ -31,6 +31,14 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 
+/**
+ * DettaglioPA
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DettaglioPA implements Serializable{
 
 	/**

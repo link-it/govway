@@ -55,11 +55,12 @@ import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 
 
-/***
+/**
+ * EventiService
  * 
- * classe dao.Service
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class EventiService implements IEventiService{

@@ -30,6 +30,14 @@ import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
+/**
+ * ConfigurazioniGeneraliSearchForm
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioniGeneraliSearchForm extends BaseSearchForm implements Cloneable{
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();

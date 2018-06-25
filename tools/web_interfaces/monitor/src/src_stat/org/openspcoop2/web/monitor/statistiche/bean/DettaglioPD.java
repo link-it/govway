@@ -31,6 +31,14 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 
+/**
+ * DettaglioPD
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DettaglioPD implements Serializable{
 
 	/**

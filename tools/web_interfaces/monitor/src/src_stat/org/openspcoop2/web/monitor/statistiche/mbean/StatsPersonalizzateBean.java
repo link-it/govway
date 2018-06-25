@@ -64,6 +64,14 @@ import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.json.JSONObject;
 
+/**
+ * StatsPersonalizzateBean
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatistica, Long, org.openspcoop2.web.monitor.core.dao.IService<ConfigurazioneStatistica, Long>> {
 
 	/**

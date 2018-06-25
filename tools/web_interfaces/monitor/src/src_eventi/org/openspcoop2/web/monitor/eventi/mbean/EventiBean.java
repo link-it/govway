@@ -40,10 +40,11 @@ import org.slf4j.Logger;
 /****
  * 
  * 
- * Bean web per la sezione delle sonde
+ * Bean web per la sezione degli eventi
  * 
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class EventiBean extends PdDBaseBean<EventoBean, Long, IService<EventoBean,Long>>{

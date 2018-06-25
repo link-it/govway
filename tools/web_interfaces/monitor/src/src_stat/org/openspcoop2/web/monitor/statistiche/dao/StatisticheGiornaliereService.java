@@ -91,6 +91,14 @@ import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
 import org.slf4j.Logger;
 
+/**
+ * StatisticheGiornaliereService
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();

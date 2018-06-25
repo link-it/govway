@@ -36,9 +36,11 @@ import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 
 /****
  * 
- * Classe che raccoglie i parametri di ricerca per le sonde
+ * Classe che raccoglie i parametri di ricerca per gli eventi
  * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class EventiSearchForm extends AbstractDateSearchForm {

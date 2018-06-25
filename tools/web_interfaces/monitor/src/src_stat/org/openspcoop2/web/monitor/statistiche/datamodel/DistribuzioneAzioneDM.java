@@ -40,6 +40,14 @@ import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerAzioneBean;
 
+/**
+ * DistribuzioneAzioneDM
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class DistribuzioneAzioneDM extends BaseDataModel<String, ResDistribuzione, IStatisticheGiornaliere> {
 
 	private static final long serialVersionUID = 500153520162806619L;

@@ -67,6 +67,14 @@ import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSoggettoBea
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
 import org.slf4j.Logger;
 
+/**
+ * ReportExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ReportExporter extends HttpServlet{
 
 	private static final long serialVersionUID = 1272767433184676700L;

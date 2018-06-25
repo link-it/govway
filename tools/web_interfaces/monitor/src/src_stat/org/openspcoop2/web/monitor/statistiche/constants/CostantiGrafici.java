@@ -21,7 +21,14 @@
  */
 package org.openspcoop2.web.monitor.statistiche.constants;
 
-
+/**
+ * CostantiGrafici
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class CostantiGrafici {
 
 	/** Costanti ereditate dal core...*/

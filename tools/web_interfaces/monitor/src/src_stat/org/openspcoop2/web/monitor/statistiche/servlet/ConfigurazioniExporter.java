@@ -47,6 +47,14 @@ import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
 import org.openspcoop2.web.monitor.statistiche.export.ConfigurazioniCsvExporter;
 
+/**
+ * ConfigurazioniExporter
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class ConfigurazioniExporter extends HttpServlet{
 
 	/**

@@ -47,6 +47,14 @@ import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+/**
+ * JsonStatsUtils
+ * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ *
+ */
 public class JsonStatsUtils {
 
 	/* ******* PIE CHART ********** */

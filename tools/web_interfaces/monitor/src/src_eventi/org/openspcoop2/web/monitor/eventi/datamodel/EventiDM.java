@@ -31,10 +31,11 @@ import org.openspcoop2.web.monitor.eventi.dao.IEventiService;
 
 /***
  * 
- * classe DataModel per la configurazione delle sonde
+ * classe DataModel per la configurazione degli eventi
  * 
- * 
- * @author pintori
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class EventiDM extends BaseDataModelWithSearchForm<Long, EventoBean, IEventiService, EventiSearchForm>{
