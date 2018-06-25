@@ -2,7 +2,8 @@
 
 
     <accordo-servizio-parte-comune nome="Trasmissione" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="false" versione="1" wsdl-logico-erogatore="">
+        utilizzo-senza-azione="false" versione="1"
+	service-binding="soap">
         <soggetto-referente tipo="SDI" nome="CentroServiziFatturaPA"/>
 
         <port-type nome="TrasmissioneFatture" profilo-collaborazione="oneway" style="document">
@@ -82,14 +83,14 @@
     <soggetto tipo="SDI" nome="CentroServiziFatturaPA">
         <connettore tipo="disabilitato" nome="PdDSistemaDiInterscambio"/>
 
-        <accordo-servizio-parte-specifica nome="RiceviFile"
+        <accordo-servizio-parte-specifica tipo="SDI" nome="RiceviFile"
             accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Trasmissione:1"
             port-type="SdIRiceviFile">
-            <servizio tipo="SDI" nome="RiceviFile">
+            <configurazione-servizio>
                 <connettore tipo="http" nome="RiceviFile">
                     <property nome="location" valore="http://localhost:8888/ricevi_file"/>
                 </connettore>
-            </servizio>
+            </configurazione-servizio>
             <fruitore tipo="SDI" nome="ENTE"/>
         </accordo-servizio-parte-specifica>
 
@@ -104,10 +105,9 @@
                 valore="http://localhost:8080/govway/sdi/PA/SDIENTE/SDITrasmissioneFatture"/>
         </connettore>
 
-        <accordo-servizio-parte-specifica nome="TrasmissioneFatture"
+        <accordo-servizio-parte-specifica tipo="SDI" nome="TrasmissioneFatture"
             accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Trasmissione:1"
             port-type="TrasmissioneFatture">
-            <servizio tipo="SDI" nome="TrasmissioneFatture"/>
             <fruitore tipo="SDI" nome="CentroServiziFatturaPA"/>
         </accordo-servizio-parte-specifica>
 

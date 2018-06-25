@@ -173,7 +173,7 @@
         <validazione-buste controllo="rigido"/>
         <inoltro-buste-non-riscontrate cadenza="60"/>
         <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
-        <tracciamento buste="abilitato" dump="abilitato"/>
+        <tracciamento stato="abilitato" />
     </configurazione>
 
 </openspcoop2>

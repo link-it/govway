@@ -2,7 +2,8 @@
 
 
     <accordo-servizio-parte-comune nome="Ricezione" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="false" versione="1">
+        utilizzo-senza-azione="false" versione="1"
+	service-binding="soap">
         <soggetto-referente tipo="SPC" nome="CentroServiziFatturaPA"/>
 
         <port-type nome="RicezioneFatture" profilo-collaborazione="sincrono" style="document">
@@ -51,7 +52,8 @@
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="Ricezione" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="false" versione="1">
+        utilizzo-senza-azione="false" versione="1"
+	service-binding="soap">
         <soggetto-referente tipo="SDI" nome="CentroServiziFatturaPA"/>
 
         <port-type nome="RicezioneFatture" profilo-collaborazione="sincrono" style="document">
@@ -105,14 +107,14 @@
     <soggetto tipo="SPC" nome="CentroServiziFatturaPA">
         <connettore tipo="disabilitato" nome="PdDSistemaDiInterscambio"/>
 
-        <accordo-servizio-parte-specifica nome="RiceviNotifica"
+        <accordo-servizio-parte-specifica tipo="SPC" nome="RiceviNotifica"
             accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Ricezione:1"
             port-type="SdIRiceviNotifica">
-            <servizio tipo="SPC" nome="SdIRiceviNotifica">
+            <configurazione-servizio>
                 <connettore tipo="http" nome="RiceviNotifica">
                     <property nome="location" valore="http://localhost:8888/ricevi_notifica"/>
                 </connettore>
-            </servizio>
+            </configurazione-servizio>
             <fruitore tipo="SPC" nome="ENTE"/>
         </accordo-servizio-parte-specifica>
 
@@ -120,10 +122,10 @@
     <soggetto tipo="SDI" nome="CentroServiziFatturaPA">
         <connettore tipo="disabilitato" nome="PdDSistemaDiInterscambio"/>
 
-        <accordo-servizio-parte-specifica nome="RiceviNotifica"
+        <accordo-servizio-parte-specifica tipo="SDI" nome="RiceviNotifica"
             accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Ricezione:1"
             port-type="SdIRiceviNotifica">
-            <servizio tipo="SDI" nome="RiceviNotifica">
+            <configurazione-servizio>
                 <connettore tipo="vmPD" nome="RiceviNotifica">
                     <property nome="protocol" valore="spcoop"/>
                     <property nome="pd"
@@ -132,7 +134,7 @@
                         valore="SPCENTE_SPCCentroServiziFatturaPA_SPCRiceviNotifica_NotificaEsito"/>
                     <property nome="password" valore="123456"/>
                 </connettore>
-            </servizio>
+            </configurazione-servizio>
             <fruitore tipo="SDI" nome="ENTE"/>
         </accordo-servizio-parte-specifica>
 
@@ -146,10 +148,9 @@
             <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
         </connettore>
 
-        <accordo-servizio-parte-specifica nome="RicezioneFatture"
+        <accordo-servizio-parte-specifica tipo="SPC" nome="RicezioneFatture"
             accordo-servizio-parte-comune="SPC/CentroServiziFatturaPA:Ricezione:1"
             port-type="RicezioneFatture">
-            <servizio tipo="SPC" nome="RicezioneFatture"/>
             <fruitore tipo="SPC" nome="CentroServiziFatturaPA"/>
         </accordo-servizio-parte-specifica>
 
@@ -161,10 +162,9 @@
                 valore="http://localhost:8080/govway/sdi/PA/SDIENTE/SDIRicezioneFatture"/>
         </connettore>
 
-        <accordo-servizio-parte-specifica nome="RicezioneFatture"
+        <accordo-servizio-parte-specifica tipo="SDI" nome="RicezioneFatture"
             accordo-servizio-parte-comune="SDI/CentroServiziFatturaPA:Ricezione:1"
             port-type="RicezioneFatture">
-            <servizio tipo="SDI" nome="RicezioneFatture"/>
             <fruitore tipo="SDI" nome="CentroServiziFatturaPA"/>
         </accordo-servizio-parte-specifica>
 

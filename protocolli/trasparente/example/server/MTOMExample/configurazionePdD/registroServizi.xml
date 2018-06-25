@@ -6,7 +6,8 @@
 		     profilo-collaborazione="sincrono"
                      wsdl-definitorio="wsdl/definitorio.xsd"
                      wsdl-concettuale="wsdl/concettuale.wsdl"
-		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl"
+		     service-binding="soap">
 	<soggetto-referente tipo="PROXY" nome="MinisteroErogatore" />
 	<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
            <azione nome="echo" />
@@ -21,30 +22,32 @@
          </connettore>
 
 	<accordo-servizio-parte-specifica
+	         tipo="PROXY" 
 		 nome="MTOMServiceExampleSOAP11"
 		 accordo-servizio-parte-comune="PROXY/MinisteroErogatore:AS_MTOMExample:1"
 		 port-type="MTOMServiceExample"
 		 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
 		 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
-	    <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11">
+	    <configurazione-servizio>
                      <connettore tipo="http" nome="Connettore">
                          <property nome="location" valore="http://localhost:8888/MTOMExample/soap11" />
                      </connettore>
-	    </servizio> 
+	    </configurazione-servizio> 
             <fruitore tipo="PROXY" nome="MinisteroFruitore" />
         </accordo-servizio-parte-specifica>
 
         <accordo-servizio-parte-specifica
+		 tipo="PROXY"
                  nome="MTOMServiceExampleSOAP12"
                  accordo-servizio-parte-comune="PROXY/MinisteroErogatore:AS_MTOMExample:1"
                  port-type="MTOMServiceExample"
                  descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
                  wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
-            <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12">
+            <configurazione-servizio>
                      <connettore tipo="http" nome="Connettore">
                          <property nome="location" valore="http://localhost:8888/MTOMExample/soap12" />
                      </connettore>
-            </servizio>
+            </configurazione-servizio>
             <fruitore tipo="PROXY" nome="MinisteroFruitore" />
         </accordo-servizio-parte-specifica>
 
