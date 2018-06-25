@@ -74,6 +74,18 @@
 			<param name="token" value="org.openspcoop2.protocol.repository.gestore"/>
 			<param name="value" value="auto-bytewise"/>
 		</antcall>
+
+		<!-- HTTPS -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository"/>
+			<param name="value" value="${work_dir}/https/fruizioni"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository"/>
+			<param name="value" value="${work_dir}/https/erogazioni"/>
+		</antcall>
 		
 		<!-- 
 		  PROTOCOL DEFAULT

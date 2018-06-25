@@ -21,6 +21,18 @@
 			<param name="token" value="confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+
+		<!-- DYNAMIC CONFIG DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="messageSecurity.dir"/>
+			<param name="value" value="${work_dir}/messageSecurity"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="policyGestioneToken.dir"/>
+			<param name="value" value="${work_dir}/policyGestioneToken"/>
+		</antcall>
 		
 		<!-- SINCRONIZZAZIONE -->
 		<antcall target="set_property">
