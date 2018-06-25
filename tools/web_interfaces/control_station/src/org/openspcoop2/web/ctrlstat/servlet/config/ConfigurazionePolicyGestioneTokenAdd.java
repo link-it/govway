@@ -1,6 +1,8 @@
 /*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
  * 
  * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
  * 
@@ -55,10 +57,12 @@ import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 
-/***
- * 
- * @author pintori
+/**     
+ * ConfigurazionePolicyGestioneTokenAdd
  *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 
