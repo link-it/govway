@@ -66,10 +66,10 @@ public class Utilities {
 	}
 	
 	public static String toString(CodiceErroreIntegrazione codiceErrore) throws ProtocolException{
-		return "GOVWAY_ORG_"+codiceErrore.getCodice();
+		return org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+codiceErrore.getCodice();
 	}
 	public static String toString(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
-		return "ECCEZIONE_PROTOCOLLO_"+codiceErrore.getCodice();
+		return org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE+codiceErrore.getCodice();
 	}
 }
 

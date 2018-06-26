@@ -340,7 +340,7 @@ public class Integrazione {
 		while(elements.hasNext()){
 			MessageElement elem = (MessageElement) elements.next();
 			Reporter.log("Elemento nell'header name["+elem.getLocalName()+"] prefix["+elem.getPrefix()+"] namespace["+elem.getNamespaceURI()+"]");
-			if("integrazione".equals(elem.getLocalName()) && "openspcoop".equals(elem.getPrefix()) && "http://www.openspcoop2.org/core/integrazione".equals(elem.getNamespaceURI())){
+			if(org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION.equals(elem.getLocalName()) && "gw".equals(elem.getPrefix()) && org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE.equals(elem.getNamespaceURI())){
 				find = true;
 				Iterator<?> attributes = elem.getAllAttributes();
 				while(attributes.hasNext()){
@@ -523,7 +523,7 @@ public class Integrazione {
 			Reporter.log("Elemento nell'header name["+elem.getLocalName()+"] prefix["+elem.getPrefix()+"] namespace["+elem.getNamespaceURI()+"]");
 			
 			if("To".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-					"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+					org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 				String v=elem.getValue();
 				Reporter.log("trovato nell'header WSA(to): "+v);
 				if(v==null){
@@ -538,7 +538,7 @@ public class Integrazione {
 				}
 			}
 			else if("From".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-					"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+					org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 				Iterator<?> itFROM = elem.getChildElements();
 				String v=null;
 				while (itFROM.hasNext()) {
@@ -563,7 +563,7 @@ public class Integrazione {
 				}
 			}
 			else if("Action".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-					"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+					org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 				String v=elem.getValue();
 				Reporter.log("trovato nell'header WSA(action): "+v);
 				if(v==null){
@@ -578,7 +578,7 @@ public class Integrazione {
 				}
 			}
 			else if("MessageID".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-					"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+					org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 				String v=elem.getValue();
 				Reporter.log("trovato nell'header WSA(id): "+v);
 				if(v==null){
@@ -1952,10 +1952,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2216,10 +2216,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2402,7 +2402,7 @@ public class Integrazione {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_423]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_423]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:BEGIN-ID__END-ID) azione [BEGIN-ID__END-ID] non trovata nell'accordo di servizio ASRichiestaStatoAvanzamento:1";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2414,7 +2414,7 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			throw new Exception("Attesa eccezione OPENSPCOOP_ORG_405 che non e' avvenuta");
+			throw new Exception("Attesa eccezione GOVWAY_ORG_405 che non e' avvenuta");
 			
 		}catch(Exception e){
 			throw e;
@@ -2582,7 +2582,7 @@ public class Integrazione {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]:  faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2594,7 +2594,7 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			throw new Exception("Attesa eccezione OPENSPCOOP_ORG_405 che non e' avvenuta");
+			throw new Exception("Attesa eccezione GOVWAY_ORG_405 che non e' avvenuta");
 			
 		}catch(Exception e){
 			throw e;
@@ -2842,10 +2842,10 @@ public class Integrazione {
 
 			TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
 			
-			Name name = new PrefixedQName("http://www.openspcoop2.org/core/integrazione","integrazione","openspcoop");
+			Name name = new PrefixedQName(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE,org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION,"gw");
 			org.apache.axis.message.SOAPHeaderElement header = 
 				new org.apache.axis.message.SOAPHeaderElement(name);
-			header.setActor("http://www.openspcoop2.org/core/integrazione");
+			header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE);
 			header.setMustUnderstand(false);
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 
@@ -2954,10 +2954,10 @@ public class Integrazione {
 			org.apache.axis.message.SOAPHeaderElement headerAction = 
 				new org.apache.axis.message.SOAPHeaderElement(nameAction);
 			
-			headerTo.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+			headerTo.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 			headerTo.setMustUnderstand(false);
 			headerTo.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
-			headerAction.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+			headerAction.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 			headerAction.setMustUnderstand(false);
 			headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			
@@ -3094,10 +3094,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -3353,10 +3353,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_423] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_423] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_423]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_423]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_SERVIZIO_ERRATO;
 				// Ci sono 2 occorrenze di azione
@@ -3447,10 +3447,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+MSG_ERRORE+"]");
 				Assert.assertTrue(MSG_ERRORE.equals(error.getFaultString()));
@@ -3534,10 +3534,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");

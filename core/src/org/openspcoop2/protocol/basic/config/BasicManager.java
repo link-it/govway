@@ -170,7 +170,9 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 				String nomeProprieta = names[i];
 				String valoreProprieta = busta.getProperty(nomeProprieta);
 				if(TipoIntegrazione.TRASPORTO.equals(tipoIntegrazione)){
-					map.put("X-"+busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
+					// X- e' deprecato
+					//map.put("X-"+busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
+					map.put(busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
 				}else if(TipoIntegrazione.URL.equals(tipoIntegrazione)){
 					map.put(busta.getProtocollo().toUpperCase()+nomeProprieta, valoreProprieta);
 				}else{

@@ -32,7 +32,12 @@ public class Costanti {
 	
 	public static final String ROOT_LOCAL_NAME_ESITO_RICHIESTA = "esito-richiesta";
 	
-	public static final String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/integrazione";
+	public static final String ROOT_LOCAL_NAME_INTEGRATION = "integration";
+	
+	public static final String TARGET_NAMESPACE = "http://govway.org/integration"; // usato anche per le informazioni di integrazione
+	public static final String TARGET_NAMESPACE_WSA = "http://govway.org/integration/wsa";
+	
+	public static final String ELEMENT_STATO = "stato";
 	
 	public static final String PRESA_IN_CARICO = "PRESA_IN_CARICO";
 }

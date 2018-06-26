@@ -76,21 +76,21 @@ public class IntegrationReaderHandler extends BasicHandler
 			
 			if(nomeProperty!=null){
 				// Egov
-				if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoMittente"))
+				if(nomeProperty.equalsIgnoreCase("GovWay-Sender-Type"))
 					tipoMittente = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Mittente"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Sender"))
 					mittente = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoDestinatario"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Provider-Type"))
 					tipoDestinatario = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Destinatario"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Provider"))
 					destinatario = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-TipoServizio"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Service-Type"))
 					tipoServizio = req.getHeader(nomeProperty);
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Servizio"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Service"))
 					servizio = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-Azione"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Action"))
 					azione = req.getHeader(nomeProperty); 
-				else if(nomeProperty.equalsIgnoreCase("X-GovWay-IdMessaggio"))
+				else if(nomeProperty.equalsIgnoreCase("GovWay-Message-ID"))
 					idEGov = req.getHeader(nomeProperty); 
 			}
 		}

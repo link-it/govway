@@ -605,8 +605,8 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 				if (localForward == null) {
-					if(pde.getLocalForward()!=null){
-						localForward = pde.getLocalForward().toString();
+					if(pde.getLocalForward()!=null && pde.getLocalForward().getStato()!=null){
+						localForward = pde.getLocalForward().getStato().toString();
 					}
 					if (localForward == null) {
 						localForward = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_DISABILITATO;

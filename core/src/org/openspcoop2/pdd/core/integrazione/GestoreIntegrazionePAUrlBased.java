@@ -53,7 +53,7 @@ public class GestoreIntegrazionePAUrlBased extends AbstractCore implements IGest
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePAUrlBased.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstancePA(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePARequest(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
@@ -79,7 +79,7 @@ public class GestoreIntegrazionePAUrlBased extends AbstractCore implements IGest
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.setRequestUrlProperties(integrazione, outRequestPAMessage.getProprietaUrlBased(),
+			this.utilities.setUrlProperties(integrazione, outRequestPAMessage.getProprietaUrlBased(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.URL));			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePAUrlBased, "+e.getMessage(),e);

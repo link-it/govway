@@ -38,10 +38,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="eccezione">
  * 		&lt;sequence>
- * 			&lt;element name="codice" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="codice" type="{http://govway.org/integration/fault}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}TipoEccezione" use="required"/>
+ * 		&lt;attribute name="tipo" type="{http://govway.org/integration/fault}TipoEccezione" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 

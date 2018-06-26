@@ -38,12 +38,13 @@ public class Costanti {
 
 	
 	/** ERRORE APPLICATIVO */
-	public static final String ERRORE_INTEGRAZIONE_NAMESPACE = "http://www.openspcoop2.org/core/errore_integrazione";
-	public static final String ERRORE_INTEGRAZIONE_PREFIX = "eccIntegrazione";
+	public static final String ERRORE_INTEGRAZIONE_NAMESPACE = org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE; // uso stesso namespace; 
+	public static final String ERRORE_INTEGRAZIONE_PREFIX = "gwIntegration";
 	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY_ORG_";
 	
-	public static final String ERRORE_PROTOCOLLO_PREFIX = "eccProtocollo";
-	public static final String ERRORE_PROTOCOLLO_NAMESPACE = "http://www.openspcoop2.org/core/errore_protocollo";
+	public static final String ERRORE_PROTOCOLLO_NAMESPACE =  "http://govway.org/protocol/fault";
+	public static final String ERRORE_PROTOCOLLO_PREFIX = "gwProtocol";
+	public final static String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
 		
     /** Ora di creazione di un tracciamento. Il token 'locale' indica il tempo locale
     non sincronizzato da sistema che lo imposta*/

@@ -36,7 +36,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="soggetto">
  * 		&lt;sequence>
- * 			&lt;element name="identificativo" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="identificativo" type="{http://govway.org/integration/fault}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>

@@ -178,21 +178,21 @@
 			<param name="buildCore" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_govway_protocol-api_jar">
+	<target name="build_openspcoop2_protocol-api_jar">
 		<delete>
-			<fileset dir="${dist}" includes="govway_protocol-api_*.jar"/>
+			<fileset dir="${dist}" includes="openspcoop2_protocol-api_*.jar"/>
 			<fileset dir="${dist}" includes="protocol-api/*"/>
 		</delete>
-		<antcall target="compile_govway_protocol-api">
+		<antcall target="compile_openspcoop2_protocol-api">
 			<param name="buildProtocolAPI" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_govway_monitor-api_jar">
+	<target name="build_openspcoop2_monitor-api_jar">
 		<delete>
-			<fileset dir="${dist}" includes="govway_monitor-api_*.jar"/>
+			<fileset dir="${dist}" includes="openspcoop2_monitor-api_*.jar"/>
 			<fileset dir="${dist}" includes="monitor-api/*"/>
 		</delete>
-		<antcall target="compile_govway_monitor-api">
+		<antcall target="compile_openspcoop2_monitor-api">
 			<param name="buildMonitorAPI" value="true"/>
 		</antcall>
 	</target>
@@ -205,21 +205,21 @@
 			<param name="buildSecurity" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_govway_protocol_jar">
+	<target name="build_openspcoop2_protocol_jar">
 		<delete>
-			<fileset dir="${dist}" includes="govway_protocol_*.jar"/>
+			<fileset dir="${dist}" includes="openspcoop2_protocol_*.jar"/>
 			<fileset dir="${dist}" includes="protocol/*"/>
 		</delete>
-		<antcall target="compile_govway_protocol">
+		<antcall target="compile_openspcoop2_protocol">
 			<param name="buildProtocolEngine" value="true"/>
 		</antcall>
 	</target>
-	<target name="build_govway_monitor_jar">
+	<target name="build_openspcoop2_monitor_jar">
 		<delete>
-			<fileset dir="${dist}" includes="govway_monitor_*.jar"/>
+			<fileset dir="${dist}" includes="openspcoop2_monitor_*.jar"/>
 			<fileset dir="${dist}" includes="monitor/*"/>
 		</delete>
-		<antcall target="compile_govway_monitor">
+		<antcall target="compile_openspcoop2_monitor">
 			<param name="buildMonitorEngine" value="true"/>
 		</antcall>
 	</target>
@@ -233,7 +233,7 @@
 		</antcall>
 	</target>
 	<target name="build_openspcoop2_all" 
-		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_govway_protocol-api,compile_govway_monitor-api,compile_openspcoop2_security,compile_govway_protocol,compile_govway_monitor,compile_openspcoop2_pdd">
+		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,compile_openspcoop2_monitor-api,compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_monitor,compile_openspcoop2_pdd">
 	
 		<if>
 			<istrue value="${buildAPI}"/>

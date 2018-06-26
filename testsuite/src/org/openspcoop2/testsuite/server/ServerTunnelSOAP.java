@@ -102,7 +102,7 @@ public class ServerTunnelSOAP extends ServerCore{
                     if("true".equals(tunnelSoap))
                             tunnel = true;
             }
-            String tunnelSoapMimeType = request.getParameter("govwayTunnelSOAPMimeType");
+            String tunnelSoapMimeType = request.getParameter("govway_soap_tunnel_mime");
             if(tunnelSoapMimeType!=null){
                     tunnelSoapMimeType = tunnelSoapMimeType.trim();
             }
@@ -124,9 +124,9 @@ public class ServerTunnelSOAP extends ServerCore{
 			} 
 
 			if(tunnel){
-				response.setHeader("X-GovWay-TunnelSOAP", "true");
+				response.setHeader("GovWay-Soap-Tunnel", "true");
                 if(tunnelSoapMimeType!=null)
-                	response.setHeader("X-GovWay-TunnelSOAP-MimeType",tunnelSoapMimeType);
+                	response.setHeader("GovWay-Soap-Tunnel-Mime",tunnelSoapMimeType);
 			}
 			
 			if(produciMsgSoap){

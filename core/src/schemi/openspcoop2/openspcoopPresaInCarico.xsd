@@ -5,6 +5,10 @@
         xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
         attributeFormDefault="unqualified">
 
+        <!-- NOTA: il namespace 'http://govway.org/integration' viene iniettato dinamicamente,
+                   mentre l'attuale namespace serve per la generazione delle classi java
+         -->
+
         <xsd:annotation>
                 <xsd:appinfo>
                         <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">

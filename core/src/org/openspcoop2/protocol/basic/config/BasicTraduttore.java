@@ -63,7 +63,7 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
 	
 	
 	public String getPrefissoEccezioni() {
-		return "ECCEZIONE_PROTOCOLLO_";
+		return org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
 	}
 
 	@Override

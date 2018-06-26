@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
@@ -603,7 +604,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -696,7 +697,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
 			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
@@ -825,7 +826,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
 			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
@@ -970,7 +971,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1108,7 +1109,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -1197,7 +1198,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -1273,7 +1274,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -1348,7 +1349,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
 			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
@@ -1478,7 +1479,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
 			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
@@ -1624,7 +1625,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1769,7 +1770,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -1888,7 +1889,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1998,7 +1999,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -2117,7 +2118,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -2229,7 +2230,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -2349,7 +2350,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -2460,7 +2461,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false);
 			client.setRispostaDaGestire(true);
@@ -2580,7 +2581,7 @@ public class ErroreApplicativoCNIPA {
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
-				client.setProperty("X-GovWay-ServizioApplicativo", servizioApplicativoFruitore);
+				client.setProperty(TestSuiteProperties.getInstance().getServizioApplicativoTrasporto(), servizioApplicativoFruitore);
 			}
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);

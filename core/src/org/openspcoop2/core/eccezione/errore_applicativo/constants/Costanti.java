@@ -33,7 +33,7 @@ public class Costanti {
 	
 	public static final String ROOT_LOCAL_NAME_ERRORE_APPLICATIVO = "errore-applicativo";
 	
-	public static final String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/eccezione/errore_applicativo";
+	public static final String TARGET_NAMESPACE = "http://govway.org/integration/fault";
 
 }
 

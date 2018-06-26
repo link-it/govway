@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="dettagli">
  * 		&lt;sequence>
- * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/core/eccezione/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="dettaglio" type="{http://govway.org/integration/fault/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

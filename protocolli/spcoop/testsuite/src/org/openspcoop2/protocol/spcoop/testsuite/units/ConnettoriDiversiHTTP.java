@@ -69,6 +69,7 @@ import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.testng.Assert;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -288,7 +289,7 @@ public class ConnettoriDiversiHTTP {
 			checkInformazioneEgov("Proprieta' di trasporto",msg, keyTrasporto, valoreAtteso);
 			
 			// UserAgent
-			keyTrasporto = CostantiPdD.HEADER_HTTP_USER_AGENT.replace("X-", "").replaceAll("-", "");
+			keyTrasporto = HttpConstants.USER_AGENT.replace("X-", "").replaceAll("-", "");
 			String value = null;
 			try{
 				value = msg.getStringProperty(keyTrasporto);

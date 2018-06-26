@@ -179,8 +179,6 @@ public class UtilitiesIntegrazione {
 						// id e servizio applicativo
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)))
 							integrazione.setIdApplicativo(prop.getProperty(key));
-						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)))
-							integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
 							integrazione.setServizioApplicativo(prop.getProperty(key));
 					}
@@ -227,8 +225,6 @@ public class UtilitiesIntegrazione {
 						// id e servizio applicativo
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)))
 							integrazione.setIdApplicativo(prop.getProperty(key));
-						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)))
-							integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
 							integrazione.setServizioApplicativo(prop.getProperty(key));
 					}
@@ -278,8 +274,6 @@ public class UtilitiesIntegrazione {
 				}
 				if(integrazione.getIdApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
-				if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null)
-					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
 				if(integrazione.getServizioApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 			}
@@ -336,14 +330,12 @@ public class UtilitiesIntegrazione {
 				}
 				if(integrazione.getIdApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
-				if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null)
-					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
 				if(integrazione.getServizioApplicativo()!=null)
 					properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 			}
 			if(properties!=null){
-				if(request)
-					properties.put(CostantiPdD.HEADER_HTTP_USER_AGENT,this.openspcoop2Properties.getHttpUserAgent());
+//				if(request)
+//					properties.put(CostantiPdD.HEADER_HTTP_USER_AGENT,this.openspcoop2Properties.getHttpUserAgent());
 				properties.put((String)this.keyValueIntegrazioneTrasporto.get(Costanti.HEADER_INTEGRAZIONE_PDD_VERSION),this.openspcoop2Properties.getHttpServer());
 				if(this.openspcoop2Properties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoop2Properties.getHttpXPdDDetails())){
 					properties.put((String)this.keyValueIntegrazioneTrasporto.get(Costanti.HEADER_INTEGRAZIONE_PDD_DETAILS),this.openspcoop2Properties.getHttpXPdDDetails());
@@ -468,13 +460,6 @@ public class UtilitiesIntegrazione {
 			}catch(Exception e){}
 			if(idApplicativo!=null && idApplicativo.compareTo("")!=0)
 				integrazione.setIdApplicativo(idApplicativo);
-			
-			String riferimentoIdApplicativoRichiesta = null;
-			try{
-				riferimentoIdApplicativoRichiesta = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA));
-			}catch(Exception e){}
-			if(riferimentoIdApplicativoRichiesta!=null && riferimentoIdApplicativoRichiesta.compareTo("")!=0)
-				integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoIdApplicativoRichiesta);
 
 			String sa = null;
 			try{
@@ -504,7 +489,6 @@ public class UtilitiesIntegrazione {
 		
 		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
-		integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoCorrelazioneApplicativaRichiesta);
 		integrazione.setServizioApplicativo(servizioApplicativo);
 		HeaderIntegrazioneBusta busta = new HeaderIntegrazioneBusta();
 		busta.setTipoMittente(soggettoFruitore.getTipo());
@@ -666,10 +650,6 @@ public class UtilitiesIntegrazione {
 			 header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
 		}
 
-		if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null){
-			 header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
-		}
-		
 		if(integrazione.getServizioApplicativo()!=null){
 			header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 		}

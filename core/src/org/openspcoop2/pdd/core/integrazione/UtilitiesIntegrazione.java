@@ -49,6 +49,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.slf4j.Logger;
 
@@ -64,31 +65,64 @@ public class UtilitiesIntegrazione {
 
 
 	// ***** STATIC *****
+
+	private static final boolean PORTA_DELEGATA = true;
+	private static final boolean PORTA_APPLICATIVA = false;
+	private static final boolean REQUEST = true;
+	private static final boolean RESPONSE = false;
 	
-	private static UtilitiesIntegrazione utilitiesIntegrazionePD = null;
-	private static UtilitiesIntegrazione utilitiesIntegrazionePA = null;
-	public static UtilitiesIntegrazione getInstancePD(Logger log){
-		if(UtilitiesIntegrazione.utilitiesIntegrazionePD==null){
-			UtilitiesIntegrazione.initialize(log,true);
+	private static UtilitiesIntegrazione utilitiesIntegrazionePDRequest = null;
+	private static UtilitiesIntegrazione utilitiesIntegrazionePDResponse = null;
+	private static UtilitiesIntegrazione utilitiesIntegrazionePARequest = null;
+	private static UtilitiesIntegrazione utilitiesIntegrazionePAResponse = null;
+	public static UtilitiesIntegrazione getInstancePDRequest(Logger log){
+		if(UtilitiesIntegrazione.utilitiesIntegrazionePDRequest==null){
+			UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,REQUEST);
 		}
-		return UtilitiesIntegrazione.utilitiesIntegrazionePD;
+		return UtilitiesIntegrazione.utilitiesIntegrazionePDRequest;
 	}
-	public static UtilitiesIntegrazione getInstancePA(Logger log){
-		if(UtilitiesIntegrazione.utilitiesIntegrazionePA==null){
-			UtilitiesIntegrazione.initialize(log,false);
+	public static UtilitiesIntegrazione getInstancePDResponse(Logger log){
+		if(UtilitiesIntegrazione.utilitiesIntegrazionePDResponse==null){
+			UtilitiesIntegrazione.initialize(log,PORTA_DELEGATA,RESPONSE);
 		}
-		return UtilitiesIntegrazione.utilitiesIntegrazionePA;
+		return UtilitiesIntegrazione.utilitiesIntegrazionePDResponse;
+	}
+	public static UtilitiesIntegrazione getInstancePARequest(Logger log){
+		if(UtilitiesIntegrazione.utilitiesIntegrazionePARequest==null){
+			UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,REQUEST);
+		}
+		return UtilitiesIntegrazione.utilitiesIntegrazionePARequest;
+	}
+	public static UtilitiesIntegrazione getInstancePAResponse(Logger log){
+		if(UtilitiesIntegrazione.utilitiesIntegrazionePAResponse==null){
+			UtilitiesIntegrazione.initialize(log,PORTA_APPLICATIVA,RESPONSE);
+		}
+		return UtilitiesIntegrazione.utilitiesIntegrazionePAResponse;
 	}
 
-	private static synchronized void initialize(Logger log,boolean portaDelegata){
+	private static synchronized void initialize(Logger log,boolean portaDelegata, boolean request){
 		if(portaDelegata) {
-			if(UtilitiesIntegrazione.utilitiesIntegrazionePD==null){
-				UtilitiesIntegrazione.utilitiesIntegrazionePD = new UtilitiesIntegrazione(log, true);
+			if(request) {
+				if(UtilitiesIntegrazione.utilitiesIntegrazionePDRequest==null){
+					UtilitiesIntegrazione.utilitiesIntegrazionePDRequest = new UtilitiesIntegrazione(log, portaDelegata, request);
+				}
+			}
+			else {
+				if(UtilitiesIntegrazione.utilitiesIntegrazionePDResponse==null){
+					UtilitiesIntegrazione.utilitiesIntegrazionePDResponse = new UtilitiesIntegrazione(log, portaDelegata, request);
+				}
 			}
 		}
 		else {
-			if(UtilitiesIntegrazione.utilitiesIntegrazionePA==null){
-				UtilitiesIntegrazione.utilitiesIntegrazionePA = new UtilitiesIntegrazione(log, false);
+			if(request) {
+				if(UtilitiesIntegrazione.utilitiesIntegrazionePARequest==null){
+					UtilitiesIntegrazione.utilitiesIntegrazionePARequest = new UtilitiesIntegrazione(log, portaDelegata, request);
+				}
+			}
+			else {
+				if(UtilitiesIntegrazione.utilitiesIntegrazionePAResponse==null){
+					UtilitiesIntegrazione.utilitiesIntegrazionePAResponse = new UtilitiesIntegrazione(log, portaDelegata, request);
+				}
 			}
 		}
 	}
@@ -116,19 +150,23 @@ public class UtilitiesIntegrazione {
 	private ValidatoreXSD validatoreXSD_soap11 = null;
 	private ValidatoreXSD validatoreXSD_soap12 = null;
 	
-	private UtilitiesIntegrazione(Logger log, boolean portaDelegata){
+	private boolean request;
+	
+	private UtilitiesIntegrazione(Logger log, boolean portaDelegata, boolean request){
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
+		
+		this.request = request;
 		
 		this.keywordsIntegrazione = this.openspcoopProperties.getKeywordsIntegrazione();
 		
 		this.keyValueIntegrazioneTrasporto = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
 		try{
 			if(portaDelegata) {
-				this.keySetEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto();
+				this.keySetEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(request);
 				this.keyReadEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPDReadEnabled_HeaderIntegrazioneTrasporto();
 			}
 			else {
-				this.keySetEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPASetEnabled_HeaderIntegrazioneTrasporto();
+				this.keySetEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPASetEnabled_HeaderIntegrazioneTrasporto(request);
 				this.keyReadEnabled_HeaderIntegrazioneTrasporto = this.openspcoopProperties.getKeyPAReadEnabled_HeaderIntegrazioneTrasporto();
 			}
 		}catch(Exception e){
@@ -152,11 +190,11 @@ public class UtilitiesIntegrazione {
 		this.keyValueIntegrazioneSoap = this.openspcoopProperties.getKeyValue_HeaderIntegrazioneSoap();
 		try{
 			if(portaDelegata) {
-				this.keySetEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPDSetEnabled_HeaderIntegrazioneSoap();
+				this.keySetEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPDSetEnabled_HeaderIntegrazioneSoap(request);
 				this.keyReadEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPDReadEnabled_HeaderIntegrazioneSoap();
 			}
 			else {
-				this.keySetEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPASetEnabled_HeaderIntegrazioneSoap();
+				this.keySetEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPASetEnabled_HeaderIntegrazioneSoap(request);
 				this.keyReadEnabled_HeaderIntegrazioneSoap = this.openspcoopProperties.getKeyPAReadEnabled_HeaderIntegrazioneSoap();
 			}
 		}catch(Exception e){
@@ -241,9 +279,6 @@ public class UtilitiesIntegrazione {
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setIdApplicativo(prop.getProperty(key));	
 									}
-									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA.equals(keywordIntegrazione)) {
-										integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));	
-									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setServizioApplicativo(prop.getProperty(key));	
 									}
@@ -323,9 +358,6 @@ public class UtilitiesIntegrazione {
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setIdApplicativo(prop.getProperty(key));	
 									}
-									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA.equals(keywordIntegrazione)) {
-										integrazione.setRiferimentoIdApplicativoRichiesta(prop.getProperty(key));	
-									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
 										integrazione.setServizioApplicativo(prop.getProperty(key));	
 									}
@@ -347,18 +379,8 @@ public class UtilitiesIntegrazione {
 	
 
 
-	public void setRequestUrlProperties(HeaderIntegrazione integrazione,
+	public void setUrlProperties(HeaderIntegrazione integrazione,
 			java.util.Properties properties,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
-		setUrlProperties(integrazione, properties, true, false, protocolInfos);
-	}
-	public void setResponseUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
-		setUrlProperties(integrazione, properties, false, true, protocolInfos);
-	}
-	private void setUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,boolean request,boolean response,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{
@@ -425,11 +447,6 @@ public class UtilitiesIntegrazione {
 						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
 					}
 				}
-				if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null) {
-					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)) {
-						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
-					}
-				}
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
 						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
@@ -473,27 +490,12 @@ public class UtilitiesIntegrazione {
 		}
 	}
 	
-	public void setInfoProductRequestTransportProperties(java.util.Properties properties) throws HeaderIntegrazioneException{
-		setTransportProperties(null, properties, true, false, null, true);
+	public void setInfoProductTransportProperties(java.util.Properties properties) throws HeaderIntegrazioneException{
+		setTransportProperties(null, properties, null);
 	}
-	public void setRequestTransportProperties(HeaderIntegrazione integrazione,
+	public void setTransportProperties(HeaderIntegrazione integrazione,
 			java.util.Properties properties,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
-		setTransportProperties(integrazione, properties, true, false, protocolInfos, false);
-	}
-	
-	public void setInfoProductResponseTransportProperties(java.util.Properties properties) throws HeaderIntegrazioneException{
-		setTransportProperties(null, properties, false, true, null, true);
-	}
-	public void setResponseTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,
-			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
-		setTransportProperties(integrazione, properties, false, true, protocolInfos, false);
-	}
-	
-	private void setTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,boolean request,boolean response,
-			Map<String, String> protocolInfos, boolean setOutputProductVersion) throws HeaderIntegrazioneException{
 
 		try{
 			if(properties!=null && integrazione!=null){
@@ -559,11 +561,6 @@ public class UtilitiesIntegrazione {
 						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
 					}
 				}
-				if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null) {
-					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)) {
-						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
-					}
-				}
 				if(integrazione.getServizioApplicativo()!=null) {
 					if(this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)) {
 						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
@@ -577,19 +574,21 @@ public class UtilitiesIntegrazione {
 			}
 			if(properties!=null){
 				
-				boolean infoProduct = false;
-				if(setOutputProductVersion) {
-					infoProduct = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_INFO_DOMINIO_ESTERNO);
-				}
-				else {
-					infoProduct = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_INFO);
-				}
+				boolean infoProduct = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_INFO);
 				if(infoProduct) {
-					if(request)
-						properties.put(CostantiPdD.HEADER_HTTP_USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
 					properties.put(CostantiPdD.HEADER_HTTP_X_PDD,this.openspcoopProperties.getHttpServer());
 					if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
 						properties.put(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
+					}
+				}
+				
+				boolean userAgent = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT);
+				if(userAgent) {
+					if(this.request) {
+						properties.put(HttpConstants.USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
+					}
+					else {
+						properties.put(HttpConstants.SERVER,this.openspcoopProperties.getHttpUserAgent());
 					}
 				}
 				
@@ -771,15 +770,6 @@ public class UtilitiesIntegrazione {
 			}catch(Exception e){}
 			if(idApplicativo!=null && idApplicativo.compareTo("")!=0)
 				integrazione.setIdApplicativo(idApplicativo);
-			
-			String riferimentoIdApplicativoRichiesta = null;
-			try{
-				if(this.keyReadEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)) {
-					riferimentoIdApplicativoRichiesta = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA));
-				}
-			}catch(Exception e){}
-			if(riferimentoIdApplicativoRichiesta!=null && riferimentoIdApplicativoRichiesta.compareTo("")!=0)
-				integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoIdApplicativoRichiesta);
 
 			String sa = null;
 			try{
@@ -825,7 +815,6 @@ public class UtilitiesIntegrazione {
 		
 		HeaderIntegrazione integrazione = new HeaderIntegrazione(idTransazione);
 		integrazione.setIdApplicativo(correlazioneApplicativa);
-		integrazione.setRiferimentoIdApplicativoRichiesta(riferimentoCorrelazioneApplicativaRichiesta);
 		integrazione.setServizioApplicativo(servizioApplicativo);
 		HeaderIntegrazioneBusta busta = new HeaderIntegrazioneBusta();
 		busta.setTipoMittente(soggettoFruitore.getTipo());
@@ -1026,12 +1015,6 @@ public class UtilitiesIntegrazione {
 		if(integrazione.getIdApplicativo()!=null){
 			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)) {
 				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO), integrazione.getIdApplicativo());
-			}
-		}
-
-		if(integrazione.getRiferimentoIdApplicativoRichiesta()!=null){
-			if(this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA)) {
-				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA), integrazione.getRiferimentoIdApplicativoRichiesta());
 			}
 		}
 		

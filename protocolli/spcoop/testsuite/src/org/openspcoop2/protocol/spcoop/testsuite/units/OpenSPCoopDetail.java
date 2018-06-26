@@ -116,7 +116,7 @@ public class OpenSPCoopDetail {
 		Reporter.log("Response: "+o.getClass().getName());
 		
 		// dati generali
-		String codice = "OPENSPCOOP_ORG_405";
+		String codice = "GOVWAY_ORG_405";
 		String msg = CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO;
 		boolean equalsMatch = true;
 		
@@ -134,7 +134,7 @@ public class OpenSPCoopDetail {
 			new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 		
 		if(username==null){
-			codice = "OPENSPCOOP_ORG_401";
+			codice = "GOVWAY_ORG_401";
 			msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 			equalsMatch = false;
 		}

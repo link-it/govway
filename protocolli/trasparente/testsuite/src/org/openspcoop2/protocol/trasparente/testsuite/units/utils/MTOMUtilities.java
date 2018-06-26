@@ -56,6 +56,7 @@ import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
+import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
@@ -245,7 +246,7 @@ public class MTOMUtilities {
 	    		@SuppressWarnings("unchecked")
 	    		Map<String,java.util.List<String>> headers = (Map<String,java.util.List<String>>)((BindingProvider)port).getResponseContext().
 	    				get(MessageContext.HTTP_RESPONSE_HEADERS);
-	    		String id = headers.get("X-GovWay-IdMessaggio").get(0);
+	    		String id = headers.get(TestSuiteProperties.getInstance().getIdMessaggioTrasporto()).get(0);
 	    	
 	    		
 	    		DatabaseComponent data = null;
@@ -312,7 +313,7 @@ public class MTOMUtilities {
 	    				get(MessageContext.HTTP_RESPONSE_HEADERS);
 	    		String id = null;
 	    		if(portaDelegata){
-	    			id = headers.get("X-GovWay-IdMessaggio").get(0);
+	    			id = headers.get(TestSuiteProperties.getInstance().getIdMessaggioTrasporto()).get(0);
 	    			Reporter.log("ID ["+id+"]");
 	    		}
 				

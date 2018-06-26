@@ -40,7 +40,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="rilevanza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="contesto-codifica" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/eccezione/details}TipoEccezione" use="required"/>
+ * 		&lt;attribute name="tipo" type="{http://govway.org/integration/fault/details}TipoEccezione" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 

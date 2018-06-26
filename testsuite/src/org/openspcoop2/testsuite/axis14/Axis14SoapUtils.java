@@ -280,14 +280,14 @@ public class Axis14SoapUtils {
 	public static byte[] buildOpenSPCoopOK(String idMessaggio) throws UtilsException{
 		try{
 			Name name = 
-				new org.apache.axis.message.PrefixedQName("http://www.openspcoop2.org/core/integrazione",
-						"esito-richiesta","OpenSPCoop2");	    
+				new org.apache.axis.message.PrefixedQName(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE,
+						org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_ESITO_RICHIESTA,"OpenSPCoop2");	    
 			//Name name = 
 			//	new org.apache.axis.message.PrefixedQName(new javax.xml.namespace.QName("Risposta"));
 
 			org.apache.axis.message.MessageElement ok = 
 				new org.apache.axis.message.MessageElement(name);
-			ok.setAttribute("stato","PRESA_IN_CARICO");
+			ok.setAttribute(org.openspcoop2.core.integrazione.constants.Costanti.ELEMENT_STATO,org.openspcoop2.core.integrazione.constants.Costanti.PRESA_IN_CARICO);
 
 
 			//return Utilities.eraserType(ok.getAsString().getBytes());

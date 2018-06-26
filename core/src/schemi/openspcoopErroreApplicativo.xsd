@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsd:schema xmlns="http://www.openspcoop2.org/core/eccezione/errore_applicativo"
-       targetNamespace="http://www.openspcoop2.org/core/eccezione/errore_applicativo"
+<xsd:schema xmlns="http://govway.org/integration/fault"
+       targetNamespace="http://govway.org/integration/fault"
        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
        attributeFormDefault="unqualified">
 

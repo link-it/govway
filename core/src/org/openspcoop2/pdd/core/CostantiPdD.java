@@ -170,8 +170,6 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO = "riferimentoMessaggio";
     /** Costante che indica il valore dell'header di integrazione: idApplicativo*/
     public final static String HEADER_INTEGRAZIONE_ID_APPLICATIVO = "idApplicativo";
-    /** Costante che indica il valore dell'header di integrazione: idApplicativoRichiesta*/
-    public final static String HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA = "idApplicativoRichiesta";
     /** Costante che indica il valore dell'header di integrazione: idCollaborazione*/
     public final static String HEADER_INTEGRAZIONE_COLLABORAZIONE = "idCollaborazione";
     /** Costante che indica il valore dell'header di integrazione: servizioApplicativo*/
@@ -184,23 +182,21 @@ public class CostantiPdD {
     
     /** Costante che indica l'invio delle informazioni di versionamento */
     public final static String HEADER_INTEGRAZIONE_INFO = "info";
-    public final static String HEADER_INTEGRAZIONE_INFO_DOMINIO_ESTERNO = "infoDominioEsterno";
-    /** Costante che indica il valore dell'header User-Agent*/
-    public final static String HEADER_HTTP_USER_AGENT = "User-Agent";
+    public final static String HEADER_INTEGRAZIONE_USER_AGENT = "userAgent";
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String HEADER_HTTP_X_PDD = "X-GovWay-Pdd";
+    public final static String HEADER_HTTP_X_PDD = "GovWay-Version";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String HEADER_HTTP_X_PDD_DETAILS = "X-GovWay-PddDetails";
+    public final static String HEADER_HTTP_X_PDD_DETAILS = "GovWay-Version-Info";
     
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
-    public final static String URL_BASED_PDD = "govwayPdd";
+    public final static String URL_BASED_PDD = "version";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String URL_BASED_PDD_DETAILS = "govwayPddDetails";
+    public final static String URL_BASED_PDD_DETAILS = "version_info";
     
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
-    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "govwayPdd";
+    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "version";
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica il dettaglio della versione della PdD*/
-    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "govwayPddDetails";
+    public final static String HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "versionInfo";
 
     
     /** Costante che indica il valore dell'header di integrazione per i token*/

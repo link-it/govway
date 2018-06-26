@@ -45,7 +45,6 @@ public class HeaderIntegrazione implements java.io.Serializable{
 	
 	/** ID Applicativo */
 	private String idApplicativo;
-	private String riferimentoIdApplicativoRichiesta;
 		
 	/** Identita del servizio applicativo */
 	private String servizioApplicativo;
@@ -102,17 +101,6 @@ public class HeaderIntegrazione implements java.io.Serializable{
 	 */
 	public void setServizioApplicativo(String servizioApplicativo) {
 		this.servizioApplicativo = servizioApplicativo;
-	}
-
-
-	public String getRiferimentoIdApplicativoRichiesta() {
-		return this.riferimentoIdApplicativoRichiesta;
-	}
-
-
-	public void setRiferimentoIdApplicativoRichiesta(
-			String riferimentoIdApplicativoRichiesta) {
-		this.riferimentoIdApplicativoRichiesta = riferimentoIdApplicativoRichiesta;
 	}
 
 

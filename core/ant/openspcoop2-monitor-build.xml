@@ -16,7 +16,7 @@
 	
 
 	<!-- Compilazione della libreria 'org.openspcoop.monitor.*' -->
-	<target name="compile_govway_monitor" description="compila la libreria org.openspcoop.monitor.engine.*">
+	<target name="compile_openspcoop2_monitor" description="compila la libreria org.openspcoop.monitor.engine.*">
 
 		<if>
 			<istrue value="${buildMonitorEngine}"/>

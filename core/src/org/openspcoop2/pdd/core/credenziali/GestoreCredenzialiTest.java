@@ -37,11 +37,11 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
  */
 public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCredenziali {
 
-	public static final String TEST_CREDENZIALI_BASIC_USERNAME = "X-OpenSPCoop-TestCredenziali-BasicUsername";
-	public static final String TEST_CREDENZIALI_BASIC_PASSWORD = "X-OpenSPCoop-TestCredenziali-BasicPassword";
-	public static final String TEST_CREDENZIALI_SSL_SUBJECT = "X-OpenSPCoop-TestCredenziali-SSLSubject";
-	public static final String TEST_CREDENZIALI_SIMULAZIONE_ERRORE = "X-OpenSPCoop-TestCredenziali-SimulazioneErrore";
-	public static final String TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE = "X-OpenSPCoop-TestCredenziali-SimulazioneErroreConfigurazione";
+	public static final String TEST_CREDENZIALI_BASIC_USERNAME = "GovWay-TestCredenziali-BasicUsername";
+	public static final String TEST_CREDENZIALI_BASIC_PASSWORD = "GovWay-TestCredenziali-BasicPassword";
+	public static final String TEST_CREDENZIALI_SSL_SUBJECT = "GovWay-TestCredenziali-SSLSubject";
+	public static final String TEST_CREDENZIALI_SIMULAZIONE_ERRORE = "GovWay-TestCredenziali-SimulazioneErrore";
+	public static final String TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE = "GovWay-TestCredenziali-SimulazioneErroreConfigurazione";
 	
 	private String identita = null;
 	

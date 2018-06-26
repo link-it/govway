@@ -84,7 +84,7 @@ public class Utilities {
 	}
 	
 	public static String toString(CodiceErroreIntegrazione codiceErrore) throws ProtocolException{
-		return "GOVWAY_ORG_"+codiceErrore.getCodice();
+		return org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+codiceErrore.getCodice();
 	}
 	
 	public static String toString(CodiceErroreCooperazione codiceErrore) throws ProtocolException{
@@ -300,7 +300,7 @@ public class Utilities {
 						throw new Exception("Non e' stato trovato un tipo di eccezione all'interno dell'errore applicativo");
 					}
 					
-					if(codiceEccezioneAtteso.startsWith("EGOV_IT_")){
+					if(codiceEccezioneAtteso.startsWith(SPCoopCostanti.ECCEZIONE_PREFIX_CODE)){
 						Assert.assertTrue(findTipoEccezioneBusta);
 					}else{
 						Assert.assertTrue(findTipoEccezioneProcessamento);

@@ -26,7 +26,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/core/eccezione/router_details",
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://govway.org/integration/fault/router_details",
 	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
  	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.openspcoop2.core.eccezione.router_details;

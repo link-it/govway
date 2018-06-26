@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="eccezioni">
  * 		&lt;sequence>
- * 			&lt;element name="eccezione" type="{http://www.openspcoop2.org/core/eccezione/details}eccezione" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="eccezione" type="{http://govway.org/integration/fault/details}eccezione" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

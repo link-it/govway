@@ -63,7 +63,7 @@ public class SPCoopTraduttore extends BasicTraduttore {
 	@Override
 	public String toString(CodiceErroreCooperazione cod,SubCodiceErrore subCode) {
 
-		String prefix = "EGOV_IT_";
+		String prefix = SPCoopCostanti.ECCEZIONE_PREFIX_CODE;
 
 		switch (cod) {
 
@@ -463,7 +463,7 @@ public class SPCoopTraduttore extends BasicTraduttore {
 	@Override
 	public CodiceErroreCooperazione toCodiceErroreCooperazione(String codiceCooperazione) {
 
-		String prefix = "EGOV_IT_";
+		String prefix = SPCoopCostanti.ECCEZIONE_PREFIX_CODE;
 
 		// Macro-struttura
 		if( (prefix+"001").equals(codiceCooperazione)){

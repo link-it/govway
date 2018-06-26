@@ -33,7 +33,7 @@ public class Costanti {
 	
 	public static final String ROOT_LOCAL_NAME_DETTAGLIO_ROUTING = "dettaglio-routing";
 	
-	public static final String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/eccezione/router_details";
+	public static final String TARGET_NAMESPACE = "http://govway.org/integration/fault/router_details";
 	
 	public static final String ESITO_ERRORE = "ERRORE";
 

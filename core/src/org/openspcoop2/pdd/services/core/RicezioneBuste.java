@@ -1031,9 +1031,9 @@ public class RicezioneBuste {
 		
 		// Imposto header di risposta
 		Properties headerRisposta = new Properties();
-		UtilitiesIntegrazione utilitiesHttp = UtilitiesIntegrazione.getInstancePA(logCore);
+		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 		try{
-			utilitiesHttp.setInfoProductResponseTransportProperties(headerRisposta);
+			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
 		}catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazioneWSAddressing;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 
@@ -171,16 +172,16 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nel trasporto: "+idAzione);
 			
 			if(checkUserAgent){
-				String userAgent=request.getHeader(CostantiPdD.HEADER_HTTP_USER_AGENT);
+				String userAgent=request.getHeader(HttpConstants.USER_AGENT);
 				this.log.debug("trovato nel trasporto: "+userAgent);
 				if(userAgent==null){
-					this.log.error(""+CostantiPdD.HEADER_HTTP_USER_AGENT+" non presente nell'header di trasporto");
-					returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_USER_AGENT+" non presente");
+					this.log.error(""+HttpConstants.USER_AGENT+" non presente nell'header di trasporto");
+					returnSOAPFault(response.getOutputStream(),"Trasporto, "+HttpConstants.USER_AGENT+" non presente");
 					return;
 				} 
-				if(userAgent.contains("OpenSPCoop")==false){
-					this.log.error(""+CostantiPdD.HEADER_HTTP_USER_AGENT+" con valore non atteso presente nell'header di trasporto (trovato:"+userAgent+" si attendeva un agent che contenesse la stringa OpenSPCoop)");
-					returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_USER_AGENT+" non valido");
+				if(userAgent.contains("GovWay")==false){
+					this.log.error(""+HttpConstants.USER_AGENT+" con valore non atteso presente nell'header di trasporto (trovato:"+userAgent+" si attendeva un agent che contenesse la stringa OpenSPCoop)");
+					returnSOAPFault(response.getOutputStream(),"Trasporto, "+HttpConstants.USER_AGENT+" non valido");
 					return;
 				} 
 			}
@@ -200,7 +201,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non presente");
 				return;
 			} 
-			if(xPdD.contains("OpenSPCoop")==false){
+			if(xPdD.contains("GovWay")==false){
 				this.log.error(""+CostantiPdD.HEADER_HTTP_X_PDD+" con valore non atteso presente nell'header di trasporto (trovato:"+xPdD+" si attendeva un valore che contenesse la stringa OpenSPCoop)");
 				returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non valido");
 				return;
@@ -412,7 +413,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 					
 					
 					// Integrazione Proprietaria OpenSPCoop
-					if("integrazione".equals(elem.getLocalName()) && "openspcoop".equals(elem.getPrefix()) && "http://www.openspcoop2.org/core/integrazione".equals(elem.getNamespaceURI())){
+					if(org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION.equals(elem.getLocalName()) && "gw".equals(elem.getPrefix()) && org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE.equals(elem.getNamespaceURI())){
 						find = true;
 						Iterator<?> attributes = elem.getAllAttributes();
 						while(attributes.hasNext()){
@@ -549,7 +550,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 					// Campi WSAddressing
 					if(checkWSAddressing){
 						if("To".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-								"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+								org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 							String v=elem.getValue();
 							this.log.debug("trovato nell'header WSA(to): "+v);
 							if(v==null){
@@ -563,7 +564,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							}
 						}
 						else if("From".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-								"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+								org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 							String v=null;
 							boolean addressFromFound = false;
 							Iterator<?> itFROM = elem.getChildElements();
@@ -593,7 +594,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							}
 						}
 						else if("Action".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-								"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+								org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 							String v=elem.getValue();
 							this.log.debug("trovato nell'header WSA(action): "+v);
 							if(v==null){
@@ -607,7 +608,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							}
 						}
 						else if("MessageID".equals(elem.getLocalName()) && "wsa".equals(elem.getPrefix()) && "http://www.w3.org/2005/08/addressing".equals(elem.getNamespaceURI()) &&
-								"http://www.openspcoop2.org/core/integrazione/wsa".equals(elem.getActor())){
+								org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA.equals(elem.getActor())){
 							String v=elem.getValue();
 							this.log.debug("trovato nell'header WSA(id): "+v);
 							if(v==null){

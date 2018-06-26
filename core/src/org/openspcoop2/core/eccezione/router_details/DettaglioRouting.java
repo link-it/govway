@@ -36,9 +36,9 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dettaglio-routing">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/eccezione/router_details}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dominio" type="{http://govway.org/integration/fault/router_details}dominio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/core/eccezione/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dettaglio" type="{http://govway.org/integration/fault/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

@@ -47,7 +47,8 @@ import org.slf4j.Logger;
 public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreIntegrazionePASoap{
 
 	/** Utility per l'integrazione */
-	UtilitiesIntegrazione utilities = null;
+	UtilitiesIntegrazione utilitiesRequest = null;
+	UtilitiesIntegrazione utilitiesResponse = null;
 	
 	/** OpenSPCoopProperties */
 	OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
@@ -62,7 +63,8 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePASoap.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstancePA(this.log);
+			this.utilitiesRequest = UtilitiesIntegrazione.getInstancePARequest(this.log);
+			this.utilitiesResponse = UtilitiesIntegrazione.getInstancePAResponse(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
@@ -80,7 +82,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilitiesRequest.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -95,7 +97,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilitiesRequest.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -111,7 +113,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.updateHeader(soapMsg, 
+			this.utilitiesRequest.updateHeader(soapMsg, 
 					inRequestPAMessage.getSoggettoMittente(), 
 					inRequestPAMessage.getServizio(), 
 					idMessaggio, 
@@ -144,7 +146,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			SOAPHeaderElement header = this.utilities.buildHeader(integrazione,
+			SOAPHeaderElement header = this.utilitiesRequest.buildHeader(integrazione,
 					this.openspcoopProperties.getHeaderSoapNameIntegrazione(), // header name 
 					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(), // prefix
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // namespace
@@ -178,7 +180,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilitiesResponse.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -193,7 +195,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			this.utilitiesResponse.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -209,7 +211,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			}
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
-			this.utilities.updateHeader(soapMsg, 
+			this.utilitiesResponse.updateHeader(soapMsg, 
 					inResponsePAMessage.getSoggettoMittente(), 
 					inResponsePAMessage.getServizio(),
 					idMessaggioRichiesta, idMessaggioRisposta,

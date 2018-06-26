@@ -45,7 +45,7 @@ public class ProjectInfo implements IProjectInfo {
 
 	@Override
 	public String getProjectNamespace(){
-		return "http://www.openspcoop2.org/core/eccezione/details";
+		return "http://govway.org/integration/fault/details";
 	}
 
 	public static ProjectInfo getInstance(){

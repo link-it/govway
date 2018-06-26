@@ -2,7 +2,7 @@
 	<soapenv:Header>
         <a:example1 xmlns:a="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova</a:example1>
         <b:example2 xmlns:b="http://www.openspcoop2.org" soapenv:actor="http://www.prova.it" soapenv:mustUnderstand="0" >prova2</b:example2> 
-	<openspcoop:integrazione ServizioApplicativo="EsempioFruitoreTrasparente" env:role="http://www.openspcoop2.org/core/integrazione" env:mustUnderstand="0" xmlns:openspcoop="http://www.openspcoop2.org/core/integrazione" xmlns:env="http://www.w3.org/2003/05/soap-envelope"/>
+	<gw:integration application="EsempioFruitoreTrasparente" env:role="http://govway.org/integration" env:mustUnderstand="0" xmlns:gw="http://govway.org/integration" xmlns:env="http://www.w3.org/2003/05/soap-envelope"/>
 	</soapenv:Header>
 	<soapenv:Body>
 <ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:se="http://schemas.xmlsoap.org/soap/envelope/" se:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">

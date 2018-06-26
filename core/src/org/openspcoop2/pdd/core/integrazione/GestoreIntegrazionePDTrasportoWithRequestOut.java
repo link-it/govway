@@ -42,7 +42,7 @@ public class GestoreIntegrazionePDTrasportoWithRequestOut extends GestoreIntegra
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
-			this.utilities.setRequestTransportProperties(integrazione, outRequestPDMessage.getProprietaTrasporto(),
+			this.utilitiesRequest.setTransportProperties(integrazione, outRequestPDMessage.getProprietaTrasporto(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.TRASPORTO));		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);

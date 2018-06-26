@@ -341,7 +341,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						else{
 							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
 							if(prefixFaultCode==null){
-								prefixFaultCode="GOVWAY_ORG_";
+								prefixFaultCode=org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
 							}
 							boolean prefixOpv2 = codice.startsWith(prefixFaultCode);
 							

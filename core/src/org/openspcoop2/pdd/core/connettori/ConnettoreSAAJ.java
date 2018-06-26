@@ -44,7 +44,6 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -238,7 +237,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
 					while( enumSPC.hasMoreElements() ) {
 						String key = (String) enumSPC.nextElement();
-						if(CostantiPdD.HEADER_HTTP_USER_AGENT.equalsIgnoreCase(key)==false){
+						if(HttpConstants.USER_AGENT.equalsIgnoreCase(key)==false){
 							String value = (String) this.propertiesTrasporto.get(key);
 							if(this.debug)
 								this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);

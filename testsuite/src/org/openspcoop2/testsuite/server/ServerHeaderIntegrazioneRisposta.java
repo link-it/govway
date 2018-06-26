@@ -177,10 +177,10 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 			}
 			
 			else if("soap".equals(tipoIntegrazione)){
-				Name name = new PrefixedQName("http://www.openspcoop2.org/core/integrazione","integrazione","openspcoop");
+				Name name = new PrefixedQName(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE,org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION,"gw");
 				org.apache.axis.message.SOAPHeaderElement header = 
 					new org.apache.axis.message.SOAPHeaderElement(name);
-				header.setActor("http://www.openspcoop2.org/core/integrazione");
+				header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE);
 				header.setMustUnderstand(false);
 				header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 
@@ -208,7 +208,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				Name nameTo = new PrefixedQName("http://www.w3.org/2005/08/addressing","To","wsa");
 				org.apache.axis.message.SOAPHeaderElement headerTo = 
 					new org.apache.axis.message.SOAPHeaderElement(nameTo);
-				headerTo.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+				headerTo.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 				headerTo.setMustUnderstand(false);
 				headerTo.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 				headerTo.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio)));
@@ -221,7 +221,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				Name nameFrom = new PrefixedQName("http://www.w3.org/2005/08/addressing","From","wsa");
 				org.apache.axis.message.SOAPHeaderElement headerFrom = 
 					new org.apache.axis.message.SOAPHeaderElement(nameFrom);
-				headerFrom.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+				headerFrom.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 				headerFrom.setMustUnderstand(false);
 				headerFrom.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 				Name nameAddressEPR =  new PrefixedQName("http://www.w3.org/2005/08/addressing","Address","wsa");
@@ -236,7 +236,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 					Name nameAction = new PrefixedQName("http://www.w3.org/2005/08/addressing","Action","wsa");
 					org.apache.axis.message.SOAPHeaderElement headerAction = 
 						new org.apache.axis.message.SOAPHeaderElement(nameAction);
-					headerAction.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+					headerAction.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 					headerAction.setMustUnderstand(false);
 					headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 					headerAction.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio), idAzione));
@@ -250,7 +250,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				Name nameRelatesTo = new PrefixedQName("http://www.w3.org/2005/08/addressing","RelatesTo","wsa");
 				org.apache.axis.message.SOAPHeaderElement headerRelatesTo = 
 					new org.apache.axis.message.SOAPHeaderElement(nameRelatesTo);
-				headerRelatesTo.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+				headerRelatesTo.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 				headerRelatesTo.setMustUnderstand(false);
 				headerRelatesTo.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 				headerRelatesTo.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSARelatesTo(idTrasporto));
@@ -263,7 +263,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				Name nameMessageId = new PrefixedQName("http://www.w3.org/2005/08/addressing","MessageID","wsa");
 				org.apache.axis.message.SOAPHeaderElement headerMessageId = 
 					new org.apache.axis.message.SOAPHeaderElement(nameMessageId);
-				headerMessageId.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+				headerMessageId.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 				headerMessageId.setMustUnderstand(false);
 				headerMessageId.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 				headerMessageId.setValue("uuid:"+"ID-APPLICATIVO-RISPOSTA-WSA-"+UniqueIDGenerator.getUniqueID());

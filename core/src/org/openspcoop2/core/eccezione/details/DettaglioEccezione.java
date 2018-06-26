@@ -36,10 +36,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dettaglio-eccezione">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/eccezione/details}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dominio" type="{http://govway.org/integration/fault/details}dominio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="eccezioni" type="{http://www.openspcoop2.org/core/eccezione/details}eccezioni" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dettagli" type="{http://www.openspcoop2.org/core/eccezione/details}dettagli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="eccezioni" type="{http://govway.org/integration/fault/details}eccezioni" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dettagli" type="{http://govway.org/integration/fault/details}dettagli" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

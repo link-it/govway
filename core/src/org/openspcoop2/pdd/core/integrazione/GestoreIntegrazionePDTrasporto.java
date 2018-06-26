@@ -42,7 +42,8 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 
 	
 	/** Utility per l'integrazione */
-	UtilitiesIntegrazione utilities = null;
+	UtilitiesIntegrazione utilitiesRequest = null;
+	UtilitiesIntegrazione utilitiesResponse = null;
 	
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
@@ -53,7 +54,8 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDTrasporto.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstancePD(this.log);
+			this.utilitiesRequest = UtilitiesIntegrazione.getInstancePDRequest(this.log);
+			this.utilitiesResponse = UtilitiesIntegrazione.getInstancePDResponse(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}
@@ -66,7 +68,7 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getParametersTrasporto(), integrazione);	
+			this.utilitiesRequest.readTransportProperties(inRequestPDMessage.getUrlProtocolContext().getParametersTrasporto(), integrazione);	
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);
 		}
@@ -97,7 +99,7 @@ public class GestoreIntegrazionePDTrasporto extends AbstractCore implements IGes
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
 			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.setResponseTransportProperties(integrazione, outResponsePDMessage.getProprietaTrasporto(),
+			this.utilitiesResponse.setTransportProperties(integrazione, outResponsePDMessage.getProprietaTrasporto(),
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outResponsePDMessage.getBustaRichiesta(), false, TipoIntegrazione.TRASPORTO));		
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDTrasporto, "+e.getMessage(),e);

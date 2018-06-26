@@ -105,7 +105,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Porta delegata non esistente
-	 * "OPENSPCOOP_ORG_401";
+	 * "GOVWAY_ORG_401";
 	 */
 	@DataProvider (name="porteDelegateInesistenti")
 	public Object[][] porteDelegateInesistenti(){
@@ -194,7 +194,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "OPENSPCOOP_ORG_402";
+	 * "GOVWAY_ORG_402";
 	 * 
 	 * messaggio: credenziali non fornite
 	 */
@@ -271,7 +271,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "OPENSPCOOP_ORG_402";
+	 * "GOVWAY_ORG_402";
 	 * 
 	 * messaggio: credenziali fornite non corrette
 	 */
@@ -344,7 +344,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "OPENSPCOOP_ORG_402";
+	 * "GOVWAY_ORG_402";
 	 * 
 	 * messaggio: identità del servizio applicativo fornita non esiste nella configurazione
 	 */
@@ -411,7 +411,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Pattern Ricerca Porta Delegata Non Validi
-	 * "OPENSPCOOP_ORG_403";
+	 * "GOVWAY_ORG_403";
 	 */
 	
 	// CONTENT-BASED
@@ -623,7 +623,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autorizzazione Fallita
-	 * "OPENSPCOOP_ORG_404";
+	 * "GOVWAY_ORG_404";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".404"})
 	public void testAutorizzazioneFallita() throws Exception{
@@ -692,7 +692,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio SPCoop abbinato alla Porta Delegata Inesistente
-	 * "OPENSPCOOP_ORG_405";
+	 * "GOVWAY_ORG_405";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".405"})
 	public void testServizioSPCoopNonEsistente() throws Exception{
@@ -753,7 +753,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Nessun Messaggio disponibile per il Servizio Applicativo (Integration Manager)
-	 * "OPENSPCOOP_ORG_406";
+	 * "GOVWAY_ORG_406";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".406"})
 	public void testIM_messaggiNonDisponibili() throws Exception{
@@ -836,7 +836,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Messaggio Richiesto Inesistente (Integration Manager)
-	 * "OPENSPCOOP_ORG_407";
+	 * "GOVWAY_ORG_407";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".407"})
 	public void testIM_messaggioNonEsistente() throws Exception{
@@ -903,7 +903,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio Correlato associato ad un Servizio Asincrono non esistente
-	 * "OPENSPCOOP_ORG_408";
+	 * "GOVWAY_ORG_408";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".408"})
 	public void testServizioCorrelatoNonEsistenteAS() throws Exception{
@@ -1010,7 +1010,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Risposta/RichiestaStato asincrona non correlata ad una precedente richiesta
-	 * "OPENSPCOOP_ORG_409";
+	 * "GOVWAY_ORG_409";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".409"})
 	public void testRispostaAsincronaSimmetricaNonGenerabile() throws Exception{
@@ -1166,7 +1166,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione richiesta per l'invocazione della Porta Delegata
-	 * "OPENSPCOOP_ORG_410";
+	 * "GOVWAY_ORG_410";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".410"})
 	public void testAutenticazioneRichiestaServizioApplicativoAsincronoSimmetrico() throws Exception{
@@ -1227,7 +1227,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Elemento Risposta Asincrona richiesto per l'invocazione della Porta Delegata
-	 * "OPENSPCOOP_ORG_411";
+	 * "GOVWAY_ORG_411";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".411"})
 	public void testElementoRispostaAsincronaNonPresente() throws Exception{
@@ -1288,7 +1288,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Porta Delegata invocabile dal servizio applicativo solo per riferimento
-	 * "OPENSPCOOP_ORG_412";
+	 * "GOVWAY_ORG_412";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".412"})
 	public void testInvioPerRiferimento() throws Exception{
@@ -1353,7 +1353,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Porta Delegata invocabile dal servizio applicativo solo senza riferimento
-	 * "OPENSPCOOP_ORG_413";
+	 * "GOVWAY_ORG_413";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".413"})
 	public void testInvioPerRiferimentoNonAutorizzato() throws Exception{
@@ -1430,7 +1430,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Consegna in ordine utilizzabile sono con profilo Oneway
-	 * "OPENSPCOOP_ORG_414";
+	 * "GOVWAY_ORG_414";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".414"})
 	public void testConsegnaOrdineProfiloSincrono() throws Exception{
@@ -1496,7 +1496,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Consegna in ordine non utilizzabile per mancanza di dati necessari
-	 * "OPENSPCOOP_ORG_415";
+	 * "GOVWAY_ORG_415";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".415"})
 	public void testConsegnaOrdineConfigurazioneErrata_confermaRicezioneMancante() throws Exception{
@@ -1657,7 +1657,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Correlazione Applicativa non riuscita
-	 * "OPENSPCOOP_ORG_416";
+	 * "GOVWAY_ORG_416";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".416"})
 	public void testCorrelazioneApplicativaErrata() throws Exception{
@@ -1734,7 +1734,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Impossibile istanziare un validatore: XSD non valido o mancante
-	 * "OPENSPCOOP_ORG_417";
+	 * "GOVWAY_ORG_417";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".417"})
 	public void testValidazioneApplicativaSenzaXsd_tipoXSD() throws Exception{
@@ -1925,7 +1925,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Validazione del messaggio di richiesta fallita
-	 * "OPENSPCOOP_ORG_418";
+	 * "GOVWAY_ORG_418";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".418"})
 	public void testValidazioneApplicativaRichiestaFallita() throws Exception{
@@ -2008,7 +2008,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Validazione del messaggio di risposta fallita
-	 * "OPENSPCOOP_ORG_419";
+	 * "GOVWAY_ORG_419";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".419"})
 	public void testValidazioneApplicativaRispostaFallita() throws Exception{
@@ -2099,7 +2099,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Busta E-Gov presente nel messaggio di richiesta
-	 * "OPENSPCOOP_ORG_420";
+	 * "GOVWAY_ORG_420";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".420"})
 	public void TestBustaEGovInviataVersoPortaDelegata() throws Exception{
@@ -2182,7 +2182,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Il messaggio di richiesta utilizzato con IM per invocare la Porta Delegata non rispetta il formato SOAP
-	 * "OPENSPCOOP_ORG_421";
+	 * "GOVWAY_ORG_421";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".421"})
 	public void testInvioMessaggioNonSOAPConXML() throws Exception{
@@ -2242,7 +2242,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Il messaggio di richiesta utilizzato con il tunnel SOAP e  con IM per invocare la Porta Delegata non e' imbustabile
-	 * "OPENSPCOOP_ORG_422";
+	 * "GOVWAY_ORG_422";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".422"})
 	public void testInvioMessaggioTramiteTunnelSOAP_nonImbustabileInSOAP() throws Exception{
@@ -2377,7 +2377,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio SPCoop invocato con azione non corretta
-	 * "OPENSPCOOP_ORG_423";
+	 * "GOVWAY_ORG_423";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".423"})
 	public void testInvocazioneServizioSenzaAzione() throws Exception{
@@ -2440,7 +2440,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Funzione "Allega Body" non riuscita sul messaggio di richiesta
-	 * "OPENSPCOOP_ORG_424";
+	 * "GOVWAY_ORG_424";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".424"})
 	public void testAllegaBodyNonRiuscito() throws Exception{
@@ -2503,7 +2503,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Funzione "Scarta Body" non riuscita sul messaggio di richiesta
-	 * "OPENSPCOOP_ORG_425";
+	 * "GOVWAY_ORG_425";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".425"})
 	public void testScartaBodyNonRiuscito() throws Exception{
@@ -2565,7 +2565,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento SOAP del messaggio di richiesta 
-	 * "OPENSPCOOP_ORG_426";
+	 * "GOVWAY_ORG_426";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".426"})
 	public void testSoapEngineFallito_errore_processamento() throws Exception{
@@ -2657,7 +2657,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Impossibile processare header SOAP in messaggio con opzione mustUnderstand
-	 * "OPENSPCOOP_ORG_427";
+	 * "GOVWAY_ORG_427";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".427"})
 	public void testMustUnderstad() throws Exception{
@@ -2716,7 +2716,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autorizzazione basata sul contenuto fallita
-	 * "OPENSPCOOP_ORG_428";
+	 * "GOVWAY_ORG_428";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".428"})
 	public void testAutorizzazioneContenutoKO() throws Exception{
@@ -2776,7 +2776,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * L'header HTTP riporta un Content-Type non previsto in SOAP 1.1
-	 * "OPENSPCOOP_ORG_429";
+	 * "GOVWAY_ORG_429";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".429"})
 	public void testContentTypeErrato() throws Exception{
@@ -2836,7 +2836,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Envelope con Namespace non previsto in SOAP 1.1
-	 * "OPENSPCOOP_ORG_430";
+	 * "GOVWAY_ORG_430";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".430"})
 	public void testNamespaceEnvelopeErrato() throws Exception{
@@ -2935,7 +2935,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Test Errore Configurazione del GEstoreCredenziali
-	 * "OPENSPCOOP_ORG_431";
+	 * "GOVWAY_ORG_431";
 	 **/
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
@@ -3030,7 +3030,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento SOAP del messaggio di richiesta 
-	 * "OPENSPCOOP_ORG_432";
+	 * "GOVWAY_ORG_432";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".432"})
 	public void testSoapEngineFallito_ricostruzioneMessaggioNonRiuscito() throws Exception{
@@ -3129,7 +3129,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento content type non presente
-	 * "OPENSPCOOP_ORG_433";
+	 * "GOVWAY_ORG_433";
 	 */
 	// LA LIBRERIA CLIENT HTTP GENERICO NON PERMETTE UNA INVOCAZIONE SENZA CONTENT TYPE
 //	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".433"})
@@ -3201,7 +3201,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento correlazione applicativa risposta
-	 * "OPENSPCOOP_ORG_434";
+	 * "GOVWAY_ORG_434";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".434"})
 	public void testCorrelazioneApplicativaRispostaErrata() throws Exception{
@@ -3292,7 +3292,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/***
 	 * LocalForward configErrata
-	 * "OPENSPCOOP_ORG_435";
+	 * "GOVWAY_ORG_435";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".435"})
 	public void localForward_invokePD_ASINCRONI() throws TestSuiteException, Exception{

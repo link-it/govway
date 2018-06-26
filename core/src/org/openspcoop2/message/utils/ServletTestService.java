@@ -339,14 +339,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni tunnel SOAP
-			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "govwayTunnelSOAP");
+			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel");
 			boolean tunnel = false;
 			if(tunnelSoap!=null){
 				tunnelSoap = tunnelSoap.trim();
 				if("true".equals(tunnelSoap))
 					tunnel = true;
 			}
-			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "govwayTunnelSOAPMimeType");
+			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel_mime");
 			if(tunnelSoapMimeType!=null){
 				tunnelSoapMimeType = tunnelSoapMimeType.trim();
 			}
@@ -609,9 +609,9 @@ public class ServletTestService extends HttpServlet {
 				}
 				
 				if(tunnel){
-					res.setHeader("X-GovWay-TunnelSOAP", "true");
+					res.setHeader("GovWay-Soap-Tunnel", "true");
 					if(tunnelSoapMimeType!=null)
-						res.setHeader("X-GovWay-TunnelSOAP-MimeType",tunnelSoapMimeType);
+						res.setHeader("GovWay-Soap-Tunnel-Mime",tunnelSoapMimeType);
 				}
 				
 				

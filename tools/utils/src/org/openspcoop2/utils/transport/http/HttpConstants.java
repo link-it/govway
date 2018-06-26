@@ -82,6 +82,11 @@ public class HttpConstants {
 	public final static String CACHE_STATUS_PROXY_EXPIRES = "Expires";
 	public final static long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
 	
+	/** Agent */
+	public final static String USER_AGENT = "User-Agent";
+	public final static String SERVER = "Server";
+	public final static String X_POWERED_BY = "X-Powered-By";
+	
 	/** Content Type */
 	public final static String CONTENT_TYPE_SOAP_1_1 = MimeTypeConstants.MEDIA_TYPE_SOAP_1_1;
 	public final static String CONTENT_TYPE_SOAP_1_2 = MimeTypeConstants.MEDIA_TYPE_SOAP_1_2;

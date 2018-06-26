@@ -3,6 +3,9 @@
        targetNamespace="http://www.openspcoop2.org/core/eccezione/errore_applicativo"
        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
        attributeFormDefault="unqualified">
+	<!-- NOTA: il namespace 'http://govway.org/integration/fault' viene iniettato dinamicamente,
+		   mentre l'attuale namespace serve per la generazione delle classi java
+	 -->
 
 
        <xsd:annotation>

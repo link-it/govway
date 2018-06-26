@@ -31,6 +31,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.testng.Assert;
@@ -175,7 +176,7 @@ public class OpenSPCoopDetailsUtilities {
 			Assert.assertTrue(dettaglioOpenSPCoop!=null);
 			xml = XMLUtils.getInstance().toString(dettaglioOpenSPCoop);
 			Reporter.log("Dettaglio OpenSPCoop ("+dettaglioOpenSPCoop.getNamespaceURI()+"): "+xml);
-			Assert.assertTrue("http://www.openspcoop2.org/core/eccezione/details".equals(dettaglioOpenSPCoop.getNamespaceURI()));
+			Assert.assertTrue(org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(dettaglioOpenSPCoop.getNamespaceURI()));
 			
 			Reporter.log("Validazione xsd");
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
@@ -205,7 +206,7 @@ public class OpenSPCoopDetailsUtilities {
 						throw new Exception("Elemento ora-registrazione presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
 					}
 					oraRegistrazioneOk = true;
-					Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(n.getNamespaceURI()) );
+					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					String ora = n.getTextContent();
 					Assert.assertTrue(ora!=null);
 					Reporter.log("ora: "+ora);
@@ -214,7 +215,7 @@ public class OpenSPCoopDetailsUtilities {
 						throw new Exception("Elemento dominio presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
 					}
 					dominioOk = true;
-					Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(n.getNamespaceURI()) );
+					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					
 					Assert.assertTrue(n.hasChildNodes());
 					
@@ -277,7 +278,7 @@ public class OpenSPCoopDetailsUtilities {
 								throw new Exception("Elemento identificativo-porta presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
 							}
 							identificativoPortaOk = true;
-							Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(nDominio.getNamespaceURI()) );
+							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
 							String idPortaValue = nDominio.getTextContent();
 							String identificativoPortaAtteso = dominioAtteso.getCodicePorta();
 							Reporter.log("Controllo identificativoPorta presente["+idPortaValue+"] atteso["+identificativoPortaAtteso+"]");
@@ -289,7 +290,7 @@ public class OpenSPCoopDetailsUtilities {
 								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
 							}
 							dominioSoggettoOk = true;
-							Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(nDominio.getNamespaceURI()) );
+							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
 							
 							// tipo
 							NamedNodeMap attributiSoggetto = nDominio.getAttributes();
@@ -311,7 +312,7 @@ public class OpenSPCoopDetailsUtilities {
 								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
 							}
 							dominioSoggettoNomeOk = true;
-							Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(nDominio.getNamespaceURI()) );
+							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
 							String nomeValue = nDominio.getTextContent();
 							String nomeAtteso = dominioAtteso.getNome();
 							Reporter.log("Controllo nome presente["+nomeValue+"] atteso["+nomeAtteso+"]");
@@ -322,7 +323,7 @@ public class OpenSPCoopDetailsUtilities {
 				}
 				else if("eccezioni".equals(n.getLocalName())){
 					eccezioneOk = true;
-					Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(n.getNamespaceURI()) );
+					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					Assert.assertTrue(n.hasChildNodes()==true);
 					NodeList listTipoEccezione = n.getChildNodes();
 					Assert.assertTrue(listTipoEccezione!=null);
@@ -333,7 +334,7 @@ public class OpenSPCoopDetailsUtilities {
 						Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"]");
 						if("eccezione".equals(tmp.getLocalName())){
 							findEccezione = true;
-							Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(tmp.getNamespaceURI()) );
+							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(tmp.getNamespaceURI()) );
 						}
 						
 						// Controllo attributi				
@@ -344,6 +345,7 @@ public class OpenSPCoopDetailsUtilities {
 						
 						Attr codiceEccezione = (Attr) attributi.getNamedItem("codice");
 						Assert.assertTrue(codiceEccezione!=null);
+						String namespaceCodiceEccezione = codiceEccezione.getNamespaceURI();
 						String valoreCodiceEccezione = codiceEccezione.getTextContent();
 						
 						Attr descrizioneEccezione = (Attr) attributi.getNamedItem("descrizione");
@@ -370,7 +372,12 @@ public class OpenSPCoopDetailsUtilities {
 								// check tipo
 								boolean okTipo = false;
 								// Non invertire altrimenti non funziona poi per i codici personalizzabili sull'integrazione
-								if(valoreCodiceEccezione.startsWith("EGOV_IT_") || valoreCodiceEccezione.startsWith("ECCEZIONE_PROTOCOLLO_")){
+								if(
+										valoreCodiceEccezione.startsWith(SPCoopCostanti.ECCEZIONE_PREFIX_CODE) 
+										|| 
+										(valoreCodiceEccezione.startsWith(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE) && 
+												org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_NAMESPACE.equals(namespaceCodiceEccezione))
+									){
 									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(valoreTipoEccezione)){
 										okTipo = true;
 									}
@@ -413,7 +420,7 @@ public class OpenSPCoopDetailsUtilities {
 					if(verificatutto) Assert.assertTrue( eccezioni.size() == 0);
 				}
 				else if("dettagli".equals(n.getLocalName())){
-					Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(n.getNamespaceURI()) );
+					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					if(dettagli.size()>0){
 						Assert.assertTrue(n.hasChildNodes()==true);
 						NodeList listDettagli = n.getChildNodes();
@@ -425,7 +432,7 @@ public class OpenSPCoopDetailsUtilities {
 							Reporter.log("Dettagli, dettaglio ["+tmp.getLocalName()+"]");
 							if("dettaglio".equals(tmp.getLocalName())){
 								findDettaglio = true;
-								Assert.assertTrue( "http://www.openspcoop2.org/core/eccezione/details".equals(tmp.getNamespaceURI()) );
+								Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(tmp.getNamespaceURI()) );
 							}
 							
 							// Controllo attributi				

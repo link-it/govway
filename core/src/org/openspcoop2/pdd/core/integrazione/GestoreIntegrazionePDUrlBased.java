@@ -51,7 +51,7 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDUrlBased.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstancePD(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePDRequest(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}

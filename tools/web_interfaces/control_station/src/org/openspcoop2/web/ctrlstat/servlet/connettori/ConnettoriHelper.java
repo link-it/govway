@@ -95,7 +95,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 
 	public String getAutenticazioneHttp(String autenticazioneHttp,String endpointtype, String user){
-		if((endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString()))){
+		if((endpointtype!=null && (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())))){
 			if ( autenticazioneHttp==null && user!=null && !"".equals(user) ){
 				autenticazioneHttp =  Costanti.CHECK_BOX_ENABLED;
 			}  

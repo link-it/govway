@@ -38,7 +38,7 @@ import java.io.Serializable;
  * &lt;complexType name="dominio">
  * 		&lt;sequence>
  * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/eccezione/router_details}dominio-soggetto" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="soggetto" type="{http://govway.org/integration/fault/router_details}dominio-soggetto" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="modulo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>

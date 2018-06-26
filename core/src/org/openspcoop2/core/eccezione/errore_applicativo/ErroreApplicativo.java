@@ -36,10 +36,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="errore-applicativo">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dominio" type="{http://govway.org/integration/fault}dominio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dati-cooperazione" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}dati-cooperazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="eccezione" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}eccezione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dati-cooperazione" type="{http://govway.org/integration/fault}dati-cooperazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="eccezione" type="{http://govway.org/integration/fault}eccezione" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

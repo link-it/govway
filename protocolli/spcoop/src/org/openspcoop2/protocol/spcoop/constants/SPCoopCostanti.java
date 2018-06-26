@@ -43,6 +43,8 @@ public class SPCoopCostanti {
     public final static String SPCOOP_PROPERTIES_LOCAL_PATH = "spcoop_local.properties";
     public final static String SPCOOP_PROPERTIES = "SPCOOP_PROPERTIES";
 	
+    public final static String ECCEZIONE_PREFIX_CODE = "EGOV_IT_";
+    
     /** Profilo di gestione della Busta eGov: busta eGov v1.1 */
     public static final String PROFILO_CNIPA_BUSTA_EGOV_11 = "eGov1.1";
     /** Profilo di gestione della Busta eGov: linee guida v1.1 */

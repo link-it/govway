@@ -52,17 +52,16 @@ public class UtilitiesIntegrazioneWSAddressing {
 	// ***** STATIC *****
 	
 	/**
-	   SOAPHeaderElement wsaTO      ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>
-	   SOAPHeaderElement wsaFROM    ->     http://[<nomeServizioApplicativoFruitore>.]<tipoSoggettoFruitore>_<nomeSoggettoFruitore>.openspcoop2.org
-	   SOAPHeaderElement wsaAction  ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>/<nomeAzione>
-	   SOAPHeaderElement wsaID      ->     uuid:<IDBusta> in caso di Messaggio di Protocollo (restituzione di una risposto lato PD o in caso di consegna tramite PA
-										   uuid:<IDApplicativo> in caso di Messaggio di Integrazione (invocazione lato PD o lettura risposta lato PA, es. per correlazione applicativa)
-	   SOAPHeaderElement wsaRelatesTo = null; // uuid:<IDBusta> equivale al riferimento messaggio
-
+	   SOAPHeaderElement wsaTO        ->     http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>
+	   SOAPHeaderElement wsaFROM      ->     http://[<application>.]<senderType>_<sender>.govway.org
+	   SOAPHeaderElement wsaAction    ->     http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>/<action>
+	   SOAPHeaderElement wsaID        ->     uuid:<messageId> in caso di Messaggio di Protocollo (restituzione di una risposto lato PD o in caso di consegna tramite PA
+										     uuid:<applicationMessageId> in caso di Messaggio di Integrazione (invocazione lato PD o lettura risposta lato PA, es. per correlazione applicativa)
+	   SOAPHeaderElement wsaRelatesTo ->     uuid:<messageId> equivale al riferimento messaggio
 	 */
-	private final static String WSA_TO_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>";
-	private final static String WSA_FROM_FORMAT = "http://[<nomeServizioApplicativoFruitore>.]<tipoSoggettoFruitore>_<nomeSoggettoFruitore>.openspcoop2.org";
-	private final static String WSA_ACTION_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>/<nomeAzione>";
+	private final static String WSA_TO_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>";
+	private final static String WSA_FROM_FORMAT = "http://[<application>.]<senderType>_<sender>.govway.org";
+	private final static String WSA_ACTION_FORMAT = "http://<providerType>_<provider>.govway.org/services/<serviceType>_<service>/<serviceVersion>/<action>";
 	private final static String WSA_ID_FORMAT = "uuid:<id>";
 	private final static String WSA_RELATES_TO_FORMAT = "uuid:<id>";
 	
@@ -105,13 +104,13 @@ public class UtilitiesIntegrazioneWSAddressing {
 		wsaValue = wsaValue.trim();
 		if(wsaValue.startsWith("http://")==false)
 			throw new HeaderIntegrazioneException(type+" Value is not valid: "+format);
-		if(wsaValue.contains(".openspcoop2.org/servizi/")==false)
+		if(wsaValue.contains(".govway.org/services/")==false)
 			throw new HeaderIntegrazioneException(type+" Value is not valid: "+format);
 		
 		wsaValue = wsaValue.substring(7, wsaValue.length());
 		
 		// soggetto
-		int indexSoggetto = wsaValue.indexOf(".openspcoop2.org/servizi/");
+		int indexSoggetto = wsaValue.indexOf(".govway.org/services/");
 		String soggetto = wsaValue.substring(0, indexSoggetto);
 		if(soggetto==null){
 			throw new HeaderIntegrazioneException(type+" Value is not valid (Soggetto non identificabile): "+format);
@@ -146,7 +145,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		}
 		
 		// servizio
-		String servizio = wsaValue.substring((indexSoggetto+".openspcoop2.org/servizi/".length()), wsaValue.length());
+		String servizio = wsaValue.substring((indexSoggetto+".govway.org/services/".length()), wsaValue.length());
 		if(servizio==null){
 			throw new HeaderIntegrazioneException(type+" Value is not valid (Servizio non identificabile): "+format);
 		}
@@ -245,7 +244,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		_readDatiWSAToOrAction(wsaTO, WSA_TO_FORMAT, integrazione);
 	}
 	public static String buildDatiWSATo(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio){
-		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio;
+		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio;
 	}
 	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
@@ -261,12 +260,12 @@ public class UtilitiesIntegrazioneWSAddressing {
 		wsaFrom = wsaFrom.trim();
 		if(wsaFrom.startsWith("http://")==false)
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid: "+WSA_FROM_FORMAT);
-		if(wsaFrom.contains(".openspcoop2.org")==false)
+		if(wsaFrom.contains(".govway.org")==false)
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid: "+WSA_FROM_FORMAT);
 		
 		wsaFrom = wsaFrom.substring(7, wsaFrom.length());
 		
-		int indexSoggetto = wsaFrom.indexOf(".openspcoop2.org");
+		int indexSoggetto = wsaFrom.indexOf(".govway.org");
 		String soggetto = wsaFrom.substring(0, indexSoggetto);
 		if(soggetto==null){
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid (Soggetto non identificabile): "+WSA_FROM_FORMAT);
@@ -315,9 +314,9 @@ public class UtilitiesIntegrazioneWSAddressing {
 	}
 	public static String buildDatiWSAFrom(String servizioApplicativoFruitore,String tipoSoggetto,String nomeSoggetto){
 		if(servizioApplicativoFruitore==null)
-			return "http://"+tipoSoggetto+"_"+nomeSoggetto+".openspcoop2.org";
+			return "http://"+tipoSoggetto+"_"+nomeSoggetto+".govway.org";
 		else
-			return "http://"+servizioApplicativoFruitore+"."+tipoSoggetto+"_"+nomeSoggetto+".openspcoop2.org";
+			return "http://"+servizioApplicativoFruitore+"."+tipoSoggetto+"_"+nomeSoggetto+".govway.org";
 	}
 	public static SOAPHeaderElement buildWSAFrom(OpenSPCoop2SoapMessage msg,String actor,String servizioApplicativoFruitore,String tipoSoggetto,String nomeSoggetto) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
@@ -330,7 +329,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		_readDatiWSAToOrAction(wsaAction, WSA_ACTION_FORMAT, integrazione);
 	}
 	public static String buildDatiWSAAction(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio,String azione){
-		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio+"/"+azione;
+		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio+"/"+azione;
 	}
 	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio,String azione) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);

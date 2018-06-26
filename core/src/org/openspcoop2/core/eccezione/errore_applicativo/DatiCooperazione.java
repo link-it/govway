@@ -36,9 +36,9 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dati-cooperazione">
  * 		&lt;sequence>
- * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="erogatore" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}servizio" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="fruitore" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="erogatore" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio" type="{http://govway.org/integration/fault}servizio" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>

@@ -397,10 +397,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgVerifica="identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione urlBased (Pattern:.+correlazioneApplicativa=([^&]*).*): nessun match trovato";
 				Reporter.log("Controllo fault string ["+msgVerifica+"]");
@@ -894,10 +894,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 								   
 				String msgCheck = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): Espressione XPATH non applicabile al messaggio: javax.xml.transform.TransformerException: Prefix must resolve to a namespace: test";
@@ -1821,7 +1821,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"BEGIN-ID_\",//test:idApplicativo/text(),\"_END-ID\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2511,10 +2511,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 
-			Name name = new PrefixedQName("http://www.openspcoop2.org/core/integrazione","integrazione","openspcoop");
+			Name name = new PrefixedQName(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE,org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION,"gw");
 			org.apache.axis.message.SOAPHeaderElement header = 
 				new org.apache.axis.message.SOAPHeaderElement(name);
-			header.setActor("http://www.openspcoop2.org/core/integrazione");
+			header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE);
 			header.setMustUnderstand(false);
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 
@@ -2747,7 +2747,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 			Name name = new PrefixedQName("http://www.w3.org/2005/08/addressing","MessageID","wsa");
 			org.apache.axis.message.SOAPHeaderElement header = 
 				new org.apache.axis.message.SOAPHeaderElement(name);
-			header.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+			header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 			header.setMustUnderstand(false);
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			header.setValue("uuid:"+idUnivoco);
@@ -3013,10 +3013,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa per l'elemento [*] con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -3440,10 +3440,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -4114,10 +4114,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [test:testNome4] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOMEXPATH1_\",//test:idApplicativo/text(),\"_NOMEXPATH1\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -4345,10 +4345,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome5] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME5_\",//test:idApplicativo/text(),\"_NOME5\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -4577,10 +4577,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [OPENSPCOOP_ORG_416] non si e' verificato...");
+				throw new Exception("Errore atteso [GOVWAY_ORG_416] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_416]");
+				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"ALL_\",//test:idApplicativo/text(),\"_ALL\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -5538,10 +5538,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 			Message msg=new Message(fin);
 			msg.getSOAPPartAsBytes();
 
-			Name name = new PrefixedQName("http://www.openspcoop2.org/core/integrazione","integrazione","openspcoop");
+			Name name = new PrefixedQName(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE,org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION,"gw");
 			org.apache.axis.message.SOAPHeaderElement header = 
 				new org.apache.axis.message.SOAPHeaderElement(name);
-			header.setActor("http://www.openspcoop2.org/core/integrazione");
+			header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE);
 			header.setMustUnderstand(false);
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 
@@ -5690,7 +5690,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 			Name name = new PrefixedQName("http://www.w3.org/2005/08/addressing","MessageID","wsa");
 			org.apache.axis.message.SOAPHeaderElement header = 
 				new org.apache.axis.message.SOAPHeaderElement(name);
-			header.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
+			header.setActor(org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE_WSA);
 			header.setMustUnderstand(false);
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			header.setValue("uuid:"+idUnivoco);
