@@ -31,7 +31,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
  */
 public class XACMLCostanti {
 
-	public static final String _XACML_REQUEST_ATTRIBUTE_ID = "org:openspcoop";
+	public static final String _XACML_REQUEST_ATTRIBUTE_ID = "org:govway";
 
 	public static final String _XACML_REQUEST_ACTION_ATTRIBUTE_ID = _XACML_REQUEST_ATTRIBUTE_ID+":action";
 	public static final String XACML_REQUEST_ACTION_PROVIDER_ATTRIBUTE_ID = _XACML_REQUEST_ACTION_ATTRIBUTE_ID+":provider";
