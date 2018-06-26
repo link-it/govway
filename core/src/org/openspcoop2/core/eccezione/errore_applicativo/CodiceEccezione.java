@@ -37,8 +37,8 @@ import java.io.Serializable;
  * &lt;complexType name="CodiceEccezione">
  * 		<xsd:simpleContent>
  * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
- * 				&lt;attribute name="sottotipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
+ * 				&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
+ * 				&lt;attribute name="subtype" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
  * 			</xsd:extension>
  * 		</xsd:simpleContent>
  * &lt;/complexType>
@@ -72,20 +72,20 @@ public class CodiceEccezione extends org.openspcoop2.utils.beans.BaseBean implem
     this.base=base;
   }
 
-  public java.lang.Integer getTipo() {
-    return this.tipo;
+  public java.lang.Integer getType() {
+    return this.type;
   }
 
-  public void setTipo(java.lang.Integer tipo) {
-    this.tipo = tipo;
+  public void setType(java.lang.Integer type) {
+    this.type = type;
   }
 
-  public java.lang.Integer getSottotipo() {
-    return this.sottotipo;
+  public java.lang.Integer getSubtype() {
+    return this.subtype;
   }
 
-  public void setSottotipo(java.lang.Integer sottotipo) {
-    this.sottotipo = sottotipo;
+  public void setSubtype(java.lang.Integer subtype) {
+    this.subtype = subtype;
   }
 
   private static final long serialVersionUID = 1L;
@@ -97,11 +97,11 @@ public class CodiceEccezione extends org.openspcoop2.utils.beans.BaseBean implem
   public String base;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlAttribute(name="tipo",required=true)
-  protected java.lang.Integer tipo;
+  @XmlAttribute(name="type",required=true)
+  protected java.lang.Integer type;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlAttribute(name="sottotipo",required=false)
-  protected java.lang.Integer sottotipo;
+  @XmlAttribute(name="subtype",required=false)
+  protected java.lang.Integer subtype;
 
 }

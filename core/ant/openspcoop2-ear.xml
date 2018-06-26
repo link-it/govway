@@ -798,6 +798,7 @@
 				<include name="guava-19.0.jar"/>
 				<include name="java-uuid-generator-3.1.4.jar"/>
 				<include name="freemarker-2.3.25.jar"/>
+				<include name="snakeyaml-1.19.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>

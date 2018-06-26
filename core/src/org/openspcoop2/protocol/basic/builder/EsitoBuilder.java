@@ -476,12 +476,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						try{
 							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
 							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
-							Eccezione ecc = erroreApplicativoObject.getEccezione();
-							if(TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(ecc.getTipo())){
+							Eccezione ecc = erroreApplicativoObject.getException();
+							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
 								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 							}
 							else{
-								String value = ecc.getCodice().getBase();
+								String value = ecc.getCode().getBase();
 								String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
 								if(prefixFaultCode==null){
 									prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;

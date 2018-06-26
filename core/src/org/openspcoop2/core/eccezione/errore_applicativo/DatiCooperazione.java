@@ -36,11 +36,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dati-cooperazione">
  * 		&lt;sequence>
- * 			&lt;element name="fruitore" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="erogatore" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio" type="{http://govway.org/integration/fault}servizio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="sender" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="provider" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="service" type="{http://govway.org/integration/fault}servizio" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="action" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="application" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -54,11 +54,11 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dati-cooperazione", 
   propOrder = {
-  	"fruitore",
-  	"erogatore",
-  	"servizio",
-  	"azione",
-  	"servizioApplicativo"
+  	"sender",
+  	"provider",
+  	"service",
+  	"action",
+  	"application"
   }
 )
 
@@ -68,65 +68,65 @@ public class DatiCooperazione extends org.openspcoop2.utils.beans.BaseBean imple
   public DatiCooperazione() {
   }
 
-  public Soggetto getFruitore() {
-    return this.fruitore;
+  public Soggetto getSender() {
+    return this.sender;
   }
 
-  public void setFruitore(Soggetto fruitore) {
-    this.fruitore = fruitore;
+  public void setSender(Soggetto sender) {
+    this.sender = sender;
   }
 
-  public Soggetto getErogatore() {
-    return this.erogatore;
+  public Soggetto getProvider() {
+    return this.provider;
   }
 
-  public void setErogatore(Soggetto erogatore) {
-    this.erogatore = erogatore;
+  public void setProvider(Soggetto provider) {
+    this.provider = provider;
   }
 
-  public Servizio getServizio() {
-    return this.servizio;
+  public Servizio getService() {
+    return this.service;
   }
 
-  public void setServizio(Servizio servizio) {
-    this.servizio = servizio;
+  public void setService(Servizio service) {
+    this.service = service;
   }
 
-  public java.lang.String getAzione() {
-    return this.azione;
+  public java.lang.String getAction() {
+    return this.action;
   }
 
-  public void setAzione(java.lang.String azione) {
-    this.azione = azione;
+  public void setAction(java.lang.String action) {
+    this.action = action;
   }
 
-  public java.lang.String getServizioApplicativo() {
-    return this.servizioApplicativo;
+  public java.lang.String getApplication() {
+    return this.application;
   }
 
-  public void setServizioApplicativo(java.lang.String servizioApplicativo) {
-    this.servizioApplicativo = servizioApplicativo;
+  public void setApplication(java.lang.String application) {
+    this.application = application;
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="fruitore",required=false,nillable=false)
-  protected Soggetto fruitore;
+  @XmlElement(name="sender",required=false,nillable=false)
+  protected Soggetto sender;
 
-  @XmlElement(name="erogatore",required=false,nillable=false)
-  protected Soggetto erogatore;
+  @XmlElement(name="provider",required=false,nillable=false)
+  protected Soggetto provider;
 
-  @XmlElement(name="servizio",required=false,nillable=false)
-  protected Servizio servizio;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="azione",required=false,nillable=false)
-  protected java.lang.String azione;
+  @XmlElement(name="service",required=false,nillable=false)
+  protected Servizio service;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="servizio-applicativo",required=false,nillable=false)
-  protected java.lang.String servizioApplicativo;
+  @XmlElement(name="action",required=false,nillable=false)
+  protected java.lang.String action;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="application",required=false,nillable=false)
+  protected java.lang.String application;
 
 }

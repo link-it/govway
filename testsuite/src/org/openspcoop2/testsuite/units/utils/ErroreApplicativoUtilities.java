@@ -269,10 +269,10 @@ public class ErroreApplicativoUtilities {
 					String idFunzioneValue = funzione.getTextContent();
 					String identificativoFunzioneAtteso = null;
 					if(tipoPdDAtteso.equals(TipoPdD.DELEGATA)){
-						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_DELEGATA.getValue();
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.OUTBOUND_PROXY.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.APPLICATIVA)){
-						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_APPLICATIVA.getValue();
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INBOUND_PROXY.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.INTEGRATION_MANAGER)){
 						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INTEGRATION_MANAGER.getValue();
@@ -361,12 +361,12 @@ public class ErroreApplicativoUtilities {
 					String valoreTipoEccezione = tipoEccezione.getTextContent();
 					Assert.assertTrue(valoreTipoEccezione!=null);
 					if(codiceErroreIntegrazione!=null) {
-						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.ECCEZIONE_INTEGRAZIONE+"]");
-						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.ECCEZIONE_INTEGRAZIONE.equals(valoreTipoEccezione));
+						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION+"]");
+						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.INTEGRATION.equals(valoreTipoEccezione));
 					}
 					else {
-						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.ECCEZIONE_PROTOCOLLO+"]");
-						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(valoreTipoEccezione));
+						Reporter.log("Controllo tipo eccezione presente["+valoreTipoEccezione+"] atteso-integrazione["+org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL+"]");
+						Assert.assertTrue(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL.equals(valoreTipoEccezione));
 					}
 					
 					

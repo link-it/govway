@@ -36,10 +36,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="errore-applicativo">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://govway.org/integration/fault}dominio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dati-cooperazione" type="{http://govway.org/integration/fault}dati-cooperazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="eccezione" type="{http://govway.org/integration/fault}eccezione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="domain" type="{http://govway.org/integration/fault}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="service" type="{http://govway.org/integration/fault}dati-cooperazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="exception" type="{http://govway.org/integration/fault}eccezione" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -53,49 +53,49 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "errore-applicativo", 
   propOrder = {
-  	"dominio",
-  	"oraRegistrazione",
-  	"datiCooperazione",
-  	"eccezione"
+  	"domain",
+  	"timestamp",
+  	"service",
+  	"exception"
   }
 )
 
-@XmlRootElement(name = "errore-applicativo")
+@XmlRootElement(name = "fault")
 
 public class ErroreApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ErroreApplicativo() {
   }
 
-  public Dominio getDominio() {
-    return this.dominio;
+  public Dominio getDomain() {
+    return this.domain;
   }
 
-  public void setDominio(Dominio dominio) {
-    this.dominio = dominio;
+  public void setDomain(Dominio domain) {
+    this.domain = domain;
   }
 
-  public java.util.Date getOraRegistrazione() {
-    return this.oraRegistrazione;
+  public java.util.Date getTimestamp() {
+    return this.timestamp;
   }
 
-  public void setOraRegistrazione(java.util.Date oraRegistrazione) {
-    this.oraRegistrazione = oraRegistrazione;
+  public void setTimestamp(java.util.Date timestamp) {
+    this.timestamp = timestamp;
   }
 
-  public DatiCooperazione getDatiCooperazione() {
-    return this.datiCooperazione;
+  public DatiCooperazione getService() {
+    return this.service;
   }
 
-  public void setDatiCooperazione(DatiCooperazione datiCooperazione) {
-    this.datiCooperazione = datiCooperazione;
+  public void setService(DatiCooperazione service) {
+    this.service = service;
   }
 
-  public Eccezione getEccezione() {
-    return this.eccezione;
+  public Eccezione getException() {
+    return this.exception;
   }
 
-  public void setEccezione(Eccezione eccezione) {
-    this.eccezione = eccezione;
+  public void setException(Eccezione exception) {
+    this.exception = exception;
   }
 
   private static final long serialVersionUID = 1L;
@@ -114,18 +114,18 @@ public class ErroreApplicativo extends org.openspcoop2.utils.beans.BaseBean impl
   }
 
 
-  @XmlElement(name="dominio",required=true,nillable=false)
-  protected Dominio dominio;
+  @XmlElement(name="domain",required=true,nillable=false)
+  protected Dominio domain;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
-  @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
-  protected java.util.Date oraRegistrazione;
+  @XmlElement(name="timestamp",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date timestamp;
 
-  @XmlElement(name="dati-cooperazione",required=false,nillable=false)
-  protected DatiCooperazione datiCooperazione;
+  @XmlElement(name="service",required=false,nillable=false)
+  protected DatiCooperazione service;
 
-  @XmlElement(name="eccezione",required=true,nillable=false)
-  protected Eccezione eccezione;
+  @XmlElement(name="exception",required=true,nillable=false)
+  protected Eccezione exception;
 
 }

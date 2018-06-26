@@ -420,7 +420,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					subCodiceEccezioneOpenSPCoop = eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione().getSubCodice();
 				}
 				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
-				tipoEccezione = TipoEccezione.ECCEZIONE_PROTOCOLLO;
+				tipoEccezione = TipoEccezione.PROTOCOL;
 				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
 				messageType = eccezioneProtocollo.getMessageType();
 			}
@@ -435,17 +435,17 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				codiceEccezioneOpenSPCoop = eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore().getCodice();
 				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
-				tipoEccezione = TipoEccezione.ECCEZIONE_INTEGRAZIONE;
+				tipoEccezione = TipoEccezione.INTEGRATION;
 				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
 				messageType = eccezioneIntegrazione.getMessageType();
 			}
 			
 			org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD idFunzione = null;
 			if(TipoPdD.DELEGATA.equals(tipoPdD)){
-				idFunzione = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_DELEGATA;
+				idFunzione = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.OUTBOUND_PROXY;
 			}
 			else if(TipoPdD.APPLICATIVA.equals(tipoPdD)){
-				idFunzione = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_APPLICATIVA;
+				idFunzione = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INBOUND_PROXY;
 			}
 			else if(TipoPdD.INTEGRATION_MANAGER.equals(tipoPdD)){
 				idFunzione = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INTEGRATION_MANAGER;
@@ -458,19 +458,19 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 			// dominio
 			Dominio dominio = new Dominio();
 			DominioSoggetto dominioSoggetto = new DominioSoggetto();
-			dominioSoggetto.setTipo(idDominio.getTipo());
+			dominioSoggetto.setType(idDominio.getTipo());
 			dominioSoggetto.setBase(idDominio.getNome());
-			dominio.setSoggetto(dominioSoggetto);
-			dominio.setIdentificativoPorta(idDominio.getCodicePorta());
-			dominio.setFunzione(idFunzione);
-			dominio.setModulo(idModulo);
-			erroreApplicativo.setDominio(dominio);
+			dominio.setOrganization(dominioSoggetto);
+			dominio.setId(idDominio.getCodicePorta());
+			dominio.setRole(idFunzione);
+			dominio.setModule(idModulo);
+			erroreApplicativo.setDomain(dominio);
 			
 			// oraRegistrazione
 			if(oraRegistrazione==null){
 				oraRegistrazione = DateManager.getDate();
 			}
-			erroreApplicativo.setOraRegistrazione(oraRegistrazione);
+			erroreApplicativo.setTimestamp(oraRegistrazione);
 			
 			// dati-coopeazione
 			if(fruitore!=null || servizio!=null || servizioApplicativo!=null){
@@ -479,52 +479,52 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				if(fruitore!=null){
 					Soggetto fruitoreErroreApplicativo = new Soggetto();
 					SoggettoIdentificativo fruitoreIdentificativoErroreApplicativo = new SoggettoIdentificativo();
-					fruitoreIdentificativoErroreApplicativo.setTipo(fruitore.getTipo());
+					fruitoreIdentificativoErroreApplicativo.setType(fruitore.getTipo());
 					fruitoreIdentificativoErroreApplicativo.setBase(fruitore.getNome());
-					fruitoreErroreApplicativo.setIdentificativo(fruitoreIdentificativoErroreApplicativo);
-					fruitoreErroreApplicativo.setIdentificativoPorta(fruitore.getCodicePorta());
-					datiCooperazione.setFruitore(fruitoreErroreApplicativo);
+					fruitoreErroreApplicativo.setId(fruitoreIdentificativoErroreApplicativo);
+					fruitoreErroreApplicativo.setDomainId(fruitore.getCodicePorta());
+					datiCooperazione.setSender(fruitoreErroreApplicativo);
 				}
 				
 				if(servizio!=null && servizio.getSoggettoErogatore()!=null){
 					IDSoggetto erogatore = servizio.getSoggettoErogatore();
 					Soggetto erogatoreErroreApplicativo = new Soggetto();
 					SoggettoIdentificativo erogatoreIdentificativoErroreApplicativo = new SoggettoIdentificativo();
-					erogatoreIdentificativoErroreApplicativo.setTipo(erogatore.getTipo());
+					erogatoreIdentificativoErroreApplicativo.setType(erogatore.getTipo());
 					erogatoreIdentificativoErroreApplicativo.setBase(erogatore.getNome());
-					erogatoreErroreApplicativo.setIdentificativo(erogatoreIdentificativoErroreApplicativo);
-					erogatoreErroreApplicativo.setIdentificativoPorta(erogatore.getCodicePorta());
-					datiCooperazione.setErogatore(erogatoreErroreApplicativo);
+					erogatoreErroreApplicativo.setId(erogatoreIdentificativoErroreApplicativo);
+					erogatoreErroreApplicativo.setDomainId(erogatore.getCodicePorta());
+					datiCooperazione.setProvider(erogatoreErroreApplicativo);
 				}
 				
 				if(servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null){
 					Servizio servizioErroreApplicativo = new Servizio();
 					servizioErroreApplicativo.setBase(servizio.getNome());
-					servizioErroreApplicativo.setTipo(servizio.getTipo());
-					servizioErroreApplicativo.setVersione(servizio.getVersione());
-					datiCooperazione.setServizio(servizioErroreApplicativo);
+					servizioErroreApplicativo.setType(servizio.getTipo());
+					servizioErroreApplicativo.setVersion(servizio.getVersione());
+					datiCooperazione.setService(servizioErroreApplicativo);
 				}
 				
 				if(servizio!=null && servizio.getAzione()!=null){
-					datiCooperazione.setAzione(servizio.getAzione());
+					datiCooperazione.setAction(servizio.getAzione());
 				}
 				
-				datiCooperazione.setServizioApplicativo(servizioApplicativo);
+				datiCooperazione.setApplication(servizioApplicativo);
 				
-				erroreApplicativo.setDatiCooperazione(datiCooperazione);
+				erroreApplicativo.setService(datiCooperazione);
 			}
 			
 			// eccezioni
 			Eccezione eccezione = new Eccezione();
 			CodiceEccezione codice = new CodiceEccezione();
 			codice.setBase(codiceEccezione);
-			codice.setTipo(codiceEccezioneOpenSPCoop);
+			codice.setType(codiceEccezioneOpenSPCoop);
 			if(subCodiceEccezioneOpenSPCoop!=null)
-				codice.setSottotipo(subCodiceEccezioneOpenSPCoop);
-			eccezione.setCodice(codice);
-			eccezione.setDescrizione(descrizioneEccezione);
-			eccezione.setTipo(tipoEccezione);
-			erroreApplicativo.setEccezione(eccezione);
+				codice.setSubtype(subCodiceEccezioneOpenSPCoop);
+			eccezione.setCode(codice);
+			eccezione.setDescription(descrizioneEccezione);
+			eccezione.setType(tipoEccezione);
+			erroreApplicativo.setException(eccezione);
 			
 			return erroreApplicativo; 
 
@@ -703,79 +703,79 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 		try{
 						
 			AbstractEccezioneBuilderParameter eccezione = null;
-			if( TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(erroreApplicativo.getEccezione().getTipo())){
+			if( TipoEccezione.PROTOCOL.equals(erroreApplicativo.getException().getType())){
 				eccezione = new EccezioneProtocolloBuilderParameters();
 				
-				CodiceErroreCooperazione codice = CodiceErroreCooperazione.toCodiceErroreCooperazione(erroreApplicativo.getEccezione().getCodice().getTipo().intValue());
-				String descrizione = erroreApplicativo.getEccezione().getCodice().getBase();
+				CodiceErroreCooperazione codice = CodiceErroreCooperazione.toCodiceErroreCooperazione(erroreApplicativo.getException().getCode().getType().intValue());
+				String descrizione = erroreApplicativo.getException().getCode().getBase();
 				ErroreCooperazione erroreCooperazione = new ErroreCooperazione(descrizione, codice);
 				org.openspcoop2.protocol.sdk.Eccezione eccezioneProtocollo = 
-						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,erroreApplicativo.getDominio().getFunzione().getValue(),this.protocolFactory);
-				if(erroreApplicativo.getEccezione().getCodice().getSottotipo()!=null){
+						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,erroreApplicativo.getDomain().getRole().getValue(),this.protocolFactory);
+				if(erroreApplicativo.getException().getCode().getSubtype()!=null){
 					SubCodiceErrore sub = new SubCodiceErrore();
-					sub.setSubCodice(erroreApplicativo.getEccezione().getCodice().getSottotipo().intValue());
+					sub.setSubCodice(erroreApplicativo.getException().getCode().getSubtype().intValue());
 					eccezioneProtocollo.setSubCodiceEccezione(sub);
 				}
 				((EccezioneProtocolloBuilderParameters)eccezione).setEccezioneProtocollo(eccezioneProtocollo);
 			}
 			else{
 				eccezione = new EccezioneIntegrazioneBuilderParameters();
-				CodiceErroreIntegrazione codice = CodiceErroreIntegrazione.toCodiceErroreIntegrazione(erroreApplicativo.getEccezione().getCodice().getTipo().intValue());
-				String descrizione = erroreApplicativo.getEccezione().getCodice().getBase();
+				CodiceErroreIntegrazione codice = CodiceErroreIntegrazione.toCodiceErroreIntegrazione(erroreApplicativo.getException().getCode().getType().intValue());
+				String descrizione = erroreApplicativo.getException().getCode().getBase();
 				ErroreIntegrazione erroreIntegrazione = new ErroreIntegrazione(descrizione, codice);
 				((EccezioneIntegrazioneBuilderParameters)eccezione).setErroreIntegrazione(erroreIntegrazione);
 			}
 				
 			// dominio
-			eccezione.setDominioPorta(new IDSoggetto(erroreApplicativo.getDominio().getSoggetto().getTipo(), 
-					erroreApplicativo.getDominio().getSoggetto().getBase(),
-					erroreApplicativo.getDominio().getIdentificativoPorta()));
-			eccezione.setIdFunzione(erroreApplicativo.getDominio().getModulo());
-			if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_DELEGATA.equals(erroreApplicativo.getDominio().getFunzione())){
+			eccezione.setDominioPorta(new IDSoggetto(erroreApplicativo.getDomain().getOrganization().getType(), 
+					erroreApplicativo.getDomain().getOrganization().getBase(),
+					erroreApplicativo.getDomain().getId()));
+			eccezione.setIdFunzione(erroreApplicativo.getDomain().getModule());
+			if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.OUTBOUND_PROXY.equals(erroreApplicativo.getDomain().getRole())){
 				eccezione.setTipoPorta(TipoPdD.DELEGATA);
 			}
-			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.PORTA_APPLICATIVA.equals(erroreApplicativo.getDominio().getFunzione())){
+			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INBOUND_PROXY.equals(erroreApplicativo.getDomain().getRole())){
 				eccezione.setTipoPorta(TipoPdD.APPLICATIVA);
 			}
-			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INTEGRATION_MANAGER.equals(erroreApplicativo.getDominio().getFunzione())){
+			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.INTEGRATION_MANAGER.equals(erroreApplicativo.getDomain().getRole())){
 				eccezione.setTipoPorta(TipoPdD.INTEGRATION_MANAGER);
 			}
-			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.ROUTER.equals(erroreApplicativo.getDominio().getFunzione())){
+			else if(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.ROUTER.equals(erroreApplicativo.getDomain().getRole())){
 				eccezione.setTipoPorta(TipoPdD.ROUTER);
 			}
 				
 			// oraRegistrazione
-			eccezione.setOraRegistrazione(erroreApplicativo.getOraRegistrazione());
+			eccezione.setOraRegistrazione(erroreApplicativo.getTimestamp());
 			
 			// dati cooperazione
-			if(erroreApplicativo.getDatiCooperazione()!=null){
-				DatiCooperazione datiCooperazione = erroreApplicativo.getDatiCooperazione();
+			if(erroreApplicativo.getService()!=null){
+				DatiCooperazione datiCooperazione = erroreApplicativo.getService();
 				
-				if(datiCooperazione.getFruitore()!=null){
-					eccezione.setMittente(new IDSoggetto(datiCooperazione.getFruitore().getIdentificativo().getTipo(), 
-							datiCooperazione.getFruitore().getIdentificativo().getBase(), 
-							datiCooperazione.getFruitore().getIdentificativoPorta()));
+				if(datiCooperazione.getSender()!=null){
+					eccezione.setMittente(new IDSoggetto(datiCooperazione.getSender().getId().getType(), 
+							datiCooperazione.getSender().getId().getBase(), 
+							datiCooperazione.getSender().getDomainId()));
 				}
 				
 				IDServizio idServizio = null;
 				IDSoggetto idSoggettoErogatore = null;
-				if(datiCooperazione.getErogatore()!=null){
-					idSoggettoErogatore = new IDSoggetto(datiCooperazione.getErogatore().getIdentificativo().getTipo(), 
-							datiCooperazione.getErogatore().getIdentificativo().getBase(), 
-							datiCooperazione.getErogatore().getIdentificativoPorta());
+				if(datiCooperazione.getProvider()!=null){
+					idSoggettoErogatore = new IDSoggetto(datiCooperazione.getProvider().getId().getType(), 
+							datiCooperazione.getProvider().getId().getBase(), 
+							datiCooperazione.getProvider().getDomainId());
 				}
-				if(datiCooperazione.getServizio()!=null){
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiCooperazione.getServizio().getTipo(), 
-							datiCooperazione.getServizio().getBase(), 
+				if(datiCooperazione.getService()!=null){
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiCooperazione.getService().getType(), 
+							datiCooperazione.getService().getBase(), 
 							idSoggettoErogatore, 
-							datiCooperazione.getServizio().getVersione());
+							datiCooperazione.getService().getVersion());
 				}
 				if(idServizio!=null){
-					idServizio.setAzione(datiCooperazione.getAzione());
+					idServizio.setAzione(datiCooperazione.getAction());
 					eccezione.setServizio(idServizio);
 				}
 				
-				eccezione.setServizioApplicativo(datiCooperazione.getServizioApplicativo());
+				eccezione.setServizioApplicativo(datiCooperazione.getApplication());
 			}
 				
 			return eccezione;

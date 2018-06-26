@@ -42,11 +42,11 @@ public class DatiCooperazioneModel extends AbstractModel<DatiCooperazione> {
 	
 		super();
 	
-		this.FRUITORE = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new Field("fruitore",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
-		this.EROGATORE = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new Field("erogatore",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
-		this.SERVIZIO = new org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel(new Field("servizio",org.openspcoop2.core.eccezione.errore_applicativo.Servizio.class,"dati-cooperazione",DatiCooperazione.class));
-		this.AZIONE = new Field("azione",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
-		this.SERVIZIO_APPLICATIVO = new Field("servizio-applicativo",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
+		this.SENDER = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new Field("sender",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
+		this.PROVIDER = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new Field("provider",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
+		this.SERVICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel(new Field("service",org.openspcoop2.core.eccezione.errore_applicativo.Servizio.class,"dati-cooperazione",DatiCooperazione.class));
+		this.ACTION = new Field("action",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
+		this.APPLICATION = new Field("application",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
 	
 	}
 	
@@ -54,25 +54,25 @@ public class DatiCooperazioneModel extends AbstractModel<DatiCooperazione> {
 	
 		super(father);
 	
-		this.FRUITORE = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new ComplexField(father,"fruitore",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
-		this.EROGATORE = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new ComplexField(father,"erogatore",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
-		this.SERVIZIO = new org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.eccezione.errore_applicativo.Servizio.class,"dati-cooperazione",DatiCooperazione.class));
-		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
-		this.SERVIZIO_APPLICATIVO = new ComplexField(father,"servizio-applicativo",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
+		this.SENDER = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new ComplexField(father,"sender",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
+		this.PROVIDER = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel(new ComplexField(father,"provider",org.openspcoop2.core.eccezione.errore_applicativo.Soggetto.class,"dati-cooperazione",DatiCooperazione.class));
+		this.SERVICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel(new ComplexField(father,"service",org.openspcoop2.core.eccezione.errore_applicativo.Servizio.class,"dati-cooperazione",DatiCooperazione.class));
+		this.ACTION = new ComplexField(father,"action",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
+		this.APPLICATION = new ComplexField(father,"application",java.lang.String.class,"dati-cooperazione",DatiCooperazione.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel FRUITORE = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel SENDER = null;
 	 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel EROGATORE = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoModel PROVIDER = null;
 	 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel SERVIZIO = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.ServizioModel SERVICE = null;
 	 
-	public IField AZIONE = null;
+	public IField ACTION = null;
 	 
-	public IField SERVIZIO_APPLICATIVO = null;
+	public IField APPLICATION = null;
 	 
 
 	@Override

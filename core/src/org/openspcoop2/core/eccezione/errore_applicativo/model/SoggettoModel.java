@@ -42,8 +42,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 		super();
 	
-		this.IDENTIFICATIVO = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel(new Field("identificativo",org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo.class,"soggetto",Soggetto.class));
-		this.IDENTIFICATIVO_PORTA = new Field("identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
+		this.ID = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel(new Field("id",org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo.class,"soggetto",Soggetto.class));
+		this.DOMAIN_ID = new Field("domain-id",java.lang.String.class,"soggetto",Soggetto.class);
 	
 	}
 	
@@ -51,16 +51,16 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 		super(father);
 	
-		this.IDENTIFICATIVO = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel(new ComplexField(father,"identificativo",org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo.class,"soggetto",Soggetto.class));
-		this.IDENTIFICATIVO_PORTA = new ComplexField(father,"identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
+		this.ID = new org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel(new ComplexField(father,"id",org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo.class,"soggetto",Soggetto.class));
+		this.DOMAIN_ID = new ComplexField(father,"domain-id",java.lang.String.class,"soggetto",Soggetto.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel IDENTIFICATIVO = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.SoggettoIdentificativoModel ID = null;
 	 
-	public IField IDENTIFICATIVO_PORTA = null;
+	public IField DOMAIN_ID = null;
 	 
 
 	@Override

@@ -42,10 +42,10 @@ public class ErroreApplicativoModel extends AbstractModel<ErroreApplicativo> {
 	
 		super();
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel(new Field("dominio",org.openspcoop2.core.eccezione.errore_applicativo.Dominio.class,"errore-applicativo",ErroreApplicativo.class));
-		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"errore-applicativo",ErroreApplicativo.class);
-		this.DATI_COOPERAZIONE = new org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel(new Field("dati-cooperazione",org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione.class,"errore-applicativo",ErroreApplicativo.class));
-		this.ECCEZIONE = new org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel(new Field("eccezione",org.openspcoop2.core.eccezione.errore_applicativo.Eccezione.class,"errore-applicativo",ErroreApplicativo.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel(new Field("domain",org.openspcoop2.core.eccezione.errore_applicativo.Dominio.class,"errore-applicativo",ErroreApplicativo.class));
+		this.TIMESTAMP = new Field("timestamp",java.util.Date.class,"errore-applicativo",ErroreApplicativo.class);
+		this.SERVICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel(new Field("service",org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione.class,"errore-applicativo",ErroreApplicativo.class));
+		this.EXCEPTION = new org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel(new Field("exception",org.openspcoop2.core.eccezione.errore_applicativo.Eccezione.class,"errore-applicativo",ErroreApplicativo.class));
 	
 	}
 	
@@ -53,22 +53,22 @@ public class ErroreApplicativoModel extends AbstractModel<ErroreApplicativo> {
 	
 		super(father);
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel(new ComplexField(father,"dominio",org.openspcoop2.core.eccezione.errore_applicativo.Dominio.class,"errore-applicativo",ErroreApplicativo.class));
-		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"errore-applicativo",ErroreApplicativo.class);
-		this.DATI_COOPERAZIONE = new org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel(new ComplexField(father,"dati-cooperazione",org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione.class,"errore-applicativo",ErroreApplicativo.class));
-		this.ECCEZIONE = new org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel(new ComplexField(father,"eccezione",org.openspcoop2.core.eccezione.errore_applicativo.Eccezione.class,"errore-applicativo",ErroreApplicativo.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel(new ComplexField(father,"domain",org.openspcoop2.core.eccezione.errore_applicativo.Dominio.class,"errore-applicativo",ErroreApplicativo.class));
+		this.TIMESTAMP = new ComplexField(father,"timestamp",java.util.Date.class,"errore-applicativo",ErroreApplicativo.class);
+		this.SERVICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel(new ComplexField(father,"service",org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione.class,"errore-applicativo",ErroreApplicativo.class));
+		this.EXCEPTION = new org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel(new ComplexField(father,"exception",org.openspcoop2.core.eccezione.errore_applicativo.Eccezione.class,"errore-applicativo",ErroreApplicativo.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel DOMINIO = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.DominioModel DOMAIN = null;
 	 
-	public IField ORA_REGISTRAZIONE = null;
+	public IField TIMESTAMP = null;
 	 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel DATI_COOPERAZIONE = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.DatiCooperazioneModel SERVICE = null;
 	 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel ECCEZIONE = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.EccezioneModel EXCEPTION = null;
 	 
 
 	@Override

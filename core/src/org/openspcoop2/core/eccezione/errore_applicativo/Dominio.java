@@ -38,11 +38,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dominio">
  * 		&lt;sequence>
- * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="soggetto" type="{http://govway.org/integration/fault}dominio-soggetto" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="organization" type="{http://govway.org/integration/fault}dominio-soggetto" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="funzione" type="{http://govway.org/integration/fault}TipoPdD" use="optional"/>
- * 		&lt;attribute name="modulo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="role" type="{http://govway.org/integration/fault}TipoPdD" use="optional"/>
+ * 		&lt;attribute name="module" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -55,8 +55,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dominio", 
   propOrder = {
-  	"identificativoPorta",
-  	"soggetto"
+  	"id",
+  	"organization"
   }
 )
 
@@ -66,48 +66,48 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Ser
   public Dominio() {
   }
 
-  public java.lang.String getIdentificativoPorta() {
-    return this.identificativoPorta;
+  public java.lang.String getId() {
+    return this.id;
   }
 
-  public void setIdentificativoPorta(java.lang.String identificativoPorta) {
-    this.identificativoPorta = identificativoPorta;
+  public void setId(java.lang.String id) {
+    this.id = id;
   }
 
-  public DominioSoggetto getSoggetto() {
-    return this.soggetto;
+  public DominioSoggetto getOrganization() {
+    return this.organization;
   }
 
-  public void setSoggetto(DominioSoggetto soggetto) {
-    this.soggetto = soggetto;
+  public void setOrganization(DominioSoggetto organization) {
+    this.organization = organization;
   }
 
-  public void set_value_funzione(String value) {
-    this.funzione = (TipoPdD) TipoPdD.toEnumConstantFromString(value);
+  public void set_value_role(String value) {
+    this.role = (TipoPdD) TipoPdD.toEnumConstantFromString(value);
   }
 
-  public String get_value_funzione() {
-    if(this.funzione == null){
+  public String get_value_role() {
+    if(this.role == null){
     	return null;
     }else{
-    	return this.funzione.toString();
+    	return this.role.toString();
     }
   }
 
-  public org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD getFunzione() {
-    return this.funzione;
+  public org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD getRole() {
+    return this.role;
   }
 
-  public void setFunzione(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD funzione) {
-    this.funzione = funzione;
+  public void setRole(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD role) {
+    this.role = role;
   }
 
-  public java.lang.String getModulo() {
-    return this.modulo;
+  public java.lang.String getModule() {
+    return this.module;
   }
 
-  public void setModulo(java.lang.String modulo) {
-    this.modulo = modulo;
+  public void setModule(java.lang.String module) {
+    this.module = module;
   }
 
   private static final long serialVersionUID = 1L;
@@ -115,20 +115,20 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-porta",required=true,nillable=false)
-  protected java.lang.String identificativoPorta;
+  @XmlElement(name="id",required=true,nillable=false)
+  protected java.lang.String id;
 
-  @XmlElement(name="soggetto",required=true,nillable=false)
-  protected DominioSoggetto soggetto;
+  @XmlElement(name="organization",required=true,nillable=false)
+  protected DominioSoggetto organization;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_funzione;
+  protected java.lang.String _value_role;
 
-  @XmlAttribute(name="funzione",required=false)
-  protected TipoPdD funzione;
+  @XmlAttribute(name="role",required=false)
+  protected TipoPdD role;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="modulo",required=false)
-  protected java.lang.String modulo;
+  @XmlAttribute(name="module",required=false)
+  protected java.lang.String module;
 
 }

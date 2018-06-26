@@ -43,8 +43,8 @@ public class CodiceEccezioneModel extends AbstractModel<CodiceEccezione> {
 		super();
 	
 		this.BASE = new Field("base",java.lang.String.class,"CodiceEccezione",CodiceEccezione.class);
-		this.TIPO = new Field("tipo",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
-		this.SOTTOTIPO = new Field("sottotipo",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
+		this.TYPE = new Field("type",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
+		this.SUBTYPE = new Field("subtype",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
 	
 	}
 	
@@ -53,8 +53,8 @@ public class CodiceEccezioneModel extends AbstractModel<CodiceEccezione> {
 		super(father);
 	
 		this.BASE = new ComplexField(father,"base",java.lang.String.class,"CodiceEccezione",CodiceEccezione.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
-		this.SOTTOTIPO = new ComplexField(father,"sottotipo",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
+		this.SUBTYPE = new ComplexField(father,"subtype",java.lang.Integer.class,"CodiceEccezione",CodiceEccezione.class);
 	
 	}
 	
@@ -62,9 +62,9 @@ public class CodiceEccezioneModel extends AbstractModel<CodiceEccezione> {
 
 	public IField BASE = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
-	public IField SOTTOTIPO = null;
+	public IField SUBTYPE = null;
 	 
 
 	@Override

@@ -42,9 +42,9 @@ public class EccezioneModel extends AbstractModel<Eccezione> {
 	
 		super();
 	
-		this.CODICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel(new Field("codice",org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione.class,"eccezione",Eccezione.class));
-		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"eccezione",Eccezione.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CODE = new org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel(new Field("code",org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione.class,"eccezione",Eccezione.class));
+		this.DESCRIPTION = new Field("description",java.lang.String.class,"eccezione",Eccezione.class);
+		this.TYPE = new Field("type",java.lang.String.class,"eccezione",Eccezione.class);
 	
 	}
 	
@@ -52,19 +52,19 @@ public class EccezioneModel extends AbstractModel<Eccezione> {
 	
 		super(father);
 	
-		this.CODICE = new org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel(new ComplexField(father,"codice",org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione.class,"eccezione",Eccezione.class));
-		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"eccezione",Eccezione.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CODE = new org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel(new ComplexField(father,"code",org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione.class,"eccezione",Eccezione.class));
+		this.DESCRIPTION = new ComplexField(father,"description",java.lang.String.class,"eccezione",Eccezione.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"eccezione",Eccezione.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel CODICE = null;
+	public org.openspcoop2.core.eccezione.errore_applicativo.model.CodiceEccezioneModel CODE = null;
 	 
-	public IField DESCRIZIONE = null;
+	public IField DESCRIPTION = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
 
 	@Override

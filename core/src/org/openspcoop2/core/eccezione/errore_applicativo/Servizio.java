@@ -37,8 +37,8 @@ import java.io.Serializable;
  * &lt;complexType name="servizio">
  * 		<xsd:simpleContent>
  * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 				&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/>
+ * 				&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 				&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/>
  * 			</xsd:extension>
  * 		</xsd:simpleContent>
  * &lt;/complexType>
@@ -72,20 +72,20 @@ public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.base=base;
   }
 
-  public java.lang.String getTipo() {
-    return this.tipo;
+  public java.lang.String getType() {
+    return this.type;
   }
 
-  public void setTipo(java.lang.String tipo) {
-    this.tipo = tipo;
+  public void setType(java.lang.String type) {
+    this.type = type;
   }
 
-  public java.lang.Integer getVersione() {
-    return this.versione;
+  public java.lang.Integer getVersion() {
+    return this.version;
   }
 
-  public void setVersione(java.lang.Integer versione) {
-    this.versione = versione;
+  public void setVersion(java.lang.Integer version) {
+    this.version = version;
   }
 
   private static final long serialVersionUID = 1L;
@@ -97,11 +97,11 @@ public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Se
   public String base;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="tipo",required=false)
-  protected java.lang.String tipo;
+  @XmlAttribute(name="type",required=false)
+  protected java.lang.String type;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
+  @XmlAttribute(name="version",required=false)
+  protected java.lang.Integer version = java.lang.Integer.valueOf("1");
 
 }

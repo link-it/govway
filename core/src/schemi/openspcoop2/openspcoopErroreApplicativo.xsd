@@ -34,7 +34,8 @@
               </xsd:appinfo>
        </xsd:annotation>
 
-       <xsd:element name="errore-applicativo">
+       <xsd:element name="fault" type="errore-applicativo"/>
+       <xsd:complexType name="errore-applicativo">
               <xsd:annotation>
                      <xsd:appinfo>
                             <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -42,62 +43,56 @@
                             </linkit:generator>
                      </xsd:appinfo>
               </xsd:annotation>
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
-                            <xsd:element ref="dominio"/>
-                            <!-- OraRegistrazione -->
-                            <xsd:element name="ora-registrazione" type="xsd:dateTime"/>
-                            <!-- Dati Cooperazione -->
-                            <xsd:element ref="dati-cooperazione" minOccurs="0"/>
-                            <!-- Eccezioni -->
-                            <xsd:element name="eccezione" type="eccezione"/>
-                     </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
+              <xsd:sequence>
+                    <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
+                    <xsd:element name="domain" type="dominio"/>
+                    <!-- OraRegistrazione -->
+                    <xsd:element name="timestamp" type="xsd:dateTime"/>
+                    <!-- Dati Cooperazione -->
+                    <xsd:element name="service" type="dati-cooperazione" minOccurs="0"/>
+                    <!-- Eccezioni -->
+                    <xsd:element name="exception" type="eccezione"/>
+             </xsd:sequence>
+      </xsd:complexType>
        
-       <xsd:element name="dominio">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="identificativo-porta" type="xsd:string"/>
-                            <xsd:element name="soggetto" type="dominio-soggetto"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="funzione" type="TipoPdD"/>
-                     <xsd:attribute name="modulo" type="xsd:string"/>
-              </xsd:complexType>
-       </xsd:element>
+       <xsd:complexType name="dominio">
+             <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="organization" type="dominio-soggetto"/>
+             </xsd:sequence>
+             <xsd:attribute name="role" type="TipoPdD"/>
+             <xsd:attribute name="module" type="xsd:string"/>
+       </xsd:complexType>
        <xsd:complexType name="dominio-soggetto">
               <xsd:simpleContent>
                      <xsd:extension base="xsd:string">
-                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                            <xsd:attribute name="type" type="xsd:string" use="required"/>
                      </xsd:extension>
               </xsd:simpleContent>
        </xsd:complexType>
        
-       <xsd:element name="dati-cooperazione">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="fruitore" type="soggetto" minOccurs="0"/>
-                            <xsd:element name="erogatore" type="soggetto" minOccurs="0"/>
-                            <xsd:element name="servizio" type="servizio" minOccurs="0"/>
-                            <xsd:element name="azione" type="xsd:string" minOccurs="0"/>
-                            <xsd:element name="servizio-applicativo" type="xsd:string" minOccurs="0"/>
-                     </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
+       <xsd:complexType name="dati-cooperazione">
+              <xsd:sequence>
+                     <xsd:element name="sender" type="soggetto" minOccurs="0"/>
+                     <xsd:element name="provider" type="soggetto" minOccurs="0"/>
+                     <xsd:element name="service" type="servizio" minOccurs="0"/>
+                     <xsd:element name="action" type="xsd:string" minOccurs="0"/>
+                     <xsd:element name="application" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+       </xsd:complexType>
        
        <xsd:complexType name="soggetto">
               <xsd:sequence>
-                     <xsd:element name="identificativo" type="soggetto-identificativo">
+                     <xsd:element name="id" type="soggetto-identificativo">
                             
                      </xsd:element>
-                     <xsd:element name="identificativo-porta" type="xsd:string" />
+                     <xsd:element name="domain-id" type="xsd:string" />
               </xsd:sequence>
        </xsd:complexType>
        <xsd:complexType name="soggetto-identificativo">
               <xsd:simpleContent>
                      <xsd:extension base="xsd:string">
-                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                            <xsd:attribute name="type" type="xsd:string" use="required"/>
                      </xsd:extension>
               </xsd:simpleContent>
        </xsd:complexType>
@@ -105,25 +100,25 @@
        <xsd:complexType name="servizio">
               <xsd:simpleContent>
                      <xsd:extension base="xsd:string">
-                            <xsd:attribute name="tipo" type="xsd:string"/>
-                            <xsd:attribute name="versione" type="xsd:integer" use="optional" default="1"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="version" type="xsd:integer" use="optional" default="1"/>
                      </xsd:extension>
               </xsd:simpleContent>
        </xsd:complexType>
        
        <xsd:complexType name="eccezione">
               <xsd:sequence>
-                     <xsd:element name="codice" type="CodiceEccezione" />
-                     <xsd:element name="descrizione" type="xsd:string" />
+                     <xsd:element name="code" type="CodiceEccezione" />
+                     <xsd:element name="description" type="xsd:string" />
               </xsd:sequence>
-              <xsd:attribute name="tipo" type="TipoEccezione" use="required"/>
+              <xsd:attribute name="type" type="TipoEccezione" use="required"/>
        </xsd:complexType>
        
        <xsd:complexType name="CodiceEccezione">
               <xsd:simpleContent>
                      <xsd:extension base="xsd:string">
-                            <xsd:attribute name="tipo" type="xsd:integer" use="required"/>
-                            <xsd:attribute name="sottotipo" type="xsd:integer" use="optional"/>
+                            <xsd:attribute name="type" type="xsd:integer" use="required"/>
+                            <xsd:attribute name="subtype" type="xsd:integer" use="optional"/>
                      </xsd:extension>
               </xsd:simpleContent>
        </xsd:complexType>
@@ -131,17 +126,17 @@
        
        <xsd:simpleType name="TipoPdD">
               <xsd:restriction base="xsd:string">
-                     <xsd:enumeration value="PortaDelegata"/>
-                     <xsd:enumeration value="PortaApplicativa"/>
-                     <xsd:enumeration value="IntegrationManager"/>
-                     <xsd:enumeration value="Router"/>
+                     <xsd:enumeration value="outboundProxy"/>
+                     <xsd:enumeration value="inboundProxy"/>
+                     <xsd:enumeration value="integrationManager"/>
+                     <xsd:enumeration value="router"/>
               </xsd:restriction>
        </xsd:simpleType>
        
        <xsd:simpleType name="TipoEccezione">
               <xsd:restriction base="xsd:string">
-                     <xsd:enumeration value="EccezioneProtocollo"/>
-                     <xsd:enumeration value="EccezioneIntegrazione"/>
+                     <xsd:enumeration value="protocol"/>
+                     <xsd:enumeration value="integration"/>
               </xsd:restriction>
        </xsd:simpleType>
 

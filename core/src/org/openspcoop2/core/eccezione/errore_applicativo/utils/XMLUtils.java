@@ -80,22 +80,22 @@ public class XMLUtils  {
 		
 		int size = motivoErroreValidazione.length();
 		
-		if(erroreApplicativo.getDominio()==null){
+		if(erroreApplicativo.getDomain()==null){
 			motivoErroreValidazione.append("Dominio non definito\n");
 		}
 		else{
-			validate(erroreApplicativo.getDominio(), motivoErroreValidazione);
+			validate(erroreApplicativo.getDomain(), motivoErroreValidazione);
 		}
 		
-		if(erroreApplicativo.getOraRegistrazione()==null){
+		if(erroreApplicativo.getTimestamp()==null){
 			motivoErroreValidazione.append("OraRegistrazione non definita\n");
 		}
 		
-		if(erroreApplicativo.getDatiCooperazione()!=null){
-			validate(erroreApplicativo.getDatiCooperazione(), motivoErroreValidazione);
+		if(erroreApplicativo.getService()!=null){
+			validate(erroreApplicativo.getService(), motivoErroreValidazione);
 		}
 		
-		validate(erroreApplicativo.getEccezione(),motivoErroreValidazione);	
+		validate(erroreApplicativo.getException(),motivoErroreValidazione);	
 		
 		if(motivoErroreValidazione.length()!=size)
 			return false;
@@ -104,51 +104,51 @@ public class XMLUtils  {
 
 	}
 	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
-		if(dominio.getIdentificativoPorta()==null){
-			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
+		if(dominio.getId()==null){
+			motivoErroreValidazione.append("Dominio.id non definito\n");
 		}
-		if(dominio.getFunzione()==null){
+		if(dominio.getRole()==null){
 			motivoErroreValidazione.append("Dominio.funzione non definito\n");
 		}
-		if(dominio.getModulo()==null){
+		if(dominio.getModule()==null){
 			motivoErroreValidazione.append("Dominio.modulo non definito\n");
 		}
-		if(dominio.getSoggetto()==null){
+		if(dominio.getOrganization()==null){
 			motivoErroreValidazione.append("Dominio.soggetto non definita\n");
 		}
 		else{
-			if(dominio.getSoggetto().getTipo()==null){
+			if(dominio.getOrganization().getType()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.tipo non definita\n");
 			}
-			if(dominio.getSoggetto().getBase()==null){
+			if(dominio.getOrganization().getBase()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.nome non definita\n");
 			}
 		}
 	}
 	private static void validate(DatiCooperazione datiCooperazione,StringBuffer motivoErroreValidazione){
-		if(datiCooperazione.getFruitore()!=null){
-			validate(datiCooperazione.getFruitore(), motivoErroreValidazione, "mittente");
+		if(datiCooperazione.getSender()!=null){
+			validate(datiCooperazione.getSender(), motivoErroreValidazione, "mittente");
 		}
-		if(datiCooperazione.getErogatore()!=null){
-			validate(datiCooperazione.getErogatore(), motivoErroreValidazione , "destinatario");
+		if(datiCooperazione.getProvider()!=null){
+			validate(datiCooperazione.getProvider(), motivoErroreValidazione , "destinatario");
 		}
-		if(datiCooperazione.getServizio()!=null){
-			validate(datiCooperazione.getServizio(), motivoErroreValidazione);
+		if(datiCooperazione.getService()!=null){
+			validate(datiCooperazione.getService(), motivoErroreValidazione);
 		}
 	}
 	private static void validate(Soggetto soggetto,StringBuffer motivoErroreValidazione,String tipo){
-		if(soggetto.getIdentificativo()==null){
+		if(soggetto.getId()==null){
 			motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativo non definita\n");
 		}
 		else{
-			if(soggetto.getIdentificativo().getTipo()==null){
+			if(soggetto.getId().getType()==null){
 				motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativo.tipo non definita\n");
 			}
-			if(soggetto.getIdentificativo().getBase()==null){
+			if(soggetto.getId().getBase()==null){
 				motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativo.base non definita\n");
 			}
 		}
-		if(soggetto.getIdentificativoPorta()==null){
+		if(soggetto.getDomainId()==null){
 			motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativoPorta non definita\n");
 		}
 	}
@@ -156,7 +156,7 @@ public class XMLUtils  {
 		if(servizio.getBase()==null){
 			motivoErroreValidazione.append("DatiCooperazione.servizio.base non definita\n");
 		}
-		if(servizio.getTipo()==null){
+		if(servizio.getType()==null){
 			motivoErroreValidazione.append("DatiCooperazione.servizio.tipo non definita\n");
 		}
 	}
@@ -165,21 +165,21 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Eccezione non definita\n");
 		}
 		else{
-			if(eccezione.getCodice()==null){
+			if(eccezione.getCode()==null){
 				motivoErroreValidazione.append("Eccezione.codice non definito\n");
 			}
 			else{
-				if(eccezione.getCodice().getBase()==null){
+				if(eccezione.getCode().getBase()==null){
 					motivoErroreValidazione.append("Eccezione.codice.base non definito\n");
 				}
-				if(eccezione.getCodice().getTipo()==null){
+				if(eccezione.getCode().getType()==null){
 					motivoErroreValidazione.append("Eccezione.codice.tipo non definito\n");
 				}
 			}
-			if(eccezione.getDescrizione()==null){
+			if(eccezione.getDescription()==null){
 				motivoErroreValidazione.append("Eccezione.descrizione non definito\n");
 			}
-			if(eccezione.getTipo()==null){
+			if(eccezione.getType()==null){
 				motivoErroreValidazione.append("Eccezione.tipo non definito\n");
 			}
 		}

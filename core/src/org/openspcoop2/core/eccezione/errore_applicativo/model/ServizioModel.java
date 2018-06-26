@@ -43,8 +43,8 @@ public class ServizioModel extends AbstractModel<Servizio> {
 		super();
 	
 		this.BASE = new Field("base",java.lang.String.class,"servizio",Servizio.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"servizio",Servizio.class);
-		this.VERSIONE = new Field("versione",java.lang.Integer.class,"servizio",Servizio.class);
+		this.TYPE = new Field("type",java.lang.String.class,"servizio",Servizio.class);
+		this.VERSION = new Field("version",java.lang.Integer.class,"servizio",Servizio.class);
 	
 	}
 	
@@ -53,8 +53,8 @@ public class ServizioModel extends AbstractModel<Servizio> {
 		super(father);
 	
 		this.BASE = new ComplexField(father,"base",java.lang.String.class,"servizio",Servizio.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio",Servizio.class);
-		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"servizio",Servizio.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"servizio",Servizio.class);
+		this.VERSION = new ComplexField(father,"version",java.lang.Integer.class,"servizio",Servizio.class);
 	
 	}
 	
@@ -62,9 +62,9 @@ public class ServizioModel extends AbstractModel<Servizio> {
 
 	public IField BASE = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
-	public IField VERSIONE = null;
+	public IField VERSION = null;
 	 
 
 	@Override

@@ -36,8 +36,8 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="soggetto">
  * 		&lt;sequence>
- * 			&lt;element name="identificativo" type="{http://govway.org/integration/fault}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="id" type="{http://govway.org/integration/fault}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="domain-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -51,8 +51,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "soggetto", 
   propOrder = {
-  	"identificativo",
-  	"identificativoPorta"
+  	"id",
+  	"domainId"
   }
 )
 
@@ -62,31 +62,31 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   public Soggetto() {
   }
 
-  public SoggettoIdentificativo getIdentificativo() {
-    return this.identificativo;
+  public SoggettoIdentificativo getId() {
+    return this.id;
   }
 
-  public void setIdentificativo(SoggettoIdentificativo identificativo) {
-    this.identificativo = identificativo;
+  public void setId(SoggettoIdentificativo id) {
+    this.id = id;
   }
 
-  public java.lang.String getIdentificativoPorta() {
-    return this.identificativoPorta;
+  public java.lang.String getDomainId() {
+    return this.domainId;
   }
 
-  public void setIdentificativoPorta(java.lang.String identificativoPorta) {
-    this.identificativoPorta = identificativoPorta;
+  public void setDomainId(java.lang.String domainId) {
+    this.domainId = domainId;
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="identificativo",required=true,nillable=false)
-  protected SoggettoIdentificativo identificativo;
+  @XmlElement(name="id",required=true,nillable=false)
+  protected SoggettoIdentificativo id;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-porta",required=true,nillable=false)
-  protected java.lang.String identificativoPorta;
+  @XmlElement(name="domain-id",required=true,nillable=false)
+  protected java.lang.String domainId;
 
 }

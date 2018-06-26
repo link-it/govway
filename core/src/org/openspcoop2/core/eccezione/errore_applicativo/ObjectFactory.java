@@ -22,6 +22,9 @@
 package org.openspcoop2.core.eccezione.errore_applicativo;
 
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -114,6 +117,19 @@ public class ObjectFactory {
      */
     public DatiCooperazione createDatiCooperazione() {
         return new DatiCooperazione();
+    }
+
+    private final static QName _Fault = new QName("http://govway.org/integration/fault", "fault");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ErroreApplicativo }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://govway.org/integration/fault", name="fault")
+    public JAXBElement<ErroreApplicativo> createFault() {
+        return new JAXBElement<ErroreApplicativo>(_Fault, ErroreApplicativo.class, null, this.createErroreApplicativo());
+    }
+    public JAXBElement<ErroreApplicativo> createFault(ErroreApplicativo fault) {
+        return new JAXBElement<ErroreApplicativo>(_Fault, ErroreApplicativo.class, null, fault);
     }
 
 

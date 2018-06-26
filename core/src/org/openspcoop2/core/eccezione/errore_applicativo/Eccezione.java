@@ -38,10 +38,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="eccezione">
  * 		&lt;sequence>
- * 			&lt;element name="codice" type="{http://govway.org/integration/fault}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="code" type="{http://govway.org/integration/fault}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="tipo" type="{http://govway.org/integration/fault}TipoEccezione" use="required"/>
+ * 		&lt;attribute name="type" type="{http://govway.org/integration/fault}TipoEccezione" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -54,8 +54,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "eccezione", 
   propOrder = {
-  	"codice",
-  	"descrizione"
+  	"code",
+  	"description"
   }
 )
 
@@ -65,57 +65,57 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
   public Eccezione() {
   }
 
-  public CodiceEccezione getCodice() {
-    return this.codice;
+  public CodiceEccezione getCode() {
+    return this.code;
   }
 
-  public void setCodice(CodiceEccezione codice) {
-    this.codice = codice;
+  public void setCode(CodiceEccezione code) {
+    this.code = code;
   }
 
-  public java.lang.String getDescrizione() {
-    return this.descrizione;
+  public java.lang.String getDescription() {
+    return this.description;
   }
 
-  public void setDescrizione(java.lang.String descrizione) {
-    this.descrizione = descrizione;
+  public void setDescription(java.lang.String description) {
+    this.description = description;
   }
 
-  public void set_value_tipo(String value) {
-    this.tipo = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
+  public void set_value_type(String value) {
+    this.type = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
-    if(this.tipo == null){
+  public String get_value_type() {
+    if(this.type == null){
     	return null;
     }else{
-    	return this.tipo.toString();
+    	return this.type.toString();
     }
   }
 
-  public org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione getTipo() {
-    return this.tipo;
+  public org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione getType() {
+    return this.type;
   }
 
-  public void setTipo(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione tipo) {
-    this.tipo = tipo;
+  public void setType(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione type) {
+    this.type = type;
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="codice",required=true,nillable=false)
-  protected CodiceEccezione codice;
+  @XmlElement(name="code",required=true,nillable=false)
+  protected CodiceEccezione code;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="descrizione",required=true,nillable=false)
-  protected java.lang.String descrizione;
+  @XmlElement(name="description",required=true,nillable=false)
+  protected java.lang.String description;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String _value_type;
 
-  @XmlAttribute(name="tipo",required=true)
-  protected TipoEccezione tipo;
+  @XmlAttribute(name="type",required=true)
+  protected TipoEccezione type;
 
 }
