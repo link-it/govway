@@ -37,9 +37,9 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="esito-richiesta">
  * 		&lt;sequence>
- * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="messageId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -52,30 +52,30 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "esito-richiesta", 
   propOrder = {
-  	"identificativoMessaggio"
+  	"messageId"
   }
 )
 
-@XmlRootElement(name = "esito-richiesta")
+@XmlRootElement(name = "result")
 
 public class EsitoRichiesta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public EsitoRichiesta() {
   }
 
-  public java.lang.String getIdentificativoMessaggio() {
-    return this.identificativoMessaggio;
+  public java.lang.String getMessageId() {
+    return this.messageId;
   }
 
-  public void setIdentificativoMessaggio(java.lang.String identificativoMessaggio) {
-    this.identificativoMessaggio = identificativoMessaggio;
+  public void setMessageId(java.lang.String messageId) {
+    this.messageId = messageId;
   }
 
-  public java.lang.String getStato() {
-    return this.stato;
+  public java.lang.String getState() {
+    return this.state;
   }
 
-  public void setStato(java.lang.String stato) {
-    this.stato = stato;
+  public void setState(java.lang.String state) {
+    this.state = state;
   }
 
   private static final long serialVersionUID = 1L;
@@ -95,11 +95,11 @@ public class EsitoRichiesta extends org.openspcoop2.utils.beans.BaseBean impleme
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="identificativo-messaggio",required=true,nillable=false)
-  protected java.lang.String identificativoMessaggio;
+  @XmlElement(name="messageId",required=true,nillable=false)
+  protected java.lang.String messageId;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="stato",required=true)
-  protected java.lang.String stato;
+  @XmlAttribute(name="state",required=true)
+  protected java.lang.String state;
 
 }

@@ -194,21 +194,21 @@ public class ErroreApplicativoMessageUtils {
 			// dominio
 			org.openspcoop2.core.eccezione.router_details.Dominio dominio = new org.openspcoop2.core.eccezione.router_details.Dominio();
 			org.openspcoop2.core.eccezione.router_details.DominioSoggetto dominioSoggetto = new org.openspcoop2.core.eccezione.router_details.DominioSoggetto();
-			dominioSoggetto.setTipo(identitaRouter.getTipo());
+			dominioSoggetto.setType(identitaRouter.getTipo());
 			dominioSoggetto.setBase(identitaRouter.getNome());
-			dominio.setSoggetto(dominioSoggetto);
-			dominio.setIdentificativoPorta(identitaRouter.getCodicePorta());
-			dominio.setModulo(idFunzione);
-			dettaglioRouting.setDominio(dominio);
+			dominio.setOrganization(dominioSoggetto);
+			dominio.setId(identitaRouter.getCodicePorta());
+			dominio.setModule(idFunzione);
+			dettaglioRouting.setDomain(dominio);
 			
 			// oraRegistrazione
-			dettaglioRouting.setOraRegistrazione(DateManager.getDate());
+			dettaglioRouting.setTimestamp(DateManager.getDate());
 			
 			// dettaglio
 			Dettaglio dettaglio = new Dettaglio();
-			dettaglio.setDescrizione(msgErrore);
-			dettaglio.setEsito(org.openspcoop2.core.eccezione.router_details.constants.Costanti.ESITO_ERRORE);
-			dettaglioRouting.setDettaglio(dettaglio);
+			dettaglio.setDescription(msgErrore);
+			dettaglio.setState(org.openspcoop2.core.eccezione.router_details.constants.Costanti.ESITO_ERRORE);
+			dettaglioRouting.setDetail(dettaglio);
 			
 			byte[]xmlDettaglioRouting = org.openspcoop2.core.eccezione.router_details.utils.XMLUtils.generateDettaglioRouting(dettaglioRouting);
 			Element elementDettaglioRouting = xmlUtils.newElement(xmlDettaglioRouting);

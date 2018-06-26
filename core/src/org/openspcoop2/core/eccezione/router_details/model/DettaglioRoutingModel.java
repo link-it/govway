@@ -42,9 +42,9 @@ public class DettaglioRoutingModel extends AbstractModel<DettaglioRouting> {
 	
 		super();
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.router_details.model.DominioModel(new Field("dominio",org.openspcoop2.core.eccezione.router_details.Dominio.class,"dettaglio-routing",DettaglioRouting.class));
-		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"dettaglio-routing",DettaglioRouting.class);
-		this.DETTAGLIO = new org.openspcoop2.core.eccezione.router_details.model.DettaglioModel(new Field("dettaglio",org.openspcoop2.core.eccezione.router_details.Dettaglio.class,"dettaglio-routing",DettaglioRouting.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.router_details.model.DominioModel(new Field("domain",org.openspcoop2.core.eccezione.router_details.Dominio.class,"dettaglio-routing",DettaglioRouting.class));
+		this.TIMESTAMP = new Field("timestamp",java.util.Date.class,"dettaglio-routing",DettaglioRouting.class);
+		this.DETAIL = new org.openspcoop2.core.eccezione.router_details.model.DettaglioModel(new Field("detail",org.openspcoop2.core.eccezione.router_details.Dettaglio.class,"dettaglio-routing",DettaglioRouting.class));
 	
 	}
 	
@@ -52,19 +52,19 @@ public class DettaglioRoutingModel extends AbstractModel<DettaglioRouting> {
 	
 		super(father);
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.router_details.model.DominioModel(new ComplexField(father,"dominio",org.openspcoop2.core.eccezione.router_details.Dominio.class,"dettaglio-routing",DettaglioRouting.class));
-		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"dettaglio-routing",DettaglioRouting.class);
-		this.DETTAGLIO = new org.openspcoop2.core.eccezione.router_details.model.DettaglioModel(new ComplexField(father,"dettaglio",org.openspcoop2.core.eccezione.router_details.Dettaglio.class,"dettaglio-routing",DettaglioRouting.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.router_details.model.DominioModel(new ComplexField(father,"domain",org.openspcoop2.core.eccezione.router_details.Dominio.class,"dettaglio-routing",DettaglioRouting.class));
+		this.TIMESTAMP = new ComplexField(father,"timestamp",java.util.Date.class,"dettaglio-routing",DettaglioRouting.class);
+		this.DETAIL = new org.openspcoop2.core.eccezione.router_details.model.DettaglioModel(new ComplexField(father,"detail",org.openspcoop2.core.eccezione.router_details.Dettaglio.class,"dettaglio-routing",DettaglioRouting.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.router_details.model.DominioModel DOMINIO = null;
+	public org.openspcoop2.core.eccezione.router_details.model.DominioModel DOMAIN = null;
 	 
-	public IField ORA_REGISTRAZIONE = null;
+	public IField TIMESTAMP = null;
 	 
-	public org.openspcoop2.core.eccezione.router_details.model.DettaglioModel DETTAGLIO = null;
+	public org.openspcoop2.core.eccezione.router_details.model.DettaglioModel DETAIL = null;
 	 
 
 	@Override

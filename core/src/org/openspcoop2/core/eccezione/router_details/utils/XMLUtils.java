@@ -71,25 +71,25 @@ public class XMLUtils  {
 		
 		int size = motivoErroreValidazione.length();
 		
-		if(dettaglioRouting.getDominio()==null){
+		if(dettaglioRouting.getDomain()==null){
 			motivoErroreValidazione.append("Dominio non definito\n");
 		}
 		else{
-			validate(dettaglioRouting.getDominio(), motivoErroreValidazione);
+			validate(dettaglioRouting.getDomain(), motivoErroreValidazione);
 		}
 		
-		if(dettaglioRouting.getOraRegistrazione()==null){
+		if(dettaglioRouting.getTimestamp()==null){
 			motivoErroreValidazione.append("OraRegistrazione non definita\n");
 		}
 		
-		if(dettaglioRouting.getDettaglio()==null){
+		if(dettaglioRouting.getDetail()==null){
 			motivoErroreValidazione.append("Dettaglio non definita\n");
 		}
 		else{
-			if(dettaglioRouting.getDettaglio().getDescrizione()==null){
+			if(dettaglioRouting.getDetail().getDescription()==null){
 				motivoErroreValidazione.append("Dettaglio.descrizione non definita\n");
 			}
-			if(dettaglioRouting.getDettaglio().getEsito()==null){
+			if(dettaglioRouting.getDetail().getState()==null){
 				motivoErroreValidazione.append("Dettaglio.esito non definita\n");
 			}
 		}
@@ -101,20 +101,20 @@ public class XMLUtils  {
 
 	}
 	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
-		if(dominio.getIdentificativoPorta()==null){
+		if(dominio.getId()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
-		if(dominio.getModulo()==null){
+		if(dominio.getModule()==null){
 			motivoErroreValidazione.append("Dominio.modulo non definito\n");
 		}
-		if(dominio.getSoggetto()==null){
+		if(dominio.getOrganization()==null){
 			motivoErroreValidazione.append("Dominio.soggetto non definita\n");
 		}
 		else{
-			if(dominio.getSoggetto().getTipo()==null){
+			if(dominio.getOrganization().getType()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.tipo non definita\n");
 			}
-			if(dominio.getSoggetto().getBase()==null){
+			if(dominio.getOrganization().getBase()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.nome non definita\n");
 			}
 		}

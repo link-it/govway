@@ -36,7 +36,8 @@
         </xsd:annotation>
 
         <!-- Contiene il messaggio ritornato dalla Porta di Dominio con presa in carico -->
-        <xsd:element name="esito-richiesta">
+       <xsd:element name="result" type="esito-richiesta"/>
+        <xsd:complexType name="esito-richiesta">
                 <xsd:annotation>
                         <xsd:appinfo>
                                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -44,12 +45,10 @@
                                 </linkit:generator>
                         </xsd:appinfo>
                 </xsd:annotation>
-                <xsd:complexType>
-                        <xsd:sequence>
-                                <xsd:element name="identificativo-messaggio" type="xsd:string"/>
-                        </xsd:sequence>
-                        <xsd:attribute name="stato" type="xsd:string" use="required" fixed="PRESA_IN_CARICO"/>
-                </xsd:complexType>
-        </xsd:element>
+                <xsd:sequence>
+                        <xsd:element name="messageId" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:attribute name="state" type="xsd:string" use="required" fixed="ENQUEUED"/>
+        </xsd:complexType>
 
 </xsd:schema>

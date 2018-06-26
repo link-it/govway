@@ -4,44 +4,39 @@
        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
        attributeFormDefault="unqualified">
 
-       <xsd:element name="dettaglio-routing">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
-                            <xsd:element ref="dominio"/>
-                            <!-- OraRegistrazione -->
-                            <xsd:element name="ora-registrazione" type="xsd:dateTime"/>
-                            <!-- Errore -->
-                            <xsd:element ref="dettaglio"/>
-                     </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
+       <xsd:element name="router-details" type="dettaglio-routing"/>
+       <xsd:complexType name="dettaglio-routing">
+             <xsd:sequence>
+                    <!-- Dati Porta di Comunicazione che ha emesso l'errore applicativo -->
+                    <xsd:element name="domain" type="dominio"/>
+                    <!-- OraRegistrazione -->
+                    <xsd:element name="timestamp" type="xsd:dateTime"/>
+                    <!-- Errore -->
+                    <xsd:element name="detail" type="dettaglio"/>
+             </xsd:sequence>
+      </xsd:complexType>
+          
+      <xsd:complexType name="dominio">
+             <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="organization" type="dominio-soggetto"/>
+             </xsd:sequence>
+             <xsd:attribute name="module" type="xsd:string"/>
+      </xsd:complexType>
+      <xsd:complexType name="dominio-soggetto">
+             <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                           <xsd:attribute name="type" type="xsd:string" use="required"/>
+                    </xsd:extension>
+             </xsd:simpleContent>
+      </xsd:complexType>
        
-       <xsd:element name="dominio">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="identificativo-porta" type="xsd:string"/>
-                            <xsd:element name="soggetto" type="dominio-soggetto"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="modulo" type="xsd:string"/>
-              </xsd:complexType>
-       </xsd:element>
-       <xsd:complexType name="dominio-soggetto">
-              <xsd:simpleContent>
-                     <xsd:extension base="xsd:string">
-                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
-                     </xsd:extension>
-              </xsd:simpleContent>
-       </xsd:complexType>
-       
-       <xsd:element name="dettaglio">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="descrizione" type="xsd:string"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="esito" type="xsd:string" fixed="ERRORE"/>
-              </xsd:complexType>
-       </xsd:element>
+      <xsd:complexType name="dettaglio">
+             <xsd:sequence>
+                    <xsd:element name="description" type="xsd:string"/>
+             </xsd:sequence>
+             <xsd:attribute name="state" type="xsd:string" fixed="ERROR"/>
+      </xsd:complexType>
        
 
 </xsd:schema>

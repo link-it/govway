@@ -42,8 +42,8 @@ public class EsitoRichiestaModel extends AbstractModel<EsitoRichiesta> {
 	
 		super();
 	
-		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
-		this.STATO = new Field("stato",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
+		this.MESSAGE_ID = new Field("messageId",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
+		this.STATE = new Field("state",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
 	
 	}
 	
@@ -51,16 +51,16 @@ public class EsitoRichiestaModel extends AbstractModel<EsitoRichiesta> {
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
-		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
+		this.MESSAGE_ID = new ComplexField(father,"messageId",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
+		this.STATE = new ComplexField(father,"state",java.lang.String.class,"esito-richiesta",EsitoRichiesta.class);
 	
 	}
 	
 	
 
-	public IField IDENTIFICATIVO_MESSAGGIO = null;
+	public IField MESSAGE_ID = null;
 	 
-	public IField STATO = null;
+	public IField STATE = null;
 	 
 
 	@Override

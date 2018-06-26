@@ -67,10 +67,10 @@ public class EsitoRichiestaXMLUtils  {
 	public static boolean validate(EsitoRichiesta esito,StringBuffer motivoErroreValidazione){
 		int size = motivoErroreValidazione.length();
 		
-		if(esito.getIdentificativoMessaggio()==null){
+		if(esito.getMessageId()==null){
 			motivoErroreValidazione.append("Identificativo Messaggio non definito\n");
 		}
-		if(esito.getStato()==null){
+		if(esito.getState()==null){
 			motivoErroreValidazione.append("Stato non definito\n");
 		}
 		

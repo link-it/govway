@@ -2801,8 +2801,8 @@ public class EJBUtils {
 			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
 						
 			EsitoRichiesta esito = new EsitoRichiesta();
-			esito.setIdentificativoMessaggio(id);
-			esito.setStato(org.openspcoop2.core.integrazione.constants.Costanti.PRESA_IN_CARICO);
+			esito.setMessageId(id);
+			esito.setState(org.openspcoop2.core.integrazione.constants.Costanti.PRESA_IN_CARICO);
 			
 			switch (messageType) {
 			case SOAP_11:

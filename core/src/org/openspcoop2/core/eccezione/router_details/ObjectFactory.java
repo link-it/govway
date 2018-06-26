@@ -22,6 +22,9 @@
 package org.openspcoop2.core.eccezione.router_details;
 
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -79,6 +82,19 @@ public class ObjectFactory {
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
+    }
+
+    private final static QName _RouterDetails = new QName("http://govway.org/integration/fault/router_details", "router-details");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DettaglioRouting }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://govway.org/integration/fault/router_details", name="router-details")
+    public JAXBElement<DettaglioRouting> createRouterDetails() {
+        return new JAXBElement<DettaglioRouting>(_RouterDetails, DettaglioRouting.class, null, this.createDettaglioRouting());
+    }
+    public JAXBElement<DettaglioRouting> createRouterDetails(DettaglioRouting routerDetails) {
+        return new JAXBElement<DettaglioRouting>(_RouterDetails, DettaglioRouting.class, null, routerDetails);
     }
 
 

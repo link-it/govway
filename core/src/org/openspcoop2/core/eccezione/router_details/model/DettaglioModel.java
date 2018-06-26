@@ -42,8 +42,8 @@ public class DettaglioModel extends AbstractModel<Dettaglio> {
 	
 		super();
 	
-		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"dettaglio",Dettaglio.class);
-		this.ESITO = new Field("esito",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.DESCRIPTION = new Field("description",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.STATE = new Field("state",java.lang.String.class,"dettaglio",Dettaglio.class);
 	
 	}
 	
@@ -51,16 +51,16 @@ public class DettaglioModel extends AbstractModel<Dettaglio> {
 	
 		super(father);
 	
-		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"dettaglio",Dettaglio.class);
-		this.ESITO = new ComplexField(father,"esito",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.DESCRIPTION = new ComplexField(father,"description",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.STATE = new ComplexField(father,"state",java.lang.String.class,"dettaglio",Dettaglio.class);
 	
 	}
 	
 	
 
-	public IField DESCRIZIONE = null;
+	public IField DESCRIPTION = null;
 	 
-	public IField ESITO = null;
+	public IField STATE = null;
 	 
 
 	@Override

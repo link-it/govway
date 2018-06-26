@@ -43,7 +43,7 @@ public class DominioSoggettoModel extends AbstractModel<DominioSoggetto> {
 		super();
 	
 		this.BASE = new Field("base",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
+		this.TYPE = new Field("type",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
 	
 	}
 	
@@ -52,7 +52,7 @@ public class DominioSoggettoModel extends AbstractModel<DominioSoggetto> {
 		super(father);
 	
 		this.BASE = new ComplexField(father,"base",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"dominio-soggetto",DominioSoggetto.class);
 	
 	}
 	
@@ -60,7 +60,7 @@ public class DominioSoggettoModel extends AbstractModel<DominioSoggetto> {
 
 	public IField BASE = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
 
 	@Override

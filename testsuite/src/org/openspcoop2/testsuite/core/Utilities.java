@@ -302,7 +302,7 @@ public class Utilities {
 				byte[] xml = XMLUtils.getInstance().toByteArray(n);
 				if(EsitoRichiestaXMLUtils.isEsitoRichiesta(xml)){
 					EsitoRichiesta esito = EsitoRichiestaXMLUtils.getEsitoRichiesta(log, xml);
-					return esito.getIdentificativoMessaggio();
+					return esito.getMessageId();
 				}
 			}
 			

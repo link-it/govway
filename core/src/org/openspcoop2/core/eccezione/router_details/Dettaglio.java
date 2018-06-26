@@ -37,9 +37,9 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dettaglio">
  * 		&lt;sequence>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="esito" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -52,7 +52,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dettaglio", 
   propOrder = {
-  	"descrizione"
+  	"description"
   }
 )
 
@@ -62,20 +62,20 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
   public Dettaglio() {
   }
 
-  public java.lang.String getDescrizione() {
-    return this.descrizione;
+  public java.lang.String getDescription() {
+    return this.description;
   }
 
-  public void setDescrizione(java.lang.String descrizione) {
-    this.descrizione = descrizione;
+  public void setDescription(java.lang.String description) {
+    this.description = description;
   }
 
-  public java.lang.String getEsito() {
-    return this.esito;
+  public java.lang.String getState() {
+    return this.state;
   }
 
-  public void setEsito(java.lang.String esito) {
-    this.esito = esito;
+  public void setState(java.lang.String state) {
+    this.state = state;
   }
 
   private static final long serialVersionUID = 1L;
@@ -83,11 +83,11 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="descrizione",required=true,nillable=false)
-  protected java.lang.String descrizione;
+  @XmlElement(name="description",required=true,nillable=false)
+  protected java.lang.String description;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="esito",required=false)
-  protected java.lang.String esito;
+  @XmlAttribute(name="state",required=false)
+  protected java.lang.String state;
 
 }

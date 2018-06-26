@@ -22,6 +22,9 @@
 package org.openspcoop2.core.integrazione;
 
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -58,6 +61,19 @@ public class ObjectFactory {
      */
     public EsitoRichiesta createEsitoRichiesta() {
         return new EsitoRichiesta();
+    }
+
+    private final static QName _Result = new QName("http://govway.org/integration", "result");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link EsitoRichiesta }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://govway.org/integration", name="result")
+    public JAXBElement<EsitoRichiesta> createResult() {
+        return new JAXBElement<EsitoRichiesta>(_Result, EsitoRichiesta.class, null, this.createEsitoRichiesta());
+    }
+    public JAXBElement<EsitoRichiesta> createResult(EsitoRichiesta result) {
+        return new JAXBElement<EsitoRichiesta>(_Result, EsitoRichiesta.class, null, result);
     }
 
 

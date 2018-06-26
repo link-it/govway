@@ -36,9 +36,9 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dettaglio-routing">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://govway.org/integration/fault/router_details}dominio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dettaglio" type="{http://govway.org/integration/fault/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="domain" type="{http://govway.org/integration/fault/router_details}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="detail" type="{http://govway.org/integration/fault/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,40 +52,40 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dettaglio-routing", 
   propOrder = {
-  	"dominio",
-  	"oraRegistrazione",
-  	"dettaglio"
+  	"domain",
+  	"timestamp",
+  	"detail"
   }
 )
 
-@XmlRootElement(name = "dettaglio-routing")
+@XmlRootElement(name = "router-details")
 
 public class DettaglioRouting extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DettaglioRouting() {
   }
 
-  public Dominio getDominio() {
-    return this.dominio;
+  public Dominio getDomain() {
+    return this.domain;
   }
 
-  public void setDominio(Dominio dominio) {
-    this.dominio = dominio;
+  public void setDomain(Dominio domain) {
+    this.domain = domain;
   }
 
-  public java.util.Date getOraRegistrazione() {
-    return this.oraRegistrazione;
+  public java.util.Date getTimestamp() {
+    return this.timestamp;
   }
 
-  public void setOraRegistrazione(java.util.Date oraRegistrazione) {
-    this.oraRegistrazione = oraRegistrazione;
+  public void setTimestamp(java.util.Date timestamp) {
+    this.timestamp = timestamp;
   }
 
-  public Dettaglio getDettaglio() {
-    return this.dettaglio;
+  public Dettaglio getDetail() {
+    return this.detail;
   }
 
-  public void setDettaglio(Dettaglio dettaglio) {
-    this.dettaglio = dettaglio;
+  public void setDetail(Dettaglio detail) {
+    this.detail = detail;
   }
 
   private static final long serialVersionUID = 1L;
@@ -104,15 +104,15 @@ public class DettaglioRouting extends org.openspcoop2.utils.beans.BaseBean imple
   }
 
 
-  @XmlElement(name="dominio",required=true,nillable=false)
-  protected Dominio dominio;
+  @XmlElement(name="domain",required=true,nillable=false)
+  protected Dominio domain;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
-  @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
-  protected java.util.Date oraRegistrazione;
+  @XmlElement(name="timestamp",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date timestamp;
 
-  @XmlElement(name="dettaglio",required=true,nillable=false)
-  protected Dettaglio dettaglio;
+  @XmlElement(name="detail",required=true,nillable=false)
+  protected Dettaglio detail;
 
 }
