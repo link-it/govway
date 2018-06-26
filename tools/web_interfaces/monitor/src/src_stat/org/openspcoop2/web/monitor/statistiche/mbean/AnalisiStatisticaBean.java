@@ -87,7 +87,7 @@ public class AnalisiStatisticaBean implements Serializable {
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE,CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL));
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO,CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_LABEL));
 			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE,CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE_LABEL));
-			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO,CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL));
+			this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO,CostantiGrafici.TIPO_DISTRIBUZIONE_MITTENTE_LABEL));
 		
 			if(this.applicationBean.getShowStatistichePersonalizzate())
 				this.tipiDistribuzione.add(new SelectItem(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA,CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL));

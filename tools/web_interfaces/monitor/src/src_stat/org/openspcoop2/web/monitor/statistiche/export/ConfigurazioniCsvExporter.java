@@ -1001,16 +1001,8 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
 			oneLine.add("");
-		
-		
 
-		
-		// STATO
-		if(StringUtils.isNotEmpty(configurazione.getStato()))
-			oneLine.add(configurazione.getStato());
-		else 
-			oneLine.add("");
-
+		// ASPC
 		if(dettaglioPD.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
 			String nomeAspc = aspc.getNome();
@@ -1021,9 +1013,10 @@ public class ConfigurazioniCsvExporter {
 
 			String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
 
-			oneLine.add(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
+			oneLine.add(NamingUtils.getLabelAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc)));
 		} else 
 			oneLine.add("");
+		
 
 		if(StringUtils.isNotEmpty(dettaglioPD.getPortType()))
 			oneLine.add(dettaglioPD.getPortType());
@@ -1055,13 +1048,14 @@ public class ConfigurazioniCsvExporter {
 		if(StringUtils.isNotEmpty(contesto) && !contesto.endsWith("/"))
 			contesto += "/";
 
-		if(dettaglioPD.getPortaDelegata().getNomeAzione()!=null &&
+		// TODO controllare lista azioni
+		if(StringUtils.isNotEmpty(portaDelegata.getNomeAzione()) &&
 				pdAzione!=null &&
 				(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC.equals(pdAzione.getIdentificazione()))){
 			// Azione: _XXX
-			oneLine.add(dettaglioPD.getPortaDelegata().getNomeAzione());
+			oneLine.add(portaDelegata.getNomeAzione());
 			// URL di Invocazione: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
-			oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+dettaglioPD.getPortaDelegata().getNome());
+			oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+portaDelegata.getNome());
 			oneLine.add("");
 			oneLine.add("");
 		}
@@ -1086,7 +1080,7 @@ public class ConfigurazioniCsvExporter {
 				}
 				oneLine.add(sb.toString());
 				// URL di Base: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
-				oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+dettaglioPD.getPortaDelegata().getNome());
+				oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+portaDelegata.getNome());
 
 				// Identificazione Azione:  urlBased/wsdlBased
 				String suffix = "";
@@ -1104,7 +1098,7 @@ public class ConfigurazioniCsvExporter {
 				}
 				else {
 					if(pdAzione!= null && CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(pdAzione.getIdentificazione())){
-						String exprDefault = ".*"+dettaglioPD.getPortaDelegata().getNome()+"/([^/|^?]*).*";
+						String exprDefault = ".*"+portaDelegata.getNome()+"/([^/|^?]*).*";
 						if(exprDefault.equals(pdAzione.getPattern())==false){
 							// Expressione Regolare: _XXX
 							oneLine.add(pdAzione.getPattern());
@@ -1115,7 +1109,79 @@ public class ConfigurazioniCsvExporter {
 				}
 			}
 		}
-
+		
+		// STATO
+		if(StringUtils.isNotEmpty(configurazione.getStato()))
+			oneLine.add(configurazione.getStato());
+		else 
+			oneLine.add("");
+		
+		
+		// URL INVOCAZIONE
+		String urlInvocazione = null;
+		
+		try {
+			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInSubscriptionInvocationURL(serviceBinding); 
+			
+			String prefix = dettaglioPD.getEndpointApplicativoPD();
+			prefix = prefix.trim();
+			if(useInterfaceNameInInvocationURL) {
+				if(prefix.endsWith("/")==false) {
+					prefix = prefix + "/";
+				}
+			}
+			
+			urlInvocazione = prefix;
+			if(useInterfaceNameInInvocationURL) {
+				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
+				if(StringUtils.isNotEmpty(portaDelegata.getNomePortaDeleganteAzione())) {
+					urlInvocazione = urlInvocazione + n.enrichPA(portaDelegata.getNomePortaDeleganteAzione());
+				} else {
+					urlInvocazione = urlInvocazione + configurazione.getLabel();
+				}
+			}
+		}catch(Exception e) {
+			 urlInvocazione = null;
+		}
+		
+		if(StringUtils.isNotEmpty(urlInvocazione))
+			oneLine.add(urlInvocazione);
+		else 
+			oneLine.add("");
+		
+		
+		if(pdAzione != null) {
+			// Modalita identificazione azione
+			if(pdAzione.getIdentificazione() != null){
+				oneLine.add(pdAzione.getIdentificazione().toString());
+			} else {
+				oneLine.add("");
+			}
+			
+			//Pattern
+			if(StringUtils.isNotEmpty(pdAzione.getPattern()))
+				oneLine.add(pdAzione.getPattern());
+			else 
+				oneLine.add("");
+			
+			// force interface based
+			if(pdAzione.getForceInterfaceBased() != null){
+				oneLine.add(pdAzione.getForceInterfaceBased().getValue());
+			} else {
+				oneLine.add("");
+			}
+			
+		} else {
+			// Modalita identificazione azione
+			oneLine.add("");
+			
+			//Pattern
+			oneLine.add("");
+			
+			// force interface based
+			oneLine.add("");
+		}
+		
 		// Autenticazione (stato)
 		// Autenticazione (opzionale
 		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(pdOp2.getAutenticazione())){
@@ -1131,6 +1197,84 @@ public class ConfigurazioniCsvExporter {
 		else{
 			oneLine.add(CostantiConfigurazione.DISABILITATO.getValue());
 		}
+		
+		// Token (stato)
+		// Token (opzionale)
+		// Token (policy)
+		// Token (validazione input)
+		// Token (introspection)
+		// Token (user info)
+		// Token (forward)
+		GestioneToken gestioneToken = pdOp2.getGestioneToken();
+		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
+		if(gestioneToken != null) {
+			gestioneTokenAutenticazione = gestioneToken.getAutenticazione(); 
+			String policy = gestioneToken.getPolicy();
+			if(policy != null) {
+				oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(policy);
+				oneLine.add(gestioneToken.getValidazione() != null ? gestioneToken.getValidazione().getValue() : ""); 
+				oneLine.add(gestioneToken.getIntrospection() != null ? gestioneToken.getIntrospection().getValue() : "");
+				oneLine.add(gestioneToken.getUserInfo() != null ? gestioneToken.getUserInfo().getValue() : "");
+				oneLine.add(gestioneToken.getForward() != null ? gestioneToken.getForward().getValue() : "");
+				
+			} else {
+				// sei colonne vuote
+				oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+			}
+		} else {
+			// sei colonne vuote
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Autenticazione Token (issuer)
+		// Autenticazione Token (client_id)
+		// Autenticazione Token (subject)
+		// Autenticazione Token (username)
+		// Autenticazione Token (email)
+		if(gestioneTokenAutenticazione != null) {
+			oneLine.add(gestioneTokenAutenticazione.getIssuer().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getClientId().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getSubject().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getUsername().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getEmail().getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		
+		// Autorizzazione (Stato)
+		// Autorizzazione (Soggetti Autorizzati)
+		// Soggetti Autorizzati
+		// Autorizzazione (Ruoli Autorizzati)
+		// Ruoli Richiesti
+		// Ruoli Forniti
+		// Autorizzazione (Scope)
+		// Scope Richiesti
+		// Scope Forniti
+		// Autorizzazione (Token Claims)
+		
+		// Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
+		// Ruoli (separati da '\n')
+		// Ruoli Richiesti (all/any)
+
+		// Autorizzazione (stato): disabilitato/abilitato/xacmlPolicy/NomeCustom
 
 		// Autorizzazione (stato) Tipo: disabilitato/abilitato/xacmlPolicy/NomeCustom
 		// Applicativi Autorizzati la colonna contiene l'elenco degli applicativi separati da '\n').
@@ -1192,6 +1336,159 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 			oneLine.add("");
 		}
+		
+		// Autorizzazione (Scope)
+		// Scope Richiesti
+		// Scope Forniti
+		AutorizzazioneScope scope = pdOp2.getScope();
+		if(scope != null) {
+			oneLine.add(scope.getStato().getValue());
+			oneLine.add(scope.getMatch().getValue());
+			
+			if(scope.getScopeList()!=null){
+				StringBuffer sb = new StringBuffer();
+
+				for (Scope scopeS : scope.getScopeList()) {
+					if(sb.length()>0) sb.append("\n");
+					sb.append(scopeS.getNome());
+				}
+
+				oneLine.add(sb.toString());
+			} else {
+				oneLine.add("");
+			}
+			
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Autorizzazione (Token Claims)
+		
+		if(gestioneToken != null) {
+			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
+				oneLine.add(gestioneToken.getOptions());
+			else 
+				oneLine.add("");
+		}else {
+			oneLine.add("");
+		}
+		
+		
+	    //Validazione (Stato)
+	    //Validazione (Tipo)
+	    //Validazione (Accetta MTOM)
+		
+		ValidazioneContenutiApplicativi validazioneContenutiApplicativi = pdOp2.getValidazioneContenutiApplicativi();
+		if(validazioneContenutiApplicativi != null) {
+			oneLine.add(validazioneContenutiApplicativi.getStato().getValue());
+			oneLine.add(validazioneContenutiApplicativi.getTipo().getValue());
+			oneLine.add(validazioneContenutiApplicativi.getAcceptMtomMessage().getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Sicurezza Messaggio (Stato)
+		// Schema Sicurezza Richiesta
+		// Schema Sicurezza Risposta
+		MessageSecurity messageSecurity = pdOp2.getMessageSecurity();
+		String requestMode = null;
+		String responseMode = null; 
+		
+		if(messageSecurity != null) {
+			if(messageSecurity.getRequestFlow() != null){
+				requestMode = messageSecurity.getRequestFlow().getMode();
+			}
+			if(messageSecurity.getResponseFlow() != null){
+				responseMode = messageSecurity.getResponseFlow().getMode();
+			}
+		}
+		String statoMessageSecurity= pdOp2.getStatoMessageSecurity();
+		
+		if(StringUtils.isNotEmpty(statoMessageSecurity)) {
+			oneLine.add(statoMessageSecurity);
+			
+			if(StatoFunzionalita.ABILITATO.getValue().equals(statoMessageSecurity)) {
+				if(StringUtils.isNotEmpty(requestMode)) {
+					if(requestMode.equals(CostantiConfigurazioni.VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT)) {
+						oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE);
+					} else {
+						oneLine.add(requestMode);
+					}
+				} else {
+					oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO);
+				}
+				
+				if(StringUtils.isNotEmpty(responseMode)) {
+					if(responseMode.equals(CostantiConfigurazioni.VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT)) {
+						oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE);
+					} else {
+						oneLine.add(responseMode);
+					}
+				} else {
+					oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO);
+				}
+			} else {
+				oneLine.add("");
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		
+		// MTOM Richiesta
+		// MTOM Risposta
+		MtomProcessor mtomProcessor = pdOp2.getMtomProcessor();
+		
+		if(mtomProcessor != null) {
+			MtomProcessorFlow requestFlow = mtomProcessor.getRequestFlow();
+			if(requestFlow != null) {
+				oneLine.add(requestFlow.getMode().getValue());
+			} else {
+				oneLine.add("");
+			}
+			
+			MtomProcessorFlow responseFlow = mtomProcessor.getResponseFlow();
+			if(responseFlow != null) {
+				oneLine.add(responseFlow.getMode().getValue());
+			} else {
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Correlazione Applicativa Richiesta
+		// Correlazione Applicativa Risposta
+		int numCorrelazioneReq = 0;
+		int numCorrelazioneRes = 0;
+
+		CorrelazioneApplicativa ca = pdOp2.getCorrelazioneApplicativa();
+		if (ca != null)
+			numCorrelazioneReq = ca.sizeElementoList();
+
+		if (pdOp2.getCorrelazioneApplicativaRisposta() != null)
+			numCorrelazioneRes = pdOp2.getCorrelazioneApplicativaRisposta().sizeElementoList();
+		
+		if(numCorrelazioneReq > 0) {
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		
+		if(numCorrelazioneRes > 0) {
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		
 		
 		// connettore
 		if(dettaglioPD.getConnettore() !=null){

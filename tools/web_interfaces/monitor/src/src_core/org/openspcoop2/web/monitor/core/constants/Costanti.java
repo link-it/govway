@@ -58,4 +58,10 @@ public class Costanti {
 	
 	public static final String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	public static final String LABEL_INFORMAZIONE_NON_PIU_PRESENTE = "Informazione non piu' presente";
+	
+	public static final String VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO = "tokenInfo";
+	public static final String VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO = "identificativoAutenticato";
+	public static final String VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO = "applicativo";
+	
+	public static final String VALUE_CREDENZIALE_TRASPORTO_PREFIX = "trasporto";
 }

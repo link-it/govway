@@ -26,6 +26,17 @@
 				</link:prop>
 			</a4j:outputPanel>
 			
+			<a4j:outputPanel id="panelProtocollo" layout="block" 
+				rendered="#{sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}" >
+				<link:prop label="Modalità">
+					<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
+						defaultLabel="Seleziona Modalità" directInputSuggestions="true" width="412" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.protocolli}"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
+			
 			<a4j:outputPanel id="filtriRicercaTemporale" layout="block" 
 				rendered="#{sf_bean.periodo != 'Live' and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
 			
@@ -88,7 +99,7 @@
 					</rich:comboBox>
 				</link:prop>
 					
-				<link:prop label="Tipologia" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
+				<link:prop label="Tipo" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 						<f:selectItem itemLabel="Erogazione" itemValue="ingresso" />
@@ -97,16 +108,6 @@
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl, ctr-ricerca-personal" actionListener="#{sf_bean.tipologiaRicercaListener}" limitToList="true"/>
 					</rich:comboBox>
 				</link:prop>
-				
-				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" ajaxRendered="true" >
-					<link:prop label="Modalità">
-						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
-							defaultLabel="Seleziona Modalità" directInputSuggestions="true" width="412" enableManualInput="false">
-							<f:selectItems value="#{sf_bean.protocolli}"/>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl" limitToList="true"/>
-						</rich:comboBox>
-					</link:prop>
-				</a4j:outputPanel>
 				
 				<ui:include src="/transazioni/includes/searchFormFiltroSoggetto.xhtml">
 					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
@@ -124,20 +125,6 @@
 					<ui:param name="sf_mbean" value="#{sf_mbean}" />
 			 	</ui:include>
 	
-				<a4j:outputPanel layout="block" id="saComboCtr">
-					<link:prop label="Applicativo" rendered="#{not empty sf_soggettoLocale}">
-						<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
-									defaultLabel="Selezione Applicativo" 
-									directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
-									width="412" enableManualInput="false">
-							<f:selectItem itemValue="--"/>
-							<f:selectItems value="#{sf_serviziApplicativi}"/>
-							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,saToolTip" limitToList="true"/>
-						</rich:comboBox>
-							<rich:toolTip id="saToolTip" rendered="#{not empty sf_servizioApplicativo}" direction="top-right" for="saCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizioApplicativo}"/>
-					</link:prop>
-				</a4j:outputPanel>
-				
 				<a4j:outputPanel layout="block" id="servizioComboCtr">
 					<ui:include src="/transazioni/includes/searchFormFiltroServizio.xhtml">
 						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
@@ -172,6 +159,85 @@
 				 	</ui:include>
 				</a4j:outputPanel>
 				
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="filtriRicercaDatiMittente" layout="block" 
+				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.modalitaRicercaStorico == 'intervalloTemporale')}">
+					
+				<div class="subtitle">
+					<h:outputText id="idDatiMittente" value="Filtro Dati Mittente" styleClass="subtitle"/>
+				</div>	
+				
+				<link:prop label="Tipo" rendered="">
+					<rich:comboBox id="riconoscimentoCombo" value="#{sf_bean.riconoscimento}" 
+								defaultLabel="Selezione Tipo" converter="selectItemConverter"
+								directInputSuggestions="true" width="412" enableManualInput="false">
+							<f:selectItems value="#{sf_bean.listaTipiRiconoscimento}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+				
+				<a4j:outputPanel layout="block" id="tipoRiconoscimentoPnl" rendered="#{not empty sf_bean.riconoscimento}">
+					
+					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_tipologiaRicerca != 'ingresso' and sf_bean.riconoscimento == 'applicativo'}">
+						<link:prop label="Applicativo" required="true">
+							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
+										defaultLabel="Selezione Applicativo" 
+										directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
+										width="412" enableManualInput="false">
+								<f:selectItem itemValue="--"/>
+								<f:selectItems value="#{sf_serviziApplicativi}"/>
+								<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,saToolTip" limitToList="true"/>
+							</rich:comboBox>
+							<rich:toolTip id="saToolTip" rendered="#{not empty sf_servizioApplicativo}" direction="top-right" for="saCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizioApplicativo}"/>
+						</link:prop>
+					</a4j:outputPanel>
+					
+					<a4j:outputPanel layout="block" id="idAutenticatoComboCtr" rendered="#{sf_bean.riconoscimento == 'identificatoAutenticato'}">
+						<link:prop label="Autenticazione" required="true">
+							<rich:comboBox id="authCombo" value="#{sf_bean.autenticazione}" defaultLabel="Selezione Autenticazione" 
+									converter="selectItemConverter"	directInputSuggestions="true" width="412" enableManualInput="false">
+								<f:selectItems value="#{sf_bean.listaAutenticazioni}"/>
+							</rich:comboBox>
+						</link:prop>
+					
+					</a4j:outputPanel>
+					
+					<a4j:outputPanel layout="block" id="tokenInfoComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
+						<link:prop label="Claim" required="true">
+							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
+									converter="selectItemConverter"	directInputSuggestions="true" width="412" enableManualInput="false">
+								<f:selectItem itemValue="--" itemLabel="--"/>
+								<f:selectItem itemValue="token_issuer" itemLabel="Issuer"/>
+								<f:selectItem itemValue="token_clientId" itemLabel="Client ID"/>
+								<f:selectItem itemValue="token_subject" itemLabel="Subject"/>
+								<f:selectItem itemValue="token_username" itemLabel="Username"/>
+								<f:selectItem itemValue="token_eMail" itemLabel="E-Mail"/>
+							</rich:comboBox>
+						</link:prop>
+					
+					</a4j:outputPanel>
+					
+					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificatoAutenticato'}">
+						<link:prop label="Ricerca Esatta">
+							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
+								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
+								<f:selectItem itemValue="LIKE" itemLabel="No"/>
+							</h:selectOneRadio>
+						</link:prop>
+						
+						<link:prop label="Case Sensitive">
+							<h:selectOneRadio id="modRicercaRadioCaseSens" value="#{sf_bean.mittenteCaseSensitiveType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
+								<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
+								<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
+							</h:selectOneRadio>
+						</link:prop>
+						
+						<link:prop label="#{sf_bean.riconoscimento == 'tokenInfo' ? 'Valore' : 'Identificativo'}" required="true">
+							<h:inputText id="valoreRiconoscimento" value="#{sf_bean.valoreRiconoscimento}" styleClass="inputLinkLong"/>
+						</link:prop>
+					</a4j:outputPanel>
+				</a4j:outputPanel>
 			</a4j:outputPanel>
 			
 			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" 
@@ -241,7 +307,7 @@
 				</div>
 				
 				<link:prop label="Ricerca Esatta">
-					<h:selectOneRadio id="radioCorrApp" value="#{sf_bean.correlazioneApplicativaMatchingType}" styleClass="controlset" style="margin-left: 170px">
+					<h:selectOneRadio id="radioCorrApp" value="#{sf_bean.correlazioneApplicativaMatchingType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
 						<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 						<f:selectItem itemValue="LIKE" itemLabel="No"/>
 						<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>
@@ -249,7 +315,7 @@
 				</link:prop>
 				
 				<link:prop label="Case Sensitive">
-					<h:selectOneRadio id="radioCorrAppCaseSens" value="#{sf_bean.correlazioneApplicativaCaseSensitiveType}" styleClass="controlset" style="margin-left: 170px">
+					<h:selectOneRadio id="radioCorrAppCaseSens" value="#{sf_bean.correlazioneApplicativaCaseSensitiveType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
 						<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 						<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
 						<a4j:support event="onchange" rendered="#{sf_bean.periodo eq 'Live'}" limitToList="true"/>

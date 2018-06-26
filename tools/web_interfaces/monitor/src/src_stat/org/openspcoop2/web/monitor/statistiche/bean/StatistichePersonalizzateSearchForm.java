@@ -357,6 +357,10 @@ implements StatisticsContext{
 				return null;
 			}
 			
+			boolean sezioneDatiMittente = this.validaSezioneDatiMittente();
+			
+			if(!sezioneDatiMittente)
+				return null;
 			
 			if(this.getStatistichePersonalizzate() == null){
 				MessageUtils.addErrorMsg("Non sono presenti statistiche personalizzate.");

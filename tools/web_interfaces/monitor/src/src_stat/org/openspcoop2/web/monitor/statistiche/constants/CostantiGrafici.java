@@ -140,8 +140,15 @@ public class CostantiGrafici {
 	public static final String ANDAMENTO_TEMPORALE_LABEL = "Distribuzione Temporale";
 	
 	public static final String DISTRIBUZIONE_PREFIX = "Distribuzione";
+	public static final String DISTRIBUZIONE_PER_MITTENTE_LABEL_SUFFIX = "per Mittente";
 	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX = "per Azione";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "per Applicativo";
+	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "Applicativo";
+	public static final String DISTRIBUZIONE_PER_IDENTIFICATIVO_AUTENTICATO_LABEL_SUFFIX = "Identificativo Autenticato";
+	public static final String DISTRIBUZIONE_PER_TOKEN_ISSUER_LABEL_SUFFIX = "Token Issuer";
+	public static final String DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX = "Token Client ID";
+	public static final String DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX = "Token Subject";
+	public static final String DISTRIBUZIONE_PER_TOKEN_USERNAME_LABEL_SUFFIX = "Token Username";
+	public static final String DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX = "Token E-Mail";
 	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX = "per Servizio";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX = "per Soggetto Locale";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX = "per Soggetto Remoto";
@@ -266,6 +273,7 @@ public class CostantiGrafici {
 	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL = "Distribuzione per Esiti";
 	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL = "Distribuzione per Azione";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
+	public static final String TIPO_DISTRIBUZIONE_MITTENTE_LABEL = "Distribuzione per Mittente";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL = "Distribuzione per Servizio";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";

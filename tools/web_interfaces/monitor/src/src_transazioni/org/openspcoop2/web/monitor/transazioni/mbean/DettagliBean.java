@@ -734,6 +734,17 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaTextAreaUrlInvocazione(boolean visualizzaTextAreaUrlInvocazione) {
 	}
 	
+	public boolean isVisualizzaTextAreaTrasportoMittente() {
+		if(StringUtils.isNotEmpty(this.dettaglio.getTrasportoMittenteLabel())) {
+			if(this.dettaglio.getTrasportoMittenteLabel().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+
+	public void setVisualizzaTextAreaTrasportoMittente(boolean visualizzaTextAreaTrasportoMittente) {
+	}
+	
 	public boolean isVisualizzaTokenInfo(){
 		boolean visualizzaMessaggio = true;
 		String f = this.dettaglio.getTokenInfo();

@@ -38,7 +38,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
@@ -177,20 +177,56 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	}
 
 	public String getCaption() {
-		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		StringBuilder sb = new StringBuilder();
+		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
-			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
-			res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
-			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append( CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
-			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else {
-			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
-		res+= CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
-		return res;
+		sb.append(CostantiGrafici.DISTRIBUZIONE_PER_MITTENTE_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append("(").append(getTipoFiltroDatiMittente()).append(")").append(CostantiGrafici.WHITE_SPACE);
+		return sb.toString();
+	}
+
+	private String getTipoFiltroDatiMittente() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				return CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX;
+			}  else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				return CostantiGrafici.DISTRIBUZIONE_PER_IDENTIFICATIVO_AUTENTICATO_LABEL_SUFFIX;
+			} else { // token
+				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
+					
+					switch (tcm) {
+					case token_clientId:
+						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX;
+					case token_eMail:
+						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX;
+					case token_issuer:
+						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_ISSUER_LABEL_SUFFIX;
+					case token_subject:
+						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX;
+					case token_username:
+						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_USERNAME_LABEL_SUFFIX;
+					case trasporto:
+					default:
+						// caso impossibile
+						break; 
+					}
+				} 
+			}
+		}
+		
+		
+		return CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX;
 	}
 
 	public String getSubCaption() {

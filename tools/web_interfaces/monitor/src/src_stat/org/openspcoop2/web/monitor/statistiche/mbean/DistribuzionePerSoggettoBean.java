@@ -187,26 +187,28 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 	}
 
 	public String getCaption(){
-		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
 		
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
-			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
-			res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
-			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
-			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else {
-			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
 		if(((StatsSearchForm)this.search).isDistribuzionePerSoggettoRemota()){
-			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
 		}
 		else{
-			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
 		}
-		return res;
+		return sb.toString();
 	}
 
 	public String getSubCaption(){

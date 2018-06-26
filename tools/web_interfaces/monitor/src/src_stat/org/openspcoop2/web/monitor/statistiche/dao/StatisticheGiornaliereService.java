@@ -23,6 +23,7 @@ package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -47,9 +48,12 @@ import org.openspcoop2.core.statistiche.dao.IStatisticaOrariaServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
 import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
 import org.openspcoop2.core.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.Union;
@@ -58,6 +62,7 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -74,6 +79,10 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -122,6 +131,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private IStatisticaOrariaServiceSearch statOrariaSearchDAO;
 
 	private IStatisticaSettimanaleServiceSearch statSettimanaleSearchDAO;
+	
+	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
+	private org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService credenzialiMittenteDAO;
 
 	private EsitoUtils esitoUtils;
 
@@ -133,14 +145,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
 					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),StatisticheGiornaliereService.log);
 
-			this.statGiornaliereSearchDAO = this.transazioniStatisticheServiceManager
-					.getStatisticaGiornalieraServiceSearch();
-			this.statMensileSearchDAO = this.transazioniStatisticheServiceManager
-					.getStatisticaMensileServiceSearch();
-			this.statOrariaSearchDAO = this.transazioniStatisticheServiceManager
-					.getStatisticaOrariaServiceSearch();
-			this.statSettimanaleSearchDAO = this.transazioniStatisticheServiceManager
-					.getStatisticaSettimanaleServiceSearch();
+			this.statGiornaliereSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaGiornalieraServiceSearch();
+			this.statMensileSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaMensileServiceSearch();
+			this.statOrariaSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaOrariaServiceSearch();
+			this.statSettimanaleSearchDAO = this.transazioniStatisticheServiceManager.getStatisticaSettimanaleServiceSearch();
+			
+			this.transazioniServiceManager = 
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) DAOFactory
+					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),StatisticheGiornaliereService.log);
+			
+			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
 
 			this.esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log);
 			
@@ -1273,6 +1287,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							this.andamentoTemporaleSearch.getNomeDestinatario());
 				}
 			}
+			
+			this.impostaFiltroDatiMittente(expr, this.andamentoTemporaleSearch, model, isCount);
 
 			if(date==null){
 				// ORDER BY
@@ -1747,6 +1763,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					mitExpr.or(orSoggetti);
 				}
+				
+				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
 
 				// DESTINATARIO
 				IExpression destExpr = dao.newExpression();
@@ -1835,6 +1853,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					destExpr.or(orSoggetti);
 				}
+				
+				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
 
 				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -1971,6 +1991,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					mitExpr.or(orSoggetti);
 				}
+				
+				this.impostaFiltroDatiMittente(mitExpr, this.distribSoggettoSearch, model, true);
 
 				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2095,6 +2117,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					destExpr.or(orSoggetti);
 				}
+				
+				this.impostaFiltroDatiMittente(destExpr, this.distribSoggettoSearch, model, true);
 
 				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -2377,6 +2401,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fruizione_portaDelegata_Expr.and().equals(	model.DESTINATARIO, this.distribSoggettoSearch.getTrafficoPerSoggetto());
 				}
 			}
+			
+			// filtro dati m
+			this.impostaFiltroDatiMittente(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch, model, false);
+			this.impostaFiltroDatiMittente(fruizione_portaDelegata_Expr, this.distribSoggettoSearch, model, false);
 
 			// UNION
 
@@ -3710,6 +3738,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							this.distribServizioSearch.getNomeDestinatario());
 				}
 			}
+			
+			this.impostaFiltroDatiMittente(expr, this.distribServizioSearch, model, isCount);
 
 			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4089,7 +4119,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.SERVIZIO,	idServizio.getNome()).
 					equals(model.VERSIONE_SERVIZIO, idServizio.getVersione()); 
 
-			}  
+			}
+			
+			this.impostaFiltroDatiMittente(expr, this.distribAzioneSearch, model, isCount); 
 			
 			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.AZIONE);
@@ -4105,8 +4137,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.TIPO_DESTINATARIO);
 			expr.addGroupBy(model.DESTINATARIO);
-			
-			
 
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -4561,11 +4591,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression gByExprErogazione = null;
 			IExpression gByExprFruizione = null;
 			IExpression fakeExpr = null;
+			IField credenzialeFieldGroupBy = this.getCredenzialeFieldGroupBy(this.distribSaSearch, model);
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
 					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							forceErogazione,false);	
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
+					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 					
@@ -4578,7 +4609,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceFruizione){
 					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							false,forceFruizione);	
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
+					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
 					
@@ -4593,7 +4624,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				gByExpr = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 						false, false);	
-				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
 				
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -4602,10 +4633,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
-			String aliasFieldServizioApplicativo = "servizio_applicativo";
+			String aliasFieldCredenzialeMittente = "credenziale_mittente";
 			String aliasFieldTipoSoggetto = "tipo_soggetto";
 			String aliasFieldSoggetto = "soggetto";
-			String aliasFieldRuoloSoggetto = "ruolo_soggetto";
+//			String aliasFieldRuoloSoggetto = "ruolo_soggetto";
 			UnionExpression unionExpr = null;
 			UnionExpression unionExprFake = null;
 			UnionExpression unionExprErogatore = null;
@@ -4613,68 +4644,62 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
 					unionExprErogatore = new UnionExpression(gByExprErogazione);
-					unionExprErogatore.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+					unionExprErogatore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
 					unionExprErogatore.addSelectField(model.DESTINATARIO, aliasFieldSoggetto);
-					unionExprErogatore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, 
-							"Erogatore", String.class), 
-							aliasFieldRuoloSoggetto);
+//					unionExprErogatore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Erogatore", String.class),aliasFieldRuoloSoggetto);
 				}
 				if(forceFruizione){
 					unionExprFruitore = new UnionExpression(gByExprFruizione);
-					unionExprFruitore.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 					unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
 					unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
-					unionExprFruitore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, 
-							"Fruitore", String.class), 
-							aliasFieldRuoloSoggetto);
+//					unionExprFruitore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Fruitore", String.class),	aliasFieldRuoloSoggetto);
 				}
 				if(unionExprErogatore==null || unionExprFruitore==null){
 					// Espressione finta per usare l'ordinamento
 					fakeExpr = this.statGiornaliereSearchDAO.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
-					unionExprFake.addSelectField(new ConstantField(aliasFieldServizioApplicativo, 
-							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.SERVIZIO_APPLICATIVO.getFieldType()), 
-							aliasFieldServizioApplicativo);
+					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
+							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
+							aliasFieldCredenzialeMittente);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
 							aliasFieldTipoSoggetto);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldSoggetto, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
 							aliasFieldSoggetto);
-					unionExprFake.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, 
-							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
-							aliasFieldRuoloSoggetto);
+//					unionExprFake.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class),	aliasFieldRuoloSoggetto);
 				}
 			}
 			else{
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				
 				unionExpr = new UnionExpression(gByExpr);
-				unionExpr.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 				
 				// Espressione finta per usare l'ordinamento
 				fakeExpr = this.statGiornaliereSearchDAO.newExpression();
 				unionExprFake = new UnionExpression(fakeExpr);
-				unionExprFake.addSelectField(new ConstantField(aliasFieldServizioApplicativo, 
-						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.SERVIZIO_APPLICATIVO.getFieldType()), 
-						aliasFieldServizioApplicativo);
+				unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
+						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
+						aliasFieldCredenzialeMittente);
 
 			}
 			 			
 			Union union = new Union();
 			union.setUnionAll(true);
-			union.addField(aliasFieldServizioApplicativo);
+			union.addField(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				union.addField(aliasFieldTipoSoggetto);
 				union.addField(aliasFieldSoggetto);
-				union.addField(aliasFieldRuoloSoggetto);
+//				union.addField(aliasFieldRuoloSoggetto);
 			}
-			union.addGroupBy(aliasFieldServizioApplicativo);
+			union.addGroupBy(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
 				union.addGroupBy(aliasFieldTipoSoggetto);
 				union.addGroupBy(aliasFieldSoggetto);
-				union.addGroupBy(aliasFieldRuoloSoggetto);
+//				union.addGroupBy(aliasFieldRuoloSoggetto);
 			}
 
 			UnionExpression [] uExpressions = new UnionExpression[2];
@@ -4900,11 +4925,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				for (Map<String, Object> row : list) {
 
 					ResDistribuzione r = new ResDistribuzione();
-					r.setRisultato((String) row.get(aliasFieldServizioApplicativo));
+					String risultato = (String) row.get(aliasFieldCredenzialeMittente); 
+					
+					if(!risultato.contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
+						risultato = this.getLabelCredenzialeFieldGroupBy(risultato, this.distribSaSearch);
+					
+					r.setRisultato(risultato);
 					
 					if(forceErogazione || forceFruizione){
-						r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/"
-								+ ((String) row.get(aliasFieldSoggetto)));
+						r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/" + ((String) row.get(aliasFieldSoggetto)));
 						
 						//r.getParentMap().put("1",((String) row.get(aliasFieldRuoloSoggetto)));
 					}
@@ -5217,8 +5246,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 
-			expr.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.SERVIZIO_APPLICATIVO);
+			
+			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
 
 			if(forceErogazione){
 				expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -5603,6 +5632,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 			expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
+			expr.and();
+			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// String idRisorsaAggregare = "RISORSA_DA_AGGREGARE";
 			//
@@ -5643,7 +5674,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.sortOrder(SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE);
 			}
 
-		}  catch (ExpressionNotImplementedException e) {
+		}  catch (ExpressionNotImplementedException | NotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
@@ -6001,6 +6032,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 			expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
+			
+			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, isCount);
 
 			// Risorsa da aggregare indica la statistica per cui aggregare, deve coincidere nel campo risorsa_nome
 			String nomeStatisticaPersonalizzata = this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica();
@@ -6029,7 +6062,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.sortOrder(SortOrder.ASC).addOrder(model.DATA,SortOrder.ASC).addOrder(modelContenuti.RISORSA_VALORE,SortOrder.ASC); 
 			}
 
-		}  catch (ExpressionNotImplementedException e) {
+		}  catch (ExpressionNotImplementedException | NotImplementedException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw new ServiceException(e);
 		} catch (ExpressionException e) {
@@ -6349,6 +6382,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try{
 			IExpression expr = parseStatistichePersonalizzateFilter(dao, model, modelContenuti);
 			expr.and();
+			this.impostaFiltroDatiMittente(expr, this.statistichePersonalizzateSearch, model, false);
 
 			boolean resourceStats = false;
 			if(StatisticByResource.ID.equals(this.statistichePersonalizzateSearch.getStatisticaSelezionata().getIdConfigurazioneStatistica())){
@@ -6453,5 +6487,237 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 
 
-
+	private IField getCredenzialeField(org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente, StatisticaModel model) {
+		IField fieldCredenziale = null;
+		String credenzialeTipo = credenzialeMittente.getTipo();
+		if(credenzialeTipo.startsWith(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_CREDENZIALE_TRASPORTO_PREFIX)) {
+			fieldCredenziale = model.TRASPORTO_MITTENTE;
+		} else {
+			org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(credenzialeTipo);
+			
+			switch (tcm) {
+			case token_clientId:
+				fieldCredenziale = model.TOKEN_CLIENT_ID;
+				break;
+			case token_eMail:
+				fieldCredenziale = model.TOKEN_MAIL;
+				break;
+			case token_issuer:
+				fieldCredenziale = model.TOKEN_ISSUER;
+				break;
+			case token_subject:
+				fieldCredenziale = model.TOKEN_SUBJECT;
+				break;
+			case token_username:
+				fieldCredenziale = model.TOKEN_USERNAME;
+				break;
+			case trasporto:
+			default:
+				// caso impossibile
+				break; 
+			}
+		}
+		
+		return fieldCredenziale;
+	}
+	
+	private List<org.openspcoop2.core.transazioni.CredenzialeMittente> getIdCredenzialiFromFilter(BaseSearchForm searchForm, org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService credenzialeMittentiService, boolean isCount) {
+		List<org.openspcoop2.core.transazioni.CredenzialeMittente> findAll = new ArrayList<>();
+		
+		try {
+			CaseSensitiveMatch caseSensitiveMatch = CaseSensitiveMatch.valueOf(searchForm.getMittenteCaseSensitiveType());
+			TipoMatch match = TipoMatch.valueOf(searchForm.getMittenteMatchingType());
+			boolean ricercaEsatta = TipoMatch.EQUALS.equals(match);
+			boolean caseSensitive = CaseSensitiveMatch.SENSITIVE.equals(caseSensitiveMatch);
+			 
+			IPaginatedExpression pagExpr = null;
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				pagExpr = org.openspcoop2.core.transazioni.utils.CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialeMittentiService,
+						org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.trasporto, searchForm.getAutenticazione(), searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+			} 
+			
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				pagExpr = org.openspcoop2.core.transazioni.utils.CredenzialiMittenteUtils.createCredenzialeMittentePaginatedExpression(credenzialeMittentiService,
+						tcm, null, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+			}
+			
+			findAll = credenzialeMittentiService.findAll(pagExpr);
+		}catch(ServiceException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) { 
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			StatisticheGiornaliereService.log.error(e.getMessage(), e);
+		} catch (UtilsException e) {
+			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
+		}
+		return findAll;
+	}
+	
+	private void impostaFiltroDatiMittente(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount)
+			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		// credenziali mittente
+		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if (StringUtils.isNotBlank(searchForm.getServizioApplicativo())) {
+					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
+					filter.and().equals(model.SERVIZIO_APPLICATIVO,	searchForm.getServizioApplicativo());
+				}
+			} else {
+				List<org.openspcoop2.core.transazioni.CredenzialeMittente> listaCredenzialiMittente = getIdCredenzialiFromFilter(searchForm, this.credenzialiMittenteDAO, isCount);
+				
+				// se non ho trovato credenziali che corrispondono a quelle inserite allora restituisco un elenco di transazioni vuoto forzando l'id transazione
+				if(listaCredenzialiMittente.size() ==0) {
+					Calendar c = Calendar.getInstance();
+					Date d = new Date();
+					c.setTime(d);
+					c.set(Calendar.YEAR, 2100);
+					filter.and().equals(model.DATA, c.getTime());
+				} else {
+					org.openspcoop2.core.transazioni.CredenzialeMittente credenzialeMittente = listaCredenzialiMittente.get(0);
+					IField fieldCredenziale = getCredenzialeField(credenzialeMittente, model);
+					
+					if(listaCredenzialiMittente.size() ==1) {
+						filter.and().equals(fieldCredenziale, credenzialeMittente.getId().toString());
+						
+					} else {
+						List<String> ids = new ArrayList<>();
+						for (org.openspcoop2.core.transazioni.CredenzialeMittente cMittente : listaCredenzialiMittente) {
+							ids.add(cMittente.getId().toString());
+						}
+						
+						filter.and().in(fieldCredenziale, ids); 
+					}
+				}
+			}
+		}
+	}
+	
+	private void impostaGroupByFiltroDatiMittente(IExpression filter, BaseSearchForm searchForm, StatisticaModel model, boolean isCount)
+			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		// credenziali mittente
+		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				filter.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.SERVIZIO_APPLICATIVO);
+			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				filter.notEquals(model.TRASPORTO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				filter.addGroupBy(model.TRASPORTO_MITTENTE);
+			} else { // token
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				
+				switch (tcm) {
+				case token_clientId:
+					filter.notEquals(model.TOKEN_CLIENT_ID, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_CLIENT_ID);
+					break;
+				case token_eMail:
+					filter.notEquals(model.TOKEN_MAIL, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_MAIL);
+					break;
+				case token_issuer:
+					filter.notEquals(model.TOKEN_ISSUER, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_ISSUER);
+					break;
+				case token_subject:
+					filter.notEquals(model.TOKEN_SUBJECT, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_SUBJECT);
+					break;
+				case token_username:
+					filter.notEquals(model.TOKEN_USERNAME, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					filter.addGroupBy(model.TOKEN_USERNAME);
+					break;
+				case trasporto:
+				default:
+					// caso impossibile
+					break; 
+				}
+			}
+		}
+	}
+	
+	
+	private IField getCredenzialeFieldGroupBy(BaseSearchForm searchForm, StatisticaModel model) {
+		// credenziali mittente
+		if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
+			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				return model.SERVIZIO_APPLICATIVO;
+			} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				return model.TRASPORTO_MITTENTE;
+			} else { // token
+				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+				
+				switch (tcm) {
+				case token_clientId:
+					return model.TOKEN_CLIENT_ID;
+				case token_eMail:
+					return model.TOKEN_MAIL;
+				case token_issuer:
+					return model.TOKEN_ISSUER;
+				case token_subject:
+					return model.TOKEN_SUBJECT;
+				case token_username:
+					return model.TOKEN_USERNAME;
+				case trasporto:
+				default:
+					// caso impossibile
+					break; 
+				}
+			}
+		}
+		
+		return null;
+		 
+	}
+	
+	
+	private String getLabelCredenzialeFieldGroupBy(String risultato, BaseSearchForm searchForm) {
+		try {
+			// credenziali mittente
+			if(StringUtils.isNotEmpty(searchForm.getRiconoscimento())) {
+				if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+					return risultato;
+				} else if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					if(StringUtils.isNotEmpty(risultato)) {
+						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+						return credenzialeMittente.getCredenziale();
+					}
+				} else { // token
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(searchForm.getTokenClaim());
+					CredenzialeMittente credenzialeMittente  = null;
+					if(StringUtils.isNotEmpty(risultato)) {
+					switch (tcm) {
+					case token_clientId:
+							credenzialeMittente  = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente.getCredenziale();
+					case token_eMail:
+							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente.getCredenziale();
+					case token_issuer:
+							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente.getCredenziale();
+					case token_subject:
+							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente.getCredenziale();
+					case token_username:
+							credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
+							return credenzialeMittente.getCredenziale();
+					case trasporto:
+					default:
+						// caso impossibile
+						break; 
+					}
+				}
+				}
+			}
+		} catch (NumberFormatException | ServiceException | NotFoundException | MultipleResultException	| NotImplementedException e) {
+			StatisticheGiornaliereService	.log.error(e.getMessage(), e);
+		}
+		
+		return risultato;
+		 
+	}
 }

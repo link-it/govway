@@ -590,6 +590,12 @@ Context, Cloneable {
 				}
 			}
 			
+			boolean sezioneDatiMittente = this.validaSezioneDatiMittente();
+			
+			if(!sezioneDatiMittente)
+				return null;
+			
+			
 			if(this.getEsitoGruppo()!=null && (EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.getEsitoGruppo())){
 				if(this.getEsitoDettaglioPersonalizzato()==null || this.getEsitoDettaglioPersonalizzato().length<=0){
 					MessageUtils.addErrorMsg("Selezionare almeno un esito di dettaglio");

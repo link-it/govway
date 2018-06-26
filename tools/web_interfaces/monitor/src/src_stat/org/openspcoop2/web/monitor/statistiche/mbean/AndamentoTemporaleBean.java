@@ -170,40 +170,40 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	}
 
 	public String getCaption() {
-		String res = null;
+		StringBuilder sb = new StringBuilder();
 		if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
-			res = CostantiGrafici.DISTRIBUZIONE_PER_ESITI_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_ESITI_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
 		else{
-			res = CostantiGrafici.ANDAMENTO_TEMPORALE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.ANDAMENTO_TEMPORALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
-			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
-				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
-			}
-			else{
-				res += CostantiGrafici.GIORNALIERO_LABEL + CostantiGrafici.WHITE_SPACE;
-			}
+//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+//			}
+//			else{
+//				sb.append(CostantiGrafici.GIORNALIERO_LABEL).append(CostantiGrafici.WHITE_SPACE;
+//			}
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
-			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
-				res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
-			}
-			else{
-				res += CostantiGrafici.ORARIO_LABEL + CostantiGrafici.WHITE_SPACE;
-			}
+//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
+			sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+//			}
+//			else{
+//				sb.append(CostantiGrafici.ORARIO_LABEL).append(CostantiGrafici.WHITE_SPACE;
+//			}
 		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
-			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
-			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+			sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else {
-			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
-				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
-			}
-			else{
-				res += CostantiGrafici.GIORNALIERO_LABEL + CostantiGrafici.WHITE_SPACE; 
-			}
+//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
+			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
+//			}
+//			else{
+//				sb.append(CostantiGrafici.GIORNALIERO_LABEL).append(CostantiGrafici.WHITE_SPACE); 
+//			}
 		}
-		return res;
+		return sb.toString();
 	}
 
 	public String getSubCaption() {

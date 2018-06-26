@@ -445,7 +445,9 @@
 								<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 								
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTrasportoMittente" value="ID Autenticato" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
-								<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
+								<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and not dettagliBean.visualizzaTextAreaUrlInvocazione}" />
+								<h:inputTextarea id="outTrasportoMittenteTextArea" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" readonly="true"  cols="60" rows="3" styleClass="inputLinkLong" style="width:auto;"
+									rendered="#{not empty dettagliBean.dettaglio.trasportoMittente and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 								
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Metodo HTTP" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
 								<h:outputText id="outTipoRichiesta" value="#{dettagliBean.dettaglio.tipoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />

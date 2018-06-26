@@ -995,8 +995,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 			expr.sortOrder(SortOrder.ASC).addOrder(ServizioApplicativo.model().NOME);
 
-			IPaginatedExpression pagExpr = this.serviziApplicativiDAO
-					.toPaginatedExpression(expr);
+			IPaginatedExpression pagExpr = this.serviziApplicativiDAO.toPaginatedExpression(expr);
 
 			return this.serviziApplicativiDAO.select(pagExpr,true,ServizioApplicativo.model().NOME);
 		} catch (ServiceException e) {

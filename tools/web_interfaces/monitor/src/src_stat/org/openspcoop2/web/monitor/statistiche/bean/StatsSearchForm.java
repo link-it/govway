@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -37,15 +38,16 @@ import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.expression.SortOrder;
-import org.openspcoop2.utils.TipiDatabase;
-
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
+import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 
 /**
  * StatsSearchForm
@@ -140,7 +142,7 @@ public class StatsSearchForm extends BaseSearchForm{
 	@Override
 	protected String eseguiFiltra() {
 		
-		if(validateForm()==false) {
+		if(validateForm(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO))==false) {
 			return null;
 		}
 		
@@ -152,6 +154,45 @@ public class StatsSearchForm extends BaseSearchForm{
 			return this.action;
 
 		return null;
+	}
+	
+	@Override
+	public boolean validaSezioneDatiMittenteCustom() {
+		if(StringUtils.isNotEmpty(this.getRiconoscimento())) {
+			if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+			} else if(this.getRiconoscimento().equals(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+			} else { // token_info
+				if (StringUtils.isEmpty(this.getTokenClaim())) {
+					MessageUtils.addErrorMsg("Indicare un Claim");
+					return false;
+				}
+			}
+		} else {
+			MessageUtils.addErrorMsg("Indicare un Tipo");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public List<SelectItem> getListaTipiRiconoscimento(){
+		List<SelectItem> lst = new ArrayList<>();
+		
+		lst.add(new SelectItem("--", "--"));  
+		/*
+				<f:selectItem itemValue="applicativo" itemLabel="Applicativo"/>
+		<f:selectItem itemValue="identificatoAutenticato" itemLabel="Identificativo Autenticato"/>
+		<f:selectItem itemValue="tokenInfo" itemLabel="Token Info"/>
+		*/
+		
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) || !this.getTipologiaRicerca().equals("ingresso")) {
+			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));  
+		}
+		lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO, "Identificativo Autenticato"));  
+		lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO, "Token Info"));  
+		
+		return lst;
 	}
 
 	@Override
