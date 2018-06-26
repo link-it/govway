@@ -36,11 +36,11 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="eccezione">
- * 		&lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="rilevanza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="contesto-codifica" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="tipo" type="{http://govway.org/integration/fault/details}TipoEccezione" use="required"/>
+ * 		&lt;attribute name="code" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="severity" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="context" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="type" type="{http://govway.org/integration/fault/details}TipoEccezione" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -59,56 +59,56 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
   public Eccezione() {
   }
 
-  public java.lang.String getCodice() {
-    return this.codice;
+  public java.lang.String getCode() {
+    return this.code;
   }
 
-  public void setCodice(java.lang.String codice) {
-    this.codice = codice;
+  public void setCode(java.lang.String code) {
+    this.code = code;
   }
 
-  public java.lang.String getDescrizione() {
-    return this.descrizione;
+  public java.lang.String getDescription() {
+    return this.description;
   }
 
-  public void setDescrizione(java.lang.String descrizione) {
-    this.descrizione = descrizione;
+  public void setDescription(java.lang.String description) {
+    this.description = description;
   }
 
-  public java.lang.String getRilevanza() {
-    return this.rilevanza;
+  public java.lang.String getSeverity() {
+    return this.severity;
   }
 
-  public void setRilevanza(java.lang.String rilevanza) {
-    this.rilevanza = rilevanza;
+  public void setSeverity(java.lang.String severity) {
+    this.severity = severity;
   }
 
-  public java.lang.String getContestoCodifica() {
-    return this.contestoCodifica;
+  public java.lang.String getContext() {
+    return this.context;
   }
 
-  public void setContestoCodifica(java.lang.String contestoCodifica) {
-    this.contestoCodifica = contestoCodifica;
+  public void setContext(java.lang.String context) {
+    this.context = context;
   }
 
-  public void set_value_tipo(String value) {
-    this.tipo = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
+  public void set_value_type(String value) {
+    this.type = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
-    if(this.tipo == null){
+  public String get_value_type() {
+    if(this.type == null){
     	return null;
     }else{
-    	return this.tipo.toString();
+    	return this.type.toString();
     }
   }
 
-  public org.openspcoop2.core.eccezione.details.constants.TipoEccezione getTipo() {
-    return this.tipo;
+  public org.openspcoop2.core.eccezione.details.constants.TipoEccezione getType() {
+    return this.type;
   }
 
-  public void setTipo(org.openspcoop2.core.eccezione.details.constants.TipoEccezione tipo) {
-    this.tipo = tipo;
+  public void setType(org.openspcoop2.core.eccezione.details.constants.TipoEccezione type) {
+    this.type = type;
   }
 
   private static final long serialVersionUID = 1L;
@@ -116,25 +116,25 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="codice",required=true)
-  protected java.lang.String codice;
+  @XmlAttribute(name="code",required=true)
+  protected java.lang.String code;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="descrizione",required=true)
-  protected java.lang.String descrizione;
+  @XmlAttribute(name="description",required=true)
+  protected java.lang.String description;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="rilevanza",required=false)
-  protected java.lang.String rilevanza;
+  @XmlAttribute(name="severity",required=false)
+  protected java.lang.String severity;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="contesto-codifica",required=false)
-  protected java.lang.String contestoCodifica;
+  @XmlAttribute(name="context",required=false)
+  protected java.lang.String context;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String _value_type;
 
-  @XmlAttribute(name="tipo",required=true)
-  protected TipoEccezione tipo;
+  @XmlAttribute(name="type",required=true)
+  protected TipoEccezione type;
 
 }

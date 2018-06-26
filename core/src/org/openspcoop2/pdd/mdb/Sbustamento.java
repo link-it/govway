@@ -531,18 +531,18 @@ public class Sbustamento extends GenericLib{
 						if(bustaRichiesta.sizeListaEccezioni()==1){
 							eccezioneDaInviareServizioApplicativo = bustaRichiesta.getEccezione(0);
 						}else{
-							if(dettaglioEccezione!=null && dettaglioEccezione.getEccezioni()!=null && dettaglioEccezione.getEccezioni().sizeEccezioneList()>0){
-								org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getEccezioni().getEccezione(0);
-								if(TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(e.getTipo())){
+							if(dettaglioEccezione!=null && dettaglioEccezione.getExceptions()!=null && dettaglioEccezione.getExceptions().sizeExceptionList()>0){
+								org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getExceptions().getException(0);
+								if(TipoEccezione.PROTOCOL.equals(e.getType())){
 									ErroreCooperazione msgErroreCooperazione =
-											new ErroreCooperazione(e.getDescrizione(), traduttore.toCodiceErroreCooperazione(e.getCodice()));
+											new ErroreCooperazione(e.getDescription(), traduttore.toCodiceErroreCooperazione(e.getCode()));
 									eccezioneDaInviareServizioApplicativo = new Eccezione(msgErroreCooperazione, false, Sbustamento.ID_MODULO, protocolFactory);
 								}else{
 //									erroreIntegrazioneDaInviareServizioApplicativo = 
 //											new ErroreIntegrazione(e.getDescrizione(), traduttore.toCodiceErroreIntegrazione(e.getCodiceAAA(), propertiesReader.getProprietaGestioneErrorePD(protocolManager).getFaultPrefixCode()));
 									// Se e' arrivato un details di errore di integrazione, comunque genero una busta di errore di processamento, visto che di fatto ho ricevuto questa.
 									eccezioneDaInviareServizioApplicativo = Eccezione.
-											getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(e.getDescrizione()), protocolFactory);
+											getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(e.getDescription()), protocolFactory);
 								}
 							}else{
 								eccezioneDaInviareServizioApplicativo = 

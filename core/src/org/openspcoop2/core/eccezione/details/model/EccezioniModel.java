@@ -42,7 +42,7 @@ public class EccezioniModel extends AbstractModel<Eccezioni> {
 	
 		super();
 	
-		this.ECCEZIONE = new org.openspcoop2.core.eccezione.details.model.EccezioneModel(new Field("eccezione",org.openspcoop2.core.eccezione.details.Eccezione.class,"eccezioni",Eccezioni.class));
+		this.EXCEPTION = new org.openspcoop2.core.eccezione.details.model.EccezioneModel(new Field("exception",org.openspcoop2.core.eccezione.details.Eccezione.class,"eccezioni",Eccezioni.class));
 	
 	}
 	
@@ -50,13 +50,13 @@ public class EccezioniModel extends AbstractModel<Eccezioni> {
 	
 		super(father);
 	
-		this.ECCEZIONE = new org.openspcoop2.core.eccezione.details.model.EccezioneModel(new ComplexField(father,"eccezione",org.openspcoop2.core.eccezione.details.Eccezione.class,"eccezioni",Eccezioni.class));
+		this.EXCEPTION = new org.openspcoop2.core.eccezione.details.model.EccezioneModel(new ComplexField(father,"exception",org.openspcoop2.core.eccezione.details.Eccezione.class,"eccezioni",Eccezioni.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.details.model.EccezioneModel ECCEZIONE = null;
+	public org.openspcoop2.core.eccezione.details.model.EccezioneModel EXCEPTION = null;
 	 
 
 	@Override

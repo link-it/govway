@@ -22,6 +22,9 @@
 package org.openspcoop2.core.eccezione.details;
 
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -100,6 +103,19 @@ public class ObjectFactory {
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
+    }
+
+    private final static QName _FaultDetails = new QName("http://govway.org/integration/fault/details", "fault-details");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DettaglioEccezione }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://govway.org/integration/fault/details", name="fault-details")
+    public JAXBElement<DettaglioEccezione> createFaultDetails() {
+        return new JAXBElement<DettaglioEccezione>(_FaultDetails, DettaglioEccezione.class, null, this.createDettaglioEccezione());
+    }
+    public JAXBElement<DettaglioEccezione> createFaultDetails(DettaglioEccezione faultDetails) {
+        return new JAXBElement<DettaglioEccezione>(_FaultDetails, DettaglioEccezione.class, null, faultDetails);
     }
 
 

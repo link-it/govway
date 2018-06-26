@@ -37,7 +37,7 @@ import java.io.Serializable;
  * &lt;complexType name="dettaglio">
  * 		<xsd:simpleContent>
  * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 				&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 			</xsd:extension>
  * 		</xsd:simpleContent>
  * &lt;/complexType>
@@ -71,12 +71,12 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
     this.base=base;
   }
 
-  public java.lang.String getTipo() {
-    return this.tipo;
+  public java.lang.String getType() {
+    return this.type;
   }
 
-  public void setTipo(java.lang.String tipo) {
-    this.tipo = tipo;
+  public void setType(java.lang.String type) {
+    this.type = type;
   }
 
   private static final long serialVersionUID = 1L;
@@ -88,7 +88,7 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
   public String base;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="tipo",required=true)
-  protected java.lang.String tipo;
+  @XmlAttribute(name="type",required=true)
+  protected java.lang.String type;
 
 }

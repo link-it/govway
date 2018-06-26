@@ -38,14 +38,14 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoPdD implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("PortaDelegata")
-	PORTA_DELEGATA ("PortaDelegata"),
-	@javax.xml.bind.annotation.XmlEnumValue("PortaApplicativa")
-	PORTA_APPLICATIVA ("PortaApplicativa"),
-	@javax.xml.bind.annotation.XmlEnumValue("IntegrationManager")
-	INTEGRATION_MANAGER ("IntegrationManager"),
-	@javax.xml.bind.annotation.XmlEnumValue("Router")
-	ROUTER ("Router");
+	@javax.xml.bind.annotation.XmlEnumValue("outboundProxy")
+	OUTBOUND_PROXY ("outboundProxy"),
+	@javax.xml.bind.annotation.XmlEnumValue("inboundProxy")
+	INBOUND_PROXY ("inboundProxy"),
+	@javax.xml.bind.annotation.XmlEnumValue("integrationManager")
+	INTEGRATION_MANAGER ("integrationManager"),
+	@javax.xml.bind.annotation.XmlEnumValue("router")
+	ROUTER ("router");
 	
 	
 	/** Value */

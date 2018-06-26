@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="dettagli">
  * 		&lt;sequence>
- * 			&lt;element name="dettaglio" type="{http://govway.org/integration/fault/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="detail" type="{http://govway.org/integration/fault/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,7 +52,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dettagli", 
   propOrder = {
-  	"dettaglio"
+  	"detail"
   }
 )
 
@@ -62,62 +62,62 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
   public Dettagli() {
   }
 
-  public void addDettaglio(Dettaglio dettaglio) {
-    this.dettaglio.add(dettaglio);
+  public void addDetail(Dettaglio detail) {
+    this.detail.add(detail);
   }
 
-  public Dettaglio getDettaglio(int index) {
-    return this.dettaglio.get( index );
+  public Dettaglio getDetail(int index) {
+    return this.detail.get( index );
   }
 
-  public Dettaglio removeDettaglio(int index) {
-    return this.dettaglio.remove( index );
+  public Dettaglio removeDetail(int index) {
+    return this.detail.remove( index );
   }
 
-  public List<Dettaglio> getDettaglioList() {
-    return this.dettaglio;
+  public List<Dettaglio> getDetailList() {
+    return this.detail;
   }
 
-  public void setDettaglioList(List<Dettaglio> dettaglio) {
-    this.dettaglio=dettaglio;
+  public void setDetailList(List<Dettaglio> detail) {
+    this.detail=detail;
   }
 
-  public int sizeDettaglioList() {
-    return this.dettaglio.size();
+  public int sizeDetailList() {
+    return this.detail.size();
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="dettaglio",required=true,nillable=false)
-  protected List<Dettaglio> dettaglio = new ArrayList<Dettaglio>();
+  @XmlElement(name="detail",required=true,nillable=false)
+  protected List<Dettaglio> detail = new ArrayList<Dettaglio>();
 
   /**
-   * @deprecated Use method getDettaglioList
+   * @deprecated Use method getDetailList
    * @return List<Dettaglio>
   */
   @Deprecated
-  public List<Dettaglio> getDettaglio() {
-  	return this.dettaglio;
+  public List<Dettaglio> getDetail() {
+  	return this.detail;
   }
 
   /**
-   * @deprecated Use method setDettaglioList
-   * @param dettaglio List<Dettaglio>
+   * @deprecated Use method setDetailList
+   * @param detail List<Dettaglio>
   */
   @Deprecated
-  public void setDettaglio(List<Dettaglio> dettaglio) {
-  	this.dettaglio=dettaglio;
+  public void setDetail(List<Dettaglio> detail) {
+  	this.detail=detail;
   }
 
   /**
-   * @deprecated Use method sizeDettaglioList
+   * @deprecated Use method sizeDetailList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeDettaglio() {
-  	return this.dettaglio.size();
+  public int sizeDetail() {
+  	return this.detail.size();
   }
 
 }

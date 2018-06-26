@@ -42,7 +42,7 @@ public class DettagliModel extends AbstractModel<Dettagli> {
 	
 		super();
 	
-		this.DETTAGLIO = new org.openspcoop2.core.eccezione.details.model.DettaglioModel(new Field("dettaglio",org.openspcoop2.core.eccezione.details.Dettaglio.class,"dettagli",Dettagli.class));
+		this.DETAIL = new org.openspcoop2.core.eccezione.details.model.DettaglioModel(new Field("detail",org.openspcoop2.core.eccezione.details.Dettaglio.class,"dettagli",Dettagli.class));
 	
 	}
 	
@@ -50,13 +50,13 @@ public class DettagliModel extends AbstractModel<Dettagli> {
 	
 		super(father);
 	
-		this.DETTAGLIO = new org.openspcoop2.core.eccezione.details.model.DettaglioModel(new ComplexField(father,"dettaglio",org.openspcoop2.core.eccezione.details.Dettaglio.class,"dettagli",Dettagli.class));
+		this.DETAIL = new org.openspcoop2.core.eccezione.details.model.DettaglioModel(new ComplexField(father,"detail",org.openspcoop2.core.eccezione.details.Dettaglio.class,"dettagli",Dettagli.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.details.model.DettaglioModel DETTAGLIO = null;
+	public org.openspcoop2.core.eccezione.details.model.DettaglioModel DETAIL = null;
 	 
 
 	@Override

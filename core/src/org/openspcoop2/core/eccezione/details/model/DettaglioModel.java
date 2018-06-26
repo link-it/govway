@@ -43,7 +43,7 @@ public class DettaglioModel extends AbstractModel<Dettaglio> {
 		super();
 	
 		this.BASE = new Field("base",java.lang.String.class,"dettaglio",Dettaglio.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.TYPE = new Field("type",java.lang.String.class,"dettaglio",Dettaglio.class);
 	
 	}
 	
@@ -52,7 +52,7 @@ public class DettaglioModel extends AbstractModel<Dettaglio> {
 		super(father);
 	
 		this.BASE = new ComplexField(father,"base",java.lang.String.class,"dettaglio",Dettaglio.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"dettaglio",Dettaglio.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"dettaglio",Dettaglio.class);
 	
 	}
 	
@@ -60,7 +60,7 @@ public class DettaglioModel extends AbstractModel<Dettaglio> {
 
 	public IField BASE = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
 
 	@Override

@@ -148,12 +148,12 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche){
 		org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
 		if(isErroreProtocollo){
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
+			eccezione.setType(TipoEccezione.PROTOCOL);
 		}else{
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
+			eccezione.setType(TipoEccezione.INTEGRATION);
 		}
-		eccezione.setCodice(codErrore);
-		eccezione.setDescrizione(msgErrore);		
+		eccezione.setCode(codErrore);
+		eccezione.setDescription(msgErrore);		
 		return buildDettaglioEccezione_engine(DateManager.getDate(), identitaPdD, tipoPdD , modulo, eccezione, null, 
 				eProcessamento, isIntegrazione, generaInformazioniGeneriche);
 	}
@@ -197,8 +197,8 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 
 		// info generali
-		dettaglioEccezione.setOraRegistrazione(DateManager.getDate());
-		dettaglioEccezione.setDominio(DaoBuilder.buildDominio(identitaPdD, tipoPdD, modulo));
+		dettaglioEccezione.setTimestamp(DateManager.getDate());
+		dettaglioEccezione.setDomain(DaoBuilder.buildDominio(identitaPdD, tipoPdD, modulo));
 
 		// eccezioni buste
 		for (int i = 0; i < busta.sizeListaEccezioni(); i++) {
@@ -206,34 +206,34 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			org.openspcoop2.protocol.sdk.Eccezione e = busta.getEccezione(i);
 
 			org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
-			eccezione.setCodice(e.getCodiceEccezioneValue(this.protocolFactory));
-			eccezione.setRilevanza(e.getRilevanzaValue(this.protocolFactory));
+			eccezione.setType(TipoEccezione.PROTOCOL);
+			eccezione.setCode(e.getCodiceEccezioneValue(this.protocolFactory));
+			eccezione.setSeverity(e.getRilevanzaValue(this.protocolFactory));
 			if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()){
-				eccezione.setDescrizione(this.transformFaultMsg(e.getCodiceEccezione(), e.getDescrizione(this.protocolFactory)));
-				eccezione.setContestoCodifica(this.protocolFactory.createTraduttore().toString(ContestoCodificaEccezione.PROCESSAMENTO));
+				eccezione.setDescription(this.transformFaultMsg(e.getCodiceEccezione(), e.getDescrizione(this.protocolFactory)));
+				eccezione.setContext(this.protocolFactory.createTraduttore().toString(ContestoCodificaEccezione.PROCESSAMENTO));
 			}
 			else{
-				eccezione.setDescrizione(e.getDescrizione(this.protocolFactory));
-				eccezione.setContestoCodifica(this.protocolFactory.createTraduttore().toString(e.getContestoCodifica()));
+				eccezione.setDescription(e.getDescrizione(this.protocolFactory));
+				eccezione.setContext(this.protocolFactory.createTraduttore().toString(e.getContestoCodifica()));
 			}
 
-			if(dettaglioEccezione.getEccezioni()==null){
-				dettaglioEccezione.setEccezioni(new Eccezioni());
+			if(dettaglioEccezione.getExceptions()==null){
+				dettaglioEccezione.setExceptions(new Eccezioni());
 			}
-			dettaglioEccezione.getEccezioni().addEccezione(eccezione);
+			dettaglioEccezione.getExceptions().addException(eccezione);
 		}
 
 		// dettagli
 		if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()==false){
 			if(servizioApplicativoErogatore!=null){
 				Dettaglio detail = new Dettaglio();
-				detail.setTipo("servizioApplicativo");
+				detail.setType("servizioApplicativo");
 				detail.setBase(servizioApplicativoErogatore);
-				if(dettaglioEccezione.getDettagli()==null){
-					dettaglioEccezione.setDettagli(new Dettagli());
+				if(dettaglioEccezione.getDetails()==null){
+					dettaglioEccezione.setDetails(new Dettagli());
 				}
-				dettaglioEccezione.getDettagli().addDettaglio(detail);
+				dettaglioEccezione.getDetails().addDetail(detail);
 			}	
 		}
 		gestioneDettaglioEccezioneProcessamento(eProcessamento, dettaglioEccezione);
@@ -259,7 +259,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			if(generaInformazioniGeneriche){
 
 				Dettaglio detail = new Dettaglio();
-				detail.setTipo("causa");
+				detail.setType("causa");
 
 				String msg = null;
 				if(eProcessamento.getMessage()!=null){
@@ -272,39 +272,39 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 				if("Connection refused".equals(msg)){
 					msg = "Connection refused";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);			
+					dettaglioEccezione.getDetails().addDetail(detail);			
 				}else if("Read timed out".equals(msg)){
 					msg = "Read timed out";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);	
+					dettaglioEccezione.getDetails().addDetail(detail);	
 				}else if("connect timed out".equals(msg)){
 					msg = "Connect timed out";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);	
+					dettaglioEccezione.getDetails().addDetail(detail);	
 				}
 
 			}else{
 
 				Dettaglio detail = new Dettaglio();
-				detail.setTipo("causa");
+				detail.setType("causa");
 
 				if(eProcessamento.getMessage()!=null)
 					detail.setBase(eProcessamento.getMessage());
 				else
 					detail.setBase(eProcessamento.toString());
-				if(dettaglioEccezione.getDettagli()==null){
-					dettaglioEccezione.setDettagli(new Dettagli());
+				if(dettaglioEccezione.getDetails()==null){
+					dettaglioEccezione.setDetails(new Dettagli());
 				}
-				dettaglioEccezione.getDettagli().addDettaglio(detail);
+				dettaglioEccezione.getDetails().addDetail(detail);
 
 				if(eProcessamento.getCause()!=null){
 					gestioneDettaglioEccezioneProcessamento_engine_InnerException(eProcessamento.getCause(), dettaglioEccezione);
@@ -312,7 +312,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 				if(generaStackTrace){
 					Dettaglio detailStackTrace = new Dettaglio();
-					detailStackTrace.setTipo("stackTrace");
+					detailStackTrace.setType("stackTrace");
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					PrintWriter pWriter = new PrintWriter(bout);
 					eProcessamento.printStackTrace(pWriter);
@@ -325,10 +325,10 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 						System.err.println("ERRORE buildEccezioneProcessamentoFromBusta: "+eClose.getMessage());
 					}
 					detailStackTrace.setBase(bout.toString());
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detailStackTrace);
+					dettaglioEccezione.getDetails().addDetail(detailStackTrace);
 				}
 			}
 		}
@@ -336,15 +336,15 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 	private void gestioneDettaglioEccezioneProcessamento_engine_InnerException(Throwable e,DettaglioEccezione dettaglioEccezione){
 		if(e!=null){
 			Dettaglio detail = new Dettaglio();
-			detail.setTipo("causato da");
+			detail.setType("causato da");
 			if(e.getMessage()!=null)
 				detail.setBase(e.getMessage());
 			else
 				detail.setBase(e.toString());
-			if(dettaglioEccezione.getDettagli()==null){
-				dettaglioEccezione.setDettagli(new Dettagli());
+			if(dettaglioEccezione.getDetails()==null){
+				dettaglioEccezione.setDetails(new Dettagli());
 			}
-			dettaglioEccezione.getDettagli().addDettaglio(detail);
+			dettaglioEccezione.getDetails().addDetail(detail);
 
 			if(e.getCause()!=null){
 				gestioneDettaglioEccezioneProcessamento_engine_InnerException(e.getCause(), dettaglioEccezione);
@@ -361,7 +361,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 	public Dettaglio buildDettagio(String tipo, String base){
 		Dettaglio dettaglio = new Dettaglio();
-		dettaglio.setTipo(tipo);
+		dettaglio.setType(tipo);
 		dettaglio.setBase(base);
 		return dettaglio;
 	}

@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="eccezioni">
  * 		&lt;sequence>
- * 			&lt;element name="eccezione" type="{http://govway.org/integration/fault/details}eccezione" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="exception" type="{http://govway.org/integration/fault/details}eccezione" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,7 +52,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "eccezioni", 
   propOrder = {
-  	"eccezione"
+  	"exception"
   }
 )
 
@@ -62,62 +62,62 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
   public Eccezioni() {
   }
 
-  public void addEccezione(Eccezione eccezione) {
-    this.eccezione.add(eccezione);
+  public void addException(Eccezione exception) {
+    this.exception.add(exception);
   }
 
-  public Eccezione getEccezione(int index) {
-    return this.eccezione.get( index );
+  public Eccezione getException(int index) {
+    return this.exception.get( index );
   }
 
-  public Eccezione removeEccezione(int index) {
-    return this.eccezione.remove( index );
+  public Eccezione removeException(int index) {
+    return this.exception.remove( index );
   }
 
-  public List<Eccezione> getEccezioneList() {
-    return this.eccezione;
+  public List<Eccezione> getExceptionList() {
+    return this.exception;
   }
 
-  public void setEccezioneList(List<Eccezione> eccezione) {
-    this.eccezione=eccezione;
+  public void setExceptionList(List<Eccezione> exception) {
+    this.exception=exception;
   }
 
-  public int sizeEccezioneList() {
-    return this.eccezione.size();
+  public int sizeExceptionList() {
+    return this.exception.size();
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="eccezione",required=true,nillable=false)
-  protected List<Eccezione> eccezione = new ArrayList<Eccezione>();
+  @XmlElement(name="exception",required=true,nillable=false)
+  protected List<Eccezione> exception = new ArrayList<Eccezione>();
 
   /**
-   * @deprecated Use method getEccezioneList
+   * @deprecated Use method getExceptionList
    * @return List<Eccezione>
   */
   @Deprecated
-  public List<Eccezione> getEccezione() {
-  	return this.eccezione;
+  public List<Eccezione> getException() {
+  	return this.exception;
   }
 
   /**
-   * @deprecated Use method setEccezioneList
-   * @param eccezione List<Eccezione>
+   * @deprecated Use method setExceptionList
+   * @param exception List<Eccezione>
   */
   @Deprecated
-  public void setEccezione(List<Eccezione> eccezione) {
-  	this.eccezione=eccezione;
+  public void setException(List<Eccezione> exception) {
+  	this.exception=exception;
   }
 
   /**
-   * @deprecated Use method sizeEccezioneList
+   * @deprecated Use method sizeExceptionList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeEccezione() {
-  	return this.eccezione.size();
+  public int sizeException() {
+  	return this.exception.size();
   }
 
 }

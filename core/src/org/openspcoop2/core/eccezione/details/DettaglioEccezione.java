@@ -36,10 +36,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dettaglio-eccezione">
  * 		&lt;sequence>
- * 			&lt;element name="dominio" type="{http://govway.org/integration/fault/details}dominio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="eccezioni" type="{http://govway.org/integration/fault/details}eccezioni" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dettagli" type="{http://govway.org/integration/fault/details}dettagli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="domain" type="{http://govway.org/integration/fault/details}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="exceptions" type="{http://govway.org/integration/fault/details}eccezioni" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="details" type="{http://govway.org/integration/fault/details}dettagli" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -53,49 +53,49 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dettaglio-eccezione", 
   propOrder = {
-  	"dominio",
-  	"oraRegistrazione",
-  	"eccezioni",
-  	"dettagli"
+  	"domain",
+  	"timestamp",
+  	"exceptions",
+  	"details"
   }
 )
 
-@XmlRootElement(name = "dettaglio-eccezione")
+@XmlRootElement(name = "fault-details")
 
 public class DettaglioEccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DettaglioEccezione() {
   }
 
-  public Dominio getDominio() {
-    return this.dominio;
+  public Dominio getDomain() {
+    return this.domain;
   }
 
-  public void setDominio(Dominio dominio) {
-    this.dominio = dominio;
+  public void setDomain(Dominio domain) {
+    this.domain = domain;
   }
 
-  public java.util.Date getOraRegistrazione() {
-    return this.oraRegistrazione;
+  public java.util.Date getTimestamp() {
+    return this.timestamp;
   }
 
-  public void setOraRegistrazione(java.util.Date oraRegistrazione) {
-    this.oraRegistrazione = oraRegistrazione;
+  public void setTimestamp(java.util.Date timestamp) {
+    this.timestamp = timestamp;
   }
 
-  public Eccezioni getEccezioni() {
-    return this.eccezioni;
+  public Eccezioni getExceptions() {
+    return this.exceptions;
   }
 
-  public void setEccezioni(Eccezioni eccezioni) {
-    this.eccezioni = eccezioni;
+  public void setExceptions(Eccezioni exceptions) {
+    this.exceptions = exceptions;
   }
 
-  public Dettagli getDettagli() {
-    return this.dettagli;
+  public Dettagli getDetails() {
+    return this.details;
   }
 
-  public void setDettagli(Dettagli dettagli) {
-    this.dettagli = dettagli;
+  public void setDetails(Dettagli details) {
+    this.details = details;
   }
 
   private static final long serialVersionUID = 1L;
@@ -114,18 +114,18 @@ public class DettaglioEccezione extends org.openspcoop2.utils.beans.BaseBean imp
   }
 
 
-  @XmlElement(name="dominio",required=true,nillable=false)
-  protected Dominio dominio;
+  @XmlElement(name="domain",required=true,nillable=false)
+  protected Dominio domain;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
-  @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
-  protected java.util.Date oraRegistrazione;
+  @XmlElement(name="timestamp",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date timestamp;
 
-  @XmlElement(name="eccezioni",required=true,nillable=false)
-  protected Eccezioni eccezioni;
+  @XmlElement(name="exceptions",required=true,nillable=false)
+  protected Eccezioni exceptions;
 
-  @XmlElement(name="dettagli",required=false,nillable=false)
-  protected Dettagli dettagli;
+  @XmlElement(name="details",required=false,nillable=false)
+  protected Dettagli details;
 
 }

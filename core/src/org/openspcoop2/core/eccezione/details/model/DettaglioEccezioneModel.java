@@ -42,10 +42,10 @@ public class DettaglioEccezioneModel extends AbstractModel<DettaglioEccezione> {
 	
 		super();
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.details.model.DominioModel(new Field("dominio",org.openspcoop2.core.eccezione.details.Dominio.class,"dettaglio-eccezione",DettaglioEccezione.class));
-		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"dettaglio-eccezione",DettaglioEccezione.class);
-		this.ECCEZIONI = new org.openspcoop2.core.eccezione.details.model.EccezioniModel(new Field("eccezioni",org.openspcoop2.core.eccezione.details.Eccezioni.class,"dettaglio-eccezione",DettaglioEccezione.class));
-		this.DETTAGLI = new org.openspcoop2.core.eccezione.details.model.DettagliModel(new Field("dettagli",org.openspcoop2.core.eccezione.details.Dettagli.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.details.model.DominioModel(new Field("domain",org.openspcoop2.core.eccezione.details.Dominio.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.TIMESTAMP = new Field("timestamp",java.util.Date.class,"dettaglio-eccezione",DettaglioEccezione.class);
+		this.EXCEPTIONS = new org.openspcoop2.core.eccezione.details.model.EccezioniModel(new Field("exceptions",org.openspcoop2.core.eccezione.details.Eccezioni.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.DETAILS = new org.openspcoop2.core.eccezione.details.model.DettagliModel(new Field("details",org.openspcoop2.core.eccezione.details.Dettagli.class,"dettaglio-eccezione",DettaglioEccezione.class));
 	
 	}
 	
@@ -53,22 +53,22 @@ public class DettaglioEccezioneModel extends AbstractModel<DettaglioEccezione> {
 	
 		super(father);
 	
-		this.DOMINIO = new org.openspcoop2.core.eccezione.details.model.DominioModel(new ComplexField(father,"dominio",org.openspcoop2.core.eccezione.details.Dominio.class,"dettaglio-eccezione",DettaglioEccezione.class));
-		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"dettaglio-eccezione",DettaglioEccezione.class);
-		this.ECCEZIONI = new org.openspcoop2.core.eccezione.details.model.EccezioniModel(new ComplexField(father,"eccezioni",org.openspcoop2.core.eccezione.details.Eccezioni.class,"dettaglio-eccezione",DettaglioEccezione.class));
-		this.DETTAGLI = new org.openspcoop2.core.eccezione.details.model.DettagliModel(new ComplexField(father,"dettagli",org.openspcoop2.core.eccezione.details.Dettagli.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.DOMAIN = new org.openspcoop2.core.eccezione.details.model.DominioModel(new ComplexField(father,"domain",org.openspcoop2.core.eccezione.details.Dominio.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.TIMESTAMP = new ComplexField(father,"timestamp",java.util.Date.class,"dettaglio-eccezione",DettaglioEccezione.class);
+		this.EXCEPTIONS = new org.openspcoop2.core.eccezione.details.model.EccezioniModel(new ComplexField(father,"exceptions",org.openspcoop2.core.eccezione.details.Eccezioni.class,"dettaglio-eccezione",DettaglioEccezione.class));
+		this.DETAILS = new org.openspcoop2.core.eccezione.details.model.DettagliModel(new ComplexField(father,"details",org.openspcoop2.core.eccezione.details.Dettagli.class,"dettaglio-eccezione",DettaglioEccezione.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.core.eccezione.details.model.DominioModel DOMINIO = null;
+	public org.openspcoop2.core.eccezione.details.model.DominioModel DOMAIN = null;
 	 
-	public IField ORA_REGISTRAZIONE = null;
+	public IField TIMESTAMP = null;
 	 
-	public org.openspcoop2.core.eccezione.details.model.EccezioniModel ECCEZIONI = null;
+	public org.openspcoop2.core.eccezione.details.model.EccezioniModel EXCEPTIONS = null;
 	 
-	public org.openspcoop2.core.eccezione.details.model.DettagliModel DETTAGLI = null;
+	public org.openspcoop2.core.eccezione.details.model.DettagliModel DETAILS = null;
 	 
 
 	@Override

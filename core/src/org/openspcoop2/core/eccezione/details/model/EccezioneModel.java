@@ -42,11 +42,11 @@ public class EccezioneModel extends AbstractModel<Eccezione> {
 	
 		super();
 	
-		this.CODICE = new Field("codice",java.lang.String.class,"eccezione",Eccezione.class);
-		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"eccezione",Eccezione.class);
-		this.RILEVANZA = new Field("rilevanza",java.lang.String.class,"eccezione",Eccezione.class);
-		this.CONTESTO_CODIFICA = new Field("contesto-codifica",java.lang.String.class,"eccezione",Eccezione.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CODE = new Field("code",java.lang.String.class,"eccezione",Eccezione.class);
+		this.DESCRIPTION = new Field("description",java.lang.String.class,"eccezione",Eccezione.class);
+		this.SEVERITY = new Field("severity",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CONTEXT = new Field("context",java.lang.String.class,"eccezione",Eccezione.class);
+		this.TYPE = new Field("type",java.lang.String.class,"eccezione",Eccezione.class);
 	
 	}
 	
@@ -54,25 +54,25 @@ public class EccezioneModel extends AbstractModel<Eccezione> {
 	
 		super(father);
 	
-		this.CODICE = new ComplexField(father,"codice",java.lang.String.class,"eccezione",Eccezione.class);
-		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"eccezione",Eccezione.class);
-		this.RILEVANZA = new ComplexField(father,"rilevanza",java.lang.String.class,"eccezione",Eccezione.class);
-		this.CONTESTO_CODIFICA = new ComplexField(father,"contesto-codifica",java.lang.String.class,"eccezione",Eccezione.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CODE = new ComplexField(father,"code",java.lang.String.class,"eccezione",Eccezione.class);
+		this.DESCRIPTION = new ComplexField(father,"description",java.lang.String.class,"eccezione",Eccezione.class);
+		this.SEVERITY = new ComplexField(father,"severity",java.lang.String.class,"eccezione",Eccezione.class);
+		this.CONTEXT = new ComplexField(father,"context",java.lang.String.class,"eccezione",Eccezione.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"eccezione",Eccezione.class);
 	
 	}
 	
 	
 
-	public IField CODICE = null;
+	public IField CODE = null;
 	 
-	public IField DESCRIZIONE = null;
+	public IField DESCRIPTION = null;
 	 
-	public IField RILEVANZA = null;
+	public IField SEVERITY = null;
 	 
-	public IField CONTESTO_CODIFICA = null;
+	public IField CONTEXT = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
 
 	@Override

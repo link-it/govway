@@ -38,10 +38,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoEccezione implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("EccezioneProtocollo")
-	ECCEZIONE_PROTOCOLLO ("EccezioneProtocollo"),
-	@javax.xml.bind.annotation.XmlEnumValue("EccezioneIntegrazione")
-	ECCEZIONE_INTEGRAZIONE ("EccezioneIntegrazione");
+	@javax.xml.bind.annotation.XmlEnumValue("protocol")
+	PROTOCOL ("protocol"),
+	@javax.xml.bind.annotation.XmlEnumValue("integration")
+	INTEGRATION ("integration");
 	
 	
 	/** Value */

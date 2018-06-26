@@ -31,7 +31,7 @@ package org.openspcoop2.core.eccezione.errore_applicativo.constants;
  */
 public class Costanti {
 	
-	public static final String ROOT_LOCAL_NAME_ERRORE_APPLICATIVO = "errore-applicativo";
+	public static final String ROOT_LOCAL_NAME_ERRORE_APPLICATIVO = "fault";
 	
 	public static final String TARGET_NAMESPACE = "http://govway.org/integration/fault";
 

@@ -79,47 +79,47 @@ public class XMLUtils  {
 		
 		int size = motivoErroreValidazione.length();
 		
-		if(eccezione.getDominio()==null){
+		if(eccezione.getDomain()==null){
 			motivoErroreValidazione.append("Dominio non definito\n");
 		}
 		else{
-			validate(eccezione.getDominio(), motivoErroreValidazione);
+			validate(eccezione.getDomain(), motivoErroreValidazione);
 		}
 		
-		if(eccezione.getOraRegistrazione()==null){
+		if(eccezione.getTimestamp()==null){
 			motivoErroreValidazione.append("OraRegistrazione non definita\n");
 		}
 
-		if(eccezione.getEccezioni()==null){
+		if(eccezione.getExceptions()==null){
 			motivoErroreValidazione.append("Nessuna eccezione definita\n");
 		}else{
-			if(eccezione.getEccezioni().sizeEccezioneList()<=0){
+			if(eccezione.getExceptions().sizeExceptionList()<=0){
 				motivoErroreValidazione.append("Nessuna eccezione definita\n");
 			}
 			else{
-				for (int i = 0; i < eccezione.getEccezioni().sizeEccezioneList(); i++) {
-					Eccezione ecc = eccezione.getEccezioni().getEccezione(i);
-					if(ecc.getCodice()==null){
+				for (int i = 0; i < eccezione.getExceptions().sizeExceptionList(); i++) {
+					Eccezione ecc = eccezione.getExceptions().getException(i);
+					if(ecc.getCode()==null){
 						motivoErroreValidazione.append("Eccezione.codice non definito\n");
 					}
-					if(ecc.getDescrizione()==null){
+					if(ecc.getDescription()==null){
 						motivoErroreValidazione.append("Eccezione.codice non definito\n");
 					}
-					if(ecc.getTipo()==null){
+					if(ecc.getType()==null){
 						motivoErroreValidazione.append("Eccezione.tipo non definito\n");
 					}
 				}
 			}
 		}
-		if(eccezione.getDettagli()!=null){
-			if(eccezione.getDettagli().sizeDettaglioList()>0){
-				for (int i = 0; i < eccezione.getDettagli().sizeDettaglioList(); i++) {
-					Dettaglio detail = eccezione.getDettagli().getDettaglio(i);
+		if(eccezione.getDetails()!=null){
+			if(eccezione.getDetails().sizeDetailList()>0){
+				for (int i = 0; i < eccezione.getDetails().sizeDetailList(); i++) {
+					Dettaglio detail = eccezione.getDetails().getDetail(i);
 					if(detail==null){
 						motivoErroreValidazione.append("Detail presente e non definito??\n");
 					}
 					else{
-						if(detail.getTipo()==null){
+						if(detail.getType()==null){
 							motivoErroreValidazione.append("Detail["+i+"].tipo non definito\n");
 						}
 						if(detail.getBase()==null){
@@ -137,23 +137,23 @@ public class XMLUtils  {
 
 	}
 	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
-		if(dominio.getIdentificativoPorta()==null){
+		if(dominio.getId()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
-		if(dominio.getFunzione()==null){
+		if(dominio.getRole()==null){
 			motivoErroreValidazione.append("Dominio.funzione non definito\n");
 		}
-		if(dominio.getModulo()==null){
+		if(dominio.getModule()==null){
 			motivoErroreValidazione.append("Dominio.modulo non definito\n");
 		}
-		if(dominio.getSoggetto()==null){
+		if(dominio.getOrganization()==null){
 			motivoErroreValidazione.append("Dominio.soggetto non definita\n");
 		}
 		else{
-			if(dominio.getSoggetto().getTipo()==null){
+			if(dominio.getOrganization().getType()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.tipo non definita\n");
 			}
-			if(dominio.getSoggetto().getBase()==null){
+			if(dominio.getOrganization().getBase()==null){
 				motivoErroreValidazione.append("Dominio.soggetto.nome non definita\n");
 			}
 		}
@@ -503,43 +503,43 @@ public class XMLUtils  {
 		StringBuffer bf = new StringBuffer();
 		if(de!=null){
 			
-			if(de.getOraRegistrazione()!=null){
+			if(de.getTimestamp()!=null){
 				SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
-				bf.append("("+dateformat.format(de.getOraRegistrazione())+")");
+				bf.append("("+dateformat.format(de.getTimestamp())+")");
 			}
 			
-			if(de.getDominio()!=null){
+			if(de.getDomain()!=null){
 				
 				bf.append(" ");
 				
 				boolean writeSoggetto = false;
-				if(de.getDominio().getIdentificativoPorta()!=null){
-					bf.append(de.getDominio().getIdentificativoPorta());
+				if(de.getDomain().getId()!=null){
+					bf.append(de.getDomain().getId());
 					writeSoggetto = true;
-					if(de.getDominio().getSoggetto()!=null){
+					if(de.getDomain().getOrganization()!=null){
 						bf.append(".");
 					}
 				}
 				
-				if(de.getDominio().getSoggetto()!=null){
-					bf.append(de.getDominio().getSoggetto().getTipo()+"/"+de.getDominio().getSoggetto().getBase());
+				if(de.getDomain().getOrganization()!=null){
+					bf.append(de.getDomain().getOrganization().getType()+"/"+de.getDomain().getOrganization().getBase());
 					writeSoggetto = true;
 				}
 				
-				if(de.getDominio().getFunzione()!=null || de.getDominio().getModulo()!=null){
+				if(de.getDomain().getRole()!=null || de.getDomain().getModule()!=null){
 					if(writeSoggetto){
 						bf.append(" ");
 					}
 				}
 				
-				if(de.getDominio().getFunzione()!=null){
-					bf.append(de.getDominio().getFunzione());
-					if(de.getDominio().getModulo()!=null){
+				if(de.getDomain().getRole()!=null){
+					bf.append(de.getDomain().getRole());
+					if(de.getDomain().getModule()!=null){
 						bf.append(".");
 					}
 				}
-				if(de.getDominio().getModulo()!=null){
-					bf.append(de.getDominio().getModulo());
+				if(de.getDomain().getModule()!=null){
+					bf.append(de.getDomain().getModule());
 				}
 			}
 			
@@ -549,22 +549,22 @@ public class XMLUtils  {
 			}
 			
 			int sizeEccezioni = 0;
-			if(de.getEccezioni()!=null){
-				sizeEccezioni = de.getEccezioni().sizeEccezioneList();
+			if(de.getExceptions()!=null){
+				sizeEccezioni = de.getExceptions().sizeExceptionList();
 			}
 			
 			int sizeDettagli = 0;
-			if(de.getDettagli()!=null){
-				sizeDettagli = de.getDettagli().sizeDettaglioList();
+			if(de.getDetails()!=null){
+				sizeDettagli = de.getDetails().sizeDetailList();
 			}
 			
 			bf.append("ha rilevato "+sizeEccezioni+" eccezione/i (dettagli:"+sizeDettagli+")");
 			for(int k=0; k<sizeEccezioni;k++){
-				bf.append("\n- Eccezione ("+de.getEccezioni().getEccezione(k).getTipo()+") ["+de.getEccezioni().getEccezione(k).getCodice()+"] "+de.getEccezioni().getEccezione(k).getDescrizione());
+				bf.append("\n- Eccezione ("+de.getExceptions().getException(k).getType()+") ["+de.getExceptions().getException(k).getCode()+"] "+de.getExceptions().getException(k).getDescription());
 			}
 			if(sizeDettagli>0){
 				for(int k=0; k<sizeDettagli;k++){
-					bf.append("\n- Dettaglio ["+de.getDettagli().getDettaglio(k).getTipo()+"] "+de.getDettagli().getDettaglio(k).getBase());
+					bf.append("\n- Dettaglio ["+de.getDetails().getDetail(k).getType()+"] "+de.getDetails().getDetail(k).getBase());
 				}
 			}
 		}

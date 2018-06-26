@@ -251,10 +251,10 @@ public class OpenSPCoopDetailsUtilities {
 					String idFunzioneValue = funzione.getTextContent();
 					String identificativoFunzioneAtteso = null;
 					if(tipoPdDAtteso.equals(TipoPdD.DELEGATA)){
-						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_DELEGATA.getValue();
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.OUTBOUND_PROXY.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.APPLICATIVA)){
-						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_APPLICATIVA.getValue();
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INBOUND_PROXY.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.INTEGRATION_MANAGER)){
 						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INTEGRATION_MANAGER.getValue();
@@ -378,12 +378,12 @@ public class OpenSPCoopDetailsUtilities {
 										(valoreCodiceEccezione.startsWith(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE) && 
 												org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_NAMESPACE.equals(namespaceCodiceEccezione))
 									){
-									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(valoreTipoEccezione)){
+									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.PROTOCOL.equals(valoreTipoEccezione)){
 										okTipo = true;
 									}
 								}
 								else{
-									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.ECCEZIONE_INTEGRAZIONE.equals(valoreTipoEccezione)){
+									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.INTEGRATION.equals(valoreTipoEccezione)){
 										okTipo = true;
 									}
 								}

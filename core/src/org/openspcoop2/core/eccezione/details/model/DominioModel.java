@@ -42,10 +42,10 @@ public class DominioModel extends AbstractModel<Dominio> {
 	
 		super();
 	
-		this.IDENTIFICATIVO_PORTA = new Field("identificativo-porta",java.lang.String.class,"dominio",Dominio.class);
-		this.SOGGETTO = new org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel(new Field("soggetto",org.openspcoop2.core.eccezione.details.DominioSoggetto.class,"dominio",Dominio.class));
-		this.FUNZIONE = new Field("funzione",java.lang.String.class,"dominio",Dominio.class);
-		this.MODULO = new Field("modulo",java.lang.String.class,"dominio",Dominio.class);
+		this.ID = new Field("id",java.lang.String.class,"dominio",Dominio.class);
+		this.ORGANIZATION = new org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel(new Field("organization",org.openspcoop2.core.eccezione.details.DominioSoggetto.class,"dominio",Dominio.class));
+		this.ROLE = new Field("role",java.lang.String.class,"dominio",Dominio.class);
+		this.MODULE = new Field("module",java.lang.String.class,"dominio",Dominio.class);
 	
 	}
 	
@@ -53,22 +53,22 @@ public class DominioModel extends AbstractModel<Dominio> {
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_PORTA = new ComplexField(father,"identificativo-porta",java.lang.String.class,"dominio",Dominio.class);
-		this.SOGGETTO = new org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel(new ComplexField(father,"soggetto",org.openspcoop2.core.eccezione.details.DominioSoggetto.class,"dominio",Dominio.class));
-		this.FUNZIONE = new ComplexField(father,"funzione",java.lang.String.class,"dominio",Dominio.class);
-		this.MODULO = new ComplexField(father,"modulo",java.lang.String.class,"dominio",Dominio.class);
+		this.ID = new ComplexField(father,"id",java.lang.String.class,"dominio",Dominio.class);
+		this.ORGANIZATION = new org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel(new ComplexField(father,"organization",org.openspcoop2.core.eccezione.details.DominioSoggetto.class,"dominio",Dominio.class));
+		this.ROLE = new ComplexField(father,"role",java.lang.String.class,"dominio",Dominio.class);
+		this.MODULE = new ComplexField(father,"module",java.lang.String.class,"dominio",Dominio.class);
 	
 	}
 	
 	
 
-	public IField IDENTIFICATIVO_PORTA = null;
+	public IField ID = null;
 	 
-	public org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel SOGGETTO = null;
+	public org.openspcoop2.core.eccezione.details.model.DominioSoggettoModel ORGANIZATION = null;
 	 
-	public IField FUNZIONE = null;
+	public IField ROLE = null;
 	 
-	public IField MODULO = null;
+	public IField MODULE = null;
 	 
 
 	@Override

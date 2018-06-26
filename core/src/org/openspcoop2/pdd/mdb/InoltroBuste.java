@@ -3887,23 +3887,23 @@ public class InoltroBuste extends GenericLib{
 						StringBuffer bfDettagliEccezione = new StringBuffer();
 						if(bustaRisposta.sizeListaEccezioni()>0)
 							msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, bustaRisposta.toStringListaEccezioni(protocolFactory));
-						else if(dettaglioEccezione!=null && dettaglioEccezione.getEccezioni()!=null){
-							for(int i=0; i<dettaglioEccezione.getEccezioni().sizeEccezioneList(); i++){
+						else if(dettaglioEccezione!=null && dettaglioEccezione.getExceptions()!=null){
+							for(int i=0; i<dettaglioEccezione.getExceptions().sizeExceptionList(); i++){
 								if(i>0)
 									bfDettagliEccezione.append("\n");
-								org.openspcoop2.core.eccezione.details.Eccezione eccDettaglio = dettaglioEccezione.getEccezioni().getEccezione(i);
-								if(eccDettaglio.getRilevanza()!=null && eccDettaglio.getContestoCodifica()!=null){
-									bfDettagliEccezione.append("Eccezione ("+eccDettaglio.getTipo()+") "+eccDettaglio.getRilevanza()+" con codice ["+eccDettaglio.getCodice()+"] - "
-											+eccDettaglio.getContestoCodifica() +", descrizione errore: "+eccDettaglio.getDescrizione());
+								org.openspcoop2.core.eccezione.details.Eccezione eccDettaglio = dettaglioEccezione.getExceptions().getException(i);
+								if(eccDettaglio.getSeverity()!=null && eccDettaglio.getContext()!=null){
+									bfDettagliEccezione.append("Eccezione ("+eccDettaglio.getType()+") "+eccDettaglio.getSeverity()+" con codice ["+eccDettaglio.getCode()+"] - "
+											+eccDettaglio.getContext() +", descrizione errore: "+eccDettaglio.getDescription());
 								}else{
-									bfDettagliEccezione.append("Eccezione ("+eccDettaglio.getTipo()+") con codice ["+eccDettaglio.getCodice()+"], descrizione errore: "+eccDettaglio.getDescrizione());
+									bfDettagliEccezione.append("Eccezione ("+eccDettaglio.getType()+") con codice ["+eccDettaglio.getCode()+"], descrizione errore: "+eccDettaglio.getDescription());
 								}
 							}
-							if(dettaglioEccezione.getDettagli()!=null){
-								for(int i=0; i<dettaglioEccezione.getDettagli().sizeDettaglioList(); i++){
+							if(dettaglioEccezione.getDetails()!=null){
+								for(int i=0; i<dettaglioEccezione.getDetails().sizeDetailList(); i++){
 									bfDettagliEccezione.append("\n");
-									org.openspcoop2.core.eccezione.details.Dettaglio eccDettaglio = dettaglioEccezione.getDettagli().getDettaglio(i);
-									bfDettagliEccezione.append("Dettaglio ["+eccDettaglio.getTipo()+"]: "+eccDettaglio.getBase());
+									org.openspcoop2.core.eccezione.details.Dettaglio eccDettaglio = dettaglioEccezione.getDetails().getDetail(i);
+									bfDettagliEccezione.append("Dettaglio ["+eccDettaglio.getType()+"]: "+eccDettaglio.getBase());
 								}
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, bfDettagliEccezione.toString());

@@ -56,10 +56,10 @@ public class DaoBuilder {
 	public static Dominio buildDominio(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo){
 		org.openspcoop2.core.eccezione.details.constants.TipoPdD idFunzione = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_DELEGATA;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.OUTBOUND_PROXY;
 		}
 		else if(TipoPdD.APPLICATIVA.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_APPLICATIVA;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INBOUND_PROXY;
 		}
 		else if(TipoPdD.INTEGRATION_MANAGER.equals(tipoPdD)){
 			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INTEGRATION_MANAGER;
@@ -71,33 +71,33 @@ public class DaoBuilder {
 		Dominio dominio = new Dominio();
 		DominioSoggetto dominioSoggetto = new DominioSoggetto();
 		dominioSoggetto.setBase(identitaPdD.getNome());
-		dominioSoggetto.setTipo(identitaPdD.getTipo());
-		dominio.setSoggetto(dominioSoggetto);
-		dominio.setIdentificativoPorta(identitaPdD.getCodicePorta());
-		dominio.setFunzione(idFunzione);
-		dominio.setModulo(modulo);
+		dominioSoggetto.setType(identitaPdD.getTipo());
+		dominio.setOrganization(dominioSoggetto);
+		dominio.setId(identitaPdD.getCodicePorta());
+		dominio.setRole(idFunzione);
+		dominio.setModule(modulo);
 		return dominio;
 	}
 	
 	public static DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, String codErrore,String msgErrore,boolean isErroreProtocollo){
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 			
-		dettaglioEccezione.setOraRegistrazione(DateManager.getDate());
+		dettaglioEccezione.setTimestamp(DateManager.getDate());
 		
-		dettaglioEccezione.setDominio(buildDominio(identitaPdD, tipoPdD, modulo));
+		dettaglioEccezione.setDomain(buildDominio(identitaPdD, tipoPdD, modulo));
 		
 		org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
-		eccezione.setCodice(codErrore);
-		eccezione.setDescrizione(msgErrore);
+		eccezione.setCode(codErrore);
+		eccezione.setDescription(msgErrore);
 		if(isErroreProtocollo){
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
+			eccezione.setType(TipoEccezione.PROTOCOL);
 		}else{
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
+			eccezione.setType(TipoEccezione.INTEGRATION);
 		}
-		if(dettaglioEccezione.getEccezioni()==null){
-			dettaglioEccezione.setEccezioni(new Eccezioni());
+		if(dettaglioEccezione.getExceptions()==null){
+			dettaglioEccezione.setExceptions(new Eccezioni());
 		}
-		dettaglioEccezione.getEccezioni().addEccezione(eccezione);
+		dettaglioEccezione.getExceptions().addException(eccezione);
 		return dettaglioEccezione;
 	}
 	
@@ -105,43 +105,43 @@ public class DaoBuilder {
 		DettaglioEccezione dettaglioEccezione = new DettaglioEccezione();
 
 		// info generali
-		dettaglioEccezione.setOraRegistrazione(oraRegistrazione);
+		dettaglioEccezione.setTimestamp(oraRegistrazione);
 		
-		dettaglioEccezione.setDominio(buildDominio(identitaPdD, tipoPdD, modulo));
+		dettaglioEccezione.setDomain(buildDominio(identitaPdD, tipoPdD, modulo));
 		
 		if(eccezione != null){
-			if(dettaglioEccezione.getEccezioni()==null){
-				dettaglioEccezione.setEccezioni(new Eccezioni());
+			if(dettaglioEccezione.getExceptions()==null){
+				dettaglioEccezione.setExceptions(new Eccezioni());
 			}
-			dettaglioEccezione.getEccezioni().addEccezione(eccezione);
+			dettaglioEccezione.getExceptions().addException(eccezione);
 		}
 		
 		if(dettaglio != null){
-			if(dettaglioEccezione.getDettagli()==null){
-				dettaglioEccezione.setDettagli(new Dettagli());
+			if(dettaglioEccezione.getDetails()==null){
+				dettaglioEccezione.setDetails(new Dettagli());
 			}
-			dettaglioEccezione.getDettagli().addDettaglio(dettaglio);
+			dettaglioEccezione.getDetails().addDetail(dettaglio);
 		}
 		return dettaglioEccezione;
 	}
 	
 	public static Eccezione buildEccezione(String codice, String descrizione, String rilevanza, String contesto, boolean isErroreProtocollo){
 		Eccezione eccezione = new Eccezione();
-		eccezione.setCodice(codice);
-		eccezione.setDescrizione(descrizione);
-		eccezione.setRilevanza(rilevanza);
-		eccezione.setContestoCodifica(contesto);
+		eccezione.setCode(codice);
+		eccezione.setDescription(descrizione);
+		eccezione.setSeverity(rilevanza);
+		eccezione.setContext(contesto);
 		if(isErroreProtocollo){
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
+			eccezione.setType(TipoEccezione.PROTOCOL);
 		}else{
-			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
+			eccezione.setType(TipoEccezione.INTEGRATION);
 		}
 		return eccezione;
 	}
 	
 	public static Dettaglio buildDettagio(String tipo, String base){
 		Dettaglio dettaglio = new Dettaglio();
-		dettaglio.setTipo(tipo);
+		dettaglio.setType(tipo);
 		dettaglio.setBase(base);
 		return dettaglio;
 	}
@@ -174,7 +174,7 @@ public class DaoBuilder {
 			if(generaInformazioniGeneriche){
 
 				Dettaglio detail = new Dettaglio();
-				detail.setTipo("causa");
+				detail.setType("causa");
 
 				String msg = null;
 				if(eProcessamento.getMessage()!=null){
@@ -187,24 +187,24 @@ public class DaoBuilder {
 				if("Connection refused".equals(msg)){
 					msg = "Connection refused";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);			
+					dettaglioEccezione.getDetails().addDetail(detail);			
 				}else if("Read timed out".equals(msg)){
 					msg = "Read timed out";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);	
+					dettaglioEccezione.getDetails().addDetail(detail);	
 				}else if("connect timed out".equals(msg)){
 					msg = "Connect timed out";
 					detail.setBase(msg);
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detail);	
+					dettaglioEccezione.getDetails().addDetail(detail);	
 				}
 
 			}else{
@@ -216,10 +216,10 @@ public class DaoBuilder {
 				
 				Dettaglio detail = DaoBuilder.buildDettagio("causa",base);
 				
-				if(dettaglioEccezione.getDettagli()==null){
-					dettaglioEccezione.setDettagli(new Dettagli());
+				if(dettaglioEccezione.getDetails()==null){
+					dettaglioEccezione.setDetails(new Dettagli());
 				}
-				dettaglioEccezione.getDettagli().addDettaglio(detail);
+				dettaglioEccezione.getDetails().addDetail(detail);
 
 				if(eProcessamento.getCause()!=null){
 					DaoBuilder.gestioneDettaglioEccezioneProcessamento_engine_InnerException(eProcessamento.getCause(), dettaglioEccezione);
@@ -227,7 +227,7 @@ public class DaoBuilder {
 
 				if(generaStackTrace){
 					Dettaglio detailStackTrace = new Dettaglio();
-					detailStackTrace.setTipo("stackTrace");
+					detailStackTrace.setType("stackTrace");
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					PrintWriter pWriter = new PrintWriter(bout);
 					eProcessamento.printStackTrace(pWriter);
@@ -240,10 +240,10 @@ public class DaoBuilder {
 						System.err.println("ERRORE buildEccezioneProcessamentoFromBusta: "+eClose.getMessage());
 					}
 					detailStackTrace.setBase(bout.toString());
-					if(dettaglioEccezione.getDettagli()==null){
-						dettaglioEccezione.setDettagli(new Dettagli());
+					if(dettaglioEccezione.getDetails()==null){
+						dettaglioEccezione.setDetails(new Dettagli());
 					}
-					dettaglioEccezione.getDettagli().addDettaglio(detailStackTrace);
+					dettaglioEccezione.getDetails().addDetail(detailStackTrace);
 				}
 			}
 		}
@@ -260,10 +260,10 @@ public class DaoBuilder {
 			Dettaglio detail = DaoBuilder.buildDettagio("causato da", base);
 			
 			
-			if(dettaglioEccezione.getDettagli()==null){
-				dettaglioEccezione.setDettagli(new Dettagli());
+			if(dettaglioEccezione.getDetails()==null){
+				dettaglioEccezione.setDetails(new Dettagli());
 			}
-			dettaglioEccezione.getDettagli().addDettaglio(detail);
+			dettaglioEccezione.getDetails().addDetail(detail);
 
 			if(e.getCause()!=null){
 				DaoBuilder.gestioneDettaglioEccezioneProcessamento_engine_InnerException(e.getCause(), dettaglioEccezione);

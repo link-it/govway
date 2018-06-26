@@ -31,7 +31,7 @@ package org.openspcoop2.core.eccezione.details.constants;
  */
 public class Costanti {
 	
-	public static final String ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE = "dettaglio-eccezione";
+	public static final String ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE = "fault-details";
 	
 	public static final String TARGET_NAMESPACE = "http://govway.org/integration/fault/details";
 
