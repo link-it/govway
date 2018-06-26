@@ -38,6 +38,8 @@ import java.io.Serializable;
  * &lt;complexType name="servizio-applicativo">
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="tipologia_fruizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="tipologia_erogazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -53,6 +55,8 @@ import java.io.Serializable;
 @XmlType(name = "servizio-applicativo", 
   propOrder = {
   	"nome",
+  	"tipologiaFruizione",
+  	"tipologiaErogazione",
   	"idSoggetto"
   }
 )
@@ -85,6 +89,22 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.nome = nome;
   }
 
+  public java.lang.String getTipologiaFruizione() {
+    return this.tipologiaFruizione;
+  }
+
+  public void setTipologiaFruizione(java.lang.String tipologiaFruizione) {
+    this.tipologiaFruizione = tipologiaFruizione;
+  }
+
+  public java.lang.String getTipologiaErogazione() {
+    return this.tipologiaErogazione;
+  }
+
+  public void setTipologiaErogazione(java.lang.String tipologiaErogazione) {
+    this.tipologiaErogazione = tipologiaErogazione;
+  }
+
   public IdSoggetto getIdSoggetto() {
     return this.idSoggetto;
   }
@@ -115,6 +135,14 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipologia_fruizione",required=true,nillable=false)
+  protected java.lang.String tipologiaFruizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipologia_erogazione",required=true,nillable=false)
+  protected java.lang.String tipologiaErogazione;
 
   @XmlElement(name="id-soggetto",required=true,nillable=false)
   protected IdSoggetto idSoggetto;

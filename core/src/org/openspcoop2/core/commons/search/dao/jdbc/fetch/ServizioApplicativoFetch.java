@@ -57,6 +57,10 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setNome", ServizioApplicativo.model().NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome", ServizioApplicativo.model().NOME.getFieldType()));
+				setParameter(object, "setTipologiaFruizione", ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "tipologia_fruizione", ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE.getFieldType()));
+				setParameter(object, "setTipologiaErogazione", ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "tipologia_erogazione", ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE.getFieldType()));
 				return object;
 			}
 			
@@ -81,6 +85,10 @@ public class ServizioApplicativoFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id"));
 				setParameter(object, "setNome", ServizioApplicativo.model().NOME.getFieldType(),
 					this.getObjectFromMap(map,"nome"));
+				setParameter(object, "setTipologiaFruizione", ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE.getFieldType(),
+					this.getObjectFromMap(map,"tipologia_fruizione"));
+				setParameter(object, "setTipologiaErogazione", ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE.getFieldType(),
+					this.getObjectFromMap(map,"tipologia_erogazione"));
 				return object;
 			}
 			

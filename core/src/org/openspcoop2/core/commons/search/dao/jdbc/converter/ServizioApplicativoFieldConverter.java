@@ -75,6 +75,20 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 				return "nome";
 			}
 		}
+		if(field.equals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipologia_fruizione";
+			}else{
+				return "tipologia_fruizione";
+			}
+		}
+		if(field.equals(ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipologia_erogazione";
+			}else{
+				return "tipologia_erogazione";
+			}
+		}
 		if(field.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_soggetto";
@@ -103,6 +117,12 @@ public class ServizioApplicativoFieldConverter extends AbstractSQLFieldConverter
 		// the full definition of the table containing the alias
 		
 		if(field.equals(ServizioApplicativo.model().NOME)){
+			return this.toTable(ServizioApplicativo.model(), returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE)){
+			return this.toTable(ServizioApplicativo.model(), returnAlias);
+		}
+		if(field.equals(ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE)){
 			return this.toTable(ServizioApplicativo.model(), returnAlias);
 		}
 		if(field.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO)){

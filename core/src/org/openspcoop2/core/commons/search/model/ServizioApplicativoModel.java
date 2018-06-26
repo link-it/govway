@@ -43,6 +43,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		super();
 	
 		this.NOME = new Field("nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOLOGIA_FRUIZIONE = new Field("tipologia_fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOLOGIA_EROGAZIONE = new Field("tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
@@ -52,6 +54,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 		super(father);
 	
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOLOGIA_FRUIZIONE = new ComplexField(father,"tipologia_fruizione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
+		this.TIPOLOGIA_EROGAZIONE = new ComplexField(father,"tipologia_erogazione",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"servizio-applicativo",ServizioApplicativo.class));
 	
 	}
@@ -59,6 +63,10 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 
 	public IField NOME = null;
+	 
+	public IField TIPOLOGIA_FRUIZIONE = null;
+	 
+	public IField TIPOLOGIA_EROGAZIONE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.IdSoggettoModel ID_SOGGETTO = null;
 	 

@@ -481,6 +481,8 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		sqlQueryObjectGet_servizioApplicativo.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model()));
 		sqlQueryObjectGet_servizioApplicativo.addSelectField("id");
 		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME,true));
+		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE,true));
+		sqlQueryObjectGet_servizioApplicativo.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().TIPOLOGIA_EROGAZIONE,true));
 		sqlQueryObjectGet_servizioApplicativo.addWhereCondition("id=?");
 
 		// Get servizioApplicativo
