@@ -122,6 +122,7 @@ public class SecurityConstants {
     public static final String PART_COMPLETE = "Complete";
     public static final String PART_ELEMENT = "Element";
     public static final String ATTACHMENT_INDEX_ALL =  "*";
+    public static final String SOAP_NAMESPACE_TEMPLATE =  "SOAP_TEMPLATE_NS";
     
     public static final String MODE_SELF_CONTAINED = "selfContained";
     public static final String MODE_DETACHED = "detached";
@@ -134,6 +135,9 @@ public class SecurityConstants {
     public static final String MULTI_USER_KEYWORD_FRUITORE = "#MultiPropUseFruitoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_EROGATORE = "#MultiPropUseErogatoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_FRUITORE_EROGATORE = "#MultiPropUseFruitoreErogatoreAsAlias#";
+    
+    public static final String PASSWORD_CALLBACK_CLASS = ConfigurationConstants.PW_CALLBACK_CLASS;
+    public static final String PASSWORD_CALLBACK_REF = ConfigurationConstants.PW_CALLBACK_REF;
     
     public static final String ENCRYPT_ACTION = ConfigurationConstants.ENCRYPT;
     public static final String DECRYPT_ACTION = "Decrypt";

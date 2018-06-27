@@ -1,4 +1,5 @@
-<config id="messageSecurity.wss4j.sender.signature" label="WSSec Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+<config id="messageSecurity.wss4j.sender.signature" label="WSSec Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.xml.SecurityProvider">
 
         <compatibility not="false" and="false">
                 <tags and="true">
@@ -29,11 +30,12 @@
 		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
 			<property name="mustUnderstand" />
 		</item>
+		
 		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
-			<property name="action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+			<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
 		</item>
 		<item type="hidden" name="signatureAction" value="Signature">
-			<property name="action" append="true" appendSeparator="_" force="true"/>
+			<property name="action" append="true" appendSeparator=" " force="true"/>
 		</item>
 
 	</section>
@@ -46,20 +48,148 @@
 			</condition>
 		</conditions>
 
-		<item type="number" name="timeToLive" label="TimeToLive" min="1" max="10000000">
+		<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
+			note="The time difference between creation and expiry time in seconds ">
 			<property name="timeToLive" />
 		</item>
 	</section>
 
 	<section label="Signature">
 
-		<item type="text" name="signatureParts" label="Elementi da firmare" required="false">
-		     	<property name="signatureParts" />
+		<item type="select" name="signaturePartsSelectWithTimestamp" label="Elementi da firmare" default="timestampBody" reloadOnChange="true">
+			<conditions>
+				<condition>
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="body" label="Body"/>
+				<value value="timestamp" label="Timestamp"/>
+				<value value="timestampBody" label="Timestamp Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="timestampAttachments" label="Timestamp Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="timestampBodyAttachments" label="Timestamp Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsSelectWithTimestamp" />
 		</item>
+		<item type="select" name="signaturePartsSelect" label="Elementi da firmare" default="timestampBody" reloadOnChange="true">
+			<conditions>
+				<condition not="true">
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsSelect" />
+		</item>
+		<item type="hidden" name="signaturePartsBody" value="{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="body"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestamp" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestamp"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampBody" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampBody"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsAttachments" value="{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="attachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="bodyAttachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampBodyAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampBodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="text" name="signaturePartsCustom" label="Elementi Obbligatori" required="true" >
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="text" name="optionalSignaturePartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localname (cid:Attachments in localname for SWA)">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="optionalSignatureParts" />
+		</item>
+
+		<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
+			<property name="signatureAlgorithm" />
+		</item>
+		<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
+			<property name="signatureDigestAlgorithm" />
+		</item>
+		<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
+			<property name="signatureC14nAlgorithm" />
+		</item>		
 
 		<subsection label="Key Identifier">
 
-			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference">
+			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference" >
+			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/signature-and-encryption-key.html"> -->
 				<values>
 					<value value="DirectReference" label="DirectReference"/>
 					<value value="IssuerSerial" label="IssuerSerial"/>
@@ -74,20 +204,6 @@
 			</item>
 			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
-			</item>
-
-		</subsection>
-
-		<subsection label="Algoritmi">
-			
-			<item type="text" name="signatureAlgorithm" label="Signature" required="false">
-			      	<property name="signatureAlgorithm" />
-			</item>
-			<item type="text" name="signatureDigestAlgorithm" label="Digest" required="false">
-			      	<property name="signatureDigestAlgorithm" />
-			</item>
-			<item type="text" name="signatureC14nAlgorithm" label="Canonicalization" required="false">
-			      	<property name="signatureC14nAlgorithm" />
 			</item>
 
 		</subsection>
@@ -113,11 +229,15 @@
 			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			      	<property name="user" />
+			      	<property name="signatureUser" />
 			</item>
 			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			      	<property name="passwordCallbackRef" /> <!-- TODO Realizzare una classe Callback che ritorna questa password -->
+			      	<property name="signaturePassword" />
 			</item>
+			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+			      	<property name="passwordCallbackRef" />
+			</item>
+			
 
 		</subsection>
 

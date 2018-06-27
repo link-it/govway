@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -774,16 +775,57 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			
 			Subscription subscription = null;
+			PortaDelegata portaDelegataDaCopiare = null;
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-				PortaDelegata portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
+				portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
-				
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
 						portaDelegataDefault, nome, azioni);
 				
+			}
+			
+			boolean clonatoDaPDConConnettoreRidefinito = false;
+			if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaDelegataDaCopiare!=null) {
+				if(portaDelegataDaCopiare.getAzione()!=null && PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(portaDelegataDaCopiare.getAzione().getIdentificazione())) {
+					// devo clonare il connettore
+					String azioneConnettoreDaPortaDelegataDaClonare = null; // prendo la prima
+					if(portaDelegataDaCopiare.getAzione().sizeAzioneDelegataList()>0) {
+						azioneConnettoreDaPortaDelegataDaClonare = portaDelegataDaCopiare.getAzione().getAzioneDelegata(0);
+					}
+					Connettore connettorePortaDelegataDaClonare = null;
+					Fruitore fruitore = null;
+					if(azioneConnettoreDaPortaDelegataDaClonare!=null) {
+						
+						for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+							if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
+								fruitore = fruitoreCheck;
+								break;
+							}
+						}
+						if(fruitore!=null) {
+							for (ConfigurazioneServizioAzione check : fruitore.getConfigurazioneAzioneList()) {
+								if(check.getAzioneList().contains(azioneConnettoreDaPortaDelegataDaClonare)) {
+									connettorePortaDelegataDaClonare = check.getConnettore();
+									break;
+								}
+							}
+						}
+					}
+					if(connettorePortaDelegataDaClonare!=null) {
+						clonatoDaPDConConnettoreRidefinito = true;
+						
+						Connettore newConnettoreRidefinito = (Connettore) connettorePortaDelegataDaClonare.clone();
+						ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
+						configurazioneAzione.setConnettore(newConnettoreRidefinito);
+						for (int i = 0; i < azioni.length; i++) {
+							configurazioneAzione.addAzione(azioni[i]);
+						}
+						fruitore.addConfigurazioneAzione(configurazioneAzione);
+					}
+				}
 			}
 			
 			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
@@ -829,7 +871,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || clonatoDaPDConConnettoreRidefinito) {
 				
 				listaOggettiDaModificare.add(asps);
 				

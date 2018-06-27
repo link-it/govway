@@ -42,6 +42,8 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
@@ -94,7 +96,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        // ** Imposto configurazione nel messaggio **/
 	        // NOTA: farlo dopo getSecurityOnAttachments poichè si modifica la regola di quali attachments trattare.
 	        
-	        setOutgoingProperties(wssContext,msgCtx);
+	        setOutgoingProperties(wssContext,msgCtx,messageParam);
 	        
 	        
 	        // ** Registro attachments da trattare **/
@@ -163,8 +165,10 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 		
     }
 
-    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx) throws Exception{
+    private void setOutgoingProperties(MessageSecurityContext wssContext,SoapMessage msgCtx,OpenSPCoop2Message message) throws Exception{
     	boolean mustUnderstand = false;
+    	boolean signatureUser = false;
+    	boolean user = false;
     	Hashtable<?,?> wssOutgoingProperties = wssContext.getOutgoingProperties();
 		if (wssOutgoingProperties != null && wssOutgoingProperties.size() > 0) {
 			
@@ -188,12 +192,18 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 					msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
 				}
 				else if(SecurityConstants.ENCRYPTION_PARTS.equals(key) || SecurityConstants.SIGNATURE_PARTS.equals(key)){
-					msgCtx.put(key, normalizeWss4jParts(value));
+					msgCtx.put(key, normalizeWss4jParts(value,message));
 				}
 				else{
 					msgCtx.put(key, value);
 					if(SecurityConstants.MUST_UNDERSTAND.equals(key)){
 						mustUnderstand = true;
+					}
+					else if(SecurityConstants.SIGNATURE_USER.equals(key)){
+						signatureUser = true;
+					}
+					else if(SecurityConstants.USER.equals(key)){
+						user = true;
 					}
 				}
 			}
@@ -205,9 +215,15 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 		if(wssContext.getActor()!=null){
 			msgCtx.put(SecurityConstants.ACTOR, wssContext.getActor());
 		}
+		if(signatureUser && !user) {
+			// fix: Caused by: org.apache.cxf.binding.soap.SoapFault: Empty username for specified action.
+	        // at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessageInternal(WSS4JOutInterceptor.java:230) ~[cxf-rt-ws-security-3.1.7.jar:3.1.7]
+	        //        at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessage(WSS4JOutInterceptor.java:135) ~[cxf-rt-ws-security-3.1.7.jar:3.1.7]
+			msgCtx.put(SecurityConstants.USER, (String) msgCtx.get(SecurityConstants.SIGNATURE_USER));
+		}
     }
     
-    private String normalizeWss4jParts(String parts){
+    private String normalizeWss4jParts(String parts,OpenSPCoop2Message message){
     	StringBuffer bf = new StringBuffer();
     	String[]split = ((String)parts).split(";");
 		for (int i = 0; i < split.length; i++) {
@@ -228,7 +244,15 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			}
 		}
 		//System.out.println("PRIMA ["+parts+"] DOPO ["+bf.toString()+"]");
-		return bf.toString();
+		
+		String newParts = bf.toString();
+		
+		while(newParts.contains(SecurityConstants.SOAP_NAMESPACE_TEMPLATE)) {
+			String namespace = MessageType.SOAP_11.equals(message.getMessageType()) ? Costanti.SOAP_ENVELOPE_NAMESPACE : Costanti.SOAP12_ENVELOPE_NAMESPACE;
+			newParts = newParts.replace(SecurityConstants.SOAP_NAMESPACE_TEMPLATE, namespace);
+		}
+		
+		return newParts;
     }
  
 }

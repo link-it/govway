@@ -24,6 +24,7 @@
 
 package org.openspcoop2.security.message;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -33,10 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.wss4j.common.ConfigurationConstants;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
@@ -254,6 +259,7 @@ public abstract class MessageSecurityContext{
     	this.setActor(true);
     	this.readMessageSecurityEngine(true);
     	this.readSignatureEngine(true);
+    	this.resolvePWCallback(true);
     }
     public Hashtable<String,Object> getIncomingProperties() {
     	return this.incomingProperties;
@@ -273,6 +279,7 @@ public abstract class MessageSecurityContext{
     	this.setActor(false);
     	this.readMessageSecurityEngine(false);
     	this.readSignatureEngine(false);
+    	this.resolvePWCallback(false);
     }
     public Hashtable<String,Object> getOutgoingProperties() {
     	return this.outgoingProperties;
@@ -448,7 +455,100 @@ public abstract class MessageSecurityContext{
     }
         
     
-    
+    /** SignatureEngine */
+    private void resolvePWCallback(boolean incoming) throws SecurityException{
+    	try{
+    		Hashtable<String, Object> props = null;
+    		if(incoming) {
+    			props = this.incomingProperties;
+    		}else {
+    			props = this.outgoingProperties;
+    		}
+    		
+    		boolean pwCallback = props.containsKey(SecurityConstants.PASSWORD_CALLBACK_REF); // non controllo il valore, mi basta la presenza
+    		props.remove(SecurityConstants.PASSWORD_CALLBACK_REF);
+    		if(pwCallback) {
+    			
+    			String aliasGenerico = null;
+    			if(props.containsKey(SecurityConstants.USER)) {
+    				aliasGenerico = (String) props.get(SecurityConstants.USER);
+				}  
+    			
+    			HashMap<String, String> mapAliasToPassword = new HashMap<>();
+    			
+    			if(props.containsKey(SecurityConstants.SIGNATURE_PASSWORD)) {
+    				String password = (String) props.get(SecurityConstants.SIGNATURE_PASSWORD);
+    				String alias = null;
+    				if(props.containsKey(SecurityConstants.SIGNATURE_USER)) {
+    					alias = (String) props.get(SecurityConstants.SIGNATURE_USER);
+    				}
+    				else {
+    					alias = aliasGenerico;
+    				}
+    				if(alias!=null){
+    					mapAliasToPassword.put(alias, password);
+    				}
+    			}
+    			
+    			if(props.containsKey(SecurityConstants.ENCRYPTION_PASSWORD)) {
+    				String password = (String) props.get(SecurityConstants.ENCRYPTION_PASSWORD);
+    				String alias = null;
+    				if(props.containsKey(SecurityConstants.ENCRYPTION_USER)) {
+    					alias = (String) props.get(SecurityConstants.ENCRYPTION_USER);
+    				}
+    				else {
+    					alias = aliasGenerico;
+    				}
+    				if(alias!=null){
+    					mapAliasToPassword.put(alias, password);
+    				}
+    			}
+
+    			if(props.containsKey(SecurityConstants.DECRYPTION_PASSWORD)) {
+    				String password = (String) props.get(SecurityConstants.DECRYPTION_PASSWORD);
+    				String alias = null;
+    				if(props.containsKey(SecurityConstants.DECRYPTION_USER)) {
+    					alias = (String) props.get(SecurityConstants.DECRYPTION_USER);
+    				}
+    				else {
+    					alias = aliasGenerico;
+    				}
+    				if(alias!=null){
+    					mapAliasToPassword.put(alias, password);
+    				}
+    			}
+    			
+    			if(mapAliasToPassword.size()>0) {
+    				
+    				CallbackHandler pwCallbackHandler = new CallbackHandler() {
+    						
+						private HashMap<String, String> mapAliasToPasswordParam = mapAliasToPassword;
+						
+						@Override
+						public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+							 for (int i = 0; i < callbacks.length; i++) {
+						            if (callbacks[i] instanceof WSPasswordCallback) {
+						                WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
+						                if(this.mapAliasToPasswordParam.containsKey(pc.getIdentifier())) {
+						                	pc.setPassword(this.mapAliasToPasswordParam.get(pc.getIdentifier()));
+						                }
+						            } else {
+						                throw new UnsupportedCallbackException(callbacks[i],
+						                        "Unrecognized Callback");
+						            }
+						        }
+						}
+						
+					};
+    			
+    				props.put(SecurityConstants.PASSWORD_CALLBACK_REF, pwCallbackHandler);
+    			}
+    		
+    		}
+    	}catch(Exception e){
+    		throw new SecurityException(e.getMessage(),e);
+    	}
+    }
     
     
     /** Utility per verificare l'esistenza di un header di sicurezza */

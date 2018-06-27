@@ -41,6 +41,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -831,8 +832,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			Implementation implementation = null;
 			
+			PortaApplicativa portaApplicativaDaCopiare = null;
 			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
-				PortaApplicativa portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+				portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
 				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
 						portaApplicativaDefault, portaApplicativaDaCopiare, nome, azioni);
 			}
@@ -895,7 +897,16 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					sa.setRispostaAsincrona(rispostaAsinc);
 					
 					InvocazioneServizio invServizio = new InvocazioneServizio();
-					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+						InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
+						invCredenziali.setUser(user);
+						invCredenziali.setPassword(password);
+						invServizio.setCredenziali(invCredenziali);
+					}
+					else {
+						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					}
 					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 					invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
 					sa.setInvocazioneServizio(invServizio);
@@ -935,7 +946,28 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				
 				portaApplicativa.getServizioApplicativoList().clear();
 				
-				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+				org.openspcoop2.core.config.Connettore connettorePDClonato = null;
+				InvocazioneServizioTipoAutenticazione tipoAutenticazioneClonata = null;
+				InvocazioneCredenziali invocazioneCredenzialiClonata = null;
+				if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaApplicativaDaCopiare!=null && !mappingSelezionato.isDefault()) {
+					PortaApplicativaServizioApplicativo portaApplicativaDaCopiareServizioApplicativo = portaApplicativaDaCopiare.getServizioApplicativoList().get(0);
+					if(portaApplicativaDaCopiareServizioApplicativo.getNome().equals(portaApplicativaDaCopiare.getNome())) { 
+						// ridefinito
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(portaApplicativaDaCopiareServizioApplicativo.getNome());
+						idSA.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDaCopiare.getTipoSoggettoProprietario(), portaApplicativaDaCopiare.getNomeSoggettoProprietario()));
+						ServizioApplicativo saDaCopiare = saCore.getServizioApplicativo(idSA);
+						connettorePDClonato = (org.openspcoop2.core.config.Connettore) saDaCopiare.getInvocazioneServizio().getConnettore().clone();
+						if(saDaCopiare.getInvocazioneServizio().getAutenticazione()!=null) {
+							tipoAutenticazioneClonata = saDaCopiare.getInvocazioneServizio().getAutenticazione();
+						}
+						if(saDaCopiare.getInvocazioneServizio().getCredenziali()!=null) {
+							invocazioneCredenzialiClonata = (InvocazioneCredenziali) saDaCopiare.getInvocazioneServizio().getCredenziali().clone();
+						}
+					}
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || (connettorePDClonato!=null)) {
 					PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
 					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
 						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
@@ -944,7 +976,29 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
 						ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
 						sa.setNome(portaApplicativa.getNome());
-						sa.getInvocazioneServizio().setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+						if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+							if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+								sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+								InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
+								invCredenziali.setUser(user);
+								invCredenziali.setPassword(password);
+								sa.getInvocazioneServizio().setCredenziali(invCredenziali);
+							}
+							else {
+								sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+								sa.getInvocazioneServizio().setCredenziali(null);
+							}
+						}
+						else {
+							sa.getInvocazioneServizio().setAutenticazione(tipoAutenticazioneClonata);
+							sa.getInvocazioneServizio().setCredenziali(invocazioneCredenzialiClonata);
+						}
+						if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
+							sa.getInvocazioneServizio().setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+						}
+						else {
+							sa.getInvocazioneServizio().setConnettore(connettorePDClonato);
+						}
 						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
 						paSa.setNome(sa.getNome());
 						portaApplicativa.getServizioApplicativoList().add(paSa);
