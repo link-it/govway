@@ -273,6 +273,27 @@
 		<copy todir="${build_govwayMonitor}/tmp_css">
 			<fileset dir="${commons_temaConsole}/css"/>
 		</copy>
+
+		<!-- CSS Locale -->
+		<available file="${deploy_govwayMonitor}/web-content/properties/${temaConsoleProperties}" property="temaConsoleProperties.locale.exists"/>
+		<if>
+			<equals arg1="${temaConsoleProperties.locale.exists}" arg2="true" />
+			<then>
+				<property file="${deploy_govwayMonitor}/web-content/properties/${temaConsoleProperties}" prefix="temalink."/>
+				<propertyselector property="cssPropertiesLocal" match="temalink\.(.*)" select="\1"/>
+				<property file="${deploy_govwayMonitor}/web-content/properties/${temaConsoleProperties}" />
+				<for list="${cssPropertiesLocal}" param="cssKey">
+					<sequential>
+						<!--  <echo message="key[@{cssKey}] value[${@{cssKey}}]"/>  -->
+						<replace dir="${build_govwayMonitor}/tmp_css" 
+					     token="$${@{cssKey}}" 
+					     value="${@{cssKey}}"/>
+			       		</sequential>
+				</for>
+			</then>
+		</if>
+
+		<!-- CSS BASE -->
 		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" prefix="temalink."/>
 		<propertyselector property="cssProperties" match="temalink\.(.*)" select="\1"/>
 		<property file="${commons_webcontent_properties}/${temaConsoleProperties}" />
@@ -282,7 +303,7 @@
 				<replace dir="${build_govwayMonitor}/tmp_css" 
 	                     token="$${@{cssKey}}" 
 	                     value="${@{cssKey}}"/>
-	       	</sequential>
+	       		</sequential>
 		</for>
 	</target>
 	
