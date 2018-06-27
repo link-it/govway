@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.commons.search.dao.IDBPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IDBPortaDelegataServiceSearch;
@@ -257,33 +258,16 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		int count = 0;
 		String tipoProtocollo = this.search.getProtocollo();
 		try { 
-			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
-				String servizioString = this.getSearch().getNomeServizio();
-				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome());
-				if(aspc != null){
-					String nomeAspc = aspc.getNome();
-
-					Integer versioneAspc = aspc.getVersione();
-
-					String nomeReferenteAspc = (aspc.getIdReferente() != null) ? aspc.getIdReferente().getNome() : null;
-
-					String tipoReferenteAspc= (aspc.getIdReferente() != null) ? aspc.getIdReferente().getTipo() : null;
-
-					String uriAccordoServizio = IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc); 
-					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, null, uriAccordoServizio, null, null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
-				} else {
-					count = 0;
-				}
+			if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
+					&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
+				Soggetto soggetto = new Soggetto();
+				soggetto.setTipoSoggetto(this.getSearch().getTipoSoggettoLocale());
+				soggetto.setNomeSoggetto(this.getSearch().getSoggettoLocale());
+				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, soggetto);
 			}else {
-				if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
-						&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
-					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, this.getSearch().getTipoSoggettoLocale(), null, this.getSearch().getSoggettoLocale(), null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
-				}else {
-					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, null, null, null, null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
-				}
-				ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
+				count = this.dynamicService.countElencoServiziApplicativi(tipoProtocollo, null);
 			}
+			ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli applicativi: " + e.getMessage(),e);
 		}

@@ -351,7 +351,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 			String tipoProtocollo =   this.search.getProtocollo();
 
-			this.serviziApplicativi = this.dynamicUtils.getListaSelectItemsServiziApplicativiFromSoggettoErogatore(tipoProtocollo,tipoSoggetto, nomeSoggetto);
+			this.serviziApplicativi = this.dynamicUtils.getListaSelectItemsServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto);
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.serviziApplicativi);
 			this.serviziApplicativiSelectItemsWidth = Math.max(this.serviziApplicativiSelectItemsWidth,  lunghezzaSelectList);
 		}

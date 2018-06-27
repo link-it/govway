@@ -224,7 +224,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return true;
 	}
 
-	public List<Object> findElencoServiziApplicativiFromSoggettoErogatore(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
+	public List<Object> findElencoServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
 		List<Object> list = new ArrayList<Object>();
 		Soggetto erogatore = this.dynamicUtilsService.findSoggettoByTipoNome(tipoSoggetto, nomeSoggetto);
 
@@ -235,10 +235,10 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return list;
 	}
 
-	public List<SelectItem> getListaSelectItemsServiziApplicativiFromSoggettoErogatore(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
+	public List<SelectItem> getListaSelectItemsServiziApplicativiFromSoggettoLocale(String tipoProtocollo,String tipoSoggetto,String nomeSoggetto){
 		List<SelectItem> sa = new ArrayList<SelectItem>();
 
-		List<Object> list = this.findElencoServiziApplicativiFromSoggettoErogatore(tipoProtocollo,tipoSoggetto, nomeSoggetto);
+		List<Object> list = this.findElencoServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto);
 
 		for (Object res : list) {
 			sa.add(new SelectItem((String) res));

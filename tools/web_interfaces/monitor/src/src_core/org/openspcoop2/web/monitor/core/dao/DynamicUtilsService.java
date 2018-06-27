@@ -34,13 +34,10 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
 import org.openspcoop2.core.commons.search.IdPortaDominio;
-import org.openspcoop2.core.commons.search.IdServizioApplicativo;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
-import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.commons.search.PortaDelegata;
-import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.commons.search.PortaDominio;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
@@ -60,6 +57,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -589,13 +587,21 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			else{
 				// devo cercare i soggetto a cui non è stata associata una pdd
 				IExpression sogExpr = this.soggettoDAO.newExpression();
-				sogExpr.isNull(Soggetto.model().SERVER);
-				sogExpr.isEmpty(Soggetto.model().SERVER);
-				sogExpr.or();
+				
+				IExpression sogExprServer = this.soggettoDAO.newExpression();
+				sogExprServer.isNull(Soggetto.model().SERVER);
+				sogExprServer.isEmpty(Soggetto.model().SERVER);
+				sogExprServer.or();
+				
+				sogExpr.and(sogExprServer);
+				
+				if(StringUtils.isNotEmpty(tipoProtocollo)){
+					sogExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.soggettoDAO, Soggetto.model().TIPO_SOGGETTO, tipoProtocollo));
+				}
 				
 				NonNegativeNumber nnn = this.soggettoDAO.count(sogExpr);
 				
-				if(nnn != null){
+				if(nnn != null){	
 					return (int) nnn.longValue(); 
 				}
 			}
@@ -988,7 +994,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 						soggetto.getTipoSoggetto());
 				expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
 						soggetto.getNomeSoggetto());
+				
 			}
+			
+			expr.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
 
 			if(tipoProtocollo != null)
 				expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
@@ -1027,6 +1036,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				expr.and().equals(ServizioApplicativo.model().ID_SOGGETTO.NOME,
 						soggetto.getNomeSoggetto());
 			}
+			
+			expr.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE).and().notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO);
 
 			if(tipoProtocollo != null)
 				expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.serviziApplicativiDAO, ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoProtocollo));
@@ -2707,126 +2718,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}  
-		return 0;
-	}
-
-	@Override
-	public List<ServizioApplicativo> findElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-
-		log.debug("Get Lista Servizi Applicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
-		List<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
-
-		try {
-			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione,permessiUtenteOperatore);
-
-			if(listaPorte != null && listaPorte.size() > 0){
-				for (PortaDelegata porta : listaPorte) {
-					List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativoList = porta.getPortaDelegataServizioApplicativoList();
-					for (PortaDelegataServizioApplicativo portaDelegataServizioApplicativo : portaDelegataServizioApplicativoList) {
-						IdServizioApplicativo idServizioApplicativo = portaDelegataServizioApplicativo.getIdServizioApplicativo();
-
-						ServizioApplicativo servizioApplicativo = this.serviziApplicativiDAO.get(idServizioApplicativo);
-						lista.add(servizioApplicativo);
-					}
-
-				}
-			}
-			return lista;
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.debug(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return lista;
-	}
-
-	@Override
-	public int countElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-		log.debug("countElencoServiziApplicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
-		try {
-			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
-
-			int somma = 0;
-			if(listaPorte != null && listaPorte.size() > 0){
-				for (PortaDelegata porta : listaPorte) {
-					List<PortaDelegataServizioApplicativo> portaDelegataServizioApplicativoList = porta.getPortaDelegataServizioApplicativoList();
-					somma += portaDelegataServizioApplicativoList.size();
-				}
-			}
-
-			return somma;
-		}   catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return 0;
-	}
-
-	@Override
-	public List<ServizioApplicativo> findElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,
-			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-
-		log.debug("Get Lista Servizi Applicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
-		List<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
-
-		try {
-			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
-
-			if(listaPorte != null && listaPorte.size() > 0){
-				for (PortaApplicativa porta : listaPorte) {
-					List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativoList = porta.getPortaApplicativaServizioApplicativoList();
-					for (PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo : portaApplicativaServizioApplicativoList) {
-						IdServizioApplicativo idServizioApplicativo = portaApplicativaServizioApplicativo.getIdServizioApplicativo();
-
-						ServizioApplicativo servizioApplicativo = this.serviziApplicativiDAO.get(idServizioApplicativo);
-						lista.add(servizioApplicativo);
-					}
-
-				}
-			}
-			return lista;
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		}catch (NotFoundException e) {
-			log.debug(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return lista;
-	}
-
-	@Override
-	public int countElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-		log.debug("countElencoServiziApplicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
-		try {
-			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione,permessiUtenteOperatore);
-
-			int somma = 0;
-			if(listaPorte != null && listaPorte.size() > 0){
-				for (PortaApplicativa porta : listaPorte) {
-					List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativoList = porta.getPortaApplicativaServizioApplicativoList();
-					somma += portaApplicativaServizioApplicativoList.size();
-				}
-			}
-
-			return somma;
-		}   catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
 		return 0;
 	}
 
