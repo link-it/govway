@@ -56,7 +56,7 @@ public class GestioneUtentiStileIbridoServiceLocator extends org.apache.axis.cli
     }
 
     // Use to get a proxy class for GestioneUtentiStileIbrido
-    private java.lang.String GestioneUtentiStileIbrido_address = "http://127.0.0.1:8080/openspcoop/PA";
+    private java.lang.String GestioneUtentiStileIbrido_address = "http://127.0.0.1:8080/govway/PA";
 
     @Override
 	public java.lang.String getGestioneUtentiStileIbridoAddress() {

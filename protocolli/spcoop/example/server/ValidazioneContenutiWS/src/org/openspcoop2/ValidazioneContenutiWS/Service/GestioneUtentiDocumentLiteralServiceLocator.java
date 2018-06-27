@@ -56,7 +56,7 @@ public class GestioneUtentiDocumentLiteralServiceLocator extends org.apache.axis
     }
 
     // Use to get a proxy class for GestioneUtentiDocumentLiteral
-    private java.lang.String GestioneUtentiDocumentLiteral_address = "http://127.0.0.1:8080/openspcoop/PA";
+    private java.lang.String GestioneUtentiDocumentLiteral_address = "http://127.0.0.1:8080/govway/PA";
 
     @Override
 	public java.lang.String getGestioneUtentiDocumentLiteralAddress() {

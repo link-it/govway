@@ -58,7 +58,7 @@ public class IntegrationManagerPDImpl extends IntegrationManager{
 			(javax.servlet.http.HttpServletRequest) msgContext.get(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST);
 		
 		
-		// Il path info e' nella forma /openspcoop/protocol/IntegrationManager
+		// Il path info e' nella forma /govway/protocol/IntegrationManager
 		String pathinfo = (String) msgContext.get(javax.xml.ws.handler.MessageContext.PATH_INFO);
 		
 		IntegrationManagerUtility.readAndSetProtocol(req, pathinfo);

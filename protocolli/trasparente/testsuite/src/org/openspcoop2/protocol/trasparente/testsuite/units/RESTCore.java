@@ -395,7 +395,7 @@ public class RESTCore {
 			if(redirect) {
 				String location = httpResponse.getHeader(HttpConstants.REDIRECT_LOCATION);
 				Assert.assertTrue(location!=null);
-				String urlBaseSenzaHostPort = urlBase.substring(urlBase.indexOf("/openspcoop2/"), urlBase.length());
+				String urlBaseSenzaHostPort = urlBase.substring(urlBase.indexOf("/govway/"), urlBase.length());
 				String urlAttesa = null;
 				
 				if(returnCodeAtteso==303) {

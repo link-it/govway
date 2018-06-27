@@ -74,7 +74,7 @@ public class WrapperHttpServletRequest implements HttpServletRequest {
 	@Override
 	public String getRequestURI() {
 		// System.out.println("getRequestURI=["+this.getRequestURI()+"]");
-		// getRequestURI=[/openspcoop/PD/NOME_PORTA_DELEGATA]
+		// getRequestURI=[/govway/PD/NOME_PORTA_DELEGATA]
 		if(this.protocolContext!=null){
 			String contextPath = this.getContextPath();
 			if(this.httpServletRequest.getRequestURI().startsWith(contextPath))
@@ -114,7 +114,7 @@ public class WrapperHttpServletRequest implements HttpServletRequest {
 	@Override
 	public StringBuffer getRequestURL() {
 		//System.out.println("getRequestURL=["+this.getRequestURL()+"]");
-		//getRequestURL=[http://127.0.0.1:3333/openspcoop/PD/PDTEST3]
+		//getRequestURL=[http://127.0.0.1:3333/govway/PD/PDTEST3]
 		
 		String requestURL = null;
 		if(this.httpServletRequest.getRequestURL()!=null){

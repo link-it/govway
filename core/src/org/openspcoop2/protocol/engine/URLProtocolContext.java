@@ -101,7 +101,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 		String servizioInvocato = null;
 		if(logCore!=null)
 			logCore.debug("SERVLET CONTEXT ["+servletContext+"] URL["+urlInvocazione+"]");
-			// es SERVLET CONTEXT [/openspcoop2] URL[/openspcoop2/dededede]
+			// es SERVLET CONTEXT [/govway] URL[/govway/altriParametri]
 		try {
 					
 			// Altro...

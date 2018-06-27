@@ -47,7 +47,7 @@
 <!-- Servizio EsitoAggiornamentoAsincronoWrappedDocumentLiteral -->
 <wsdl:service name="EsitoAggiornamentoAsincronoWrappedDocumentLiteralService">
       <wsdl:port binding="service:EsitoAggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" name="EsitoAggiornamentoAsincronoWrappedDocumentLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/openspcoop/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
       </wsdl:port>
 </wsdl:service>
 

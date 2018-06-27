@@ -20,7 +20,7 @@
    <eGov_IT:ListaTrasmissioni>
     <eGov_IT:Trasmissione>
      <eGov_IT:Origine>
-             <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://localhost:8080/openspcoop/PA">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
+             <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://localhost:8080/govway/PA">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
      </eGov_IT:Origine>
      <eGov_IT:Destinazione>
              <eGov_IT:IdentificativoParte tipo="SPC">MinisteroErogatoreLineeGuida</eGov_IT:IdentificativoParte>

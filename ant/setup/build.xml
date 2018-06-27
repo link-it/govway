@@ -507,7 +507,7 @@
 				</if>
 
 	
-				<!-- openspcoop2sec -->
+				<!-- govwaySec -->
 				<if>
 					<not>
 						<istrue value="${build_openspcoop_sec_archive}" />
@@ -540,12 +540,12 @@
 				</antcall>
 
 
-				<!-- openspcoop2sec -->
+				<!-- govwaySec -->
 				<if>
 					<istrue value="${build_openspcoop_sec_archive}" />
 					<then>
 						<!-- unzip -->
-						<unzip src="${deploy_sw}/${build_for_as}/openspcoop2sec_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govwaySec.war"/>
+						<unzip src="${deploy_sw}/${build_for_as}/govwaySec_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/govwaySec.war"/>
 						<!-- configuro openspcoopp2.war -->
 						<antcall target="-create_tomcat_war">
 						    <param name="tomcat_war" value="${tmp_archivi}/govwaySec.war"/>
@@ -888,7 +888,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govway.xml"/>
 				</antcall>
-				<!-- openspcoop2sec -->
+				<!-- govwaySec -->
 				<if>
 					<istrue value="${build_openspcoop_sec_archive}" />
 					<then>

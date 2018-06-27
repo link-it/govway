@@ -620,7 +620,7 @@ public class Costanti {
 	
 	/* ****************** TEST 7 ************************* */
 	
-	public static String TEST7_WSDL_URL = "http://127.0.0.1:8080/openspcoop/IntegrationManager?wsdl";	
+	public static String TEST7_WSDL_URL = "http://127.0.0.1:8080/govway/IntegrationManager?wsdl";	
 	
 	public static String [] TEST7_SCHEMI= {"InterfacciaDefinitoria.xsd"};
 	

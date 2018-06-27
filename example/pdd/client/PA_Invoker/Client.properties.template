@@ -1,5 +1,5 @@
 # Punto di accesso della porta di dominio
-openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PA
+openspcoop2.portaDiDominio=http://localhost:8080/govway/PA
 
 busta = XXX
 

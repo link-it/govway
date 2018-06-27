@@ -1,6 +1,6 @@
 # Punto di accesso della porta di dominio
-openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PD/
-#openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PDtoSOAP/
+openspcoop2.portaDiDominio=http://localhost:8080/govway/PD/
+#openspcoop2.portaDiDominio=http://localhost:8080/govway/PDtoSOAP/
 
 # HTTP Method
 # PATCH/LINK/UNLINK funziona solo con java 8
@@ -52,7 +52,7 @@ openspcoop2.printFileReceived = true
 #file=fileToSend/requestSenzaHeader.xml
 
 # --------- FUNZIONALITA' DI IMBUSTAMENTO SOAP -------------
-# Nota: da usare con http://localhost:8080/openspcoop/PDtoSOAP/
+# Nota: da usare con http://localhost:8080/govway/PDtoSOAP/
 
 # Contenuto XML senza struttura SOAP
 #file=fileToSend/requestBody.xml
@@ -61,7 +61,7 @@ openspcoop2.printFileReceived = true
 #file=fileToSend/requestMultipartRelatedMIME
 
 # Documenti da utilizzare per prove di Imbustamento
-# Con http://localhost:8080/openspcoop/PDtoSOAP/PD?OpenSPCoopTunnelSOAP=true
+# Con http://localhost:8080/govway/PDtoSOAP/PD?OpenSPCoopTunnelSOAP=true
 #file=fileToSend/HelloWorld.doc
 #file=fileToSend/HelloWorld.pdf
 #file=fileToSend/HelloWorld.zip

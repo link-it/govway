@@ -12,12 +12,12 @@ endpoint.soap11=http://localhost:8888/MTOMExample/soap11
 endpoint.soap12=http://localhost:8888/MTOMExample/soap12
 
 # Invocazione tramite PdD (Caso Porta Delegata)
-#portaDiDominio=http://localhost:8080/openspcoop2/proxy/PD/
+#portaDiDominio=http://localhost:8080/govway/api/out/
 #Contesto.soap11=PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo
 #Contesto.soap12=PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo
 
 # Invocazione tramite PdD (Caso Porta Applicativa)
-#portaDiDominio=http://localhost:8080/openspcoop2/proxy/PA/
+#portaDiDominio=http://localhost:8080/govway/api/in/
 #Contesto.soap11=MTOMServiceExampleSOAP11/echo
 #Contesto.soap12=MTOMServiceExampleSOAP12/echo
 

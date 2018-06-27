@@ -363,7 +363,7 @@ public class Testsuite {
 		
 		System.out.println("----------------------------------------");
 		System.out.println("Test.7 : ");
-		System.out.println("  input:  WSDL prelevato da URL: http://test.spcoop.it/openspcoop/IntegrationManager?wsdl");
+		System.out.println("  input:  WSDL prelevato da URL: http://test.spcoop.it/govway/IntegrationManager?wsdl");
 		System.out.println("  output: WSDL diviso in componenti SPCoop ");
 		System.out.println("");
 		System.out.println("----------------------------------------");

@@ -5976,7 +5976,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5987,7 +5987,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -6007,7 +6007,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6020,7 +6020,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -6114,7 +6114,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6125,7 +6125,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -6145,7 +6145,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6158,7 +6158,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -6250,7 +6250,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6261,7 +6261,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -6281,7 +6281,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6294,7 +6294,7 @@
                     
                     <!-- Attributi che dipendono dal test (Bug#18) -->
                     <parameter nome="mustUnderstand" valore="true" />
-                    <!-- <parameter nome="actor" valore="client/openspcoop/NON_PRESENTE" /> -->
+                    <!-- <parameter nome="actor" valore="client/govway/NON_PRESENTE" /> -->
                 </response-flow>
             </message-security>
         </porta-applicativa>
@@ -11548,8 +11548,8 @@
         </servizio-applicativo>
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter3" 
-        pd-url-prefix-rewriter="http://localhost:8080/openspcoop/testPD" 
-        pa-url-prefix-rewriter="http://localhost:8080/openspcoop/testPA" >
+        pd-url-prefix-rewriter="http://localhost:8080/govway/testPD" 
+        pa-url-prefix-rewriter="http://localhost:8080/govway/testPA" >
         <porta-delegata gestione-manifest="abilitato" nome="TestUrlPrefixRewriter3" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />

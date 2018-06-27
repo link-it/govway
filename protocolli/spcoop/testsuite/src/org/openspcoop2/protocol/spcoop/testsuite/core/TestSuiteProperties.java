@@ -193,15 +193,15 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 	}
 	
 	/**
-	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio fruitore (openspcoop2sec)
+	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio fruitore (govwaySec)
 	 *
 	 */
 	@Override
 	public String getServizioRicezioneContenutiApplicativiFruitore_openspcoop2Sec() {
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PD.fruitore.openspcoop2sec").trim();
+			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PD.fruitore.govwaySec").trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.openspcoop.PD.fruitore.openspcoop2sec':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.openspcoop.PD.fruitore.govwaySec':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
@@ -254,15 +254,15 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 	}
 	
 	/**
-	 * Ritorna Servizio di ricezione buste della Porta di Dominio erogatore (openspcoop2sec)
+	 * Ritorna Servizio di ricezione buste della Porta di Dominio erogatore (govwaySec)
 	 *
 	 */
 	@Override
 	public String getServizioRicezioneBusteErogatore_openspcoop2Sec() {
 		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PA.erogatore.openspcoop2sec").trim();
+			return this.reader.getProperty("org.openspcoop2.testsuite.openspcoop.PA.erogatore.govwaySec").trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.openspcoop.PA.erogatore.openspcoop2sec':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.openspcoop.PA.erogatore.govwaySec':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}

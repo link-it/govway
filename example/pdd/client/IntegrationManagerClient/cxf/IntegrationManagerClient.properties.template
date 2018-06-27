@@ -1,6 +1,6 @@
 # URL Servizio IntegrationManager
-#urlServizio=http://localhost:8080/openspcoop2/IntegrationManager/PD
-urlServizio=http://localhost:8080/openspcoop2/IntegrationManager/MessageBox
+#urlServizio=http://localhost:8080/govway/IntegrationManager/PD
+urlServizio=http://localhost:8080/govway/IntegrationManager/MessageBox
 
 
 

@@ -46,7 +46,7 @@
 
       <wsdl:port binding="impl:PDSoapBinding" name="PD">
 
-         <wsdlsoap:address location="http://localhost:8080/openspcoop2/PD"/>
+         <wsdlsoap:address location="http://localhost:8080/govway/out"/>
 
       </wsdl:port>
 

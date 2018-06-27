@@ -495,7 +495,7 @@
 	
 	<target name="_prepareArchivioTomcat">
 		<zip destfile="${dist}/archivi/govway.war" basedir="${tmp_archivi}/govway.war"/>
-		<!-- openspcoop2sec -->
+		<!-- govwaySec -->
 		<if>
 			<istrue value="${build_openspcoop_sec_archive}" />
 			<then>

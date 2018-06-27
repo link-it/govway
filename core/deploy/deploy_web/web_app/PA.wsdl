@@ -46,7 +46,7 @@
 
       <wsdl:port binding="impl:PASoapBinding" name="PA">
 
-         <wsdlsoap:address location="http://localhost:8080/openspcoop2/PA"/>
+         <wsdlsoap:address location="http://localhost:8080/govway/in"/>
 
       </wsdl:port>
 

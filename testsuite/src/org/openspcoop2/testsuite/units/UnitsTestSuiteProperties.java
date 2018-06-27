@@ -59,7 +59,7 @@ public interface UnitsTestSuiteProperties {
 	 */
 	public String getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient();
 	/**
-	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio fruitore (openspcoop2sec)
+	 * Ritorna Servizio di ricezione contenuti applicativi della Porta di Dominio fruitore (govwaySec)
 	 *
 	 */
 	public String getServizioRicezioneContenutiApplicativiFruitore_openspcoop2Sec();
@@ -82,7 +82,7 @@ public interface UnitsTestSuiteProperties {
 	 */
 	public String getServizioRicezioneBusteErogatore_httpsConAutenticazioneClient();
 	/**
-	 * Ritorna Servizio di ricezione buste della Porta di Dominio erogatore (openspcoop2sec)
+	 * Ritorna Servizio di ricezione buste della Porta di Dominio erogatore (govwaySec)
 	 *
 	 */
 	public String getServizioRicezioneBusteErogatore_openspcoop2Sec();

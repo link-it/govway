@@ -23,7 +23,7 @@
              <eGov_IT:IdentificativoParte tipo="SPC">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
      </eGov_IT:Origine>
      <eGov_IT:Destinazione>
-             <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://localhost:8080/openspcoop/PA">MinisteroErogatoreLineeGuida</eGov_IT:IdentificativoParte>
+             <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://localhost:8080/govway/PA">MinisteroErogatoreLineeGuida</eGov_IT:IdentificativoParte>
      </eGov_IT:Destinazione>
      <eGov_IT:OraRegistrazione tempo="EGOV_IT_SPC">2005-11-10T11:35:35</eGov_IT:OraRegistrazione>
     </eGov_IT:Trasmissione>

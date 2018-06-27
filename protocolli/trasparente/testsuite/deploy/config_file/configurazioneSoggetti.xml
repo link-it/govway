@@ -636,7 +636,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -654,7 +654,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -672,7 +672,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -689,7 +689,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -706,7 +706,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -723,7 +723,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -740,7 +740,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -757,7 +757,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -774,7 +774,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
 		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
@@ -794,7 +794,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
 		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
@@ -856,7 +856,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio)
 		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
@@ -876,7 +876,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei s.a. autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
 		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
@@ -897,7 +897,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -909,7 +909,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -921,7 +921,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -933,7 +933,7 @@
 		</porta-delegata>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -1853,7 +1853,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -1871,7 +1871,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -1889,7 +1889,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -1906,7 +1906,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -1923,7 +1923,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -1940,7 +1940,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -1957,7 +1957,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -1974,7 +1974,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ok
 		-->
@@ -1991,7 +1991,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio)
 		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
@@ -2013,7 +2013,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
 		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
@@ -2081,7 +2081,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio)
 		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ko (non è nella lista ne ha i ruoli)
@@ -2103,7 +2103,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (perchè autenticato e nella lista dei soggetti autorizzati per il servizio) Inoltre in questo caso ha anche i ruoli
 		     3. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal3 ha esito ok (possiede almeno un ruolo: roleTerzaUtenzaAllOpenSPCoopTest)
@@ -2126,7 +2126,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -2138,7 +2138,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -2150,7 +2150,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->
@@ -2162,7 +2162,7 @@
 		</porta-applicativa>
 
 		<!-- 
-		     Invocazione da effettuare su openspcoop2sec
+		     Invocazione da effettuare su govwaySec
 		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
 		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
 		-->

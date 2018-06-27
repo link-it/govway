@@ -56,7 +56,7 @@ public class GestioneUtentiOverloadedOperationsServiceLocator extends org.apache
     }
 
     // Use to get a proxy class for GestioneUtentiOverloadedOperations
-    private java.lang.String GestioneUtentiOverloadedOperations_address = "http://127.0.0.1:8080/openspcoop/PA";
+    private java.lang.String GestioneUtentiOverloadedOperations_address = "http://127.0.0.1:8080/govway/PA";
 
     @Override
 	public java.lang.String getGestioneUtentiOverloadedOperationsAddress() {

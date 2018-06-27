@@ -681,11 +681,11 @@ public class UrlPrefixRewriter {
 	
 	
 	
-	/* ************************ TEST 3 http://localhost:8080/openspcoop/testPD e http://localhost:8080/openspcoop/testPA **************************
+	/* ************************ TEST 3 http://localhost:8080/govway/testPD e http://localhost:8080/govway/testPA **************************
 
 
 	/***
-	 * Test per pd-url-prefix-rewriter="http://localhost:8080/openspcoop/testPD"
+	 * Test per pd-url-prefix-rewriter="http://localhost:8080/govway/testPD"
 	 */
 	Date testPD3StartTime = null;
 	Repository repository_testPD3=new Repository();
@@ -753,8 +753,8 @@ public class UrlPrefixRewriter {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
 			
-			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPD]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/openspcoop/testPD/govway/spcoop/PA)"));
+			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/govway/testPD]");
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(location: http://localhost:8080/govway/testPD/govway/spcoop/PA)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD3StartTime,"(404)"));
 			
 		}catch(Exception e){
@@ -777,7 +777,7 @@ public class UrlPrefixRewriter {
 	
 	
 	/***
-	 * Test per pa-url-prefix-rewriter="http://localhost:8080/openspcoop/testPA"
+	 * Test per pa-url-prefix-rewriter="http://localhost:8080/govway/testPA"
 	 */
 	Date testPA3StartTime = null;
 	Repository repository_testPA3=new Repository();
@@ -928,8 +928,8 @@ public class UrlPrefixRewriter {
 			//Reporter.log("Controllo che la busta abbia generato l'eccezione " + Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO + " rappresentante un servizio applicativo non disponibile");
 			//Assert.assertTrue(data.isTracedEccezione(id, Costanti.ECCEZIONE_PROCESSAMENTO_MESSAGGIO));
 			
-			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/openspcoop/testPA]");
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/openspcoop/testPA/govwayTestSuite/server)"));
+			Reporter.log("Controllo esistenza diagnostico [http://localhost:8080/govway/testPA]");
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://localhost:8080/govway/testPA/govwayTestSuite/server)"));
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(404)"));
 			
 		}catch(Exception e){
