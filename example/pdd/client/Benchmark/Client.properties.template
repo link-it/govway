@@ -1,5 +1,5 @@
 # Punto di accesso della porta di dominio
-openspcoop2.portaDiDominio=http://localhost:8080/govway/PD/
+openspcoop2.portaDiDominio=http://localhost:8080/govway/out/
 #openspcoop2.portaDiDominio=http://localhost:8080/govway/out/xml2soap/
 
 # HTTP Method
@@ -113,7 +113,7 @@ openspcoop2.http10=false
 #file=fileToSend/requestMultipartRelatedMIME
 
 # Documenti da utilizzare per prove di Imbustamento
-# Con http://localhost:8080/govway/out/xml2soap/PD?OpenSPCoopTunnelSOAP=true
+# Con http://localhost:8080/govway/out/xml2soap/NOME?OpenSPCoopTunnelSOAP=true
 #file=fileToSend/HelloWorld.doc
 #file=fileToSend/HelloWorld.pdf
 #file=fileToSend/HelloWorld.zip

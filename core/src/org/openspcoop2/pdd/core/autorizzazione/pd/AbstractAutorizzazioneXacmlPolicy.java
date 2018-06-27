@@ -70,7 +70,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	private String policyKey = null;
 	private synchronized XacmlRequest getXacmlRequest(DatiInvocazionePortaDelegata datiInvocazione, Logger log) throws AutorizzazioneException{
 		if(this.xacmlRequest==null){
-	    	this.policyKey = "http://openspcoop2.org/PD/"+datiInvocazione.getIdPD().getNome();
+	    	this.policyKey = "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
 			this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione, 
 	    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
 			this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));

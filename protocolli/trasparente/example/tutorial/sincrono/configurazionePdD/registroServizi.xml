@@ -17,7 +17,7 @@
    <soggetto tipo="PROXY" nome="CentroAnagrafico">
 
         <connettore tipo="http" nome="PdDCentroAnagrafico">
-             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/api/in" />
          </connettore>
 
 	<accordo-servizio-parte-specifica
@@ -82,7 +82,7 @@
    <soggetto tipo="PROXY" nome="Comune">
 
         <connettore tipo="http" nome="PdDComune">
-             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/api/in" />
         </connettore>
 
 	<credenziali tipo="basic" user="Comune" password="123456" />

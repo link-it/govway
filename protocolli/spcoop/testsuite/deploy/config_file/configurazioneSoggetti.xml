@@ -9125,19 +9125,19 @@
         <servizio-applicativo nome="ConnettoreErratoApplicativo" >
             <invocazione-servizio>
                 <connettore tipo="http" nome="ConnettoreErratoApplicativo">
-                    <property nome="location" valore="http://localhost:82/govway/spcoop/PA"/>
+                    <property nome="location" valore="http://localhost:82/govway/spcoop/in"/>
                 </connettore>
             </invocazione-servizio>
         </servizio-applicativo>
         <servizio-applicativo nome="ConnettoreErratoApplicativoAA" >
             <invocazione-servizio>
                 <connettore tipo="http" nome="ConnettoreErratoApplicativo">
-                    <property nome="location" valore="http://localhost:82/govway/spcoop/PA"/>
+                    <property nome="location" valore="http://localhost:82/govway/spcoop/in"/>
                 </connettore>
             </invocazione-servizio>
             <risposta-asincrona>
                 <connettore tipo="http" nome="ConnettoreErratoApplicativo">
-                    <property nome="location" valore="http://localhost:82/govway/spcoop/PA"/>
+                    <property nome="location" valore="http://localhost:82/govway/spcoop/in"/>
                 </connettore>
             </risposta-asincrona>
         </servizio-applicativo>

@@ -125,7 +125,7 @@ public class Client {
 					}else if("PD".equalsIgnoreCase(prefisso))
 						prefisso = null;
 					else {
-						System.err.println("ERROR : Tipo di Validazione non corretto (valore ammessi: wsdl/govway/PD )");
+						System.err.println("ERROR : Tipo di Validazione non corretto (valore ammessi: wsdl/govway/out )");
 						return;
 					}
 						

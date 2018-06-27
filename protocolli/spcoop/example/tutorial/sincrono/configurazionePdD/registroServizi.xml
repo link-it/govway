@@ -17,7 +17,7 @@
    <soggetto tipo="SPC" nome="CentroAnagrafico">
 
         <connettore tipo="http" nome="PdDCentroAnagrafico">
-             <property nome="location" valore="http://127.0.0.1:8080/govway/spcoop/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/spcoop/in" />
          </connettore>
 
 	<accordo-servizio-parte-specifica
@@ -36,7 +36,7 @@
    <soggetto tipo="SPC" nome="Comune">
 
         <connettore tipo="http" nome="PdDComune">
-             <property nome="location" valore="http://127.0.0.1:8080/govway/spcoop/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/spcoop/in" />
         </connettore>
 
    </soggetto>

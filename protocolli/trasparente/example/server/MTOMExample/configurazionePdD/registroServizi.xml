@@ -18,7 +18,7 @@
    <soggetto tipo="PROXY" nome="MinisteroErogatore">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/api/in" />
          </connettore>
 
 	<accordo-servizio-parte-specifica
@@ -57,7 +57,7 @@
    <soggetto tipo="PROXY" nome="MinisteroFruitore">
 
         <connettore tipo="http" nome="PdDComune">
-             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+             <property nome="location" valore="http://127.0.0.1:8080/govway/api/in" />
         </connettore>
 
 	<credenziali tipo="basic" user="MinisteroFruitore" password="123456" />

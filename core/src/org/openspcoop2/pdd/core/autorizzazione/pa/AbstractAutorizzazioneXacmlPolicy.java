@@ -74,10 +74,10 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 	private synchronized XacmlRequest getXacmlRequest(DatiInvocazionePortaApplicativa datiInvocazione, Logger log) throws AutorizzazioneException{
 		if(this.xacmlRequest==null){
 			if(datiInvocazione.getIdPA()!=null){
-				this.policyKey =  "http://openspcoop2.org/PA/"+datiInvocazione.getIdPA().getNome();
+				this.policyKey =  "http://govway.org/in/"+datiInvocazione.getIdPA().getNome();
 			}
 			else if(datiInvocazione.getIdPD()!=null){
-				this.policyKey =  "http://openspcoop2.org/PD/"+datiInvocazione.getIdPD().getNome();
+				this.policyKey =  "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
 			} 
 			else{
 				throw new AutorizzazioneException("Identificativo Porta non presente");

@@ -3,18 +3,18 @@
    <!-- Soggetti SPCoop per AccordoCooperazione e ServizioComposto/Componenti-->
    <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComponente1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComponente1">
-             <property nome="location" valore="http://pddErogatoreServizioComponente1:8080/govway/PA" />
+             <property nome="location" valore="http://pddErogatoreServizioComponente1:8080/govway/in" />
          </connettore>
    </soggetto>
    <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComponente2">
         <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComponente2">
-             <property nome="location" valore="http://pddErogatoreServizioComponente2:8080/govway/PA" />
+             <property nome="location" valore="http://pddErogatoreServizioComponente2:8080/govway/in" />
          </connettore>
    </soggetto>
 
    <soggetto tipo="SPC" nome="MinisteroErogatoreServizioComposto">
         <connettore tipo="http" nome="PdDMinisteroErogatoreServizioComposto">
-             <property nome="location" valore="http://pddErogatoreServizioComposto:8080/govway/PA" />
+             <property nome="location" valore="http://pddErogatoreServizioComposto:8080/govway/in" />
          </connettore>
    </soggetto>
 

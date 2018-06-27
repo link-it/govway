@@ -172,7 +172,7 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/PD/"+portaDelegata+"]");
+		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/out/"+portaDelegata+"]");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();

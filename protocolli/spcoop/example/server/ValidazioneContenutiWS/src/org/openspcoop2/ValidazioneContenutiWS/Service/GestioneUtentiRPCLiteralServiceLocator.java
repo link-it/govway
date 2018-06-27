@@ -57,7 +57,7 @@ public class GestioneUtentiRPCLiteralServiceLocator extends org.apache.axis.clie
     }
 
     // Use to get a proxy class for GestioneUtentiRPCLiteral
-    private java.lang.String GestioneUtentiRPCLiteral_address = "http://127.0.0.1:8080/govway/PA";
+    private java.lang.String GestioneUtentiRPCLiteral_address = "http://127.0.0.1:8080/govway/in";
 
     @Override
 	public java.lang.String getGestioneUtentiRPCLiteralAddress() {

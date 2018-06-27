@@ -1,5 +1,5 @@
 # Punto di accesso della porta di dominio
-urlPortaDiDominio=http://localhost:8080/govway/spcoop/PD/
+urlPortaDiDominio=http://localhost:8080/govway/spcoop/out/
 
 # Se si indica la validazione openspcoop, sara' utilizzata la PD 'PDValOpenSPCoop'.
 # Se si indica la validazione wsdl, sara' utilizzata la PD 'PDValWSDL'

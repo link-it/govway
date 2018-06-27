@@ -288,7 +288,7 @@ public class SOAPMessageScorretti {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta invocata non esiste porta[NOME_PA] urlInvocazione[/govway/spcoop/PA/NOME_PA]: verificare i parametri di accesso utilizzati: Porta Applicativa [NOME_PA] non esistente");
+		err.setMsgErrore("La porta invocata non esiste porta[NOME_PA] urlInvocazione[/govway/spcoop/in/NOME_PA]: verificare i parametri di accesso utilizzati: Porta Applicativa [NOME_PA] non esistente");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 

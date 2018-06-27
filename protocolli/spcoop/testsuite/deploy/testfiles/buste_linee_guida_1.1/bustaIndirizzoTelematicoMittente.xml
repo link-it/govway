@@ -3,7 +3,7 @@
 	 <eGov_IT:Intestazione SOAP_ENV:actor="http://www.cnipa.it/eGov_it/portadominio" SOAP_ENV:mustUnderstand="1" xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eGov_IT="http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/">
    <eGov_IT:IntestazioneMessaggio>
     <eGov_IT:Mittente>
-	    <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://127.0.0.1:8080/govway/PA">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
+	    <eGov_IT:IdentificativoParte tipo="SPC" indirizzoTelematico="http://127.0.0.1:8080/govway/in">MinisteroFruitoreLineeGuida</eGov_IT:IdentificativoParte>
     </eGov_IT:Mittente>
     <eGov_IT:Destinatario>
 	    <eGov_IT:IdentificativoParte tipo="SPC">MinisteroErogatoreLineeGuida</eGov_IT:IdentificativoParte>

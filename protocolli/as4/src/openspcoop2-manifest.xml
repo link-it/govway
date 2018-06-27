@@ -199,7 +199,7 @@
 		<!-- Contesto api supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
 	    <context name="as4">
-	    	<emptySubContext function="PA" messageType="soap12"/> <!-- es. http://server/govway/as4/PA -->
+	    	<emptySubContext function="PA" messageType="soap12"/> <!-- es. http://server/govway/as4/in -->
 	    </context>
 
     </web>

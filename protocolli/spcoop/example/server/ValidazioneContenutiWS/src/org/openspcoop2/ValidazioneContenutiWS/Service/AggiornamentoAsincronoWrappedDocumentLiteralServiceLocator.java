@@ -56,7 +56,7 @@ public class AggiornamentoAsincronoWrappedDocumentLiteralServiceLocator extends 
     }
 
     // Use to get a proxy class for AggiornamentoAsincronoWrappedDocumentLiteral
-    private java.lang.String AggiornamentoAsincronoWrappedDocumentLiteral_address = "http://127.0.0.1:8080/govway/PA";
+    private java.lang.String AggiornamentoAsincronoWrappedDocumentLiteral_address = "http://127.0.0.1:8080/govway/in";
 
     @Override
 	public java.lang.String getAggiornamentoAsincronoWrappedDocumentLiteralAddress() {

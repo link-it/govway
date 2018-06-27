@@ -1204,7 +1204,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -1480,7 +1480,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -1777,7 +1777,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -2055,7 +2055,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -2355,7 +2355,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -2631,7 +2631,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -2928,7 +2928,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);
@@ -3206,7 +3206,7 @@ public class FiltroDuplicatiEGov {
 				// Elimino invio in corso della ricevuta asincrona. 
 				// Tale comportamente rimane in loop poichè siamo in pdd loopback
 				// Inoltre la PdD Mittente in realta non conosce la comunicazione asincrona, 
-				// poichè questo test invia direttamente la busta al servizio govway/PA
+				// poichè questo test invia direttamente la busta al servizio govway/in
 				// Per questo la PdD Mittente segnala le eccezioni Servizio e RiferimentoMessaggio.
 				try{
 					Thread.sleep(5000);

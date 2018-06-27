@@ -172,7 +172,7 @@ public class Test {
 			
 			// ... TODO PRoceso di identificaizone funzione smistatore (es. PortaDlegata)
 			
-			context.getTransaction().getClient().setInvocationEndpoint("/govway/PD/NomePortaDelegta?prova=si");
+			context.getTransaction().getClient().setInvocationEndpoint("/govway/out/NomePortaDelegta?prova=si");
 			context.getTransaction().getClient().setInterfaceName("NomePortaDelegata");
 			
 			// .... TODO DOMINIO PER CUI AGISCO

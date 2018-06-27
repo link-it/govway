@@ -7,10 +7,10 @@ mtom=true
 
 # PdD
 # -- SDICOOP --
-pdd=http://localhost:8080/govway/sdi/PA
+pdd=http://localhost:8080/govway/sdi/in
 pa=SDIENTE/SDITrasmissioneFatture/
 # -- SPCOOP --
-#pdd=http://localhost:8080/govway/spcoop/PA
+#pdd=http://localhost:8080/govway/spcoop/in
 #pa=
 
 # Tipo Operazione

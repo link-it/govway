@@ -774,17 +774,17 @@
 
     <soggetto tipo="spc" nome="Soggetto1" porta-dominio="PdDSoggetto1">
         <connettore tipo="http" nome="PdDSoggetto1">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
     </soggetto>
     <soggetto tipo="spc" nome="Soggetto2" porta-dominio="PdDSoggetto2">
         <connettore tipo="http" nome="PdDSoggetto2">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
     </soggetto>
     <soggetto tipo="spc" nome="SoggettoNonAutenticato" porta-dominio="PdDSoggettoNonAutenticato">
         <connettore tipo="http" nome="PdDSoggettoNonAutenticato">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
     </soggetto>
 
@@ -795,13 +795,13 @@
 
     <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore" porta-dominio="PdDEsempioSoapBoxFruitore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
     </soggetto>
 
     <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxErogatore" porta-dominio="PdDEsempioSoapBoxErogatore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -817,7 +817,7 @@
     <!-- Soggetto Mittente degli esempi -->
     <soggetto tipo="spc" nome="MinisteroFruitore" codice-ipa="o=MinisteroFruitore,c=it">
         <connettore tipo="http" nome="PdDMinisteroFruitore">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay, per esempio di Loopback -->
@@ -879,7 +879,7 @@
     <soggetto tipo="spc" nome="MinisteroErogatore" codice-ipa="o=MinisteroErogatore,c=it">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -892,7 +892,7 @@
 	    <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                     <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
                     <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
@@ -908,7 +908,7 @@
 	    <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore rilevato, poiche' client-auth=abilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                     <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
                     <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
@@ -927,7 +927,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
-                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/in"
                         />
                     </connettore>
 		    <azione>WSSEncryptError</azione>
@@ -935,7 +935,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
-                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/govway/spcoop/in"
                         />
                     </connettore>
 		    <azione>WSSSignatureError</azione>
@@ -944,7 +944,7 @@
                 <!-- TEST HTTPS -->
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -958,7 +958,7 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto2.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -972,7 +972,7 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth_error">
-                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -982,7 +982,7 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_without_client_auth">
-                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -992,7 +992,7 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_ca_non_presente">
-                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto1_senzaCA.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -1002,7 +1002,7 @@
                 </configurazione-azione>
                 <configurazione-azione>
                     <connettore tipo="https" nome="https_hostname_verify">
-                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/PA"/>
+                        <property nome="location" valore="https://127.0.0.1:8445/govway/spcoop/in"/>
                         <property nome="trustStoreLocation"
                             valore="/etc/govway/keys/soggetto1.jks"/>
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
@@ -1015,7 +1015,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_allega_body">
                         <property nome="location"
-                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaAllegaBody?forward=http://127.0.0.1:8080/govway/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaAllegaBody?forward=http://127.0.0.1:8080/govway/spcoop/in"
                         />
                     </connettore>
 		    <azione>allegaBody</azione>
@@ -1023,7 +1023,7 @@
                 <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_scarta_body">
                         <property nome="location"
-                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaScartaBody?forward=http://127.0.0.1:8080/govway/spcoop/PA"
+                            valore="http://localhost:8080/govwayTestSuite/verificaFunzionalitaScartaBody?forward=http://127.0.0.1:8080/govway/spcoop/in"
                         />
                     </connettore>
 		    <azione>scartaBody</azione>
@@ -1081,7 +1081,7 @@
             <fruitore tipo="spc" nome="Soggetto1">
                 <!-- Viene utilizzato come identita il soggetto1: corretto -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                     <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
                     <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
@@ -1093,7 +1093,7 @@
             <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: scorretto -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                     <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
                     <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
@@ -1105,7 +1105,7 @@
             <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato -->
                 <connettore tipo="https" nome="soggetto1">
-                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/PA"/>
+                    <property nome="location" valore="https://127.0.0.1:8444/govway/spcoop/in"/>
                     <property nome="trustStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
                     <property nome="trustStorePassword" valore="openspcoopjks"/>
                     <property nome="keyStoreLocation" valore="/etc/govway/keys/soggetto1.jks"/>
@@ -1471,7 +1471,7 @@
     <soggetto tipo="spc" nome="SoggettoConnettoreErrato">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
-            <property nome="location" valore="http://localhost:82/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:82/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1590,7 +1590,7 @@
     <soggetto tipo="spc" nome="SoggettoConfigurazionePdDErrata">
 
         <connettore tipo="http" nome="PdDConfigurazioneErrata">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1634,7 +1634,7 @@
     <soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroFruitoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1664,7 +1664,7 @@
     <soggetto tipo="spc" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1723,7 +1723,7 @@
     <soggetto tipo="test" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
@@ -1756,7 +1756,7 @@
     <soggetto tipo="spc" nome="MinisteroTmp">
 
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: test per profilo -->
@@ -1780,7 +1780,7 @@
 
         <connettore tipo="http" nome="PdDSoggettoTestConsegnaInOrdine">
             <property nome="location"
-                valore="http://localhost:8080/govwayTestSuite/congelamentoBusta?forward=http://127.0.0.1:8080/govway/spcoop/PA&#38;secondiCongelamento=60"
+                valore="http://localhost:8080/govwayTestSuite/congelamentoBusta?forward=http://127.0.0.1:8080/govway/spcoop/in&#38;secondiCongelamento=60"
             />
         </connettore>
 
@@ -1797,7 +1797,7 @@
     <soggetto tipo="spc" nome="TestRichiesteScorrette">
 
         <connettore tipo="http" nome="PdDTestRichiesteScorrette">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
 
     </soggetto>
@@ -1829,7 +1829,7 @@
     <!-- Test UrlPrefixRewriter -->
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter1">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1838,7 +1838,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter2">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1847,7 +1847,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter3">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1856,7 +1856,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter4">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1874,7 +1874,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter6">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1883,7 +1883,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter7">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1901,7 +1901,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter9">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
@@ -1910,7 +1910,7 @@
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter10">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
-            <property nome="location" valore="http://localhost:8080/govway/spcoop/PA"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/in"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">

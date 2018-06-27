@@ -265,56 +265,56 @@
 <!-- Servizio GestioneUtentiWrappedDocumentLiteral -->
 <wsdl:service name="GestioneUtentiWrappedDocumentLiteralService">
       <wsdl:port binding="service:GestioneUtentiWrappedDocumentLiteralSoapBinding" name="GestioneUtentiWrappedDocumentLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio AggiornamentoUtentiWrappedDocumentLiteral -->
 <wsdl:service name="AggiornamentoUtentiWrappedDocumentLiteralService">
       <wsdl:port binding="service:AggiornamentoUtentiWrappedDocumentLiteralSoapBinding" name="AggiornamentoUtentiWrappedDocumentLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio AggiornamentoAsincronoWrappedDocumentLiteral -->
 <wsdl:service name="AggiornamentoAsincronoWrappedDocumentLiteralService">
       <wsdl:port binding="service:AggiornamentoAsincronoWrappedDocumentLiteralSoapBinding" name="AggiornamentoAsincronoWrappedDocumentLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio GestioneUtentiDocumentLiteral -->
 <wsdl:service name="GestioneUtentiDocumentLiteralService">
       <wsdl:port binding="service:GestioneUtentiDocumentLiteralSoapBinding" name="GestioneUtentiDocumentLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio GestioneUtentiRPCLiteral -->
 <wsdl:service name="GestioneUtentiRPCLiteralService">
       <wsdl:port binding="service:GestioneUtentiRPCLiteralSoapBinding" name="GestioneUtentiRPCLiteral">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio GestioneUtentiRPCEncoded -->
 <wsdl:service name="GestioneUtentiRPCEncodedService">
       <wsdl:port binding="service:GestioneUtentiRPCEncodedSoapBinding" name="GestioneUtentiRPCEncoded">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio GestioneUtentiStileIbrido -->
 <wsdl:service name="GestioneUtentiStileIbridoService">
       <wsdl:port binding="service:GestioneUtentiStileIbridoSoapBinding" name="GestioneUtentiStileIbrido">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 
 <!-- Servizio GestioneUtentiOverloadedOperations -->
 <wsdl:service name="GestioneUtentiOverloadedOperationsService">
       <wsdl:port binding="service:GestioneUtentiOverloadedOperationsSoapBinding" name="GestioneUtentiOverloadedOperations">
-        <wsdlsoap:address location="http://127.0.0.1:8080/govway/PA"/>
+        <wsdlsoap:address location="http://127.0.0.1:8080/govway/in"/>
       </wsdl:port>
 </wsdl:service>
 

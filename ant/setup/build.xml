@@ -736,7 +736,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		                           files="init_soggetto_as4.sql"/>
 				</concat>
 				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/govway/as4/PD/','${antinstaller_as4_msh}');
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/govway/as4/out/','${antinstaller_as4_msh}');
 ]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>

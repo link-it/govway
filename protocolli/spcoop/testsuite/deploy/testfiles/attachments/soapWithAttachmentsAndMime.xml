@@ -1,4 +1,4 @@
-POST /govway/PD/CooperazioneSincrona HTTP/1.0
+POST /govway/out/CooperazioneSincrona HTTP/1.0
 Content-Type: multipart/related; type="text/xml"; start="<56D2051AED8F9598BB61721D8C95BA6F>"; 	boundary="----=_Part_0_6330713.1171639717331"
 Accept: application/soap+xml, application/dime, multipart/related, text/*
 User-Agent: Axis/1.4

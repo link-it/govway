@@ -221,7 +221,7 @@ public class ErroreApplicativoCNIPA {
 			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 			err.setIntervalloInferiore(dataInizioTest);
 			err.setIntervalloSuperiore(dataFineTest);
-			err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/PD/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
+			err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/out/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
 			//System.out.println("CHECK ["+err.getMsgErrore()+"]");
 			this.erroriAttesiOpenSPCoopCore.add(err);
 			

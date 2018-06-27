@@ -2,7 +2,7 @@
 
 	<soggetto tipo="SPC" nome="PROVA">
 	        <connettore tipo="http" nome="PdD">
-        	    <property nome="location" valore="http://localhost:8080/govway/PA"/>
+        	    <property nome="location" valore="http://localhost:8080/govway/in"/>
 	        </connettore>
 	</soggetto>
 

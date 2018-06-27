@@ -247,7 +247,7 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/in");
 			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
@@ -389,7 +389,7 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/in");
 			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
@@ -524,7 +524,7 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/in");
 			test.setLocationPA("http://localhost:8080/govwayTestSuite/server?generazioneRisposta=false");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
@@ -657,7 +657,7 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/in");
 			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");
@@ -797,7 +797,7 @@ public class Handlers {
 			test.setReturnCodePDRes(200);
 			test.setReturnCodePAReq(200);
 			test.setReturnCodePARes(200);
-			test.setLocationPD("http://localhost:8080/govway/spcoop/PA");
+			test.setLocationPD("http://localhost:8080/govway/spcoop/in");
 			test.setLocationPA("http://localhost:8080/govwayTestSuite/server");
 			test.setTipoConnettorePD("http");
 			test.setTipoConnettorePA("http");

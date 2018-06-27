@@ -118,7 +118,7 @@ public class SerializationClientTest {
 		connettore.setTipo("http");
 		Property pr = new Property();
 		pr.setNome("location");
-		pr.setValore("http://localhost:8080/govway/PA");
+		pr.setValore("http://localhost:8080/govway/in");
 		connettore.addProperty(pr);
 		soggettoTest.setConnettore(connettore);
 		
