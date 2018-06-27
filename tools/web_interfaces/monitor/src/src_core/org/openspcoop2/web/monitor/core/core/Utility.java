@@ -490,7 +490,7 @@ public class Utility {
 		}
 	}
 	
-	public static List<String> getListaProtocolli(List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
+	public static List<String> getListaProtocolli(User utente, List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
 		List<String> listaNomiProtocolli = new  ArrayList<String>();
 
 		if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
@@ -509,12 +509,20 @@ public class Utility {
 			}
 
 		} else {
-			// Tutti i protocolli
-			Enumeration<String> keys = protocolFactories.keys();
-			while (keys.hasMoreElements()) {
-				String protocolKey = (String) keys.nextElement();
-				if(!listaNomiProtocolli.contains(protocolKey))
-					listaNomiProtocolli.add(protocolKey);
+			if(utente.getProtocolliSupportati() !=null) {
+				for (String protocolKey : utente.getProtocolliSupportati()) {
+					if(!listaNomiProtocolli.contains(protocolKey))
+						listaNomiProtocolli.add(protocolKey);
+				}
+			}
+			else {
+				// Tutti i protocolli
+				Enumeration<String> keys = protocolFactories.keys();
+				while (keys.hasMoreElements()) {
+					String protocolKey = (String) keys.nextElement();
+					if(!listaNomiProtocolli.contains(protocolKey))
+						listaNomiProtocolli.add(protocolKey);
+				}
 			}
 		}
 		return listaNomiProtocolli;

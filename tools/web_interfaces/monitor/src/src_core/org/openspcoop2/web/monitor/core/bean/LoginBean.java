@@ -357,7 +357,7 @@ public class LoginBean extends AbstractLoginBean {
 		ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-		List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+		List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUtente(),listaSoggettiGestione, pfManager, protocolFactories);
 		return listaNomiProtocolli;
 	}
 
@@ -406,7 +406,7 @@ public class LoginBean extends AbstractLoginBean {
 			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUtente(),listaSoggettiGestione, pfManager, protocolFactories);
 
 			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
 				// prelevo l'eventuale protocollo selezionato

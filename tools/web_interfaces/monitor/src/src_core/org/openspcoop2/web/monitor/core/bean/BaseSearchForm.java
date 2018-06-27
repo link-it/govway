@@ -310,21 +310,41 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.sortField = null;
 			
 			IProtocolFactory<?> protocolFactory = null;
-			String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+			User utente = this.getUser();
 			
-			if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
-				try {
-					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
-				}catch(Exception e) {
-					User user = this.getUser();
-					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(user.getProtocolliSupportati().get(0));
+			if(this.isShowListaProtocolli()) {
+				String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+				
+				if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
+					if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
+						if(utente.getProtocolliSupportati().contains(ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol())) {
+							protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+						} else {
+							protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(utente.getProtocolliSupportati().get(0));
+						}
+					} else {
+						try {
+							protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+						}catch(Exception e) {
+							BaseSearchForm.log.error("Errore durante l'impostazione del default per il protocollo: " + e.getMessage(),e);
+						}
+					}
+				} else {
+					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
 				}
-			} else {
-				protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
+				
 			}
-			
+			else {
+				// utente ha selezionato una modalita'
+				if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
+					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(utente.getProtocolloSelezionatoPddMonitor());
+				} else if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
+					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(utente.getProtocolliSupportati().get(0));
+				} else {
+					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+				}
+			}
 			this.protocollo = protocolFactory.getProtocol();
-
 			this.modalitaRicercaStorico = BaseSearchForm.default_modalitaRicercaStorico;
 
 			
@@ -1350,7 +1370,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUser(),listaSoggettiGestione, pfManager, protocolFactories);
 
 			for (String protocolKey : listaNomiProtocolli) {
 				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
@@ -1385,12 +1405,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			}
 			
 			
-			if(utente.getProtocolliSupportati() ==null ||  utente.getProtocolliSupportati().size() <= 1) {
+			if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() <= 1) {
 				return false;
 			}
 
 			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUser(),listaSoggettiGestione, pfManager, protocolFactories);
 
 			numeroProtocolli = listaNomiProtocolli.size();
 
@@ -1406,8 +1426,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public boolean isSetFiltroProtocollo() {
-		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) &&
-				(this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
+		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) ;
+//		&& (this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
 		
 		return setFilter;
 	}
