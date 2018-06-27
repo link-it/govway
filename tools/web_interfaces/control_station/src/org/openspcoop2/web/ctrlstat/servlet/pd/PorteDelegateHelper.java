@@ -428,11 +428,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				!azTmp.contains(modeaz);
 		// se true viewOnlyModeDatiAzione e' stato usato un valore modificato in avanzato e non supportato in standard
 		
+		// Fix per standard visualizzazione anche su soap
+		// fornisco interfaceMode direttamente come per rest se cmq è abilitato sia il riconoscimento per url che anche per forceInterface.
+		boolean visualizzazioneSpecialeSoapPerEssereUgualeARest = false;
+		if(this.isModalitaStandard() && ServiceBinding.SOAP.equals(serviceBinding) &&
+				PortaDelegataAzioneIdentificazione.URL_BASED.getValue().equals(modeaz) &&
+				(ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased)) 
+				&& (aspc.getByteWsdlConcettuale()!=null)
+				) {
+			visualizzazioneSpecialeSoapPerEssereUgualeARest = true;
+		}
+		
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
-			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1)) {
+			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1) || visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(modeaz);
 				dati.addElement(de);
@@ -441,7 +452,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
-				de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(modeaz));
+				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
+					de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(PortaDelegataAzioneIdentificazione.INTERFACE_BASED.getValue()));
+				}
+				else {
+					de.setValue(this.getPortaDelegataAzioneIdentificazioneLabel(modeaz));
+				}
 			}
 			else {
 				de.setType(DataElementType.SELECT);
@@ -475,7 +491,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			else {
 			
-				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
+				if ( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						(modeaz != null) && 
+						modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 					de.setType(DataElementType.SELECT);
@@ -503,7 +521,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						de.setValue(azione);
 					}
 		
-					if (!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
+					if ( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED.equals(modeaz) && 
 							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
 							!PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED.equals(modeaz) ){
 						if(viewOnlyModeDatiAzione) {
@@ -523,9 +542,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
-				if( modeaz!= null && (
+				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						modeaz!= null && 
+						(
 							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
+							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)
+						)
 					){
 		
 					if(viewOnlyModeDatiAzione) {
@@ -551,9 +573,12 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
 				dati.addElement(de);
 				
-				if( modeaz!= null && (
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
-						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
+				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						modeaz!= null && 
+						(
+							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) &&
+							!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED)
+						)
 				){
 					de = new DataElement();
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY);

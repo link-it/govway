@@ -1100,7 +1100,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.connfact = "";
 					this.sendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					this.profilo = "-";
-					this.portType = "-";
+					if(ServiceBinding.SOAP.equals(this.serviceBinding)) {
+						if(ptList!=null && ptList.length==2){
+							this.portType = ptList[1]; // al posto 0 è presente '-'
+							this.nomeservizio = this.portType;
+						}
+						else {
+							this.portType = "-";
+						}
+					}else {
+						this.portType = "-";
+					}
 					this.descrizione = "";
 					this.httpsurl = "";
 					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
@@ -1178,6 +1188,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						}  else {
 							if(ptList ==null || ptList.length < 1){
 								this.nomeservizio = as.getNome();
+							}
+							else if(ptList!=null && ptList.length==2){
+								this.portType = ptList[1]; // al posto 0 è presente '-'
+								this.nomeservizio = this.portType;
 							}
 						}
 		

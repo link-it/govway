@@ -1192,11 +1192,22 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				!azTmp.contains(modeaz);
 		// se true viewOnlyModeDatiAzione e' stato usato un valore modificato in avanzato e non supportato in standard
 		
+		// Fix per standard visualizzazione anche su soap
+		// fornisco interfaceMode direttamente come per rest se cmq è abilitato sia il riconoscimento per url che anche per forceInterface.
+		boolean visualizzazioneSpecialeSoapPerEssereUgualeARest = false;
+		if(this.isModalitaStandard() && ServiceBinding.SOAP.equals(serviceBinding) &&
+				PortaApplicativaAzioneIdentificazione.URL_BASED.getValue().equals(modeaz) &&
+				(ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased)) 
+				&& (aspc.getByteWsdlConcettuale()!=null)
+				) {
+			visualizzazioneSpecialeSoapPerEssereUgualeARest = true;
+		}
+		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
 		if(!usataInConfigurazioni || datiInvocazione) {
-			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1)) {
+			if(viewOnlyModeDatiAzione || (tipoModeAzione!=null && tipoModeAzione.length==1) || visualizzazioneSpecialeSoapPerEssereUgualeARest) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(modeaz);
 				dati.addElement(de);
@@ -1205,7 +1216,12 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE+"__LABEL");
 				de.setType(DataElementType.TEXT);
-				de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(modeaz));
+				if(visualizzazioneSpecialeSoapPerEssereUgualeARest) {
+					de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(PortaApplicativaAzioneIdentificazione.INTERFACE_BASED.getValue()));
+				}
+				else {
+					de.setValue(this.getPortaApplicativaAzioneIdentificazioneLabel(modeaz));
+				}
 			}
 			else {
 				de.setType(DataElementType.SELECT);
@@ -1239,7 +1255,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 			else {
 			
-				if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
+				if ( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						(modeaz != null) && 
+						modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
 					de = new DataElement();
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
 					de.setType(DataElementType.SELECT);
@@ -1268,7 +1286,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						de.setValue(azione);
 					}
 		
-					if (!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED.equals(modeaz) && 
+					if ( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED.equals(modeaz) && 
 							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED.equals(modeaz) && 
 							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED.equals(modeaz) && 
 							!PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED.equals(modeaz) ){
@@ -1288,10 +1307,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
-				if( modeaz!= null && (
+				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						modeaz!= null && 
+						(
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
 							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
+							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED)
+						)
 					){
 		
 					if(viewOnlyModeDatiAzione) {
@@ -1317,10 +1339,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
 				dati.addElement(de);
 				
-				if( modeaz!= null && (
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
-						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
+				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
+						modeaz!= null && 
+						(
+							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT) &&
+							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) &&
+							!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED)
+						)
 				){
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY);
