@@ -896,6 +896,10 @@
 			<zipfileset dir="${deploy_jwk_dir}" prefix="properties">
 				<include name="*.jwk"/>
 			</zipfileset>
+			<!-- PreLoading -->
+			<zipfileset dir="${deploy_preLoading_dir}" prefix="properties">
+				<include name="*.zip"/>
+			</zipfileset>
 		</ear>
 		
 		<!-- Elimino file temporanei -->

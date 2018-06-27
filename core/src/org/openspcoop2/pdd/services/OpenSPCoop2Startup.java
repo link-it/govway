@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.eventi.Evento;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -78,6 +80,7 @@ import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.GeneralInstanceProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
+import org.openspcoop2.pdd.config.PreLoadingConfig;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -1248,6 +1251,31 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 //			}
 
 
+			
+			
+			
+			
+			
+			
+			
+			/* ------------ PreLoading ------------- */
+			
+			if(propertiesReader.getConfigPreLoadingLocale()!=null) {
+				try{
+					
+					Object oConfig = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+					Object oRegistry = RegistroServiziReader.getDriverRegistroServizi().values().iterator().next();
+					if( (oConfig instanceof DriverConfigurazioneDB) && (oRegistry instanceof DriverRegistroServiziDB) ) {
+						PreLoadingConfig preLoading = new PreLoadingConfig(logCore, logCore, propertiesReader.getDefaultProtocolName(),
+								propertiesReader.getIdentitaPortaDefault(propertiesReader.getDefaultProtocolName()));
+						preLoading.loadConfig(propertiesReader.getConfigPreLoadingLocale());
+					}
+										
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante il preloading della configurazione di OpenSPCoop: "+e.getMessage(),e);
+					return;
+				}
+			}
 
 
 

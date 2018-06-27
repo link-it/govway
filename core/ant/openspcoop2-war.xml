@@ -278,6 +278,10 @@
 			<classes dir="${deploy_jwk_dir}">
 				<include name="*.jwk"/>
 			</classes>
+			<!-- PreLoading -->
+			<classes dir="${deploy_preLoading_dir}">
+				<include name="*.zip"/>
+			</classes>
 		</war>
 	</target>
 	

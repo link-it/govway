@@ -61,6 +61,9 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
@@ -268,6 +271,146 @@ public class XMLDataConverter {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
 		}
+		this.xmlUtils = XMLUtils.getInstance();
+		
+		// Protocol initialize
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	public XMLDataConverter(String sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(String sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(String sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
+	public XMLDataConverter(byte[] sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(byte[] sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(byte[] sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
+	public XMLDataConverter(InputStream sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(InputStream sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(InputStream sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
+	public XMLDataConverter(File sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				null,null);
+	}
+	public XMLDataConverter(File sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,null);
+	}
+	public XMLDataConverter(File sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,
+				configurazione,tabellaSoggettiCondivisaPddRegserv,superUser,protocolloDefault,
+				log,logDriver);
+	}
+	
+	private void XMLDataConverterSetup(Object sorgente,IDriverConfigurazioneCRUD gestoreCRUD,String tipoDestinazione,
+			boolean configurazione,boolean tabellaSoggettiCondivisaPddRegserv,String superUser,String protocolloDefault,
+			Logger log,Logger logDriver) throws DriverConfigurazioneException{
+	
+		if(log == null)
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
+		else
+			this.log = log;
+		this.logDriver = logDriver;
+		
+		this.gestioneConfigurazione = configurazione;
+		if(gestoreCRUD==null)
+			throw new DriverConfigurazioneException("GestoreCRUD non definito");
+		this.tipoBEDestinazione = tipoDestinazione;
+		this.superUser = superUser;
+		
+		// Istanziazione sorgente
+		try{
+			if(sorgente instanceof String){
+				createSorgente((String)sorgente);
+			}
+			else if (sorgente instanceof byte[]){
+				createSorgente((byte[])sorgente);
+			}else if (sorgente instanceof InputStream){
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				InputStream is = (InputStream) sorgente;
+				int letti = 0;
+				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+				while( (letti=is.read(reads)) != -1 ){
+					bout.write(reads,0,letti);	
+				}
+				bout.flush();
+				bout.close();
+				createSorgente(bout.toByteArray());
+			}else if (sorgente instanceof File){
+				createSorgente(((File)sorgente).getAbsolutePath());
+			}
+		}catch(DriverConfigurazioneException d){
+			throw d;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Creazione sorgente ["+sorgente.getClass().getName()+"] non riuscita: "+e.getMessage(),e);
+		}
+		
+		// Istanziazione CRUD
+		this.gestoreCRUD = gestoreCRUD;
 		this.xmlUtils = XMLUtils.getInstance();
 		
 		// Protocol initialize
@@ -657,6 +800,9 @@ public class XMLDataConverter {
 	}
 	
 	public void convertXML(boolean reset,boolean aggiornamentoSoggetti, boolean createMappingErogazioneFruizione) throws DriverConfigurazioneException{
+		convertXML(reset, aggiornamentoSoggetti, createMappingErogazioneFruizione, true);
+	}
+	public void convertXML(boolean reset,boolean aggiornamentoSoggetti, boolean createMappingErogazioneFruizione, boolean updateEnabled) throws DriverConfigurazioneException{
 		
 		// Reset
 		if(reset){
@@ -709,7 +855,7 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
 				for(int j=0;j<soggetto.sizeServizioApplicativoList();j++){
 					ServizioApplicativo servizioApplicativo = soggetto.getServizioApplicativo(j);
-					this.addServizioApplicativo(servizioApplicativo,soggetto,null,reset);				
+					this.addServizioApplicativo(servizioApplicativo,soggetto,null,reset, updateEnabled);				
 				}
 			}
 		}catch(Exception e){
@@ -733,9 +879,11 @@ public class XMLDataConverter {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(pd.getNome());			
 					if( (reset==false) && this.gestoreCRUD.existsPortaDelegata(idPD)){
-						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
-						this.gestoreCRUD.updatePortaDelegata(pd);
-						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						if(updateEnabled) {
+							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
+							this.gestoreCRUD.updatePortaDelegata(pd);
+							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						}
 					}else{
 						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
 						this.gestoreCRUD.createPortaDelegata(pd);
@@ -880,9 +1028,11 @@ public class XMLDataConverter {
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(pa.getNome());
 					if( (reset==false) && this.gestoreCRUD.existsPortaApplicativa(idPA)){
-						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
-						this.gestoreCRUD.updatePortaApplicativa(pa);
-						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						if(updateEnabled) {
+							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
+							this.gestoreCRUD.updatePortaApplicativa(pa);
+							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						}
 					}else{
 						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
 						this.gestoreCRUD.createPortaApplicativa(pa);
@@ -1031,8 +1181,10 @@ public class XMLDataConverter {
 						this.log.info("Routing Table, creazione effettuata.");
 					}
 					else{
-						this.gestoreCRUD.updateRoutingTable(this.sorgenteConfigurazione.getConfigurazione().getRoutingTable());
-						this.log.info("Routing Table, aggiornamento effettuato.");
+						if(updateEnabled) {
+							this.gestoreCRUD.updateRoutingTable(this.sorgenteConfigurazione.getConfigurazione().getRoutingTable());
+							this.log.info("Routing Table, aggiornamento effettuato.");
+						}
 					}
 				}
 				
@@ -1051,8 +1203,10 @@ public class XMLDataConverter {
 						this.log.info("Accesso registro, creazione effettuata.");
 					}
 					else{
-						this.gestoreCRUD.updateAccessoRegistro(this.sorgenteConfigurazione.getConfigurazione().getAccessoRegistro());
-						this.log.info("Accesso registro, aggiornamento effettuato.");
+						if(updateEnabled) {
+							this.gestoreCRUD.updateAccessoRegistro(this.sorgenteConfigurazione.getConfigurazione().getAccessoRegistro());
+							this.log.info("Accesso registro, aggiornamento effettuato.");
+						}
 					}						
 				}
 			
@@ -1073,8 +1227,10 @@ public class XMLDataConverter {
 						this.log.info("GestioneErrore, creazione effettuata.");
 					}
 					else{
-						this.gestoreCRUD.updateGestioneErroreComponenteCooperazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteCooperazione());
-						this.log.info("GestioneErrore, aggiornamento effettuato.");
+						if(updateEnabled) {
+							this.gestoreCRUD.updateGestioneErroreComponenteCooperazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteCooperazione());
+							this.log.info("GestioneErrore, aggiornamento effettuato.");
+						}
 					}
 								
 				}
@@ -1097,8 +1253,10 @@ public class XMLDataConverter {
 						this.log.info("GestioneErrore, creazione effettuata.");
 					}
 					else{
-						this.gestoreCRUD.updateGestioneErroreComponenteIntegrazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteIntegrazione());
-						this.log.info("GestioneErrore, aggiornamento effettuato.");
+						if(updateEnabled) {
+							this.gestoreCRUD.updateGestioneErroreComponenteIntegrazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteIntegrazione());
+							this.log.info("GestioneErrore, aggiornamento effettuato.");
+						}
 					}
 				}
 
@@ -1117,8 +1275,10 @@ public class XMLDataConverter {
 						this.gestoreCRUD.createConfigurazione(this.sorgenteConfigurazione.getConfigurazione());
 						this.log.info("Configurazione, creazione effettuata.");
 					}else{
-						this.gestoreCRUD.updateConfigurazione(this.sorgenteConfigurazione.getConfigurazione());
-						this.log.info("Configurazione, aggiornamento effettuato.");
+						if(updateEnabled) {
+							this.gestoreCRUD.updateConfigurazione(this.sorgenteConfigurazione.getConfigurazione());
+							this.log.info("Configurazione, aggiornamento effettuato.");
+						}
 					}
 				}
 				
@@ -1505,11 +1665,15 @@ public class XMLDataConverter {
 		
 		// **** altre info per driver DB ***
 		if(CostantiConfigurazione.REGISTRO_DB.equals(tipoBEDestinazione)){
+			
 			if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getConnettore()!=null){
 				// I nomi dei connettorivengono autogenerati dal driver
 				servizioApplicativo.getInvocazioneServizio().getConnettore().setNome(null);
-				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				String tipoConnettore = servizioApplicativo.getInvocazioneServizio().getConnettore().getTipo();
+				if(!TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore)) {
+					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+				}
+				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
 					 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
 					 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
@@ -1523,8 +1687,11 @@ public class XMLDataConverter {
 			if(servizioApplicativo.getRispostaAsincrona()!=null && servizioApplicativo.getRispostaAsincrona().getConnettore()!=null){
 				// I nomi dei connettorivengono autogenerati dal driver
 				servizioApplicativo.getRispostaAsincrona().getConnettore().setNome(null);
-				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				String tipoConnettore = servizioApplicativo.getRispostaAsincrona().getConnettore().getTipo();
+				if(!TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore)) {
+					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.ASINCRONA_ASIMMETRICA.getValue());
+				}
+				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
 					 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
 					 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
@@ -1534,6 +1701,16 @@ public class XMLDataConverter {
 				if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
 					gestioneDefaultConnettoreHTTP(servizioApplicativo.getRispostaAsincrona().getConnettore());
 				}
+			}
+			if(servizioApplicativo.getTipologiaErogazione()==null) {
+				if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getGetMessage()!=null &&
+						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getInvocazioneServizio().getGetMessage())) {
+					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.MESSAGE_BOX.getValue());
+				}
+			}
+			
+			if(servizioApplicativo.getInvocazionePorta()!=null && servizioApplicativo.getInvocazionePorta().sizeCredenzialiList()>0) {
+				servizioApplicativo.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 			}
 		}
 	}
@@ -1564,7 +1741,7 @@ public class XMLDataConverter {
 		}
 	}
 	
-	private void addServizioApplicativo(ServizioApplicativo servizioApplicativo,Soggetto soggettoProprietario,String posizione,boolean reset) throws Exception{
+	private void addServizioApplicativo(ServizioApplicativo servizioApplicativo,Soggetto soggettoProprietario,String posizione,boolean reset, boolean updateEnabled) throws Exception{
 		servizioApplicativo.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
 		servizioApplicativo.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 		String pos = "";
@@ -1581,14 +1758,16 @@ public class XMLDataConverter {
 		idSA.setIdSoggettoProprietario(idSoggetto);
 		idSA.setNome(servizioApplicativo.getNome());
 		if( (reset==false) && this.gestoreCRUD.existsServizioApplicativo(idSA)){
-			this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornamento in corso...");
-			
-			ServizioApplicativo old = ((IDriverConfigurazioneGet) this.gestoreCRUD).getServizioApplicativo(idSA);
-			
-			impostaInformazioniConfigurazione_ServizioApplicativo_update(servizioApplicativo, old);
-			
-			this.gestoreCRUD.updateServizioApplicativo(servizioApplicativo);
-			this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornato.");
+			if(updateEnabled) {
+				this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornamento in corso...");
+				
+				ServizioApplicativo old = ((IDriverConfigurazioneGet) this.gestoreCRUD).getServizioApplicativo(idSA);
+				
+				impostaInformazioniConfigurazione_ServizioApplicativo_update(servizioApplicativo, old);
+				
+				this.gestoreCRUD.updateServizioApplicativo(servizioApplicativo);
+				this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornato.");
+			}
 		}else{
 			this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" creazione in corso...");
 			this.gestoreCRUD.createServizioApplicativo(servizioApplicativo);

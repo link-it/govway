@@ -85,6 +85,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -335,7 +336,9 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.configurazionePdDReader;
 	}
 
-
+	public static IDriverConfigurazioneGet getDriverConfigurazionePdD() {
+		return ConfigurazionePdDReader.configurazionePdDReader.configurazionePdD.getDriverConfigurazionePdD();
+	} 
 
 
 

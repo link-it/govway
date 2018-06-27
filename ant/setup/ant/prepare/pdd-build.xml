@@ -64,6 +64,7 @@
 			<param name="properties_dir" value="${core}/deploy/properties" />
 			<param name="deploy_jks_dir" value="${core}/deploy/jks" />
 			<param name="deploy_jwk_dir" value="${core}/deploy/jwk" />
+			<param name="deploy_preLoading_dir" value="${core}/deploy/preloading" />
 			<param name="printServerInfo" value="true"/>
 			<param name="forceDisableJ2eeMode" value="${buildPddInternal_forceDisableJ2eeMode}"/>
 			<param name="wsdlFolder" value="${core}/deploy/deploy_web/web_app" />

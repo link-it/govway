@@ -337,13 +337,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				configurazioneStandardNonApplicabile = true;
 			}
 			else if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
-				de.setSelected(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
+				de.setValue(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 				if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
 					tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 				} 
 			}
 			else if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-				de.setSelected(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
+				de.setValue(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
 				if( (endpointtype==null || TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) 
 						&&
 						(getmsg==null || CostantiConfigurazione.DISABILITATO.equals(getmsg))){

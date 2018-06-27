@@ -121,6 +121,7 @@ import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
@@ -128,6 +129,7 @@ import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
@@ -447,6 +449,9 @@ public class OpenSPCoop2Properties {
 
 
 			// Tipo di Configurazione
+			
+			this.getConfigPreLoadingLocale();
+			
 			if (getTipoConfigurazionePDD() == null){		
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Proprieta' non impostata");
 				return false;
@@ -2981,6 +2986,46 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.pathConfigurazionePDD;
 	} 
 
+	private static byte[] configPreLoadingLocale = null;
+	private static Boolean configPreLoadingLocale_read = null;
+	public byte[] getConfigPreLoadingLocale() {	
+		if(OpenSPCoop2Properties.configPreLoadingLocale_read==null){
+			try{ 
+				String resource = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
+				if(resource!=null){
+					resource = resource.trim();
+					File f = new File(resource);
+					if(f.exists()) {
+						OpenSPCoop2Properties.configPreLoadingLocale = FileSystemUtilities.readBytesFromFile(f);
+					}
+					else {
+						if(resource.startsWith("/")==false) {
+							resource = "/" + resource;
+						}
+						InputStream is = OpenSPCoop2Properties.class.getResourceAsStream(resource);
+						if(is!=null) {
+							try {
+								OpenSPCoop2Properties.configPreLoadingLocale = Utilities.getAsByteArray(is);
+							}finally {
+								try {
+									is.close();
+								}catch(Exception eClose) {}
+							}
+						}
+					}
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.preLoading.locale': "+e.getMessage());
+				OpenSPCoop2Properties.tipoConfigurazionePDD = null;
+			}  
+			
+			OpenSPCoop2Properties.configPreLoadingLocale_read = true;
+		}
+
+		return OpenSPCoop2Properties.configPreLoadingLocale;
+	}
+	
 	/**
 	 * Restituisce il tipo di configurazione della porta di dominio di OpenSPCoop.
 	 *

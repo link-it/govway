@@ -290,6 +290,116 @@ public class XMLDataConverter {
 	}
 	
 	
+	public XMLDataConverter(String sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(String sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(String sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
+	public XMLDataConverter(byte[] sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(byte[] sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(byte[] sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
+	public XMLDataConverter(InputStream sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(InputStream sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(InputStream sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
+	public XMLDataConverter(File sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,null,null);
+	}
+	public XMLDataConverter(File sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,null);
+	}
+	public XMLDataConverter(File sorgente,IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		XMLDataConverterSetup(sorgente,gestoreCRUD, tipoDestinazione,superUser,protocolloDefault,log,logDriver);
+	}
+	
+	private void XMLDataConverterSetup(Object sorgente, IDriverRegistroServiziCRUD gestoreCRUD, String tipoDestinazione,
+			String superUser,String protocolloDefault,Logger log,Logger logDriver) throws DriverRegistroServiziException{
+		
+		if(log == null)
+			this.log = LoggerWrapperFactory.getLogger(XMLDataConverter.class);
+		else
+			this.log = log;
+		this.logDriver = logDriver;
+		
+		if(gestoreCRUD==null)
+			throw new DriverRegistroServiziException("GestoreCRUD non definito");
+		
+		this.tipoBEDestinazione = tipoDestinazione;
+		this.superUser = superUser;
+		
+		// Istanziazione sorgente
+		try{
+			if(sorgente instanceof String){
+				createSorgente((String)sorgente);
+				// Calcolo directory padre
+				try{
+					File f = new File((String)sorgente);
+					if(f.getParentFile()!=null){
+						this.parentFile = f.getParentFile();
+					}
+				}catch(Exception e){}
+			}
+			else if (sorgente instanceof byte[]){
+				createSorgente((byte[])sorgente);
+			}else if (sorgente instanceof InputStream){
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				InputStream is = (InputStream) sorgente;
+				int letti = 0;
+				byte [] reads = new byte[Utilities.DIMENSIONE_BUFFER];
+				while( (letti=is.read(reads)) != -1 ){
+					bout.write(reads,0,letti);	
+				}
+				bout.flush();
+				bout.close();
+				createSorgente(bout.toByteArray());
+			}else if (sorgente instanceof File){
+				createSorgente(((File)sorgente).getAbsolutePath());
+				// Calcolo directory padre
+				try{
+					File f = (File)sorgente;
+					if(f.getParentFile()!=null){
+						this.parentFile = f.getParentFile();
+					}
+				}catch(Exception e){}
+			}
+		}catch(DriverRegistroServiziException d){
+			throw d;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Creazione sorgente ["+sorgente.getClass().getName()+"] non riuscita: "+e.getMessage(),e);
+		}
+		
+		// Istanziazione CRUD
+		this.gestoreCRUD = gestoreCRUD;
+		
+		// Protocol initialize
+		try {
+			ProtocolFactoryReflectionUtils.initializeProtocolManager(protocolloDefault, this.log);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Errore durante l'istanziazione del driver di CRUD: "+e.getMessage(),e);
+		}
+		
+		
+	}
+	
+	
 	
 	public XMLDataConverter(String sorgente,Connection connection,String tipoDatabase,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
 		XMLDataConverterSetup(sorgente,connection,tipoDatabase,superUser,protocolloDefault,null,null);
@@ -563,9 +673,15 @@ public class XMLDataConverter {
 	public void convertXML(boolean reset, boolean mantieniFruitoriEsistenti,boolean aggiornamentoSoggetti,StatiAccordo statoAccordo) throws DriverRegistroServiziException{
 		convertXML(reset,new PdDConfig(),mantieniFruitoriEsistenti,aggiornamentoSoggetti,statoAccordo);
 	}
+	public void convertXML(boolean reset, boolean mantieniFruitoriEsistenti,boolean aggiornamentoSoggetti,StatiAccordo statoAccordo, boolean updateEnabled) throws DriverRegistroServiziException{
+		convertXML(reset,new PdDConfig(),mantieniFruitoriEsistenti,aggiornamentoSoggetti,statoAccordo,updateEnabled);
+	}
 	
 	// pddEsterne da impostare solo nel caso di conversione per govwayConsole
 	public void convertXML(boolean reset, PdDConfig pddConfig, boolean mantieniFruitoriEsistenti,boolean aggiornamentoSoggetti,StatiAccordo statoAccordo) throws DriverRegistroServiziException{
+		this.convertXML(reset, pddConfig, mantieniFruitoriEsistenti, aggiornamentoSoggetti, statoAccordo, true);
+	}
+	public void convertXML(boolean reset, PdDConfig pddConfig, boolean mantieniFruitoriEsistenti,boolean aggiornamentoSoggetti,StatiAccordo statoAccordo, boolean updateEnabled) throws DriverRegistroServiziException{
 		
 		// Reset
 		if(reset){

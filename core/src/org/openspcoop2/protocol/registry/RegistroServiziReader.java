@@ -276,7 +276,9 @@ public class RegistroServiziReader {
 		return RegistroServiziReader.registroServiziReader;
 	}
 
-
+	public static java.util.Hashtable<String, IDriverRegistroServiziGet> getDriverRegistroServizi() {
+		return RegistroServiziReader.registroServiziReader.registroServizi.getDriverRegistroServizi();
+	}
 
 
 
