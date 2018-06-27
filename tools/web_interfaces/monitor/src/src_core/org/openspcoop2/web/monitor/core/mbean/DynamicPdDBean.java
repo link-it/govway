@@ -219,12 +219,50 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 //		}
 //		return this.soggetti;
 //	}
+	
+	public List<SelectItem> _getSoggetti(boolean includiOperativi,boolean includiEsterni) throws Exception {
+		if(this.search==null){
+			return new ArrayList<SelectItem>();
+		}
+		
+		if(!this.soggettiSelectItemsWidthCheck){
+			this.soggetti = new ArrayList<SelectItem>();
 
-	public List<SelectItem> getSoggettiLocale() throws Exception{
-		return _getSoggetti(true,false);
+			String tipoProtocollo = this.search.getProtocollo();
+			String idPorta = null;
+			List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
+
+			for (Soggetto soggetto : list) {
+				boolean add = true;
+				if(!(includiOperativi && includiEsterni)) { 
+					if(includiOperativi) {
+						String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+						add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+					} 
+					if(includiEsterni) {
+						String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+						add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.ESTERNO);
+					}
+				}
+				
+				if(add) {				
+					String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
+					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+					this.soggetti.add(new SelectItem(value,label));
+				}
+			}
+			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggetti);
+			this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
+		}
+		return this.soggetti;
 	}
 
-	public List<SelectItem> _getSoggetti(boolean includiOperativi,boolean includiEsterni) throws Exception {
+	public List<SelectItem> getSoggettiLocale() throws Exception{
+		return _getSoggettiLocale(true,false);
+	}
+
+	public List<SelectItem> _getSoggettiLocale(boolean includiOperativi,boolean includiEsterni) throws Exception {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
