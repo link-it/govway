@@ -59,7 +59,7 @@ public class JmxUtils {
 				//System.out.println("=================== REMOTA OPENSPCOOP =======================");
 				String remoteUrl = this.monitorProperties.getJmxPdD_remoteAccess_url(alias);
 				if(remoteUrl==null){
-					throw new Exception("Configurazione errata (pdd:"+alias+") accesso via checkPdD. Non e' stata indicata la url");
+					throw new Exception("Configurazione errata (pdd:"+alias+") accesso via check. Non e' stata indicata la url");
 				}
 				return remoteUrl;
 			}

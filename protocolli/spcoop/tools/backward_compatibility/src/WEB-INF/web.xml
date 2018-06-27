@@ -51,7 +51,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
     <!-- OpenSPCoop: Servizio di check stato PdD -->
     <servlet>
-        <servlet-name>checkPdD</servlet-name>
+        <servlet-name>check</servlet-name>
         <servlet-class>org.openspcoop2.protocol.spcoop.backward_compatibility.services.CheckStatoPdD</servlet-class>
     </servlet>
 
@@ -75,8 +75,8 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
     <!-- servlet-mapping OpenSPCoop2 -->
     <servlet-mapping>
-        <servlet-name>checkPdD</servlet-name>
-        <url-pattern>/checkPdD/*</url-pattern>
+        <servlet-name>check</servlet-name>
+        <url-pattern>/check/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PDtoSOAP</servlet-name>

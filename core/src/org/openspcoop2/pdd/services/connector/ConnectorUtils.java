@@ -391,7 +391,7 @@ public class ConnectorUtils {
 			
 			if(htmlMessage){
 				// servizi
-				risposta.append("<i>Enabled services: PD, PA, PDtoSOAP, checkPdD, IntegrationManager</i><br/><br/>\n");
+				risposta.append("<i>Enabled services: PD, PA, PDtoSOAP, check, IntegrationManager</i><br/><br/>\n");
 			
 				// web site
 				risposta.append("<i>Official website: http://www.govway.org</i><br/><br/>\n");

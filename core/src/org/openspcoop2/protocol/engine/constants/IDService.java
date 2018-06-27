@@ -46,7 +46,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
 	
-	CHECK_PDD ("CheckPdD");
+	CHECK_PDD ("Check");
 	
 	
 	// ID: 7 cifre (parlante)

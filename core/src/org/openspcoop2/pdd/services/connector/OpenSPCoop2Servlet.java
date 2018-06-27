@@ -189,19 +189,31 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
 			}
 						
-			if(function.equals(URLProtocolContext.PD_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_DELEGATA.equals(idServiceCustom))){
+			if( 
+					(function.equals(URLProtocolContext.PD_FUNCTION) && op2Properties.isEnabledFunctionPD()) 
+					|| 
+					(idServiceCustom!=null && IDService.PORTA_DELEGATA.equals(idServiceCustom))
+				){
 				
 				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idServiceCustom))){
+			else if(
+					(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
+					|| 
+					(idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idServiceCustom))
+				){
 				
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if(function.equals(URLProtocolContext.PA_FUNCTION) || (idServiceCustom!=null && IDService.PORTA_APPLICATIVA.equals(idServiceCustom))){
+			else if(
+					(function.equals(URLProtocolContext.PA_FUNCTION) && op2Properties.isEnabledFunctionPA()) 
+					|| 
+					(idServiceCustom!=null && IDService.PORTA_APPLICATIVA.equals(idServiceCustom))
+				){
 				
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
@@ -266,12 +278,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				dispatcher.forward(req, res);
 				
 			}
-			else if(function.equals(URLProtocolContext.CheckPdD_FUNCTION)){
+			else if(function.equals(URLProtocolContext.Check_FUNCTION)){
 				
 				if(HttpRequestMethod.GET.equals(method)==false){
 					// messaggio di errore
 					boolean errore404 = false;
-					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled()){
+					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled()){
 						errore404 = true;
 					}
 					

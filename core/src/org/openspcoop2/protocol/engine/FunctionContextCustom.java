@@ -68,12 +68,13 @@ public class FunctionContextCustom implements java.io.Serializable {
 		if(idServiceParam==null && (subcontextMap==null || subcontextMap.size()<=0)) {
 			throw new ProtocolException("IDService and Subcontext not found");
 		}
+		
 		if(idServiceParam!=null) {
 			checkIDService(idServiceParam);
 			this.idService = idServiceParam;
 		}
-		else {
-			
+
+		if(subcontextMap!=null && subcontextMap.size()>0) {	
 			Iterator<String> it = subcontextMap.keySet().iterator();
 			while (it.hasNext()) {
 				String subcontext = (String) it.next();
@@ -132,40 +133,48 @@ public class FunctionContextCustom implements java.io.Serializable {
 	}
 	public IDService getServiceMatch(String contextParam,String subContextParam) {
 		if(this.context.equals(contextParam)) {
-			if(this.idService!=null) {
-				return this.idService;
-			}
-			else {
-				if(subContextParam!=null && !"".equals(subContextParam)) {
-					Iterator<String> it = this.subcontext.keySet().iterator();
-					while (it.hasNext()) {
-						String subcontext = (String) it.next();
-						if(subContextParam.startsWith(subcontext)) {
-							IDService idService = this.subcontext.get(subcontext);
-							return idService;
-						}
+			
+			// cerco prima nel subcontext
+			if(subContextParam!=null && !"".equals(subContextParam) &&
+					this.subcontext!=null && this.subcontext.size()>0) {
+				Iterator<String> it = this.subcontext.keySet().iterator();
+				while (it.hasNext()) {
+					String subcontext = (String) it.next();
+					if(subContextParam.startsWith(subcontext)) {
+						IDService idService = this.subcontext.get(subcontext);
+						return idService;
 					}
 				}
 			}
+			
+			// poi senza
+			if(this.idService!=null) {
+				return this.idService;
+			}
+
 		}
 		return null;
 	}
 	public String getFunctionMatch(String contextParam,String subContextParam) {
 		if(this.context.equals(contextParam)) {
-			if(this.idService!=null) {
-				return this.context;
-			}
-			else {
-				if(subContextParam!=null && !"".equals(subContextParam)) {
-					Iterator<String> it = this.subcontext.keySet().iterator();
-					while (it.hasNext()) {
-						String subcontext = (String) it.next();
-						if(subContextParam.startsWith(subcontext)) {
-							return this.context+"/"+subcontext;
-						}
+			
+			// cerco prima nel subcontext
+			if(subContextParam!=null && !"".equals(subContextParam) &&
+					this.subcontext!=null && this.subcontext.size()>0) {
+				Iterator<String> it = this.subcontext.keySet().iterator();
+				while (it.hasNext()) {
+					String subcontext = (String) it.next();
+					if(subContextParam.startsWith(subcontext)) {
+						return this.context+"/"+subcontext;
 					}
 				}
 			}
+			
+			// poi senza
+			if(this.idService!=null) {
+				return this.context;
+			}
+
 		}
 		return null;
 	}

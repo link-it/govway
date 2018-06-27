@@ -60,7 +60,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	public static final String IntegrationManager_FUNCTION_MessageBox = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_MessageBox;
 	public static final String IntegrationManager_ENGINE_FUNCTION_PD = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_PD;
 	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
-	public static final String CheckPdD_FUNCTION = "checkPdD";
+	public static final String Check_FUNCTION = "check";
 	
 	private IDService idServiceCustom;
 	
@@ -195,7 +195,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
-					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION) ||
+					protocollo.equals(URLProtocolContext.Check_FUNCTION) ||
 					(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 				// ContextProtocol Empty
 				if(logCore!=null)

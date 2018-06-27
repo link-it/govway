@@ -1407,17 +1407,17 @@ public class OpenSPCoop2Properties {
 			this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled();
 			this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled();
 			this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled();
-			this.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled();
+			this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled();
 			
 			// Informazioni generazione WSDL
 			this.isGenerazioneWsdlPortaDelegataEnabled();
 			this.isGenerazioneWsdlPortaApplicativaEnabled();
 			this.isGenerazioneWsdlIntegrationManagerEnabled();
 			
-			// CheckPdD
-			this.isCheckPdDReadJMXResourcesEnabled();
-			this.getCheckPdDReadJMXResourcesUsername();
-			this.getCheckPdDReadJMXResourcesPassword();
+			// Check
+			this.isCheckReadJMXResourcesEnabled();
+			this.getCheckReadJMXResourcesUsername();
+			this.getCheckReadJMXResourcesPassword();
 						
 			// Datasource Wrapped
 			this.isDSOp2UtilsEnabled();
@@ -1455,6 +1455,9 @@ public class OpenSPCoop2Properties {
 			this.getPortJminixConsole();
 			
 			// Custom Contexts
+			this.isEnabledFunctionPD();
+			this.isEnabledFunctionPDtoSOAP();
+			this.isEnabledFunctionPA();
 			this.getCustomContexts();
 			
 			// Custom Container
@@ -13103,25 +13106,25 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled;
 	}
 	
-	private static Boolean isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = null;
-	public boolean isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled() {	
-		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled==null){
+	private static Boolean isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = null;
+	public boolean isGenerazioneErroreHttpMethodUnsupportedCheckEnabled() {	
+		if(OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
-				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled = true;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage': "+e.getMessage());
+				OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = true;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled;
+		return OpenSPCoop2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled;
 	}
 	
 	
@@ -13195,65 +13198,65 @@ public class OpenSPCoop2Properties {
 	
 	
 	
-	/* ------------- CheckPdD Reader Risorse JMX ---------------------*/
+	/* ------------- Check Reader Risorse JMX ---------------------*/
 	
-	private static Boolean isCheckPdDReadJMXResourcesEnabled = null;
-	public boolean isCheckPdDReadJMXResourcesEnabled() {	
-		if(OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled==null){
+	private static Boolean isCheckReadJMXResourcesEnabled = null;
+	public boolean isCheckReadJMXResourcesEnabled() {	
+		if(OpenSPCoop2Properties.isCheckReadJMXResourcesEnabled==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.enabled");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.enabled");
 				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
-				OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled = Boolean.parseBoolean(name);
+				OpenSPCoop2Properties.isCheckReadJMXResourcesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.enabled': "+e.getMessage());
-				OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled = false;
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isCheckReadJMXResourcesEnabled = false;
 			}    
 		}
 
-		return OpenSPCoop2Properties.isCheckPdDReadJMXResourcesEnabled;
+		return OpenSPCoop2Properties.isCheckReadJMXResourcesEnabled;
 	}
 	
-	private static String getCheckPdDReadJMXResourcesUsername = null;
-	private static Boolean getCheckPdDReadJMXResourcesUsername_read = null;
-	public String getCheckPdDReadJMXResourcesUsername() {	
-		if(OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername_read==null){
+	private static String getCheckReadJMXResourcesUsername = null;
+	private static Boolean getCheckReadJMXResourcesUsername_read = null;
+	public String getCheckReadJMXResourcesUsername() {	
+		if(OpenSPCoop2Properties.getCheckReadJMXResourcesUsername_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.username");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.username");
 				if(name!=null){
 					name = name.trim();
 				}
-				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername_read = true;
-				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername = name;
+				OpenSPCoop2Properties.getCheckReadJMXResourcesUsername_read = true;
+				OpenSPCoop2Properties.getCheckReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.username': "+e.getMessage());
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage());
 			}    
 		}
-		return OpenSPCoop2Properties.getCheckPdDReadJMXResourcesUsername;
+		return OpenSPCoop2Properties.getCheckReadJMXResourcesUsername;
 	}
 	
-	private static String getCheckPdDReadJMXResourcesPassword = null;
-	private static Boolean getCheckPdDReadJMXResourcesPassword_read = null;
-	public String getCheckPdDReadJMXResourcesPassword() {	
-		if(OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword_read==null){
+	private static String getCheckReadJMXResourcesPassword = null;
+	private static Boolean getCheckReadJMXResourcesPassword_read = null;
+	public String getCheckReadJMXResourcesPassword() {	
+		if(OpenSPCoop2Properties.getCheckReadJMXResourcesPassword_read==null){
 			try{ 
 				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.checkPdD.readJMXResources.password");
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.password");
 				if(name!=null){
 					name = name.trim();
 				}
-				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword_read = true;
-				OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword = name;
+				OpenSPCoop2Properties.getCheckReadJMXResourcesPassword_read = true;
+				OpenSPCoop2Properties.getCheckReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.checkPdD.readJMXResources.password': "+e.getMessage());
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage());
 			}    
 		}
-		return OpenSPCoop2Properties.getCheckPdDReadJMXResourcesPassword;
+		return OpenSPCoop2Properties.getCheckReadJMXResourcesPassword;
 	}
 	
 	
@@ -13396,6 +13399,70 @@ public class OpenSPCoop2Properties {
 
 	/* ------------- Custom Function ---------------------*/
 	
+	private static Boolean isEnabledFunctionPD = null;
+	public boolean isEnabledFunctionPD() {	
+		if(OpenSPCoop2Properties.isEnabledFunctionPD==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pd.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled' non impostata, viene utilizzato il default=false");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isEnabledFunctionPD = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isEnabledFunctionPD = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isEnabledFunctionPD;
+	}
+	
+	private static Boolean isEnabledFunctionPDtoSOAP = null;
+	public boolean isEnabledFunctionPDtoSOAP() {	
+		if(OpenSPCoop2Properties.isEnabledFunctionPDtoSOAP==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pdToSoap.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled' non impostata, viene utilizzato il default=false");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isEnabledFunctionPDtoSOAP = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isEnabledFunctionPDtoSOAP = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isEnabledFunctionPDtoSOAP;
+	}
+	
+	private static Boolean isEnabledFunctionPA = null;
+	public boolean isEnabledFunctionPA() {	
+		if(OpenSPCoop2Properties.isEnabledFunctionPA==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.function.pa.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled' non impostata, viene utilizzato il default=false");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isEnabledFunctionPA = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isEnabledFunctionPA = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isEnabledFunctionPA;
+	}
+	
+	
 	private static FunctionContextsCustom customContexts = null;
 	public FunctionContextsCustom getCustomContexts() throws UtilsException {	
 		if(OpenSPCoop2Properties.customContexts==null){
@@ -13417,23 +13484,26 @@ public class OpenSPCoop2Properties {
 								context = context.trim();
 								
 								String service = p.getProperty(alias+".service");
+								boolean serviceFound = false;
+								FunctionContextCustom customWithoutSubContext = null;
+								IDService idServiceCustomWithoutSubContext = null;
 								if(service!=null && !"".equals(service.trim())) {
-									IDService idService = IDService.toEnumConstant(service);
-									if(idService==null) {
+									idServiceCustomWithoutSubContext = IDService.toEnumConstant(service);
+									if(idServiceCustomWithoutSubContext==null) {
 										throw new Exception("Value '"+service+"' unsupported for service in alias '"+alias+"'");
 									}
-									FunctionContextCustom custom = new FunctionContextCustom(context, idService);
-									if(OpenSPCoop2Properties.customContexts==null) {
-										OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
-									}
-									OpenSPCoop2Properties.customContexts.getContexts().add(custom);
-									this.log.info("Registrato context '"+context+"' per service '"+idService+"'");
+									customWithoutSubContext = new FunctionContextCustom(context, idServiceCustomWithoutSubContext);
+									serviceFound = true;
+									// lo registro dopo gli eventuali subcontext
 								}
-								else {
-									Properties pSubContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
-									if(pSubContext==null || pSubContext.size()<=0) {
+
+								Properties pSubContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.function.custom."+alias+".subcontext.");
+								if(pSubContext==null || pSubContext.size()<=0) {
+									if(!serviceFound) {
 										throw new Exception("Service and SubContext undefined for alias '"+alias+"'");
 									}
+								}
+								else {
 									HashMap<String,IDService> subcontextMap = new HashMap<String,IDService>();
 									Enumeration<Object> enSubContext = pSubContext.keys();
 									while (enSubContext.hasMoreElements()) {
@@ -13464,20 +13534,31 @@ public class OpenSPCoop2Properties {
 										}
 									}
 									if(subcontextMap.size()<=0) {
-										throw new Exception("SubContext undefined (wrong configuration) for alias '"+alias+"'");
+										if(!serviceFound) {
+											throw new Exception("SubContext undefined (wrong configuration) for alias '"+alias+"'");
+										}
 									}
-									FunctionContextCustom custom = new FunctionContextCustom(context, subcontextMap);
-									if(OpenSPCoop2Properties.customContexts==null) {
-										OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
-									}
-									OpenSPCoop2Properties.customContexts.getContexts().add(custom);
-									Iterator<String> itS = subcontextMap.keySet().iterator();
-									while (itS.hasNext()) {
-										String subContext = (String) itS.next();
-										this.log.info("Registrato context '"+context+"', subcontext '"+subContext+"',  per service '"+subcontextMap.get(subContext)+"'");		
+									else {
+										FunctionContextCustom custom = new FunctionContextCustom(context, subcontextMap);
+										if(OpenSPCoop2Properties.customContexts==null) {
+											OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
+										}
+										OpenSPCoop2Properties.customContexts.getContexts().add(custom);
+										Iterator<String> itS = subcontextMap.keySet().iterator();
+										while (itS.hasNext()) {
+											String subContext = (String) itS.next();
+											this.log.info("Registrato context '"+context+"', subcontext '"+subContext+"',  per service '"+subcontextMap.get(subContext)+"'");		
+										}
 									}
 								}
 								
+								if(customWithoutSubContext!=null) {
+									if(OpenSPCoop2Properties.customContexts==null) {
+										OpenSPCoop2Properties.customContexts = new FunctionContextsCustom();
+									}
+									OpenSPCoop2Properties.customContexts.getContexts().add(customWithoutSubContext);
+									this.log.info("Registrato context '"+context+"' per service '"+idServiceCustomWithoutSubContext+"'");
+								}
 							}
 						}
 					}

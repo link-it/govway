@@ -72,16 +72,16 @@ public class CheckStatoPdD extends HttpServlet {
 		
 		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		boolean checkPdDReadEnabled = false;
-		if(properties!=null && properties.isCheckPdDReadJMXResourcesEnabled() ){
-			checkPdDReadEnabled = true;
+		boolean checkReadEnabled = false;
+		if(properties!=null && properties.isCheckReadJMXResourcesEnabled() ){
+			checkReadEnabled = true;
 		}
 			
 		// verifico se l'invocazione richiede una lettura di una risorsa jmx
 		String resourceName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME);
 		if(resourceName!=null && !"".equals(resourceName)){
 			
-			if(checkPdDReadEnabled==false){
+			if(checkReadEnabled==false){
 				String msg = "Servizio non abilitato";
 				log.error("[CheckStatoPdD] "+msg);
 				res.setStatus(500);
@@ -90,8 +90,8 @@ public class CheckStatoPdD extends HttpServlet {
 			}
 			
 			// prima di procedere verifico una eventuale autenticazione
-			String username = properties.getCheckPdDReadJMXResourcesUsername();
-			String password = properties.getCheckPdDReadJMXResourcesPassword();
+			String username = properties.getCheckReadJMXResourcesUsername();
+			String password = properties.getCheckReadJMXResourcesPassword();
 			if(username!=null && password!=null){
 				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(username.equals(identity.getUsername())==false){
