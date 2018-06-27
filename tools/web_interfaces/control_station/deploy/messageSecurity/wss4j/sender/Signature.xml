@@ -5,12 +5,12 @@
                 <tags and="true">
                         <tag>SOAP</tag>
                         <tag>REQUEST</tag>
-                        <tag>PD</tag>
+                        <tag>OUT</tag>
                 </tags>
                 <tags and="true">
                         <tag>SOAP</tag>
                         <tag>RESPONSE</tag>
-                        <tag>PA</tag>
+                        <tag>IN</tag>
                 </tags>
         </compatibility>
 	

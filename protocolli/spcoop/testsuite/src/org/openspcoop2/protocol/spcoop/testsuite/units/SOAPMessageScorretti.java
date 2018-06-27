@@ -1004,7 +1004,7 @@ public class SOAPMessageScorretti {
 			Reporter.log("Test ["+identificativoTest+"]");
 			ClientHttpGenerico client=new ClientHttpGenerico(repository);
 			if(PD2SOAP){
-				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
+				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
 			}
 			else{
 				client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());

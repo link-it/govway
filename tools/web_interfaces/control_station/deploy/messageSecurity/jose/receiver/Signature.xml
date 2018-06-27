@@ -4,12 +4,12 @@
         <tags and="true">
                 <tag>REST</tag>
                 <tag>RESPONSE</tag>
-                <tag>PD</tag>
+                <tag>OUT</tag>
         </tags>
         <tags and="true">
                 <tag>REST</tag>
                 <tag>REQUEST</tag>
-                <tag>PA</tag>
+                <tag>IN</tag>
         </tags>
 	</compatibility>
 	

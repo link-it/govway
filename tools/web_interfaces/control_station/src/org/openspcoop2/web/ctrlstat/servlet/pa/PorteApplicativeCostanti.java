@@ -561,7 +561,7 @@ public class PorteApplicativeCostanti {
 	
 	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "RESPONSE";
 	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "REQUEST";
-	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA = "PA";
+	public static final String TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA = "IN";
 	
 	/* MESSAGGI */
 	
