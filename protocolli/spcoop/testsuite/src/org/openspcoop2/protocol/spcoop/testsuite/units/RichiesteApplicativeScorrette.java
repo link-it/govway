@@ -2257,7 +2257,7 @@ public class RichiesteApplicativeScorrette {
 		try{
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta("<CONTENUTO_ERRATO".getBytes());

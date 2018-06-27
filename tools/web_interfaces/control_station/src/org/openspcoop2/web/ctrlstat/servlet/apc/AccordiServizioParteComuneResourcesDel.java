@@ -133,7 +133,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 				
 					if(checkPorte){
 						
-						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano PA/PD esistenti.
+						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
 						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeRisorsa)) {
 							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeRisorsa);
 							errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' in uso in porte applicative: <BR>");
@@ -153,7 +153,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 						
 					}else{
 						
-						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano PA/PD esistenti,
+						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
 						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
 						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
 						errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' l'accordo di servizio parte comune viene implementato dai seguenti servizi: <br>");

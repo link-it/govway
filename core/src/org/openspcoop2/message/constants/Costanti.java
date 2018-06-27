@@ -52,7 +52,7 @@ public class Costanti {
 	public static final String XMLNS_LOCAL_NAME = "xmlns";
 	
 	/** Tunnel */
-	public static final String SOAP_TUNNEL_NAMESPACE = "http://www.openspcoop2.org/pdd/services/PDtoSOAP";
+	public static final String SOAP_TUNNEL_NAMESPACE = "http://www.govway.org/out/xml2soap";
 	public static final String SOAP_TUNNEL_ATTACHMENT_ELEMENT_OPENSPCOOP2_TYPE = "SOAPTunnel";
 	public static final String SOAP_TUNNEL_ATTACHMENT_ELEMENT = "Attachments";
 	

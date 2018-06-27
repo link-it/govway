@@ -157,7 +157,7 @@ public class TunnelSoapUtils {
 				bodyChildren.size() > 0 && 
 				bodyChildren.get(0)!=null &&
 				"SOAPTunnel".equals(bodyChildren.get(0).getLocalName()) &&
-				"http://www.openspcoop2.org/pdd/services/PDtoSOAP".equals(bodyChildren.get(0).getNamespaceURI()) &&
+				"http://www.govway.org/out/xml2soap".equals(bodyChildren.get(0).getNamespaceURI()) &&
 				org.openspcoop2.utils.Costanti.OPENSPCOOP2.equals(bodyChildren.get(0).getPrefix())){
 			return true;
 		}else{

@@ -265,7 +265,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(username!=null && password!=null)
@@ -332,7 +332,7 @@ public class ErroreApplicativoCNIPA {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/PDtoSOAP/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
+		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/govway/spcoop/out/xml2soap/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
 	}
@@ -496,7 +496,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(username!=null && password!=null)
@@ -967,7 +967,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
@@ -1621,7 +1621,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
@@ -1885,7 +1885,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
@@ -2114,7 +2114,7 @@ public class ErroreApplicativoCNIPA {
 			bout.close();
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
@@ -2346,7 +2346,7 @@ public class ErroreApplicativoCNIPA {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setConnectionReadTimeout(60000);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){
@@ -2577,7 +2577,7 @@ public class ErroreApplicativoCNIPA {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setConnectionReadTimeout(60000);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "out/xml2soap"));
 			client.setPortaDelegata(portaDelegata);
 			client.connectToSoapEngine();
 			if(servizioApplicativoFruitore!=null){

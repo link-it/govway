@@ -524,7 +524,7 @@ public class Axis14SoapUtils {
 				body.hasChildNodes() && 
 				body.getFirstChild()!=null &&
 				"SOAPTunnel".equals(body.getFirstChild().getLocalName()) &&
-				"http://www.openspcoop2.org/pdd/services/PDtoSOAP".equals(body.getFirstChild().getNamespaceURI()) &&
+				"http://www.govway.org/out/xml2soap".equals(body.getFirstChild().getNamespaceURI()) &&
 				"OpenSPCoop2".equals(body.getFirstChild().getPrefix())){
 			return true;
 		}else{
@@ -763,10 +763,10 @@ public class Axis14SoapUtils {
 			SOAPBody soapBody = msg.getSOAPBody();
 			Name name = null;
 			if("application/openspcoop2".equals(tipoAttachment)){
-				name = new org.apache.axis.message.PrefixedQName("http://www.openspcoop2.org/pdd/services/PDtoSOAP",
+				name = new org.apache.axis.message.PrefixedQName("http://www.govway.org/out/xml2soap",
 						"SOAPTunnel","OpenSPCoop2");	    
 			}else{
-				name = new org.apache.axis.message.PrefixedQName("http://www.openspcoop2.org/pdd/services/PDtoSOAP",
+				name = new org.apache.axis.message.PrefixedQName("http://www.govway.org/out/xml2soap",
 						"Attachments","OpenSPCoop2");	 
 			}
 			SOAPBodyElement bodyElement = soapBody.addBodyElement(name);

@@ -178,7 +178,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				
 					if(apcCore.isUnicaAzioneInAccordi(nomeop)){
 						
-						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano PA/PD esistenti.
+						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
 						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeop)) {
 							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeop);
 							errori.append("Azione "+nomeop+" non rimuovibile poiche' in uso in porte applicative: <BR>");
@@ -198,7 +198,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 						
 					}else{
 						
-						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano PA/PD esistenti,
+						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
 						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
 						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
 						errori.append("Azione "+nomeop+" non rimuovibile poiche' il servizio "+nomept+" dell'accordo viene implementato da accordi di servizio parte specifica: <br>");
