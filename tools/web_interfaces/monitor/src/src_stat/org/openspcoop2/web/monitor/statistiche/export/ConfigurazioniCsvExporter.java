@@ -543,7 +543,7 @@ public class ConfigurazioniCsvExporter {
 		String urlInvocazione = null;
 		
 		try {
-			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInSubscriptionInvocationURL(serviceBinding); 
+			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInImplementationInvocationURL(serviceBinding); 
 			
 			String prefix = dettaglioPA.getEndpointApplicativoPA();
 			prefix = prefix.trim();
@@ -616,9 +616,10 @@ public class ConfigurazioniCsvExporter {
 		if(gestioneToken != null) {
 			gestioneTokenAutenticazione = gestioneToken.getAutenticazione(); 
 			String policy = gestioneToken.getPolicy();
+			StatoFunzionalita tokenOpzionale = gestioneToken.getTokenOpzionale() != null ? gestioneToken.getTokenOpzionale()  : StatoFunzionalita.DISABILITATO;
 			if(policy != null) {
 				oneLine.add(StatoFunzionalita.ABILITATO.getValue());
-				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(tokenOpzionale.getValue());
 				oneLine.add(policy);
 				oneLine.add(gestioneToken.getValidazione() != null ? gestioneToken.getValidazione().getValue() : ""); 
 				oneLine.add(gestioneToken.getIntrospection() != null ? gestioneToken.getIntrospection().getValue() : "");
@@ -626,9 +627,9 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add(gestioneToken.getForward() != null ? gestioneToken.getForward().getValue() : "");
 				
 			} else {
-				// sei colonne vuote
+				// sette colonne vuote
 				oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
-				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(tokenOpzionale.getValue());
 				oneLine.add("");
 				oneLine.add("");
 				oneLine.add("");
@@ -636,7 +637,7 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add("");
 			}
 		} else {
-			// sei colonne vuote
+			// sette colonne vuote
 			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
 			oneLine.add("");
@@ -1005,6 +1006,8 @@ public class ConfigurazioniCsvExporter {
 		// ASPC
 		if(dettaglioPD.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding2 = org.openspcoop2.core.registry.constants.ServiceBinding.toEnumConstant(aspc.getServiceBinding());
+			serviceBinding = ServiceBinding.valueOf(serviceBinding2.name());
 			String nomeAspc = aspc.getNome();
 
 			Integer versioneAspc = aspc.getVersione();
@@ -1042,11 +1045,6 @@ public class ConfigurazioniCsvExporter {
 		// url di invocazione
 		// Identificazione Azione: ....
 		// Espressione: xpath o regolare
-		String endpointApplicativoPD = dettaglioPD.getEndpointApplicativoPD();
-		String contesto = dettaglioPD.getContesto();
-		
-		if(StringUtils.isNotEmpty(contesto) && !contesto.endsWith("/"))
-			contesto += "/";
 
 		// TODO controllare lista azioni
 		if(StringUtils.isNotEmpty(portaDelegata.getNomeAzione()) &&
@@ -1054,19 +1052,12 @@ public class ConfigurazioniCsvExporter {
 				(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC.equals(pdAzione.getIdentificazione()))){
 			// Azione: _XXX
 			oneLine.add(portaDelegata.getNomeAzione());
-			// URL di Invocazione: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
-			oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+portaDelegata.getNome());
-			oneLine.add("");
-			oneLine.add("");
 		}
 		else{
 			List<String> azioni = dettaglioPD.getAzioni();
 			
 			if(pdAzione==null && (azioni == null || azioni.size() == 0)){
 				oneLine.add(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
-				oneLine.add("");
-				oneLine.add("");
-				oneLine.add("");
 			}
 			else{
 				// Azioni: XXXs
@@ -1079,34 +1070,6 @@ public class ConfigurazioniCsvExporter {
 					}
 				}
 				oneLine.add(sb.toString());
-				// URL di Base: (Endpoint Applicativo PD)/PD/SPCEnte/SPCMinistero/SPCAnagrafica
-				oneLine.add(endpointApplicativoPD+"/"+contesto+"PD/"+portaDelegata.getNome());
-
-				// Identificazione Azione:  urlBased/wsdlBased
-				String suffix = "";
-				if(pdAzione!= null && CostantiConfigurazione.ABILITATO.equals(pdAzione.getForceInterfaceBased())){
-					suffix = "/"+CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.getValue();
-				}
-				if(pdAzione!= null){
-					oneLine.add(pdAzione.getIdentificazione().getValue()+suffix);
-				} else 
-					oneLine.add("");
-
-				if(pdAzione!= null && CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(pdAzione.getIdentificazione())){
-					// Expressione XPath: _XXX
-					oneLine.add(pdAzione.getPattern());
-				}
-				else {
-					if(pdAzione!= null && CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(pdAzione.getIdentificazione())){
-						String exprDefault = ".*"+portaDelegata.getNome()+"/([^/|^?]*).*";
-						if(exprDefault.equals(pdAzione.getPattern())==false){
-							// Expressione Regolare: _XXX
-							oneLine.add(pdAzione.getPattern());
-						} else 
-							oneLine.add("");
-					} else 
-						oneLine.add("");
-				}
 			}
 		}
 		
@@ -1135,7 +1098,7 @@ public class ConfigurazioniCsvExporter {
 			if(useInterfaceNameInInvocationURL) {
 				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
 				if(StringUtils.isNotEmpty(portaDelegata.getNomePortaDeleganteAzione())) {
-					urlInvocazione = urlInvocazione + n.enrichPA(portaDelegata.getNomePortaDeleganteAzione());
+					urlInvocazione = urlInvocazione + n.enrichPD(portaDelegata.getNomePortaDeleganteAzione());
 				} else {
 					urlInvocazione = urlInvocazione + configurazione.getLabel();
 				}
@@ -1210,9 +1173,10 @@ public class ConfigurazioniCsvExporter {
 		if(gestioneToken != null) {
 			gestioneTokenAutenticazione = gestioneToken.getAutenticazione(); 
 			String policy = gestioneToken.getPolicy();
+			StatoFunzionalita tokenOpzionale = gestioneToken.getTokenOpzionale() != null ? gestioneToken.getTokenOpzionale()  : StatoFunzionalita.DISABILITATO;
 			if(policy != null) {
 				oneLine.add(StatoFunzionalita.ABILITATO.getValue());
-				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(tokenOpzionale.getValue());
 				oneLine.add(policy);
 				oneLine.add(gestioneToken.getValidazione() != null ? gestioneToken.getValidazione().getValue() : ""); 
 				oneLine.add(gestioneToken.getIntrospection() != null ? gestioneToken.getIntrospection().getValue() : "");
@@ -1222,7 +1186,7 @@ public class ConfigurazioniCsvExporter {
 			} else {
 				// sei colonne vuote
 				oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
-				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(tokenOpzionale.getValue());
 				oneLine.add("");
 				oneLine.add("");
 				oneLine.add("");
@@ -1301,6 +1265,7 @@ public class ConfigurazioniCsvExporter {
 		//                                  sa2 (user:xxx)
 		//                                  sa3 (user:xxx)
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> sa = dettaglioPD.getSa();
 			StringBuffer sb = new StringBuffer();
 			for (String servApp : sa) {
@@ -1308,8 +1273,10 @@ public class ConfigurazioniCsvExporter {
 				sb.append(servApp);
 			}
 			oneLine.add(sb.toString());
-		} else 
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
+		}
 
 		// Ruoli: tutti/almenoUno
 		// Ruoli Autorizzati: ruolo1 (fonte esterna)
@@ -1317,6 +1284,7 @@ public class ConfigurazioniCsvExporter {
 		//                    ruolo3 (fonte qualsiasi)
 		//
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> ruoli = dettaglioPD.getRuoli();
 			String match = dettaglioPD.getMatchRuoli();
 			if(pdOp2.getRuoli()!=null){
@@ -1333,6 +1301,7 @@ public class ConfigurazioniCsvExporter {
 			}
 			oneLine.add(match);
 		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
 			oneLine.add("");
 		}
