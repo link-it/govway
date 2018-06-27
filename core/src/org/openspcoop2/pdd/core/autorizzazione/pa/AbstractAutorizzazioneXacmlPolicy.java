@@ -153,7 +153,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	// ****** Raccolta Dati e Policy ********
 		    	
     	try{
-    		XACMLPolicyUtilities.loadPolicy(idServizio, this.policyKey, false, this.log);
+    		XACMLPolicyUtilities.loadPolicy(idServizio, this.policyKey, false, null, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (load XACML-Policy)",e);
 			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA));

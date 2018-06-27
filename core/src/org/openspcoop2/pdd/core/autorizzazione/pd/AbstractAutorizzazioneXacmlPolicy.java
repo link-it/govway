@@ -29,6 +29,7 @@ import java.util.List;
 import org.herasaf.xacml.core.context.impl.DecisionType;
 import org.herasaf.xacml.core.context.impl.ResultType;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.core.autorizzazione.XACMLPolicyUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -141,10 +142,11 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	
     	// ****** Raccolta Dati e Policy ********
 		
+    	IDSoggetto fruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
     	IDServizio idServizio = datiInvocazione.getIdServizio();
     	
     	try{
-    		XACMLPolicyUtilities.loadPolicy(idServizio, this.policyKey, true, this.log);
+    		XACMLPolicyUtilities.loadPolicy(idServizio, this.policyKey, true, fruitore, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (load XACML-Policy)",e);
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

@@ -91,7 +91,9 @@ public class XACMLPolicyUtilities {
 	// Workaround: Serve nel caso di Porta Delegata per poter utilizzare una policy differente da quella utilizzata nell'erogazione
 	private static final String  NOME_POLICY_FRUIZIONE = "fruizioneXacmlPolicy.xml";
 
-	public static void loadPolicy(IDServizio idServizio, String key, boolean portaDelegata, Logger log) throws PolicyException{
+	public static void loadPolicy(IDServizio idServizio, String key, 
+			boolean portaDelegata,IDSoggetto fruitore, // fruitore is null se non e' portaDelegata
+			Logger log) throws PolicyException{
 		byte[] policy = null; 
 		@SuppressWarnings("unused")
 		String nomePolicy = null;
@@ -104,7 +106,7 @@ public class XACMLPolicyUtilities {
 				Documento d = asps.getSpecificaSicurezza(i);
 				if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
 
-					if(policy == null || (portaDelegata && NOME_POLICY_FRUIZIONE.equals(d.getFile()))){
+					if(policy == null || (portaDelegata && (fruitore.getNome()+"_"+NOME_POLICY_FRUIZIONE).equals(d.getFile()))){
 						if(NOME_POLICY_FRUIZIONE.equals(d.getFile())){
 							numeroPolicyFruizione = true;
 						}
