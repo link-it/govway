@@ -113,6 +113,7 @@
 
 			<fileset dir="${deploy_govwayMonitor}/web-content">
 				<include name="**/*" />
+				<exclude name="properties/**" />
 			</fileset>
 			<fileset dir="${deploy_govwayMonitor}/pages">
 				<include name="**/*" />
