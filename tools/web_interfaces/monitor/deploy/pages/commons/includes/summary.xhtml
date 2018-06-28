@@ -37,9 +37,9 @@
 								</rich:comboBox>
 								<rich:toolTip for="labelPeriodoCombo" value="#{summaryBean.printPeriodo}"/>
 							</link:prop>
-							<link:prop label="Modalità" rendered="#{summaryBean.showListaProtocolli}">
+							<link:prop label="#{applicationBean.labelProfilo}" rendered="#{summaryBean.showListaProtocolli}">
 								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
-									defaultLabel="Seleziona Modalità" directInputSuggestions="true" width="412" enableManualInput="false">
+									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="412" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.protocolli}"/>
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
 								</rich:comboBox>

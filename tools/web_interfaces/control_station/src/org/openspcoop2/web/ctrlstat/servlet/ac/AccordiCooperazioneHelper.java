@@ -304,7 +304,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			int index = 1;
 
 			if( showProtocolli ) {
-				labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO;
+				labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO_COMPACT;
 				index++;
 			}
 			

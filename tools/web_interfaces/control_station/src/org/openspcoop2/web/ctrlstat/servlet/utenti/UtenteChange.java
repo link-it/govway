@@ -265,11 +265,11 @@ public final class UtenteChange extends Action {
 				
 				//String labelProt = protocolloSelezionatoUtente != null ?  ConsoleHelper.getLabelProtocollo(protocolloSelezionatoUtente) : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 				String pdMsg = "";
-				String pdMsgTitle= "Passaggio alla Modalit&agrave; Gateway selezionata effettuato con successo.";
+				String pdMsgTitle= "Passaggio al "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE+" selezionato effettuato con successo.";
 				if(protocolloSelezionatoUtente == null) {
-					pdMsg = "<p>Modalit&agrave; disponibili:<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>"+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_COMPACT+" disponibili:<p/>" + sbProtocolli.toString();
 				} else {
-					pdMsg = "<p>Modalit&agrave; attuale:<p/>" + sbProtocolli.toString();
+					pdMsg = "<p>"+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+" attuale:<p/>" + sbProtocolli.toString();
 				}
 				
 				pd.setMessage(pdMsg, pdMsgTitle, Costanti.MESSAGE_TYPE_INFO);

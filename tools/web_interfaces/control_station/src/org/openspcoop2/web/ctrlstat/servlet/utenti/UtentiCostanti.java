@@ -99,7 +99,8 @@ public class UtentiCostanti {
 	public final static String LABEL_INFORMAZIONI_UTENTE = "Informazioni Utente";
 	public final static String LABEL_PASSWORD = "Password";
 	public final static String LABEL_MODALITA_INTERFACCIA = "Modalit&agrave; Interfaccia";
-	public final static String LABEL_MODALITA_GATEWAY = "Modalit&agrave; Gateway";
+	public final static String LABEL_MODALITA_GATEWAY = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE;
+	public final static String LABEL_MODALITA_GATEWAY_COMPACT = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	public final static String LABEL_PERMESSI_GESTIONE = "Permessi di Gestione";
 	public final static String LABEL_CAMBIA_IDENTITA = "Cambia identità";
 	public final static String LABEL_ACCEDI = "Accedi";
@@ -110,9 +111,9 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTI_SERVIZI = "Servizi";
 	public final static String LABEL_UTENTI_SOGGETTI = "Soggetti";
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI = "Non esistono altri soggetti associabili all'utente";
-	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti della modalit&agrave; {0} associabili all''utente";
+	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
 	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI = "Non esistono altri servizi associabili all'utente";
-	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri servizi della modalit&agrave; {0} associabili all''utente";
+	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri servizi del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
 	
 	/* PARAMETRI */
 	
@@ -184,7 +185,7 @@ public class UtentiCostanti {
 	
 	public final static String LABEL_PARAMETRO_UTENTE_MULTI_TENANT = "Multi-Tenant";
 	
-	public final static String LABEL_PARAMETRO_MODALITA_ALL = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Any";//CostantiControlStation.LABEL_QUALSIASI;
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";

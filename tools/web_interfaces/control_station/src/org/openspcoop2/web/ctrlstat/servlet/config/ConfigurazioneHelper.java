@@ -6499,7 +6499,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Modalità: ");
+				bf.append(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": ");
 				bf.append(this.getLabelProtocollo(filtro.getProtocollo()));
 			}
 						
@@ -6614,7 +6614,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Modalità");
+				bf.append(CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT);
 			}
 			
 			if(groupBy.isErogatore()){
@@ -10322,7 +10322,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(policy.getFiltro().isEnabled()){
 				de = new DataElement();
 				de.setType(DataElementType.NOTE);
-				de.setValue("Filtro non modificabile poichè definito per una Modalità non attiva nella console");
+				de.setValue("Filtro non modificabile poichè definito per un "+CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_DI.toLowerCase()+" non attivo nella console");
 				dati.addElement(de);
 			}
 		}

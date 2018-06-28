@@ -170,6 +170,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String LABEL_APS_TIPO_SERVIZIO = "Tipo Servizio";
 	public static final String LABEL_APS_NOME_SERVIZIO = "Nome Servizio";
 	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public final static String LABEL_PARAMETRO_APS_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	public final static String LABEL_APS_APPLICATIVO_INTERNO_PREFIX = "Dominio Interno - ";
 	public final static String LABEL_APS_APPLICATIVO_ESTERNO_PREFIX = "Dominio Esterno - ";
 	

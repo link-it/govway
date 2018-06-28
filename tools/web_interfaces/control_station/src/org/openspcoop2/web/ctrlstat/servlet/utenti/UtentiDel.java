@@ -139,9 +139,11 @@ public final class UtentiDel extends Action {
 							sbUL.append(", ");
 						sbUL.append(userL);
 					}
-					msgErroreModalita = "Gli utenti "+sbUL.toString()+" non sono stati eliminati poich&egrave; sono stati rilevati oggetti appartenenti a delle Modalit&agrave; Gateway non assegnate a nessun altro utente";
+					msgErroreModalita = "Gli utenti "+sbUL.toString()+" non sono stati eliminati poich&egrave; sono stati rilevati oggetti, appartenenti a dei "+
+							org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE+", non assegnabili a nessun altro utente";
 				} else {
-					msgErroreModalita = "L'utente " +utentiDaNonEliminare.get(0) +" non &egrave; stato eliminato poich&egrave; sono stati rilevati oggetti appartenenti a delle Modalit&agrave; Gateway non assegnate a nessun altro utente";
+					msgErroreModalita = "L'utente " +utentiDaNonEliminare.get(0) +" non &egrave; stato eliminato poich&egrave; sono stati rilevati oggetti, appartenenti a dei "+
+							org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE+", non assegnabili a nessun altro utente";
 				}
 
 				List<String> newList = new ArrayList<>();

@@ -1414,7 +1414,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			}
 			if( showProtocolli ) {
-				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
+				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO_COMPACT);
 			}
 			if(!this.isModalitaCompleta()) {
 				labels.add(RuoliCostanti.LABEL_RUOLI);

@@ -24,6 +24,7 @@ package org.openspcoop2.core.constants;
 
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.jmx.CostantiJMX;
@@ -129,4 +130,17 @@ public class Costanti {
 	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = "AsincronoAsimmetrico_Polling";
 	/** Variabile che indica un tipo di scenario gestito */
 	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = "ConsegnaContenutiApplicativi";
+	
+	
+	public final static String LABEL_PARAMETRO_PROTOCOLLO_DI = "Profilo di Interoperabilità";
+	public final static String LABEL_PARAMETRO_PROTOCOLLI_DI = "Profili di Interoperabilità";
+	public final static String LABEL_PARAMETRO_PROTOCOLLO = "Profilo Interoperabilità";
+	public final static String LABEL_PARAMETRO_PROTOCOLLI = "Profili Interoperabilità";
+	public final static String LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLO_DI);
+	public final static String LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLI_DI);
+	public final static String LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLO);
+	public final static String LABEL_PARAMETRO_PROTOCOLLI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLI);
+	
+	public final static String LABEL_PARAMETRO_PROTOCOLLO_COMPACT = "Profilo";
+	public final static String LABEL_PARAMETRO_PROTOCOLLI_COMPACT = "Profili";
 }

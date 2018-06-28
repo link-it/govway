@@ -92,7 +92,7 @@ public class LoginCostanti {
 	public final static String LABEL_MENU_UTENTE_PROFILO_UTENTE = "Profilo Utente";
 	public final static String LABEL_MENU_UTENTE_LOGOUT = "Logout";
 	
-	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = "Modalit&agrave;: {0}";
+	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
 	
 	/* PARAMETRI */
 	

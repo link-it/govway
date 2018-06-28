@@ -875,7 +875,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int i = 0;
 			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
 			if( showProtocolli ) {
-				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO;
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO_COMPACT;
 			}
 			if(this.pddCore.isGestionePddAbilitata(this)) {
 				labels[i++] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
@@ -1172,7 +1172,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			int i = 0;
 			labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME;
 			if( showProtocolli ) {
-				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO;
+				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO_COMPACT;
 			}
 			if(this.isModalitaCompleta()) {
 				labels[i++] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;

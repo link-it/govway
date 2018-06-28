@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
-	<ui:param value="Passaggio alla Modalità Gateway selezionata effettuato con successo." name="title" />
+	<ui:param value="Passaggio al #{applicationBean.labelProfiloDi} selezionato effettuato con successo." name="title" />
 	<ui:define name="navbar">
 		<ul>
 		</ul>
@@ -22,11 +22,11 @@
 						<div class="messages-info">
 				  			<div class="messages-title">
 				  				<h:outputText value="&#160;&#160;" id="modalitaInfoTitleIcon" styleClass="messages-info-title-icon"/>
-				  				<span class="messages-title-text">Passaggio alla Modalità Gateway selezionata effettuato con successo.</span>
+				  				<span class="messages-title-text">Passaggio al #{applicationBean.labelProfiloDi} selezionato effettuato con successo.</span>
 				  			</div>
 							<div class="messages-info-text">
 								<span>
-									<p>#{loginBean.modalita == 'qualsiasi' ? 'Modalità disponibili:' : 'Modalità attuale:'}</p>
+									<p>#{loginBean.modalita == 'qualsiasi' ? applicationBean.labelProfiliCompact.concat(' disponibili:') : applicationBean.labelProfiloCompact.concat(' attuale:')}</p>
 									<ul>
 									<c:forEach items="#{loginBean.listaInformazioniProtocollo}" var="protocollo">
 										<br/>

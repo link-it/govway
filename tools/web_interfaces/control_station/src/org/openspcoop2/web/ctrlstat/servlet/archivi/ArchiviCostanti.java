@@ -25,6 +25,7 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 import java.util.Vector;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -187,7 +188,7 @@ public class ArchiviCostanti {
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO = "Modalità";
+	public final static String LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE = "File";
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "File Caricato";

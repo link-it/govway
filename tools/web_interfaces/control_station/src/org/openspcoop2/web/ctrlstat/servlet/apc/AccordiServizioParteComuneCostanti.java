@@ -477,6 +477,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_DOCUMENTO = "Documento";
 	public final static String LABEL_PARAMETRO_APC_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public final static String LABEL_PARAMETRO_APC_PROTOCOLLO_COMPATC = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	public final static String LABEL_PARAMETRO_APC_WSDL = "WSDL";
 	public final static String LABEL_PARAMETRO_APC_WSDL_LOGICO = "WSDL Logico";
 	

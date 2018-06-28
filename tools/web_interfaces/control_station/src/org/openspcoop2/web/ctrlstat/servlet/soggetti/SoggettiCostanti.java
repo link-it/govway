@@ -118,6 +118,7 @@ public class SoggettiCostanti {
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA = "Tipologia";
 	public final static String LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public final static String LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	public final static String LABEL_PARAMETRO_SOGGETTO_CODICE_PORTA = "Identificativo Porta";
 	public final static String LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO = "Versione Protocollo";

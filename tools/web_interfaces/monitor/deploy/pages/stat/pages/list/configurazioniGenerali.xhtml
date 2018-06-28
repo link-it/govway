@@ -95,9 +95,9 @@
 						
 							<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{configurazioniGeneraliSearchForm.showListaProtocolli}"
 								ajaxRendered="true">
-								<link:prop label="Modalità">
+								<link:prop label="#{applicationBean.labelProfilo}">
 									<rich:comboBox id="protocolloCombo" value="#{configurazioniGeneraliSearchForm.protocollo}"
-										converter="selectItemConverter" defaultLabel="Seleziona Modalità" enableManualInput="false" directInputSuggestions="true" width="412">
+										converter="selectItemConverter" defaultLabel="Seleziona #{applicationBean.labelProfilo}" enableManualInput="false" directInputSuggestions="true" width="412">
 										<f:selectItems value="#{configurazioniGeneraliSearchForm.protocolli}" />
 										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
 											reRender="soggettoErogatoreComboCtr,servizioComboCtr" />

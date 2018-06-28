@@ -253,7 +253,7 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		if(!onlyUser) {
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
+			de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -586,7 +586,7 @@ public class UtentiHelper extends ConsoleHelper {
 		User utente = this.utentiCore.getUser(nomeUtente);
 		
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_MODALITA_GATEWAY);
+		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_HTML_ESCAPE);
 		if(utente.hasOnlyPermessiUtenti()) {
 			de.setType(DataElementType.HIDDEN);
 		}
@@ -890,10 +890,12 @@ public class UtentiHelper extends ConsoleHelper {
 								}
 								
 								this.pd.setMessage("L'utente " +utentiDaNonEliminare.get(0) +
-									" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti appartenenti alle Modalit&agrave; '"+ sbPnV.toString() +"' non assegnate a nessun altro utente");
+									" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti, appartenenti ai "+
+										org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE+" '"+ sbPnV.toString() +"', non assegnati a nessun altro utente");
 							} else {
 								this.pd.setMessage("L'utente " +utentiDaNonEliminare.get(0) +
-										" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti appartenenti alla Modalit&agrave; '"+ protocolliNonValidi.get(0) +"' non assegnata a nessun altro utente");
+										" non pu&ograve; essere modificato poich&egrave; sono stati rilevati oggetti, appartenenti al "+
+										org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE+" '"+ protocolliNonValidi.get(0) +"', non assegnati a nessun altro utente");
 							}
 							return false;
 						}
@@ -909,8 +911,9 @@ public class UtentiHelper extends ConsoleHelper {
 									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getTipo());
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
 										this.pd.setMessage("L'utente " + nomesu 
-												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi appartenenti alla Modalit&agrave; '"
-												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
+												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi, appartenenti al "+
+										org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE+" '"
+												+ this.getLabelProtocollo(protocolloDaControllare) +"', associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 										return false;
 									}
 								}
@@ -921,8 +924,9 @@ public class UtentiHelper extends ConsoleHelper {
 									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
 										this.pd.setMessage("L'utente " + nomesu 
-												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti appartenenti alla Modalit&agrave; '"
-												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
+												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti, appartenenti al "+
+										org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE+" '"
+												+ this.getLabelProtocollo(protocolloDaControllare) +"', associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 										return false;
 									}
 								}
@@ -1026,13 +1030,13 @@ public class UtentiHelper extends ConsoleHelper {
 			if(hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)==false) {
 							
 				if(!modalitaPresenti) {
-					this.pd.setMessage("Selezionare almeno una Modalit&agrave; Gateway");
+					this.pd.setMessage("Selezionare almeno un "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);
 					return false;
 				}
 			}
 			else {
 				if(modalitaPresenti) {
-					this.pd.setMessage("Se all'utente viene assegnato solamente il Permesso 'U' non deve essere selezionata alcuna Modalit&agrave; Gateway");
+					this.pd.setMessage("Se all'utente viene assegnato solamente il Permesso 'U' non deve essere selezionata alcun "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);
 					return false;
 				}
 			}
@@ -1187,7 +1191,7 @@ public class UtentiHelper extends ConsoleHelper {
 			// setto le label delle colonne
 			String[] labels = { UtentiCostanti.LABEL_UTENTE, UtentiCostanti.LABEL_MODALITA_INTERFACCIA, 
 					UtentiCostanti.LABEL_PARAMETRO_UTENTE_MULTI_TENANT, 
-					UtentiCostanti.LABEL_MODALITA_GATEWAY, 
+					UtentiCostanti.LABEL_MODALITA_GATEWAY_COMPACT, 
 					UtentiCostanti.LABEL_PERMESSI_GESTIONE, UtentiCostanti.LABEL_CAMBIA_IDENTITA };
 			this.pd.setLabels(labels);
 

@@ -147,6 +147,7 @@ public class AccordiCooperazioneCostanti {
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PARTECIPANTE = "Soggetto";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DOCUMENTO = "Documento";
 	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	public final static String LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO_COMPACT = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
 	
 	
 	/* DEFAULT VALUE PARAMETRI */

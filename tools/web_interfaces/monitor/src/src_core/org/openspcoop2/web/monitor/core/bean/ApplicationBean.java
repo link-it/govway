@@ -999,4 +999,24 @@ public class ApplicationBean implements Serializable {
 	public String getLicenza() {
 		return CostantiPdD.OPENSPCOOP2_LICENSE;
 	}
+	
+	public String getLabelProfilo() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
+	}
+	public String getLabelProfili() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI;
+	}
+	public String getLabelProfiloDi() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI;
+	}
+	public String getLabelProfiliDi() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_DI;
+	}
+	public String getLabelProfiloCompact() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT;
+	}
+	public String getLabelProfiliCompact() {
+		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_COMPACT;
+	}
+
 }

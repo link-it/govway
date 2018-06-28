@@ -4787,7 +4787,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			int index = 1;
 
 			if( showProtocolli ) {
-				labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO;
+				labels[index] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO_COMPATC;
 				index++;
 			}
 			

@@ -1310,7 +1310,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_FRUITORE);
 			}
 			if( showProtocolli ) {
-				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO);
+				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_PROTOCOLLO_COMPACT);
 			}
 			listaLabelTabella.add(asLabel);
 			

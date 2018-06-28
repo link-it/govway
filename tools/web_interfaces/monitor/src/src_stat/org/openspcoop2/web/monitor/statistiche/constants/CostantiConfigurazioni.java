@@ -138,7 +138,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_ASPC = "API";
 	public static final String LABEL_PORT_TYPE = "PortType";
 	public static final String LABEL_TIPO_CODA_JMS = "Tipo JMS";
-	public static final String LABEL_MODALITA = "Modalità";
+	public static final String LABEL_MODALITA = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO;
 	
 	public static final String LABEL_TOKEN_STATO = "Token (Stato)";
 	public static final String LABEL_TOKEN_OPZIONALE = "Token (Opzionale)";

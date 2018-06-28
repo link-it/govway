@@ -65,9 +65,9 @@
 						</rich:toolTip>
 					</a4j:htmlCommandLink>
 				</rich:column>
-				<rich:column id="colProtocollo" sortable="false" label="Modalità" visible="false">
+				<rich:column id="colProtocollo" sortable="false" label="#{applicationBean.labelProfilo}" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outProtocollo1" value="Modalità" />
+						<h:outputText id="outProtocollo1" value="#{applicationBean.labelProfiloCompact}" />
 					</f:facet>
 					<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}"/>
 					<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}"/>
