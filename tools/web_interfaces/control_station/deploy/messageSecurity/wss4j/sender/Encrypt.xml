@@ -15,7 +15,6 @@
     </compatibility>
 	
 	<properties>
-		<collection name="encryptionTrustStorePropRefId"/>
 		<collection name="encryptionPropRefId"/>
 	</properties>
 	
@@ -156,7 +155,7 @@
 					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
 					<value value="KeyValue" label="KeyValue"/>
 				</values>
-				<property name="encryptKeyIdentifier" />
+				<property name="encryptionKeyIdentifier" />
 			</item>
 			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
@@ -209,7 +208,7 @@
            	</conditions>
            	
            	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.apache.ws.security.components.crypto.Merlin">
-				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionTrustStorePropRefId"/>
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
 			</item>
            	
 			<item type="select" name="truststoreType" label="Tipo" default="jks" >
@@ -218,13 +217,13 @@
 					<value value="pkcs12" label="PKCS12"/>
 					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
-				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionTrustStorePropRefId" />
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="truststoreFile" label="File" required="true">
-			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionTrustStorePropRefId" />
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="truststorePassword" label="Password" required="true">
-			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionTrustStorePropRefId" />
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionPropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
 			    <property name="encryptionUser" />
