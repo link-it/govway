@@ -209,6 +209,10 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				newConfigurazione.setDump(d);
 			}
 			
+			if(StatoFunzionalita.DISABILITATO.equals(newConfigurazione.getDump().getStato())) {
+				newConfigurazione.getDump().setConfigurazione(null);
+			}
+			
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 
 			// Preparo la lista

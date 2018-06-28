@@ -89,7 +89,7 @@
 								<f:facet name="header">
 									<h:outputText id="outTipo1" value="Tipo" />
 								</f:facet>
-								<h:outputText id="outTipo2" value="#{allegato.mimetype}" />
+								<h:outputText id="outTipo2" value="#{allegato.contentType}" />
 							</rich:column>
 							<rich:column id="colDimensione">
 								<f:facet name="header">
@@ -100,13 +100,13 @@
 								</h:outputText>
 							</rich:column>
 							<rich:column id="colDownload">
-								<a4j:htmlCommandLink id="iconLink" title="#{allegato.idAllegato}" action="#{dettagliDump.download}" target="_blank"  value="Download">
+								<a4j:htmlCommandLink id="iconLink" title="#{allegato.contentId}" action="#{dettagliDump.download}" target="_blank"  value="Download">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />
 									<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}" />
 									<f:setPropertyActionListener value="false" target="#{dettagliDump.base64Decode}" />
 								</a4j:htmlCommandLink>
 								<h:outputLabel value="&#160;&#160;" />
-								<a4j:htmlCommandLink id="iconLink2" title="#{allegato.idAllegato}" action="#{dettagliDump.download}" 
+								<a4j:htmlCommandLink id="iconLink2" title="#{allegato.contentId}" action="#{dettagliDump.download}" 
 									target="_blank"  value="[Decodifica Base64]"
 									rendered="#{allegato.base64}">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />

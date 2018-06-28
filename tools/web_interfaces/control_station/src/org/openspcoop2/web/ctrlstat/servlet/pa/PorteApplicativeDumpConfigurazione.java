@@ -132,23 +132,23 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO)) {
 					if(!porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) && statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-						dumpRichiestaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRichiestaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
 					}
 				}
 				
 				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO)) {
 					if(!porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) && statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
-						dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRispostaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
 					}
 				}
 			}
@@ -205,18 +205,18 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 						statoDumpRichiesta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						statoDumpRisposta = porteApplicativeHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						
-						dumpRichiestaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRichiestaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
-						dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
-						dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
-						dumpRispostaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
-						dumpRispostaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
-						dumpRispostaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
 					}
 				}
 
@@ -267,9 +267,9 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE,	ForwardParams.OTHER(""));
 			}
 			
+			boolean showConfermaRichiesta = false;
+			boolean showConfermaRisposta = false;
 			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
-				boolean showConfermaRichiesta = false;
-				boolean showConfermaRisposta = false;
 				// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
 				if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
 					// doppio body
@@ -295,7 +295,9 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 						showConfermaRisposta = true;
 					}
 				}
+			}
 				
+			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 				if(showConfermaRichiesta  || showConfermaRisposta) {
 					if(actionConferma == null) {
 						
@@ -361,7 +363,10 @@ public class PorteApplicativeDumpConfigurazione extends Action {
 
 			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
 				// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
-				if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+				if( !(showConfermaRichiesta  || showConfermaRisposta) 
+						|| 
+					(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK))
+						) {
 					DumpConfigurazione newDumpConfigurazione = porteApplicativeHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
 							statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
 							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 

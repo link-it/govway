@@ -287,6 +287,9 @@ public class Dump {
 		
 		
 		if(dumpNormale) {
+			if(this.dumpConfigurazione==null) {
+				return; // disabilitato
+			}
 			if(this.dumpConfigurazione!=null && StatoFunzionalita.DISABILITATO.equals(this.dumpConfigurazione.getRealtime())) {
 				return; // viene gestito tramite l'handler notify
 			}
@@ -433,10 +436,10 @@ public class Dump {
 					dumpMessaggioConfig.setDumpMultipartHeaders(dumpMultipartHeaders);
 					
 					if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
-						dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, this.properties.isDumpAllAttachments());
+						dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
 					}
 					else{
-						dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, this.properties.isDumpAllAttachments());
+						dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, true); //!Devo leggere tutti gli attachments! this.properties.isDumpAllAttachments());
 					}
 					
 					messaggio.setContentType(dumpMessaggio.getContentType());
@@ -488,7 +491,12 @@ public class Dump {
 								}
 							}
 							
-							attachment.setContent(dumpAttach.getContent());
+							if(dumpAttach.getContent()!=null)
+								attachment.setContent(dumpAttach.getContent());
+							else if(dumpAttach.getErrorContentNotSerializable()!=null)
+								attachment.setContent(dumpAttach.getErrorContentNotSerializable().getBytes());
+							else
+								throw new Exception("Contenuto dell'attachment con id '"+attachment.getContentId()+"' non presente ?");
 							
 							messaggio.getAttachments().add(attachment);
 						}
@@ -645,7 +653,17 @@ public class Dump {
 				if(dumpBody || dumpAttachments) {
 					if(msg!=null){
 	
-						out.append(dumpMessaggio.toString(dumpMessaggioConfig));
+						if(dumpAttachments && !this.properties.isDumpAllAttachments()) {
+							// Ricalcolo gli attachments prendendo solo quelli stampabili
+							if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+								dumpMessaggio = DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), dumpMessaggioConfig, false);
+							}
+							else{
+								dumpMessaggio = DumpRestMessageUtils.dumpMessage(msg.castAsRest(), dumpMessaggioConfig, false);
+							}
+						}
+						
+						out.append(dumpMessaggio.toString(dumpMessaggioConfig,this.properties.isDumpAllAttachments()));
 	
 					}else{
 						if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes)){

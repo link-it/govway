@@ -116,10 +116,26 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			// creo una configurazione di default
 			if(oldConfigurazione == null) {
 				oldConfigurazione = new DumpConfigurazione();
+				
 				oldConfigurazione.setRichiestaIngresso(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRichiestaIngresso().setBody(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
+				
 				oldConfigurazione.setRichiestaUscita(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRichiestaUscita().setBody(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRichiestaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
+				
 				oldConfigurazione.setRispostaIngresso(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRispostaIngresso().setBody(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
+				
 				oldConfigurazione.setRispostaUscita(new DumpConfigurazioneRegola());
+				oldConfigurazione.getRispostaUscita().setBody(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
+				oldConfigurazione.getRispostaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
 			}
 
 			// setto la barra del titolo
@@ -309,7 +325,10 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			}
 			
 			// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
-			if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+			if( !(showConfermaRichiesta  || showConfermaRisposta)
+				||
+				(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK))
+				) {
 
 				Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 				

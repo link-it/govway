@@ -101,6 +101,7 @@ public class MimeTypeUtils {
 		}
 	}
 
+	// Non piu usato, serviva per mettere una immagine nella tabella degli allegati
 	public static String getMimeTypeImageClass(String mimeType) {
 
 		if(mimeType!=null){

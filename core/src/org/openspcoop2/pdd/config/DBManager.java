@@ -209,6 +209,9 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 * 
 	 */
 	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		return this.getResource(idPDD, modulo, idTransazione, true);
+	}
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
 
 		if(this.dataSource == null)
 			throw new Exception("Datasource non istanziato");
@@ -224,10 +227,12 @@ public class DBManager implements IMonitoraggioRisorsa {
 						
 		}
 		catch(Exception e) {
-			this.msgDiag.aggiornaFiltri();
-			this.msgDiag.setDominio(idPDD);
-			this.msgDiag.setFunzione("DBManager."+modulo);
-			this.msgDiag.logFatalError(e, "Richiesta connessione al datasource");
+			if(logError) {
+				this.msgDiag.aggiornaFiltri();
+				this.msgDiag.setDominio(idPDD);
+				this.msgDiag.setFunzione("DBManager."+modulo);
+				this.msgDiag.logFatalError(e, "Richiesta connessione al datasource");
+			}
 			throw e;
 		}
 		
@@ -268,6 +273,9 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 * 
 	 */
 	public void releaseResource(IDSoggetto idPDD,String modulo,Resource resource){
+		this.releaseResource(idPDD, modulo, resource, true);
+	}
+	public void releaseResource(IDSoggetto idPDD,String modulo,Resource resource, boolean logError){
 		try {
 			if(resource!=null){
 				
@@ -287,10 +295,12 @@ public class DBManager implements IMonitoraggioRisorsa {
 
 		}
 		catch(SQLException e) {
-			this.msgDiag.aggiornaFiltri();
-			this.msgDiag.setDominio(idPDD);
-			this.msgDiag.setFunzione("DBManager."+modulo);
-			this.msgDiag.logFatalError(e, "Rilasciata connessione al datasource");
+			if(logError) {
+				this.msgDiag.aggiornaFiltri();
+				this.msgDiag.setDominio(idPDD);
+				this.msgDiag.setFunzione("DBManager."+modulo);
+				this.msgDiag.logFatalError(e, "Rilasciata connessione al datasource");
+			}
 		}
 	}
 

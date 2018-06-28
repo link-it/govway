@@ -990,7 +990,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO = "Configurazione modificata con successo"+RIAVVIO;
-	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO = "Configurazione Esiti modificata con successo"+RIAVVIO;
+	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO = "Configurazione di tracciamento modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_RIAVVIO_RICHIESTO = "Configurazione "+LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO
 			+" modificata con successo"+org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti.RIAVVIO;

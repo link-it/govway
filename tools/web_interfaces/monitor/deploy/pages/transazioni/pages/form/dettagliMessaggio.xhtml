@@ -156,13 +156,13 @@
 									</h:form>
 								</h:panelGroup>
 								
-								<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso}"/>
-								<h:panelGroup id="panelGroupDumpMessaggiReqIngresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso}">
+								<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"/>
+								<h:panelGroup id="panelGroupDumpMessaggiReqIngresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}">
 									<h:form id="formDumpMessaggiReqIngresso">
 										<a4j:htmlCommandLink id="dumpMessaggiIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
-				                    						 rendered="#{dettagliBean.hasDumpRichiestaIngresso}"
+				                    						 rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"
 				                    						 action="dettaglioDump">
 				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 					                    	<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
@@ -171,13 +171,13 @@
 									</h:form>
 								</h:panelGroup>
 								
-								<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRichiestaUscita}"/>
-								<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita}">
+								<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"/>
+								<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}">
 									<h:form id="formDumpMessaggiReqUscita">
 										<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
-				                    						 rendered="#{dettagliBean.hasDumpRichiestaUscita}"
+				                    						 rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"
 				                    						 action="dettaglioDump">
 				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 				                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
@@ -338,13 +338,13 @@
 									</h:form>
 								</h:panelGroup>								
 								
-								<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRispostaIngresso}"/>
-								<h:panelGroup id="panelGroupDumpMessaggiResIngresso" rendered="#{dettagliBean.hasDumpRispostaIngresso}">
+								<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"/>
+								<h:panelGroup id="panelGroupDumpMessaggiResIngresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}">
 									<h:form id="formDumpMessaggiResIngresso">
 										<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
-				                    						 rendered="#{dettagliBean.hasDumpRispostaIngresso}"
+				                    						 rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"
 				                    						 action="dettaglioDump">
 				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 				                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
@@ -353,13 +353,13 @@
 									</h:form>
 								</h:panelGroup>
 								
-								<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita}"/>
-								<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita}">
+								<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"/>
+								<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}">
 									<h:form id="formDumpMessaggiResUscita">
 										<a4j:htmlCommandLink id="dumpMessaggiResUscita-iconLink"
 				                    						 styleClass="icon-details"
 				                    						 value="Visualizza"
-				                    						 rendered="#{dettagliBean.hasDumpRispostaUscita}"
+				                    						 rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"
 				                    						 action="dettaglioDump">
 				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 				                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>

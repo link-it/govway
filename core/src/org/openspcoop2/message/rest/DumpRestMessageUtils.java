@@ -24,6 +24,7 @@ package org.openspcoop2.message.rest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -183,15 +184,20 @@ public class DumpRestMessageUtils {
 			    	if(dumpAllBodyParts){
 			    		boutAttach = (ByteArrayOutputStream) DumpRestMessageUtils._dumpBodyPart(msg, bodyPart, true); 
 			    	}else{
-			    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
-			    		Object o = bodyPart.getDataHandler().getContent();
-			    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");			    		
-			    		if(o instanceof String){
+			    		Object o = _dumpBodyPart(msg, bodyPart, false);
+			    		if(o == null){
+			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non recuperato??");
+			    		}
+			    		else if(o instanceof String){
 			    			boutAttach = new ByteArrayOutputStream();
 			    			boutAttach.write(((String)o).getBytes());
 			    			boutAttach.flush();
 			    			boutAttach.close();
-			    		}else{
+			    		}
+			    		else if(o instanceof java.io.ByteArrayOutputStream){
+			    			boutAttach = (java.io.ByteArrayOutputStream) o;
+			    		}
+			    		else{
 			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
 			    		}
 			    	}
@@ -200,6 +206,11 @@ public class DumpRestMessageUtils {
 			    	}
 			    	else {
 			    		dumpAttach.setContent(boutAttach);
+			    		
+				    	if(dumpMessaggio.getAttachments()==null) {
+				    		dumpMessaggio.setAttachments(new ArrayList<>());
+				    	}
+			    		dumpMessaggio.getAttachments().add(dumpAttach);
 			    	}
 				}
 			}
@@ -210,13 +221,13 @@ public class DumpRestMessageUtils {
 		}
 	}
 	
-	public static String dumpMessageAsString(DumpMessaggio msg) throws MessageException{
-		return dumpMessageAsString(msg,  new DumpMessaggioConfig());
+	public static String dumpMessageAsString(DumpMessaggio msg, boolean dumpAllAttachments) throws MessageException{
+		return dumpMessageAsString(msg,  new DumpMessaggioConfig(), dumpAllAttachments);
 	}
 	public static String dumpMessageAsString(DumpMessaggio msg,
-			DumpMessaggioConfig config) throws MessageException{
+			DumpMessaggioConfig config, boolean dumpAllAttachments) throws MessageException{
 		try{
-			StringBuffer out = new StringBuffer(msg.toString(config));
+			StringBuffer out = new StringBuffer(msg.toString(config,dumpAllAttachments));
 			return out.toString();
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);

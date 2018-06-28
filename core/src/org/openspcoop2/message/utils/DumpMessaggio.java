@@ -126,7 +126,7 @@ public class DumpMessaggio implements Serializable{
 	}
 
 	
-	public String toString(DumpMessaggioConfig config) throws MessageException{
+	public String toString(DumpMessaggioConfig config, boolean dumpAllAttachments) throws MessageException{
 		try{
 			StringBuffer out = new StringBuffer();
 						
@@ -243,7 +243,7 @@ public class DumpMessaggio implements Serializable{
 						out.append(ap.getErrorContentNotSerializable());
 					}
 					else {
-						out.append(ap.getContentAsString());
+						out.append(ap.getContentAsString(!dumpAllAttachments));
 					}
 					
 			    	index++;

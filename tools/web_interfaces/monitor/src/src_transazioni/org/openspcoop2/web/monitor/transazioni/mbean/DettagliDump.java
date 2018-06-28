@@ -43,6 +43,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -149,16 +150,40 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			}
 
 			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
 			case JSON:
 				JSONUtils jsonUtils = JSONUtils.getInstance(true);
 				try {
 					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
 				} catch (UtilsException e) {
 				}
+				break;
+			case MIME_MULTIPART:
+				try {
+					String contentType = this.dumpMessaggio.getContentType();
+					if(ContentTypeUtilities.isMultipart(contentType)){
+						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					}
+					String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+					if("json".equals(ext) || contentType.contains("json")) {
+						jsonUtils = JSONUtils.getInstance(true);
+						try {
+							toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
+						} catch (UtilsException e) {
+						}
+					}
+					else if("xml".equals(ext) || contentType.contains("xml")) {
+						toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+					}
+					// else {
+					// 	nop
+					//}
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					toRet = "xml"; // default
+				}
+				break;
+			case BINARY:
+				// gia gestito nel return dell'errore sopra
 				break;
 			case SOAP_11:
 			case SOAP_12:
@@ -187,8 +212,25 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			case JSON:
 				toRet = "json";
 				break;
-			case BINARY:
 			case MIME_MULTIPART:
+				try {
+					String contentType = this.dumpMessaggio.getContentType();
+					if(ContentTypeUtilities.isMultipart(contentType)){
+						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					}
+					String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+					if("json".equals(ext) || contentType.contains("json")) {
+						toRet = "json";
+					}
+					else {
+						toRet = "xml"; // default
+					}
+				}catch(Exception e) {
+					this.log.error(e.getMessage(),e);
+					toRet = "xml"; // default
+				}
+				break;
+			case BINARY:
 				// per ora restituisco il default
 			case SOAP_11:
 			case SOAP_12:
@@ -318,7 +360,11 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "messaggio";
 
-			String ext = MimeTypeUtils.fileExtensionForMIMEType(this.dumpMessaggio.getContentType());
+			String contentType = this.dumpMessaggio.getContentType();
+			if(ContentTypeUtilities.isMultipart(contentType)){
+				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+			}
+			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 
 			fileName+="."+ext;
 
@@ -330,10 +376,10 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			OutputStream os = null;
 
 			// First we load the file in our InputStream
-			byte[] contenutoBody = this.dumpMessaggio.getBody();
 			//			if(this.base64Decode){
 			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
 			//			}
+			byte[] contenutoBody = this.dumpMessaggio.getBody();
 			bis = new ByteArrayInputStream(contenutoBody);
 			os = response.getOutputStream();
 

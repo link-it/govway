@@ -2388,11 +2388,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						eventoShutdown.setCodice(CodiceEventoStatoPortaDominio.STOP.getValue());
 						eventoShutdown.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
 						eventoShutdown.setClusterId(clusterID);
-						OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown);
+						OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown,true);
 					}
 				}
 			}catch(Exception e){
-				logEventi.error("Errore durante la segnalazione di shutdown ('Emissione Evento'): "+e.getMessage(),e);
+				// L'errore puo' avvenire poiche' lo shutdown puo' anche disattivare il datasource
+				logEventi.debug("Errore durante la segnalazione di shutdown ('Emissione Evento'): "+e.getMessage(),e);
 				if(eventoShutdown!=null){
 					try{
 				    	if(eventoShutdown.getOraRegistrazione()==null){

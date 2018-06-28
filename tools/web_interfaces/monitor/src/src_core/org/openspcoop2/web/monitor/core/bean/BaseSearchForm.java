@@ -1345,12 +1345,24 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.modalita = modalita;
 	}
 
+	private boolean isCloned = false;
+	private String protocolCloned = null;
+	public void saveProtocollo() {
+		this.protocolCloned = this.protocollo;
+		this.isCloned = true;
+	}
+	
 	public String getProtocollo() {
-		if(!this.getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
-			this.setProtocollo(Utility.getLoginBean().getModalita()); 
+		if(this.isCloned) {
+			return this.protocolCloned;
 		}
-		
-		return this.protocollo;
+		else {
+			if(!this.getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+				this.setProtocollo(Utility.getLoginBean().getModalita()); 
+			}
+			
+			return this.protocollo;
+		}
 	}
 
 	public void setProtocollo(String protocollo) {

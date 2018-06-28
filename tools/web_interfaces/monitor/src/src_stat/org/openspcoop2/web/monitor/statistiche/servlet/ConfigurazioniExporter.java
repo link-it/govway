@@ -100,6 +100,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 			}
 			searchForm.setUser(utente);
 			searchForm.setModalita(modalita);
+			searchForm.saveProtocollo();
 			service.setSearch(searchForm);
 			
 

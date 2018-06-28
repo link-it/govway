@@ -58,6 +58,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
@@ -73,6 +74,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -5078,9 +5080,10 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
 		if(showStato) {
+			
 			de.setType(DataElementType.SELECT);
 			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			String labelsStato [] = {CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+			String labelsStato [] = {this.getDumpLabelDefault(), CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
 			de.setSelected(statoDump);
 			de.setLabels(labelsStato);
 			de.setValues(valuesStato); 
@@ -5293,6 +5296,79 @@ public class ConsoleHelper {
 
 			}
 		}
+	}
+	
+	protected String getDumpLabelDefault() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		String labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT;
+		
+		Dump dConfig = this.confCore.getConfigurazioneGenerale().getDump();
+		if(dConfig==null || dConfig.getConfigurazione()==null) {
+			labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+		}
+		else {
+			boolean richiesta = (
+						dConfig.getConfigurazione().getRichiestaIngresso()!=null 
+						&& 
+						(
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaIngresso().getHeaders())
+								||
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaIngresso().getBody())
+								||
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaIngresso().getAttachments())
+						)
+					)
+					||
+					(
+						dConfig.getConfigurazione().getRichiestaUscita()!=null 
+						&& 
+						(
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaUscita().getHeaders())
+								||
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaUscita().getBody())
+								||
+								StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRichiestaUscita().getAttachments())
+						)
+						)
+					;
+			boolean risposta = (
+					dConfig.getConfigurazione().getRispostaIngresso()!=null 
+					&& 
+					(
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaIngresso().getHeaders())
+							||
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaIngresso().getBody())
+							||
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaIngresso().getAttachments())
+					)
+				)
+				||
+				(
+					dConfig.getConfigurazione().getRispostaUscita()!=null 
+					&& 
+					(
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaUscita().getHeaders())
+							||
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaUscita().getBody())
+							||
+							StatoFunzionalita.ABILITATO.equals(dConfig.getConfigurazione().getRispostaUscita().getAttachments())
+					)
+					)
+				;
+			if(richiesta && risposta) {
+				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato)";
+			}
+			else if(richiesta) {
+				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato richiesta)";
+			}
+			else if(risposta) {
+				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato risposta)";
+			}
+			else {
+				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+			}
+			
+		}
+		return labelDefault;
 	}
 	
 	public void addConfigurazioneDumpToDatiAsHidden(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,

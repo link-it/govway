@@ -3471,79 +3471,70 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addTracciamentoToDati(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati,	Boolean contaListe) {
 		DataElement de;
 		
-		boolean showSezione = this.isModalitaAvanzata() && (
-					this.core.isShowConfigurazioneTracciamentoDiagnostica() ||
-					this.confCore.isTracce_showConfigurazioneCustomAppender() || 
-					this.confCore.isTracce_showSorgentiDatiDatabase()
-				);
-		
-		if(showSezione) {
+		boolean showTitleSection = 
+				(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()) 
+				||
+				(this.isModalitaAvanzata() && (this.confCore.isTracce_showConfigurazioneCustomAppender() || this.confCore.isTracce_showSorgentiDatiDatabase()));
+				
+		if(showTitleSection) {
 			if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || this.isModalitaAvanzata()){
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE);
 				de.setType(DataElementType.TITLE);
 				dati.addElement(de);
 			}
+		}
 	
-			String[] tipoBuste = { 
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-			};
-			de = new DataElement();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-			if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()){
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoBuste);
-				de.setSelected(registrazioneTracce);
-				de.setPostBack(true);
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(registrazioneTracce);
-			}
-			dati.addElement(de);
-	
-			if (this.isModalitaAvanzata()) {
-				if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
-					if (contaListe) {
-						int totAppender = 0;
-						if (configurazione.getTracciamento() != null)
-							totAppender =
-							configurazione.getTracciamento().sizeOpenspcoopAppenderList();
-						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-					} else
-						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-					dati.addElement(de);
-				}
-				if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
-					if (contaListe) {
-						int totDs = 0;
-						if (configurazione.getTracciamento() != null)
-							totDs =
-							configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
-						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-					} else
-						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-					dati.addElement(de);
-				}
-			}
-		
-		} else {
-			// campi hidden
-			de = new DataElement();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		String[] tipoBuste = { 
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoBuste);
+			de.setSelected(registrazioneTracce);
+			de.setPostBack(true);
+		}
+		else{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(registrazioneTracce);
-			dati.addElement(de);
 		}
+		dati.addElement(de);
+	
+		if (this.isModalitaAvanzata()) {
+			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
+				if (contaListe) {
+					int totAppender = 0;
+					if (configurazione.getTracciamento() != null)
+						totAppender =
+						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+				dati.addElement(de);
+			}
+			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
+				if (contaListe) {
+					int totDs = 0;
+					if (configurazione.getTracciamento() != null)
+						totDs =
+						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+				dati.addElement(de);
+			}
+		}
+		
 	}
 
 	public void addMessaggiDiagnosticiToDatiAsHidden(String severita, String severita_log4j, Vector<DataElement> dati) {

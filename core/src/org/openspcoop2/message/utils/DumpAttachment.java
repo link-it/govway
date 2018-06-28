@@ -48,6 +48,7 @@ public class DumpAttachment implements Serializable{
 	
 	private String errorContentNotSerializable;
 	private ByteArrayOutputStream content;
+	private StringBuffer printableContent;
 	
 	public String getContentId() {
 		return this.contentId;
@@ -85,9 +86,37 @@ public class DumpAttachment implements Serializable{
 		}
 		return null;
 	}
-	public String getContentAsString() {
+	private static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer) {
+		 try{
+			 // 1024 = 1K
+			 // Visualizzo al massimo 50K (per i log)
+			 int max = 50 * 1024;
+			 stringBuffer.append(org.openspcoop2.utils.Utilities.convertToPrintableText(b, max));
+			 return null;	
+		 }catch(Exception e){
+			 return e.getMessage();
+		 }
+
+	 }
+	public String getContentAsString(boolean ifPrintableContent) {
 		if(this.content!=null) {
-			return this.content.toString();
+			if(ifPrintableContent) {
+				if(this.printableContent!=null) {
+					return this.printableContent.toString();
+				}
+				else {
+					this.printableContent = new StringBuffer();
+					String errore = getTestoVisualizzabile(this.content.toByteArray(),this.printableContent);
+					if(errore!=null) {
+						this.printableContent = new StringBuffer();
+						this.printableContent.append(errore);
+					}
+					return this.printableContent.toString();
+				}
+			}
+			else {
+				return this.content.toString();
+			}
 		}
 		return null;
 	}

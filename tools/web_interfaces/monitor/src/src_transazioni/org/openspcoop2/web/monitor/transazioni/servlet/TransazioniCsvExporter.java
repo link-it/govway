@@ -117,6 +117,7 @@ public class TransazioniCsvExporter extends HttpServlet{
 			}
 			searchForm.setUser(utente);
 			searchForm.setModalita(modalita);
+			searchForm.saveProtocollo();
 			service.setSearch(searchForm);
 
 			// Then we have to get the Response where to write our file

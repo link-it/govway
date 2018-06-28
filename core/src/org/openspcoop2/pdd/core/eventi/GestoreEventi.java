@@ -95,9 +95,17 @@ public class GestoreEventi {
     }
         
     public void log(Evento evento) throws Exception{
+    	this.log(evento, false);
+    }
+    public void log(Evento evento, boolean shutdownInCorso) throws Exception{
     	
     	if(evento.getOraRegistrazione()==null){
     		evento.setOraRegistrazione(DateManager.getDate());
+    	}
+    	
+    	boolean logError = true;
+    	if(shutdownInCorso) {
+    		logError = false;
     	}
     	
     	DBManager dbManager = null;
@@ -105,7 +113,7 @@ public class GestoreEventi {
     	String modulo = ID_MODULO+"."+evento.getTipo()+"."+evento.getCodice();
 		try{
 			dbManager = DBManager.getInstance();
-			r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), modulo, evento.getIdTransazione());
+			r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), modulo, evento.getIdTransazione(), logError);
 			if(r==null){
 				throw new Exception("Risorsa al database non disponibile");
 			}
@@ -117,7 +125,7 @@ public class GestoreEventi {
 		}finally{
 			try{
 				if(r!=null)
-					dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), modulo, r);
+					dbManager.releaseResource(this.properties.getIdentitaPortaDefault(null), modulo, r, logError);
 			}catch(Exception e){}
 		}
     }

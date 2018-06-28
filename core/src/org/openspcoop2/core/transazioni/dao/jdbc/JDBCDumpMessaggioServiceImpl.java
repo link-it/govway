@@ -234,7 +234,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			// Rilasciare il vincolo di not null 'fisico' sul database.
 			// Imporlo logicamente, in modo che non siano permessi insert o update con valori null.
 			// Dopodichè, se nella get viene recuperato un valore null, deve essere trasformato in stringa vuota.
-			DumpHeaderTrasporto dht = dumpMessaggio.getHeaderTrasporto(i);
+			DumpMultipartHeader dht = dumpMessaggio.getMultipartHeader(i);
 			if(dht.getValore()==null){
 				throw new ServiceException("Header ["+dht.getNome()+"] with value null");
 			}

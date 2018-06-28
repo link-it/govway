@@ -246,7 +246,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						this.log.debug("\t\tId["+attach.getContentId()+"]");
 						this.log.debug("\t\tlocation["+attach.getContentLocation()+"]");
 						this.log.debug("\t\ttype["+attach.getContentType()+"]");
-						if(messaggio.getBody()==null) {
+						if(attach.getContent()==null) {
 							this.log.debug("\t\tcontent undefined");
 						}
 						else {
