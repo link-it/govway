@@ -1,0 +1,240 @@
+<config id="messageSecurity.wss4j.sender.encrypt" label="WSSec Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.xml.SecurityProvider">
+
+    <compatibility not="false" and="false">
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>REQUEST</tag>
+                    <tag>OUT</tag>
+            </tags>
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>RESPONSE</tag>
+                    <tag>IN</tag>
+            </tags>
+    </compatibility>
+	
+	<properties>
+		<collection name="encryptionTrustStorePropRefId"/>
+		<collection name="encryptionPropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
+		</item>
+		<item type="hidden" name="encryptAction" value="Encrypt">
+			<property name="action" append="true" appendSeparator=" " force="true"/>
+		</item>
+
+	</section>
+
+	<section label="Timestamp">
+		
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+
+		<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
+			note="The time difference between creation and expiry time in seconds ">
+			<property name="timeToLive" />
+		</item>
+	</section>
+
+	<section label="Encrypt">
+
+		<item type="select" name="encryptPartsSelect" label="Elementi da cifrare" default="body" reloadOnChange="true">
+			<values>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="encryptPartsSelect" />
+		</item>
+		<item type="hidden" name="encryptPartsBody" value="{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions and="false">
+				<condition>
+					<equals name="encryptPartsSelect" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="encryptParts" />
+		</item>
+		<item type="hidden" name="encryptPartsAttachments" value="{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="encryptPartsSelect" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="encryptParts" />
+		</item>
+		<item type="hidden" name="encryptPartsBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="encryptPartsSelect" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="encryptParts" />
+		</item>
+		<item type="text" name="encryptPartsCustom" label="Elementi Obbligatori" required="true" >
+			<conditions and="false">
+				<condition>
+					<equals name="encryptPartsSelect" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="encryptParts" />
+		</item>
+		<item type="text" name="optionalencryptPartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localName (cid:Attachments in localName for SWA)">
+			<conditions and="false">
+				<condition>
+					<equals name="encryptPartsSelect" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="optionalencryptParts" />
+		</item>
+		
+		<item type="checkbox" name="encryptionSymmetricKey" label="Symmetric Key" defaultSelected="false" reloadOnChange="true" >
+			<property name="encryptionSymmetricKey" />
+		</item>
+
+		<item type="select" name="encryptionSymAlgorithm" label="Key Wrap Algorithm">
+			<conditions>
+	            <condition and="true">
+	                    <selected name="encryptionSymmetricKey" />
+	            </condition>
+           	</conditions>
+			<!--  <property name="encryptionSymAlgorithm" /> -->
+			<property name="encryptionKeyTransportAlgorithm" /> <!--  in wss4j finisce cmq qua ? -->
+		</item>
+		<item type="select" name="encryptionKeyTransportAlgorithm" label="Key Wrap Algorithm">
+			<conditions>
+	            <condition not="true">
+	                    <selected name="encryptionSymmetricKey" />
+	            </condition>
+           	</conditions>
+			<property name="encryptionKeyTransportAlgorithm" />
+		</item>
+		
+		<item type="select" name="encryptionAlgorithm" label="Encryption Algorithm">
+			<!--  <property name="encryptionAlgorithm" /> -->
+			<property name="encryptionSymAlgorithm" /> <!--  in wss4j la proprietà per l'algoritmo di cifratura si chiama cosi' -->
+		</item>		
+		<item type="select" name="encryptionDigestAlgorithm" label="Digest Algorithm">
+			<property name="encryptionDigestAlgorithm" />
+		</item>
+		<!--  
+		<item type="select" name="encryptionC14nAlgorithm" label="Canonicalization Algorithm">
+			<property name="encryptionC14nAlgorithm" />
+		</item>
+		--> <!--  in wss4j la proprietà non sembra supportata -->
+		
+		<subsection label="Key Identifier">
+
+			<item type="select" name="encryptKeyIdentifier" label="Tipo" default="DirectReference" >
+			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/encrypt-and-encryption-key.html"> -->
+				<values>
+					<value value="DirectReference" label="DirectReference"/>
+					<value value="IssuerSerial" label="IssuerSerial"/>
+					<value value="X509KeyIdentifier" label="X509KeyIdentifier"/>
+					<value value="SKIKeyIdentifier" label="SKIKeyIdentifier"/>
+					<value value="EmbeddedKeyName" label="EmbeddedKeyName"/>
+					<value value="Thumbprint" label="Thumbprint"/>
+					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
+					<value value="KeyValue" label="KeyValue"/>
+				</values>
+				<property name="encryptKeyIdentifier" />
+			</item>
+			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
+				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+
+		</subsection>
+		
+		<subsection label="KeyStore">
+			<conditions>
+                   <condition>
+                           <selected name="encryptionSymmetricKey" />
+                   </condition>
+           	</conditions>
+           	
+           	<item type="hidden" name="encryptCryptoProviderKeyStore" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
+			</item>
+           	
+			<item type="select" name="keystoreType" label="Tipo" default="jceks">
+				<values>
+					<!-- <value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/> -->
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			    <property name="encryptionUser" /> 
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			    <property name="encryptionPassword" />
+			</item>
+			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+			      	<property name="passwordCallbackRef" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="TrustStore">
+			<conditions>
+                   <condition not="true">
+                           <selected name="encryptionSymmetricKey" />
+                   </condition>
+           	</conditions>
+           	
+           	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionTrustStorePropRefId"/>
+			</item>
+           	
+			<item type="select" name="truststoreType" label="Tipo" default="jks" >
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionTrustStorePropRefId" />
+			</item>
+			<item type="text" name="truststoreFile" label="File" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="encryptionTrustStorePropRefId" />
+			</item>
+			<item type="text" name="truststorePassword" label="Password" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="encryptionTrustStorePropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+			    <property name="encryptionUser" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

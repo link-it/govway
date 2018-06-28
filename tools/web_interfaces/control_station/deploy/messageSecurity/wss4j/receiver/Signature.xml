@@ -30,19 +30,36 @@
 			<property name="mustUnderstand" />
 		</item>
 		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
-			<property name="action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+			<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
 		</item>
 		<item type="hidden" name="signatureAction" value="Signature">
-			<property name="action" append="true" appendSeparator="_" force="true"/>
+			<property name="action" append="true" appendSeparator=" " force="true"/>
+		</item>
+		
+		<item type="checkbox" name="isBSPCompliant" label="Compliance BSP 1.1" defaultSelected="true">
+			<property name="isBSPCompliant" />
+		</item>		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
 		</item>
 
 	</section>
 
-	<section label="Signature">
-
-		<item type="text" name="signatureParts" label="Elementi firmati" required="false">
-		     	<property name="signatureParts" />
+	<section label="Timestamp">
+	
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+	
+		<item type="number" name="futureTimeToLive" label="Future Time to Live (seconds)" min="1" max="999999999" default="60"
+			note="The time in seconds in the future within which the Created time of an incoming Timestamp is valid">
+			<property name="futureTimeToLive" />
 		</item>
+	</section>
+
+	<section label="Signature">
 
 		<subsection label="TrustStore">
 
@@ -65,7 +82,7 @@
 			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="false">
-			      	<property name="user" />
+			      	<property name="signatureUser" />
 			</item>
 
 		</subsection>

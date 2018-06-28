@@ -527,7 +527,7 @@ public abstract class MessageSecurityContext{
 						@Override
 						public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 							 for (int i = 0; i < callbacks.length; i++) {
-						            if (callbacks[i] instanceof WSPasswordCallback) {
+								 if (callbacks[i] instanceof WSPasswordCallback) {
 						                WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
 						                if(this.mapAliasToPasswordParam.containsKey(pc.getIdentifier())) {
 						                	pc.setPassword(this.mapAliasToPasswordParam.get(pc.getIdentifier()));

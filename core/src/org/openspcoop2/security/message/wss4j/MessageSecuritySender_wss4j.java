@@ -54,6 +54,7 @@ import org.openspcoop2.security.message.saml.SAMLCallbackHandler;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.id.IDUtilities;
 
 /**
  * Classe per la gestione della WS-Security (WSDoAllSender).
@@ -193,6 +194,22 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				}
 				else if(SecurityConstants.ENCRYPTION_PARTS.equals(key) || SecurityConstants.SIGNATURE_PARTS.equals(key)){
 					msgCtx.put(key, normalizeWss4jParts(value,message));
+				}
+				else if(SecurityConstants.PASSWORD_CALLBACK_REF.equals(key)) {
+					msgCtx.put(key, oValue);
+				}
+				else if(SecurityConstants.SIGNATURE_PROPERTY_REF_ID.equals(key) || 
+						SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID.equals(key) || 
+						SecurityConstants.ENCRYPTION_PROPERTY_REF_ID.equals(key) || 
+						SecurityConstants.DECRYPTION_PROPERTY_REF_ID.equals(key) ) {
+					if(value!=null) {
+						msgCtx.put(key, value);
+					}
+					else { 
+						String id = key+"_"+IDUtilities.getUniqueSerialNumber();
+						msgCtx.put(key, id);
+						msgCtx.put(id, oValue);
+					}
 				}
 				else{
 					msgCtx.put(key, value);
