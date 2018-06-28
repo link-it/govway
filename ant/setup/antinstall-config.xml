@@ -172,9 +172,9 @@
 
     </page>
 
-    <page name="preinstallazione4" type="input" displayText="Modalità Operativa">
+    <page name="preinstallazione4" type="input" displayText="Profili di Interoperabilità">
 
-        <comment displayText="Modalità" bold="true"/>
+        <comment displayText="Profilo" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
