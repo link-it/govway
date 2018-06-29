@@ -830,7 +830,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
@@ -892,7 +892,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					null,null,null,null,null,
-					null, null, null,null,
+					null, null, null,null,null,
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
@@ -943,7 +943,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 						null,null,null,null,null,
 						null,
-						null,null,null);
+						null,null,null,null,null);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1008,7 +1008,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
@@ -1218,7 +1218,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,

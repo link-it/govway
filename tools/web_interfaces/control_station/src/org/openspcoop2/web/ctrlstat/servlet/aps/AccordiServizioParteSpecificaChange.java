@@ -980,7 +980,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
@@ -1087,7 +1087,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					generaPACheckSoggetto, listExtendedConnettore,
 					null,null,null,null,null,
 					null, null, null, null,
-					tipoProtocollo);
+					tipoProtocollo,null);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -1157,7 +1157,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null,null,null,null,null,null,null,null,
 						null,null,null,null,null,
 						null,
-						null,null,null);
+						null,null,null,null,null);
 
 				if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
@@ -1268,7 +1268,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 						boolean forceEnableConnettore = false;
@@ -1513,7 +1513,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null);
+							null,null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					

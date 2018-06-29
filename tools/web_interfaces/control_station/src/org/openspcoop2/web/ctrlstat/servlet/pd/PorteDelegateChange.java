@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCos
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -149,6 +150,8 @@ public final class PorteDelegateChange extends Action {
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
+			
+			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			if(idFruizione == null)
@@ -827,6 +830,22 @@ public final class PorteDelegateChange extends Action {
 						}
 					}
 				}
+				
+//				String idAsps = servS.getId()+"";
+				String nomeSoggettoFruitore = null;
+				if(porteDelegateCore.isRegistroServiziLocale()){
+					org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(soggInt);
+					nomeSoggettoFruitore = soggettoFruitore.getNome();
+				}else{
+					org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(soggInt);
+					nomeSoggettoFruitore = soggettoFruitore.getNome();
+				}
+				Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(servS,nomeSoggettoFruitore);
+				String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+				if(allegatoXacmlPolicy.getValue() != null) {
+					// faccio sparire il link download
+					idAllegatoXacmlPolicy = null;
+				}
 
 				AccordoServizioParteComune as = null;
 				if ( servS!=null ) {
@@ -895,7 +914,7 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -993,6 +1012,17 @@ public final class PorteDelegateChange extends Action {
 					}catch(DriverRegistroServiziNotFound dNotFound){
 					}
 				}
+//				String idAsps = servS.getId()+"";
+				String nomeSoggettoFruitore = null;
+				if(porteDelegateCore.isRegistroServiziLocale()){
+					org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(soggInt);
+					nomeSoggettoFruitore = soggettoFruitore.getNome();
+				}else{
+					org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(soggInt);
+					nomeSoggettoFruitore = soggettoFruitore.getNome();
+				}
+				Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(servS,nomeSoggettoFruitore);
+				String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
 				
 				AccordoServizioParteComune as = null;
 				if(servS!=null){
@@ -1056,7 +1086,7 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy, allegatoXacmlPolicy);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 

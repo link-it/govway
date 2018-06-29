@@ -390,6 +390,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
 			
+			String idAllegatoXacmlPolicy = null;
+			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			
 
 			if(apsHelper.isMultipart()){
 				this.decodeRequestValidazioneDocumenti = true;
@@ -1344,7 +1347,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 				// Controllo se richiedere il connettore
 				
@@ -1430,7 +1433,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					generaPortaApplicativa, listExtendedConnettore,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-					this.tipoProtocollo);
+					this.tipoProtocollo, allegatoXacmlPolicy);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1510,7 +1513,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
@@ -1707,7 +1710,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 					if(!connettoreStatic) {
 					
@@ -1753,8 +1756,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				}
 			}
-
-
 
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 			listaOggettiDaCreare.add(asps);
@@ -1834,6 +1835,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				listaOggettiDaCreare.add(portaApplicativa);						
 				listaOggettiDaCreare.add(mappingErogazione);
 
+				if(this.erogazioneAutorizzazione != null && this.erogazioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+					asps.addSpecificaSicurezza(apsHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, asps.getId()));
+				}
 			}
 			
 			if(generaPortaDelegata){
@@ -1871,6 +1875,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 				listaOggettiDaCreare.add(mappingFruizione);
 				
+				if(this.fruizioneAutorizzazione != null && this.fruizioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+					asps.addSpecificaSicurezza(apsHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, this.nomeSoggettoFruitore, asps.getId()));
+				}
 			}
 
 			//imposto properties custom

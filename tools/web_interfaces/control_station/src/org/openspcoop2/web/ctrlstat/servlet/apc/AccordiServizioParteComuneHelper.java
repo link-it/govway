@@ -2761,7 +2761,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			de = new DataElement();
 			//			de.setLabel(label.replace(" di ", " di <BR/>")+"<BR/>Nuovo:");
-			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO + " "+ labelWSDL);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_WSDL_NUOVO);
 			de.setValue("");
 			de.setType(DataElementType.FILE);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
@@ -5699,14 +5699,51 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					org.openspcoop2.core.registry.Resource risorsa = it.next();
 
 					Vector<DataElement> e = new Vector<DataElement>();
-
+					String styleClass = "resource-method-block resource-method-default";
 					DataElement de = new DataElement();
 					if(risorsa.getMethod()==null) {
 						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI);
 					}
 					else {
 						de.setValue(risorsa.getMethod().toString());
+						
+						switch (risorsa.getMethod()) {
+						case DELETE:
+							styleClass = "resource-method-block resource-method-delete";
+							break;
+						case GET:
+							styleClass = "resource-method-block resource-method-get";
+							break;
+						case HEAD:
+							styleClass = "resource-method-block resource-method-head";
+							break;
+						case LINK:
+							styleClass = "resource-method-block resource-method-link";
+							break;
+						case OPTIONS:
+							styleClass = "resource-method-block resource-method-options";
+							break;
+						case PATCH:
+							styleClass = "resource-method-block resource-method-patch";
+							break;
+						case POST:
+							styleClass = "resource-method-block resource-method-post";
+							break;
+						case PUT:
+							styleClass = "resource-method-block resource-method-put";
+							break;
+						case TRACE:
+							styleClass = "resource-method-block resource-method-trace";
+							break;
+						case UNLINK:
+							styleClass = "resource-method-block resource-method-unlink";
+							break;
+						default:
+							styleClass = "resource-method-block resource-method-default";
+							break;
+						}
 					}
+					de.setLabelStyleClass(styleClass); 
 					de.setWidthPx(100);
 					e.addElement(de);
 					

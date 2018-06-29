@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -192,6 +193,7 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
+			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -392,6 +394,14 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 			
+			String idAsps = servS != null ?  servS.getId()+"" : null;
+			Long idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(servS,null);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
+			}
+			
 			AccordoServizioParteComune as = null;
 			if (servS != null) {
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
@@ -537,7 +547,7 @@ public final class PorteApplicativeAdd extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -584,7 +594,7 @@ public final class PorteApplicativeAdd extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -802,9 +812,34 @@ public final class PorteApplicativeAdd extends Action {
 			else 
 				pa.setBehaviour(null);
 			
+			boolean addSpecSicurezza = false;
+			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) &&  allegatoXacmlPolicy.getValue() != null) {
+				Long oldIdAllegato = porteApplicativeHelper.getIDAllegatoXacmlPolicy(servS, null);
+				if(oldIdAllegato!= null) {
+					int j = -1;
+					for(int i = 0 ; i < servS.sizeSpecificaSicurezzaList(); i++) {
+						if(servS.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+							j = i;
+							break;
+						}
+					}
+					
+					if(j > -1) {
+						servS.removeSpecificaSicurezza(j);
+					}
+				}
+				
+				servS.addSpecificaSicurezza(porteApplicativeHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, servS.getId()));
+				addSpecSicurezza = true;
+			}
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);		
 
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			
+			if(addSpecSicurezza) {
+				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), servS);
+			}
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

@@ -93,6 +93,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -181,6 +182,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
+			
+			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			Properties parametersPOST = null;
 			
@@ -315,6 +318,13 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
+			
+			Long idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps,null);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
+			}
 
 			String mappingLabel = "";
 			String[] listaMappingLabels = null;
@@ -715,7 +725,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 					
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
@@ -793,7 +803,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -874,6 +884,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 			}
+			boolean addSpecSicurezza = false;
 			
 			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 							
@@ -941,6 +952,25 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions);
 				
+				if(erogazioneAutorizzazione != null && erogazioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) &&  allegatoXacmlPolicy.getValue() != null) {
+					Long oldIdAllegato = apsHelper.getIDAllegatoXacmlPolicy(asps, null);
+					if(oldIdAllegato!= null) {
+						int j = -1;
+						for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
+							if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+								j = i;
+								break;
+							}
+						}
+						
+						if(j > -1) {
+							asps.removeSpecificaSicurezza(j);
+						}
+					}
+					
+					asps.addSpecificaSicurezza(apsHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, asps.getId()));
+					addSpecSicurezza = true;
+				}
 			}
 			else {
 				
@@ -1022,7 +1052,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			
 
 			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray());
-
+			if(addSpecSicurezza) {
+				porteApplicativeCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
+			}
+			
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

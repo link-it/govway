@@ -84,6 +84,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -173,6 +174,8 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
+			
+			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			Properties parametersPOST = null;
 			
@@ -307,6 +310,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizio2, null);
 			
 			MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
+			
+			Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps,nomeSoggettoFruitore);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
+			}
 
 			String mappingLabel = "";
 			String[] listaMappingLabels = null;
@@ -630,7 +640,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -706,7 +716,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -849,6 +859,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			PortaDelegata portaDelegata = subscription.getPortaDelegata();
 			MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
 			portaDelegata.setIdSoggetto((long) idSoggFru);
+			boolean addSpecSicurezza = false;
 			
 			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
@@ -864,6 +875,26 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions
 						);
+				
+				if(fruizioneAutorizzazione != null && fruizioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+					Long oldIdAllegato = apsHelper.getIDAllegatoXacmlPolicy(asps, nomeSoggettoFruitore);
+					if(oldIdAllegato!= null) {
+						int j = -1;
+						for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
+							if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+								j = i;
+								break;
+							}
+						}
+						
+						if(j > -1) {
+							asps.removeSpecificaSicurezza(j);
+						}
+					}
+					
+					asps.addSpecificaSicurezza(apsHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, nomeSoggettoFruitore, asps.getId()));
+					addSpecSicurezza = true;
+				}
 			}
 			
 			listaOggettiDaCreare.add(portaDelegata);
@@ -871,7 +902,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
 
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || clonatoDaPDConConnettoreRidefinito) {
+			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || clonatoDaPDConConnettoreRidefinito || addSpecSicurezza) {
 				
 				listaOggettiDaModificare.add(asps);
 				

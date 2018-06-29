@@ -78,6 +78,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -126,7 +127,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_tokenOptions,
-			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch) throws Exception {
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,String idAllegatoXacmlPolicy, BinaryParameter allegatoXacmlPolicy) throws Exception {
 
 
 
@@ -747,7 +748,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
+					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 			
 				
 			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
@@ -1542,6 +1543,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String autorizzazione_tokenOptions = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+				BinaryParameter allegatoXacmlPolicy = this.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+				
+				String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+				if(idAsps == null)
+					idAsps = "";
+				
+				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps)); 
+				
+				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 				
 				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
@@ -1549,7 +1559,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch)==false){
+						autorizzazioneScope,autorizzazioneScopeMatch,null,allegatoXacmlPolicy,protocollo)==false){
 					return false;
 				}
 			}

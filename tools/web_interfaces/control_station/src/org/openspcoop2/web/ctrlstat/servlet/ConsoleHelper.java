@@ -87,15 +87,18 @@ import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
@@ -105,6 +108,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -127,6 +131,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
+import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -3459,13 +3464,13 @@ public class ConsoleHelper {
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
 			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
-			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
+			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions,String idAllegatoXacmlPolicy,String idAsps,BinaryParameter allegatoXacmlPolicy) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,
-				gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
+				gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 		
 	}
 	
@@ -3475,7 +3480,7 @@ public class ConsoleHelper {
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
-			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
+			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions,String idAllegatoXacmlPolicy,String idAsps,BinaryParameter allegatoXacmlPolicy) throws Exception{
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative());
@@ -3686,6 +3691,30 @@ public class ConsoleHelper {
 					
 				}
 				
+				if(AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
+					String filePolicyLabel = CostantiControlStation.LABEL_PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY;
+					if(idAllegatoXacmlPolicy != null) {
+						filePolicyLabel = CostantiControlStation.LABEL_PARAMETRO_DOCUMENTO_SICUREZZA_XACML_NUOVA_POLICY;
+						DataElement saveAs = new DataElement();
+						saveAs.setValue(CostantiControlStation.LABEL_DOWNLOAD_DOCUMENTO_SICUREZZA_XACML_POLICY);
+						saveAs.setType(DataElementType.LINK);
+						Parameter pIdAccordo = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ACCORDO, idAsps);
+						Parameter pIdAllegato = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_ALLEGATO, idAllegatoXacmlPolicy);
+						Parameter pTipoDoc = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_DOCUMENTO, "asps");
+						saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pIdAllegato, pTipoDoc);
+						dati.add(saveAs);
+						
+						de = new DataElement();
+						de.setType(DataElementType.SUBTITLE);
+						de.setLabel(CostantiControlStation.LABEL_AGGIORNAMENTO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+						de.setLabelStyleClass("noBold");
+						dati.add(de);
+					}
+					dati.add(allegatoXacmlPolicy.getFileDataElement(filePolicyLabel, "", getSize()));
+					dati.addAll(allegatoXacmlPolicy.getFileNameDataElement());
+					dati.add(allegatoXacmlPolicy.getFileIdDataElement());
+				}
+				
 				if(autorizzazione_ruoli){
 					String[] tipoRole = { RuoloTipoMatch.ALL.getValue(),
 							RuoloTipoMatch.ANY.getValue() };
@@ -3868,7 +3897,7 @@ public class ConsoleHelper {
 			List<String> ruoli,String gestioneToken, 
 			String policy, String validazioneInput, String introspection, String userInfo, String forward,
 			String autorizzazione_tokenOptions,
-			String autorizzazioneScope, String autorizzazioneScopeMatch) throws Exception{
+			String autorizzazioneScope, String autorizzazioneScopeMatch,String idAllegatoXacmlPolicy, BinaryParameter allegatoXacmlPolicy,String protocollo) throws Exception{
 		try {
 			
 			// check token
@@ -3977,6 +4006,25 @@ public class ConsoleHelper {
 								CostantiControlStation.MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_GIA_DEI_RUOLI_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_AUTORIZZAZIONE,
 								AutorizzazioneUtilities.STATO_XACML_POLICY));
 						return false;
+					}
+					
+					// se questo parametro e' diverso da null vuol dire che ho aggiornato il valore dell'allegato e devo validare il contenuto
+					if(allegatoXacmlPolicy.getValue() != null) {
+						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+						Documento documento = new Documento();
+						documento.setByteContenuto(allegatoXacmlPolicy.getValue());
+						documento.setTipo(TipiDocumentoSicurezza.XACML_POLICY.getNome());
+						ValidazioneResult valida = pf.createValidazioneDocumenti().valida(documento);
+						if(!valida.isEsito()) {
+							this.pd.setMessage(valida.getMessaggioErrore());
+							return false;
+						}
+					} else {
+						// se questo valore e' null vuol dire che non ho trovato una policy tra gli allegati
+						if(idAllegatoXacmlPolicy == null) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE, AutorizzazioneUtilities.STATO_XACML_POLICY));
+							return false;
+						}
 					}
 				}
 				
@@ -5905,5 +5953,32 @@ public class ConsoleHelper {
 		(
 				(isReportistica == null) || ServletUtils.isCheckBoxEnabled(isReportistica)
 		);
+	}
+	
+	public Long getIDAllegatoXacmlPolicy(AccordoServizioParteSpecifica asps, String nomeFruitore) throws Exception {
+		String nomeAllegato = nomeFruitore != null ? nomeFruitore + "_" + CostantiControlStation.NOME_FILE_FRUIZIONE_XACML_POLICY_XML_SUFFIX : CostantiControlStation.NOME_FILE_EROGAZIONE_XACML_POLICY_XML_SUFFIX;
+		if(asps !=null) {
+			for (Documento documento : asps.getSpecificaSicurezzaList()) {
+				if(RuoliDocumento.valueOf(documento.getRuolo()).equals(RuoliDocumento.specificaSicurezza) 
+						&& TipiDocumentoSicurezza.toEnumConstant(documento.getTipo()).equals(TipiDocumentoSicurezza.XACML_POLICY) 
+						&& documento.getFile().equals(nomeAllegato)) { 
+					return documento.getId();
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public Documento getDocumentoXacmlPolicy(BinaryParameter allegatoXacmlPolicy, String nomeFruitore, Long idAsps) {
+		Documento documento = new Documento();
+		String nomeAllegato = nomeFruitore != null ? nomeFruitore + "_" + CostantiControlStation.NOME_FILE_FRUIZIONE_XACML_POLICY_XML_SUFFIX : CostantiControlStation.NOME_FILE_EROGAZIONE_XACML_POLICY_XML_SUFFIX;
+		documento.setFile(nomeAllegato);
+		documento.setByteContenuto(allegatoXacmlPolicy.getValue());
+		documento.setTipo(TipiDocumentoSicurezza.XACML_POLICY.getNome());
+		documento.setRuolo(RuoliDocumento.specificaSicurezza.toString()); 
+		documento.setIdProprietarioDocumento(idAsps);
+		return documento;
+		
 	}
 }

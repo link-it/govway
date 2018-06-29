@@ -84,6 +84,7 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -176,6 +177,8 @@ public final class PorteDelegateAdd extends Action {
 			String autorizzazione_tokenOptions = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			
+			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			if(sp == null) {
 				tiposp = "";
@@ -357,6 +360,22 @@ public final class PorteDelegateAdd extends Action {
 						}
 					}
 				}
+			}
+			
+//			String idAsps = servS.getId()+"";
+			String nomeSoggettoFruitore = null;
+			if(porteDelegateCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(soggInt);
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}else{
+				org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(soggInt);
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}
+			Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(servS,nomeSoggettoFruitore);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
 			}
 			
 			AccordoServizioParteComune as = null;
@@ -541,7 +560,7 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -594,7 +613,7 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -845,10 +864,34 @@ public final class PorteDelegateAdd extends Action {
 			portaDelegata.setValidazioneContenutiApplicativi(vx);
 
 			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			
+			boolean addSpecSicurezza = false;
+			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+				Long oldIdAllegato = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps, nomeSoggettoFruitore);
+				if(oldIdAllegato!= null) {
+					int j = -1;
+					for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
+						if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+							j = i;
+							break;
+						}
+					}
+					
+					if(j > -1) {
+						asps.removeSpecificaSicurezza(j);
+					}
+				}
+				
+				asps.addSpecificaSicurezza(porteDelegateHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, asps.getId()));
+				addSpecSicurezza = true;
+			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+			if(addSpecSicurezza) {
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps);
+			}
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

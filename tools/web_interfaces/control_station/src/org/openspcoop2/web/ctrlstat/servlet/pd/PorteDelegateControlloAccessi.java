@@ -45,13 +45,18 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -139,12 +144,16 @@ public class PorteDelegateControlloAccessi extends Action {
 			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
+			BinaryParameter allegatoXacmlPolicy = porteDelegateHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo il nome della porta
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();
@@ -218,6 +227,23 @@ public class PorteDelegateControlloAccessi extends Action {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
+			String nomeSoggettoFruitore = null;
+			if(porteDelegateCore.isRegistroServiziLocale()){
+				org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitore));
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}else{
+				org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(Integer.parseInt(idSoggFruitore));
+				nomeSoggettoFruitore = soggettoFruitore.getNome();
+			}
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
+			Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps,nomeSoggettoFruitore);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
 			}
 			
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
@@ -407,7 +433,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -428,7 +454,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch);
+						autorizzazioneScope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy,protocollo);
 			
 			if (!isOk) {
 				// preparo i campi
@@ -450,7 +476,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -486,6 +512,45 @@ public class PorteDelegateControlloAccessi extends Action {
 						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
 			else
 				portaDelegata.setAutorizzazione(autorizzazioneCustom);
+			
+			boolean addSpecSicurezza = false;
+			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY)) {
+				if(allegatoXacmlPolicy.getValue() != null) {
+					Long oldIdAllegato = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps, nomeSoggettoFruitore);
+					if(oldIdAllegato!= null) {
+						int j = -1;
+						for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
+							if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+								j = i;
+								break;
+							}
+						}
+						
+						if(j > -1) {
+							asps.removeSpecificaSicurezza(j);
+						}
+					}
+					
+					asps.addSpecificaSicurezza(porteDelegateHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, asps.getId()));
+					addSpecSicurezza = true;
+				}
+			} else {
+				Long oldIdAllegato = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps, nomeSoggettoFruitore);
+				if(oldIdAllegato!= null) {
+					int j = -1;
+					for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
+						if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
+							j = i;
+							break;
+						}
+					}
+					
+					if(j > -1) {
+						asps.removeSpecificaSicurezza(j);
+					}
+					addSpecSicurezza = true;
+				}
+			}
 			
 			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
 				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
@@ -552,6 +617,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+			if(addSpecSicurezza) {
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), asps);
+			}
 			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -736,6 +804,10 @@ public class PorteDelegateControlloAccessi extends Action {
 				}
 			}
 			
+			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
+			idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(asps,nomeSoggettoFruitore);
+			idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			
 			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
@@ -750,7 +822,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
+					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 			
 			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			

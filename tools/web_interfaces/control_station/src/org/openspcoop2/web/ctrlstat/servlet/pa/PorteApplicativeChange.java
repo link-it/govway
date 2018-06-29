@@ -80,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -147,6 +148,8 @@ public final class PorteApplicativeChange extends Action {
 			String azid = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
 			String modeaz = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
 			String forceWsdlBased = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
+			
+			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null)
@@ -512,6 +515,12 @@ public final class PorteApplicativeChange extends Action {
 				autorizzazioneScope = "";
 			}
 			
+			Long idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps,null);
+			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
+			if(allegatoXacmlPolicy.getValue() != null) {
+				// faccio sparire il link download
+				idAllegatoXacmlPolicy = null;
+			}
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
 			if (postBackElementName != null) {
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE)) {
@@ -519,7 +528,7 @@ public final class PorteApplicativeChange extends Action {
 					serviceBinding = null;
 				} else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO)) {
 					serviceBinding = null;
-				} 
+				}  
 			}
 			
 			List<String> tipiServizioCompatibiliAccordo = new ArrayList<String>();
@@ -920,7 +929,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -1091,7 +1100,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
