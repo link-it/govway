@@ -13,29 +13,23 @@
 				.rich-page-body {
     					margin-left: 0px;
 					}
+				#pCampiObbligatori {display: none;	}	
+				#crumbs {display: none;	}					
 			</style>
 			
 			<h:form prependId="false">
 				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">
-					<link:prop
-						label="Username" 
-						required="true">
+					<link:prop label="Username">
 						<h:inputText label="Username" id="username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
 					</link:prop>
 					
-					<link:prop
-						label="Password"
-						required="true">
+					<link:prop label="Password">
 						<h:inputSecret label="Password" id="password" value="#{loginBean.pwd}" required="true" styleClass="inputLink"/>
 					</link:prop>
-					
-					<div class="buttonrow">
-						<a4j:commandButton id="submitBtn" styleClass="icon-login" action="#{loginBean.login}" value="Login" />
-					</div>
 				</link:fieldset>
+				<div class="buttonrow">
+					<a4j:commandButton id="submitBtn" styleClass="icon-login" action="#{loginBean.login}" value="Login" />
+				</div>
 			</h:form>
-		
-			
-			
 		</ui:define>
 </ui:composition>

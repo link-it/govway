@@ -7,12 +7,10 @@
 	xmlns:link="http://www.link.it" xmlns:c="http://java.sun.com/jstl/core"
 	template="/templates/defaultTemplate.xhtml">
 	<ui:param value="About" name="title" />
-	<ui:define name="navbar">
-		<ul>
-			<li><h:outputText value="Stato" styleClass="ultimo-path"/></li>
-		</ul>
-	</ui:define>
 	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}					
+		</style>
 		<a4j:keepAlive beanName="statusBean" />
 		<a4j:outputPanel id="panelStatus1" layout="block">
 			<script type="text/javascript">

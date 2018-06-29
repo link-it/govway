@@ -7,6 +7,12 @@
       xmlns:a4j="http://richfaces.org/a4j">
 <f:loadBundle var="msg" basename="messages" />
 		<ui:define name="body">
+			<style>
+				.rich-page-body {
+    					margin-left: 0px;
+					}
+				#crumbs {display: none;	}					
+			</style>
 		<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
 			<div class="form-container">	
 				<h:form>

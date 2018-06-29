@@ -9,16 +9,15 @@
 	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
 
-	<ui:define name="navbar">
-		<ul>
-			<li><h:outputText value="Analisi Statistica" styleClass="ultimo-path" /></li>
-		</ul>
-	</ui:define>
 	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}		
+			}
+		</style>
 		<a4j:keepAlive beanName="analisiStatisticaBean" />
 		<rich:panel id="analisiStatisticaSearch" >
 		    <f:facet name="header">
-		    	<h:outputText id="titoloFiltri" value="Filtri di Ricerca" />
+		    	<h:outputText id="titoloFiltri" value="Analisi Statistica" />
 		    </f:facet>
 		    <div class="form-container noborder">
 				<h:form prependId="false">

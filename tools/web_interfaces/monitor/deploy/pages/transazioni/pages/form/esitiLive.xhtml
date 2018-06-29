@@ -7,14 +7,10 @@
 	xmlns:fc="http://www.fusioncharts.com"
 	xmlns:link="http://www.link.it"
 	template="/templates/defaultTemplate.xhtml">
-	<ui:define name="navbar">
-			<ul>
-				<li>
-					<h:outputText id="esitiLive" value="Esiti Live" styleClass="ultimo-path"/>
-				</li>
-			</ul>
-	</ui:define>
 	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}					
+		</style>
 		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}" />
 		<a4j:loadScript src="/FusionCharts/FusionChartsExportComponent.js" rendered="#{not summaryBean.useGraficiSVG}" />
 		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
@@ -25,7 +21,7 @@
 			
 		<rich:panel id="summaryCtLive" rendered="true">
 			<f:facet name="header">
-				<h:outputText id="outMonitoraggio" value="Monitoraggio Esiti Transazioni" />
+				<h:outputText id="outMonitoraggio" value="Esiti Live" />
 			</f:facet>
 			
 			<a4j:region id="regionPoll"  >

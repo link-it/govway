@@ -36,6 +36,7 @@
 }
 
 .ultimo-path, .ultimo-path span{
+	font-weight: bold;
 	color: ${crumbs.label.active.color};
 }
 

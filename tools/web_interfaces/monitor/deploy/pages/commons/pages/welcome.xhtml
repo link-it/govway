@@ -24,9 +24,12 @@
 			</c:if>
 	</ui:define>
 		
-	  <ui:define name="body">
-	  		<c:if test="#{empty sessionScope.acclim}">	  	
-				<ui:include src="/commons/includes/summary.xhtml" />
-			</c:if>
-	  </ui:define>
+	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}					
+		</style>
+		<c:if test="#{empty sessionScope.acclim}">	  	
+			<ui:include src="/commons/includes/summary.xhtml" />
+		</c:if>
+	</ui:define>
 </ui:composition>

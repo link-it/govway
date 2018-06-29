@@ -12,34 +12,42 @@
 		</ul>
 	</ui:define>
 	<ui:define name="body">
-		<h:form>
-			<div class="panelLista">
-				<div class="form-container">
-					<link:fieldset legend="Prodotto" rendered="#{true}" collapsible="false" closed="false">
-					
-						<link:prop label="Versione" rendered="true">
-							<div class="divNoEdit">
-								<h:outputText id="outVersioneProdotto" value="#{applicationBean.idProdotto}" styleClass="spanNoEdit"/>
-							</div>
-						</link:prop>
-						<link:prop label="Sito" rendered="true">
-							<div class="divNoEdit">
-								<h:outputText id="outSitoProdotto" value="http://www.govway.org" styleClass="spanNoEdit" />
-							</div>
-						</link:prop>
-						<link:prop label="Copyright" rendered="true">
-							<div class="divNoEdit">
-								<h:outputText id="outCopyrightProdotto" value="#{applicationBean.copyright}" styleClass="spanNoEdit"/>
-							</div>
-						</link:prop>
-						<link:prop label="Licenza" rendered="true">
-							<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="11" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
-						</link:prop>
-					
-					</link:fieldset>
+		<style>
+			#crumbs {display: none;}
+		</style>
+		<rich:panel id="panelDettaglioInformazioni">
+			<f:facet name="header">
+				<h:outputText id="outDettagliInformazioni" value="Informazioni" />
+			</f:facet>
+			<h:form>
+				<div class="">
+					<div class="form-container">
+						<link:fieldset legend="Prodotto" rendered="#{true}" collapsible="false" closed="false">
+						
+							<link:prop label="Versione" rendered="true">
+								<div class="divNoEdit">
+									<h:outputText id="outVersioneProdotto" value="#{applicationBean.idProdotto}" styleClass="spanNoEdit"/>
+								</div>
+							</link:prop>
+							<link:prop label="Sito" rendered="true">
+								<div class="divNoEdit">
+									<h:outputText id="outSitoProdotto" value="http://www.govway.org" styleClass="spanNoEdit" />
+								</div>
+							</link:prop>
+							<link:prop label="Copyright" rendered="true">
+								<div class="divNoEdit">
+									<h:outputText id="outCopyrightProdotto" value="#{applicationBean.copyright}" styleClass="spanNoEdit"/>
+								</div>
+							</link:prop>
+							<link:prop label="Licenza" rendered="true">
+								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="11" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
+							</link:prop>
+						
+						</link:fieldset>
+					</div>
 				</div>
-			</div>
-		 </h:form>
+			 </h:form>
+		 </rich:panel>
 	</ui:define>
 
 </ui:composition>

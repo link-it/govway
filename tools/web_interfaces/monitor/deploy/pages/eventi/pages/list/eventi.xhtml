@@ -7,15 +7,13 @@
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
 
 <ui:composition template="/templates/defaultTemplate.xhtml">
-	<ui:define name="navbar">
-		<ul>
-			<li><h:outputText value="Eventi" styleClass="ultimo-path"/></li>
-		</ul>
-	</ui:define>
 	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}					
+		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
 			<rich:simpleTogglePanel id="panelFiltri1" opened="true"
-				label="#{ (searchFormEventi.executeQuery or searchFormEventi.periodo eq 'Live')? 'Modifica Filtri di Ricerca' : 'Filtri di Ricerca'}" switchType="client">
+				label="Eventi" switchType="client">
 				<f:facet name="openMarker">
 					<h:graphicImage value="/images/tema_link/down_white.png"/>
 				</f:facet>
