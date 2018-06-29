@@ -511,7 +511,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								
 				String labelPerPorta = null;
 				if(accessoDaListaAPS) {
-					labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
+					if(!multitenant) {
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
+								porteDelegateHelper.getLabelIdServizio(asps);
+					}
+					else {
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
+					}
 				}
 				else {
 					PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);

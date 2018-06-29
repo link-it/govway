@@ -1351,7 +1351,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(showFruitori) {
 				listaLabelTabella.add(fruitoriLabel);
 			}
-			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI);
+			if(!this.isModalitaStandard()) {
+				listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI);
+			}
 
 			labels = listaLabelTabella.toArray(new String[listaLabelTabella.size()]);
 
@@ -1694,21 +1696,23 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// de.setValue("non disp.");
 				// e.addElement(de);
 
-				de = new DataElement();
-
-				de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
-				if (contaListe) {
-					// BugFix OP-674
-					//List<org.openspcoop2.core.registry.Documento> tmpLista = this.apsCore.serviziAllegatiList(asps.getId().intValue(), new Search(true));
-					Search searchForCount = new Search(true,1);
-					this.apsCore.serviziAllegatiList(asps.getId().intValue(), searchForCount);
-					//int numAllegati = tmpLista.size();
-					int numAllegati = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
-					ServletUtils.setDataElementVisualizzaLabel(de, (long) numAllegati);
-				} else
-					ServletUtils.setDataElementVisualizzaLabel(de);
-				e.addElement(de);
+				if(!this.isModalitaStandard()) {
+					de = new DataElement();
+	
+					de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));
+					if (contaListe) {
+						// BugFix OP-674
+						//List<org.openspcoop2.core.registry.Documento> tmpLista = this.apsCore.serviziAllegatiList(asps.getId().intValue(), new Search(true));
+						Search searchForCount = new Search(true,1);
+						this.apsCore.serviziAllegatiList(asps.getId().intValue(), searchForCount);
+						//int numAllegati = tmpLista.size();
+						int numAllegati = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) numAllegati);
+					} else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+				}
 
 				dati.addElement(e);
 			}

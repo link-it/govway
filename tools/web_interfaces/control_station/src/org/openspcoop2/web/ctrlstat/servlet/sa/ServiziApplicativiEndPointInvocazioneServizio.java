@@ -77,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -120,6 +121,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 		
 		try {
+			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
+			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
@@ -291,8 +294,17 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 				
+				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
+				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+				
 				if(accessoDaListaAPS) {
-					labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
+					if(!multitenant) {
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
+								saHelper.getLabelIdServizio(asps);
+					}
+					else {
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
+					}
 				}
 				else {
 					PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
@@ -303,8 +315,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 							pa);
 				}
 				
-				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
-				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 				AccordoServizioParteComune apc = apcCore.getAccordoServizio(asps.getIdAccordo()); 
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
