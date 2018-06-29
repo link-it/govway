@@ -1,0 +1,104 @@
+<config id="messageSecurity.wss4j.receiver.encrypt" label="WSSec Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+        <compatibility not="false" and="false">
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>RESPONSE</tag>
+                        <tag>OUT</tag>
+                </tags>
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>REQUEST</tag>
+                        <tag>IN</tag>
+                </tags>
+        </compatibility>
+	
+	<properties>
+		<collection name="decryptionPropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
+		</item>
+		<item type="hidden" name="encryptAction" value="Encrypt">
+			<property name="action" append="true" appendSeparator=" " force="true"/>
+		</item>
+		
+		<item type="checkbox" name="isBSPCompliant" label="Compliance BSP 1.1" defaultSelected="true">
+			<property name="isBSPCompliant" />
+		</item>	
+		<item type="checkbox" name="allowRSA15KeyTransportAlgorithm" label="RSA15 Key Wrap Algorithm " defaultSelected="false">
+			<property name="allowRSA15KeyTransportAlgorithm" />
+		</item>		
+		<item type="checkbox" name="encryptCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+
+	</section>
+
+	<section label="Timestamp">
+	
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+	
+		<item type="number" name="futureTimeToLive" label="Future Time to Live (seconds)" min="1" max="999999999" default="60"
+			note="The time in seconds in the future within which the Created time of an incoming Timestamp is valid">
+			<property name="futureTimeToLive" />
+		</item>
+	</section>
+
+	<section label="Decryption">
+
+		<subsection label="KeyStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="decryptionPropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!-- <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="decryptionUser" />
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			      	<property name="decryptionPassword" />
+			</item>
+			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+			      	<property name="passwordCallbackRef" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

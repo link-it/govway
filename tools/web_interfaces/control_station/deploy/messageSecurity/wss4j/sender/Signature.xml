@@ -188,7 +188,7 @@
 
 		<subsection label="Key Identifier">
 
-			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference" >
+			<item type="select" name="signatureKeyIdentifier" label="Tipo" reloadOnChange="true" default="DirectReference" >
 			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/signature-and-encryption-key.html"> -->
 				<values>
 					<value value="DirectReference" label="DirectReference"/>
@@ -202,8 +202,18 @@
 				</values>
 				<property name="signatureKeyIdentifier" />
 			</item>
-			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
+			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+			<item type="checkbox" name="includeSignatureToken" label="Include Signature Token" defaultSelected="false">
+				<conditions>
+		            <condition and="false">
+		            	<equals name="signatureKeyIdentifier" value="IssuerSerial" />
+		            	<equals name="signatureKeyIdentifier" value="Thumbprint" />
+		            	<equals name="signatureKeyIdentifier" value="SKIKeyIdentifier" />
+		            </condition>
+	           	</conditions>
+				<property name="includeSignatureToken" selectedValue="true" unselectedValue="false"/>
 			</item>
 
 		</subsection>

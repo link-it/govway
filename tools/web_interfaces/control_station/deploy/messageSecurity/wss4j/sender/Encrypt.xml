@@ -106,25 +106,32 @@
 		    <property name="optionalencryptParts" />
 		</item>
 		
+		<!--
+		non supportato da wss4j  
 		<item type="checkbox" name="encryptionSymmetricKey" label="Symmetric Key" defaultSelected="false" reloadOnChange="true" >
 			<property name="encryptionSymmetricKey" />
 		</item>
+		-->
 
+		<!--
 		<item type="select" name="encryptionSymAlgorithm" label="Key Wrap Algorithm">
 			<conditions>
 	            <condition and="true">
 	                    <selected name="encryptionSymmetricKey" />
 	            </condition>
            	</conditions>
-			<!--  <property name="encryptionSymAlgorithm" /> -->
-			<property name="encryptionKeyTransportAlgorithm" /> <!--  in wss4j finisce cmq qua ? -->
+			<property name="encryptionSymAlgorithm" /> ? 
+			<property name="encryptionKeyTransportAlgorithm" />
 		</item>
+		-->
 		<item type="select" name="encryptionKeyTransportAlgorithm" label="Key Wrap Algorithm">
+			<!-- 
 			<conditions>
 	            <condition not="true">
 	                    <selected name="encryptionSymmetricKey" />
 	            </condition>
            	</conditions>
+           	-->
 			<property name="encryptionKeyTransportAlgorithm" />
 		</item>
 		
@@ -143,7 +150,7 @@
 		
 		<subsection label="Key Identifier">
 
-			<item type="select" name="encryptKeyIdentifier" label="Tipo" default="DirectReference" >
+			<item type="select" name="encryptKeyIdentifier" label="Tipo" reloadOnChange="true" default="DirectReference" >
 			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/encrypt-and-encryption-key.html"> -->
 				<values>
 					<value value="DirectReference" label="DirectReference"/>
@@ -157,12 +164,23 @@
 				</values>
 				<property name="encryptionKeyIdentifier" />
 			</item>
-			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
+			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
 				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+			<item type="checkbox" name="includeEncryptionToken" label="Include Encryption Token" defaultSelected="false">
+				<conditions>
+		            <condition and="false">
+		            	<equals name="encryptKeyIdentifier" value="IssuerSerial" />
+		            	<equals name="encryptKeyIdentifier" value="Thumbprint" />
+		            	<equals name="encryptKeyIdentifier" value="SKIKeyIdentifier" />
+		            </condition>
+	           	</conditions>
+				<property name="includeEncryptionToken" selectedValue="true" unselectedValue="false"/>
 			</item>
 
 		</subsection>
 		
+		<!-- 
 		<subsection label="KeyStore">
 			<conditions>
                    <condition>
@@ -176,8 +194,6 @@
            	
 			<item type="select" name="keystoreType" label="Tipo" default="jceks">
 				<values>
-					<!-- <value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/> -->
 					<value value="jceks" label="JCEKS"/>
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="encryptionPropRefId" />
@@ -199,13 +215,16 @@
 			</item>
 
 		</subsection>
+		 -->
 		
 		<subsection label="TrustStore">
+			<!-- 
 			<conditions>
                    <condition not="true">
                            <selected name="encryptionSymmetricKey" />
                    </condition>
            	</conditions>
+           	 -->
            	
            	<item type="hidden" name="encryptCryptoProviderTrustStore" value="org.apache.ws.security.components.crypto.Merlin">
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="encryptionPropRefId"/>
