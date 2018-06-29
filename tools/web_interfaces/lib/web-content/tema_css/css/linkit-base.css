@@ -290,13 +290,14 @@ a.td2PageHeader:visited {
 }
 
 .titoloSezione-right {
-	width: 20px;
-	border-left: 1px solid ${body.background.color};
+	width: 40px;
+	margin-right: 8px;
+/* 	border-left: 1px solid ${body.background.color}; */
 }
 
 .titoloSezione-right:hover {
-	cursor: pointer;
-	background: ${menu.element.hover.background.color};
+/* 	cursor: pointer; */
+/* 	background: ${menu.element.hover.background.color}; */
 }
 
 .titoloSezione span{

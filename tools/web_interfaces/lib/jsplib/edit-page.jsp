@@ -93,6 +93,9 @@ String titoloSezione = null;
 if (titlelist != null && titlelist.size() > 0) {
 	GeneralLink l = titlelist.elementAt(titlelist.size() -1);
 	titoloSezione = l.getLabel();
+	
+	if(titoloSezione != null && titoloSezione.equals(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI))
+		titoloSezione = null;
 } 
 boolean mostraFormHeader = false;
 int colFormHeader = (mostraFormHeader ? 2 : 1);
@@ -112,8 +115,10 @@ String classPanelTitolo = mostraFormHeader ? "panelDettaglioForm" : "panelDettag
 								<span class="history"><%= titoloSezione %></span>
 							</td>
 							<% if(mostraFormHeader) { %>
-							<td align="right" class="titoloSezione titoloSezione-right">
-								<span class="icon-up-white" id="iconaPanelDettaglio"></span>
+							<td class="titoloSezione titoloSezione-right">
+								<span class="icon-box" id="iconaPanelDettaglioSpan">
+									<i class="material-icons md-18" id="iconaPanelDettaglio">&#xE5CF;</i>
+								</span>
 							</td>
 							<% }%>
 						</tr>

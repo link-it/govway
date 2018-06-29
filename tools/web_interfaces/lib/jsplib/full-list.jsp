@@ -95,8 +95,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								<span class="history"><%=titoloSezione %></span>
 							</td>
 							<% if(mostraFormHeader) { %>
-								<td align="right" class="titoloSezione titoloSezione-right">
-									<span class="icon-up-white" id="iconaPanelLista"></span>
+								<td class="titoloSezione titoloSezione-right">
+									<span class="icon-box" id="iconaPanelListaSpan">
+										<i class="material-icons md-18" id="iconaPanelLista">&#xE152;</i>
+									</span>
 								</td>
 							<% }%>
 						</tr>

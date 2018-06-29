@@ -63,8 +63,10 @@ if (search == null)
 <meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
-<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/roboto/roboto-fontface.css" type="text/css">
+<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 <link rel="stylesheet" href="css/ui.core.css" type="text/css">
 <link rel="stylesheet" href="css/ui.theme.css" type="text/css">
 <link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
@@ -380,14 +382,14 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").removeClass('searchFormOff');
     	$("#searchForm").addClass('searchFormOn');
     	
-    	$("#iconaPanelLista").removeClass('icon-down-white');
-    	$("#iconaPanelLista").addClass('icon-up-white');
+//     	$("#iconaPanelLista").removeClass('icon-down-white');
+//     	$("#iconaPanelLista").addClass('icon-up-white');
     } else {
     	$("#searchForm").removeClass('searchFormOn');
     	$("#searchForm").addClass('searchFormOff');
     	
-    	$("#iconaPanelLista").removeClass('icon-up-white');
-    	$("#iconaPanelLista").addClass('icon-down-white');
+//     	$("#iconaPanelLista").removeClass('icon-up-white');
+//     	$("#iconaPanelLista").addClass('icon-down-white');
     }
 }
 
