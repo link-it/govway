@@ -185,8 +185,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+
-						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI,
+						portaDelegata);
 			}
 			else {
 				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;

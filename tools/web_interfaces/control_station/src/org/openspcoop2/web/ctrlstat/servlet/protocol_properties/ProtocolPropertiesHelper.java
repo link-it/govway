@@ -937,8 +937,10 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						}
 						else {
 							PortaDelegata portaDelegata = this.porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta)); 
-							labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
-									this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+							labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+									PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI,
+									PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE,
+									portaDelegata);
 						}
 						
 						Parameter pConnettore = new Parameter(labelPerPorta, urlDecode);

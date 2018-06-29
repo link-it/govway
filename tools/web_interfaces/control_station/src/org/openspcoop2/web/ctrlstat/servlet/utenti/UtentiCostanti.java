@@ -185,7 +185,7 @@ public class UtentiCostanti {
 	
 	public final static String LABEL_PARAMETRO_UTENTE_MULTI_TENANT = "Multi-Tenant";
 	
-	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Any";//CostantiControlStation.LABEL_QUALSIASI;
+	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";//CostantiControlStation.LABEL_QUALSIASI;
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";

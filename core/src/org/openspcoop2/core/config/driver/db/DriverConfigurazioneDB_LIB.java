@@ -1295,6 +1295,7 @@ public class DriverConfigurazioneDB_LIB {
 
 		String autenticazione = aPD.getAutenticazione();
 		String autorizzazione = aPD.getAutorizzazione();
+		String autorizzazioneXacmlPolicy = aPD.getXacmlPolicy();
 		String autorizzazioneContenuto = aPD.getAutorizzazioneContenuto();
 		String descrizione = aPD.getDescrizione();
 		GestioneToken gestioneToken = aPD.getGestioneToken();
@@ -1347,6 +1348,15 @@ public class DriverConfigurazioneDB_LIB {
 		
 		CorrelazioneApplicativa corrApp = aPD.getCorrelazioneApplicativa();
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPD.getCorrelazioneApplicativaRisposta();
+		
+		String msg_diag_severita = null;
+		String msg_diag_severita_log4j = null;
+		String tracciamento_esiti = null;
+		if(aPD.getTracciamento()!=null){
+			msg_diag_severita = DriverConfigurazioneDB_LIB.getValue(aPD.getTracciamento().getSeverita());
+			msg_diag_severita_log4j = DriverConfigurazioneDB_LIB.getValue(aPD.getTracciamento().getSeveritaLog4j());
+			tracciamento_esiti = aPD.getTracciamento().getEsiti();
+		}
 		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
@@ -1442,6 +1452,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("token_authn_username", "?");
 				sqlQueryObject.addInsertField("token_authn_email", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
+				sqlQueryObject.addInsertField("autorizzazione_xacml", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
 				sqlQueryObject.addInsertField("mtom_response_mode", "?");
@@ -1468,6 +1479,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
+				sqlQueryObject.addInsertField("msg_diag_severita", "?");
+				sqlQueryObject.addInsertField("msg_diag_severita_log4j", "?");
+				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -1517,6 +1531,7 @@ public class DriverConfigurazioneDB_LIB {
 						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// autorizzazione
 				stm.setString(index++, autorizzazione);
+				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
@@ -1566,6 +1581,11 @@ public class DriverConfigurazioneDB_LIB {
 				// Ricerca Porta Azione Delegata
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				
+				// Tracciamento
+				stm.setString(index++, msg_diag_severita);
+				stm.setString(index++, msg_diag_severita_log4j);
+				stm.setString(index++, tracciamento_esiti);
+				
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				
@@ -1591,7 +1611,7 @@ public class DriverConfigurazioneDB_LIB {
 								((gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? gestioneToken.getAutenticazione().getSubject() : null),
 								((gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? gestioneToken.getAutenticazione().getUsername() : null),
 								((gestioneToken!=null && gestioneToken.getAutenticazione()!=null) ? gestioneToken.getAutenticazione().getEmail() : null),
-								autorizzazione, autorizzazioneContenuto,
+								autorizzazione, autorizzazioneXacmlPolicy, autorizzazioneContenuto,
 								mtomMode_request, mtomMode_response,
 								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response, securityRequestMode, securityResponseMode,
 								idSoggettoProprietario,
@@ -1608,6 +1628,7 @@ public class DriverConfigurazioneDB_LIB {
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
+								msg_diag_severita,msg_diag_severita_log4j,tracciamento_esiti,
 								aPD.getStato(),
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
@@ -2063,6 +2084,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("token_authn_username", "?");
 				sqlQueryObject.addUpdateField("token_authn_email", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
+				sqlQueryObject.addUpdateField("autorizzazione_xacml", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
 				sqlQueryObject.addUpdateField("mtom_response_mode", "?");
@@ -2089,6 +2111,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
+				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
+				sqlQueryObject.addUpdateField("msg_diag_severita_log4j", "?");
+				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -2139,6 +2164,7 @@ public class DriverConfigurazioneDB_LIB {
 						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// autorizzazione
 				stm.setString(index++, autorizzazione);
+				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
@@ -2181,6 +2207,10 @@ public class DriverConfigurazioneDB_LIB {
 						aPD.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
+				// Tracciamento
+				stm.setString(index++, msg_diag_severita);
+				stm.setString(index++, msg_diag_severita_log4j);
+				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				//idAccordo
@@ -3567,6 +3597,7 @@ public class DriverConfigurazioneDB_LIB {
 
 		String autenticazione = aPA.getAutenticazione();
 		String autorizzazione = aPA.getAutorizzazione();
+		String autorizzazioneXacmlPolicy = aPA.getXacmlPolicy();
 		GestioneToken gestioneToken = aPA.getGestioneToken(); 
 		
 		PortaApplicativaAzione azione = aPA.getAzione();
@@ -3622,6 +3653,15 @@ public class DriverConfigurazioneDB_LIB {
 		CorrelazioneApplicativa corrApp = aPA.getCorrelazioneApplicativa();
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPA.getCorrelazioneApplicativaRisposta();
 
+		String msg_diag_severita = null;
+		String msg_diag_severita_log4j = null;
+		String tracciamento_esiti = null;
+		if(aPA.getTracciamento()!=null){
+			msg_diag_severita = DriverConfigurazioneDB_LIB.getValue(aPA.getTracciamento().getSeverita());
+			msg_diag_severita_log4j = DriverConfigurazioneDB_LIB.getValue(aPA.getTracciamento().getSeveritaLog4j());
+			tracciamento_esiti = aPA.getTracciamento().getEsiti();
+		}
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
 		
@@ -3734,11 +3774,15 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("token_authn_username", "?");
 				sqlQueryObject.addInsertField("token_authn_email", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
+				sqlQueryObject.addInsertField("autorizzazione_xacml", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
 				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
+				sqlQueryObject.addInsertField("msg_diag_severita", "?");
+				sqlQueryObject.addInsertField("msg_diag_severita_log4j", "?");
+				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -3820,6 +3864,7 @@ public class DriverConfigurazioneDB_LIB {
 						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// Autorizzazione
 				stm.setString(index++, autorizzazione);
+				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, aPA!=null ? aPA.getAutorizzazioneContenuto() : null);
 				
 				// Ruoli
@@ -3834,6 +3879,11 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
+				
+				// Tracciamento
+				stm.setString(index++, msg_diag_severita);
+				stm.setString(index++, msg_diag_severita_log4j);
+				stm.setString(index++, tracciamento_esiti);
 				
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
@@ -4320,11 +4370,15 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("token_authn_username", "?");
 				sqlQueryObject.addUpdateField("token_authn_email", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
+				sqlQueryObject.addUpdateField("autorizzazione_xacml", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
 				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
+				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
+				sqlQueryObject.addUpdateField("msg_diag_severita_log4j", "?");
+				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -4414,6 +4468,7 @@ public class DriverConfigurazioneDB_LIB {
 						DriverConfigurazioneDB_LIB.getValue(gestioneToken.getAutenticazione().getEmail()) : null);
 				// Autorizzazione
 				stm.setString(index++, autorizzazione);
+				stm.setString(index++, autorizzazioneXacmlPolicy);
 				stm.setString(index++, aPA!=null ? aPA.getAutorizzazioneContenuto() : null);
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
@@ -4425,6 +4480,10 @@ public class DriverConfigurazioneDB_LIB {
 						aPA.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
+				// Tracciamento
+				stm.setString(index++, msg_diag_severita);
+				stm.setString(index++, msg_diag_severita_log4j);
+				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
 				// id

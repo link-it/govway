@@ -575,7 +575,7 @@ public final class PorteApplicativeChange extends Action {
 					nomeBreadCrumb=null;
 				}
 				else {
-					nomeBreadCrumb = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+					nomeBreadCrumb = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,pa);
 				}
 			}
 			

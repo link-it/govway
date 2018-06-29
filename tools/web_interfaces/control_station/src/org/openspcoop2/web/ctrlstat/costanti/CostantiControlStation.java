@@ -218,6 +218,7 @@ public class CostantiControlStation {
 	public static final String LABEL_PARAMETRO_RISORSA = "Risorsa";
 	public final static String LABEL_PARAMETRO_RISORSE = "Risorse";
 	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
+	public final static String LABEL_PARAMETRO_PORTE_NOME_GRUPPO = "Nome Gruppo";
 	public final static String LABEL_PARAMETRO_PORTA_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTA_RISORSA_MODALITA = "Modalità Identificazione Risorsa";
 	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
@@ -376,6 +377,8 @@ public class CostantiControlStation {
 	
 	public final static String PARAMETRO_AZIONE = "azione";
 	public final static String PARAMETRO_AZIONI = "azioni";
+	public final static int RIGHE_MULTISELECT_AZIONI = 10;
+	public final static String PARAMETRO_NOME_GRUPPO = "nomeGruppo";
 	
 	public final static String PARAMETRO_DUMP_STATO = "dumpStato";
 	public final static String PARAMETRO_DUMP_REALTIME = "dumpRealTime";
@@ -560,6 +563,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_PER_LA_RISPOSTA_CON_ELEMENTO_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa per la risposta con elemento [{0}] definita nella {1}";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
 	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA = "Deve essere selezionata una Azione";
+	public static final String MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA = "Deve essere indicato un nome per il gruppo";
 	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
 	public static final String MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i ruoli associati";
 	public static final String MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare gli scope associati";

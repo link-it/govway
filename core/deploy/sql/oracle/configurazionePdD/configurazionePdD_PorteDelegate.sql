@@ -51,6 +51,7 @@ CREATE TABLE porte_delegate
 	token_authn_email VARCHAR2(255),
 	-- Autorizzazione
 	autorizzazione VARCHAR2(255),
+	autorizzazione_xacml CLOB,
 	autorizzazione_contenuto VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_request_mode VARCHAR2(255),
@@ -97,6 +98,10 @@ CREATE TABLE porte_delegate
 	scope_match VARCHAR2(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR2(255),
+	-- Livello Log Messaggi Diagnostici
+	msg_diag_severita VARCHAR2(255),
+	msg_diag_severita_log4j VARCHAR2(255),
+	tracciamento_esiti VARCHAR2(255),
 	-- abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta delegata (Soggetto fruitore)

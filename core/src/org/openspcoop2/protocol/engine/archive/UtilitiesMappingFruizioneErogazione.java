@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -261,7 +262,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 												try{
 													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
 													
-													DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB());
+													DBMappingUtils.createMappingErogazione(nomeMapping, isDefault ? Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT : nomeMapping,
+															isDefault, idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB());
 												}finally{
 													try{
 														if(this.driverRegistroServizi.isAtomica()) {
@@ -310,7 +312,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 														try{
 															con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingErogazione");
 															this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-															DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.isDefault(), idServizio, idPADefault, con, this.driverConfigurazione.getTipoDB());
+															DBMappingUtils.createMappingErogazione(mapping.getNome(),mapping.getDescrizione(),  mapping.isDefault(), idServizio, idPADefault, con, this.driverConfigurazione.getTipoDB());
 															this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
 														}finally{
 															try{
@@ -477,7 +479,8 @@ public class UtilitiesMappingFruizioneErogazione  {
 												try{
 													con = this.driverRegistroServizi.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");
 													
-													DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idSoggetto, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
+													DBMappingUtils.createMappingFruizione(nomeMapping, isDefault ? Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT : nomeMapping,
+															isDefault, idServizio, idSoggetto, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
 												}finally{
 													try{
 														if(this.driverRegistroServizi.isAtomica()) {
@@ -518,7 +521,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 														try{
 															con = this.driverConfigurazione.getConnection("UtilitiesMappingFruizioneErogazione.createMappingFruizione");
 															this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-															DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.isDefault(), idServizio, idFruitore, idPDDefault, con, this.driverConfigurazione.getTipoDB());
+															DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), idServizio, idFruitore, idPDDefault, con, this.driverConfigurazione.getTipoDB());
 															this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
 														}finally{
 															try{

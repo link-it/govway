@@ -516,6 +516,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaTracciamento }
+     */
+    public PortaTracciamento createPortaTracciamento() {
+        return new PortaTracciamento();
+    }
+
+    /**
      * Create an instance of {@link PortaDelegataServizioApplicativo }
      */
     public PortaDelegataServizioApplicativo createPortaDelegataServizioApplicativo() {

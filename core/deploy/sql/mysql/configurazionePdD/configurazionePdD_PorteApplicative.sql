@@ -76,6 +76,7 @@ CREATE TABLE porte_applicative
 	token_authn_email VARCHAR(255),
 	-- Autorizzazione
 	autorizzazione VARCHAR(255),
+	autorizzazione_xacml MEDIUMTEXT,
 	autorizzazione_contenuto VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
@@ -84,6 +85,10 @@ CREATE TABLE porte_applicative
 	scope_match VARCHAR(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR(255),
+	-- Livello Log Messaggi Diagnostici
+	msg_diag_severita VARCHAR(255),
+	msg_diag_severita_log4j VARCHAR(255),
+	tracciamento_esiti VARCHAR(255),
 	-- abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta applicativa

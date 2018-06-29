@@ -124,8 +124,10 @@ public class PorteDelegateMTOMRequestChange extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI+
-						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pde);
+				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG,
+						pde);
 			}
 			else {
 				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI+idporta;

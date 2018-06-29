@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config}porta-delegata-soggetto-erogatore" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/>
@@ -57,6 +58,7 @@ import java.util.List;
  * 			&lt;element name="correlazione-applicativa" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="correlazione-applicativa-risposta" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}porta-tracciamento" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -95,6 +97,7 @@ import java.util.List;
   	"soggettoErogatore",
   	"servizio",
   	"azione",
+  	"xacmlPolicy",
   	"servizioApplicativo",
   	"ruoli",
   	"scope",
@@ -106,7 +109,8 @@ import java.util.List;
   	"validazioneContenutiApplicativi",
   	"correlazioneApplicativa",
   	"correlazioneApplicativaRisposta",
-  	"dump"
+  	"dump",
+  	"tracciamento"
   }
 )
 
@@ -184,6 +188,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setAzione(PortaDelegataAzione azione) {
     this.azione = azione;
+  }
+
+  public java.lang.String getXacmlPolicy() {
+    return this.xacmlPolicy;
+  }
+
+  public void setXacmlPolicy(java.lang.String xacmlPolicy) {
+    this.xacmlPolicy = xacmlPolicy;
   }
 
   public void addServizioApplicativo(PortaDelegataServizioApplicativo servizioApplicativo) {
@@ -312,6 +324,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setDump(DumpConfigurazione dump) {
     this.dump = dump;
+  }
+
+  public PortaTracciamento getTracciamento() {
+    return this.tracciamento;
+  }
+
+  public void setTracciamento(PortaTracciamento tracciamento) {
+    this.tracciamento = tracciamento;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -659,6 +679,10 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="azione",required=false,nillable=false)
   protected PortaDelegataAzione azione;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="xacml-policy",required=false,nillable=false)
+  protected java.lang.String xacmlPolicy;
+
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   protected List<PortaDelegataServizioApplicativo> servizioApplicativo = new ArrayList<PortaDelegataServizioApplicativo>();
 
@@ -748,6 +772,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="dump",required=false,nillable=false)
   protected DumpConfigurazione dump;
+
+  @XmlElement(name="tracciamento",required=false,nillable=false)
+  protected PortaTracciamento tracciamento;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

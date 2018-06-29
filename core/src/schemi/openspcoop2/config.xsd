@@ -135,6 +135,7 @@
 			<xsd:element name="soggetto-erogatore" type="porta-delegata-soggetto-erogatore" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="servizio" type="porta-delegata-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
@@ -174,6 +175,16 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="dump" type="dump-configurazione" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tracciamento" type="porta-tracciamento" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -397,6 +408,7 @@
 			<xsd:element name="azione" type="porta-applicativa-azione" maxOccurs="1" minOccurs="0"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="soggetti" type="porta-applicativa-autorizzazione-soggetti" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
@@ -435,6 +447,16 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="dump" type="dump-configurazione" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tracciamento" type="porta-tracciamento" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -948,6 +970,13 @@
 	<xsd:complexType name="proprieta">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/> 
+	</xsd:complexType>
+
+	<!-- PortaDelegata o PortaApplicativa Tracciamento -->
+	<xsd:complexType name="porta-tracciamento">
+		<xsd:attribute name="severita" type="Severita" use="optional"/>
+		<xsd:attribute name="severita-log4j" type="Severita" use="optional"/>
+		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 	<!-- GestioneErrore -->

@@ -6,6 +6,7 @@ CREATE TABLE mapping_fruizione_pd
 	id_porta BIGINT NOT NULL,
 	is_default INT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints
@@ -25,6 +26,7 @@ CREATE TABLE mapping_erogazione_pa
 	id_porta BIGINT NOT NULL,
 	is_default INT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints

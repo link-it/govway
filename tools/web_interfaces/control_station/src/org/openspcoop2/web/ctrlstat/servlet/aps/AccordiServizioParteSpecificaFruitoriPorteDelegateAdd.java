@@ -137,7 +137,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			//String azione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String [] azioni = apsHelper.getParameterValues(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
+			
 			String nome = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
+			String nomeGruppo = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
 		
 			String modeCreazione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE);
 			String modeCreazioneConnettore = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE_CONNETTORE);
@@ -350,7 +352,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				
 				if(!mappingSelezionato.isDefault()) {
 					PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
-					mappingLabel = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pdMapping,Integer.MAX_VALUE);
+					mappingLabel = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,Integer.MAX_VALUE);
 				}
 
 				listaMappingLabels = new String[listaMappingFruizioneSize];
@@ -361,7 +363,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					String nomeMappingNoDefault = null;
 					if(!mappingFruizionePortaDelegata.isDefault()) {
 						PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-						nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pdMapping,70);
+						nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,70);
 					}
 					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
 							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
@@ -630,7 +632,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 	
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
-					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
+					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -676,7 +678,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,true);
+			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,true);
 			
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
@@ -706,7 +708,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
-				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
+				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -789,11 +791,11 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 				portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, portaDelegataDaCopiare, nome, azioni);
+						portaDelegataDefault, portaDelegataDaCopiare, nome, nomeGruppo, azioni);
 			}
 			else {
 				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, nome, azioni);
+						portaDelegataDefault, nome, nomeGruppo, azioni);
 				
 			}
 			

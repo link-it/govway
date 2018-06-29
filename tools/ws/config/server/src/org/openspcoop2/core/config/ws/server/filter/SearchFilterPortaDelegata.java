@@ -32,6 +32,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-soggetto-erogatore" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="scope" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-scope" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config/management}gestione-token" minOccurs="0" maxOccurs="1" />
@@ -96,6 +97,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "soggettoErogatore",
     "servizio",
     "azione",
+    "xacmlPolicy",
     "ruoli",
     "scope",
     "gestioneToken",
@@ -164,6 +166,19 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public PortaDelegataAzione getAzione(){
 		return this.azione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="xacml-policy",required=false,nillable=false)
+	private String xacmlPolicy;
+	
+	public void setXacmlPolicy(String xacmlPolicy){
+		this.xacmlPolicy = xacmlPolicy;
+	}
+	
+	public String getXacmlPolicy(){
+		return this.xacmlPolicy;
 	}
 	
 	

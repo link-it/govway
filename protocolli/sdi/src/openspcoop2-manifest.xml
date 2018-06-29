@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="sdi" label="Fattura PA (SdI)"
+    <protocol name="sdi" label="Fatturazione Elettronica"
     	descrizione="Invio e Ricezione di Fatture verso il Sistema di Interscambio (SdI) "
     	webSite="http://www.fatturapa.gov.it/">
     	<factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>

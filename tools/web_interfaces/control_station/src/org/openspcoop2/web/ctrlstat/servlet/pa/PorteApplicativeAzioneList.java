@@ -101,8 +101,10 @@ public final class PorteApplicativeAzioneList extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+
-						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						porteApplicativeHelper.getLabelAzioniDi(serviceBinding),
+						porteApplicativeHelper.getLabelAzioni(serviceBinding),
+						pa);
 			}
 			else {
 				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+pa.getNome();

@@ -45,6 +45,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SOGGETTO_EROGATORE = new org.openspcoop2.core.config.model.PortaDelegataSoggettoErogatoreModel(new Field("soggetto-erogatore",org.openspcoop2.core.config.PortaDelegataSoggettoErogatore.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
+		this.XACML_POLICY = new Field("xacml-policy",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.SCOPE = new org.openspcoop2.core.config.model.AutorizzazioneScopeModel(new Field("scope",org.openspcoop2.core.config.AutorizzazioneScope.class,"porta-delegata",PortaDelegata.class));
@@ -57,6 +58,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.CORRELAZIONE_APPLICATIVA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaModel(new Field("correlazione-applicativa",org.openspcoop2.core.config.CorrelazioneApplicativa.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new Field("correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-delegata",PortaDelegata.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-delegata",PortaDelegata.class));
+		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new Field("tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -89,6 +91,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SOGGETTO_EROGATORE = new org.openspcoop2.core.config.model.PortaDelegataSoggettoErogatoreModel(new ComplexField(father,"soggetto-erogatore",org.openspcoop2.core.config.PortaDelegataSoggettoErogatore.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
+		this.XACML_POLICY = new ComplexField(father,"xacml-policy",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.SCOPE = new org.openspcoop2.core.config.model.AutorizzazioneScopeModel(new ComplexField(father,"scope",org.openspcoop2.core.config.AutorizzazioneScope.class,"porta-delegata",PortaDelegata.class));
@@ -101,6 +104,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.CORRELAZIONE_APPLICATIVA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaModel(new ComplexField(father,"correlazione-applicativa",org.openspcoop2.core.config.CorrelazioneApplicativa.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new ComplexField(father,"correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-delegata",PortaDelegata.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-delegata",PortaDelegata.class));
+		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new ComplexField(father,"tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -134,6 +138,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	 
 	public org.openspcoop2.core.config.model.PortaDelegataAzioneModel AZIONE = null;
 	 
+	public IField XACML_POLICY = null;
+	 
 	public org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
 	 
 	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
@@ -157,6 +163,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel CORRELAZIONE_APPLICATIVA_RISPOSTA = null;
 	 
 	public org.openspcoop2.core.config.model.DumpConfigurazioneModel DUMP = null;
+	 
+	public org.openspcoop2.core.config.model.PortaTracciamentoModel TRACCIAMENTO = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

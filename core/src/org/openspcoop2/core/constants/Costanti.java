@@ -114,6 +114,8 @@ public class Costanti {
 	
 	public static final String MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "__qualsiasi__";
 	public static final String MAPPING_FRUIZIONE_PD_NOME_DEFAULT = "__qualsiasi__";
+	public static final String MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT = "Other";
+	public static final String MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT = "Other";
 	
 	
     /** Variabile che indica un tipo di scenario gestito */

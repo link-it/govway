@@ -51,10 +51,10 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
-			String ruleName, String ... azione ) throws ProtocolException;
+			String ruleName, String description, String ... azione ) throws ProtocolException;
 	public Subscription createSubscription(ServiceBinding serviceBinding, IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaCopiare,
-			String ruleName, String ... azione ) throws ProtocolException;
+			String ruleName, String description, String ... azione ) throws ProtocolException;
 	
 	public List<PortaDelegataAzioneIdentificazione> getAllSubscriptionIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	
@@ -67,10 +67,10 @@ public interface IProtocolIntegrationConfiguration extends IComponentFactory {
 	
 	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
-			String ruleName, String ... azione ) throws ProtocolException;
+			String ruleName, String description, String ... azione ) throws ProtocolException;
 	public Implementation createImplementation(ServiceBinding serviceBinding, IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaCopiare,
-			String ruleName, String ... azione ) throws ProtocolException;
+			String ruleName, String description, String ... azione ) throws ProtocolException;
 	
 	public List<PortaApplicativaAzioneIdentificazione> getAllImplementationIdentificationResourceModes(ServiceBinding serviceBinding, ConsoleInterfaceType consoleType) throws ProtocolException;
 	

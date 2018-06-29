@@ -248,8 +248,10 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI+
-						porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(portaApplicativa);
+				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT,
+						portaApplicativa);
 			}
 			else {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DEFAULT_DI+idporta;

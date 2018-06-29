@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -279,7 +280,7 @@ public class GeneralHelper {
 				link.addElement(glModalitaCorrente);
 
 				// popolo la tendina con i protocolli disponibili
-				for (String protocolloDisponibile : protocolliDispondibili) {
+				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
 					GeneralLink glProt = new GeneralLink();
 					
 					String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);

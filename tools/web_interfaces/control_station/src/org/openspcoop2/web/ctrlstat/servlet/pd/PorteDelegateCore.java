@@ -793,33 +793,76 @@ public class PorteDelegateCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	public String getLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
-		return getLabelRegolaMappingFruizionePortaDelegata(pd, 50);
+	public List<MappingFruizionePortaDelegata> countMappingFruizionePortaDelegata(IDSoggetto idFruitore, IDServizio idServizio) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "countMappingFruizionePortaDelegata";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idFruitore, idServizio);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
-	public String getLabelRegolaMappingFruizionePortaDelegata(PortaDelegata pd, int sizeSubstring) throws DriverConfigurazioneException {
+	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, 50);
+	}
+	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd, int sizeSubstring) throws DriverConfigurazioneException {
+		
+		boolean showGroup = true;
+		
+		String prefix = "";
+		if(functionDi!=null) {
+			prefix = functionDi;
+		}
+		
 		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
 		if(mapping.isDefault()) {
-			return PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
-			//return "(*)";
-		}
-		else {
-			//return mapping.getNome();
-			List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
-			if(listaAzioni.size() > 0) {
-				StringBuffer sb = new StringBuffer();
-				for (String string : listaAzioni) {
-					if(sb.length() >0)
-						sb.append(", ");
-					
-					sb.append(string);
+			if(this.countMappingFruizionePortaDelegata(mapping.getIdFruitore(),mapping.getIdServizio()).size()>1) {
+				if(showGroup) {
+					return prefix+getLabelGroup(mapping.getDescrizione());
 				}
-				if(sb.length()>sizeSubstring)
-					return sb.toString().substring(0, (sizeSubstring-3))+"...";
-				else 
-					return sb.toString();
+				else {
+					return prefix+PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+				}
+				//return "(*)";
 			}
 			else {
-				return "???";
+				return function!=null ? function : PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
+			}
+		}
+		else {
+			if(showGroup) {
+				StringBuffer sb = new StringBuffer(mapping.getDescrizione());
+				if(sb.length()>sizeSubstring)
+					return prefix+getLabelGroup(sb.toString().substring(0, (sizeSubstring-3))+"...");
+				else 
+					return prefix+getLabelGroup(sb.toString());
+			}
+			else {
+				//return mapping.getNome();
+				List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				if(listaAzioni.size() > 0) {
+					StringBuffer sb = new StringBuffer();
+					for (String string : listaAzioni) {
+						if(sb.length() >0)
+							sb.append(", ");
+						
+						sb.append(string);
+					}
+					if(sb.length()>sizeSubstring)
+						return prefix+sb.toString().substring(0, (sizeSubstring-3))+"...";
+					else 
+						return prefix+sb.toString();
+				}
+				else {
+					return prefix+"???";
+				}
 			}
 		}
 	}

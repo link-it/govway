@@ -69,6 +69,7 @@ import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -944,7 +945,8 @@ public class XMLDataConverter {
 								}
 								if(create) {
 									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione in corso...");
-									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault, idServizio, idFruitore, idPD, con, driver.getTipoDB());
+									DBMappingUtils.createMappingFruizione(nomeMapping, isDefault ? Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT : nomeMapping, 
+											isDefault, idServizio, idFruitore, idPD, con, driver.getTipoDB());
 									this.log.info("Creazione mapping di fruizione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato.");
 								}
 								
@@ -986,7 +988,7 @@ public class XMLDataConverter {
 								}
 								
 								this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-								DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.isDefault(), idServizio, idFruitore, idPDDefault, con, driver.getTipoDB());
+								DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), idServizio, idFruitore, idPDDefault, con, driver.getTipoDB());
 								this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
 							}
 							
@@ -1092,7 +1094,8 @@ public class XMLDataConverter {
 								}
 								if(create) {
 									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creazione in corso...");
-									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault, idServizio, idPA, con, driver.getTipoDB());
+									DBMappingUtils.createMappingErogazione(nomeMapping, isDefault ? Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT : nomeMapping, 
+											isDefault, idServizio, idPA, con, driver.getTipoDB());
 									this.log.info("Creazione mapping di erogazione (nome:"+nomeMapping+" default:"+isDefault+") tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] creato.");
 								}
 								
@@ -1142,7 +1145,7 @@ public class XMLDataConverter {
 								}
 								
 								this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creazione delegante in corso...");
-								DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.isDefault(), idServizio, idPADefault, con, driver.getTipoDB());
+								DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), idServizio, idPADefault, con, driver.getTipoDB());
 								this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
 						
 							}

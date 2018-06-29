@@ -115,6 +115,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
@@ -4817,10 +4818,10 @@ public class ControlStationCore {
 			}
 			
 			if(u.getProtocolliSupportati()!=null && u.getProtocolliSupportati().size()>0) {
-				return u.getProtocolliSupportati();
+				return ProtocolUtils.orderProtocolli(u.getProtocolliSupportati());
 			}
 			
-			return this.getProtocolli();
+			return this.getProtocolli(); // ordinato dentro il metodo
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + getProtocolli + "] Exception :" + e.getMessage(), e);
@@ -4839,7 +4840,7 @@ public class ControlStationCore {
 			protocolliList.add(protocollo);
 		}
 		
-		return protocolliList;
+		return ProtocolUtils.orderProtocolli(protocolliList);
 	}
 	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, 
 			boolean filtraAccordiEsistenti) throws  DriverRegistroServiziException {
@@ -5489,6 +5490,10 @@ public class ControlStationCore {
 		default:
 			return ServiceBinding.SOAP;
 		}			
+	}
+	
+	public String getLabelGroup(String groupName) {
+		return "'"+groupName+"'";
 	}
 	
 	public org.openspcoop2.core.registry.constants.ServiceBinding fromMessageServiceBinding(ServiceBinding serviceBinding) {

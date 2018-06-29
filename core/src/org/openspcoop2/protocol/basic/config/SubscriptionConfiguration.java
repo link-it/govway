@@ -175,14 +175,14 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 	
 	public Subscription createSubscription(IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, 
-			String ruleName, String ... azione ) throws ProtocolException {
+			String ruleName, String description, String ... azione ) throws ProtocolException {
 		return createSubscription(idFruitore, idServizio, 
 				portaDelegataDefault, null, 
-				ruleName, azione);
+				ruleName, description, azione);
 	}
 	public Subscription createSubscription(IDSoggetto idFruitore, IDServizio idServizio,
 			PortaDelegata portaDelegataDefault, PortaDelegata portaDelegataDaClonare,
-			String ruleName, String ... azione ) throws ProtocolException {
+			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
 		if(azione==null || azione.length<=0) {
 			throw new ProtocolException("Actions undefined");
@@ -228,7 +228,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 						
 		subscription.setPortaDelegata(portaDelegata);		
 
-		MappingFruizionePortaDelegata mappingFruizione = SubscriptionUtils.createMapping(idFruitore, idServizio, idPortaDelegata, ruleName);
+		MappingFruizionePortaDelegata mappingFruizione = SubscriptionUtils.createMapping(idFruitore, idServizio, idPortaDelegata, ruleName, description);
 		
 		subscription.setMapping(mappingFruizione);
 		

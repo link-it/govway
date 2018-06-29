@@ -176,14 +176,14 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 	
 	public Implementation createImplementation(IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, 
-			String ruleName, String ... azione ) throws ProtocolException {
+			String ruleName, String description, String ... azione ) throws ProtocolException {
 		return createImplementation(idServizio, 
 				portaApplicativaDefault, null, 
-				ruleName, azione);
+				ruleName, description, azione);
 	}
 	public Implementation createImplementation(IDServizio idServizio,
 			PortaApplicativa portaApplicativaDefault, PortaApplicativa portaApplicativaDaClonare,
-			String ruleName, String ... azione ) throws ProtocolException {
+			String ruleName, String description, String ... azione ) throws ProtocolException {
 		
 		if(azione==null || azione.length<=0) {
 			throw new ProtocolException("Actions undefined");
@@ -229,7 +229,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 				
 		implementation.setPortaApplicativa(portaApplicativa);		
 
-		MappingErogazionePortaApplicativa mappingErogazione = ImplementationUtils.createMapping(idServizio, idPortaApplicativa, ruleName);
+		MappingErogazionePortaApplicativa mappingErogazione = ImplementationUtils.createMapping(idServizio, idPortaApplicativa, ruleName, description);
 		
 		implementation.setMapping(mappingErogazione);
 		

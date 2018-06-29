@@ -48,6 +48,7 @@ public class MappingErogazionePortaApplicativa implements Serializable {
 	private IDServizio idServizio;
 	private IDPortaApplicativa idPortaApplicativa;
 	private String nome;
+	private String descrizione;
 	private boolean isDefault;
 
 
@@ -75,6 +76,12 @@ public class MappingErogazionePortaApplicativa implements Serializable {
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	public String getDescrizione() {
+		return this.descrizione;
+	}
+	public void setDescrizione(String descrizione) {
+		this.descrizione = descrizione;
 	}
 	public boolean isDefault() {
 		return this.isDefault;

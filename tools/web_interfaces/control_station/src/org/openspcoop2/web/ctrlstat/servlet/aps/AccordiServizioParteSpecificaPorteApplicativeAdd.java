@@ -147,6 +147,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String[] azioni = apsHelper.getParameterValues(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
 			
 			String nome = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME);
+			String nomeGruppo = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
+			
 			String modeCreazione = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE);
 			String modeCreazioneConnettore = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE);
 			String identificazione = apsHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_IDENTIFICAZIONE);
@@ -358,7 +360,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				if(!mappingSelezionato.isDefault()) {
 					PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-					mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(paMapping,Integer.MAX_VALUE);
+					mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,Integer.MAX_VALUE);
 				}
 				
 				listaMappingLabels = new String[listaMappingErogazioneSize];
@@ -369,7 +371,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					String nomeMappingNoDefault = null;
 					if(!mappingErogazionePortaApplicativa.isDefault()) {
 						PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-						nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(paMapping,70);
+						nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,70);
 					}
 					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
@@ -715,7 +717,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					
 	
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
-					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
+					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -763,7 +765,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
+			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
@@ -793,7 +795,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 
-				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
+				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -846,11 +848,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 				portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
 				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
-						portaApplicativaDefault, portaApplicativaDaCopiare, nome, azioni);
+						portaApplicativaDefault, portaApplicativaDaCopiare, nome, nomeGruppo, azioni);
 			}
 			else {
 				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
-						portaApplicativaDefault, nome, azioni);
+						portaApplicativaDefault, nome, nomeGruppo, azioni);
 			}
 			
 			PortaApplicativa portaApplicativa = implementation.getPortaApplicativa();

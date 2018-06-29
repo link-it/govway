@@ -966,7 +966,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata(), con, this.tipoDB);
+			DBMappingUtils.createMappingFruizione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata(), con, this.tipoDB);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1241,7 +1241,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdPortaApplicativa(), con, this.tipoDB);
+			DBMappingUtils.createMappingErogazione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdPortaApplicativa(), con, this.tipoDB);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);

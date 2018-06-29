@@ -563,7 +563,7 @@ public final class PorteDelegateChange extends Action {
 					nomeBreadCrumb=null;
 				}
 				else {
-					nomeBreadCrumb = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(pde);
+					nomeBreadCrumb = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pde);
 				}
 			}
 			

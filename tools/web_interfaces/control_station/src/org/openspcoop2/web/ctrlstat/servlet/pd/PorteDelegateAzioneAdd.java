@@ -184,8 +184,10 @@ public final class PorteDelegateAzioneAdd extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+
-						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						porteDelegateHelper.getLabelAzioniDi(serviceBinding),
+						porteDelegateHelper.getLabelAzioni(serviceBinding),
+						portaDelegata);
 			}
 			else {
 				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+nomePorta;

@@ -47,6 +47,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -525,7 +526,8 @@ public class Utility {
 				}
 			}
 		}
-		return listaNomiProtocolli;
+		
+		return ProtocolUtils.orderProtocolli(listaNomiProtocolli);
 	}
 	
 	public static List<Soggetto> getSoggettiGestione(User u, String tipoNomeSoggettoLocale) {

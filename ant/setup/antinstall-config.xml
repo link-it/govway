@@ -178,7 +178,7 @@
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
         <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
 	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
-        <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="SdI (Fatturazione Elettronica)"/>
+        <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
          
 
 		<comment displayText=""/>	

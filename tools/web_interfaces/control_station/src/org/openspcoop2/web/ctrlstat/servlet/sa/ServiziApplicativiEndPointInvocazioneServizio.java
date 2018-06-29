@@ -297,8 +297,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				else {
 					PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
 					PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
-					labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI+
-							porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+					labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE,
+							pa);
 				}
 				
 				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);

@@ -68,6 +68,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -2957,6 +2958,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpConfigurazione readDumpConfigurazioneFromString(String in) throws DeserializerException {
 		return (DumpConfigurazione) this.xmlToObj(in.getBytes(), DumpConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: porta-tracciamento
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaTracciamento readPortaTracciamento(String fileName) throws DeserializerException {
+		return (PortaTracciamento) this.xmlToObj(fileName, PortaTracciamento.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaTracciamento readPortaTracciamento(File file) throws DeserializerException {
+		return (PortaTracciamento) this.xmlToObj(file, PortaTracciamento.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaTracciamento readPortaTracciamento(InputStream in) throws DeserializerException {
+		return (PortaTracciamento) this.xmlToObj(in, PortaTracciamento.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaTracciamento readPortaTracciamento(byte[] in) throws DeserializerException {
+		return (PortaTracciamento) this.xmlToObj(in, PortaTracciamento.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @return Object type {@link org.openspcoop2.core.config.PortaTracciamento}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaTracciamento readPortaTracciamentoFromString(String in) throws DeserializerException {
+		return (PortaTracciamento) this.xmlToObj(in.getBytes(), PortaTracciamento.class);
 	}	
 	
 	

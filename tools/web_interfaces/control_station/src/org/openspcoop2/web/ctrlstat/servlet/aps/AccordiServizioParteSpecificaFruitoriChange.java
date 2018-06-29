@@ -516,8 +516,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				else {
 					PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 					PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta)); 
-					labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
-							porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+					labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI,
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE,
+							portaDelegata);
 				}
 				
 				Parameter pConnettore = new Parameter(labelPerPorta, null);

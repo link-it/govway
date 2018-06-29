@@ -96,12 +96,14 @@ public class ImplementationUtils {
 		MappingErogazionePortaApplicativa mappingErogazione = _creteMapping(idServizio, idPortaApplicativa);
 		mappingErogazione.setDefault(true);
 		mappingErogazione.setNome(getDefaultMappingName());
+		mappingErogazione.setDescrizione(getDefaultMappingDescription());
 		return mappingErogazione;
 	}
-	public static MappingErogazionePortaApplicativa createMapping(IDServizio idServizio,IDPortaApplicativa idPortaApplicativa, String ruleName) {
+	public static MappingErogazionePortaApplicativa createMapping(IDServizio idServizio,IDPortaApplicativa idPortaApplicativa, String ruleName, String description) {
 		MappingErogazionePortaApplicativa mappingErogazione = _creteMapping(idServizio, idPortaApplicativa);
 		mappingErogazione.setDefault(false);
 		mappingErogazione.setNome(ruleName);
+		mappingErogazione.setDescrizione(description);
 		return mappingErogazione;
 	}
 	private static MappingErogazionePortaApplicativa _creteMapping(IDServizio idServizio,IDPortaApplicativa idPortaApplicativa) {
@@ -127,6 +129,9 @@ public class ImplementationUtils {
 	}
 	public static String getDefaultMappingName() {
 		return Costanti.MAPPING_EROGAZIONE_PA_NOME_DEFAULT;
+	}
+	public static String getDefaultMappingDescription() {
+		return Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT;
 	}
 }
 

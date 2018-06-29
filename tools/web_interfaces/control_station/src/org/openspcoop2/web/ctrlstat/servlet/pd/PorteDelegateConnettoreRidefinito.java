@@ -138,11 +138,13 @@ public class PorteDelegateConnettoreRidefinito  extends Action {
 			
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+
-						porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(portaDelegata);
+				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO,
+						portaDelegata);
 			}
 			else {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO_DI+idporta;
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,  null));

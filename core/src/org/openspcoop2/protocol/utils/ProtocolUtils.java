@@ -36,12 +36,65 @@ import org.openspcoop2.protocol.sdk.properties.StringProperty;
  * ProtocolPropertiesUtils
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 14182 $, $Date: 2018-06-23 21:12:23 +0200 (Sat, 23 Jun 2018) $
  */
-public class ProtocolPropertiesUtils {
+public class ProtocolUtils {
 
 	// UTILITIES
+
+	public static List<String> orderProtocolli(List<String> protocolliDispondibili){
+		List<String> l = new ArrayList<>();
+		
+		List<String> newL = new ArrayList<>();
+		for (String protocollo : protocolliDispondibili) {
+			newL.add(protocollo);
+		}
+		
+		// trasparente
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			if("trasparente".equals(protocollo)) {
+				l.add(newL.remove(i));
+				break;
+			}
+		}
+		
+		// spcoop
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			if("spcoop".equals(protocollo)) {
+				l.add(newL.remove(i));
+				break;
+			}
+		}
+		
+		// edelivery
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			if("as4".equals(protocollo)) {
+				l.add(newL.remove(i));
+				break;
+			}
+		}
+		
+		// fatturazione
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			if("sdi".equals(protocollo)) {
+				l.add(newL.remove(i));
+				break;
+			}
+		}
+		
+		// altri
+		for (int i = 0; i < newL.size(); i++) {
+			String protocollo = newL.get(i);
+			l.add(protocollo);
+		}
+		
+		return l;
+	}
 	
 	public static List<FiltroRicercaProtocolProperty> convert(ProtocolProperties protocolProperties){
 		List<FiltroRicercaProtocolProperty> list = null;

@@ -69,6 +69,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="soggetto-erogatore" type="porta-delegata-soggetto-erogatore"/>
 			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="porta-delegata-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-delegata-azione"/>
+			<xsd:element minOccurs="0" name="xacml-policy" type="xsd:string"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-delegata-servizio-applicativo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="scope" type="autorizzazione-scope"/>	
@@ -87,6 +88,9 @@
 				
 			</xsd:element>
 			<xsd:element minOccurs="0" name="dump" type="dump-configurazione">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="tracciamento" type="porta-tracciamento">
 				
 			</xsd:element>
 		</xsd:sequence>
@@ -188,6 +192,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-applicativa-azione"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
+			<xsd:element minOccurs="0" name="xacml-policy" type="xsd:string"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="soggetti" type="porta-applicativa-autorizzazione-soggetti"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="scope" type="autorizzazione-scope"/>	
@@ -205,6 +210,9 @@
 				
 			</xsd:element>
 			<xsd:element minOccurs="0" name="dump" type="dump-configurazione">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="tracciamento" type="porta-tracciamento">
 				
 			</xsd:element>
 		</xsd:sequence>
@@ -456,6 +464,13 @@
 	<xsd:complexType name="proprieta">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/> 
+	</xsd:complexType>
+
+	<!-- PortaDelegata o PortaApplicativa Tracciamento -->
+	<xsd:complexType name="porta-tracciamento">
+		<xsd:attribute name="severita" type="Severita" use="optional"/>
+		<xsd:attribute name="severita-log4j" type="Severita" use="optional"/>
+		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 	<!-- GestioneErrore -->

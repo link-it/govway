@@ -673,6 +673,18 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="autorizzazione_xacml" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>XACML Policy</linkit:sql-ddl-column-comment>
+                                <linkit:ws-field-mapping filter="false" />
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="autorizzazione_contenuto" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -731,6 +743,60 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 <linkit:sql-column-mapping name="ricerca_porta_azione_delegata"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se identificata l'azione con la modalità configurata tramite la colonna 'mode_azione' deve essere cercata una porta più specifica (contenente tale azione come delega) o deve essere utilizzata quella individuata da questa riga della tabella (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="msg_diag_severita" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="msg_diag_severita"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità dei messaggi diagnostici emessi dalla PdD tramite gli appender registrati (vedi tabella 'msg-diag-appender'). Di seguito l'elenco dei valori ammissibili:
+- 'off': non viene emesso alcun diagnostico
+- 'fatal': rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
+- 'errorProtocol': rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
+- 'errorIntegration': rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'infoProtocol': rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
+- 'infoIntegration': rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'lowDebug': rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
+- 'mediumDebug': rappresente una informazione di debug di media importanza
+- 'lowDebug': rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale
+- 'alll': vengono emessi i diagnostici di tutte le severità]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Livello Log Messaggi Diagnostici]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="msg_diag_severita_log4j" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="msg_diag_severita_log4j"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità dei messaggi diagnostici emesso dalla PdD su filesystem tramite appender log4j2. Di seguito l'elenco dei valori ammissibili:
+- 'off': non viene emesso alcun diagnostico
+- 'fatal': rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
+- 'errorProtocol': rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
+- 'errorIntegration': rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'infoProtocol': rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
+- 'infoIntegration': rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'lowDebug': rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
+- 'mediumDebug': rappresente una informazione di debug di media importanza
+- 'lowDebug': rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale
+- 'alll': vengono emessi i diagnostici di tutte le severità]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="tracciamento_esiti" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tracciamento_esiti"/>
+                                <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

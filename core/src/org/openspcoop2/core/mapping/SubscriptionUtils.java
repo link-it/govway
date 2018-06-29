@@ -104,12 +104,14 @@ public class SubscriptionUtils {
 		MappingFruizionePortaDelegata mappingFruizione = _creteMapping(idFruitore, idServizio, idPortaDelegata);
 		mappingFruizione.setDefault(true);
 		mappingFruizione.setNome(getDefaultMappingName());
+		mappingFruizione.setDescrizione(getDefaultMappingDescription());
 		return mappingFruizione;
 	}
-	public static MappingFruizionePortaDelegata createMapping(IDSoggetto idFruitore, IDServizio idServizio,IDPortaDelegata idPortaDelegata, String ruleName) {
+	public static MappingFruizionePortaDelegata createMapping(IDSoggetto idFruitore, IDServizio idServizio,IDPortaDelegata idPortaDelegata, String ruleName, String description) {
 		MappingFruizionePortaDelegata mappingFruizione = _creteMapping(idFruitore, idServizio, idPortaDelegata);
 		mappingFruizione.setDefault(false);
 		mappingFruizione.setNome(ruleName);
+		mappingFruizione.setDescrizione(description);
 		return mappingFruizione;
 	}
 	private static MappingFruizionePortaDelegata _creteMapping(IDSoggetto idFruitore, IDServizio idServizio,IDPortaDelegata idPortaDelegata) {
@@ -137,6 +139,10 @@ public class SubscriptionUtils {
 	public static String getDefaultMappingName() {
 		return Costanti.MAPPING_FRUIZIONE_PD_NOME_DEFAULT;
 	}
+	public static String getDefaultMappingDescription() {
+		return Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT;
+	}
+	
 }
 
 

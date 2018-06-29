@@ -219,6 +219,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".nome");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".descrizione");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_EROGAZIONE_PA+".id");
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
@@ -256,10 +257,12 @@ public class DBMappingUtils {
 //				Long idPorta = risultato.getLong("id_porta");
 //				Long idErogazione = risultato.getLong("id_erogazione");
 				String nome = risultato.getString("nome");
+				String descrizione = risultato.getString("descrizione");
 				Integer isDefaultInt = risultato.getInt("is_default");
 				boolean isDefault = isDefaultInt > 0 ;
 				
 				mapping.setNome(nome);
+				mapping.setDescrizione(descrizione);
 				mapping.setTableId(id);
 				mapping.setDefault(isDefault);
 				// evitiamo una join utilizzo l'id che mi sono passato come parametro
@@ -302,20 +305,20 @@ public class DBMappingUtils {
 	}
 	
 	
-	public static void createMappingErogazione(String nome, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,  
+	public static void createMappingErogazione(String nome, String descrizione, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,  
 			Connection con, String tipoDB) throws CoreException{
-		createMappingErogazione(nome, isDefault, idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
+		createMappingErogazione(nome, descrizione, isDefault, idServizio, idPortaApplicativa, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static void createMappingErogazione(String nome, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
+	public static void createMappingErogazione(String nome, String descrizione, boolean isDefault, IDServizio idServizio, IDPortaApplicativa idPortaApplicativa,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		long idServizioLong = DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB);
 		if(idServizioLong<=0){
 			throw new CoreException("Servizio ["+idServizio.toString()+"] non esistente");
 		}
-		_createMappingErogazione(nome, isDefault, idServizioLong, idPortaApplicativa, con, tipoDB, tabellaSoggetti);
+		_createMappingErogazione(nome, descrizione, isDefault, idServizioLong, idPortaApplicativa, con, tipoDB, tabellaSoggetti);
 	}
 	
-	private static void _createMappingErogazione(String nome, boolean isDefault, long idServizioLong, IDPortaApplicativa idPortaApplicativa,
+	private static void _createMappingErogazione(String nome, String descrizione, boolean isDefault, long idServizioLong, IDPortaApplicativa idPortaApplicativa,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		PreparedStatement stmt = null;
 
@@ -336,18 +339,57 @@ public class DBMappingUtils {
 			sqlQueryObject.addInsertField("id_erogazione", "?");
 			sqlQueryObject.addInsertField("id_porta", "?");
 			sqlQueryObject.addInsertField("nome", "?");
+			sqlQueryObject.addInsertField("descrizione", "?");
 			sqlQueryObject.addInsertField("is_default", "?");
 			String queryString = sqlQueryObject.createSQLInsert();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idServizioLong);
-			stmt.setLong(2, idPA);
-			stmt.setString(3, nome);
-			stmt.setInt(4, isDefaultInt);
+			int index = 1;
+			stmt.setLong(index++, idServizioLong);
+			stmt.setLong(index++, idPA);
+			stmt.setString(index++, nome);
+			stmt.setString(index++, descrizione);
+			stmt.setInt(index++, isDefaultInt);
 			stmt.executeUpdate();
 			stmt.close();
 			
 		}catch(Exception e){
 			throw new CoreException("createMappingErogazione error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	public static void updateMappingErogazione(long tableId, String descrizione, Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stmt = null;
+
+		try {
+
+			if(tableId<=0){
+				throw new Exception("TableId non fornito");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addUpdateTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+			sqlQueryObject.addUpdateField("descrizione", "?");
+			sqlQueryObject.addWhereCondition("id=?");
+			String queryString = sqlQueryObject.createSQLUpdate();
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setString(index++, descrizione);
+			stmt.setLong(index++, tableId);
+			stmt.executeUpdate();
+			stmt.close();
+			
+		}catch(Exception e){
+			throw new CoreException("updateMappingErogazione error",e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -933,6 +975,7 @@ public class DBMappingUtils {
 				mapping.setTableId(rs.getLong("id"));
 				
 				mapping.setNome(rs.getString("nome"));
+				mapping.setDescrizione(rs.getString("descrizione"));
 				
 				return mapping;
 			}
@@ -1155,6 +1198,7 @@ public class DBMappingUtils {
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".nome");
+			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".descrizione");
 			sqlQueryObject.addSelectField(CostantiDB.MAPPING_FRUIZIONE_PD+".id");
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
 			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = ?");
@@ -1192,10 +1236,12 @@ public class DBMappingUtils {
 //				Long idPorta = risultato.getLong("id_porta");
 //				Long idFruizione = risultato.getLong("id_fruizione");
 				String nome = risultato.getString("nome");
+				String descrizione = risultato.getString("descrizione");
 				Integer isDefaultInt = risultato.getInt("is_default");
 				boolean isDefault = isDefaultInt > 0 ;
 				
 				mapping.setNome(nome);
+				mapping.setDescrizione(descrizione);
 				mapping.setTableId(id);
 				mapping.setDefault(isDefault);
 				// evitiamo una join utilizzo l'id che mi sono passato come parametro
@@ -1239,20 +1285,20 @@ public class DBMappingUtils {
 		return lista;
 	}
 
-	public static void createMappingFruizione(String nome, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+	public static void createMappingFruizione(String nome, String descrizione, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB) throws CoreException{
-		createMappingFruizione(nome, isDefault, idServizio, idFruitore, idPortaDelegata, con, tipoDB, CostantiDB.SOGGETTI);
+		createMappingFruizione(nome, descrizione, isDefault, idServizio, idFruitore, idPortaDelegata, con, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static void createMappingFruizione(String nome, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
+	public static void createMappingFruizione(String nome, String descrizione, boolean isDefault, IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		long idFruizione = DBUtils.getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, tabellaSoggetti);
 		if(idFruizione<=0){
 			throw new CoreException("Fruizione da parte del soggetto ["+idFruitore.toString()+"] del servizio ["+idServizio.toString()+"] non esistente");
 		}
-		_createMappingFruizione(nome, isDefault, idFruizione, idPortaDelegata, con, tipoDB, tabellaSoggetti);
+		_createMappingFruizione(nome, descrizione, isDefault, idFruizione, idPortaDelegata, con, tipoDB, tabellaSoggetti);
 	}
 	
-	private static void _createMappingFruizione(String nome, boolean isDefault, long idFruizione, IDPortaDelegata idPortaDelegata,
+	private static void _createMappingFruizione(String nome, String descrizione, boolean isDefault, long idFruizione, IDPortaDelegata idPortaDelegata,
 			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
 		PreparedStatement stmt = null;
 
@@ -1273,18 +1319,58 @@ public class DBMappingUtils {
 			sqlQueryObject.addInsertField("id_fruizione", "?");
 			sqlQueryObject.addInsertField("id_porta", "?");
 			sqlQueryObject.addInsertField("nome", "?");
+			sqlQueryObject.addInsertField("descrizione", "?");
 			sqlQueryObject.addInsertField("is_default", "?");
 			String queryString = sqlQueryObject.createSQLInsert();
 			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idFruizione);
-			stmt.setLong(2, idPD);
-			stmt.setString(3, nome);
-			stmt.setInt(4, isDefaultInt);
+			int index = 1;
+			stmt.setLong(index++, idFruizione);
+			stmt.setLong(index++, idPD);
+			stmt.setString(index++, nome);
+			stmt.setString(index++, descrizione);
+			stmt.setInt(index++, isDefaultInt);
 			stmt.executeUpdate();
 			stmt.close();
 			
 		}catch(Exception e){
 			throw new CoreException("createMappingFruizione error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	public static void updateMappingFruizione(long tableId, String descrizione, Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stmt = null;
+
+		try {
+
+			if(tableId<=0){
+				throw new Exception("TableId non fornito");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addUpdateTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+			sqlQueryObject.addUpdateField("descrizione", "?");
+			sqlQueryObject.addWhereCondition("id=?");
+			String queryString = sqlQueryObject.createSQLUpdate();
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setString(index++, descrizione);
+			stmt.setLong(index++, tableId);
+			stmt.executeUpdate();
+			stmt.close();
+			
+		}catch(Exception e){
+			throw new CoreException("updateMappingFruizione error",e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -1884,7 +1970,8 @@ public class DBMappingUtils {
 				
 				mapping.setTableId(rs.getLong("id"));
 				
-				mapping.setNome(rs.getString("nome"));
+				mapping.setNome(rs.getString("nome"));			
+				mapping.setDescrizione(rs.getString("descrizione"));
 				
 				return mapping;
 			}

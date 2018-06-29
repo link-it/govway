@@ -16,6 +16,7 @@
  			<xsd:element name="soggetto-erogatore" type="tns:porta-delegata-soggetto-erogatore" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="servizio" type="tns:porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="azione" type="tns:porta-delegata-azione" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ruoli" type="tns:autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="scope" type="tns:autorizzazione-scope" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="gestione-token" type="tns:gestione-token" minOccurs="0" maxOccurs="1" />

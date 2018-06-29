@@ -91,53 +91,58 @@ public class XACMLPolicyUtilities {
 	// Workaround: Serve nel caso di Porta Delegata per poter utilizzare una policy differente da quella utilizzata nell'erogazione
 	private static final String  NOME_POLICY_FRUIZIONE = "fruizioneXacmlPolicy.xml";
 
-	public static void loadPolicy(IDServizio idServizio, String key, 
+	public static void loadPolicy(String xacmlPolicyPorta, IDServizio idServizio, String key, 
 			boolean portaDelegata,IDSoggetto fruitore, // fruitore is null se non e' portaDelegata
 			Logger log) throws PolicyException{
 		byte[] policy = null; 
-		@SuppressWarnings("unused")
-		String nomePolicy = null;
-		int numeroPolicy = 0;
-		@SuppressWarnings("unused")
-		boolean numeroPolicyFruizione = false;
-		try{
-			AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
-			for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
-				Documento d = asps.getSpecificaSicurezza(i);
-				if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
-
-					if(policy == null || (portaDelegata && (fruitore.getNome()+"_"+NOME_POLICY_FRUIZIONE).equals(d.getFile()))){
-						if(NOME_POLICY_FRUIZIONE.equals(d.getFile())){
-							numeroPolicyFruizione = true;
-						}
-						else{
-							numeroPolicy++;
-						}
-						if(d.getByteContenuto()!=null){
-							policy = d.getByteContenuto();
-							nomePolicy = d.getFile();
-						}
-						else if(d.getFile()!=null){
-							if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
-								URL url = new URL(d.getFile());
-								policy = HttpUtilities.requestHTTPFile(url.toString());
+		if(xacmlPolicyPorta!=null) {
+			policy = xacmlPolicyPorta.getBytes();
+		}
+		else {
+			@SuppressWarnings("unused")
+			String nomePolicy = null;
+			int numeroPolicy = 0;
+			@SuppressWarnings("unused")
+			boolean numeroPolicyFruizione = false;
+			try{
+				AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
+				for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
+					Documento d = asps.getSpecificaSicurezza(i);
+					if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
+	
+						if(policy == null || (portaDelegata && (fruitore.getNome()+"_"+NOME_POLICY_FRUIZIONE).equals(d.getFile()))){
+							if(NOME_POLICY_FRUIZIONE.equals(d.getFile())){
+								numeroPolicyFruizione = true;
 							}
 							else{
-								File f = new File(d.getFile());
-								policy = FileSystemUtilities.readBytesFromFile(f);
+								numeroPolicy++;
+							}
+							if(d.getByteContenuto()!=null){
+								policy = d.getByteContenuto();
+								nomePolicy = d.getFile();
+							}
+							else if(d.getFile()!=null){
+								if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
+									URL url = new URL(d.getFile());
+									policy = HttpUtilities.requestHTTPFile(url.toString());
+								}
+								else{
+									File f = new File(d.getFile());
+									policy = FileSystemUtilities.readBytesFromFile(f);
+								}
 							}
 						}
 					}
 				}
+				if(numeroPolicy>1){
+					throw new PolicyException("Piu di una xacml policy trovata per il servizio "+idServizio.toString());
+				}
+			}catch(Exception e){
+				throw new PolicyException("Errore durante la ricerca delle policies xacml per il servizio "+idServizio.toString()+": "+e.getMessage(),e);
 			}
-			if(numeroPolicy>1){
-				throw new PolicyException("Piu di una xacml policy trovata per il servizio "+idServizio.toString());
+			if(policy== null){
+				throw new PolicyException("Nessuna xacml policy trovata trovata per il servizio "+idServizio.toString());
 			}
-		}catch(Exception e){
-			throw new PolicyException("Errore durante la ricerca delle policies xacml per il servizio "+idServizio.toString()+": "+e.getMessage(),e);
-		}
-		if(policy== null){
-			throw new PolicyException("Nessuna xacml policy trovata trovata per il servizio "+idServizio.toString());
 		}
 
 		try{

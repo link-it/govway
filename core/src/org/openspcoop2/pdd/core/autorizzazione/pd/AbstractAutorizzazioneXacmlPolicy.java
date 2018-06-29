@@ -146,7 +146,11 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	IDServizio idServizio = datiInvocazione.getIdServizio();
     	
     	try{
-    		XACMLPolicyUtilities.loadPolicy(idServizio, this.policyKey, true, fruitore, this.log);
+    		String xacmlPolicyPorta = null;
+    		if(datiInvocazione.getPd()!=null) {
+    			xacmlPolicyPorta = datiInvocazione.getPd().getXacmlPolicy();
+    		}
+    		XACMLPolicyUtilities.loadPolicy(xacmlPolicyPorta, idServizio, this.policyKey, true, fruitore, this.log);
     	}catch(Exception e){
     		this.log.error("Autorizzazione "+this.nomeAutorizzazione+" ("+this.policyKey+") non riuscita (load XACML-Policy)",e);
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

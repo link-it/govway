@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -411,7 +412,7 @@ public class LoginBean extends AbstractLoginBean {
 			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
 				// prelevo l'eventuale protocollo selezionato
 				// popolo la tendina con i protocolli disponibili
-				for (String protocolloDisponibile : listaNomiProtocolli) {
+				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(listaNomiProtocolli) ) {
 					String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
 					
 					MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, NamingUtils.getLabelProtocollo(protocolloDisponibile), iconProt); 

@@ -313,6 +313,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_STATELESS = "stateless";
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
+	public final static String PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO = CostantiControlStation.PARAMETRO_NOME_GRUPPO;
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
@@ -393,6 +394,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Properties Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Properties Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG = "Configurazione MTOM";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "Parametri della Richiesta";
@@ -480,6 +482,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED = "header-based";

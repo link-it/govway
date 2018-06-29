@@ -2095,6 +2095,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> listaLabel = new ArrayList<String>();
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE); // spostata direttamente nell'elenco delle erogazioni
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
 			listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			if(this.isModalitaAvanzata()) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
@@ -2158,8 +2159,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				//de.setToolTip(StringUtils.isNotEmpty(paAssociata.getDescrizione()) ? paAssociata.getDescrizione() : paAssociata.getNome()); 
 //				e.addElement(de);
 				
-				// azioni
+				// NomeGruppo
 				DataElement de = new DataElement();
+				de.setValue(mapping.getDescrizione());
+				e.addElement(de);
+				
+				// azioni
+				de = new DataElement();
 				if(!mapping.isDefault()) {
 					List<String> listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
@@ -2923,7 +2929,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParm );
 
 			List<String> listaLabel = new ArrayList<String>();
-
+			
+			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
 			listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			if(this.isModalitaAvanzata() && !connettoreStatic) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
@@ -2983,8 +2990,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				//de.setToolTip(StringUtils.isNotEmpty(pdAssociata.getDescrizione()) ? pdAssociata.getDescrizione() : pdAssociata.getNome());
 //				e.addElement(de);
 				
-				// lista delle azioni
+				// NomeGruppo
 				DataElement de = new DataElement();
+				de.setValue(mapping.getDescrizione());
+				e.addElement(de);
+				
+				// lista delle azioni
+				de = new DataElement();
 				List<String> listaAzioni = null;
 				if(!mapping.isDefault()) {
 					listaAzioni = pdAssociata.getAzione().getAzioneDelegataList();
@@ -5804,7 +5816,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return dati;
 	}
 	
-	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
+	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome, String nomeGruppo,
 			String[] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
@@ -5834,6 +5846,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setValue(idSoggettoErogatoreDelServizio); 
 		dati.addElement(de);
 		
+		// Nome Gruppo
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
+		de.setValue(nomeGruppo);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true); 
+		dati.addElement(de);
 		
 		// Azione
 		de = new DataElement();
@@ -5843,6 +5863,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
+		de.setRows(CostantiControlStation.RIGHE_MULTISELECT_AZIONI);
 		de.setRequired(true); 
 		dati.addElement(de);
 		
@@ -5923,9 +5944,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String[] azioni,
+	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String nomeGruppo, String[] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
+		
+		if(nomeGruppo==null || "".equals(nomeGruppo.trim())) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
 		
 		if(azioni == null || azioni.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -6016,9 +6042,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return true;
 	}
 	
-	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String [] azioni,
+	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String nomeGruppo, String [] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
 			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
+		
+		if(nomeGruppo==null || "".equals(nomeGruppo.trim())) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
 		
 		if(azioni == null || azioni.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -6107,7 +6138,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 
-	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome,
+	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome, String nomeGruppo,
 			String [] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
@@ -6138,6 +6169,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
+		// Nome Gruppo
+		de = new DataElement();
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
+		de.setValue(nomeGruppo);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setRequired(true); 
+		dati.addElement(de);
+		
 		// Azione
 		de = new DataElement();
 		de.setLabel(this.getLabelAzioni(serviceBinding));
@@ -6146,7 +6186,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setSelezionati(azioni); 
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);
-//		de.setPostBack(true, true);
+		de.setRows(CostantiControlStation.RIGHE_MULTISELECT_AZIONI);
 		de.setRequired(true); 
 		dati.addElement(de);
 		

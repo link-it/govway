@@ -336,6 +336,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO = "servizio";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE = CostantiControlStation.PARAMETRO_AZIONE;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONI = CostantiControlStation.PARAMETRO_AZIONI;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.PARAMETRO_NOME_GRUPPO;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA = "oldNomePA";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE = "integrazione";
@@ -425,6 +426,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Schema Sicurezza";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM = "MTOM";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG = "Configurazione MTOM";
 //	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_REQUEST_FLOW_DI = "Parametri della Richiesta";
@@ -488,6 +490,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";
