@@ -55,6 +55,13 @@ if (hidden!=null) {
 	%><input type="hidden" name=<%= key %> value=<%= value %>><%
     }
 }
+
+Vector<GeneralLink> titlelist = pd.getTitleList();
+String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
+if (titlelist != null && titlelist.size() > 0) {
+	GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+	titoloSezione = l.getLabel();
+} 
 %>
 
 
@@ -65,38 +72,39 @@ if (hidden!=null) {
 <table class="tabella-ext">
 
 <%
-if ( 
-	(
+boolean mostraFormHeader = (
 		pd.getSearch().equals("on") || 
 		(pd.getSearch().equals("auto") && (pd.getNumEntries() > pd.getSearchNumEntries()))
 	) || 
 	(
 		pd.getFilterNames() != null &&
 		pd.getFilterValues().size()>0
-	)
-) {
-	Vector<GeneralLink> titlelist = pd.getTitleList();
-	String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
-	if (titlelist != null && titlelist.size() > 0) {
-		GeneralLink l = titlelist.elementAt(titlelist.size() -1);
-		titoloSezione = l.getLabel();
-	} 
-	%>
+	);
+
+int colFormHeader = (mostraFormHeader ? 2 : 1);
+String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRicercaNoForm";
+
+%>
 	<tr>
 		<td valign=top>
-			<div class="panelListaRicerca" >
+			<div class="<%= classPanelTitolo %>" >
 				<table class="tabella" id="panelListaRicercaHeader">
 					<tbody>
 						<tr>
-							<td class="titoloSezione" id="searchFormHeader">
+							<td class="titoloSezione" id="searchFormHeader" colspan="<%= colFormHeader %>">
 								<span class="history"><%=titoloSezione %></span>
 							</td>
-							<td align="right" class="titoloSezione titoloSezione-right">
-								<span class="icon-up-white" id="iconaPanelLista"></span>
-							</td>
+							<% if(mostraFormHeader) { %>
+								<td align="right" class="titoloSezione titoloSezione-right">
+									<span class="icon-up-white" id="iconaPanelLista"></span>
+								</td>
+							<% }%>
 						</tr>
 						</tbody>
 				</table>
+				<% 
+					if ( mostraFormHeader ) {
+				%>
 				<table class="tabella" id="searchForm">
 					<tbody>
 						<tr>
@@ -172,6 +180,7 @@ if (
 								</tr>
 					</tbody>
 				</table>
+				<% } %>
 			</div>
 		</td>
 	</tr>
@@ -181,8 +190,6 @@ if (
 			<div class="spacer"></div>
 		</td>
 	</tr>
-<% } %>
-
 	<!-- Riga tabella -->
 		<tr> 
 			<td valign=top>

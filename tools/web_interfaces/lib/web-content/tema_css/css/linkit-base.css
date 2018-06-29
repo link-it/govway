@@ -141,7 +141,8 @@ textarea.inputLinkLong {
     margin-left: 16px;
 }
 
-.panelListaRicerca {
+.panelListaRicerca,
+.panelListaRicercaNoForm {
     border: none;
     margin-left: 16px;
 }
@@ -156,15 +157,20 @@ textarea.inputLinkLong {
     visibility: hidden;
 }
 
-.panelListaRicerca .titoloSezione {
+.panelListaRicerca .titoloSezione,
+.panelListaRicercaNoForm .titoloSezione {
 	background-image: none;
 	background-color: ${panel.header.background.color};
 	color: ${panel.header.color};
 	padding: 8px;
+}
+
+.panelListaRicerca .titoloSezione {
 	cursor: pointer;
 }
 
-.panelListaRicerca .titoloSezione span{
+.panelListaRicerca .titoloSezione span,
+.panelListaRicercaNoForm .titoloSezione span{
 	padding-left: 8px;
     font-size: 14px;
     font-weight: bold;
