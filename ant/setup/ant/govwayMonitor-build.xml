@@ -27,6 +27,13 @@
 			<param name="value" value="${work_dir}/monitor.forceIndex.properties"/>
 		</antcall>
 		
+		<!-- ESITI LIVE DISABLED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="transazioni.esitiLiveEnabled"/>
+			<param name="value" value="false"/>
+		</antcall>
+
 		<!-- 
 		  PROTOCOL DEFAULT
 		  Se è abilitato spcoop in backward compatibility è spcoop, 

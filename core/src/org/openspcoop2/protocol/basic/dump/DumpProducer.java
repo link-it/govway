@@ -186,7 +186,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
 						
-						String value = messaggio.getHeaders().get(key);
+						String value = messaggio.getBodyMultipartInfo().getHeaders().get(key);
 						if(value==null){
 							value = ""; // puo' succedere in alcuni casi.
 						}
