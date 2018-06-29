@@ -500,37 +500,39 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 		ValidazioneResult result = new ValidazioneResult();
 		result.setEsito(false);
 				
-		if(TipiDocumentoInterfaccia.WSDL.equals(documento.getTipo()) ||
-				TipiDocumentoConversazione.WSBL.equals(documento.getTipo()) ||
-				TipiDocumentoConversazione.BPEL.equals(documento.getTipo()) ||
-				TipiDocumentoCoordinamento.BPEL.equals(documento.getTipo()) ||
-				TipiDocumentoCoordinamento.WSCDL.equals(documento.getTipo()) ||
-				TipiDocumentoLivelloServizio.WSAGREEMENT.equals(documento.getTipo()) ||
-				TipiDocumentoLivelloServizio.WSLA.equals(documento.getTipo()) ||
-				TipiDocumentoSemiformale.XML.equals(documento.getTipo()) ||
-				TipiDocumentoSicurezza.WSPOLICY.equals(documento.getTipo()) ||
-				TipiDocumentoSicurezza.XACML_POLICY.equals(documento.getTipo()) 
-		){
-			// Valido che sia un documento XML corretto.
-			try{
-				
-				byte[]doc = null;
-				if(documento.getByteContenuto()!=null){
-					doc = documento.getByteContenuto();
+		if(documento.getTipo()!=null) {
+			if(TipiDocumentoInterfaccia.WSDL.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoConversazione.WSBL.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoConversazione.BPEL.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoCoordinamento.BPEL.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoCoordinamento.WSCDL.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoLivelloServizio.WSAGREEMENT.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoLivelloServizio.WSLA.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoSemiformale.XML.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoSicurezza.WSPOLICY.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) ||
+					TipiDocumentoSicurezza.XACML_POLICY.toString().toLowerCase().equals(documento.getTipo().toLowerCase()) 
+			){
+				// Valido che sia un documento XML corretto.
+				try{
+					
+					byte[]doc = null;
+					if(documento.getByteContenuto()!=null){
+						doc = documento.getByteContenuto();
+					}
+					else if(documento.getFile()!=null){
+						doc = this.readDocumento(documento.getFile());		
+					}
+					if(doc!=null){
+						// Verifico che sia un documento xml valido
+						this.xmlUtils.newDocument(doc);
+						// Verifico che sia un xsd, leggendone il targetNamespace
+						this.xsdUtils.getTargetNamespace(doc);				
+					}	
+				}catch(Exception e){
+					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
+					result.setException(e);
+					return result;
 				}
-				else if(documento.getFile()!=null){
-					doc = this.readDocumento(documento.getFile());		
-				}
-				if(doc!=null){
-					// Verifico che sia un documento xml valido
-					this.xmlUtils.newDocument(doc);
-					// Verifico che sia un xsd, leggendone il targetNamespace
-					this.xsdUtils.getTargetNamespace(doc);				
-				}	
-			}catch(Exception e){
-				result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
-				result.setException(e);
-				return result;
 			}
 		}
 		
