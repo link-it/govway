@@ -167,6 +167,10 @@
 			<xsd:element name="defined" type="defined" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="selected" type="selected" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="equals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="lessThen" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="lessEquals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="greaterThen" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="greaterEquals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
 		<xsd:attribute name="not" type="xsd:boolean" default="false"/>

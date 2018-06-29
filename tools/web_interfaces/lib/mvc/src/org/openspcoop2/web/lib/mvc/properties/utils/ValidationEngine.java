@@ -256,6 +256,10 @@ public class ValidationEngine {
 	private static void validaCondition(Condition condition, int indice,ConfigBean metadata) throws ValidationException{ 
 		if((condition.getDefinedList() == null || condition.getDefinedList().size() == 0) 
 				&& (condition.getEqualsList() == null || condition.getEqualsList().size() == 0)
+				&& (condition.getLessEqualsList() == null || condition.getLessEqualsList().size() == 0)
+				&& (condition.getLessThenList() == null || condition.getLessThenList().size() == 0)
+				&& (condition.getGreaterEqualsList() == null || condition.getGreaterEqualsList().size() == 0)
+				&& (condition.getGreaterThenList() == null || condition.getGreaterThenList().size() == 0)
 				&& (condition.getSelectedList() == null || condition.getSelectedList().size() == 0))
 			throw new ValidationException("La condition numero ["+indice+"] non e' valida: indicare almeno un elemento tra Defined, Equals o Selected.");
 		
@@ -277,19 +281,19 @@ public class ValidationEngine {
 		}
 		
 		for (int i = 0; i < condition.getEqualsList().size(); i++) {
-			Equals equals = condition.getEquals(i);
-			if(!itemDefined(equals.getName(),metadata))
-				throw new ValidationException("L'elemento Equals numero ["+(i+1)+"] della Condition numero ["
-						+indice+"] non e' valido: si riferisce ad un elemento ["+equals.getName()+"] non presente nella configurazione.");
-				
-			BaseItemBean<?> itemToCheck = metadata.getItem(equals.getName()); 
-			ItemType itemToCheckType = itemToCheck.getItemType();
-			
-			// la condizione equals non si puo' attivare su un elemento checkbox
-			if(itemToCheckType.equals(ItemType.CHECKBOX)) {
-				throw new ValidationException("L'elemento Equals numero ["+(i+1)+"] della Condition numero ["
-						+indice+"] non e' valido: si riferisce ad un elemento ["+equals.getName()+"] che ha un tipo non compatibile con la regola, non si puo' controllare se una CheckBox e' Equals");
-			}
+			checkEqualsTypeCondition(condition.getEquals(i), condition, indice, metadata, i, "equals");
+		}
+		for (int i = 0; i < condition.getLessEqualsList().size(); i++) {
+			checkEqualsTypeCondition(condition.getLessEquals(i), condition, indice, metadata, i, "lessEquals");
+		}
+		for (int i = 0; i < condition.getLessThenList().size(); i++) {
+			checkEqualsTypeCondition(condition.getLessThen(i), condition, indice, metadata, i, "lessThen");
+		}
+		for (int i = 0; i < condition.getGreaterEqualsList().size(); i++) {
+			checkEqualsTypeCondition(condition.getGreaterEquals(i), condition, indice, metadata, i, "greaterEquals");
+		}
+		for (int i = 0; i < condition.getGreaterThenList().size(); i++) {
+			checkEqualsTypeCondition(condition.getGreaterThen(i), condition, indice, metadata, i, "greaterThen");
 		}
 		
 		for (int i = 0; i < condition.getSelectedList().size(); i++) {
@@ -306,6 +310,21 @@ public class ValidationEngine {
 				throw new ValidationException("L'elemento Selected numero ["+(i+1)+"] della Condition numero ["
 						+indice+"] non e' valido: si riferisce ad un elemento ["+selected.getName()+"] che non e' di tipo CheckBox");
 			}
+		}
+	}
+	
+	private static void checkEqualsTypeCondition(Equals equals, Condition condition, int indice,ConfigBean metadata, int i, String tipo) throws ValidationException {
+		if(!itemDefined(equals.getName(),metadata))
+			throw new ValidationException("L'elemento '"+tipo+"' numero ["+(i+1)+"] della Condition numero ["
+					+indice+"] non e' valido: si riferisce ad un elemento ["+equals.getName()+"] non presente nella configurazione.");
+			
+		BaseItemBean<?> itemToCheck = metadata.getItem(equals.getName()); 
+		ItemType itemToCheckType = itemToCheck.getItemType();
+		
+		// la condizione equals non si puo' attivare su un elemento checkbox
+		if(itemToCheckType.equals(ItemType.CHECKBOX)) {
+			throw new ValidationException("L'elemento '"+tipo+"' numero ["+(i+1)+"] della Condition numero ["
+					+indice+"] non e' valido: si riferisce ad un elemento ["+equals.getName()+"] che ha un tipo non compatibile con la regola, non si puo' controllare se una CheckBox e' Equals");
 		}
 	}
 	

@@ -93,7 +93,35 @@ public class ConditionsEngine {
 			}
 
 			for (Equals equals: condition.getEqualsList()) {
-				boolean resCondition = resolveEquals(equals,configBean);
+				boolean resCondition = resolveEquals(EqualsType.EQUALS, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
+			for (Equals equals: condition.getLessThenList()) {
+				boolean resCondition = resolveEquals(EqualsType.LESS_THEN, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
+			for (Equals equals: condition.getLessEqualsList()) {
+				boolean resCondition = resolveEquals(EqualsType.LESS_EQUALS, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
+			for (Equals equals: condition.getGreaterThenList()) {
+				boolean resCondition = resolveEquals(EqualsType.GREATER_THEN, equals,configBean);
+
+				// aggiorno l'esito in base all'operazione da aggregare AND o OR
+				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
+			}
+			
+			for (Equals equals: condition.getGreaterEqualsList()) {
+				boolean resCondition = resolveEquals(EqualsType.GREATER_EQUALS, equals,configBean);
 
 				// aggiorno l'esito in base all'operazione da aggregare AND o OR
 				esito = isAnd ? (esito && resCondition) : (esito || resCondition);
@@ -128,7 +156,7 @@ public class ConditionsEngine {
 		}
 	}
 
-	public static boolean resolveEquals(Equals equals, ConfigBean configBean) throws ConditionException {
+	public static boolean resolveEquals(EqualsType equalsType, Equals equals, ConfigBean configBean) throws ConditionException {
 		try {
 			String elementName = equals.getName();
 			boolean isNot = equals.getNot();
@@ -136,7 +164,28 @@ public class ConditionsEngine {
 
 			BaseItemBean<?> item = configBean.getItem(elementName);
 
-			boolean esito = item.isVisible() &&  value.equals(item.getValue());
+			boolean opValue = false;
+			if(item.isVisible()) {
+				switch (equalsType) {
+				case EQUALS:
+					opValue = value.equals(item.getValue());
+					break;
+				case LESS_THEN:
+					opValue = (item.getValue()!=null && value.compareTo(item.getValue())<0);
+					break;
+				case LESS_EQUALS:
+					opValue = value.equals(item.getValue()) || (item.getValue()!=null && value.compareTo(item.getValue())<0);
+					break;
+				case GREATER_THEN:
+					opValue = (item.getValue()!=null && value.compareTo(item.getValue())>0);
+					break;
+				case GREATER_EQUALS:
+					opValue = value.equals(item.getValue()) || (item.getValue()!=null && value.compareTo(item.getValue())>0);
+					break;
+				}
+			}
+			
+			boolean esito = item.isVisible() && opValue;
 
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
@@ -253,4 +302,10 @@ public class ConditionsEngine {
 		
 		return show;
 	}
+}
+
+enum EqualsType{
+	
+	EQUALS, LESS_EQUALS, LESS_THEN, GREATER_EQUALS, GREATER_THEN
+	
 }

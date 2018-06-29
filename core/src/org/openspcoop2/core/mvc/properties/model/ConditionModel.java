@@ -45,6 +45,10 @@ public class ConditionModel extends AbstractModel<Condition> {
 		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new Field("defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.SELECTED = new org.openspcoop2.core.mvc.properties.model.SelectedModel(new Field("selected",org.openspcoop2.core.mvc.properties.Selected.class,"condition",Condition.class));
 		this.EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("equals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.LESS_THEN = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("lessThen",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.LESS_EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("lessEquals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.GREATER_THEN = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("greaterThen",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.GREATER_EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("greaterEquals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
 		this.AND = new Field("and",boolean.class,"condition",Condition.class);
 		this.NOT = new Field("not",boolean.class,"condition",Condition.class);
 	
@@ -57,6 +61,10 @@ public class ConditionModel extends AbstractModel<Condition> {
 		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new ComplexField(father,"defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.SELECTED = new org.openspcoop2.core.mvc.properties.model.SelectedModel(new ComplexField(father,"selected",org.openspcoop2.core.mvc.properties.Selected.class,"condition",Condition.class));
 		this.EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"equals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.LESS_THEN = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"lessThen",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.LESS_EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"lessEquals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.GREATER_THEN = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"greaterThen",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
+		this.GREATER_EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"greaterEquals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
 		this.AND = new ComplexField(father,"and",boolean.class,"condition",Condition.class);
 		this.NOT = new ComplexField(father,"not",boolean.class,"condition",Condition.class);
 	
@@ -69,6 +77,14 @@ public class ConditionModel extends AbstractModel<Condition> {
 	public org.openspcoop2.core.mvc.properties.model.SelectedModel SELECTED = null;
 	 
 	public org.openspcoop2.core.mvc.properties.model.EqualsModel EQUALS = null;
+	 
+	public org.openspcoop2.core.mvc.properties.model.EqualsModel LESS_THEN = null;
+	 
+	public org.openspcoop2.core.mvc.properties.model.EqualsModel LESS_EQUALS = null;
+	 
+	public org.openspcoop2.core.mvc.properties.model.EqualsModel GREATER_THEN = null;
+	 
+	public org.openspcoop2.core.mvc.properties.model.EqualsModel GREATER_EQUALS = null;
 	 
 	public IField AND = null;
 	 
