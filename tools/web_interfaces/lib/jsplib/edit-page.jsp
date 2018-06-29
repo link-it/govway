@@ -87,13 +87,45 @@ if(!visualizzaPanelLista)
 	visualizzaPanelLista = !pd.isPageBodyEmpty();
 String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
 String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
+
+Vector<GeneralLink> titlelist = pd.getTitleList();
+String titoloSezione = null;
+if (titlelist != null && titlelist.size() > 0) {
+	GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+	titoloSezione = l.getLabel();
+} 
+boolean mostraFormHeader = false;
+int colFormHeader = (mostraFormHeader ? 2 : 1);
+String classPanelTitolo = mostraFormHeader ? "panelDettaglioForm" : "panelDettaglioNoForm";
 %>
 
 
 <table class="tabella-ext">
+	<% if(titoloSezione != null) { %>
+	<tr>
+		<td valign=top colspan="2">
+			<div class="<%= classPanelTitolo %>" >
+				<table class="tabella" id="panelDettaglioHeader">
+					<tbody>
+						<tr>	
+							<td class="titoloSezione" id="dettaglioFormHeader" colspan="<%= colFormHeader %>">
+								<span class="history"><%= titoloSezione %></span>
+							</td>
+							<% if(mostraFormHeader) { %>
+							<td align="right" class="titoloSezione titoloSezione-right">
+								<span class="icon-up-white" id="iconaPanelDettaglio"></span>
+							</td>
+							<% }%>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</td>
+	</tr>
+	<% }%>
 	<!-- Riga tabella -->
 		<tr> 
-			<td valign=top>		
+			<td valign=top colspan="2">		
 			<div class="<%=classDivPanelLista %>">
 				<table class="<%=classTabellaPanelLista %>">
 
@@ -113,7 +145,7 @@ if(elementsRequiredEnabled){
 		// inserisco la riga con le note
 		%>
 		<tr class="even" name="row_CampiObbligatori">
-			<td class="campiObbligatori">
+			<td class="campiObbligatori" colspan="2">
 				<p class="legend">
 					<strong>Note: </strong>(<em>*</em>) Campi obbligatori
 				</p>

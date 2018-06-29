@@ -49,6 +49,8 @@ String messageType = pd.getMessageType();
 String pageDescription = pd.getPageDescription();
 String messageTitle = pd.getMessageTitle();
 boolean mostraLinkHome = pd.isMostraLinkHome();
+Vector<GeneralLink> titlelist = pd.getTitleList();
+
 %>
 <table style="width:100%;">
 	<tbody>
@@ -56,8 +58,7 @@ boolean mostraLinkHome = pd.isMostraLinkHome();
 			<td colspan="2">
 				<div id="breadcrumb-ct">
 					<%
-						Vector<GeneralLink> titlelist = pd.getTitleList();
-						if (titlelist != null && titlelist.size() > 0) {
+						if (titlelist != null && titlelist.size() > 1) {
 						%>
 					<div id="crumbs">
 						<ul>

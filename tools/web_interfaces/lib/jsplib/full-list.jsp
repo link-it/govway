@@ -75,7 +75,12 @@ if (
 		pd.getFilterValues().size()>0
 	)
 ) {
-	
+	Vector<GeneralLink> titlelist = pd.getTitleList();
+	String titoloSezione = Costanti.LABEL_TITOLO_SEZIONE_DEFAULT;
+	if (titlelist != null && titlelist.size() > 0) {
+		GeneralLink l = titlelist.elementAt(titlelist.size() -1);
+		titoloSezione = l.getLabel();
+	} 
 	%>
 	<tr>
 		<td valign=top>
@@ -84,7 +89,7 @@ if (
 					<tbody>
 						<tr>
 							<td class="titoloSezione" id="searchFormHeader">
-								<span class="history">Filtri di Ricerca</span>
+								<span class="history"><%=titoloSezione %></span>
 							</td>
 							<td align="right" class="titoloSezione titoloSezione-right">
 								<span class="icon-up-white" id="iconaPanelLista"></span>
@@ -310,7 +315,7 @@ if (
 							    DataElement de = (DataElement) e.elementAt(j);
 							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
 							    String classLink = "";
-							    String classSpan = "";
+							    String classSpan = de.getLabelStyleClass();
 							    String tdStyle = " "; 
 							    if (!de.getStyle().equals("")) {
 							    	tdStyle = " style=\""+ de.getStyle() +"\"";

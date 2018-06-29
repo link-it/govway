@@ -170,6 +170,32 @@ textarea.inputLinkLong {
     font-weight: bold;
 }
 
+.panelDettaglioNoForm,
+.panelDettaglioForm {
+    border: none;
+    margin-left: 16px;
+}
+
+
+.panelDettaglioNoForm .titoloSezione,
+.panelDettaglioForm .titoloSezione {
+	background-image: none;
+	background-color: ${panel.header.background.color};
+	color: ${panel.header.color};
+	padding: 8px;
+}
+
+.panelDettaglioForm .titoloSezione {
+	cursor: pointer;
+}
+
+.panelDettaglioNoForm .titoloSezione span,
+.panelDettaglioForm .titoloSezione span{
+	padding-left: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 /* Componenti del layout generale */
 
 /* Body Wrapper */ 
@@ -597,6 +623,7 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 }
 
 .ultimo-path, .ultimo-path span{
+	font-weight: bold;
 	color: ${crumbs.label.active.color};
 }
 
@@ -1031,6 +1058,10 @@ p.note.labelLong {
     color: #46464e;
 }
 
+.subtitle.noBold span{
+	font-weight: normal;
+}
+
 div.prop-slider{
 	width: 410px;
 	background-color: ${input.slider.background.color};	
@@ -1070,4 +1101,60 @@ div.prop-slider{
 	 list-style-type: disc;
 }
 
-   
+.resource-method-block {
+	width: 50px;
+	display: block;
+    font-size: 11px;
+    font-weight: 700;
+/*     min-width: 72px; */
+    padding: 6px 12px;
+    text-align: center;
+    border-radius: 3px;
+    background: ${api.resources.httpmethod.background.color};
+    text-shadow: 0 1px 0 rgba(0,0,0,.1);
+    color: ${api.resources.httpmethod.color};
+}
+
+.resource-method-block.resource-method-default {
+	  background-color: ${api.resources.httpmethod.background.default.color};
+}
+
+.resource-method-block.resource-method-post {
+	 background-color: ${api.resources.httpmethod.background.post.color};
+}
+
+.resource-method-block.resource-method-put {
+	   background-color: ${api.resources.httpmethod.background.put.color};
+}
+ 
+.resource-method-block.resource-method-delete {
+	  background-color: ${api.resources.httpmethod.background.delete.color};
+}
+
+.resource-method-block.resource-method-get {
+	  background-color: ${api.resources.httpmethod.background.get.color};
+}
+
+.resource-method-block.resource-method-patch {
+	  background-color: ${api.resources.httpmethod.background.patch.color};
+}
+
+.resource-method-block.resource-method-head {
+	  background-color: ${api.resources.httpmethod.background.head.color};
+}
+
+.resource-method-block.resource-method-options {
+	  background-color: ${api.resources.httpmethod.background.options.color};
+}
+
+.resource-method-block.resource-method-trace {
+	  background-color: ${api.resources.httpmethod.background.trace.color};
+}
+
+.resource-method-block.resource-method-link {
+	  background-color: ${api.resources.httpmethod.background.link.color};
+}
+
+.resource-method-block.resource-method-unlink {
+	  background-color: ${api.resources.httpmethod.background.unlink.color};
+}

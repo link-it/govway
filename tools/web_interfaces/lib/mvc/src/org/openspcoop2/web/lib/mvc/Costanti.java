@@ -212,4 +212,6 @@ public class Costanti {
 	public final static String LABEL_MEDIUM_CSS_CLASS = "labelMedium";
 	public final static String LABEL_LONG_CSS_CLASS = "labelLong";
 	
+	public final static String LABEL_TITOLO_SEZIONE_DEFAULT = "Filtri di Ricerca";
+	
 }
