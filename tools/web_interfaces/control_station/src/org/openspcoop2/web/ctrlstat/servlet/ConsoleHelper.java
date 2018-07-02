@@ -4025,6 +4025,7 @@ public class ConsoleHelper {
 					if(allegatoXacmlPolicy.getValue() != null) {
 						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 						Documento documento = new Documento();
+						documento.setFile("xacmlPolicy");
 						documento.setByteContenuto(allegatoXacmlPolicy.getValue());
 						documento.setTipo(TipiDocumentoSicurezza.XACML_POLICY.getNome());
 						documento.setRuolo(RuoliDocumento.specificaSicurezza.toString()); 

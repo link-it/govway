@@ -59,6 +59,7 @@ import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
+import org.openspcoop2.utils.xacml.MarshallUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.utils.xml.XSDUtils;
@@ -524,10 +525,15 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 					}
 					if(doc!=null){
 						// Verifico che sia un documento xml valido
-						this.xmlUtils.newDocument(doc);
-						// Verifico che sia un xsd, leggendone il targetNamespace
-						this.xsdUtils.getTargetNamespace(doc);				
+						this.xmlUtils.newDocument(doc);		
 					}	
+					
+					if(TipiDocumentoSicurezza.XACML_POLICY.toString().toLowerCase().equals(documento.getTipo().toLowerCase())){
+						if(MarshallUtilities.unmarshallPolicy(doc)==null) {
+							throw new Exception("Policy non corretta");
+						}
+					}
+					
 				}catch(Exception e){
 					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
 					result.setException(e);
