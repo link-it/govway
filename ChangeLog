@@ -1,3 +1,17 @@
+2018-07-02  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddMonitor]
+	Aggiunta funzionalità OP-728
+	I dati salvati dalla Porta di dominio possono riguardare 4 entry point:
+	- richiesta ingresso
+	- richiesta uscita
+	- risposta ingresso
+	- risposta uscita
+	E' possibile, tramite la configurazione della registrazione dei messaggi salvare gli header http, i messaggi e gli eventuali allegati.
+	La consultazione tramite console pddMonitor permette di accedere ad ogni singola sezione del messaggio.
+	E' inoltre possibile abilitare la funzionalità di dump binario che consente di accedere allo stream dei dati
+	direttamente ricevuto o inviato dalla pdd, senza che sia stato effettuato alcuna attivita di processamento e suddivisione in messaggio e allegati.
+
 2018-06-01  Andrea Poli <apoli@link.it>
 
 	* [GenericProject, Pdd, PddConsole, PddLoader, 
