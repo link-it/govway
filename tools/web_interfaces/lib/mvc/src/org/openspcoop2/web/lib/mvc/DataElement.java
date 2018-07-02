@@ -78,7 +78,7 @@ public class DataElement {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, labelRight, value, type, subType, url, target, name, onClick, onChange, selected,toolTip;
+	String label, labelRight, value, type, url, target, name, onClick, onChange, selected,toolTip;
 	String [] values = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -113,7 +113,6 @@ public class DataElement {
 		this.label = "";
 		this.value = "";
 		this.type = "text";
-		this.subType = "";
 		this.url = "";
 		this.target = "";
 		this.name = "";
@@ -129,6 +128,7 @@ public class DataElement {
 		this.note = "";
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
 		this.labelStyleClass = null;
+		this.labelRight = null;
 		
 	}
 
@@ -201,13 +201,6 @@ public class DataElement {
 				this.required = required;
 			}
 		}*/
-	}
-
-	public void setSubType(String s) {
-		this.subType = s;
-	}
-	public String getSubType() {
-		return DataElement.checkNull(this.subType);
 	}
 
 	public void setUrl(String s) {
