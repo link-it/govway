@@ -113,6 +113,12 @@ public class UtentiHelper extends ConsoleHelper {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
+		boolean oldMultiTenantValue = false;
+		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			User user = this.utentiCore.getUser(nomesu);
+			oldMultiTenantValue = user.isPermitMultiTenant();
+		}
+		
 		boolean onlyUser = ServletUtils.isCheckBoxEnabled(isUtenti) &&
 				!ServletUtils.isCheckBoxEnabled(isServizi) &&
 				!ServletUtils.isCheckBoxEnabled(isAccordiCooperazione) &&
@@ -315,18 +321,20 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
-			if(contaListe){
-				Search searchForCount = new Search(true,1);
-				this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
-				int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
-				ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SOGGETTI, (long) num);
-			}else {
-				de.setValue(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+			if(oldMultiTenantValue) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
+				if(contaListe){
+					Search searchForCount = new Search(true,1);
+					this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
+					int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
+					ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SOGGETTI, (long) num);
+				}else {
+					de.setValue(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+				}
+				dati.addElement(de);
 			}
-			dati.addElement(de);
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
