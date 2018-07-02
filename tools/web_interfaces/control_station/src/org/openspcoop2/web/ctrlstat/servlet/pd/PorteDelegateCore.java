@@ -63,6 +63,7 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -87,7 +88,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String fruizioneAutorizzazione_tokenOptions,
-			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch) {
+			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) {
 		
 		portaDelegata.setAutenticazione(fruizioneAutenticazione);
 		if(fruizioneAutenticazioneOpzionale != null){
@@ -103,6 +104,12 @@ public class PorteDelegateCore extends ControlStationCore {
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneScope),
 				fruizioneAutorizzazione_tokenOptions,
 				RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
+		
+		if(fruizioneAutorizzazione != null && fruizioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+			portaDelegata.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));
+		} else {
+			portaDelegata.setXacmlPolicy(null);
+		}
 		
 		if(fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(fruizioneAutorizzazioneRuoliMatch)){
 			RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(fruizioneAutorizzazioneRuoliMatch);

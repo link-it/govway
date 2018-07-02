@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -87,7 +88,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, 
 			String erogazioneAutorizzazione_tokenOptions,
-			String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch) {
+			String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) {
 		pa.setAutenticazione(erogazioneAutenticazione);
 		if(erogazioneAutenticazioneOpzionale != null){
 			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
@@ -102,6 +103,12 @@ public class PorteApplicativeCore extends ControlStationCore {
 				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneScope),
 				erogazioneAutorizzazione_tokenOptions,
 				RuoloTipologia.toEnumConstant(erogazioneAutorizzazioneRuoliTipologia)));
+		
+		if(erogazioneAutorizzazione != null && erogazioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+			pa.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));
+		} else {
+			pa.setXacmlPolicy(null);
+		}
 		
 		if(erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(erogazioneAutorizzazioneRuoliMatch)){
 			RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(erogazioneAutorizzazioneRuoliMatch);

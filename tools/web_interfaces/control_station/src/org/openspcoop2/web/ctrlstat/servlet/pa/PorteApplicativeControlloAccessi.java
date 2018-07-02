@@ -46,14 +46,12 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -151,7 +149,6 @@ public class PorteApplicativeControlloAccessi extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
@@ -245,14 +242,6 @@ public class PorteApplicativeControlloAccessi extends Action {
 			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
 				policyLabels[(i+1)] = genericProperties.getNome();
 				policyValues[(i+1)] = genericProperties.getNome();
-			}
-			
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
-			Long idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps,null);
-			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
-			if(allegatoXacmlPolicy.getValue() != null) {
-				// faccio sparire il link download
-				idAllegatoXacmlPolicy = null;
 			}
 			
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
@@ -442,7 +431,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -463,7 +452,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy,protocollo);
+					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo);
 					
 			if (!isOk) {
 				// preparo i campi
@@ -485,7 +474,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,
 						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -522,43 +511,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 			else
 				pa.setAutorizzazione(autorizzazioneCustom);
 			
-			boolean addSpecSicurezza = false;
-			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY)) {
-				if(allegatoXacmlPolicy.getValue() != null) {
-					Long oldIdAllegato = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps, null);
-					if(oldIdAllegato!= null) {
-						int j = -1;
-						for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
-							if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
-								j = i;
-								break;
-							}
-						}
-						
-						if(j > -1) {
-							asps.removeSpecificaSicurezza(j);
-						}
-					}
-					
-					asps.addSpecificaSicurezza(porteApplicativeHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, null, asps.getId()));
-					addSpecSicurezza = true;
-				}
+			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
+				pa.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));
 			} else {
-				Long oldIdAllegato = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps, null);
-				if(oldIdAllegato!= null) {
-					int j = -1;
-					for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
-						if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
-							j = i;
-							break;
-						}
-					}
-					
-					if(j > -1) {
-						asps.removeSpecificaSicurezza(j);
-					}
-					addSpecSicurezza = true;
-				}
+				pa.setXacmlPolicy(null);
 			}
 			
 			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
@@ -627,9 +583,6 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-			if(addSpecSicurezza) {
-				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), asps);
-			}
 			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -814,10 +767,6 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 			
-			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps),true);
-			idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps,null);
-			idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null;
-			
 			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
@@ -833,7 +782,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazione, contaListe, false, false
 					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
 			
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			

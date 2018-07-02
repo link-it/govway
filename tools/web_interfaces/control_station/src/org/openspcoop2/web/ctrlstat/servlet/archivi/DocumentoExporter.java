@@ -37,6 +37,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
@@ -55,6 +58,8 @@ import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.slf4j.Logger;
@@ -138,6 +143,8 @@ public class DocumentoExporter extends HttpServlet {
 			
 			ArchiviCore archiviCore = new ArchiviCore();
 			ProtocolPropertiesCore ppCore = new ProtocolPropertiesCore(archiviCore);
+			PorteDelegateCore pdCore = new PorteDelegateCore(archiviCore);
+			PorteApplicativeCore paCore = new PorteApplicativeCore(archiviCore);
 			
 			if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_DOCUMENTO.equals(tipoDocumentoDaScaricare) ){
 				
@@ -294,8 +301,42 @@ public class DocumentoExporter extends HttpServlet {
 					 if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY.equals(tipoDocumentoDaScaricare)){
 						 int idAllegatoInt = Integer.parseInt(idAllegato);
 						 ProtocolProperty bp = ppCore.getProtocolPropertyBinaria(idAllegatoInt);
-						fileName = bp.getFile();
-						docBytes = bp.getByteFile();
+						 fileName = bp.getFile();
+						 docBytes = bp.getByteFile();
+					}else{
+						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
+					}
+				}
+				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PORTA_APPLICATIVA.equals(tipoDocumento)){
+					 if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_XACML_POLICY.equals(tipoDocumentoDaScaricare)){
+						 Long idPorta = Long.parseLong(idAccordo);
+						 PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPorta);
+						 fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_XACML_POLICY_FILENAME;
+						 
+						 String policy = portaApplicativa.getXacmlPolicy();
+						 
+						 if(StringUtils.isEmpty(policy)) {
+							 throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						 }
+						 
+						 docBytes = policy.getBytes();
+					}else{
+						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
+					}
+				}
+				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PORTA_DELEGATA.equals(tipoDocumento)){
+					 if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_XACML_POLICY.equals(tipoDocumentoDaScaricare)){
+						 Long idPorta = Long.parseLong(idAccordo);
+						 PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPorta);
+						 fileName = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_XACML_POLICY_FILENAME;
+						 
+						 String policy = portaDelegata.getXacmlPolicy();
+						 
+						 if(StringUtils.isEmpty(policy)) {
+							 throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+						 }
+						 
+						 docBytes = policy.getBytes();
 					}else{
 						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
 					}

@@ -235,7 +235,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
 			
-			String idAllegatoXacmlPolicy = null;
 			BinaryParameter allegatoXacmlPolicy = apsHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
 			this.endpointtype = apsHelper.readEndPointType();
@@ -715,7 +714,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -846,7 +845,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, 
 						dati,null
@@ -995,7 +994,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,scope,autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
+							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -1090,7 +1089,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						this.fruizioneServizioApplicativo, this.fruizioneRuolo,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch);
+						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 				
 				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -1106,26 +1105,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				listaOggettiDaCreare.add(mappingFruizione);
 				
 				porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), listaOggettiDaCreare.toArray());
-				
-				if(this.fruizioneAutorizzazione != null && this.fruizioneAutorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
-					Long oldIdAllegato = apsHelper.getIDAllegatoXacmlPolicy(asps, nomeFruitore);
-					if(oldIdAllegato!= null) {
-						int j = -1;
-						for(int i = 0 ; i < asps.sizeSpecificaSicurezzaList(); i++) {
-							if(asps.getSpecificaSicurezza(i).getId().intValue() == oldIdAllegato.intValue()) {
-								j = i;
-								break;
-							}
-						}
-						
-						if(j > -1) {
-							asps.removeSpecificaSicurezza(j);
-						}
-					}
-					
-					asps.addSpecificaSicurezza(apsHelper.getDocumentoXacmlPolicy(allegatoXacmlPolicy, nomeFruitore, asps.getId()));
-					porteDelegateCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
-				}
 			}
 
 

@@ -515,12 +515,6 @@ public final class PorteApplicativeChange extends Action {
 				autorizzazioneScope = "";
 			}
 			
-			Long idAll = porteApplicativeHelper.getIDAllegatoXacmlPolicy(asps,null);
-			String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
-			if(allegatoXacmlPolicy.getValue() != null) {
-				// faccio sparire il link download
-				idAllegatoXacmlPolicy = null;
-			}
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
 			if (postBackElementName != null) {
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_VIRTUALE)) {
@@ -929,7 +923,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 
@@ -1100,7 +1094,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
 

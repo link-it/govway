@@ -980,7 +980,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null,null,null);
+							null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					
@@ -1157,7 +1157,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						null,null,null,null,null,null,null,null,null,null,
 						null,null,null,null,null,
 						null,
-						null,null,null,null,null);
+						null,null,null,null);
 
 				if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 				
@@ -1268,7 +1268,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null,null,null);
+							null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 						boolean forceEnableConnettore = false;
@@ -1513,7 +1513,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							null,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
 							null,
-							null,null,null,null,null);
+							null,null,null,null);
 
 					if(multiTenant || apsHelper.isModalitaCompleta() || (!soggettoOperativo && !gestioneFruitori)) {
 					

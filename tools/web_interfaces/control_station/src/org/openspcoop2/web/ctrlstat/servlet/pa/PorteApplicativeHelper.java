@@ -472,7 +472,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch,null,allegatoXacmlPolicy,protocollo)==false){
+						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
 					return false;
 				}
 			}
@@ -915,7 +915,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_tokenOptions,
-			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,String idAllegatoXacmlPolicy,String idAsps,BinaryParameter allegatoXacmlPolicy) throws Exception {
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1531,7 +1531,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,idAllegatoXacmlPolicy,idAsps,allegatoXacmlPolicy);
+					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
 			
 			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		}

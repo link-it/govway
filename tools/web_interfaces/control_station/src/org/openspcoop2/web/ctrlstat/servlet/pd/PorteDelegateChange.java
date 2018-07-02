@@ -831,22 +831,6 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 				
-//				String idAsps = servS.getId()+"";
-				String nomeSoggettoFruitore = null;
-				if(porteDelegateCore.isRegistroServiziLocale()){
-					org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(soggInt);
-					nomeSoggettoFruitore = soggettoFruitore.getNome();
-				}else{
-					org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(soggInt);
-					nomeSoggettoFruitore = soggettoFruitore.getNome();
-				}
-				Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(servS,nomeSoggettoFruitore);
-				String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
-				if(allegatoXacmlPolicy.getValue() != null) {
-					// faccio sparire il link download
-					idAllegatoXacmlPolicy = null;
-				}
-
 				AccordoServizioParteComune as = null;
 				if ( servS!=null ) {
 					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
@@ -914,7 +898,7 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -1012,17 +996,6 @@ public final class PorteDelegateChange extends Action {
 					}catch(DriverRegistroServiziNotFound dNotFound){
 					}
 				}
-//				String idAsps = servS.getId()+"";
-				String nomeSoggettoFruitore = null;
-				if(porteDelegateCore.isRegistroServiziLocale()){
-					org.openspcoop2.core.registry.Soggetto soggettoFruitore = soggettiCore.getSoggettoRegistro(soggInt);
-					nomeSoggettoFruitore = soggettoFruitore.getNome();
-				}else{
-					org.openspcoop2.core.config.Soggetto soggettoFruitore = soggettiCore.getSoggetto(soggInt);
-					nomeSoggettoFruitore = soggettoFruitore.getNome();
-				}
-				Long idAll = porteDelegateHelper.getIDAllegatoXacmlPolicy(servS,nomeSoggettoFruitore);
-				String idAllegatoXacmlPolicy = idAll != null ? idAll+"" : null; 
 				
 				AccordoServizioParteComune as = null;
 				if(servS!=null){
@@ -1086,7 +1059,7 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,idAllegatoXacmlPolicy, allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 
