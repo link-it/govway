@@ -78,7 +78,7 @@ public class DataElement {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, value, type, subType, url, target, name, onClick, onChange, selected,toolTip;
+	String label, labelRight, value, type, subType, url, target, name, onClick, onChange, selected,toolTip;
 	String [] values = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -575,4 +575,11 @@ public class DataElement {
 		this.labelStyleClass = labelStyleClass;
 	}
 	
+	public String getLabelRight() {
+		return DataElement.checkNull(this.labelRight);
+	}
+
+	public void setLabelRight(String labelRight) {
+		this.labelRight = labelRight;
+	}
 }

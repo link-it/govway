@@ -437,6 +437,11 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "Completate con successo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "Fault applicativo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO = "Controllo del Traffico";
@@ -624,6 +629,10 @@ public class ConfigurazioneCostanti {
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
 	public final static String PARAMETRO_CONFIGURAZIONE_FIRST_TIME = "ConfigurazioneFirstTime";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "RecEsitiStatoOk";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_JMX_STATE = "CTViewJmxState";
 	
@@ -1071,6 +1080,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String DEFAULT_VALUE_ABILITATO = StatoFunzionalita.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_DISABILITATO = StatoFunzionalita.DISABILITATO.toString();
+	
+	public final static String TRACCIAMENTO_ESITI_PERSONALIZZATO = "personalizzato";
 	
 	
 	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(String context) {

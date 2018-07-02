@@ -95,6 +95,8 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
@@ -5059,18 +5061,59 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return false;
 	}
 	
-	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, String tracciamentoEsiti) throws Exception {
+	public boolean isCompleteEnabled(List<String> attivi, List<Integer> listCheck) {
+
+		boolean all = true;
+		for (int i = 0; i < listCheck.size(); i++) {
+			String okString = listCheck.get(i).intValue()+"";
+			if(attivi.contains(okString)==false) {
+				all = false;
+				break;
+			}
+		}
+		return all;
+	}
+	
+	public boolean isCompleteDisabled(List<String> attivi, List<Integer> listCheck) {
+
+		for (int i = 0; i < listCheck.size(); i++) {
+			String okString = listCheck.get(i).intValue()+"";
+			if(attivi.contains(okString)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public List<Integer> getListaEsitiFalliteSenzaMaxThreads(EsitiProperties esiti) throws ProtocolException{
+		List<Integer> listFallite = esiti.getEsitiCodeKo_senzaFaultApplicativo();
+		int esitoViolazione = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
+		List<Integer> listFalliteSenzaMax = new ArrayList<>(); 
+		int i = 0;
+		for (; i < listFallite.size(); i++) {
+			if(listFallite.get(i).intValue() != esitoViolazione) {
+				listFalliteSenzaMax.add(listFallite.get(i));
+			}
+		}
+		return listFalliteSenzaMax;
+	}
+	
+	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, String tracciamentoEsiti,
+			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
+			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataMax) throws Exception {
 		
 	
 		DataElement de = new DataElement();
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
-		
-//		de = new DataElement();
-//		de.setLabel(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
-//		de.setType(DataElementType.SUBTITLE);
-//		dati.addElement(de);
+				
+		de = new DataElement();
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
 		
 		List<String> attivi = new ArrayList<String>();
 		if(tracciamentoEsiti!=null){
@@ -5082,20 +5125,185 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
+		
 		EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
-		List<Integer> esitiCodes = esiti.getEsitiCode();
-		if(esitiCodes!=null){
-			for (Integer esito : esitiCodes) {
+		
+		List<String> values = new ArrayList<>();
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		values.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
+		values.add(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO);
+		
+		List<String> values_senza_personalizzato = new ArrayList<>();
+		values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
+		values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
+		
+		
+		// ok
+		
+		List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+		de.setType(DataElementType.SELECT);
+		de.setValues(values);
+		de.setLabels(values);
+		de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+		de.setPostBack(true);
+		dati.addElement(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+			for (Integer esito : listOk) {
 				de = new DataElement();
-				de.setLabel(esiti.getEsitoLabel(esito));
-				de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setLabelRight(esiti.getEsitoLabel(esito));
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 //				de.setNote(esiti.getEsitoLabel(esito));
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(attivi.contains((esito+"")));
+				if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(attivi.contains((esito+"")));
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("true");
+				}
 				dati.addElement(de);
 			}
 		}
+		
+		
+		
+		// fault
+		
+		List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+		de.setType(DataElementType.SELECT);
+		if(listFault.size()>1) {
+			de.setValues(values);
+			de.setLabels(values);
+		}
+		else {
+			de.setValues(values_senza_personalizzato);
+			de.setLabels(values_senza_personalizzato);
+		}
+		de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
+		de.setPostBack(true);
+		dati.addElement(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+			for (Integer esito : listFault) {
+				de = new DataElement();
+				de.setLabelRight(esiti.getEsitoLabel(esito));
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+//						de.setNote(esiti.getEsitoLabel(esito));
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+				if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(attivi.contains((esito+"")));
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("true");
+				}
+				dati.addElement(de);
+			}
+		}
+		
+		
+		
+		// fallite
+		
+		List<Integer> listFalliteSenzaMax = getListaEsitiFalliteSenzaMaxThreads(esiti);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+				
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+		de.setType(DataElementType.SELECT);
+		de.setValues(values);
+		de.setLabels(values);
+		de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
+		de.setPostBack(true);
+		dati.addElement(de);
+				
+		if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
+			for (Integer esito : listFalliteSenzaMax) {
+				de = new DataElement();
+				de.setLabelRight(esiti.getEsitoLabel(esito));
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+//						de.setNote(esiti.getEsitoLabel(esito));
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+				if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(attivi.contains((esito+"")));
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("true");
+				}
+				dati.addElement(de);
+			}
+		}
+				
+		
+		
+		
+		// max
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+		//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
+		de.setType(DataElementType.SELECT);
+		de.setValues(values_senza_personalizzato);
+		de.setLabels(values_senza_personalizzato);
+		de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax)) {
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("true");
+			dati.addElement(de);
+		}
+
+
 	}
 	
 	public String readConfigurazioneRegistrazioneEsitiFromHttpParameters(String configurazioneEsiti, boolean first) throws Exception {
@@ -5142,14 +5350,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuffer bf) throws Exception{
 		if(configurazioneEsiti==null ||"".equals(configurazioneEsiti.trim())){
 			
-			// creo un default composto da tutti ad eccezione dell'esito 84 (MaxThreads)
+			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
 			EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
 			List<Integer> esitiCodes = esiti.getEsitiCode();
+			
+			int esitoMaxThreads = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
 			
 			if(esitiCodes!=null && esitiCodes.size()>0){
 				List<String> esitiDaRegistrare = new ArrayList<String>();
 				for (Integer esito : esitiCodes) {
-					if(esito!=84){
+					if(esito!=esitoMaxThreads){
 						if(bf.length()>0){
 							bf.append(",");
 						}

@@ -2077,6 +2077,20 @@ public class ConsoleHelper {
 				this.pd.setMessage("Stato dev'essere abilitato o disabilitato");
 				return false;
 			}
+			
+			if (messageSecurity.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO)){
+				String req = this.getParameter(CostantiControlStation.PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME); 
+				String res = this.getParameter(CostantiControlStation.PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME); 
+				if( 
+						(req==null || "".equals(req) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(req))
+						&&
+						(res==null || "".equals(res) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(res))
+						) {
+					this.pd.setMessage("Almeno uno schema di sicurezza per la richiesta o per la risposta dev'essere abilitato");
+					return false;
+				}
+			}
+			
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

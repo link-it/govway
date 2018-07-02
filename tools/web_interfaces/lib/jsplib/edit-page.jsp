@@ -446,6 +446,11 @@ for (int i = 0; i < dati.size(); i++) {
 						    														<td>
 								   														<input type="checkbox" name="<%= deName  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> <%=disVal %> >
 								   													</td>
+								   													<% if(!de.getLabelRight().equals("")){ %>
+								   													<td>
+								   														<span class="controlset"><%=de.getLabelRight() %></span>
+								   													</td>
+								   													<% } %>
 							   													</tr>
 							   												</table>
 								  										<% if(!deNote.equals("")){ %>

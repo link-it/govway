@@ -39,6 +39,8 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -101,6 +103,11 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			String dumpPD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 			String dumpPA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 			
+			String tracciamentoEsitiSelezionePersonalizzataOk = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+			String tracciamentoEsitiSelezionePersonalizzataFault = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+			String tracciamentoEsitiSelezionePersonalizzataFallite = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+			String tracciamentoEsitiSelezionePersonalizzataMax = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, null));
@@ -124,11 +131,69 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						registrazioneTracce = oldConfigurazione.getTracciamento().getStato().toString();
 				}
 				
+				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
+					
+					List<String> attivi = new ArrayList<String>();
+					if(nuovaConfigurazioneEsiti!=null){
+						String [] tmp = nuovaConfigurazioneEsiti.split(",");
+						if(tmp!=null){
+							for (int i = 0; i < tmp.length; i++) {
+								attivi.add(tmp[i].trim());
+							}
+						}
+					}
+					
+					EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+					
+					List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+					if(confHelper.isCompleteEnabled(attivi, listOk)) {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(confHelper.isCompleteDisabled(attivi, listOk)) {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
+					if(confHelper.isCompleteEnabled(attivi, listFault)) {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(confHelper.isCompleteDisabled(attivi, listFault)) {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					List<Integer> listFalliteSenzaMax = confHelper.getListaEsitiFalliteSenzaMaxThreads(esiti);
+					if(confHelper.isCompleteEnabled(attivi, listFalliteSenzaMax)) {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(confHelper.isCompleteDisabled(attivi, listFalliteSenzaMax)) {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					if(attivi.contains((esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS)+""))) {
+						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}	
+					else {
+						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					
+				}
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti); 
+				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti, 
+						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
@@ -156,7 +221,9 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti); 
+				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti, 
+						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 				
 				confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
 
@@ -240,7 +307,9 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				registrazioneTracce = newConfigurazione.getTracciamento().getStato().toString();
 			
 			
-			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, newConfigurazione.getTracciamento().getEsiti()); 
+			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, newConfigurazione.getTracciamento().getEsiti(), 
+					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 			
 			confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, newConfigurazione, dati, contaListe);
 

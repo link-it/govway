@@ -965,6 +965,10 @@ div.prop table.controlset {
 	margin-bottom: 2px;
 }
 
+span.controlset {
+	margin-left: 10px;
+}
+
 div.prop{
 	padding: 3px 5px 5px 5px;  /* padding top 0px IE7 fix */
 }
