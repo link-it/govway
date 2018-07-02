@@ -28,14 +28,14 @@
 		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
 			<property name="mustUnderstand" />
 		</item>
-				
-		<subsection label="Timestamp">
-			<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
-				note="The time difference between creation and expiry time in seconds ">
-				<property name="timeToLive" />
-			</item>
-		</subsection>
 
+	</section>
+
+	<section label="Timestamp">
+		<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
+			note="The time difference between creation and expiry time in seconds ">
+			<property name="timeToLive" />
+		</item>
 	</section>
 
 </config>

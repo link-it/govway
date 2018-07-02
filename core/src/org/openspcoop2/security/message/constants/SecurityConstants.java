@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.ConfigurationConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.utils.digest.Constants;
 
@@ -252,6 +253,12 @@ public class SecurityConstants {
     public static final String TIMESTAMP_SOAPBOX_TTL_DEFAULT = "300";
 	public static final String TIMESTAMP_SOAPBOX_FUTURE_TTL_DEFAULT =  "60";
 
+	public static final String USERNAME_TOKEN_PASSWORD = "usernameTokenPassword";
+	public static final String USERNAME_TOKEN_PASSWORD_TYPE = ConfigurationConstants.PASSWORD_TYPE;
+	public static final String USERNAME_TOKEN_PASSWORD_TYPE_DIGEST = WSS4JConstants.PW_DIGEST;
+	public static final String USERNAME_TOKEN_PASSWORD_TYPE_TEXT = WSS4JConstants.PW_TEXT;
+	public static final String USERNAME_TOKEN_PASSWORD_TYPE_NONE = WSS4JConstants.PW_NONE;
+	
 	public static final String SAML_PROF_FILE =  "samlPropFile";
 	public static final String SAML_CALLBACK_REF = ConfigurationConstants.SAML_CALLBACK_REF;
 	

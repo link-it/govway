@@ -1,0 +1,100 @@
+<config id="messageSecurity.wss4j.sender.usernameToken" label="WSSec Username Token" sortLabel="Z_UsernameToken" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
+
+    <compatibility not="false" and="false">
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>REQUEST</tag>
+                    <tag>OUT</tag>
+            </tags>
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>RESPONSE</tag>
+                    <tag>IN</tag>
+            </tags>
+    </compatibility>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>	
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		
+	</section>
+		
+	<section label="Username Token">
+		
+		<!-- 
+	 	Non sembra funzionare in fase di ricezione: per ora e' hidden disabilitata
+		<item type="checkbox" name="usernameTokenSignature" label="Signature" defaultSelected="false" reloadOnChange="true">
+			<property name="usernameTokenSignature" />
+		</item>
+		-->
+		<item type="hidden" name="usernameTokenSignature" value="false">
+			<property name="usernameTokenSignature" />
+		</item>
+		<item type="hidden" name="securityAction" value="UsernameToken">
+			<conditions>
+	            <condition not="true">
+	                    <selected name="usernameTokenSignature" />
+	            </condition>
+           	</conditions>
+            <property name="action"/>
+        </item>
+		<item type="hidden" name="securityActionSignature" value="UsernameTokenSignature">
+			<conditions>
+	            <condition>
+	                    <selected name="usernameTokenSignature" />
+	            </condition>
+           	</conditions>
+            <property name="action"/>
+        </item>
+		
+		<item type="text" name="usernameTokenUser" label="User" required="true">
+		    <property name="user" />
+		</item>
+		<item type="select" name="passwordType" label="Tipo Password" reloadOnChange="true">
+			<conditions>
+	            <condition not="true">
+	                    <selected name="usernameTokenSignature" />
+	            </condition>
+           	</conditions>
+			<property name="passwordType" />
+		</item>
+		<item type="text" name="usernameTokenPassword" label="Password" required="true">
+		    <conditions>
+	            <condition not="true">
+	                    <equals name="passwordType" value="PasswordNone" />
+	            </condition>
+           	</conditions>
+		    <property name="usernameTokenPassword" />
+		</item>
+		<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+		   <conditions>
+	            <condition not="true">
+	                    <equals name="passwordType" value="PasswordNone" />
+	            </condition>
+           	</conditions>
+		    <property name="passwordCallbackRef" />
+		</item>
+				
+		<item type="checkbox" name="addUsernameTokenNonce" label="Nonce Element" defaultSelected="false">
+			<property name="addUsernameTokenNonce" />
+		</item>
+		<item type="checkbox" name="addUsernameTokenCreated" label="Created Element" defaultSelected="false">
+			<property name="addUsernameTokenCreated" />
+		</item>
+		
+</section>
+
+</config>
+
+
+

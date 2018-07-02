@@ -518,6 +518,14 @@ public abstract class MessageSecurityContext{
     				}
     			}
     			
+    			if(props.containsKey(SecurityConstants.USERNAME_TOKEN_PASSWORD)) {
+    				String password = (String) props.get(SecurityConstants.USERNAME_TOKEN_PASSWORD);
+    				String alias = aliasGenerico;
+    				if(alias!=null){
+    					mapAliasToPassword.put(alias, password);
+    				}
+    			}
+    			
     			if(mapAliasToPassword.size()>0) {
     				
     				CallbackHandler pwCallbackHandler = new CallbackHandler() {

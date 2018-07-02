@@ -1,17 +1,17 @@
 <config id="messageSecurity.wss4j.receiver.timestamp" label="WSSec Timestamp" sortLabel="0_Timestamp" xmlns="http://www.openspcoop2.org/core/mvc/properties">
 
-        <compatibility not="false" and="false">
-                <tags and="true">
-                        <tag>SOAP</tag>
-                        <tag>RESPONSE</tag>
-                        <tag>OUT</tag>
-                </tags>
-                <tags and="true">
-                        <tag>SOAP</tag>
-                        <tag>REQUEST</tag>
-                        <tag>IN</tag>
-                </tags>
-        </compatibility>
+	<compatibility not="false" and="false">
+	        <tags and="true">
+	                <tag>SOAP</tag>
+	                <tag>RESPONSE</tag>
+	                <tag>OUT</tag>
+	        </tags>
+	        <tags and="true">
+	                <tag>SOAP</tag>
+	                <tag>REQUEST</tag>
+	                <tag>IN</tag>
+	        </tags>
+	</compatibility>
 	
 	<section label="Informazioni Generali">
 		
@@ -31,15 +31,16 @@
 		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
 			<property name="detachSecurityInfo" />
 		</item>
-				
-		<subsection label="Timestamp">
-			<item type="number" name="futureTimeToLive" label="Future Time to Live (seconds)" min="1" max="999999999" default="60"
-				note="The time in seconds in the future within which the Created time of an incoming Timestamp is valid">
-				<property name="futureTimeToLive" />
-			</item>
-		</subsection>
 		
 	</section>
+				
+	<section label="Timestamp">
+		<item type="number" name="futureTimeToLive" label="Future Time to Live (seconds)" min="1" max="999999999" default="60"
+			note="The time in seconds in the future within which the Created time of an incoming Timestamp is valid">
+			<property name="futureTimeToLive" />
+		</item>
+	</section>
+		
 
 </config>
 

@@ -23,8 +23,12 @@
 
 package org.openspcoop2.security.message.wss4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.security.message.constants.EncryptionKeyTransportAlgorithm;
+import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.xml.XMLCostanti;
 
 /**     
@@ -35,6 +39,34 @@ import org.openspcoop2.security.message.xml.XMLCostanti;
  * @version $Rev: 14182 $, $Date: 2018-06-23 21:12:23 +0200 (Sat, 23 Jun 2018) $
  */
 public class SecurityProvider extends org.openspcoop2.security.message.xml.SecurityProvider  {
+
+	@Override
+	public List<String> getValues(String id) throws ProviderException {
+		if(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_DIGEST);
+			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_TEXT);
+			l.add(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_NONE);
+			return l;
+		}
+		else {
+			return super.getValues(id);
+		}
+	}
+
+	@Override
+	public List<String> getLabels(String id) throws ProviderException {
+		if(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_DIGEST.replace("Password", ""));
+			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_TEXT.replace("Password", ""));
+			l.add("Password "+SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE_NONE.replace("Password", ""));
+			return l;
+		}
+		else {
+			return super.getLabels(id);
+		}
+	}
 
 	@Override
 	public String getDefault(String id) throws ProviderException {

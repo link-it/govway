@@ -306,7 +306,9 @@ public class ValidationEngine {
 			ItemType itemToCheckType = itemToCheck.getItemType();
 			
 			// la condizione selected si puo' attivare su un elemento checkbox
-			if(!itemToCheckType.equals(ItemType.CHECKBOX)) {
+			if(!itemToCheckType.equals(ItemType.CHECKBOX)
+					&& !itemToCheckType.equals(ItemType.HIDDEN) // aggiunto hidden perche' puo' essere utile quando si disattiva un checbox ma non si vuole eliminare il codice
+					) {
 				throw new ValidationException("L'elemento Selected numero ["+(i+1)+"] della Condition numero ["
 						+indice+"] non e' valido: si riferisce ad un elemento ["+selected.getName()+"] che non e' di tipo CheckBox");
 			}
