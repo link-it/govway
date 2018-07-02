@@ -775,6 +775,23 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
+	public void aggiornaDescrizioneMappingFruizionePortaDelegata(MappingFruizionePortaDelegata mapping) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "aggiornaDescrizioneMappingFruizionePortaDelegata";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			DBMappingUtils.updateMappingFruizione(mapping.getTableId(), mapping.getDescrizione(), con, this.tipoDB);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public MappingFruizionePortaDelegata getMappingFruizionePortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getMappingFruizionePortaDelegata";

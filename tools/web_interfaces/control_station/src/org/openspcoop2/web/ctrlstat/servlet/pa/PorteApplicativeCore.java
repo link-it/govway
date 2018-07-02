@@ -860,6 +860,23 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
+	public void aggiornaDescrizioneMappingErogazionePortaApplicativa(MappingErogazionePortaApplicativa mapping) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "aggiornaDescrizioneMappingErogazionePortaApplicativa";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			DBMappingUtils.updateMappingErogazione(mapping.getTableId(), mapping.getDescrizione(), con, this.tipoDB);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public MappingErogazionePortaApplicativa getMappingErogazionePortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getMappingErogazionePortaApplicativa";

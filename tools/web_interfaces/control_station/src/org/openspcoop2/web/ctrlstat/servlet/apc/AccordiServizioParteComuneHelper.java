@@ -5698,53 +5698,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				while (it.hasNext()) {
 					org.openspcoop2.core.registry.Resource risorsa = it.next();
 
+					String labelParametroApcResourcesHttpMethodQualsiasi = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 					Vector<DataElement> e = new Vector<DataElement>();
-					String styleClass = "resource-method-block resource-method-default";
-					DataElement de = new DataElement();
-					if(risorsa.getMethod()==null) {
-						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI);
-					}
-					else {
-						de.setValue(risorsa.getMethod().toString());
-						
-						switch (risorsa.getMethod()) {
-						case DELETE:
-							styleClass = "resource-method-block resource-method-delete";
-							break;
-						case GET:
-							styleClass = "resource-method-block resource-method-get";
-							break;
-						case HEAD:
-							styleClass = "resource-method-block resource-method-head";
-							break;
-						case LINK:
-							styleClass = "resource-method-block resource-method-link";
-							break;
-						case OPTIONS:
-							styleClass = "resource-method-block resource-method-options";
-							break;
-						case PATCH:
-							styleClass = "resource-method-block resource-method-patch";
-							break;
-						case POST:
-							styleClass = "resource-method-block resource-method-post";
-							break;
-						case PUT:
-							styleClass = "resource-method-block resource-method-put";
-							break;
-						case TRACE:
-							styleClass = "resource-method-block resource-method-trace";
-							break;
-						case UNLINK:
-							styleClass = "resource-method-block resource-method-unlink";
-							break;
-						default:
-							styleClass = "resource-method-block resource-method-default";
-							break;
-						}
-					}
-					de.setLabelStyleClass(styleClass); 
-					de.setWidthPx(100);
+					//HTTP Method
+					DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi);
 					e.addElement(de);
 					
 					de = new DataElement();

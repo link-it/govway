@@ -1405,6 +1405,16 @@
 		    <forward name="porteDelegateWSResponsePropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
 		    <forward name="porteDelegateWSResponsePropertiesConfigError" path="/jsplib/info.jsp"/>
 		</action>
+		
+		<!--  Porte Delegate (Configurazione Change) -->
+
+        <action path="/porteDelegateConfigurazioneChange" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateConfigurazioneChange"
+            scope="request" validate="true">
+            <forward name="porteDelegateConfigurazioneChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateConfigurazioneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateConfigurazioneChangeError" path="/jsplib/info.jsp"/>
+        </action>
 		    
     	<!--  Porte Applicative -->
     
@@ -1857,6 +1867,16 @@
 		    <forward name="porteApplicativeWSResponsePropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
 		    <forward name="porteApplicativeWSResponsePropertiesConfigError" path="/jsplib/info.jsp"/>
 		</action>
+		
+		<!--  Porte Applicative (Configurazione Change) -->
+
+        <action path="/porteApplicativeConfigurazioneChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConfigurazioneChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConfigurazioneChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConfigurazioneChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConfigurazioneChangeError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

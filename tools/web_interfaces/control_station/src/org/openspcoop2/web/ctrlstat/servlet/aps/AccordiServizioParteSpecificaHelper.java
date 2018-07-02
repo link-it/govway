@@ -2162,6 +2162,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// NomeGruppo
 				DataElement de = new DataElement();
 				de.setValue(mapping.getDescrizione());
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE,pIdSogg, pIdPorta, pIdAsps);
 				e.addElement(de);
 				
 				// azioni
@@ -2993,6 +2994,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// NomeGruppo
 				DataElement de = new DataElement();
 				de.setValue(mapping.getDescrizione());
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 				e.addElement(de);
 				
 				// lista delle azioni
