@@ -328,8 +328,9 @@ div.voceMenu:hover {
 }
 
 .voceMenu a:hover{
+	font-weight: 600;
 	color: ${menu.element.hover.color};
-	text-decoration: none
+	text-decoration: none;
 }
 
 .spazioSottoTitolo {
