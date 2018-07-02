@@ -830,9 +830,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE = "govway_tracciamento.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL = "Log4J Dump";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE = "govway_dump.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL = "Log4J Dump Binario PD";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL = "Dump Binario PD";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE = "govway_dumpBinarioPD.log";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Log4J Dump Binario PA";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Dump Binario PA";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE = "govway_dumpBinarioPA.log";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "ID Cluster";

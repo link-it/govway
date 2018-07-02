@@ -168,6 +168,11 @@
 					                    	<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
 					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
 				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpMessaggiReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpMessaggiReqIngresso" value="Esporta" />
+										</h:commandLink>
 									</h:form>
 								</h:panelGroup>
 								
@@ -183,6 +188,51 @@
 				                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
 					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
 				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
+										</h:commandLink>
+									</h:form>
+								</h:panelGroup>
+								
+								<h:outputLabel id="req-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Ingresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"/>
+								<h:panelGroup id="panelGroupDumpBinarioReqIngresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}">
+									<h:form id="formDumpBinarioReqIngresso">
+										<a4j:htmlCommandLink id="dumpBinarioIngresso-iconLink"
+				                    						 styleClass="icon-details"
+				                    						 value="Visualizza"
+				                    						 rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"
+				                    						 action="dettaglioDump">
+				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+					                    	<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpBinarioReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpBinarioReqIngresso" value="Esporta" />
+										</h:commandLink>
+									</h:form>
+								</h:panelGroup>
+								
+								<h:outputLabel id="req-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Uscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"/>
+								<h:panelGroup id="panelGroupDumpBinarioReqUscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}">
+									<h:form id="formDumpBinarioReqUscita">
+										<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink"
+				                    						 styleClass="icon-details"
+				                    						 value="Visualizza"
+				                    						 rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"
+				                    						 action="dettaglioDump">
+				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+				                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpBinarioReqUscita" value="Esporta" />
+										</h:commandLink>
 									</h:form>
 								</h:panelGroup>
 								
@@ -350,6 +400,11 @@
 				                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
 					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
 				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpMessaggiResIngresso" value="Esporta" />
+										</h:commandLink>
 									</h:form>
 								</h:panelGroup>
 								
@@ -365,6 +420,51 @@
 				                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>
 					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
 				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpMessaggiResUscita" value="Esporta" />
+										</h:commandLink>
+									</h:form>
+								</h:panelGroup>
+								
+								<h:outputLabel id="res-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Ingresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"/>
+								<h:panelGroup id="panelGroupDumpBinarioResIngresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}">
+									<h:form id="formDumpBinarioResIngresso">
+										<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink"
+				                    						 styleClass="icon-details"
+				                    						 value="Visualizza"
+				                    						 rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"
+				                    						 action="dettaglioDump">
+				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+				                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpBinarioResIngresso" value="Esporta" />
+										</h:commandLink>
+									</h:form>
+								</h:panelGroup>
+								
+								<h:outputLabel id="res-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Uscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"/>
+								<h:panelGroup id="panelGroupDumpBinarioResUscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}">
+									<h:form id="formDumpBinarioResUscita">
+										<a4j:htmlCommandLink id="dumpBinarioResUscita-iconLink"
+				                    						 styleClass="icon-details"
+				                    						 value="Visualizza"
+				                    						 rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"
+				                    						 action="dettaglioDump">
+				                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+				                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+					                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+				                    	</a4j:htmlCommandLink>
+				                    	<h:outputLabel value="&#160;|&#160;" />	 
+				                    	<h:commandLink id="exportDumpBinarioResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+				                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+											<h:outputText id="outEsportaDumpBinarioResUscita" value="Esporta" />
+										</h:commandLink>
 									</h:form>
 								</h:panelGroup>
 								

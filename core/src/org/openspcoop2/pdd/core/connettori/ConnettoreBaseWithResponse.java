@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
+import java.util.Properties;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -117,7 +118,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void dumpResponse() throws Exception{
+	protected void dumpResponse(Properties trasporto) throws Exception{
 		if(this.isResponse!=null){
 			// Registro Debug.
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -132,6 +133,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") :\n"+bout.toString(),false);
 			// Creo nuovo inputStream
 			this.isResponse = new ByteArrayInputStream(bout.toByteArray());
+			
+			this.dumpBinarioRispostaIngresso(bout.toByteArray(), trasporto);
 		}
 		else{
 			this.logger.info("Messaggio ricevuto (ContentType:"+this.tipoRisposta+") senza contenuto nell'http-reply",false);

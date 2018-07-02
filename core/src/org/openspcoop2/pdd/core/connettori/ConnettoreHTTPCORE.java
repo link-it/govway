@@ -258,40 +258,6 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			
 			
-			// Impostazione Metodo
-			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
-			
-			
-			
-			// Preparazione messaggio da spedire
-			// Spedizione byte
-			if(httpBody.isDoOutput()){
-				if(this.debug)
-					this.logger.debug("Spedizione byte...");
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				if(this.isSoap && this.sbustamentoSoap){
-					if(this.debug)
-						this.logger.debug("Sbustamento...");
-					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
-				}else{
-					this.requestMsg.writeTo(out, true);
-				}
-				out.flush();
-				out.close();
-				if(this.debug){
-					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
-				}
-				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
-				if(httpRequest instanceof HttpEntityEnclosingRequestBase){
-					((HttpEntityEnclosingRequestBase)httpRequest).setEntity(httpEntity);
-				}
-				else{
-					throw new Exception("Tipo ["+httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
-				}
-			}
-
-			
-			
 			// Impostazione transfer-length
 			if(this.debug)
 				this.logger.debug("Impostazione transfer-length...");
@@ -451,6 +417,40 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			
 			
+			// Impostazione Metodo
+			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
+			
+			
+			
+			// Preparazione messaggio da spedire
+			// Spedizione byte
+			if(httpBody.isDoOutput()){
+				if(this.debug)
+					this.logger.debug("Spedizione byte...");
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				if(this.isSoap && this.sbustamentoSoap){
+					if(this.debug)
+						this.logger.debug("Sbustamento...");
+					TunnelSoapUtils.sbustamentoMessaggio(soapMessageRequest,out);
+				}else{
+					this.requestMsg.writeTo(out, true);
+				}
+				out.flush();
+				out.close();
+				if(this.debug){
+					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
+					
+					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, this.propertiesTrasporto);
+				}
+				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
+				if(httpRequest instanceof HttpEntityEnclosingRequestBase){
+					((HttpEntityEnclosingRequestBase)httpRequest).setEntity(httpEntity);
+				}
+				else{
+					throw new Exception("Tipo ["+httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+				}
+			}
+			
 			
 			// Imposto Configurazione
 			httpRequest.setConfig(requestConfigBuilder.build());
@@ -582,7 +582,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			this.initCheckContentTypeConfiguration();
 			
 			if(this.debug){
-				this.dumpResponse();
+				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 					
 			if(this.isRest){

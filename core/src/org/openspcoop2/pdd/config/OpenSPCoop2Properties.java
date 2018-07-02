@@ -1310,6 +1310,7 @@ public class OpenSPCoop2Properties {
 			
 			// Dump
 			this.isDumpAllAttachments();
+			this.isDumpBinario_registrazioneDatabase();
 			this.isDumpFallito_BloccaCooperazioneInCorso();
 			this.isDumpFallito_BloccoServiziPdD();
 
@@ -12591,6 +12592,30 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isDumpAllAttachments;
 	}
 	
+	private static Boolean isDumpBinario_registrazioneDatabase = null;
+	public boolean isDumpBinario_registrazioneDatabase(){
+
+		if(OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isDumpBinario_registrazioneDatabase;
+	}
+	
 	/**
 	 * Indica se in caso di errore di dump applicativo (es. salvataggio contenuto non riuscito) deve essere bloccata la gestione del messaggio e generato un errore al client
 	 *   
@@ -12649,6 +12674,7 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isDumpFallito_BloccoServiziPdD;
 	}
+
 	
 	
 	

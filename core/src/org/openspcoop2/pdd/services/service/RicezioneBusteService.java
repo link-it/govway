@@ -178,11 +178,18 @@ public class RicezioneBusteService  {
 			return;
 		}
 		
+		// PddContext from servlet
+		Object oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
+		PdDContext pddContextFromServlet = null;
+		if(oPddContextFromServlet!=null){
+			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
+		}
+		
 		// Configurazione Reader
 		DumpRaw dumpRaw = null;
 		try{
 			if(configPdDManager.dumpBinarioPA()){
-				dumpRaw = new DumpRaw(logCore,false);	
+				dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.APPLICATIVA);
 				req = new DumpRawConnectorInMessage(logCore, req);
 				res = new DumpRawConnectorOutMessage(logCore, res);
 			}
@@ -222,13 +229,7 @@ public class RicezioneBusteService  {
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);
-				
-		// PddContext from servlet
-		Object oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
-		PdDContext pddContextFromServlet = null;
-		if(oPddContextFromServlet!=null){
-			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
-		}
+		
 		
 		
 		
@@ -299,6 +300,7 @@ public class RicezioneBusteService  {
 			}
 			
 			if(dumpRaw!=null){
+				dumpRaw.setPddContext(context.getPddContext());
 				dumpRaw.serializeContext(context, protocol);
 			}
 			

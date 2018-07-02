@@ -360,16 +360,23 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "messaggio";
 
+			boolean dumpBinario = TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
+					TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
+					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
+					TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio());
+			String ext = "bin";
 			String contentType = this.dumpMessaggio.getContentType();
-			if(ContentTypeUtilities.isMultipart(contentType)){
-				contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+			if(dumpBinario == false) {
+				if(ContentTypeUtilities.isMultipart(contentType)){
+					contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+				}
+				ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 			}
-			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 
 			fileName+="."+ext;
 
 			// Setto Proprietà Export File
-			HttpUtilities.setOutputFile(response, true, fileName, this.dumpMessaggio.getContentType());
+			HttpUtilities.setOutputFile(response, true, fileName, contentType);
 
 			// Streams we will use to read, write the file bytes to our response
 			ByteArrayInputStream bis = null;

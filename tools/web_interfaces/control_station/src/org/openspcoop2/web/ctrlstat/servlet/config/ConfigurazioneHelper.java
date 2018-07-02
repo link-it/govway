@@ -4161,14 +4161,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoMsg);
-				de.setSelected(v);
-				de.setPostBack_viaPOST(true);
+			if(this.isModalitaAvanzata()) {
+				if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+					de.setType(DataElementType.SELECT);
+					de.setValues(tipoMsg);
+					de.setSelected(v);
+					de.setPostBack_viaPOST(true);
+				}
+				else{
+					de.setType(DataElementType.TEXT);
+					de.setValue(v);
+				}
 			}
-			else{
-				de.setType(DataElementType.TEXT);
+			else {
+				de.setType(DataElementType.HIDDEN);
 				de.setValue(v);
 			}
 			dati.addElement(de);

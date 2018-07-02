@@ -195,6 +195,12 @@ public class PddMonitorProperties {
 	public boolean isAttivoTransazioniExportHeader() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableHeaderInfo", true, true));
 	}
+	public boolean isAttivoTransazioniExportHeaderAsProperties() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.headers.asProperties", true, true));
+	}
+	public boolean isAttivoTransazioniExportContenutiAsProperties() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.contenuti.asProperties", true, true));
+	}
 	public boolean isTransazioniDownloadThrowExceptionMimeTypeNotFound() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.download.mime.throwExceptionIfMappingNotFound", true, true));
 	}

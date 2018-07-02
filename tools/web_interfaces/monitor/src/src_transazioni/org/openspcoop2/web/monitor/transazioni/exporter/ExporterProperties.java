@@ -38,6 +38,8 @@ public class ExporterProperties {
 	private boolean enableHeaderInfo;
 	private boolean mimeThrowExceptionIfNotFound;
 	private boolean abilitaMarcamentoTemporaleEsportazione;
+	private boolean headersAsProperties = true;
+	private boolean contenutiAsProperties = false;
 	
 	private Date dataInizio;
 	private Date dataFine;
@@ -90,5 +92,17 @@ public class ExporterProperties {
 	}
 	public void setDataFine(Date dataFine) {
 		this.dataFine = dataFine;
+	}
+	public boolean isHeadersAsProperties() {
+		return this.headersAsProperties;
+	}
+	public void setHeadersAsProperties(boolean headersAsProperties) {
+		this.headersAsProperties = headersAsProperties;
+	}
+	public boolean isContenutiAsProperties() {
+		return this.contenutiAsProperties;
+	}
+	public void setContenutiAsProperties(boolean contenutiAsProperties) {
+		this.contenutiAsProperties = contenutiAsProperties;
 	}
 }

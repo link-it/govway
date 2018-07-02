@@ -54,12 +54,16 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundExcep
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.core.transazioni.constants.DeleteState;
@@ -90,6 +94,8 @@ public class SingleFileExporter implements IExporter{
 	private boolean enableHeaderInfo = false;
 	private boolean mimeThrowExceptionIfNotFound = false;
 	private boolean abilitaMarcamentoTemporale = false;
+	private boolean headersAsProperties = true;
+	private boolean contenutiAsProperties = false;
 	
 	private ITransazioniService transazioniService;
 	private ITracciaDriver tracciamentoService;
@@ -108,6 +114,8 @@ public class SingleFileExporter implements IExporter{
 		this.exportContenuti = properties.isExportContenuti();
 		this.mimeThrowExceptionIfNotFound = properties.isMimeThrowExceptionIfNotFound();
 		this.abilitaMarcamentoTemporale = properties.isAbilitaMarcamentoTemporaleEsportazione();
+		this.headersAsProperties = properties.isHeadersAsProperties();
+		this.contenutiAsProperties = properties.isContenutiAsProperties();
 		
 		this.tracciamentoService = tracciamentoService;
 		this.transazioniService = transazioniService;
@@ -417,10 +425,12 @@ public class SingleFileExporter implements IExporter{
 				
 				//contenuti
 				
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_INGRESSO);
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_USCITA);
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_INGRESSO);
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_USCITA);
+				TipoMessaggio [] listTipiDaEsportare = TipoMessaggio.values();
+				for (int i = 0; i < listTipiDaEsportare.length; i++) {
+					exportContenuti(SingleFileExporter.log, t, this.zip, transazioneDir, this.transazioniService, listTipiDaEsportare[i],
+							this.headersAsProperties, this.contenutiAsProperties);
+				}
+
 			}
 
 		}//chiudo for transazioni
@@ -615,9 +625,17 @@ public class SingleFileExporter implements IExporter{
 		}
 	}
 	
-	private void exportContenuti(Transazione t, ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo) throws ExportException{
+	
+	public static void exportContenuti(Logger log, Transazione t, ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 
-		String contenutiDir = dirPath+"contenuti"+File.separator;
+		String contenutiDir = null;
+		if(dirPath!=null) {
+			contenutiDir = dirPath+"contenuti"+File.separator;
+		}
+		else {
+			contenutiDir = "";
+		}
 
 		DumpMessaggio dump=null;
 		try {
@@ -625,38 +643,129 @@ public class SingleFileExporter implements IExporter{
 		} catch (Exception e) {
 			String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
 			msg+=" Non sono riuscito a recuperare il messaggio di dump ("+e.getMessage()+")";
-			SingleFileExporter.log.error(msg,e);
+			log.error(msg,e);
 			throw new ExportException(msg, e);
 		}
 		if(dump!=null){
-			String dir = contenutiDir+tipo.toString().toLowerCase()+File.separator;
+			String dir = contenutiDir+tipo.name().toLowerCase()+File.separator;
 
-			//envelope
+			boolean dumpBinario = TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(dump.getTipoMessaggio()) ||
+					TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(dump.getTipoMessaggio()) ||
+					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(dump.getTipoMessaggio()) ||
+					TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(dump.getTipoMessaggio());
+			
+			//messaggio
 			if(dump.getBody()!=null){
 				try{
-					zip.putNextEntry(new ZipEntry(dir+"envelope.xml"));
+					
+					String ext = "bin";
+					if(dumpBinario==false) {
+						
+						String contentType = dump.getContentType();
+						if(ContentTypeUtilities.isMultipart(contentType)){
+							contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+						}
+						ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+					}
+					
+					zip.putNextEntry(new ZipEntry(dir+"message."+ext));
 					zip.write(dump.getBody());
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
 					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
 					msg+=" Non sono riuscito a creare il file envelope.xml ("+ioe.getMessage()+")";
-					SingleFileExporter.log.error(msg,ioe);
+					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
 			}
+			
+			// message info
+			StringBuffer bf = new StringBuffer();
+			bf.append("ContentType=").append(dump.getContentType()).append("\n");
+			if(dumpBinario==false) {
+				bf.append("MessageType=").append(dump.getFormatoMessaggio()).append("\n");
+			}
+			bf.append("TransactionId=").append(dump.getIdTransazione()).append("\n");
+			bf.append("Protocol=").append(dump.getProtocollo());
+			String nameManifest = "manifest.txt";
+			try{
+				zip.putNextEntry(new ZipEntry(dir+nameManifest));
+				zip.write(bf.toString().getBytes());
+				zip.flush();
+				zip.closeEntry();
+			}catch(Exception ioe){
+				String msg = "Si e' verificato un errore durante l'esportazione del manifest ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+				msg+=" Non sono riuscito a creare il file manifest.txt ("+ioe.getMessage()+")";
+				log.error(msg,ioe);
+				throw new ExportException(msg, ioe);
+			}
+			
+			// haeder messaggio
+			List<DumpMultipartHeader> headersMultiPart = dump.getMultipartHeaderList();
+			if(headersMultiPart==null || headersMultiPart.size()<=0) {
+				if(dump.getMultipartContentId()!=null || dump.getMultipartContentType()!=null || dump.getMultipartContentLocation()!=null) {
+					headersMultiPart = new ArrayList<>();
+					if(dump.getMultipartContentId()!=null) {
+						DumpMultipartHeader header = new DumpMultipartHeader();
+						header.setNome(HttpConstants.CONTENT_ID);
+						header.setValore(dump.getMultipartContentId());
+						headersMultiPart.add(header);
+					}
+					if(dump.getMultipartContentType()!=null) {
+						DumpMultipartHeader header = new DumpMultipartHeader();
+						header.setNome(HttpConstants.CONTENT_TYPE);
+						header.setValore(dump.getMultipartContentType());
+						headersMultiPart.add(header);
+					}
+					if(dump.getMultipartContentLocation()!=null) {
+						DumpMultipartHeader header = new DumpMultipartHeader();
+						header.setNome(HttpConstants.CONTENT_LOCATION);
+						header.setValore(dump.getMultipartContentLocation());
+						headersMultiPart.add(header);
+					}
+				}
+			}
+			if(headersMultiPart!=null && headersMultiPart.size()>0) {
+				try{
+					String name = "message_multipart_headers.";
+					if(headersAsProperties) {
+						name = name + "txt";
+					}
+					else {
+						name = name + "xml";
+					}
+					zip.putNextEntry(new ZipEntry(dir+name));
+					UtilityTransazioni.writeMultipartHeaderXml(dump.getMultipartHeaderList(), zip, headersAsProperties);
+					zip.flush();
+					zip.closeEntry();
+				}catch(Exception ioe){
+					String msg = "Si e' verificato un errore durante l'esportazione degli header del messaggio multipart ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					msg+=" Non sono riuscito a creare il file message_multipart_headers.xml ("+ioe.getMessage()+")";
+					log.error(msg,ioe);
+					throw new ExportException(msg, ioe);
+				}
+			}
+			
 			//header trasporto
 			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
 			if(headers.size()>0){
 				try{
-					zip.putNextEntry(new ZipEntry(dir+"header.xml"));
-					 UtilityTransazioni.writeHeadersTrasportoXml(headers,zip);
+					String name = "headers.";
+					if(headersAsProperties) {
+						name = name + "txt";
+					}
+					else {
+						name = name + "xml";
+					}
+					zip.putNextEntry(new ZipEntry(dir+name));
+					UtilityTransazioni.writeHeadersTrasportoXml(headers,zip,headersAsProperties);
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
-					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
-					msg+=" Non sono riuscito a creare il file header.xml ("+ioe.getMessage()+")";
-					SingleFileExporter.log.error(msg,ioe);
+					String msg = "Si e' verificato un errore durante l'esportazione degli header di trasporto ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
+					msg+=" Non sono riuscito a creare il file headers.xml ("+ioe.getMessage()+")";
+					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
 
@@ -665,15 +774,21 @@ public class SingleFileExporter implements IExporter{
 			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
 			if(contenuti.size()>0){
 				try{
-					zip.putNextEntry(new ZipEntry(dir+"contenuti.xml"));
-					
-					UtilityTransazioni.writeContenutiXml(contenuti,zip);
+					String name = "contents.";
+					if(contenutiAsProperties) {
+						name = name + "txt";
+					}
+					else {
+						name = name + "xml";
+					}
+					zip.putNextEntry(new ZipEntry(dir+name));
+					UtilityTransazioni.writeContenutiXml(contenuti,zip,contenutiAsProperties);
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
 					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
-					msg+=" Non sono riuscito a creare il file contenuti.xml ("+ioe.getMessage()+")";
-					SingleFileExporter.log.error(msg,ioe);
+					msg+=" Non sono riuscito a creare il file contents.xml ("+ioe.getMessage()+")";
+					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
 
@@ -685,22 +800,48 @@ public class SingleFileExporter implements IExporter{
 				try{
 					for (int i = 0; i < allegati.size(); i++) {
 						DumpAllegato allegato = allegati.get(i);
+						
 						String iEsimoAllegato=dir+"allegati"+File.separator+"allegato_"+(i+1)+File.separator;
-						zip.putNextEntry(new ZipEntry(iEsimoAllegato+"manifest.xml"));
+						String fileName = "allegato";
 						
-						// scrivo il contenuto dell'allegato
-						
-						UtilityTransazioni.writeManifestAllegatoXml(allegato, zip);
+						// header
+						String name = iEsimoAllegato+fileName+"_multipart_headers.";
+						if(headersAsProperties) {
+							name = name + "txt";
+						}
+						else {
+							name = name + "xml";
+						}
+						zip.putNextEntry(new ZipEntry(name));
+						List<DumpHeaderAllegato> headersAllegato = allegato.getHeaderList();
+						if(headersAllegato==null || headersAllegato.size()<=0) {
+							headersAllegato = new ArrayList<>();
+							if(allegato.getContentId()!=null) {
+								DumpHeaderAllegato header = new DumpHeaderAllegato();
+								header.setNome(HttpConstants.CONTENT_ID);
+								header.setValore(allegato.getContentId());
+								headersAllegato.add(header);
+							}
+							if(allegato.getContentType()!=null) {
+								DumpHeaderAllegato header = new DumpHeaderAllegato();
+								header.setNome(HttpConstants.CONTENT_TYPE);
+								header.setValore(allegato.getContentType());
+								headersAllegato.add(header);
+							}
+							if(allegato.getContentLocation()!=null) {
+								DumpHeaderAllegato header = new DumpHeaderAllegato();
+								header.setNome(HttpConstants.CONTENT_LOCATION);
+								header.setValore(allegato.getContentLocation());
+								headersAllegato.add(header);
+							}
+						}
+						UtilityTransazioni.writeAllegatoHeaderXml(headersAllegato,zip, headersAsProperties);
 						zip.flush();
 						zip.closeEntry();
-
+											
 						//salvo il file
-						String fileName = "allegato";
-
 						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
-
 						fileName+="."+ext;
-
 						zip.putNextEntry(new ZipEntry(iEsimoAllegato+fileName));
 						zip.write(allegato.getAllegato());	
 						zip.flush();
@@ -709,7 +850,7 @@ public class SingleFileExporter implements IExporter{
 				}catch(Exception ioe){
 					String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
 					msg+=" Errore durante la gestione degli allegati ("+ioe.getMessage()+")";
-					SingleFileExporter.log.error(msg,ioe);
+					log.error(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
 			}

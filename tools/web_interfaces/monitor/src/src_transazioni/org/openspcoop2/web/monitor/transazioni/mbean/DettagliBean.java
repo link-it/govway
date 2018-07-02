@@ -63,6 +63,7 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
+import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 
 /**
  * DettagliBean
@@ -96,6 +97,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private TransazioneBean originale;
 
 	private static Boolean enableHeaderInfo = null;
+	private static boolean headersAsProperties = true;
+	private static boolean contenutiAsProperties = false;
 
 	private transient IProtocolFactory<?> protocolFactory;
 	
@@ -107,18 +110,43 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasDumpRichiestaUscita = null;
 	private Boolean hasDumpRispostaIngresso = null;
 	private Boolean hasDumpRispostaUscita = null;
+	private Boolean hasDumpBinarioRichiestaIngresso = null;
+	private Boolean hasDumpBinarioRichiestaUscita = null;
+	private Boolean hasDumpBinarioRispostaIngresso = null;
+	private Boolean hasDumpBinarioRispostaUscita = null;
 	private Boolean hasHeaderTrasportoRichiestaIngresso = null;
 	private Boolean hasHeaderTrasportoRichiestaUscita = null;
 	private Boolean hasHeaderTrasportoRispostaIngresso = null;
 	private Boolean hasHeaderTrasportoRispostaUscita = null;
+	private Boolean hasHeaderTrasportoBinarioRichiestaIngresso = null;
+	private Boolean hasHeaderTrasportoBinarioRichiestaUscita = null;
+	private Boolean hasHeaderTrasportoBinarioRispostaIngresso = null;
+	private Boolean hasHeaderTrasportoBinarioRispostaUscita = null;
 	
+	private TipoMessaggio exportContenuto;
+		
+	public String getExportContenuto() {
+		if(this.exportContenuto == null){
+			return null;
+		}else{
+			return this.exportContenuto.toString();
+		}
+	}
+	public void setExportContenuto(String exportContenuto) {
+		if(exportContenuto != null )
+				this.exportContenuto = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(exportContenuto);
+	}
+
+
 	static {
 		try {
 
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
 
 			DettagliBean.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
-
+			DettagliBean.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
+			DettagliBean.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
+			
 		} catch (Exception e) {
 			DettagliBean.log
 			.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",
@@ -135,6 +163,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.driver  = govwayMonitorProperties.getDriverTracciamento();
 			
 			this.visualizzaDataAccettazione = govwayMonitorProperties.isAttivoTransazioniDataAccettazione();
+			
+			
 
 		} catch (Exception e) {
 			DettagliBean.log
@@ -556,6 +586,34 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		
 		return this.hasDumpRispostaUscita;
 	}
+	
+	public boolean getHasDumpBinarioRichiestaIngresso() {
+		if(this.hasDumpBinarioRichiestaIngresso == null)
+			this.hasDumpBinarioRichiestaIngresso  = this.getHasDump(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO); 
+		
+		return this.hasDumpBinarioRichiestaIngresso;
+	}
+ 	
+ 	public boolean getHasDumpBinarioRichiestaUscita() {
+		if(this.hasDumpBinarioRichiestaUscita == null)
+			this.hasDumpBinarioRichiestaUscita  = this.getHasDump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO); 
+		
+		return this.hasDumpBinarioRichiestaUscita;
+	}
+
+	public boolean getHasDumpBinarioRispostaIngresso() {
+		if(this.hasDumpBinarioRispostaIngresso == null)
+			this.hasDumpBinarioRispostaIngresso  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO); 
+		
+		return this.hasDumpBinarioRispostaIngresso;
+	}
+
+	public boolean getHasDumpBinarioRispostaUscita() {
+		if(this.hasDumpBinarioRispostaUscita == null)
+			this.hasDumpBinarioRispostaUscita  = this.getHasDump(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);  
+		
+		return this.hasDumpBinarioRispostaUscita;
+	}
 
 	private boolean getHasDump(TipoMessaggio tipo) {
 		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, tipo);
@@ -587,6 +645,34 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.hasHeaderTrasportoRispostaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_USCITA);  
 		
 		return this.hasHeaderTrasportoRispostaUscita;
+	}
+	
+	public boolean getHasHeaderTrasportoBinarioRichiestaIngresso() {
+		if(this.hasHeaderTrasportoBinarioRichiestaIngresso == null)
+			this.hasHeaderTrasportoBinarioRichiestaIngresso = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioRichiestaIngresso;
+	}
+	
+	public boolean getHasHeaderTrasportoBinarioRichiestaUscita() {
+		if(this.hasHeaderTrasportoBinarioRichiestaUscita == null)
+			this.hasHeaderTrasportoBinarioRichiestaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioRichiestaUscita;
+	}
+
+	public boolean getHasHeaderTrasportoBinarioRispostaIngresso() {
+		if(this.hasHeaderTrasportoBinarioRispostaIngresso == null)
+			this.hasHeaderTrasportoBinarioRispostaIngresso = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioRispostaIngresso;
+	}
+
+	public boolean getHasHeaderTrasportoBinarioRispostaUscita() {
+		if(this.hasHeaderTrasportoBinarioRispostaUscita == null)
+			this.hasHeaderTrasportoBinarioRispostaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioRispostaUscita;
 	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
@@ -864,6 +950,68 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			DettagliBean.log.error(e.getMessage(), e);
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del token info");
 		}
+		return null;
+	}
+	
+	
+	public String exportContenuti() {
+
+		try {
+			
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			// Then we have to get the Response where to write our file
+			HttpServletResponse response = (HttpServletResponse) context
+					.getExternalContext().getResponse();
+
+			// Be sure to retrieve the absolute path to the file with the
+			// required
+			// method
+			// filePath = pathToTheFile;
+
+			// This is another important attribute for the header of the
+			// response
+			// Here fileName, is a String with the name that you will suggest as
+			// a
+			// name to save as
+			// I use the same name as it is stored in the file system of the
+			// server.
+
+			String dirPath = null; // per non far produrre la directory contenuti
+			String fileName = this.exportContenuto.name().toLowerCase();
+						
+			if (this.isRisposta)
+				fileName = fileName+".zip";
+			else
+				fileName = fileName+".zip";
+
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, fileName);
+			
+			// committing status and headers
+			response.setStatus(200);
+			response.flushBuffer();
+
+
+			ZipOutputStream zip = new ZipOutputStream(
+					response.getOutputStream());
+			
+			SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
+					DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);
+			
+			zip.flush();
+			zip.close();
+
+			context.responseComplete();
+
+			// End of the method
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().responseComplete();
+			DettagliBean.log.error(e.getMessage(), e);
+			MessageUtils
+			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei contenuti.");
+		}
+
 		return null;
 	}
 }

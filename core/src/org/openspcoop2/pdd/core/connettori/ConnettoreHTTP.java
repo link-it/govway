@@ -640,6 +640,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					out.write(bout.toByteArray());
 					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
 					bout.close();
+					
+					this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, this.propertiesTrasporto);
+					
 				}else{
 					if(this.isSoap && this.sbustamentoSoap){
 						if(this.debug)
@@ -839,7 +842,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			this.initCheckContentTypeConfiguration();
 			
 			if(this.debug){
-				this.dumpResponse();
+				this.dumpResponse(this.propertiesTrasportoRisposta);
 			}
 			
 			if(this.isRest){

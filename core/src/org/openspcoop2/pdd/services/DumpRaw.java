@@ -29,6 +29,10 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorInMessage;
@@ -36,6 +40,7 @@ import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessag
 import org.openspcoop2.pdd.services.core.AbstractContext;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
@@ -58,10 +63,25 @@ public class DumpRaw {
 	private boolean pd;
 	private String idTransaction;
 	private Logger logDump;
+	private Dump dump;
+	private URLProtocolContext urlProtocolContext;
 	
-	public DumpRaw(Logger log,boolean isPD) throws ConnectorException{
+	private IDSoggetto dominio;
+	private String modulo;
+	private TipoPdD tipoPdD;
+	
+	public DumpRaw(Logger log,IDSoggetto dominio,String modulo,TipoPdD tipoPdD) throws ConnectorException{
 		this.log = log;
-		this.pd = isPD;
+		
+		switch (tipoPdD) {
+		case DELEGATA:
+			this.pd = true;
+			break;
+		default:
+			this.pd = false;
+			break;
+		}
+		
 		if(this.pd){
 			this.logDump = OpenSPCoop2Logger.getLoggerOpenSPCoopDumpBinarioPD();
 		}
@@ -71,6 +91,16 @@ public class DumpRaw {
 		if(this.logDump==null){
 			throw new ConnectorException("Logger per la registrazione dei dati binari non inizializzato");
 		}
+		
+		this.dominio = dominio;
+		this.modulo = modulo;
+		this.tipoPdD = tipoPdD;
+	}
+	
+	public void setPddContext(PdDContext pddContext) throws DumpException {
+		if(OpenSPCoop2Properties.getInstance().isDumpBinario_registrazioneDatabase()) {
+			this.dump = new Dump(this.dominio, this.modulo, this.tipoPdD, pddContext);
+		}	
 	}
 		
 	public void serializeContext(AbstractContext context,String protocol){
@@ -168,9 +198,9 @@ public class DumpRaw {
 			this.log.error("Request.getIdentity error: "+t.getMessage(),t);
 		}
 		
-		URLProtocolContext urlProtocolContext = null;
+		this.urlProtocolContext = null;
 		try{
-			urlProtocolContext = req.getURLProtocolContext();
+			this.urlProtocolContext = req.getURLProtocolContext();
 		}catch(Throwable t){
 			this.bfRequest.append("Request.getURLProtocolContext error: "+t.getMessage()+"\n");
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
@@ -189,8 +219,19 @@ public class DumpRaw {
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
 		
-		this.serializeRequest(contentType, contentLength, credential, urlProtocolContext, req.getRequestAsString(),
+		this.serializeRequest(contentType, contentLength, credential, this.urlProtocolContext, req.getRequestAsString(),
 				req.getParsingRequestErrorAsString());
+		
+		if(this.dump!=null) {
+			byte [] rawMessage = req.getRequestAsByte();
+			if(rawMessage!=null){
+				try {
+					this.dump.dumpBinarioRichiestaIngresso(rawMessage, this.urlProtocolContext);
+				}catch(Throwable t){
+					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
+				}
+			}
+		}
 	}
 	
 	public void serializeRequest(String contentType, Integer contentLength, Credential credential, URLProtocolContext urlProtocolContext, String rawMessage,
@@ -360,6 +401,7 @@ public class DumpRaw {
 		this.bfRequest.append("------ End-Request ("+this.idTransaction+") ------\n\n");
 		
 		this.logDump.info(this.bfRequest.toString());
+				
 	}
 	
 	public void serializeResponse(DumpRawConnectorOutMessage res) {
@@ -367,6 +409,16 @@ public class DumpRaw {
 		this.serializeResponse(res.getResponseAsString(),res.getParsingResponseErrorAsString(),
 				res.getTrasporto(),res.getContentLenght(),res.getContentType(),res.getStatus());
 		
+		if(this.dump!=null) {
+			byte [] rawMessage = res.getResponseAsByte();
+			if(rawMessage!=null){
+				try {
+					this.dump.dumpBinarioRispostaUscita(rawMessage, this.urlProtocolContext, res.getTrasporto());
+				}catch(Throwable t){
+					this.log.error("Log DumpBinarioRichiestaIngresso error: "+t.getMessage(),t);
+				}
+			}
+		}
 	}
 	
 	public void serializeResponse(String rawMessage,String parsingError,Properties transportHeader,Integer contentLength, String contentType, Integer status) {

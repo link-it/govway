@@ -197,6 +197,8 @@ public class ConnettoreJMS extends ConnettoreBase {
 				try{
 					String contentTypeRichiesta = this.requestMsg.getContentType();
 					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+new String(consegna),false);
+					
+					this.dumpBinarioRichiestaUscita(consegna, this.location, this.propertiesTrasporto);
 				}catch(Exception e){
 					this.logger.error("DebugMode, log del messaggio inviato non riuscito",e);
 				}

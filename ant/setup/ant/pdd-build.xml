@@ -86,6 +86,38 @@
 			<param name="token" value="org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository"/>
 			<param name="value" value="${work_dir}/https/erogazioni"/>
 		</antcall>
+
+		<!-- DEBUG -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.transazioni.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.transazioni.stateful.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.eventi.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.resources.fileSystemRecovery.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.debug"/>
+			<param name="value" value="false"/>
+		</antcall>
 		
 		<!-- 
 		  PROTOCOL DEFAULT

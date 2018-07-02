@@ -159,7 +159,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		DumpRaw dumpRaw = null;
 		try{
 			if(configPdDManager.dumpBinarioPD()){
-				dumpRaw = new DumpRaw(logCore,true);
+				dumpRaw = new DumpRaw(logCore,requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA);
 			}
 		}catch(Throwable e){
 			String msgError = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
@@ -249,6 +249,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		try{
 			// viene generato l'UUID
 			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			if(dumpRaw!=null){
+				dumpRaw.setPddContext(context.getPddContext());
+			}
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());

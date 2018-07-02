@@ -175,11 +175,23 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			return;
 		}
 			
+		// PddContext from servlet
+		Object oPddContextFromServlet = null;
+		try{
+			oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
+		}catch(Exception e){
+			logCore.error("req.getAttribute("+CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP+") error: "+e.getMessage(),e);
+		}
+		PdDContext pddContextFromServlet = null;
+		if(oPddContextFromServlet!=null){
+			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
+		}
+		
 		// DumpRaw
 		DumpRaw dumpRaw = null;
 		try{
 			if(configPdDManager.dumpBinarioPD()){
-				dumpRaw = new DumpRaw(logCore,true);
+				dumpRaw = new DumpRaw(logCore, requestInfo.getIdentitaPdD(), idModulo, TipoPdD.DELEGATA);
 				req = new DumpRawConnectorInMessage(logCore, req);
 				res = new DumpRawConnectorOutMessage(logCore, res);
 			}
@@ -218,19 +230,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				this.generatoreErrore, serviceIdentificationReader,msgDiag)==false){
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
-		req.updateRequestInfo(requestInfo);
-			
-		// PddContext from servlet
-		Object oPddContextFromServlet = null;
-		try{
-			oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
-		}catch(Exception e){
-			logCore.error("req.getAttribute("+CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP+") error: "+e.getMessage(),e);
-		}
-		PdDContext pddContextFromServlet = null;
-		if(oPddContextFromServlet!=null){
-			pddContextFromServlet = (PdDContext) oPddContextFromServlet;
-		}		
+		req.updateRequestInfo(requestInfo);	
 
 		
 		
@@ -285,6 +285,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}
 			
 			if(dumpRaw!=null){
+				dumpRaw.setPddContext(context.getPddContext());
 				dumpRaw.serializeContext(context, protocol);
 			}
 			

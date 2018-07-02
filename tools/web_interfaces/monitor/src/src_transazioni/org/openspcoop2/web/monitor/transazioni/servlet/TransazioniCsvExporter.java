@@ -67,6 +67,8 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 	private static Boolean enableHeaderInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
+	private boolean headersAsProperties = true;
+	private boolean contenutiAsProperties = false;
 	private transient ITracciaDriver tracciamentoService = null;
 	private transient IDiagnosticDriver diagnosticiService = null; 
 
@@ -77,6 +79,8 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 			TransazioniCsvExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			TransazioniCsvExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
+			this.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
+			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
 			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
@@ -218,7 +222,9 @@ public class TransazioniCsvExporter extends HttpServlet{
 			prop.setExportTracce(exportTracce);
 			prop.setMimeThrowExceptionIfNotFound(TransazioniCsvExporter.mimeThrowExceptionIfNotFound);
 			prop.setFormato(formato);
-			prop.setColonneSelezionate(colonneSelezionateFromSession); 
+			prop.setColonneSelezionate(colonneSelezionateFromSession);
+			prop.setHeadersAsProperties(this.headersAsProperties);
+			prop.setContenutiAsProperties(this.contenutiAsProperties);
 
 			SingleCsvFileExporter sfe = new SingleCsvFileExporter(response.getOutputStream(), prop, service,
 					this.tracciamentoService, this.diagnosticiService,null);

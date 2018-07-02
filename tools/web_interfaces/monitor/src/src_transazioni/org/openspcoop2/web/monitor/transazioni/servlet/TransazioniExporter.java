@@ -64,6 +64,8 @@ public class TransazioniExporter extends HttpServlet{
 
 	private static Boolean enableHeaderInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
+	private boolean headersAsProperties = true;
+	private boolean contenutiAsProperties = false;
 	private transient ITracciaDriver tracciamentoService = null;
 	private transient IDiagnosticDriver diagnosticiService = null; 
 
@@ -74,6 +76,8 @@ public class TransazioniExporter extends HttpServlet{
 
 			TransazioniExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
 			TransazioniExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
+			this.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
+			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
 			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
@@ -207,6 +211,8 @@ public class TransazioniExporter extends HttpServlet{
 			prop.setExportDiagnostici(exportDiagnostici);
 			prop.setExportTracce(exportTracce);
 			prop.setMimeThrowExceptionIfNotFound(TransazioniExporter.mimeThrowExceptionIfNotFound);
+			prop.setHeadersAsProperties(this.headersAsProperties);
+			prop.setContenutiAsProperties(this.contenutiAsProperties);
 
 			SingleFileExporter sfe = new SingleFileExporter(response.getOutputStream(), prop, service,
 					this.tracciamentoService, this.diagnosticiService,null);

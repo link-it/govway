@@ -142,6 +142,9 @@ public class Dump {
 //			DumpConfigurazione dumpConfigurazione) throws DumpException{
 //		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,dumpConfigurazione);
 //	}
+	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext) throws DumpException{ // dump binario
+		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,null);
+	}
 	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
 		this(dominio, modulo, null, null, null, tipoPdD, pddContext,statoRichiesta,statoRisposta,dumpConfigurazione);

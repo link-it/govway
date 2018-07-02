@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
@@ -37,10 +38,12 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
+import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -138,6 +141,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	public Date getDataAccettazioneRisposta(){
     	return this.dataAccettazioneRisposta;
     }
+    
+    protected Dump dump;
 	
 
 	protected ConnettoreBase(){
@@ -222,6 +227,19 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.outRequestContext = request.getOutRequestContext();
 		this.msgDiagnostico = request.getMsgDiagnostico();
 
+		// Dump
+		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase()) {
+			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(this.outRequestContext.getProtocolFactory().getProtocol());
+			try{
+				this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), this.outRequestContext.getPddContext());
+			}catch(Exception e){
+				this.eccezioneProcessamento = e;
+				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);
+				this.errore = "Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e);
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -487,5 +505,21 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     private boolean isNotNullMessageException(Throwable tmp){
     	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
+    }
+    
+    
+    private InfoConnettoreUscita infoConnettoreUscita = null;
+    protected void dumpBinarioRichiestaUscita(byte[]raw,String location, Properties trasporto) throws DumpException {
+    	if(this.dump!=null) {
+			this.infoConnettoreUscita = new InfoConnettoreUscita();
+			this.infoConnettoreUscita.setLocation(location);
+			this.infoConnettoreUscita.setPropertiesTrasporto(trasporto);
+			this.dump.dumpBinarioRichiestaUscita(raw, this.infoConnettoreUscita);
+    	}
+    }
+    protected void dumpBinarioRispostaIngresso(byte[]raw,Properties trasportoRisposta) throws DumpException {
+    	if(this.dump!=null) {
+			this.dump.dumpBinarioRispostaIngresso(raw, this.infoConnettoreUscita, trasportoRisposta);
+    	}
     }
 }

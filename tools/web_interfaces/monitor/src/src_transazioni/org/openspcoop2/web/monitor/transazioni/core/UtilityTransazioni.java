@@ -21,9 +21,30 @@
  */
 package org.openspcoop2.web.monitor.transazioni.core;
 
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.text.MessageFormat;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
+import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
 import org.openspcoop2.web.monitor.core.converter.EsitoConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -65,27 +86,6 @@ import org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Sogge
 import org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.SoggettoMittente;
 import org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.SoggettoRemoto;
 import org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.TransazioniIdentificate;
-
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.text.MessageFormat;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.transazioni.DumpAllegato;
-import org.openspcoop2.core.transazioni.DumpContenuto;
-import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
-import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
-import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
-import org.openspcoop2.utils.xml.XMLUtils;
-import org.openspcoop2.protocol.utils.EsitiProperties;
 
 /**
  * UtilityTransazioni
@@ -344,7 +344,7 @@ public class UtilityTransazioni {
 		 */
 
 		JAXBContext jc = JAXBContext
-				.newInstance("org.openspcoop2.web.monitor.transazioni.core.manifest");
+				.newInstance(org.openspcoop2.web.monitor.transazioni.core.manifest.ObjectFactory.class.getPackage().getName());
 
 		Marshaller marshaller = jc.createMarshaller();
 		// marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -1180,7 +1180,7 @@ public class UtilityTransazioni {
 		 */
 
 		JAXBContext jc = JAXBContext
-				.newInstance("org.openspcoop2.web.monitor.transazioni.core.search");
+				.newInstance(org.openspcoop2.web.monitor.transazioni.core.search.ObjectFactory.class.getPackage().getName());
 
 		Marshaller marshaller = jc.createMarshaller();
 
@@ -1376,81 +1376,180 @@ public class UtilityTransazioni {
 	}
 
 	public static void writeHeadersTrasportoXml(
-			List<DumpHeaderTrasporto> headers, OutputStream out)
-			throws JAXBException {
+			List<DumpHeaderTrasporto> headers, OutputStream out, boolean asProperties)
+			throws Exception {
 
-		JAXBContext jc = JAXBContext
-				.newInstance("org.openspcoop2.web.monitor.transazioni.core.header");
-
-		Marshaller marshaller = jc.createMarshaller();
-
-		org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory();
-
-		org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType();
-
-		if (headers != null) {
-			for (DumpHeaderTrasporto dumpHeaderTrasporto : headers) {
-				HeaderType header = new HeaderType();
-				header.setNome(dumpHeaderTrasporto.getNome());
-				header.setValore(dumpHeaderTrasporto.getValore());
-
-				transazione.getHeader().add(header);
+		if(asProperties) {
+			StringBuffer bf = new StringBuffer();
+			if (headers != null) {
+				for (DumpHeaderTrasporto dumpHeaderTrasporto : headers) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append(dumpHeaderTrasporto.getNome());
+					bf.append("=");
+					bf.append(dumpHeaderTrasporto.getValore());
+				}
+			}
+			if(bf.length()>0) {
+				out.write(bf.toString().getBytes());
 			}
 		}
+		else {
+			JAXBContext jc = JAXBContext
+					.newInstance(org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory.class.getPackage().getName());
+	
+			Marshaller marshaller = jc.createMarshaller();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType();
+	
+			if (headers != null) {
+				for (DumpHeaderTrasporto dumpHeaderTrasporto : headers) {
+					HeaderType header = new HeaderType();
+					header.setNome(dumpHeaderTrasporto.getNome());
+					header.setValore(dumpHeaderTrasporto.getValore());
+	
+					transazione.getHeader().add(header);
+				}
+			}
+	
+			marshaller.marshal(objFactory.createTransazione(transazione), out);
+		}
+	}
+	
+	public static void writeMultipartHeaderXml(
+			List<DumpMultipartHeader> headers, OutputStream out, boolean asProperties)
+			throws Exception {
 
-		marshaller.marshal(objFactory.createTransazione(transazione), out);
+		if(asProperties) {
+			StringBuffer bf = new StringBuffer();
+			if (headers != null) {
+				for (DumpMultipartHeader dumpHeaderTrasporto : headers) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append(dumpHeaderTrasporto.getNome());
+					bf.append("=");
+					bf.append(dumpHeaderTrasporto.getValore());
+				}
+			}
+			if(bf.length()>0) {
+				out.write(bf.toString().getBytes());
+			}
+		}
+		else {
+			JAXBContext jc = JAXBContext
+					.newInstance(org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory.class.getPackage().getName());
+	
+			Marshaller marshaller = jc.createMarshaller();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType();
+	
+			if (headers != null) {
+				for (DumpMultipartHeader dumpHeaderTrasporto : headers) {
+					HeaderType header = new HeaderType();
+					header.setNome(dumpHeaderTrasporto.getNome());
+					header.setValore(dumpHeaderTrasporto.getValore());
+	
+					transazione.getHeader().add(header);
+				}
+			}
+	
+			marshaller.marshal(objFactory.createTransazione(transazione), out);
+		}
+	}
+	
+	public static void writeAllegatoHeaderXml(
+			List<DumpHeaderAllegato> headers, OutputStream out, boolean asProperties)
+			throws Exception {
+
+		if(asProperties) {
+			StringBuffer bf = new StringBuffer();
+			if (headers != null) {
+				for (DumpHeaderAllegato dumpHeaderTrasporto : headers) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append(dumpHeaderTrasporto.getNome());
+					bf.append("=");
+					bf.append(dumpHeaderTrasporto.getValore());
+				}
+			}
+			if(bf.length()>0) {
+				out.write(bf.toString().getBytes());
+			}
+		}
+		else {
+			JAXBContext jc = JAXBContext
+					.newInstance(org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory.class.getPackage().getName());
+	
+			Marshaller marshaller = jc.createMarshaller();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.header.ObjectFactory();
+	
+			org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.header.TransazioneType();
+	
+			if (headers != null) {
+				for (DumpHeaderAllegato dumpHeaderTrasporto : headers) {
+					HeaderType header = new HeaderType();
+					header.setNome(dumpHeaderTrasporto.getNome());
+					header.setValore(dumpHeaderTrasporto.getValore());
+	
+					transazione.getHeader().add(header);
+				}
+			}
+	
+			marshaller.marshal(objFactory.createTransazione(transazione), out);
+		}
 	}
 
 	public static void writeContenutiXml(List<DumpContenuto> contenuti,
-			OutputStream out) throws Exception {
-		ContentType content = new ContentType();
-
-		JAXBContext jc = JAXBContext
-				.newInstance("org.openspcoop2.web.monitor.transazioni.core.contents");
-
-		Marshaller marshaller = jc.createMarshaller();
-
-		org.openspcoop2.web.monitor.transazioni.core.contents.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.contents.ObjectFactory();
-
-		if (contenuti != null) {
-			for (DumpContenuto dumpContenuto : contenuti) {
-				RisorsaType risorsa = new RisorsaType();
-
-				risorsa.setNome(dumpContenuto.getNome());
-				risorsa.setValore(TransactionContentUtils.getDumpContenutoValue(dumpContenuto));
-
-				content.getRisorsa().add(risorsa);
+			OutputStream out, boolean asProperties) throws Exception {
+		
+		if(asProperties) {
+			StringBuffer bf = new StringBuffer();
+			if (contenuti != null) {
+				for (DumpContenuto dumpContenuto : contenuti) {
+					if(bf.length()>0) {
+						bf.append("\n");
+					}
+					bf.append(dumpContenuto.getNome());
+					bf.append("=");
+					bf.append(TransactionContentUtils.getDumpContenutoValue(dumpContenuto));
+				}
+			}
+			if(bf.length()>0) {
+				out.write(bf.toString().getBytes());
 			}
 		}
-
-		marshaller.marshal(objFactory.createTransazione(content), out);
+		else {
+			ContentType content = new ContentType();
+	
+			JAXBContext jc = JAXBContext
+					.newInstance(org.openspcoop2.web.monitor.transazioni.core.contents.ObjectFactory.class.getPackage().getName());
+	
+			Marshaller marshaller = jc.createMarshaller();
+	
+			org.openspcoop2.web.monitor.transazioni.core.contents.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.contents.ObjectFactory();
+	
+			if (contenuti != null) {
+				for (DumpContenuto dumpContenuto : contenuti) {
+					RisorsaType risorsa = new RisorsaType();
+	
+					risorsa.setNome(dumpContenuto.getNome());
+					risorsa.setValore(TransactionContentUtils.getDumpContenutoValue(dumpContenuto));
+	
+					content.getRisorsa().add(risorsa);
+				}
+			}
+	
+			marshaller.marshal(objFactory.createTransazione(content), out);
+		}
 
 	}
 
-	public static void writeManifestAllegatoXml(DumpAllegato allegato,	OutputStream out) throws Exception {
-
-		JAXBContext jc = JAXBContext
-				.newInstance("org.openspcoop2.web.monitor.transazioni.core.manifest_allegato");
-
-		Marshaller marshaller = jc.createMarshaller();
-
-		org.openspcoop2.web.monitor.transazioni.core.manifest_allegato.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.manifest_allegato.ObjectFactory();
-
-		org.openspcoop2.web.monitor.transazioni.core.manifest_allegato.TransazioneType transazione = new org.openspcoop2.web.monitor.transazioni.core.manifest_allegato.TransazioneType();
-
-		if (allegato.getId() != null) {
-			transazione.setAttachId(allegato.getId());
-		}
-
-		if (StringUtils.isNotEmpty(allegato.getContentLocation())) {
-			transazione.setLocation(allegato.getContentLocation());
-		}
-
-		if (StringUtils.isNotEmpty(allegato.getContentType())) {
-			transazione.setMimeType(allegato.getContentType());
-		}
-
-		marshaller.marshal(objFactory.createTransazione(transazione), out);
-
-	}
 }
