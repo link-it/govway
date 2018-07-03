@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -180,7 +181,7 @@ public class ImbustamentoRisposteMDB implements MessageDrivenBean, MessageListen
 			/* ------------  Lettura parametri dalla coda associato al MDB 'ImbustamentoRisposte'  ------------- */
 
 			//Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(ImbustamentoRisposte.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA, ImbustamentoRisposte.ID_MODULO);
 
 			//	Ricezione Messaggio
 			msgDiag.mediumDebug("Ricezione richiesta (ImbustamentoRisposteMessage)...");
@@ -191,6 +192,12 @@ public class ImbustamentoRisposteMDB implements MessageDrivenBean, MessageListen
 			}  catch(javax.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getObject(ImbustamentoRisposteMessage)");
 				return; 
+			}
+			if(imbustamentoRisposteMsg.getRichiestaApplicativa()!=null && imbustamentoRisposteMsg.getRichiestaApplicativa().getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(imbustamentoRisposteMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome());
+			}
+			else if(imbustamentoRisposteMsg.getRichiestaDelegata()!=null && imbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(TipoPdD.DELEGATA, imbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
 			}
 			
 			// ID associato alla richiesta

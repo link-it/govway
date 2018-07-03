@@ -474,7 +474,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}
 	}
 	private MsgDiagnostico getMsgDiagnostico(){
-		MsgDiagnostico msgDiag = new MsgDiagnostico(IntegrationManager.ID_MODULO);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(IntegrationManager.ID_MODULO);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		return msgDiag;
 	}
@@ -1023,7 +1023,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),
 					IntegrationManager.ID_MODULO,idMessaggio,
 					fruitore,idServizio,
-					TipoPdD.INTEGRATION_MANAGER,pddContext,
+					TipoPdD.INTEGRATION_MANAGER,null,pddContext,
 					stato.getStatoRichiesta(),stato.getStatoRisposta(),
 					ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
 			dumpApplicativo.dumpIntegrationManagerGetMessage(consegnaMessage);

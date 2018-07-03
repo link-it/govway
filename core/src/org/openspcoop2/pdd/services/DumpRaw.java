@@ -97,9 +97,9 @@ public class DumpRaw {
 		this.tipoPdD = tipoPdD;
 	}
 	
-	public void setPddContext(PdDContext pddContext) throws DumpException {
+	public void setPddContext(String interfaceName, PdDContext pddContext) throws DumpException {
 		if(OpenSPCoop2Properties.getInstance().isDumpBinario_registrazioneDatabase()) {
-			this.dump = new Dump(this.dominio, this.modulo, this.tipoPdD, pddContext);
+			this.dump = new Dump(this.dominio, this.modulo, this.tipoPdD, interfaceName, pddContext);
 		}	
 	}
 		

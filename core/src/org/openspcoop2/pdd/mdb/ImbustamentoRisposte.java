@@ -118,10 +118,20 @@ public class ImbustamentoRisposte extends GenericLib {
 		RichiestaApplicativa richiestaApplicativa = imbustamentoRisposteMsg.getRichiestaApplicativa();
 		//	Identificatore Porta Delegata
 		RichiestaDelegata richiestaDelegata = imbustamentoRisposteMsg.getRichiestaDelegata();
+		
+		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
+		if(msgDiag.getPorta()==null) {
+			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+			}
+			else if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome());
+			}
+		}
+		
 		// ID della risposta
 		String idMessageResponse = imbustamentoRisposteMsg.getIDMessageResponse(); // ID associato a questa risposta
 		// Altri parametri:
-		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		String idModuloInAttesa = null; 
 		IDSoggetto identitaPdD = null;
 		String scenarioCooperazione = null; 
@@ -185,7 +195,6 @@ public class ImbustamentoRisposte extends GenericLib {
 		//			 Aggiornamento Informazioni
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.setIdMessaggioRisposta(idMessageResponse);
-		msgDiag.setDelegata(false);
 		msgDiag.setFruitore(soggettoFruitore);
 		if(servizioHeaderIntegrazione!=null){
 			msgDiag.setServizio(servizioHeaderIntegrazione);

@@ -125,7 +125,7 @@ public class TimerGestoreBusteNonRiscontrateImpl implements SessionBean, TimedOb
 		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		try {
-			this.msgDiag = new MsgDiagnostico(TimerGestoreBusteNonRiscontrate.ID_MODULO);
+			this.msgDiag = MsgDiagnostico.newInstance(TimerGestoreBusteNonRiscontrate.ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_RISCONTRI_RICEVUTE);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_RISCONTRI_RICEVUTE, TimerGestoreBusteNonRiscontrate.ID_MODULO);
 		} catch (Exception e) {

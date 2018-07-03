@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -187,7 +188,7 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 			/* ------------  Lettura parametri della richiesta  ------------- */
 
 			//Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(ConsegnaContenutiApplicativi.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,ConsegnaContenutiApplicativi.ID_MODULO);
 
 			//	Ricezione Messaggio
 			msgDiag.mediumDebug("Ricezione richiesta (ConsegnaContenutiApplicativiMessage)...");	
@@ -198,6 +199,12 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 			}	catch(javax.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getObject(ConsegnaContenutiApplicativiMessage)");
 				return; 
+			}
+			if(consegnaContenutiApplicativiMsg.getRichiestaApplicativa()!=null && consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome());
+			}
+			else if(consegnaContenutiApplicativiMsg.getRichiestaDelegata()!=null && consegnaContenutiApplicativiMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(TipoPdD.DELEGATA, consegnaContenutiApplicativiMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
 			}
 			
 			// ID associato alla richiesta

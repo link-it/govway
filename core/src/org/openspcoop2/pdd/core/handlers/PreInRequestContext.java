@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
@@ -64,6 +65,9 @@ public class PreInRequestContext {
 	
 	/** NotifierInputStreamParameter */
 	private NotifierInputStreamParams notifierInputStreamParams;
+	
+	/** RequestInfo */
+	RequestInfo requestInfo;
 	
 	
 	public PreInRequestContext(PdDContext pddContext){
@@ -121,5 +125,13 @@ public class PreInRequestContext {
 
 	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
+	}
+	
+	public RequestInfo getRequestInfo() {
+		return this.requestInfo;
+	}
+
+	public void setRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
 	}
 }

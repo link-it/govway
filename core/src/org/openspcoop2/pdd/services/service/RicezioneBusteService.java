@@ -217,11 +217,9 @@ public class RicezioneBusteService  {
 		}
 		
 		// Logger dei messaggi diagnostici
-		MsgDiagnostico msgDiag = new MsgDiagnostico(idModulo);
+		String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,idModulo,nomePorta);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
-		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
-			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
-		}
 		
 		// Aggiorno RequestInfo
 		if(RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
@@ -300,7 +298,7 @@ public class RicezioneBusteService  {
 			}
 			
 			if(dumpRaw!=null){
-				dumpRaw.setPddContext(context.getPddContext());
+				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 				dumpRaw.serializeContext(context, protocol);
 			}
 			
@@ -340,6 +338,7 @@ public class RicezioneBusteService  {
 			preInRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
+			preInRequestContext.setRequestInfo(requestInfo);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
 			transportContext.put(PreInRequestContext.SERVLET_REQUEST, req);
 			transportContext.put(PreInRequestContext.SERVLET_RESPONSE, res);

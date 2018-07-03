@@ -102,7 +102,7 @@ public class TimerConsegnaContenutiApplicativiThread extends Thread{
 		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		try {
-			this.msgDiag = new MsgDiagnostico(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+			this.msgDiag = MsgDiagnostico.newInstance(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, ID_MODULO);
 		} catch (Exception e) {

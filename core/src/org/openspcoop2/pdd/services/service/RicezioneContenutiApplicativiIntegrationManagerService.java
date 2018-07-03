@@ -193,7 +193,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		
 		// Logger dei messaggi diagnostici
-		MsgDiagnostico msgDiag = new MsgDiagnostico(IntegrationManager.ID_MODULO);
+		String nomePorta = portaDelegata;
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		
@@ -250,7 +251,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			// viene generato l'UUID
 			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
 			if(dumpRaw!=null){
-				dumpRaw.setPddContext(context.getPddContext());
+				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 			}
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
@@ -304,6 +305,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			preInRequestContext.setTipoPorta(TipoPdD.DELEGATA);
 			preInRequestContext.setIdModulo(idModulo);
 			preInRequestContext.setProtocolFactory(protocolFactory);
+			preInRequestContext.setRequestInfo(requestInfo);
 			Hashtable<String, Object> transportContext = new Hashtable<String, Object>();
 			HttpServletConnectorInMessage httpIn = null;
 			try{
@@ -551,7 +553,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					}
 					
 					Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
-							IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),
+							IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,portaDelegata,context.getPddContext(),
 							null,null,
 							dumpConfig);
 					dumpApplicativo.dumpRichiestaIngressoByIntegrationManagerError(msg.getMessage(),urlProtocolContext);

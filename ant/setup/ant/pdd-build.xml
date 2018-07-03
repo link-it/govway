@@ -351,8 +351,8 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.built-in.out-response"/>
-					<param name="value" value="faultCodeOpV1"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.out-response"/> <!-- Attenzione a non sovrascrivere i valori originali definiti nel file del prodotto -->
+					<param name="value" value="faultCodeOpV1,transazioni"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -375,12 +375,12 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.built-in.init"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.init"/>  <!-- Attenzione a non sovrascrivere i valori originali definiti nel file del prodotto -->
 					<param name="value" value="as4"/>
 				</antcall>	
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.built-in.exit"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.exit"/>  <!-- Attenzione a non sovrascrivere i valori originali definiti nel file del prodotto -->
 					<param name="value" value="as4"/>
 				</antcall>	
 			</then>
@@ -392,8 +392,8 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.built-in.pre-in-request"/>
-					<param name="value" value="fatturapa"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.pre-in-request"/>  <!-- Attenzione a non sovrascrivere i valori originali definiti nel file del prodotto -->
+					<param name="value" value="transazioni,fatturapa"/>
 				</antcall>	
 			</then>
 		</if>

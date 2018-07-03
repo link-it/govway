@@ -557,7 +557,7 @@
 								<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 									rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 								
-								<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'PortaDelegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'PortaApplicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
+								<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Porta Delegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Porta Applicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
 									rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
 								<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
 								

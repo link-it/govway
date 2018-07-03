@@ -94,7 +94,7 @@ public class TimerGestorePuliziaMessaggiAnomaliThread extends Thread{
 		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		try {
-			this.msgDiag = new MsgDiagnostico(TimerGestorePuliziaMessaggiAnomali.ID_MODULO);
+			this.msgDiag = MsgDiagnostico.newInstance(TimerGestorePuliziaMessaggiAnomali.ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_MESSAGGI_INCONSISTENTI);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_INCONSISTENTI, TimerGestorePuliziaMessaggiAnomali.ID_MODULO);
 		} catch (Exception e) {

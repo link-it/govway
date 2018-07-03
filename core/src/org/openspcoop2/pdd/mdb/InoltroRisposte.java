@@ -342,7 +342,7 @@ public class InoltroRisposte extends GenericLib{
 		// Tracciamento
 		org.openspcoop2.pdd.logger.Tracciamento tracciamento;
 		try {
-			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPorta,
+			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPorta,msgDiag.getPorta(),
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1057,7 +1057,7 @@ public class InoltroRisposte extends GenericLib{
 				if(responseHttpReply!=null ){
 					DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pa);
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroRisposte.ID_MODULO,idMessageRequest,
-							soggettoMittente,idServizio,tipoPorta,pddContext,
+							soggettoMittente,idServizio,tipoPorta,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseHttpReply, infoConnettoreUscita, headerTrasportoReply);

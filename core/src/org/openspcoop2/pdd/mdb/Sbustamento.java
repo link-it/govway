@@ -160,12 +160,18 @@ public class Sbustamento extends GenericLib{
 		/* Intrepretazione informazioni */
 		RichiestaApplicativa richiestaApplicativa = sbustamentoMsg.getRichiestaApplicativa();
 	
+		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
+		if(msgDiag.getPorta()==null) {
+			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+			}
+		}
+		
 		IDServizio idServizio = richiestaApplicativa.getIDServizio();
 		IDSoggetto idSoggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
 		java.util.List<Eccezione> errors = sbustamentoMsg.getErrors();
 		boolean isMessaggioErroreProtocollo = sbustamentoMsg.isMessaggioErroreProtocollo();
 		boolean bustaDiServizio = sbustamentoMsg.getIsBustaDiServizio();
-		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		IDSoggetto identitaPdD = sbustamentoMsg.getRichiestaApplicativa().getDominio();
 		
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
@@ -213,7 +219,6 @@ public class Sbustamento extends GenericLib{
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.setFruitore(idSoggettoFruitore);
 		msgDiag.setServizio(idServizio);
-		msgDiag.setDelegata(false);
 
 
 

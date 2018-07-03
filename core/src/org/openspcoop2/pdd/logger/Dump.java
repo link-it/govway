@@ -142,15 +142,15 @@ public class Dump {
 //			DumpConfigurazione dumpConfigurazione) throws DumpException{
 //		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,dumpConfigurazione);
 //	}
-	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext) throws DumpException{ // dump binario
-		this(dominio, modulo, null, null, null, tipoPdD, pddContext,null,null,null);
+	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext) throws DumpException{ // dump binario
+		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,null,null,null);
 	}
-	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
+	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
-		this(dominio, modulo, null, null, null, tipoPdD, pddContext,statoRichiesta,statoRisposta,dumpConfigurazione);
+		this(dominio, modulo, null, null, null, tipoPdD, nomePorta, pddContext,statoRichiesta,statoRisposta,dumpConfigurazione);
 	}
 	public Dump(IDSoggetto dominio, String modulo, String idMessaggio, IDSoggetto fruitore, IDServizio servizio, 
-			TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
+			TipoPdD tipoPdD, String nomePorta, PdDContext pddContext,IState statoRichiesta,IState statoRisposta,
 			DumpConfigurazione dumpConfigurazione) throws DumpException{
 		this.dominio = dominio;
 		this.idModulo = modulo;
@@ -172,7 +172,7 @@ public class Dump {
 		this.statoRisposta = statoRisposta;
 		this.dumpConfigurazione = dumpConfigurazione;
 		
-		this.msgDiagErroreDump = new MsgDiagnostico(dominio,modulo,this.statoRichiesta,this.statoRisposta);
+		this.msgDiagErroreDump = MsgDiagnostico.newInstance(this.tipoPdD,dominio,modulo,nomePorta,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		
 		this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);

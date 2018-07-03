@@ -245,7 +245,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	 */
 	public QueueManager(String jndiName,java.util.Properties context) throws OpenSPCoop2ConfigurationException{
 
-		this.msgDiag = new MsgDiagnostico("WrapperQueueManager");
+		this.msgDiag = MsgDiagnostico.newInstance("WrapperQueueManager");
 		try {
 			GestoreJNDI jndi = new GestoreJNDI(context);
 

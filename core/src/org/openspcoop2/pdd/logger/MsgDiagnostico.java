@@ -33,7 +33,13 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -139,9 +145,37 @@ public class MsgDiagnostico {
 	public Hashtable<String, String> getKeywordLogPersonalizzati() {
 		return this.keywordLogPersonalizzati;
 	}
+	
+	/** Informazioni sulla porta */
+	private String porta;
+	private boolean delegata;
+	@SuppressWarnings("unused")
+	private TipoPdD tipoPdD;
+	private Severita severitaPorta;
 
 	/** Stati */
 	private List<IState> states = new ArrayList<IState>();
+	
+	
+	
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, IState ... state) {
+		return new MsgDiagnostico(tipoPdD, idSoggettoDominio, modulo, nomePorta, state);
+	}
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,String nomePorta, IState ... state) {
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, nomePorta, state);
+	}
+	public static MsgDiagnostico newInstance(TipoPdD tipoPdD,String modulo,IState ... state) {
+		return new MsgDiagnostico(tipoPdD, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, state);
+	}
+	public static MsgDiagnostico newInstance(IDSoggetto idSoggettoDominio, String modulo,IState ... state) {
+		return new MsgDiagnostico(null, idSoggettoDominio, modulo, null, state);
+	}
+	public static MsgDiagnostico newInstance(String modulo,IState ... state) {
+		return new MsgDiagnostico(null, OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null), modulo, null, state);
+	}
+	public static MsgDiagnostico newInstance() {
+		return new MsgDiagnostico();
+	}
 	
 	/**
 	 * Costruttore. 
@@ -151,7 +185,8 @@ public class MsgDiagnostico {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public MsgDiagnostico(IDSoggetto idSoggettoDominio,String modulo,IState ... state) {
+	private MsgDiagnostico(TipoPdD tipoPdD,IDSoggetto idSoggettoDominio, String modulo,String nomePorta, IState ... state) {
+		
 		this.idSoggettoDominio = idSoggettoDominio;
 		this.idModulo = modulo;
 		this.loggerMsgDiagnostico = OpenSPCoop2Logger.loggerMsgDiagnostico;
@@ -190,23 +225,75 @@ public class MsgDiagnostico {
 		this.diagnosticoBuilder = new DiagnosticoBuilder(this.protocolFactory); 
 		// Impostazione filtri
 		// Il filtro viene effettuato a livello di programma.
+		
+		this.porta = nomePorta;
+		this.tipoPdD = tipoPdD;
+		if(tipoPdD!=null) {
+			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+				this.delegata = true;
+			}
+			else {
+				this.delegata = false;
+			}
+		}
+		this.setPorta();
 			
 	}
 	
-	/**
-	 * Costruttore. 
-	 *
-	 * @param modulo Funzione che richiede il logger
-	 * @throws ProtocolException 
-	 * 
-	 */
-	public MsgDiagnostico(String modulo,IState  ...  state) {
-		this(OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(null),modulo,state);
-	}
-	public MsgDiagnostico(){
+	private MsgDiagnostico(){
 		this.msgDiagPropertiesReader = MsgDiagnosticiProperties.getInstance();
 	}
 	
+	private void setPorta() {
+		if(this.porta!=null) {
+			IState [] state = null;
+			if(this.states!=null && this.states.size()>0) {
+				state = this.states.toArray(new IState[1]);
+			}
+			if(this.delegata) {
+				try {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(this.porta);
+					PortaDelegata pd = ConfigurazionePdDManager.getInstance(state).getPortaDelegata_SafeMethod(idPD);
+					if(pd!=null && pd.getTracciamento()!=null) {
+						this.severitaPorta = pd.getTracciamento().getSeverita();
+					}
+				}
+				catch(Throwable e){}
+			}
+			else {
+				try {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(this.porta);
+					PortaApplicativa pa = ConfigurazionePdDManager.getInstance(state).getPortaApplicativa_SafeMethod(idPA);
+					if(pa!=null && pa.getTracciamento()!=null) {
+						this.severitaPorta = pa.getTracciamento().getSeverita();
+					}
+				}
+				catch(Throwable e){}
+			}
+		}
+	}
+
+	public void updatePorta(String porta) {
+		this.updatePorta(null, porta);
+	}
+	public void updatePorta(TipoPdD tipoPdD, String porta) {
+		if(tipoPdD!=null) {
+			this.tipoPdD = tipoPdD;
+			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+				this.delegata = true;
+			}
+			else {
+				this.delegata = false;
+			}
+		}
+		this.porta = porta;
+		this.setPorta();
+	}
+	public String getPorta() {
+		return this.porta;
+	}
 
 	public void updateState(IState ... state){
 		this.states.clear();
@@ -323,8 +410,6 @@ public class MsgDiagnostico {
 	/** -----------------Impostazione Identificatori nei messaggi ---------------- */
 	private IDSoggetto fruitore;
 	private IDServizio servizio;
-	private String porta;
-	private boolean delegata;
 	private String servizioApplicativo;
 	private String idCorrelazioneApplicativa;
 	private String idCorrelazioneRisposta;
@@ -336,13 +421,6 @@ public class MsgDiagnostico {
 		this.servizio = servizio;
 	}
 
-	public void setPorta(String porta) {
-		this.porta = porta;
-	}
-
-	public void setDelegata(boolean delegata) {
-		this.delegata = delegata;
-	}
 	public void setServizioApplicativo(String servizioApplicativo) {
 		this.servizioApplicativo = servizioApplicativo;
 	}
@@ -770,6 +848,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		try{
 			// Data
@@ -987,6 +1068,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		try{
 			
@@ -1121,6 +1205,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		
 		try{
@@ -1252,6 +1339,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		try{
 			
@@ -1381,6 +1471,9 @@ public class MsgDiagnostico {
 		if(this.configurazionePdDReader!=null && this.configurazionePdDReader.isInitializedConfigurazionePdDReader()){
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
 		}
 		
 		try{
@@ -1513,6 +1606,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		try{
 			
@@ -1643,6 +1739,9 @@ public class MsgDiagnostico {
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
 		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
+		}
 		
 		try{
 			
@@ -1770,6 +1869,9 @@ public class MsgDiagnostico {
 		if(this.configurazionePdDReader!=null && this.configurazionePdDReader.isInitializedConfigurazionePdDReader()){
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
 		}
 		
 		try{
@@ -1899,6 +2001,9 @@ public class MsgDiagnostico {
 		if(this.configurazionePdDReader!=null && this.configurazionePdDReader.isInitializedConfigurazionePdDReader()){
 			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeverita_msgDiagnostici());
 			severitaLog4JRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(this.configurazionePdDReader.getSeveritaLog4J_msgDiagnostici());
+		}
+		if(this.severitaPorta!=null) {
+			severitaRichiestaPdD = this.msgDiagPropertiesReader.getValoreFiltroFromValoreOpenSPCoop2(LogLevels.toOpenSPCoop2(this.severitaPorta.getValue()));
 		}
 		
 		try{

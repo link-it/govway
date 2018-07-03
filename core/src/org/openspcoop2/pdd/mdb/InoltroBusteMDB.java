@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -196,7 +197,7 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 			/* ------------  Lettura parametri della richiesta  ------------- */
 
 			// Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(InoltroBuste.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, InoltroBuste.ID_MODULO);
 
 			//	Ricezione Messaggio
 			msgDiag.mediumDebug("Ricezione richiesta (InoltroBusteMessage)...");
@@ -208,6 +209,9 @@ public class InoltroBusteMDB implements MessageDrivenBean, MessageListener {
 				msgDiag.logErroreGenerico(e,"received.getObject(InoltroBusteMessage)");
 				return; 
 			}	
+			if(inoltroBusteMsg.getRichiestaDelegata()!=null && inoltroBusteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(inoltroBusteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());
+			}
 			
 			// ID associato alla richiesta 
 			String idMessageRequest = null;

@@ -133,7 +133,7 @@ public class TimerGestoreMessaggiImpl implements SessionBean, TimedObject {
 		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		try {
-			this.msgDiag = new MsgDiagnostico(TimerGestoreMessaggi.ID_MODULO);
+			this.msgDiag = MsgDiagnostico.newInstance(TimerGestoreMessaggi.ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_MESSAGGI);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI, TimerGestoreMessaggi.ID_MODULO);
 		} catch (Exception e) {

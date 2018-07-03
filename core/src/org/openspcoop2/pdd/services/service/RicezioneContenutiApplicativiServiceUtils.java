@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.services.service;
 
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -30,12 +31,14 @@ import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
+import org.openspcoop2.protocol.basic.registry.IdentificazionePortaDelegata;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -118,6 +121,23 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory()));
 				}catch(Exception e){
 					logCore.debug("Azione non trovata: "+e.getMessage(),e);
+				}
+				
+				try{
+					if(idServizio.getAzione()!=null) {
+						PortaDelegata pd = ConfigurazionePdDManager.getInstance().getPortaDelegata(idPD);
+						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, null, pd);
+						if(identificazione.find(idServizio.getAzione())) {
+							IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
+							if(idPD_action!=null) {
+								protocolContext.setInterfaceName(idPD_action.getNome());
+								msgDiag.updatePorta(idPD_action.getNome());
+								idPD = idPD_action;
+							}
+						}
+					}
+				}catch(Exception e){
+					logCore.debug("Gestione porta specifica per azione fallita: "+e.getMessage(),e);
 				}
 				
 				// updateInformazioniCooperazione

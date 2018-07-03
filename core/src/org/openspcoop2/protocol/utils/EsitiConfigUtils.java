@@ -25,10 +25,8 @@ package org.openspcoop2.protocol.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
-import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.slf4j.Logger;
 
 /**     
  * EsitiConfigUtils
@@ -39,8 +37,8 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
  */
 public class EsitiConfigUtils {
 
-	public static List<String> getRegistrazioneEsiti(Tracciamento config, Logger log, StringBuffer bf) throws Exception{
-		if(config==null || config.getEsiti()==null || "".equals(config.getEsiti().trim())){
+	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf) throws Exception{
+		if(esitiConfig==null || "".equals(esitiConfig.trim())){
 			
 			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
 			EsitiProperties esiti = EsitiProperties.getInstance(log);
@@ -67,7 +65,7 @@ public class EsitiConfigUtils {
 		}
 		else{
 			
-			String [] tmp = config.getEsiti().split(",");
+			String [] tmp = esitiConfig.split(",");
 			if(tmp!=null && tmp.length>0){
 				List<String> esitiDaRegistrare = new ArrayList<String>();
 				for (int i = 0; i < tmp.length; i++) {

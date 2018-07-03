@@ -298,7 +298,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
-		
+				
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
 		try{
@@ -320,6 +320,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		RichiestaDelegata richiestaDelegata = consegnaContenutiApplicativiMsg.getRichiestaDelegata();
 		Busta bustaRichiesta = consegnaContenutiApplicativiMsg.getBusta(); // in caso di richiesta delegata serve per il profilo asincrono
 
+		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
+		if(msgDiag.getPorta()==null) {
+			if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(tipoPdD, richiestaApplicativa.getIdPortaApplicativa().getNome());
+			}
+			else if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(TipoPdD.DELEGATA, richiestaDelegata.getIdPortaDelegata().getNome());
+			}
+		}
+		
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI);
 		if(bustaRichiesta!=null){
 			msgDiag.addKeywords(bustaRichiesta, true);
@@ -350,7 +360,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			tipoServizio = bustaRichiesta.getTipoServizio();
 			azione = bustaRichiesta.getAzione(); // in caso di richiesta delegata serve per il profilo asincrono
 		}
-		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
 		String idModuloInAttesa = null; // in caso di richiesta delegata serve per il profilo asincrono
 		IDSoggetto identitaPdD = null; 
 		IDSoggetto soggettoFruitore = null; 
@@ -477,7 +486,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}else{
 			msgDiag.setServizio(idServizio);
 		}
-		msgDiag.setDelegata(false);
 		msgDiag.setServizioApplicativo(servizioApplicativo);
 
 		// Calcolo Profilo di Collaborazione
@@ -1663,7 +1671,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			Dump dumpApplicativoRichiesta = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDumpRichiesta,
-					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
+					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
 			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessage, outRequestContext.getConnettore());
@@ -2050,7 +2058,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				//	dump applicativo
 				if(responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
-							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
+							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());

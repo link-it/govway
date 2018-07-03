@@ -82,7 +82,7 @@ public class TimerThresholdThread extends Thread{
 	public TimerThresholdThread() throws ThresholdException{
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerThresholdThread.ID_MODULO);
+		this.msgDiag = MsgDiagnostico.newInstance(TimerThresholdThread.ID_MODULO);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_THRESHOLD);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD, TimerThresholdThread.ID_MODULO);
 		

@@ -106,7 +106,7 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 	public TimerMonitoraggioRisorseThread() {
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerMonitoraggioRisorseThread.ID_MODULO);
+		this.msgDiag = MsgDiagnostico.newInstance(TimerMonitoraggioRisorseThread.ID_MODULO);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_MONITORAGGIO_RISORSE);
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_MONITORAGGIO_RISORSE, TimerMonitoraggioRisorseThread.ID_MODULO);
 		

@@ -144,8 +144,11 @@ public class Imbustamento extends GenericLib{
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO);
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessageRequest);
-		msgDiag.setDelegata(true);
-		msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
+		if(msgDiag.getPorta()==null) {
+			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome());
+			}
+		}
 		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.addKeywords(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());

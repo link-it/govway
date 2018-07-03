@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -184,7 +185,7 @@ public class InoltroRisposteMDB implements MessageDrivenBean, MessageListener {
 			/* ------------  Lettura parametri della richiesta  ------------- */
 
 			// Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(InoltroRisposte.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA, InoltroRisposte.ID_MODULO);
 
 			//	Ricezione Messaggio
 			msgDiag.mediumDebug("Ricezione richiesta (InoltroRisposteMessage)...");
@@ -195,7 +196,7 @@ public class InoltroRisposteMDB implements MessageDrivenBean, MessageListener {
 			}	catch(javax.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getObject(InoltroRisposteMessage)");
 				return; 
-			}	
+			}
 			
 			// ID associato alla richiesta
 			String idMessageRequest = null; //(serve anche per una validazione sincrona)

@@ -152,11 +152,18 @@ public class SbustamentoRisposte extends GenericLib {
 		
 		/* Processamento informazioni */
 		RichiestaDelegata richiestaDelegata = sbustamentoRisposteMsg.getRichiestaDelegata();
+		
+		TipoPdD tipoPdD = TipoPdD.DELEGATA;
+		if(msgDiag.getPorta()==null) {
+			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(tipoPdD, richiestaDelegata.getIdPortaDelegata().getNome());
+			}
+		}
+		
 		richiestaDelegata.setProfiloCollaborazione(bustaRisposta.getProfiloDiCollaborazione(),bustaRisposta.getProfiloDiCollaborazioneValue()); // update value
 		java.util.List<Eccezione> errors = sbustamentoRisposteMsg.getErrors();
 		boolean isMessaggioErroreProtocollo = sbustamentoRisposteMsg.isMessaggioErroreProtocollo();
 		boolean bustaDiServizio = sbustamentoRisposteMsg.getIsBustaDiServizio();
-		TipoPdD tipoPdD = TipoPdD.DELEGATA;
 		IDSoggetto identitaPdD = sbustamentoRisposteMsg.getRichiestaDelegata().getDominio();
 		
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
@@ -205,8 +212,6 @@ public class SbustamentoRisposte extends GenericLib {
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.setIdMessaggioRisposta(idResponse);
 		msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessageRequest);
-		msgDiag.setDelegata(true);
-		msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
 		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 		msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());

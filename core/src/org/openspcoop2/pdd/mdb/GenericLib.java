@@ -87,7 +87,7 @@ public abstract class GenericLib {
 
 	protected MsgDiagnostico initMsgDiagnostico(IOpenSPCoopState openspcoop_state) throws OpenSPCoopStateException {
 		try {
-			return new MsgDiagnostico(this.idModulo,openspcoop_state.getStatoRichiesta(),openspcoop_state.getStatoRisposta());
+			return MsgDiagnostico.newInstance(this.idModulo,openspcoop_state.getStatoRichiesta(),openspcoop_state.getStatoRisposta());
 		} catch (Exception e) {
 			this.log.error("Riscontrato Errore durante l'inizializzazione del MsgDiagnostico",e);
 			//if(this.msgDiag!=null)

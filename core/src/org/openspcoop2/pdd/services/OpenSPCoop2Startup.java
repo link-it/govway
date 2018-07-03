@@ -866,7 +866,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 			/* -------------- Inizializzo MsgDiagnostico -------------------- */
-			MsgDiagnostico msgDiag = new MsgDiagnostico(OpenSPCoop2Startup.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(OpenSPCoop2Startup.ID_MODULO);
 
 
 			
@@ -2347,7 +2347,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				System.out.println(propertiesReader.getPddDetailsForLog()+" avviata correttamente in "+secondStarter+" secondi.");
 			}
 			msgDiag.logPersonalizzato("pdd");
-			MsgDiagnostico msgIM = new MsgDiagnostico(IntegrationManager.ID_MODULO);
+			MsgDiagnostico msgIM = MsgDiagnostico.newInstance(IntegrationManager.ID_MODULO);
 			msgIM.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP);
 			msgIM.addKeyword(CostantiPdD.KEY_VERSIONE_PORTA, propertiesReader.getPddDetailsForLog());
 			msgIM.addKeyword(CostantiPdD.KEY_TEMPO_AVVIO, secondStarter+" secondi");

@@ -205,7 +205,11 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 	// Ritorna un MsgDiagnostico generator
 	private MsgDiagnostico buildMsgDiagnostico(PreInRequestContext context) throws HandlerException{
 		try{
-			MsgDiagnostico msgDiag = new MsgDiagnostico(context.getIdModulo());
+			String nomePorta = null;
+			if(context.getRequestInfo()!=null && context.getRequestInfo().getProtocolContext()!=null) {
+				nomePorta = context.getRequestInfo().getProtocolContext().getInterfaceName();
+			}
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),context.getIdModulo(),nomePorta);
 			msgDiag.setPddContext(context.getPddContext(), context.getProtocolFactory());
 			if(org.openspcoop2.core.constants.TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);

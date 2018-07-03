@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -192,7 +193,7 @@ public class SbustamentoMDB implements MessageDrivenBean, MessageListener {
 			/* ------------  Lettura parametri dalla coda associato al MDB 'Sbustamento'  ------------- */
 
 			//Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(Sbustamento.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,Sbustamento.ID_MODULO);
 
 			msgDiag.mediumDebug("Ricezione richiesta (SbustamentoMessage)...");	
 			ObjectMessage received = (ObjectMessage)message;
@@ -202,6 +203,9 @@ public class SbustamentoMDB implements MessageDrivenBean, MessageListener {
 			}	catch(javax.jms.JMSException e){ 
 				msgDiag.logErroreGenerico(e,"received.getObject(SbustamentoMessage)");
 				return; 
+			}
+			if(sbustamentoMsg.getRichiestaApplicativa()!=null && sbustamentoMsg.getRichiestaApplicativa().getIdPortaApplicativa()!=null) {
+				msgDiag.updatePorta(sbustamentoMsg.getRichiestaApplicativa().getIdPortaApplicativa().getNome());
 			}
 			
 			// ID associato alla richiesta

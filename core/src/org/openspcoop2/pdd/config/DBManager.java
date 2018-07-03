@@ -109,7 +109,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 	 */
 	public DBManager(String jndiName,java.util.Properties context) throws Exception {
 
-		this.msgDiag = new MsgDiagnostico("DBManager");
+		this.msgDiag = MsgDiagnostico.newInstance("DBManager");
 
 		GestoreJNDI jndi = new GestoreJNDI(context);
 		Object oSearch = jndi.lookup(jndiName);

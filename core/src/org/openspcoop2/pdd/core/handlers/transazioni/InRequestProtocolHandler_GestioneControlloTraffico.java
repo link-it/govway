@@ -518,7 +518,16 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	private MsgDiagnostico buildMsgDiagnostico(InRequestProtocolContext context) throws HandlerException{
 		MsgDiagnostico msgDiag = null;
 		try{
-			msgDiag = new MsgDiagnostico(context.getIdModulo());
+			String nomePorta = null;
+			if(context.getIntegrazione()!=null) {
+				if(context.getIntegrazione().getIdPA()!=null) {
+					nomePorta = context.getIntegrazione().getIdPA().getNome();
+				}
+				else if(context.getIntegrazione().getIdPD()!=null) {
+					nomePorta = context.getIntegrazione().getIdPD().getNome();
+				}
+			}
+			msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),context.getIdModulo(),nomePorta);
 			msgDiag.setPddContext(context.getPddContext(), context.getProtocolFactory());
 			if(org.openspcoop2.core.constants.TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);

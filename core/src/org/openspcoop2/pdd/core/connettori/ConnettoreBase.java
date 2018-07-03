@@ -230,8 +230,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// Dump
 		if(this.openspcoopProperties.isDumpBinario_registrazioneDatabase()) {
 			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(this.outRequestContext.getProtocolFactory().getProtocol());
+			String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
 			try{
-				this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), this.outRequestContext.getPddContext());
+				this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), nomePorta, this.outRequestContext.getPddContext());
 			}catch(Exception e){
 				this.eccezioneProcessamento = e;
 				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);

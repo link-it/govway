@@ -495,7 +495,7 @@ public class RicezioneContenutiApplicativi {
 					OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
 					if (msgRichiesta!=null) {
 						
-						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 						dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
 								inRequestContext.getConnettore().getUrlProtocolContext());
 					}
@@ -578,7 +578,7 @@ public class RicezioneContenutiApplicativi {
 				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
 				if (msgRisposta!=null) {
 					
-					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());
@@ -597,7 +597,8 @@ public class RicezioneContenutiApplicativi {
 	
 	private Dump getDump(ConfigurazionePdDManager configurazionePdDReader,
 			IProtocolFactory<?> protocolFactory,
-			HashMap<String, Object> internalObjects) throws DumpException, DriverRegistroServiziException {
+			HashMap<String, Object> internalObjects,
+			String nomePorta) throws DumpException, DriverRegistroServiziException {
 		
 		DumpConfigurazione dumpConfig = null;
 		if(internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
@@ -668,12 +669,12 @@ public class RicezioneContenutiApplicativi {
 			dumpApplicativo = new Dump(dominio,
 					this.msgContext.getIdModulo(), 
 					idRichiesta, fruitore, idServizio,
-					this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					this.msgContext.getTipoPorta(), nomePorta, this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
 		}else{
 			dumpApplicativo = new Dump(dominio,
-					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(), nomePorta,this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
 		}
@@ -935,17 +936,18 @@ public class RicezioneContenutiApplicativi {
 		}
 		
 		// Logger dei messaggi diagnostici
-		MsgDiagnostico msgDiag = new MsgDiagnostico(identitaPdD, this.msgContext.getIdModulo());
+		String nomePorta = null;
+		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
+			nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+		}
+		else{
+			nomePorta = urlProtocolContext.getFunctionParameters() + "_urlInvocazione("+ urlProtocolContext.getUrlInvocazione_formBased() + ")";
+		}
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,identitaPdD, this.msgContext.getIdModulo(),nomePorta);
 		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
 		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
-		msgDiag.setDelegata(true);
-		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
-			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
-		}
-		else{
-			msgDiag.setPorta(urlProtocolContext.getFunctionParameters() + "_urlInvocazione("+ urlProtocolContext.getUrlInvocazione_formBased() + ")");
-		}
+		
 
 		// set credenziali
 		setCredenziali(credenziali, msgDiag);
@@ -1342,7 +1344,7 @@ public class RicezioneContenutiApplicativi {
 		Dump dumpApplicativo = new Dump(identitaPdD,
 				this.msgContext.getIdModulo(), null,
 				soggettoFruitore, richiestaDelegata.getIdServizio(),
-				this.msgContext.getTipoPorta(), inRequestContext.getPddContext(),
+				this.msgContext.getTipoPorta(), msgDiag.getPorta(), inRequestContext.getPddContext(),
 				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 				dumpConfig);
 		dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
@@ -2143,7 +2145,7 @@ public class RicezioneContenutiApplicativi {
 		
 		richiestaDelegata.setServizioApplicativo(servizioApplicativo);
 		// Identita' errore
-		msgDiag.setPorta(identificativoPortaDelegata.getNome());
+		msgDiag.updatePorta(identificativoPortaDelegata.getNome());
 		msgDiag.setServizioApplicativo(servizioApplicativo);
 		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativo);
 		// identita
@@ -4164,12 +4166,14 @@ public class RicezioneContenutiApplicativi {
 			if(localForward){
 			
 				localForwardParameter.setRepositoryBuste(repositoryBuste);
-				localForwardParameter.getMsgDiag().setDelegata(false);
+				String portaDelegataAttuale = localForwardParameter.getMsgDiag().getPorta();
+				localForwardParameter.getMsgDiag().updatePorta(TipoPdD.APPLICATIVA,localForwardParameter.getIdPortaApplicativaIndirizzata().getNome());
 				localForwardEngine.updateLocalForwardParameter(localForwardParameter);
 				
 				localForwardEngine.sendRequest(msgRequest);
 				
-				localForwardParameter.getMsgDiag().setDelegata(true);
+				// ripristino
+				localForwardParameter.getMsgDiag().updatePorta(TipoPdD.DELEGATA,portaDelegataAttuale);
 				
 			}
 			else{

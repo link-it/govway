@@ -145,7 +145,7 @@ public class Tracciamento {
 	 * @throws TracciamentoException 
 	 * 
 	 */
-	public Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,IState statoRichiesta,IState statoRisposta) throws TracciamentoException {
+	public Tracciamento(IDSoggetto idSoggettoDominio,String idFunzione,PdDContext pddContext,TipoPdD tipoPdD,String nomePorta, IState statoRichiesta,IState statoRisposta) throws TracciamentoException {
 		this.idSoggettoDominio = idSoggettoDominio;
 		this.pddContext=pddContext;
 		this.tipoPdD = tipoPdD;
@@ -156,7 +156,7 @@ public class Tracciamento {
 		this.statoRichiesta = statoRichiesta;
 		this.statoRisposta = statoRisposta;
 		this.configurazionePdDManager = ConfigurazionePdDManager.getInstance(this.statoRichiesta,this.statoRisposta);
-		this.msgDiagErroreTracciamento = new MsgDiagnostico(idSoggettoDominio,idFunzione,this.statoRichiesta,this.statoRisposta);
+		this.msgDiagErroreTracciamento = MsgDiagnostico.newInstance(tipoPdD,idSoggettoDominio,idFunzione,nomePorta,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreTracciamento.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();

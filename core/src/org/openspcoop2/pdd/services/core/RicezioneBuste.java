@@ -532,7 +532,7 @@ public class RicezioneBuste {
 					OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
 					if (msgRichiesta!=null) {
 						
-						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 						dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
 								inRequestContext.getConnettore().getUrlProtocolContext());
 					}
@@ -620,7 +620,7 @@ public class RicezioneBuste {
 				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
 				if (msgRisposta!=null) {
 					
-					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());
@@ -638,7 +638,8 @@ public class RicezioneBuste {
 	
 	private Dump getDump(ConfigurazionePdDManager configurazionePdDReader,
 			IProtocolFactory<?> protocolFactory,
-			HashMap<String, Object> internalObjects) throws DumpException, DriverRegistroServiziException {
+			HashMap<String, Object> internalObjects,
+			String nomePorta) throws DumpException, DriverRegistroServiziException {
 		DumpConfigurazione dumpConfig = null;
 		if(internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
 			dumpConfig = (DumpConfigurazione) internalObjects.get(CostantiPdD.DUMP_CONFIG); // dovrebbe essere stata impostata per la pd/pa specifica
@@ -707,12 +708,12 @@ public class RicezioneBuste {
 			dumpApplicativo = new Dump(dominio,
 					this.msgContext.getIdModulo(), 
 					idRichiesta, fruitore, idServizio,
-					this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					this.msgContext.getTipoPorta(),nomePorta,this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
 		}else{
 			dumpApplicativo = new Dump(dominio,
-					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),nomePorta,this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
 		}
@@ -998,16 +999,17 @@ public class RicezioneBuste {
 		ITraduttore traduttore = protocolFactory.createTraduttore();
 		
 		//	Logger dei messaggi diagnostici
-		MsgDiagnostico msgDiag = new MsgDiagnostico(identitaPdD,this.msgContext.getIdModulo());
+		String nomePorta = null;
+		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
+			nomePorta = requestInfo.getProtocolContext().getInterfaceName();
+		}
+		else{
+			nomePorta = inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
+		}
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,identitaPdD,this.msgContext.getIdModulo(),nomePorta);
 		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
 		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
-		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
-			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
-		}
-		else{
-			msgDiag.setPorta(inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")");
-		}
 			
 		// Parametri della porta applicativa invocata
 		URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
@@ -1269,7 +1271,7 @@ public class RicezioneBuste {
 			}
 		}
 		if(pa!=null){
-			msgDiag.setPorta(pa.getNome());
+			msgDiag.updatePorta(pa.getNome());
 		}
 
 		
@@ -1582,7 +1584,7 @@ public class RicezioneBuste {
 		Dump dumpApplicativo = new Dump(identitaPdD,
 				this.msgContext.getIdModulo(),  null,
 				null, idServizio,
-				this.msgContext.getTipoPorta(),inRequestContext.getPddContext(),
+				this.msgContext.getTipoPorta(),msgDiag.getPorta(),inRequestContext.getPddContext(),
 				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 				dumpConfig);
 		dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
@@ -1851,7 +1853,7 @@ public class RicezioneBuste {
 					Tracciamento tracciamento = new Tracciamento(identitaPdD,
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
-							this.msgContext.getTipoPorta(),
+							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 					
 					erroreIntestazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
@@ -1903,7 +1905,7 @@ public class RicezioneBuste {
 					Tracciamento tracciamento = new Tracciamento(identitaPdD,
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
-							this.msgContext.getTipoPorta(),
+							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 					
 					parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
@@ -2105,7 +2107,7 @@ public class RicezioneBuste {
 				// Aggiungo identita servizio applicativi
 				if(pa!=null){
 					idPA = configurazionePdDReader.convertToIDPortaApplicativa(pa);
-					msgDiag.setPorta(pa.getNome());
+					msgDiag.updatePorta(pa.getNome());
 					for(int i=0; i<pa.sizeServizioApplicativoList();i++){
 						this.msgContext.getIntegrazione().addServizioApplicativoErogatore(pa.getServizioApplicativo(i).getNome());
 					}
@@ -2157,7 +2159,6 @@ public class RicezioneBuste {
 		msgDiag.setIdMessaggioRichiesta(validatore.getBusta().getID());
 		this.msgContext.setIdMessage(validatore.getBusta().getID());
 		msgDiag.setServizio(idServizio);
-		msgDiag.setDelegata(false);
 		msgDiag.addKeywords(validatore.getBusta(), true);
 		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
 		parametriInvioBustaErrore.setMsgDiag(msgDiag);
@@ -2166,7 +2167,7 @@ public class RicezioneBuste {
 		Tracciamento tracciamento = new Tracciamento(identitaPdD,
 				this.msgContext.getIdModulo(),
 				inRequestContext.getPddContext(),
-				this.msgContext.getTipoPorta(),
+				this.msgContext.getTipoPorta(),msgDiag.getPorta(),
 				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
 		

@@ -30,10 +30,14 @@ import java.util.List;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -327,6 +331,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			throw new HandlerException("Identificativo della transazione assente");
 		//System.out.println("------------- PostOutRequestHandler ("+idTransazione+")("+context.getTipoPorta().getTipo()+") -------------------");
 
+		Transaction transaction = TransactionContext.removeTransaction(idTransazione);
 		
 		
 		/* ---- Verifica Esito della Transazione per registrazione nello storico ----- */
@@ -336,7 +341,36 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		try{
 			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppender_Tracciamento();
 			StringBuffer bf = new StringBuffer();
-			esitiDaRegistrare = EsitiConfigUtils.getRegistrazioneEsiti(configTracciamento, this.log, bf);
+			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
+			try {
+				if(transaction!=null && transaction.getRequestInfo()!=null && 
+						transaction.getRequestInfo().getProtocolContext()!=null &&
+						transaction.getRequestInfo().getProtocolContext().getInterfaceName()!=null) {
+					switch (context.getTipoPorta()) {
+					case DELEGATA:
+						IDPortaDelegata idPD = new IDPortaDelegata();
+						idPD.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
+						PortaDelegata pd = this.configPdDManager.getPortaDelegata_SafeMethod(idPD);
+						if(pd!=null && pd.getTracciamento()!=null && pd.getTracciamento().getEsiti()!=null) {
+							esitiConfig = pd.getTracciamento().getEsiti();
+						}
+						break;
+					case APPLICATIVA:
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(transaction.getRequestInfo().getProtocolContext().getInterfaceName());
+						PortaApplicativa pa = this.configPdDManager.getPortaApplicativa_SafeMethod(idPA);
+						if(pa!=null && pa.getTracciamento()!=null && pa.getTracciamento().getEsiti()!=null) {
+							esitiConfig = pa.getTracciamento().getEsiti();
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}catch(Throwable e) {
+				this.log.debug("["+idTransazione+"] Errore avvenuto durante la lettura della configurazione delle transazioni da salvare: "+e.getMessage(),e); 
+			}
+			esitiDaRegistrare = EsitiConfigUtils.getRegistrazioneEsiti(esitiConfig, this.log, bf);
 			if(esitiDaRegistrare==null || esitiDaRegistrare.size()<=0){
 				esitiDaRegistrare = null;
 				if(this.debug){
@@ -395,7 +429,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			}		
 		}
 		
-		Transaction transaction = TransactionContext.removeTransaction(idTransazione);
+		// Check Transaction
 		if (transaction==null)
 			throw new HandlerException("Dati della transazione assenti");
 		transaction.setDeleted();

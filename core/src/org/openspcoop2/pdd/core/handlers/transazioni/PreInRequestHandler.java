@@ -101,7 +101,12 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		/* ---- Analisi RequestInfo ----- */
 		RequestInfo requestInfo = null;
 		try{
-			requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			if(context.getRequestInfo()!=null) {
+				requestInfo = context.getRequestInfo();
+			}
+			else {
+				requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			}
 			tr.setRequestInfo(requestInfo);
 			
 			if(req.getCredential()!=null) {

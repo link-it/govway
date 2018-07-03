@@ -109,7 +109,7 @@ public class PostgreSQLThreshold implements IThreshold {
 		//else
 			//Utilizzo del fattore di default 1
 		
-		MsgDiagnostico msgDiag = new MsgDiagnostico(PostgreSQLThreshold.ID_MODULO);
+		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(PostgreSQLThreshold.ID_MODULO);
 		Connection connection =null;
 		try{
 			if(datasource==null) {

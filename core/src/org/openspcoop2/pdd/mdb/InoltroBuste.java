@@ -330,6 +330,11 @@ public class InoltroBuste extends GenericLib{
 		
 		IDPortaDelegata idPD = richiestaDelegata.getIdPortaDelegata();
 		
+		TipoPdD tipoPdD = TipoPdD.DELEGATA;
+		if(idPD!=null) {
+			msgDiag.updatePorta(tipoPdD, idPD.getNome());
+		}
+		
 		Integrazione integrazione = new Integrazione();
 		integrazione.setIdModuloInAttesa(richiestaDelegata.getIdModuloInAttesa());
 		integrazione.setNomePorta(richiestaDelegata.getIdPortaDelegata().getNome());
@@ -436,7 +441,6 @@ public class InoltroBuste extends GenericLib{
 				return esito;
 			}
 		}
-		TipoPdD tipoPdD = TipoPdD.DELEGATA;
 		if(functionAsRouter){
 			tipoPdD = TipoPdD.ROUTER;
 		}
@@ -740,7 +744,7 @@ public class InoltroBuste extends GenericLib{
 		// Tracciamento
 		org.openspcoop2.pdd.logger.Tracciamento tracciamento;
 		try {
-			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPdD,
+			tracciamento = new org.openspcoop2.pdd.logger.Tracciamento(identitaPdD,InoltroBuste.ID_MODULO,pddContext,tipoPdD,msgDiag.getPorta(),
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e, "ProtocolFactory.instanziazione Imbustamento/Tracciamento"); 
@@ -817,8 +821,6 @@ public class InoltroBuste extends GenericLib{
 
 		// Identita' errore
 		if(functionAsRouter == false){
-			msgDiag.setDelegata(true);
-			msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
 			msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 		}
 
@@ -1961,7 +1963,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------------- Dump -----------------------*/
 			DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
 			Dump dumpApplicativoRichiesta = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
-					soggettoFruitore,idServizio,tipoPdD,pddContext,
+					soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
 			dumpApplicativoRichiesta.dumpRichiestaUscita(requestMessage, outRequestContext.getConnettore());
@@ -2392,7 +2394,7 @@ public class InoltroBuste extends GenericLib{
 				// dump applicativo
 				if(responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
-							soggettoFruitore,idServizio,tipoPdD,pddContext,
+							soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());

@@ -119,7 +119,7 @@ public class TimerGestoreRepositoryBusteImpl implements SessionBean, TimedObject
 		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		try {
-			this.msgDiag = new MsgDiagnostico(TimerGestoreRepositoryBuste.ID_MODULO);
+			this.msgDiag = MsgDiagnostico.newInstance(TimerGestoreRepositoryBuste.ID_MODULO);
 			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_REPOSITORY_BUSTE);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_REPOSITORY_BUSTE, TimerGestoreRepositoryBuste.ID_MODULO);
 		} catch (Exception e) {

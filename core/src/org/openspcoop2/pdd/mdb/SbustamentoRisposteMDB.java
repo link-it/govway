@@ -32,6 +32,7 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.node.TransactionManager;
@@ -187,7 +188,7 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 			/* ------------  Lettura parametri della richiesta  ------------- */
 
 			// Logger dei messaggi diagnostici
-			MsgDiagnostico msgDiag = new MsgDiagnostico(SbustamentoRisposte.ID_MODULO);
+			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, SbustamentoRisposte.ID_MODULO);
 
 			//	Ricezione Messaggio	
 			msgDiag.mediumDebug("Ricezione richiesta (SbustamentoRisposteMessage)...");	
@@ -199,6 +200,9 @@ public class SbustamentoRisposteMDB implements MessageDrivenBean, MessageListene
 				msgDiag.logErroreGenerico(e,"received.getObject(SbustamentoRisposteMessage)");
 				return; 
 			}	
+			if(sbustamentoRisposteMsg.getRichiestaDelegata()!=null && sbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata()!=null) {
+				msgDiag.updatePorta(sbustamentoRisposteMsg.getRichiestaDelegata().getIdPortaDelegata().getNome());	
+			}
 			
 			// ID associato alla richiesta
 			String idMessageRequest = null; //(serve anche per una validazione sincrona)
