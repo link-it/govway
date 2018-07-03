@@ -45,20 +45,38 @@
 					<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
 						<c:if test="#{not empty utentiBean.listaSoggettiAssociatiUtente}">
 							<link:fieldset legend="Soggetti Associati" collapsible="false" closed="false">	
-								<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">
-									<c:forEach items="#{utentiBean.listaSoggettiAssociatiUtente}" var="sog">
-										<h:outputText styleClass="" value="#{sog}" />
-									</c:forEach>
-								</h:panelGrid>
+								<rich:dataTable value="#{utentiBean.listaSoggettiAssociatiUtente}" var="item" id="tableSoggs" width="100%" rowClasses="even, odd">
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Soggetto"  id="outSoggetto1"/>
+										</f:facet>
+										<h:outputText value="#{item.name}"/>
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Profilo Interoperabilità"  id="outProfilo1"/>
+										</f:facet>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</rich:dataTable>
 							</link:fieldset>
 						</c:if>
 						<c:if test="#{not empty utentiBean.listaServiziAssociatiUtente}">
 							<link:fieldset legend="Servizi Associati" collapsible="false" closed="false">
-								<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">	
-									<c:forEach items="#{utentiBean.listaServiziAssociatiUtente}" var="ser">
-										<h:outputText styleClass="" value="#{ser}" />
-									</c:forEach>
-								</h:panelGrid>
+								<rich:dataTable value="#{utentiBean.listaServiziAssociatiUtente}" var="item" id="tableServs" width="100%" rowClasses="even, odd">
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Servizio"  id="outServizio1"/>
+										</f:facet>
+										<h:outputText value="#{item.name}"/>
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Profilo Interoperabilità"  id="outProfilo2"/>
+										</f:facet>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</rich:dataTable>
 							</link:fieldset>
 						</c:if>
 					</c:if>

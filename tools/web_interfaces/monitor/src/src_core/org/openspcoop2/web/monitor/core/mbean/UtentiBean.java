@@ -31,7 +31,10 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -231,16 +234,16 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 	public void setListaSoggettiAssociatiUtente(List<String> lst){}
 
-	@SuppressWarnings("deprecation")
-	public List<String> getListaSoggettiAssociatiUtente(){
-		List<String> lst = new ArrayList<>();
+	public List<org.openspcoop2.utils.NameValue> getListaSoggettiAssociatiUtente() throws Exception{
+		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<org.openspcoop2.utils.NameValue>();
 		List<IDSoggetto> utenteSoggettoList = this.user.getSoggetti();
 
 		if(utenteSoggettoList != null && utenteSoggettoList.size() > 0) {
 			for (IDSoggetto idSog : utenteSoggettoList) {
-				IDServizio serv = new IDServizio();
-				serv.setSoggettoErogatore(idSog);
-				lst.add(Utility.convertToSoggettoServizio(serv));
+				org.openspcoop2.utils.NameValue val = new org.openspcoop2.utils.NameValue();
+				val.setName(NamingUtils.getLabelSoggetto(idSog));
+				val.setValue(NamingUtils.getLabelProtocollo(ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idSog.getTipo())));
+				lst.add(val);
 			}
 		}
 
@@ -249,13 +252,17 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 	public void setListaServiziAssociatiUtente(List<String> lst){}
 
-	public List<String> getListaServiziAssociatiUtente(){
-		List<String> lst = new ArrayList<>();
+	public List<org.openspcoop2.utils.NameValue> getListaServiziAssociatiUtente() throws Exception{ 
+		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<org.openspcoop2.utils.NameValue>();
 		List<IDServizio> utenteServizioList = this.user.getServizi();
 
 		if(utenteServizioList != null && utenteServizioList.size() > 0) {
 			for (IDServizio serv : utenteServizioList) {
-				lst.add(Utility.convertToSoggettoServizio(serv));
+				org.openspcoop2.utils.NameValue val = new org.openspcoop2.utils.NameValue();
+				val.setName(NamingUtils.getLabelAccordoServizioParteSpecifica(serv));
+				val.setValue(NamingUtils.getLabelProtocollo(ProtocolFactoryManager.getInstance().getProtocolByServiceType(serv.getTipo())));
+				
+				lst.add(val);
 			}
 		}
 		return lst;
