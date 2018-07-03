@@ -12696,7 +12696,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("msg_diag_severita");
-			sqlQueryObject.addSelectField("msg_diag_severita_log4j");
 			sqlQueryObject.addSelectField("tracciamento_esiti");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
@@ -12932,11 +12931,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				// Tracciamento
 				String msg_diag_severita = rs.getString("msg_diag_severita");
-				String msg_diag_severita_log4j = rs.getString("msg_diag_severita_log4j");
 				String tracciamento_esiti = rs.getString("tracciamento_esiti");
-				if(msg_diag_severita!=null || msg_diag_severita_log4j!=null || tracciamento_esiti!=null) {
+				if(msg_diag_severita!=null || tracciamento_esiti!=null) {
 					PortaTracciamento tracciamento = new PortaTracciamento();
-					tracciamento.setSeveritaLog4j(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita_log4j));
 					tracciamento.setSeverita(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita));
 					tracciamento.setEsiti(tracciamento_esiti);
 					pa.setTracciamento(tracciamento);
@@ -13519,7 +13516,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("msg_diag_severita");
-			sqlQueryObject.addSelectField("msg_diag_severita_log4j");
 			sqlQueryObject.addSelectField("tracciamento_esiti");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
@@ -13798,11 +13794,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				// Tracciamento
 				String msg_diag_severita = rs.getString("msg_diag_severita");
-				String msg_diag_severita_log4j = rs.getString("msg_diag_severita_log4j");
 				String tracciamento_esiti = rs.getString("tracciamento_esiti");
-				if(msg_diag_severita!=null || msg_diag_severita_log4j!=null || tracciamento_esiti!=null) {
+				if(msg_diag_severita!=null || tracciamento_esiti!=null) {
 					PortaTracciamento tracciamento = new PortaTracciamento();
-					tracciamento.setSeveritaLog4j(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita_log4j));
 					tracciamento.setSeverita(DriverConfigurazioneDB_LIB.getEnumSeverita(msg_diag_severita));
 					tracciamento.setEsiti(tracciamento_esiti);
 					pd.setTracciamento(tracciamento);

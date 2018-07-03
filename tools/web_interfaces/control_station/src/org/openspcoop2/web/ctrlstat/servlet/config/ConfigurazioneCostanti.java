@@ -537,6 +537,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO = "controllo";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA = "severita";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J = "severita_log4j";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_RIDEFINITO = "severitaRidefinito";
 	public final static String PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN = "nomeintegman";
 	public final static String PARAMETRO_CONFIGURAZIONE_INTEGMAN = "integman";
 	public final static String PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE = "profcoll";
@@ -629,6 +630,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
 	public final static String PARAMETRO_CONFIGURAZIONE_FIRST_TIME = "ConfigurazioneFirstTime";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RIDEFINITO = "RecEsitiStatoRidefinito";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "RecEsitiStatoOk";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";

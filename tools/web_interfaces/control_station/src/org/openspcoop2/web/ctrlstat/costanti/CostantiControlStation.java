@@ -192,6 +192,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String LABEL_PARAMETRO_HTTP_METHOD_COMPACT = "Method";
 	public final static String LABEL_PARAMETRO_HTTP_METHOD = "HTTP Method";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
@@ -342,6 +343,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "autorizzazioneRuoli";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "autorizzazioneScope";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS = "autorizzazioneTokenOptions";
+	public final static String PARAMETRO_PORTE_TRACCIAMENTO_ESITO = "portaEsiti";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";

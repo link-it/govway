@@ -2081,7 +2081,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			case REST:
 				visualizzaMTOM = false;
 				visualizzaSicurezza = true;
-				visualizzaCorrelazione = false;
+				visualizzaCorrelazione = true;
 				break;
 			case SOAP:
 			default:
@@ -2109,7 +2109,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			}
 			if(visualizzaCorrelazione) {
-				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO);
 			}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
 			
@@ -2335,6 +2335,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps);
 					
+					boolean tracciamento = false;
 					boolean isCorrelazioneApplicativaAbilitataReq = false;
 					boolean isCorrelazioneApplicativaAbilitataRes = false;
 					
@@ -2343,8 +2344,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	
 					if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
 						isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+						
+					if(paAssociata.getTracciamento()!=null &&
+							(paAssociata.getTracciamento().getEsiti()!=null || 
+							paAssociata.getTracciamento().getSeverita()!=null)) {
+						tracciamento = true;
+					}
 					
-					if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+					if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
 					else 
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
@@ -2862,7 +2869,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			case REST:
 				visualizzaMTOM = false;
 				visualizzaSicurezza = true;
-				visualizzaCorrelazione = false;
+				visualizzaCorrelazione = true;
 				break;
 			case SOAP:
 			default:
@@ -2945,7 +2952,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
 			}
 			if(visualizzaCorrelazione) {
-				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO);
 			}
 			
 			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
@@ -3188,6 +3195,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 					
+					boolean tracciamento = false;
 					boolean isCorrelazioneApplicativaAbilitataReq = false;
 					boolean isCorrelazioneApplicativaAbilitataRes = false;
 					
@@ -3197,7 +3205,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					if (pdAssociata.getCorrelazioneApplicativaRisposta() != null)
 						isCorrelazioneApplicativaAbilitataRes = pdAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
 						
-					if(isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+					if(pdAssociata.getTracciamento()!=null &&
+							(pdAssociata.getTracciamento().getEsiti()!=null || 
+							pdAssociata.getTracciamento().getSeverita()!=null)) {
+						tracciamento = true;
+					}
+					
+					if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
 						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA);
 					else 
 						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);

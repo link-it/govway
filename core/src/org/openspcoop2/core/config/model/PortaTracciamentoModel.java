@@ -43,7 +43,6 @@ public class PortaTracciamentoModel extends AbstractModel<PortaTracciamento> {
 		super();
 	
 		this.SEVERITA = new Field("severita",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
-		this.SEVERITA_LOG_4J = new Field("severita-log4j",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
 		this.ESITI = new Field("esiti",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
 	
 	}
@@ -53,7 +52,6 @@ public class PortaTracciamentoModel extends AbstractModel<PortaTracciamento> {
 		super(father);
 	
 		this.SEVERITA = new ComplexField(father,"severita",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
-		this.SEVERITA_LOG_4J = new ComplexField(father,"severita-log4j",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
 		this.ESITI = new ComplexField(father,"esiti",java.lang.String.class,"porta-tracciamento",PortaTracciamento.class);
 	
 	}
@@ -61,8 +59,6 @@ public class PortaTracciamentoModel extends AbstractModel<PortaTracciamento> {
 	
 
 	public IField SEVERITA = null;
-	 
-	public IField SEVERITA_LOG_4J = null;
 	 
 	public IField ESITI = null;
 	 

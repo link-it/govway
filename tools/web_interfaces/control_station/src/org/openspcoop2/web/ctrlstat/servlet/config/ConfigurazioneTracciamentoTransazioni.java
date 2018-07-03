@@ -191,7 +191,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti, 
+				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, nuovaConfigurazioneEsiti, 
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 				
@@ -221,7 +221,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti, 
+				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, nuovaConfigurazioneEsiti, 
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 				
@@ -307,7 +307,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				registrazioneTracce = newConfigurazione.getTracciamento().getStato().toString();
 			
 			
-			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, newConfigurazione.getTracciamento().getEsiti(), 
+			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, newConfigurazione.getTracciamento().getEsiti(), 
 					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 			

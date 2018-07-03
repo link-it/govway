@@ -803,27 +803,6 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="msg_diag_severita_log4j" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="msg_diag_severita_log4j"/>
-                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità dei messaggi diagnostici emesso dalla PdD su filesystem tramite appender log4j2. Di seguito l'elenco dei valori ammissibili:
-- 'off': non viene emesso alcun diagnostico
-- 'fatal': rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
-- 'errorProtocol': rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
-- 'errorIntegration': rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
-- 'infoProtocol': rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
-- 'infoIntegration': rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
-- 'lowDebug': rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
-- 'mediumDebug': rappresente una informazione di debug di media importanza
-- 'lowDebug': rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale
-- 'alll': vengono emessi i diagnostici di tutte le severità]]></linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element name="tracciamento_esiti" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

@@ -38,7 +38,6 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="porta-tracciamento">
  * 		&lt;attribute name="severita" type="{http://www.openspcoop2.org/core/config}Severita" use="optional"/>
- * 		&lt;attribute name="severita-log4j" type="{http://www.openspcoop2.org/core/config}Severita" use="optional"/>
  * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -92,26 +91,6 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBean impl
     this.severita = severita;
   }
 
-  public void set_value_severitaLog4j(String value) {
-    this.severitaLog4j = (Severita) Severita.toEnumConstantFromString(value);
-  }
-
-  public String get_value_severitaLog4j() {
-    if(this.severitaLog4j == null){
-    	return null;
-    }else{
-    	return this.severitaLog4j.toString();
-    }
-  }
-
-  public org.openspcoop2.core.config.constants.Severita getSeveritaLog4j() {
-    return this.severitaLog4j;
-  }
-
-  public void setSeveritaLog4j(org.openspcoop2.core.config.constants.Severita severitaLog4j) {
-    this.severitaLog4j = severitaLog4j;
-  }
-
   public java.lang.String getEsiti() {
     return this.esiti;
   }
@@ -132,12 +111,6 @@ public class PortaTracciamento extends org.openspcoop2.utils.beans.BaseBean impl
 
   @XmlAttribute(name="severita",required=false)
   protected Severita severita;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.String _value_severitaLog4j;
-
-  @XmlAttribute(name="severita-log4j",required=false)
-  protected Severita severitaLog4j;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="esiti",required=false)

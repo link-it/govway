@@ -314,7 +314,6 @@
 	<!-- PortaDelegata o PortaApplicativa Tracciamento -->
 	<xsd:complexType name="porta-tracciamento">
 		<xsd:attribute name="severita" type="Severita" use="optional"/>
-		<xsd:attribute name="severita-log4j" type="Severita" use="optional"/>
 		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 

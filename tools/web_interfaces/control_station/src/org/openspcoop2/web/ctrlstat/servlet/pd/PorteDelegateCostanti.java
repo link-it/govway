@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -408,11 +409,15 @@ public class PorteDelegateCostanti {
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "Parametri della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "Parametri della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Correlazione Applicativa di ";
+//	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Correlazione Applicativa di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI = "Tracciamento di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO_CONFIG_DI = "Tracciamento di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazioni Applicative per la richiesta di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazioni Applicative per la risposta di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Regole della Richiesta";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Regole della Risposta";
+//	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Regole della Richiesta";
+//	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Regole della Risposta";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RICHIESTA_DI = "Correlazione Applicativa Richiesta";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazione Applicativa Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DEFAULT = "Connettore Default";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DEFAULT_DI = "Connettore Default di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
@@ -459,6 +464,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Identificazione Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI = "Applicativi";

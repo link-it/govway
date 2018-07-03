@@ -89,7 +89,6 @@ CREATE TABLE porte_applicative
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- Livello Log Messaggi Diagnostici
 	msg_diag_severita VARCHAR(255),
-	msg_diag_severita_log4j VARCHAR(255),
 	tracciamento_esiti VARCHAR(255),
 	-- abilitato/disabilitato
 	stato VARCHAR(255),

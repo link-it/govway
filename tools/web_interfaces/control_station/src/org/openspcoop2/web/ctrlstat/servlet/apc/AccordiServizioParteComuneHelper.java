@@ -5665,7 +5665,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			// setto le label delle colonne
 			List<String> labelList = new ArrayList<>();
-			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD);
+			//labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD);
+			labelList.add(CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD_COMPACT);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH);
 			labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE);
 			//labelList.add(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME);

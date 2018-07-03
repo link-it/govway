@@ -148,7 +148,7 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
-						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, ForwardParams.OTHER(""));
+						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE, ForwardParams.OTHER(""));
 			}
 
 			// Controlli sui campi immessi
@@ -169,7 +169,7 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
-						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI,
+						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE,
 						ForwardParams.OTHER(""));
 			}
 			
@@ -239,12 +239,12 @@ public class PorteApplicativeConfigurazioneChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE, 
 					ForwardParams.OTHER(""));
 			
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI , 
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE , 
 					ForwardParams.OTHER(""));
 		} 
 	}

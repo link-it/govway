@@ -1350,11 +1350,9 @@ public class DriverConfigurazioneDB_LIB {
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPD.getCorrelazioneApplicativaRisposta();
 		
 		String msg_diag_severita = null;
-		String msg_diag_severita_log4j = null;
 		String tracciamento_esiti = null;
 		if(aPD.getTracciamento()!=null){
 			msg_diag_severita = DriverConfigurazioneDB_LIB.getValue(aPD.getTracciamento().getSeverita());
-			msg_diag_severita_log4j = DriverConfigurazioneDB_LIB.getValue(aPD.getTracciamento().getSeveritaLog4j());
 			tracciamento_esiti = aPD.getTracciamento().getEsiti();
 		}
 		
@@ -1480,7 +1478,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
-				sqlQueryObject.addInsertField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -1583,7 +1580,6 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, msg_diag_severita_log4j);
 				stm.setString(index++, tracciamento_esiti);
 				
 				// Stato
@@ -1628,7 +1624,7 @@ public class DriverConfigurazioneDB_LIB {
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
-								msg_diag_severita,msg_diag_severita_log4j,tracciamento_esiti,
+								msg_diag_severita,tracciamento_esiti,
 								aPD.getStato(),
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
@@ -2112,7 +2108,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
-				sqlQueryObject.addUpdateField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -2209,7 +2204,6 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, msg_diag_severita_log4j);
 				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
@@ -3654,11 +3648,9 @@ public class DriverConfigurazioneDB_LIB {
 		CorrelazioneApplicativaRisposta corrAppRisposta = aPA.getCorrelazioneApplicativaRisposta();
 
 		String msg_diag_severita = null;
-		String msg_diag_severita_log4j = null;
 		String tracciamento_esiti = null;
 		if(aPA.getTracciamento()!=null){
 			msg_diag_severita = DriverConfigurazioneDB_LIB.getValue(aPA.getTracciamento().getSeverita());
-			msg_diag_severita_log4j = DriverConfigurazioneDB_LIB.getValue(aPA.getTracciamento().getSeveritaLog4j());
 			tracciamento_esiti = aPA.getTracciamento().getEsiti();
 		}
 		
@@ -3781,7 +3773,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
-				sqlQueryObject.addInsertField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -3882,7 +3873,6 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, msg_diag_severita_log4j);
 				stm.setString(index++, tracciamento_esiti);
 				
 				// Stato
@@ -4377,7 +4367,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
-				sqlQueryObject.addUpdateField("msg_diag_severita_log4j", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -4482,7 +4471,6 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				// Tracciamento
 				stm.setString(index++, msg_diag_severita);
-				stm.setString(index++, msg_diag_severita_log4j);
 				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);

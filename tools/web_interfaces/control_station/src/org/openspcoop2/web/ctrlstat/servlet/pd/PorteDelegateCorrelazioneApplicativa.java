@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -32,12 +33,18 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaTracciamento;
+import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -83,9 +90,18 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			String id = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			
+			String tracciamentoEsitiStato = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_TRACCIAMENTO_ESITO);
+			String nuovaConfigurazioneEsiti = porteDelegateHelper.readConfigurazioneRegistrazioneEsitiFromHttpParameters(null, false);
+			String tracciamentoEsitiSelezionePersonalizzataOk = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+			String tracciamentoEsitiSelezionePersonalizzataFault = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+			String tracciamentoEsitiSelezionePersonalizzataFallite = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+			String tracciamentoEsitiSelezionePersonalizzataMax = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
+			
+			String statoDiagnostici = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_RIDEFINITO);
+			String severita = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+			
 			String scadcorr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-			String applicaModificaS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
-			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
@@ -122,6 +138,107 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				}
 			}
 			
+			Configurazione config = null;
+			if(tracciamentoEsitiStato==null) {
+				if(pde.getTracciamento()!=null && pde.getTracciamento().getEsiti()!=null) {
+					tracciamentoEsitiStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				}
+				else {
+					tracciamentoEsitiStato = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+				}
+			}
+			if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato)) {
+				if(nuovaConfigurazioneEsiti==null) {
+					if(pde.getTracciamento()!=null && pde.getTracciamento().getEsiti()!=null) {
+						nuovaConfigurazioneEsiti = pde.getTracciamento().getEsiti();
+					}
+					else {
+						// prendo quella di default
+						if(config==null) {
+							config = porteDelegateCore.getConfigurazioneGenerale();
+						}
+						nuovaConfigurazioneEsiti = config.getTracciamento()!=null ? config.getTracciamento().getEsiti() : null;
+					}
+				}
+				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
+					
+					List<String> attivi = new ArrayList<String>();
+					if(nuovaConfigurazioneEsiti!=null){
+						String [] tmp = nuovaConfigurazioneEsiti.split(",");
+						if(tmp!=null){
+							for (int i = 0; i < tmp.length; i++) {
+								attivi.add(tmp[i].trim());
+							}
+						}
+					}
+					
+					EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+					
+					List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+					if(porteDelegateHelper.isCompleteEnabled(attivi, listOk)) {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(porteDelegateHelper.isCompleteDisabled(attivi, listOk)) {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
+					if(porteDelegateHelper.isCompleteEnabled(attivi, listFault)) {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(porteDelegateHelper.isCompleteDisabled(attivi, listFault)) {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					List<Integer> listFalliteSenzaMax = porteDelegateHelper.getListaEsitiFalliteSenzaMaxThreads(esiti);
+					if(porteDelegateHelper.isCompleteEnabled(attivi, listFalliteSenzaMax)) {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(porteDelegateHelper.isCompleteDisabled(attivi, listFalliteSenzaMax)) {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					if(attivi.contains((esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS)+""))) {
+						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}	
+					else {
+						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					
+				}
+			}
+			if(statoDiagnostici==null) {
+				if(pde.getTracciamento()!=null && pde.getTracciamento().getSeverita()!=null) {
+					statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				}
+				else {
+					statoDiagnostici = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+				}
+			}
+			if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici) && severita==null) {
+				// prendo quella di default
+				if(pde.getTracciamento()!=null && pde.getTracciamento().getSeverita()!=null) {
+					severita = pde.getTracciamento().getSeverita().getValue();
+				}
+				else {
+					if(config==null) {
+						config = porteDelegateCore.getConfigurazioneGenerale();
+					}
+					severita = config.getMessaggiDiagnostici()!=null && config.getMessaggiDiagnostici().getSeverita()!=null ? 
+							config.getMessaggiDiagnostici().getSeverita().getValue() : 
+								null;
+				}
+			}
+			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
@@ -132,12 +249,12 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			String labelPerPorta = null;
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO_CONFIG_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO,
 						pde);
 			}
 			else {
-				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI+idporta;
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO_CONFIG_DI+idporta;
 			}
 			lstParam.add(new Parameter(labelPerPorta,  null));
 
@@ -148,7 +265,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			Parameter urlRichiesta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST, urlParms);
 			Parameter urlRisposta = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST , urlParms);
 
-			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
+			if(	porteDelegateHelper.isEditModeInProgress()){
 				if ((scadcorr == null) && (ca != null)) {
 					scadcorr = ca.getScadenza();
 				}
@@ -157,6 +274,13 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
+						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+				
+				porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
+				
 				dati = porteDelegateHelper.addCorrelazioneApplicativaToDati(dati, true, riusoID, scadcorr, urlRichiesta.getValue(), urlRisposta.getValue(), contaListe, numCorrelazioneReq, numCorrelazioneRes);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, idFruizione, dati);
@@ -176,6 +300,13 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
+						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+				
+				porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
+				
 				dati = porteDelegateHelper.addCorrelazioneApplicativaToDati(dati,true, riusoID, scadcorr, urlRichiesta.getValue(), urlRisposta.getValue(), contaListe, numCorrelazioneReq, numCorrelazioneRes);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
@@ -196,6 +327,20 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				ca.setScadenza(scadcorr);
 			pde.setCorrelazioneApplicativa(ca);
 
+			if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici) || CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato)) {
+				PortaTracciamento portaTracciamento = new PortaTracciamento();
+				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(statoDiagnostici)) {
+					portaTracciamento.setSeverita(Severita.toEnumConstant(severita));
+				}
+				if(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO.equals(tracciamentoEsitiStato)) {
+					portaTracciamento.setEsiti(nuovaConfigurazioneEsiti);
+				}
+				pde.setTracciamento(portaTracciamento);
+			}
+			else {
+				pde.setTracciamento(null);
+			}
+			
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);
 
 
@@ -226,14 +371,23 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				}
 			}
 
+			porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
+					tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
+					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+			
+			porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
+			
 			dati = porteDelegateHelper.addCorrelazioneApplicativaToDati(dati, true,riusoID, scadcorr, urlRichiesta.getValue(), urlRisposta.getValue(), contaListe, numCorrelazioneReq, numCorrelazioneRes);
 
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
 			pd.setDati(dati);
-			
+						
 			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
+			pd.disableEditMode();
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
