@@ -399,6 +399,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BASE_URL_INVOCAZIONE = "Base URL";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE = "Opzioni Avanzate";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";

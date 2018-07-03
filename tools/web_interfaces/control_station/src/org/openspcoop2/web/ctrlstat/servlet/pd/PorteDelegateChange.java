@@ -163,7 +163,9 @@ public final class PorteDelegateChange extends Action {
 				serviceBinding = ServiceBinding.valueOf(serviceBindingS);
 			
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-						
+				
+			boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO));
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
 			if(parentPD == null) {
@@ -175,9 +177,7 @@ public final class PorteDelegateChange extends Action {
 					parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 				}
 			}
-			
-			
-			
+
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
 			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
@@ -560,6 +560,11 @@ public final class PorteDelegateChange extends Action {
 				if(datiInvocazione) {
 					lstParam.remove(lstParam.size()-1);
 					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else if(datiAltro) {
+					lstParam.remove(lstParam.size()-1);
+					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
 					nomeBreadCrumb=null;
 				}
 				else {

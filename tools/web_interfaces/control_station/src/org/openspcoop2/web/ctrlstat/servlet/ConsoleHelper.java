@@ -6514,4 +6514,12 @@ public class ConsoleHelper {
 		return true;
 	}
 
+	public DataElement getDataElementNotCorrelazioneApplicativa() {
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE);
+		de.setBold(true);
+		de.setValue(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE_MESSAGGIO);
+		de.setType(DataElementType.NOTE);
+		return de;
+	}
 }

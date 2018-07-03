@@ -563,9 +563,15 @@ public final class PorteApplicativeChange extends Action {
 //				}
 				
 				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
+				boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
 				if(datiInvocazione) {
 					lstParm.remove(lstParm.size()-1);
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else if(datiAltro) {
+					lstParm.remove(lstParm.size()-1);
+					lstParm.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
 					nomeBreadCrumb=null;
 				}
 				else {

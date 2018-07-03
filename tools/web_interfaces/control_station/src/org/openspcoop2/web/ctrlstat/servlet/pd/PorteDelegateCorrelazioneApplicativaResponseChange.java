@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRispostaIdentificazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -128,8 +129,8 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 					break;
 				}
 			}
-			if (elemxmlOrig == null)
-				elemxmlOrig = "";
+			if (elemxmlOrig == null || "".equals(elemxmlOrig))
+				elemxmlOrig = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
@@ -143,7 +144,7 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
 						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO,
 						pde);
 			}
 			else {

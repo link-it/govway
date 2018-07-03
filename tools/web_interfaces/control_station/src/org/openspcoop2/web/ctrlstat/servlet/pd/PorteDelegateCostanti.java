@@ -451,6 +451,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE = "Opzioni Avanzate";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = "Elemento";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR = "Elemento<BR/>(Il campo vuoto indica qualsiasi elemento)";

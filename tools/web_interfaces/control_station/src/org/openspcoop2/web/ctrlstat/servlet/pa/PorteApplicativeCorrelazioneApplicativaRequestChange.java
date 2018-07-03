@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIden
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -124,8 +125,8 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 					break;
 				}
 			}
-			if (elemxmlOrig == null)
-				elemxmlOrig = "";
+			if (elemxmlOrig == null || "".equals(elemxmlOrig))
+				elemxmlOrig = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 			// Quando esco dal ciclo, cae è il mio elemento
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -134,7 +135,7 @@ public final class PorteApplicativeCorrelazioneApplicativaRequestChange extends 
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO,
 						pde);
 			}
 			else {

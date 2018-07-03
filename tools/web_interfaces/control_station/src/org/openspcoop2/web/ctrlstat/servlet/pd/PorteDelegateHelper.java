@@ -1167,6 +1167,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String protocollo) throws ProtocolException {
 
 		DataElement de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		de = new DataElement();
+		de.setLabel("");
+		de.setValue("");
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -1258,6 +1270,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Vector<DataElement> dati, String idcorr) {
 
 		DataElement de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		de = new DataElement();
+		de.setLabel("");
+		de.setValue("");
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
@@ -2621,7 +2645,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
 						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO,
 						myPD);
 			}
 			else {
@@ -2679,7 +2703,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							pIdFrizione,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_CORRELAZIONE, ""+ cae.getId())
 							);
-					String nomeElemento = "(*)";
+					//String nomeElemento = "(*)";
+					String nomeElemento = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 					if (cae.getNome() != null && !"".equals(cae.getNome()))
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);
@@ -2936,7 +2961,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
 						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO,
 						myPD);
 			}
 			else {
@@ -2991,7 +3016,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE_CHANGE, pId, pIdSoggetto, pIdAsps, pIdFrizione,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_CORRELAZIONE, cae.getId() + "")
 							);
-					String nomeElemento = "(*)";
+					//String nomeElemento = "(*)";
+					String nomeElemento = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 					if (cae.getNome() != null && !"".equals(cae.getNome()))
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);

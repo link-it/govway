@@ -129,7 +129,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestAdd extends Action
 			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
 						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO,
 						pde);
 			}
 			else {

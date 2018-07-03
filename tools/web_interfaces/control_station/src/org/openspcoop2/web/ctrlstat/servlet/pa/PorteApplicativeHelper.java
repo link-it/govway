@@ -2539,7 +2539,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO,
 						myPA);
 			}
 			else {
@@ -2607,7 +2607,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA, "" + cae.getId()),
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 							);
-					String nomeElemento = "(*)";
+					//String nomeElemento = "(*)";
+					String nomeElemento = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 					if (cae.getNome() != null && !"".equals(cae.getNome()))
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);
@@ -2669,7 +2670,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO,
 						myPA);
 			}
 			else {
@@ -2738,7 +2739,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA, cae.getId() + ""),
 							new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
 							);
-					String nomeElemento = "(*)";
+					//String nomeElemento = "(*)";
+					String nomeElemento = CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI;
 					if (cae.getNome() != null && !"".equals(cae.getNome()))
 						nomeElemento = cae.getNome();
 					de.setValue(nomeElemento);
@@ -3120,7 +3122,20 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRichiestaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
 			String riusoIdMessaggio, Vector<DataElement> dati) {
+		
 		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		de = new DataElement();
+		de.setLabel("");
+		de.setValue("");
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
@@ -3192,7 +3207,20 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 	public Vector<DataElement> addPorteApplicativeCorrelazioneApplicativeRispostaToDati(TipoOperazione tipoOp,
 			String elemxml, String mode, String pattern, String gif,
 			Vector<DataElement> dati) {
+		
 		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		dati.addElement(this.getDataElementNotCorrelazioneApplicativa());
+		de = new DataElement();
+		de.setLabel("");
+		de.setValue("");
+		de.setType(DataElementType.NOTE);
+		dati.addElement(de);
+		
+		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);

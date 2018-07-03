@@ -108,7 +108,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseAdd extends Ac
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_CONFIG_DI,
-						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA,
+						PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO,
 						pde);
 			}
 			else {
