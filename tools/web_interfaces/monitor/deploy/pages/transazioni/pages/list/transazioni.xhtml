@@ -17,11 +17,15 @@ xmlns="http://www.w3.org/1999/xhtml"
 			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live')}" 
 				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : 'Visualizza Transazioni'}" switchType="client">
 				<f:facet name="openMarker">
-					<h:graphicImage value="/images/tema_link/down_white.png"/>
+					<span class="icon-search-box">
+						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+					</span>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<h:graphicImage value="/images/tema_link/up_white.png"/>
+					<span class="icon-search-box">
+						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+					</span>
 				</f:facet>
 				<a4j:keepAlive beanName="transazioniBean" />
 				<a4j:outputPanel id="panelTransazioniCtr" ajaxRendered="false">

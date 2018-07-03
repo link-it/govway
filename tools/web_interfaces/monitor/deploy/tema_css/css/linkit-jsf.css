@@ -128,6 +128,10 @@
 	font-weight: bold;
 }
 
+.icon-search-box {
+	margin-right: 16px;
+}
+
 .rich-page-footer {
 	background: ${body.background.color};
 	background-image: none;
@@ -192,6 +196,7 @@
 	color: ${menu.element.hover.color};
 	border-left: 8px solid ${menu.element.hover.border.color};
 	padding-left: 16px;
+	font-weight: 600;
 }
 
 .rich-pmenu-hovered-element td.rich-pmenu-top-group-self-label , .rich-pmenu-top-group.rich-pmenu-group.rich-pmenu-hovered-element {

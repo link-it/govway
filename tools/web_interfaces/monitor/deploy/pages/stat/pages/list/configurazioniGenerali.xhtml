@@ -9,71 +9,23 @@
 	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
 
-	<ui:define name="navbar">
-		<ul>
-			<li><h:outputText value="Configurazione Servizi" styleClass="ultimo-path" /></li>
-		</ul>
-	</ui:define>
 	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}					
+		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
-			<rich:panel id="statusPnl">
-				<f:facet name="header">	
-					<h:outputText value="Informazioni Generali" />
-				</f:facet>
-				<a4j:outputPanel id="outPanelInformazioniGenerali" ajaxRendered="false"  layout="block">
-					<h:form>
-						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable" style="width: 100%;">
-							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
-								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
-									<f:facet name="header">
-		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;"> 
-		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
-		        	                    	</rich:column>
-		            	               	</rich:columnGroup>
-		       	                	</f:facet>
-									
-									<rich:column style="width: 260px;">
-										<h:outputText value="#{item.label}"/>
-									</rich:column>
-									<rich:column>
-										<h:outputText value="#{item.value}"/>
-									</rich:column>
-								</link:simpleDataTable>
-							</a4j:outputPanel>
-							
-							<a4j:outputPanel id="outPanelInformazioniGenerali2" ajaxRendered="false"  layout="block" styleClass="form-container" rendered="#{applicationBean.amministratore}">
-								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
-									<f:facet name="header">
-		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;">
-		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
-		        	                    	</rich:column>
-		            	               	</rich:columnGroup>
-		       	                	</f:facet>
-									
-									<rich:column style="width: 260px;">
-										<h:outputText value="#{item.label}"/>
-									</rich:column>
-									<rich:column>
-										<h:outputText value="#{item.value}"/>
-									</rich:column>
-								</link:simpleDataTable>
-							</a4j:outputPanel>
-						</h:panelGrid>
-					</h:form>
-				</a4j:outputPanel>
-			</rich:panel>
-		
-			<div class="spacerDettaglio"></div>
 			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
-				label="#{ configurazioniGeneraliSearchForm.executeQuery ? 'Modifica Filtri di Ricerca' : 'Filtri di Ricerca'}" opened="true">
+				label="Configurazione Servizi" opened="true">
 				<f:facet name="openMarker">
-					<h:graphicImage value="/images/tema_link/down_white.png"/>
+					<span class="icon-search-box">
+						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+					</span>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<h:graphicImage value="/images/tema_link/up_white.png"/>
+					<span class="icon-search-box">
+						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+					</span>
 				</f:facet>
 	
 				<div class="form-container noborder">
@@ -137,6 +89,54 @@
 	
 			</rich:simpleTogglePanel>
 	
+			<div class="spacer"></div>
+			
+			<a4j:outputPanel id="statusPnl" layout="block" styleClass="panelLista" >
+				<a4j:outputPanel id="outPanelInformazioniGenerali" ajaxRendered="false"  layout="block">
+					<h:form>
+						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable" style="width: 100%;">
+							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
+									<f:facet name="header">
+		                        		<rich:columnGroup>
+			                            	<rich:column colspan="2" style="text-align: left;"> 
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
+		        	                    	</rich:column>
+		            	               	</rich:columnGroup>
+		       	                	</f:facet>
+									
+									<rich:column style="width: 260px;">
+										<h:outputText value="#{item.label}"/>
+									</rich:column>
+									<rich:column>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</link:simpleDataTable>
+							</a4j:outputPanel>
+							
+							<a4j:outputPanel id="outPanelInformazioniGenerali2" ajaxRendered="false"  layout="block" styleClass="form-container" rendered="#{applicationBean.amministratore}">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
+									<f:facet name="header">
+		                        		<rich:columnGroup>
+			                            	<rich:column colspan="2" style="text-align: left;">
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
+		        	                    	</rich:column>
+		            	               	</rich:columnGroup>
+		       	                	</f:facet>
+									
+									<rich:column style="width: 260px;">
+										<h:outputText value="#{item.label}"/>
+									</rich:column>
+									<rich:column>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</link:simpleDataTable>
+							</a4j:outputPanel>
+						</h:panelGrid>
+					</h:form>
+				</a4j:outputPanel>
+			</a4j:outputPanel>
+		
 			<div class="spacer"></div>
 			
 			<a4j:outputPanel id="configurazioniTbl" layout="block" styleClass="panelLista" rendered="#{configurazioniDM.executeQuery}" >
