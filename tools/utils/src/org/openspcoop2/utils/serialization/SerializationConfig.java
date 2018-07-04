@@ -38,6 +38,7 @@ public class SerializationConfig {
 	private List<String> includes;
 	private DateFormat df;
 	private Boolean ignoreNullValues;
+	private boolean serializeEnumAsString = true; //default
 	
 	public Filter getFilter() {
 		return this.filter;
@@ -74,5 +75,11 @@ public class SerializationConfig {
 	}
 	public void setIgnoreNullValues(Boolean ignoreNullValues) {
 		this.ignoreNullValues = ignoreNullValues;
+	}
+	public boolean isSerializeEnumAsString() {
+		return this.serializeEnumAsString;
+	}
+	public void setSerializeEnumAsString(boolean serializeEnumAsString) {
+		this.serializeEnumAsString = serializeEnumAsString;
 	}
 }

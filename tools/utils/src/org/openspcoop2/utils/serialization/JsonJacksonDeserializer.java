@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerBuilder;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
@@ -99,6 +100,8 @@ public class JsonJacksonDeserializer implements IDeserializer{
 
 		this.mapper = new ObjectMapper(null, null, new DefaultDeserializationContext.Impl(dFactory));
 		this.mapper.setDateFormat(config.getDf());
+		if(config.isSerializeEnumAsString())
+			this.mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 
 	}
 

@@ -30,6 +30,7 @@ import java.util.HashSet;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
@@ -60,6 +61,7 @@ public class JsonJacksonSerializer implements ISerializer {
 	public JsonJacksonSerializer() {
 		this(new SerializationConfig());
 	}
+	
 	public JsonJacksonSerializer(SerializationConfig config) {
 		ObjectMapper mapper = new ObjectMapper().setAnnotationIntrospector(
 				new AnnotationIntrospectorPair(
@@ -76,7 +78,10 @@ public class JsonJacksonSerializer implements ISerializer {
 						)
 				);
 
-		mapper.setDateFormat(config.getDf());		
+		if(config.isSerializeEnumAsString())
+			mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+
+    	mapper.setDateFormat(config.getDf());		
 		
 		if(config.getIgnoreNullValues() == null || config.getIgnoreNullValues())
 			mapper.setSerializationInclusion(Include.NON_NULL);

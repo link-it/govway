@@ -45,8 +45,18 @@ public class SerializerTest {
 			IDeserializer jsonJacksonDeserializer = new JsonJacksonDeserializer();
 
 			System.out.println("Test serializzazione e rilettura...");
-			testSerializeDeserialize(jsonJacksonSerializer, jsonJacksonDeserializer);
+			testSerializeDeserialize(jsonJacksonSerializer, jsonJacksonDeserializer, true);
 			System.out.println("Test serializzazione e rilettura OK");
+
+			SerializationConfig configEnumNoString = new SerializationConfig();
+			configEnumNoString.setSerializeEnumAsString(false);
+			
+			ISerializer jsonJacksonSerializerEnumNoString = new JsonJacksonSerializer(configEnumNoString);
+			IDeserializer jsonJacksonDeserializerEnumNoString = new JsonJacksonDeserializer(configEnumNoString);
+
+			System.out.println("Test serializzazione e rilettura con enum serializzate non come stringa...");
+			testSerializeDeserialize(jsonJacksonSerializerEnumNoString, jsonJacksonDeserializerEnumNoString, false);
+			System.out.println("Test serializzazione e rilettura con enum serializzate non come stringa OK");
 			
 			Filter filter = new Filter();
 			filter.addFilterByName("calendar");
@@ -73,11 +83,21 @@ public class SerializerTest {
 		}
 	}
 
-	private static void testSerializeDeserialize(ISerializer serializer, IDeserializer deserializer) throws Exception {
+	private static void testSerializeDeserialize(ISerializer serializer, IDeserializer deserializer, boolean serializeEnumAsString) throws Exception {
 		ClassToSerialize oggettoIniziale = new ClassToSerialize();
 		oggettoIniziale.init();
 
 		String serialized = serializer.getObject(oggettoIniziale);
+		
+		if(serializeEnumAsString) {
+			if(!serialized.contains(oggettoIniziale.getMyEnum().toString())) {
+				throw new Exception("Oggetto non correttamente serializzato: " + serialized);
+			}
+		} else {
+			if(!serialized.contains(oggettoIniziale.getMyEnum().name())) {
+				throw new Exception("Oggetto non correttamente serializzato: " + serialized);
+			}
+		}
 		ClassToSerialize oggettoDeserializzato = (ClassToSerialize) deserializer.getObject(serialized, ClassToSerialize.class);
 		if(!oggettoIniziale.equals(oggettoDeserializzato)) {
 			throw new Exception("Oggetto deserializzato non uguale a quello precedentemente serializzato");
