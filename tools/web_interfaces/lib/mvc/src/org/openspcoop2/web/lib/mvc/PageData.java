@@ -69,6 +69,7 @@ public class PageData {
 	List<DataElement> filter_values = null;
 	int pageSize, index, numEntries;
 	boolean mostraLinkHome = false;
+	String customListViewName = null;
 
 	public PageData() {
 		this.pageDescription = "";
@@ -97,6 +98,7 @@ public class PageData {
 		this.index = 0;
 		this.numEntries = 0;
 		this.mostraLinkHome = false;
+		this.customListViewName = null;
 	}
 
 	public void setPageDescription(String s) {
@@ -404,9 +406,22 @@ public class PageData {
 			// conto i campi non hidden
 			int nonHidden = 0;
 			for(int i = 0; i < this.dati.size(); i++){
-				DataElement de = (DataElement) this.dati.get(i);
-				if(!de.getType().equals(DataElementType.HIDDEN.toString()))
-					nonHidden ++;
+				Object o = this.dati.get(i);
+				if(o instanceof DataElement) {
+					DataElement de = (DataElement) o;
+					if(!de.getType().equals(DataElementType.HIDDEN.toString()))
+						nonHidden ++;
+				} else if(o instanceof Vector<?>) {
+					Vector<?> v = (Vector<?>) o;
+					for(int j = 0; j < v.size(); j++){
+						Object o02 = v.get(j);
+						if(o02 instanceof DataElement) {
+							DataElement de = (DataElement) o02;
+							if(!de.getType().equals(DataElementType.HIDDEN.toString()))
+								nonHidden ++;
+						} 
+					}
+				}
 			}
 
 			return nonHidden == 0; // dati presenti se c'e' almeno un elemento non hidden.
@@ -428,6 +443,14 @@ public class PageData {
 
 	public void setMostraLinkHome(boolean mostraLinkHome) {
 		this.mostraLinkHome = mostraLinkHome;
+	}
+
+	public String getCustomListViewName() {
+		return this.customListViewName;
+	}
+
+	public void setCustomListViewName(String customListViewName) {
+		this.customListViewName = customListViewName;
 	}
 	
 	

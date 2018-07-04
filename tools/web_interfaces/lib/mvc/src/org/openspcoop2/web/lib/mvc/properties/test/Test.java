@@ -39,7 +39,7 @@ import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.utils.ReadPropertiesUtilities;
 
 /**     
- * ConditionException
+ * Test
  *
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$

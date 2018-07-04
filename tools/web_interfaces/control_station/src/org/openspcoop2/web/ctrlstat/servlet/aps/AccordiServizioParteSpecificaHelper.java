@@ -2233,38 +2233,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 				
-				String gestioneToken = null;
-				if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getPolicy()!=null &&
-						!"".equals(paAssociata.getGestioneToken().getPolicy()) &&
-						!"-".equals(paAssociata.getGestioneToken().getPolicy())) {
-					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
-				}
+				String statoControlloAccessi = getStatoControlloAccessiPortaApplicativa(paAssociata); 
 				
-				String autenticazione = paAssociata.getAutenticazione();
-				String autenticazioneCustom = null;
-				if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
-					autenticazioneCustom = autenticazione;
-					autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-				}
-				String autenticazioneOpzionale = "";
-				if(paAssociata.getAutenticazioneOpzionale()!=null){
-					if (paAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-					}
-				}
-				String autorizzazioneContenuti = paAssociata.getAutorizzazioneContenuto();
-				
-				String autorizzazione= null, autorizzazioneCustom = null;
-				if (paAssociata.getAutorizzazione() != null &&
-						!TipoAutorizzazione.getAllValues().contains(paAssociata.getAutorizzazione())) {
-					autorizzazioneCustom = paAssociata.getAutorizzazione();
-					autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-				}
-				else{
-					autorizzazione = AutorizzazioneUtilities.convertToStato(paAssociata.getAutorizzazione());
-				}
-				
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
 				e.addElement(de);
 				
@@ -2272,19 +2242,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
-				String statoValidazione = null;
-				
-				ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
-				if (vx == null) {
-					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
-				} else {
-					if(vx.getStato()!=null)
-						statoValidazione = vx.getStato().toString();
-					if ((statoValidazione == null) || "".equals(statoValidazione)) {
-						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
-					}
-				}
-				
+				String statoValidazione = getStatoValidazionePortaApplicativa(paAssociata);
 				de.setValue(statoValidazione);
 				e.addElement(de);
 				
@@ -2292,10 +2250,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaSicurezza) {
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-					de.setUrl(
-							PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY,
-							pIdSogg, pIdPorta, pIdAsps);
-					de.setValue(paAssociata.getStatoMessageSecurity());
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY, pIdSogg, pIdPorta, pIdAsps);
+					String statoMessageSecurity = getStatoMessageSecurityPortaApplicativa(paAssociata);
+					
+					de.setValue(statoMessageSecurity);
 					e.addElement(de);
 				}
 				
@@ -2303,30 +2261,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaMTOM) {
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MTOM,pIdPorta, pIdSogg, pIdAsps);
-					boolean isMTOMAbilitatoReq = false;
-					boolean isMTOMAbilitatoRes= false;
-					if(paAssociata.getMtomProcessor()!= null){
-						if(paAssociata.getMtomProcessor().getRequestFlow() != null){
-							if(paAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
-								MTOMProcessorType mode = paAssociata.getMtomProcessor().getRequestFlow().getMode();
-								if(!mode.equals(MTOMProcessorType.DISABLE))
-									isMTOMAbilitatoReq = true;
-							}
-						}
-	
-						if(paAssociata.getMtomProcessor().getResponseFlow() != null){
-							if(paAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
-								MTOMProcessorType mode = paAssociata.getMtomProcessor().getResponseFlow().getMode();
-								if(!mode.equals(MTOMProcessorType.DISABLE))
-									isMTOMAbilitatoRes = true;
-							}
-						}
-					}
-	
-					if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO);
-					else 
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO);			
+					
+					String statoMTOM = getStatoMTOMPortaApplicativa(paAssociata);
+					
+					de.setValue(statoMTOM);	
 					e.addElement(de);
 				}
 				
@@ -2334,27 +2272,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaCorrelazione) {
 					de = new DataElement();
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps);
-					
-					boolean tracciamento = false;
-					boolean isCorrelazioneApplicativaAbilitataReq = false;
-					boolean isCorrelazioneApplicativaAbilitataRes = false;
-					
-					if (paAssociata.getCorrelazioneApplicativa() != null)
-						isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
-	
-					if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
-						isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
-						
-					if(paAssociata.getTracciamento()!=null &&
-							(paAssociata.getTracciamento().getEsiti()!=null || 
-							paAssociata.getTracciamento().getSeverita()!=null)) {
-						tracciamento = true;
-					}
-					
-					if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA);
-					else 
-						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
+					String statoTracciamento = getStatoTracciamentoPortaApplicativa(paAssociata);
+					de.setValue(statoTracciamento);	
 					e.addElement(de);
 				}
 				
@@ -2362,9 +2281,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSogg, pIdPorta, pIdAsps);
-				DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
-				String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
-					(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+				String statoDump = getStatoDumpPortaApplicativa(paAssociata);
+				
 				de.setValue(statoDump);
 				e.addElement(de);
 				
@@ -2430,6 +2348,175 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+
+
+	public String getStatoMessageSecurityPortaApplicativa(PortaApplicativa paAssociata) {
+		String statoMessageSecurity = paAssociata.getStatoMessageSecurity();
+		return statoMessageSecurity;
+	}
+
+
+	public String getStatoDumpPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+		return statoDump;
+	}
+
+
+	public String getStatoTracciamentoPortaApplicativa(PortaApplicativa paAssociata) {
+		String statoTracciamento = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+		
+		boolean tracciamento = false;
+		boolean isCorrelazioneApplicativaAbilitataReq = false;
+		boolean isCorrelazioneApplicativaAbilitataRes = false;
+		
+		if (paAssociata.getCorrelazioneApplicativa() != null)
+			isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
+
+		if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
+			isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+			
+		if(paAssociata.getTracciamento()!=null &&
+				(paAssociata.getTracciamento().getEsiti()!=null || 
+				paAssociata.getTracciamento().getSeverita()!=null)) {
+			tracciamento = true;
+		}
+		
+		if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+			statoTracciamento = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA;
+		else 
+			statoTracciamento = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+		return statoTracciamento;
+	}
+
+
+	public String getStatoMTOMPortaApplicativa(PortaApplicativa paAssociata) {
+		String statoMTOM = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO;
+		boolean isMTOMAbilitatoReq = false;
+		boolean isMTOMAbilitatoRes= false;
+		if(paAssociata.getMtomProcessor()!= null){
+			if(paAssociata.getMtomProcessor().getRequestFlow() != null){
+				if(paAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
+					MTOMProcessorType mode = paAssociata.getMtomProcessor().getRequestFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoReq = true;
+				}
+			}
+
+			if(paAssociata.getMtomProcessor().getResponseFlow() != null){
+				if(paAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
+					MTOMProcessorType mode = paAssociata.getMtomProcessor().getResponseFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoRes = true;
+				}
+			}
+		}
+
+		if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
+			statoMTOM = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_ABILITATO;
+		else 
+			statoMTOM = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_DISABILITATO;
+		return statoMTOM;
+	}
+
+
+	public String getStatoValidazionePortaApplicativa(PortaApplicativa paAssociata) {
+		String statoValidazione = null;
+		
+		ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
+		if (vx == null) {
+			statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+		} else {
+			if(vx.getStato()!=null)
+				statoValidazione = vx.getStato().toString();
+			if ((statoValidazione == null) || "".equals(statoValidazione)) {
+				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+			}
+		}
+		return statoValidazione;
+	}
+
+
+	public String getStatoControlloAccessiPortaApplicativa(PortaApplicativa paAssociata) {
+		String gestioneToken = null;
+		if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getPolicy()!=null &&
+				!"".equals(paAssociata.getGestioneToken().getPolicy()) &&
+				!"-".equals(paAssociata.getGestioneToken().getPolicy())) {
+			gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+		}
+		
+		String autenticazione = paAssociata.getAutenticazione();
+		String autenticazioneCustom = null;
+		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+			autenticazioneCustom = autenticazione;
+			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+		}
+		String autenticazioneOpzionale = "";
+		if(paAssociata.getAutenticazioneOpzionale()!=null){
+			if (paAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+			}
+		}
+		String autorizzazioneContenuti = paAssociata.getAutorizzazioneContenuto();
+		
+		String autorizzazione= null, autorizzazioneCustom = null;
+		if (paAssociata.getAutorizzazione() != null &&
+				!TipoAutorizzazione.getAllValues().contains(paAssociata.getAutorizzazione())) {
+			autorizzazioneCustom = paAssociata.getAutorizzazione();
+			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+		}
+		else{
+			autorizzazione = AutorizzazioneUtilities.convertToStato(paAssociata.getAutorizzazione());
+		}
+		
+		String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+		return statoControlloAccessi;
+	}
+	
+	public String getStatoGestioneTokenPortaApplicativa(PortaApplicativa paAssociata) {
+		String gestioneToken = null;
+		if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getPolicy()!=null &&
+				!"".equals(paAssociata.getGestioneToken().getPolicy()) &&
+				!"-".equals(paAssociata.getGestioneToken().getPolicy())) {
+			gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+		}
+		
+		return this.getLabelStatoGestioneToken(gestioneToken);
+	}
+	
+	public String getStatoAutenticazionePortaApplicativa(PortaApplicativa paAssociata) {
+		String autenticazione = paAssociata.getAutenticazione();
+		String autenticazioneCustom = null;
+		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+			autenticazioneCustom = autenticazione;
+			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+		}
+		String autenticazioneOpzionale = "";
+		if(paAssociata.getAutenticazioneOpzionale()!=null){
+			if (paAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+			}
+		}
+
+		return this.getLabelStatoAutenticazione(autenticazione, autenticazioneOpzionale, autenticazioneCustom);
+	}
+	
+	public String getStatoAutorizzazionePortaApplicativa(PortaApplicativa paAssociata) {
+		String autorizzazioneContenuti = paAssociata.getAutorizzazioneContenuto();
+		
+		String autorizzazione= null, autorizzazioneCustom = null;
+		if (paAssociata.getAutorizzazione() != null &&
+				!TipoAutorizzazione.getAllValues().contains(paAssociata.getAutorizzazione())) {
+			autorizzazioneCustom = paAssociata.getAutorizzazione();
+			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+		}
+		else{
+			autorizzazione = AutorizzazioneUtilities.convertToStato(paAssociata.getAutorizzazione());
+		}
+		
+		return this.getLabelStatoAutorizzazione(autorizzazione, autorizzazioneContenuti, autorizzazioneCustom);
 	}
 	
 	
@@ -3097,56 +3184,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 				
-				String gestioneToken = null;
-				if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getPolicy()!=null &&
-						!"".equals(pdAssociata.getGestioneToken().getPolicy()) &&
-						!"-".equals(pdAssociata.getGestioneToken().getPolicy())) {
-					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
-				}
+				String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(pdAssociata); 
 				
-				String autenticazione = pdAssociata.getAutenticazione();
-				String autenticazioneCustom = null;
-				if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
-					autenticazioneCustom = autenticazione;
-					autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-				}
-				String autenticazioneOpzionale = "";
-				if(pdAssociata.getAutenticazioneOpzionale()!=null){
-					if (pdAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-					}
-				}
-				String autorizzazioneContenuti = pdAssociata.getAutorizzazioneContenuto();
-				
-				String autorizzazione= null, autorizzazioneCustom = null;
-				if (pdAssociata.getAutorizzazione() != null &&
-						!TipoAutorizzazione.getAllValues().contains(pdAssociata.getAutorizzazione())) {
-					autorizzazioneCustom = pdAssociata.getAutorizzazione();
-					autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-				}
-				else{
-					autorizzazione = AutorizzazioneUtilities.convertToStato(pdAssociata.getAutorizzazione());
-				}
-				
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken, autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
 				e.addElement(de);
 				
 				// validazione contenuti
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-				String statoValidazione = null;
-				
-				ValidazioneContenutiApplicativi vx = pdAssociata.getValidazioneContenutiApplicativi();
-				if (vx == null) {
-					statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
-				} else {
-					if(vx.getStato()!=null)
-						statoValidazione = vx.getStato().toString();
-					if ((statoValidazione == null) || "".equals(statoValidazione)) {
-						statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
-					}
-				}
+				String statoValidazione = this.getStatoValidazionePortaDelegata(pdAssociata);
 				de.setValue(statoValidazione);
 				e.addElement(de);
 				
@@ -3154,7 +3200,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaSicurezza) {
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
-					de.setValue(pdAssociata.getStatoMessageSecurity());
+					String statoMessageSecurity = getStatoMessageSecurityPortaDelegata(pdAssociata);
+					de.setValue(statoMessageSecurity);
 					e.addElement(de);
 				}
 
@@ -3163,30 +3210,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 
-					boolean isMTOMAbilitatoReq = false;
-					boolean isMTOMAbilitatoRes= false;
-					if(pdAssociata.getMtomProcessor()!= null){
-						if(pdAssociata.getMtomProcessor().getRequestFlow() != null){
-							if(pdAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
-								MTOMProcessorType mode = pdAssociata.getMtomProcessor().getRequestFlow().getMode();
-								if(!mode.equals(MTOMProcessorType.DISABLE))
-									isMTOMAbilitatoReq = true;
-							}
-						}
-	
-						if(pdAssociata.getMtomProcessor().getResponseFlow() != null){
-							if(pdAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
-								MTOMProcessorType mode = pdAssociata.getMtomProcessor().getResponseFlow().getMode();
-								if(!mode.equals(MTOMProcessorType.DISABLE))
-									isMTOMAbilitatoRes = true;
-							}
-						}
-					}
-	
-					if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
-						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO);
-					else 
-						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO);
+					String statoMTOM = getStatoMTOMPortaDelegata(pdAssociata);
+					
+					de.setValue(statoMTOM);
 					e.addElement(de);
 				}
 
@@ -3195,35 +3221,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 					
-					boolean tracciamento = false;
-					boolean isCorrelazioneApplicativaAbilitataReq = false;
-					boolean isCorrelazioneApplicativaAbilitataRes = false;
+					String statoTracciamento = getStatoTracciamentoPortaDelegata(pdAssociata);
 					
-					if (pdAssociata.getCorrelazioneApplicativa() != null)
-						isCorrelazioneApplicativaAbilitataReq = pdAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
-	
-					if (pdAssociata.getCorrelazioneApplicativaRisposta() != null)
-						isCorrelazioneApplicativaAbilitataRes = pdAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
-						
-					if(pdAssociata.getTracciamento()!=null &&
-							(pdAssociata.getTracciamento().getEsiti()!=null || 
-							pdAssociata.getTracciamento().getSeverita()!=null)) {
-						tracciamento = true;
-					}
-					
-					if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
-						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA);
-					else 
-						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
+					de.setValue(statoTracciamento);
 					e.addElement(de);
 				}
 				
 				// dump
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-				DumpConfigurazione dumpConfigurazione = pdAssociata.getDump();
-				String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
-					(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+				String statoDump = getStatoDumpPortaDelegata(pdAssociata);
 				de.setValue(statoDump);
 				e.addElement(de);
 				
@@ -3289,6 +3296,173 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+
+
+	public String getStatoDumpPortaDelegata(PortaDelegata pdAssociata)
+			throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		DumpConfigurazione dumpConfigurazione = pdAssociata.getDump();
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+		return statoDump;
+	}
+
+
+	public String getStatoTracciamentoPortaDelegata(PortaDelegata pdAssociata) {
+		String statoTracciamento = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+		boolean tracciamento = false;
+		boolean isCorrelazioneApplicativaAbilitataReq = false;
+		boolean isCorrelazioneApplicativaAbilitataRes = false;
+		
+		if (pdAssociata.getCorrelazioneApplicativa() != null)
+			isCorrelazioneApplicativaAbilitataReq = pdAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
+
+		if (pdAssociata.getCorrelazioneApplicativaRisposta() != null)
+			isCorrelazioneApplicativaAbilitataRes = pdAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+			
+		if(pdAssociata.getTracciamento()!=null &&
+				(pdAssociata.getTracciamento().getEsiti()!=null || 
+				pdAssociata.getTracciamento().getSeverita()!=null)) {
+			tracciamento = true;
+		}
+		
+		if(tracciamento || isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes)
+			statoTracciamento = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA;
+		else 
+			statoTracciamento = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+		return statoTracciamento;
+	}
+
+
+	public String getStatoMTOMPortaDelegata(PortaDelegata pdAssociata) {
+		String statoMTOM = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO;
+		
+		boolean isMTOMAbilitatoReq = false;
+		boolean isMTOMAbilitatoRes= false;
+		if(pdAssociata.getMtomProcessor()!= null){
+			if(pdAssociata.getMtomProcessor().getRequestFlow() != null){
+				if(pdAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
+					MTOMProcessorType mode = pdAssociata.getMtomProcessor().getRequestFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoReq = true;
+				}
+			}
+
+			if(pdAssociata.getMtomProcessor().getResponseFlow() != null){
+				if(pdAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
+					MTOMProcessorType mode = pdAssociata.getMtomProcessor().getResponseFlow().getMode();
+					if(!mode.equals(MTOMProcessorType.DISABLE))
+						isMTOMAbilitatoRes = true;
+				}
+			}
+		}
+
+		if(isMTOMAbilitatoReq || isMTOMAbilitatoRes)
+			statoMTOM = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_ABILITATO;
+		else 
+			statoMTOM = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_DISABILITATO;
+		return statoMTOM;
+	}
+
+
+	public String getStatoMessageSecurityPortaDelegata(PortaDelegata pdAssociata) {
+		String statoMessageSecurity = pdAssociata.getStatoMessageSecurity();
+		return statoMessageSecurity;
+	}
+
+
+	public String getStatoValidazionePortaDelegata(PortaDelegata pdAssociata) {
+		String statoValidazione = null;
+		ValidazioneContenutiApplicativi vx = pdAssociata.getValidazioneContenutiApplicativi();
+		if (vx == null) {
+			statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+		} else {
+			if(vx.getStato()!=null)
+				statoValidazione = vx.getStato().toString();
+			if ((statoValidazione == null) || "".equals(statoValidazione)) {
+				statoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+			}
+		}
+		return statoValidazione;
+	}
+
+
+	public String getStatoControlloAccessiPortaDelegata(PortaDelegata pdAssociata) {
+		String gestioneToken = null;
+		if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getPolicy()!=null &&
+				!"".equals(pdAssociata.getGestioneToken().getPolicy()) &&
+				!"-".equals(pdAssociata.getGestioneToken().getPolicy())) {
+			gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+		}
+		
+		String autenticazione = pdAssociata.getAutenticazione();
+		String autenticazioneCustom = null;
+		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+			autenticazioneCustom = autenticazione;
+			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+		}
+		String autenticazioneOpzionale = "";
+		if(pdAssociata.getAutenticazioneOpzionale()!=null){
+			if (pdAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+			}
+		}
+		String autorizzazioneContenuti = pdAssociata.getAutorizzazioneContenuto();
+		
+		String autorizzazione= null, autorizzazioneCustom = null;
+		if (pdAssociata.getAutorizzazione() != null &&
+				!TipoAutorizzazione.getAllValues().contains(pdAssociata.getAutorizzazione())) {
+			autorizzazioneCustom = pdAssociata.getAutorizzazione();
+			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+		}
+		else{
+			autorizzazione = AutorizzazioneUtilities.convertToStato(pdAssociata.getAutorizzazione());
+		}
+		
+		String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken, autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+		return statoControlloAccessi;
+	}
+	
+	public String getStatoAutenticazionePortaDelegata(PortaDelegata pdAssociata) {
+		String autenticazione = pdAssociata.getAutenticazione();
+		String autenticazioneCustom = null;
+		if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
+			autenticazioneCustom = autenticazione;
+			autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+		}
+		String autenticazioneOpzionale = "";
+		if(pdAssociata.getAutenticazioneOpzionale()!=null){
+			if (pdAssociata.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+				autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+			}
+		}
+		return this.getLabelStatoAutenticazione(autenticazione, autenticazioneOpzionale, autenticazioneCustom);
+	}
+	
+	public String getStatoAutorizzazionePortaDelegata(PortaDelegata pdAssociata) {
+		String autorizzazioneContenuti = pdAssociata.getAutorizzazioneContenuto();
+		String autorizzazione= null, autorizzazioneCustom = null;
+		if (pdAssociata.getAutorizzazione() != null &&
+				!TipoAutorizzazione.getAllValues().contains(pdAssociata.getAutorizzazione())) {
+			autorizzazioneCustom = pdAssociata.getAutorizzazione();
+			autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+		}
+		else{
+			autorizzazione = AutorizzazioneUtilities.convertToStato(pdAssociata.getAutorizzazione());
+		}
+		
+		return this.getLabelStatoAutorizzazione(autorizzazione, autorizzazioneContenuti, autorizzazioneCustom);
+	}
+	
+	public String getStatoGestioneTokenPortaDelegata(PortaDelegata pdAssociata) {
+		String gestioneToken = null;
+		if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getPolicy()!=null &&
+				!"".equals(pdAssociata.getGestioneToken().getPolicy()) &&
+				!"-".equals(pdAssociata.getGestioneToken().getPolicy())) {
+			gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+		}
+		 
+		return this.getLabelStatoGestioneToken(gestioneToken);
 	}
 
 	private boolean addInfoCorrelata(TipoOperazione tipoOp, String portType, boolean modificaAbilitata, String servcorr, String oldStato,

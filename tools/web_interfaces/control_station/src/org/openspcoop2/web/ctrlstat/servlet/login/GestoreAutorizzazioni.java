@@ -29,6 +29,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -201,6 +202,7 @@ public class GestoreAutorizzazioni {
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_FRUITORI_PORTE_DELEGATE);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_PORTE_APPLICATIVE);
 		this.servletServizi.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
+		this.servletServizi.addAll(ErogazioniCostanti.SERVLET_ASPS_EROGAZIONI);
 		/** Permessi associati alla gestione dei servizi */
 		this.permessiServizi = new PermessiUtente();
 		this.permessiServizi.setServizi(true);

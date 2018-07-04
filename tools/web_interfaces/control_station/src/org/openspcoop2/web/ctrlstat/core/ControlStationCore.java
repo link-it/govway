@@ -535,6 +535,7 @@ public class ControlStationCore {
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
+	private boolean showServiziVisualizzaModalitaElenco = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -607,6 +608,9 @@ public class ControlStationCore {
 	}
 	public boolean isTokenPolicyForceIdEnabled() {
 		return this.tokenPolicyForceIdEnabled;
+	}
+	public boolean isShowServiziVisualizzaModalitaElenco() {
+		return this.showServiziVisualizzaModalitaElenco;
 	}
 
 	/** Motori di Sincronizzazione */
@@ -1419,6 +1423,7 @@ public class ControlStationCore {
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
+		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -1679,6 +1684,7 @@ public class ControlStationCore {
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
+			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){

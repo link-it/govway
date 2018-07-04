@@ -154,6 +154,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -968,6 +969,7 @@ public class ConsoleHelper {
 			Vector<MenuEntry> menu = new Vector<MenuEntry>();
 
 			if(pu.isServizi() || pu.isAccordiCooperazione()){
+				Boolean serviziVisualizzaModalitaElenco = ConsoleProperties.getInstance().isEnableServiziVisualizzaModalitaElenco();
 				// Oggetti del registro compatti
 				MenuEntry me = new MenuEntry();
 				String[][] entries = null;
@@ -989,11 +991,18 @@ public class ConsoleHelper {
 
 					// ASPC e ASPS
 					if(this.core.isRegistroServiziLocale()){
+						// ASPC 
+						totEntries ++;
+						
 						if(multiTenant) {
-							totEntries +=2;
-						}
-						else {
-							totEntries +=3;
+							totEntries +=1;
+						} else {
+							// ASPS vecchia visualizzazione 
+							if(serviziVisualizzaModalitaElenco) {
+								totEntries +=2;
+							} 
+						// ASPS nuova visualizzazione
+						totEntries +=2;
 						}
 					}
 				}
@@ -1079,6 +1088,8 @@ public class ConsoleHelper {
 								AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
 						index++;
 
+						
+
 						//ASPS
 						if(multiTenant) {
 							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
@@ -1088,14 +1099,30 @@ public class ConsoleHelper {
 							index++;
 						}
 						else {
-							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+							// ASPS vecchia visualizzazione 
+							if(serviziVisualizzaModalitaElenco) {
+								entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_MENU_VISUALE_AGGREGATA;
+								entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+										AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
+										AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
+								index++;
+								
+								entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA;
+								entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+										AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
+										AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
+								index++;
+							}
+							
+							// ASPS nuova visualizzazione
+							entries[index][0] = ErogazioniCostanti.LABEL_ASPS_EROGAZIONI;
+							entries[index][1] = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST+"?"+
 									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
 									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE;
 							index++;
 							
-							entries[index][0] = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUIZIONI_MENU_VISUALE_AGGREGATA;
-							entries[index][1] = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST+"?"+
+							entries[index][0] = ErogazioniCostanti.LABEL_ASPS_FRUIZIONI;
+							entries[index][1] = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST+"?"+
 									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE+"="+
 									AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE;
 							index++;
@@ -4219,6 +4246,40 @@ public class ConsoleHelper {
 		return label;
 	}
 	
+	public String getLabelStatoGestioneToken(String gestioneToken) {
+		String label = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		
+		if(gestioneToken!=null && StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)) {
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		}
+		return label;
+	}
+	
+	public String getLabelStatoAutenticazione(String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom) {
+		String label = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		
+		if(autenticazione != null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		if(autenticazioneOpzionale != null && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		return label;
+	}
+	
+	public String getLabelStatoAutorizzazione(String autorizzazione, String autorizzazioneContenuti,String autorizzazioneCustom) {
+		String label = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		
+		if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		if(StringUtils.isNotEmpty(autorizzazioneContenuti))
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		
+		return label;
+	}
+	
+	
 	public DataElement getServiceBindingDataElement(ServiceBinding serviceBinding) throws Exception{
 		return getServiceBindingDataElement(null, false, serviceBinding, true);
 	}
@@ -5022,6 +5083,9 @@ public class ConsoleHelper {
 	}
 	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws Exception{
 		return NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
+	}
+	public String getLabelIdServizioSenzaErogatore(IDServizio idServizio) throws Exception{
+		return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(idServizio);
 	}
 	
 	

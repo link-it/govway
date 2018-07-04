@@ -41,6 +41,8 @@ else
   iddati = "notdefined";
 GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
+
+String customListViewName = pd.getCustomListViewName();
 %>
 
 <td valign="top" class="td2PageBody">
@@ -198,7 +200,9 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					<table class="tabella">
 						<%
 						String [] labels = pd.getLabels();
-						int labelLength = labels != null ? labels.length : 0;
+						int baseLength = pd.getSelect() ? 1 : 0;
+						int labelLength = (labels != null ? labels.length : 1);
+						int colSpanLength = labelLength + baseLength;
 						
 						Vector<?> v = pd.getDati();
 						String stile= "";
@@ -212,7 +216,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					
 						<!-- data scroller top -->
 						<tr>
-							<td colspan="<%= labelLength + 1%>">
+							<td colspan="<%= colSpanLength %>">
 								<div class="buttonrowdatascroller dsTop" align="center">
 									<table>
 										<tbody>
@@ -261,12 +265,13 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								</div>
 							</td>
 						</tr>
-					
+						
+						<% if(labels!=null){ %>
 						<tr class="tableHeader">
 							<%
 							if (v.size()> 0 && pd.getSelect()) {
 							  %>
-							  <td style="width:30px;">
+							  <td style="width:16px;">
 							  	<div align="center">
 							  		<input id="chkAll" type="checkbox" name="chkAll" onclick="checkAll();"/> 
 							  	</div>
@@ -276,15 +281,13 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							%>
 					
 							<%
-							
-							if(labels!=null){
 								for (int i = 0; i < labelLength ;i++) {
 								  %><td><span><%= labels[i] %></span></td><%
 								}
-							}
 							%>
 					
 						</tr>
+					  <% }	%>
 					<%
 					//inizio entries
 					
@@ -311,159 +314,25 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 						  	}
 						  	
 							if (pd.getSelect()) {
+								String checkBoxStyle = labels!=null ? "" : "style=\"width:16px;\"" ;
 							   %>
-								<td class="tdText">
+								<td <%=checkBoxStyle %> class="tdText">
 							   		<div align="center">
 							   			<input id='_<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>' type="checkbox" name="selectcheckbox" value='<% if(idToRemove!=null) out.write(idToRemove);else out.write(""+i); %>'/>
 							   		</div>
 							   	</td><%
 							 }
-								  
-							for (int j = 0; j < e.size(); j++) {
-							    DataElement de = (DataElement) e.elementAt(j);
-							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
-							    String classLink = "";
-							    String classSpan = de.getLabelStyleClass();
-							    String tdStyle = " "; 
-							    if (!de.getStyle().equals("")) {
-							    	tdStyle = " style=\""+ de.getStyle() +"\"";
-						  		}
-							    
-							    // se e' un elemento visualizzabile inserisco una cella
-							    if (!de.getType().equals("hidden")) {
-							      %><td class="tdText" <%=tdStyle %>><%
-							    }
-					
-								if (de.getType().equals("text")) {
-						    		// tipo link
-					      			if (!de.getUrl().equals("")) {
-							    		//tooltip
-								  		String tip = "";
-								  		boolean showTip=false;
-								  		if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
-								  			tip=de.getToolTip();
-								  			showTip=true;
-								  		}
-								  		//se la lunghezza del dato impostato come value e' > della larghezza della
-								  		//colonna allora accorcio il dato ed imposto il tooltip
-								  		//15 e' il valore di default impostato nel dataelement
-								  		// [TODO] questa dimensione e' da rivedere
-								  		int size=de.getSize();
-								  		String res=de.getValue();
-								  		if(size>15 && de.getValue().trim().length()>size){
-								  			res=de.getValue().trim().substring(0,size)+" ...";
-								  			//se nn e' stato specificato un tip precedentemente
-								  			//metto come tip il valore completo del campo
-								  			if(!showTip) tip=de.getValue();
-								  			
-								  			showTip=true;
-								  		}
-								  		
-								  		String deTarget = " ";
-								  		if (!de.getTarget().equals("")) {
-								  			deTarget = " target=\""+ de.getTarget() +"\"";
-								  		}
-								  		
-								  		String deTip = " ";
-								  		if(showTip){
-								  			deTip = " title=\"" + tip + "\"";
-								  		}
-								  		
-								  		%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>"><%= res %></a><%
-								  		
-							      	} else {
-										//no url
-										if (!de.getOnClick().equals("")) {
-										  //onclick
-										  %><a class="<%= classLink %>" href='' onClick="<%= de.getOnClick() %>; return false;"><%= de.getValue() %></a><%
-										} else {
-										  //string only
-										  %><span class="<%= classSpan %>"><%= de.getValue() %></span><%
-										}
-							      	}
-								} else { 
-								      // Tipo hidden
-								      if (de.getType().equals("hidden")) {
-										%><input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" /><%
-								      } else {
-										// Tipo image
-										if (de.getType().equals("image")) {
-									
-										  String[] stValue = de.getValue().split("\\s");
-										  String[] stUrl = de.getUrl().split("\\s");
-										  String[] stOnClick = de.getOnClick().split("\\s");
-									
-										  // Ciclo sulla lista di immagini
-										  for (int x=0; x<stValue.length; x++) {
-									
-										    // Se e' definito 'Url'
-										    if (stUrl.length > x && stUrl[x] != "") {
-										      %><a class="<%= stile %>" href="<%= stUrl[x] %>"><img src="images/<%= stValue[x] %>"></a>&nbsp;<%
-										    } else {
-									
-										      // Se e' definito 'OnClick'
-										      if (stOnClick.length > x && stOnClick[x] != "") {
-											%><a class="<%= stile %>" href='' onClick="<%= stOnClick[x] %>; return false;"><img src="images/<%= stValue[x] %>"></a>&nbsp;<%
-										      } else {
-									
-											// Solo immagine
-											%><img src="images/<%= stValue[x] %>">&nbsp;<%
-										      }
-										    }
-										  }
-										} else {
-								        	  if (de.getType().equals("radio")) {
-										   		String[] stValues = de.getValues();
-									    		String[] stLabels = de.getLabels();
-									
-											    // Ciclo sulla lista di valori 
-											    for (int r = 0; r < stValues.length; r++) {
-											      if (stValues[r].equals(de.getSelected())) {
-										                 %><input type="radio" checked name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
-											      } else {
-										                 %><input type="radio" name='<%= deName %>' value='<%= stValues[r] %>'>&nbsp;&nbsp;<%= stLabels[r] %><%
-										              }
-										    	  if (r<stValues.length-1) {
-													%><br/><%
-									              }
-										    	}
-									  		} else { 
-									  			 if (de.getType().equals("checkbox")) {
-												 	String image = "disabled_red.png";
-												 	if("yes".equals(de.getSelected())){
-														image = "check_green.png";
-													}
-													else if("warn".equals(de.getSelected())){
-														image = "check_yellow.png";
-													}
-									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
-									  				 
-									  				// tipo link
-										      		if (!de.getUrl().equals("")) { 
-										      			String deTarget = " ";
-												  		if (!de.getTarget().equals("")) {
-												  			deTarget = " target=\""+ de.getTarget() +"\"";
-												  		} 
-												  		%><div style="text-align: center;">
-												  			<a class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>">
-												  				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
-															</a>
-														</div><%
-										      			
-										      		}else {
-									  				 	%><div style="text-align: center;"><img src="images/tema_link/<%= image %>" <%= tooltip %>/>&nbsp;</div><%
-										      		}
-									  			 } // enc checkbox
-									  		} // end else radio
-										} // end else image
-						      		} // end else hidden
-						    	} // end else text
-					
-							    if (!de.getType().equals("hidden")) {
-							      %></td><%
-							    }
-					 		 }
-					 	 %></tr><%
+					 	 %>
+							<% if(customListViewName.equals("erogazioni")){ %>
+								<jsp:include page="/jsp/erogazioni.jsp" flush="true">
+									<jsp:param name="numeroEntry" value="<%=i %>"/>
+								</jsp:include>
+							<% } else if(customListViewName.equals("fruizioni")){ %>
+								<jsp:include page="/jsp/fruizioni.jsp" flush="true">
+									<jsp:param name="numeroEntry" value="<%=i %>"/>
+								</jsp:include>
+							<% } %>						
+					 	 </tr><%
 					}
 					
 					//fine entries
@@ -472,7 +341,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					if (pd.getNumEntries() > 20){
 						%>
 						<tr>
-							<td colspan="<%= labelLength + 1 %>">
+							<td colspan="<%= colSpanLength %>">
 								<div class="buttonrowdatascroller dsBottom" align="center" >
 									<table>
 										<tbody>
@@ -594,7 +463,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					if (pd.getSelect()) {
 						%>
 						<tr>
-							<td colspan=<%= labelLength + 1 %> class="buttonrow">
+							<td colspan=<%= colSpanLength %> class="buttonrow">
 								<div class="buttonrowlista">
 									<%
 									Vector<?> areaBottoni = pd.getAreaBottoni();
@@ -630,7 +499,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					else{
 						%>
 						 <tr class="buttonrownobuttons">
-						  <td colspan="<%= labelLength + 1 %>">&nbsp;</td>
+						  <td colspan="<%= colSpanLength %>">&nbsp;</td>
 					  	</tr>
 					  	<%
 					}

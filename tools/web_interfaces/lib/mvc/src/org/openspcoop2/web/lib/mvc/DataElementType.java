@@ -42,6 +42,7 @@ public enum DataElementType {
 	FILE("file"),
 	NOTE("note"),
 	RADIO("radio"),
+	IMAGE("image"), BUTTON("button"),
 	NUMBER("number");
 	
 	private String value;

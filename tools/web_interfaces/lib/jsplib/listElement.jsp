@@ -57,6 +57,8 @@ int n = v.size();
 String search = request.getParameter("search");
 if (search == null)
   search = "";
+
+String customListViewName = pd.getCustomListViewName();
 %>
 
 <head>
@@ -401,6 +403,18 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 		});
 		
 		togglePanelListaRicerca(panelListaRicercaOpen);
+		
+		$("tr[class='even']").hover(function() {
+		    $(this).addClass('active');
+		}, function() {
+		    $(this).removeClass('active');
+		});
+		
+		$("tr[class='odd']").hover(function() {
+		    $(this).addClass('active');
+		}, function() {
+		    $(this).removeClass('active');
+		});
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js"></script>
@@ -413,7 +427,11 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
 			<tr class="trPageBody">
 				<jsp:include page="/jsplib/menu.jsp" flush="true" />
-				<jsp:include page="/jsplib/full-list.jsp" flush="true" />
+				<% if(customListViewName == null || "".equals(customListViewName)){ %>
+					<jsp:include page="/jsplib/full-list.jsp" flush="true" />
+				<% } else {%>	
+					<jsp:include page="/jsplib/full-list-noTable.jsp" flush="true" />
+				<% } %>
 			</tr>
 			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
 		</tbody>

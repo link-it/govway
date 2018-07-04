@@ -806,7 +806,13 @@
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
-		
+        
+        <!-- Accordi di Servizio Parte Specifica (Erogazioni/Fruizioni) -->
+		<action path="/aspsErogazioniList" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniList"
+            scope="request" validate="true">
+            <forward name="aspsErogazioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="aspsErogazioniError" path="/jsplib/info.jsp"/>
+        </action>
 		
 		<!--  Accordi di Cooperazione -->
 		

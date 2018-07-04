@@ -61,22 +61,39 @@ PageData pd = (PageData) session.getAttribute(pdString);
 				<%
 			  		String [][] entries = m.getEntries();
 			  		for (int j = 0; j < entries.length; j++) {
-			  			
+			  			String deVoceMenuName = "url_entry_"+j;
 			  			String cssClass = "voceMenu";
 			  			
 			    		if (entries[j].length == 2) {
-			      		%><div class="voceMenu">
-			      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+			    			
+			      		%><div class="voceMenu" id="voceMenu_<%=j %>">
+			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
+							<script type="text/javascript">
+							   $('[id=voceMenu_<%=j %>]')
+							   .click(function() {
+										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										window.location = val;
+							       });
+						   </script>	
+		      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
 			      			</div>
 			      		<%
 			    		} else if (entries[j].length == 3) {
-			      		%><div class="voceMenu">
+			      		%><div class="voceMenu" id="voceMenu_<%=j %>">
+			      			<input id="<%= deVoceMenuName  %>" type="hidden" name="<%= deVoceMenuName  %>" value="<%= entries[j][1]  %>"/>
+							<script type="text/javascript">
+							   $('[id=voceMenu_<%=j %>]')
+							   .click(function() {
+										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
+										window.location = val;
+							       });
+						   </script>
 			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
 			      			</div>
 			      		<%
 			    		}
 			 	 }
-			 %>
+	  		 %>
 				
 			</div>
 		<% } %>

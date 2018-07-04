@@ -829,6 +829,10 @@ public class ConsoleProperties {
 	public String getTokenPolicyForceId() throws UtilsException{
 		return this.readProperty(false, "console.tokenPolicy.forceId");
 	}
+	
+	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{
+		return this.readBooleanProperty(true, "console.servizi.visualizzaModalitaElenco");
+	}
 
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */

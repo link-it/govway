@@ -314,12 +314,14 @@ a.td2PageHeader:visited {
 }
 
 div.voceMenu:hover {
+	cursor: pointer;
 	background: ${menu.element.hover.background.color};
 	color: ${menu.element.hover.color};
 	border-left: 8px solid ${menu.element.hover.border.color};
 	padding-left: 4px;
     padding-top: 6px;
    	padding-bottom: 6px;
+   	font-weight: 600;
 }
 
 .voceMenu a{
@@ -1170,3 +1172,69 @@ div.prop-slider{
 .resource-method-block.resource-method-unlink {
 	  background-color: ${api.resources.httpmethod.background.unlink.color};
 }
+
+
+/* CLASSI VISTA CUSTOM EROGAZIONI */
+
+.entryErogazione,
+.entryFruizione {
+	cursor: pointer;
+	padding: 16px;
+}
+
+.entryErogazione .titoloEntry,
+.entryFruizione .titoloEntry {
+	padding: 4px 4px 4px 0px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.entryErogazione .metadatiEntry,
+.entryFruizione .metadatiEntry {
+	padding: 4px 4px 4px 0px;
+	color: ${body.secondary.color};
+}
+
+.funzionalitaErogazione,
+.funzionalitaFruizione {
+	padding: 16px;
+	display: flex;
+} 
+
+.funzionalitaErogazione .configurazioneErogazione,
+.funzionalitaFruizione .configurazioneFruizione {
+	background-color: ${configurazione.background.color};
+	color: ${configurazione.color};
+    max-width: 120px;
+    height: 40px;
+    padding: 4px 4px 4px 0px;
+    margin: 4px;
+    border-radius: 5px;
+    display: inline-flex;
+} 
+
+.configurazioneErogazioneIcon,
+.configurazioneFruizioneIcon {
+    padding: 8px 4px 8px 8px;
+    margin-right: 4px;
+    cursor: default;
+}
+
+.configurazioneErogazioneIcon span,
+.configurazioneFruizioneIcon span {
+	padding: 0px;
+	margin: 0px;
+}
+
+.configurazioneErogazioneSpan,
+.configurazioneFruizioneSpan{
+	padding: 6px 4px 4px 0px;
+	cursor: default;
+}
+
+.configurazioneErogazioneSpanOneLine,
+.configurazioneFruizioneSpanOneLine{
+	padding: 12px 4px 4px 0px;
+	cursor: default;
+}
+

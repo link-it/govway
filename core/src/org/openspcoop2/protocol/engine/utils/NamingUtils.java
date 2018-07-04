@@ -178,6 +178,11 @@ public class NamingUtils {
 		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
 		return getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
 	}
+	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(IDServizio idServizio) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
+		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+	}
 	public static String getLabelAccordoServizioParteSpecifica(String protocollo, IDServizio idServizio) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
