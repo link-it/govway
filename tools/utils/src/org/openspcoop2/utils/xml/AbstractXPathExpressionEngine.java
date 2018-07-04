@@ -29,11 +29,10 @@ import java.util.Enumeration;
 
 import javax.xml.soap.SOAPElement;
 
-import org.slf4j.Logger;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -816,7 +815,8 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	
 	public static String extractAndConvertResultAsString(Element element,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
-		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+		dnc.findPrefixNamespace(element);
 		return extractAndConvertResultAsString(element, dnc, xPathEngine, pattern, log);
 	}
 	public static String extractAndConvertResultAsString(Element element,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {

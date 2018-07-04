@@ -51,8 +51,8 @@ import java.io.Serializable;
  * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="defaultSelected" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
  * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
- * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
+ * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
+ * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
  * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -273,11 +273,11 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlAttribute(name="value",required=false)
   protected java.lang.String value;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="min",required=false)
   protected java.lang.Integer min;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="max",required=false)
   protected java.lang.Integer max;
 
