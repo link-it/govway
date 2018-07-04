@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import javax.xml.soap.SOAPElement;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -811,4 +812,56 @@ public abstract class AbstractXPathExpressionEngine {
 			}
 		}
 	}
+	
+	
+	
+	public static String extractAndConvertResultAsString(Element element,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+		return extractAndConvertResultAsString(element, dnc, xPathEngine, pattern, log);
+	}
+	public static String extractAndConvertResultAsString(Element element,DynamicNamespaceContext dnc,AbstractXPathExpressionEngine xPathEngine, String pattern, Logger log) throws Exception {
+		
+		// Provo a cercarlo prima come Node
+		NodeList nodeList = null;
+		Exception exceptionNodeSet = null;
+		String risultato = null;
+		try{
+			nodeList = (NodeList) xPathEngine.getMatchPattern(element, dnc, pattern,XPathReturnType.NODESET);
+			if(nodeList!=null){
+				risultato = xPathEngine.toString(nodeList);
+			}
+		}catch(Exception e){
+			exceptionNodeSet = e;
+		}
+		
+		// Se non l'ho trovato provo a cercarlo come string (es. il metodo sopra serve per avere l'xml, ma fallisce in caso di concat, in caso di errori di concat_openspcoop....)
+		// Insomma il caso dell'xml sopra e' quello speciale, che pero' deve essere eseguito prima, perche' altrimenti il caso string sotto funziona sempre, e quindi non si ottiene mai l'xml.
+		if(risultato==null || "".equals(risultato)){
+			try{
+				risultato = xPathEngine.getStringMatchPattern(element, dnc, pattern);
+			}catch(Exception e){
+				if(exceptionNodeSet!=null){
+					log.error("Errore avvenuto durante la getStringMatchPattern("+pattern
+							+") ("+e.getMessage()+") invocata in seguito all'errore dell'invocazione getMatchPattern("+
+							pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
+				}
+				// lancio questo errore.
+				throw e;
+			}
+		}
+		
+		if(risultato == null || "".equals(risultato)){
+			if(exceptionNodeSet!=null){
+				log.debug("Non sono stati trovati risultati tramite l'invocazione del metodo getStringMatchPattern("+pattern
+						+") invocato in seguito all'errore dell'invocazione getMatchPattern("+
+						pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
+				// lancio questo errore.
+				// Questo errore puo' avvenire perche' ho provato a fare xpath con nodeset
+				//throw exceptionNodeSet;
+			}
+		}
+		
+		return risultato;
+	}
+	
 }

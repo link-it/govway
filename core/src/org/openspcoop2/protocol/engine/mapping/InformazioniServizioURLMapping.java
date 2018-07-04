@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -395,6 +396,7 @@ public class InformazioniServizioURLMapping {
 		DynamicNamespaceContext dnc = null;
 		AbstractXPathExpressionEngine xPathEngine = null;
 		Element element = null;
+		String elementJson = null;
 		
 		if(this.existsUrlBasedIdentificationMode()){
 			urlInvocazione = this.urlProtocolContext.getUrlInvocazione_formBased();
@@ -408,12 +410,17 @@ public class InformazioniServizioURLMapping {
 					if(MessageType.XML.equals(this.msg.getMessageType())){
 						element = this.msg.castAsRestXml().getContent();
 					}
+					else if(MessageType.JSON.equals(this.msg.getMessageType())){
+						elementJson = this.msg.castAsRestJson().getContent();
+					}
 					else{
 						throw new DriverConfigurazioneNotFound("Identificazione 'contentBased' non supportata per il message-type '"+this.msg.getMessageType()+"'");
 					}
 				}
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-				xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				if(element!=null) {
+					dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+					xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				}
 			}catch(Exception e){
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -422,7 +429,10 @@ public class InformazioniServizioURLMapping {
 		// TipoMittente
 		String tipoMittente = null;
 		try{
-			tipoMittente = this.readValue(this.tipoMittente, TIPO_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiestaSoggettoMittente);
+			tipoMittente = this.readValue(this.tipoMittente, TIPO_MITTENTE, identity, urlInvocazione,
+					element, dnc, xPathEngine, 
+					elementJson, 
+					headerIntegrazioneRichiestaSoggettoMittente);
 		}catch(ProtocolException e){
 			if(tipoMittente==null && !ModalitaIdentificazione.PLUGIN_BASED.equals(this.tipoMittente.getModalitaIdentificazione())){
 				if(this.tipoMittente.getAnonymous()==null){
@@ -439,7 +449,10 @@ public class InformazioniServizioURLMapping {
 		// Mittente
 		String mittente = null;
 		try{
-			mittente = this.readValue(this.mittente, NOME_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiestaSoggettoMittente);
+			mittente = this.readValue(this.mittente, NOME_MITTENTE, identity, urlInvocazione, 
+					element, dnc, xPathEngine, 
+					elementJson, 
+					headerIntegrazioneRichiestaSoggettoMittente);
 		}catch(ProtocolException e){
 			if(mittente==null && !ModalitaIdentificazione.PLUGIN_BASED.equals(this.mittente.getModalitaIdentificazione())){
 				if(this.mittente.getAnonymous()==null){
@@ -460,6 +473,7 @@ public class InformazioniServizioURLMapping {
 	private String readValue(MappingInfo mappingInfo,String oggetto,
 			Credential identity,String urlInvocazione,
 			Element element, DynamicNamespaceContext dnc ,AbstractXPathExpressionEngine xPathEngine,
+			String elementJson, 
 			IDSoggetto headerIntegrazioneRichiestaSoggettoMittente) throws ProtocolException{
 		
 		if(ModalitaIdentificazione.STATIC.equals(mappingInfo.getModalitaIdentificazione())){
@@ -484,7 +498,12 @@ public class InformazioniServizioURLMapping {
 		
 		else if(ModalitaIdentificazione.CONTENT_BASED.equals(mappingInfo.getModalitaIdentificazione())){
 			try{
-				return xPathEngine.getStringMatchPattern(element,dnc, mappingInfo.getPattern() );
+				if(element!=null) {
+					return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element,dnc, xPathEngine, mappingInfo.getPattern(),  this.log);
+				}
+				else {
+					return JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, mappingInfo.getPattern(), this.log);
+				}
 			}catch(Exception e){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.CONTENT_BASED.toString()+" non riuscita: "+e.getMessage(),e);
 			}

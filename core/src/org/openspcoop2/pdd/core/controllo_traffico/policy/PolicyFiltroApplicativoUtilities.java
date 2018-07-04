@@ -24,21 +24,21 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.xml.soap.SOAPEnvelope;
-
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
-import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
-import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 /**     
  * PolicyFiltroApplicativoUtilities
@@ -57,15 +57,29 @@ public class PolicyFiltroApplicativoUtilities {
 		
 		switch (tipoFiltro) {
 		case CONTENT_BASED:
-			
-			XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-			try{
-				SOAPEnvelope soapEnvelope = context.getMessaggio().castAsSoap().getSOAPPart().getEnvelope();
-				DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(soapEnvelope);
-				return xpathEngine.getStringMatchPattern(soapEnvelope, dnc, nome);
-			}catch(XPathNotFoundException notFound){
-				log.debug(notFound.getMessage(),notFound);
-				return null;
+			AbstractXPathExpressionEngine xPathEngine = null;
+			Element element = null;
+			String elementJson = null;
+			if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())){
+				element = context.getMessaggio().castAsSoap().getSOAPPart().getEnvelope();
+			}
+			else{
+				if(MessageType.XML.equals(context.getMessaggio().getMessageType())){
+					element = context.getMessaggio().castAsRestXml().getContent();
+				}
+				else if(MessageType.JSON.equals(context.getMessaggio().getMessageType())){
+					elementJson = context.getMessaggio().castAsRestJson().getContent();
+				}
+				else{
+					throw new DriverConfigurazioneNotFound("Filtro '"+tipoFiltro.getValue()+"' non supportato per il message-type '"+context.getMessaggio().getMessageType()+"'");
+				}
+			}
+			if(element!=null) {
+				xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, nome,  log);
+			}
+			else {
+				return JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, nome, log);
 			}
 			
 		case URLBASED:

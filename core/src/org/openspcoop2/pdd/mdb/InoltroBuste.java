@@ -104,6 +104,8 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.TokenForward;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -3268,6 +3270,11 @@ public class InoltroBuste extends GenericLib{
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					
 					idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
+					
+					if(idCorrelazioneApplicativaRisposta!=null) {
+						Transaction tr = TransactionContext.getTransaction(idTransazione);
+						tr.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+					}
 					
 					msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
 

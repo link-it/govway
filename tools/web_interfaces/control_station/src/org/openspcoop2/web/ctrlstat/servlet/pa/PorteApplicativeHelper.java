@@ -3141,7 +3141,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
 		de.setSize(80);
-		if (elemxml == null) {
+		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
 			de.setValue("");
 		} else {
 			de.setValue(elemxml);
@@ -3226,7 +3226,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 		de.setSize(80);
-		if (elemxml == null) {
+		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
 			de.setValue("");
 		} else {
 			de.setValue(elemxml);

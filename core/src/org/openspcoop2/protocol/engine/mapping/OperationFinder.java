@@ -33,18 +33,17 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.rest.api.ApiOperation;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
@@ -135,9 +134,9 @@ public class OperationFinder {
 							if(message==null){
 								throw new DriverConfigurazioneNotFound("Messaggio non fornito");
 							}
-							DynamicNamespaceContext dnc = null;
 							AbstractXPathExpressionEngine xPathEngine = null;
 							Element element = null;
+							String elementJson = null;
 							if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 								element = message.castAsSoap().getSOAPPart().getEnvelope();
 							}
@@ -145,13 +144,20 @@ public class OperationFinder {
 								if(MessageType.XML.equals(message.getMessageType())){
 									element = message.castAsRestXml().getContent();
 								}
+								else if(MessageType.JSON.equals(message.getMessageType())){
+									elementJson = message.castAsRestJson().getContent();
+								}
 								else{
 									throw new DriverConfigurazioneNotFound("Identificazione '"+modalitaIdentificazione.getValue()+"' non supportata per il message-type '"+message.getMessageType()+"'");
 								}
 							}
-							dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-							xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
-							azione = xPathEngine.getStringMatchPattern(element,dnc,pattern);
+							if(element!=null) {
+								xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								azione = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, pattern,  log);
+							}
+							else {
+								azione = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, pattern, log);
+							}
 						}
 						else if(ModalitaIdentificazioneAzione.INPUT_BASED.equals(modalitaIdentificazione)){
 							// INPUT-BASED

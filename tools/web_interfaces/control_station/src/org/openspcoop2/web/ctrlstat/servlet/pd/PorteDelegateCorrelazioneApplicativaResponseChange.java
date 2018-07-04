@@ -237,7 +237,12 @@ public final class PorteDelegateCorrelazioneApplicativaResponseChange extends Ac
 				}
 			}
 
-			caeNew.setNome(StringEscapeUtils.unescapeHtml(elemxml));
+			if(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
+				caeNew.setNome(null);
+			}
+			else {
+				caeNew.setNome(StringEscapeUtils.unescapeHtml(elemxml));
+			}
 			caeNew.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.toEnumConstant(mode));
 			if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) || 
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {

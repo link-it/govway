@@ -1184,7 +1184,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);
-		if (elemxml == null) {
+		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
 			de.setValue("");
 		} else {
 			de.setValue(elemxml);
@@ -1287,7 +1287,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);
-		if (elemxml == null) {
+		if (elemxml == null || CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_QUALSIASI.equals(elemxml)) {
 			de.setValue("");
 		} else {
 			de.setValue(elemxml);

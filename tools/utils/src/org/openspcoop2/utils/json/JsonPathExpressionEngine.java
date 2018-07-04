@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
@@ -418,5 +419,56 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathNotValidException(e.getMessage());
 		}
 	}
+
 	
+	public static String extractAndConvertResultAsString(String elementJson, String pattern, Logger log) throws Exception {
+		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
+		
+		Exception exceptionNodeSet = null;
+		String risultato = null;
+		try{
+			List<String> l = engine.getStringMatchPattern(elementJson, pattern);
+			if(l!=null && l.size()>0) {
+				if(l.size()==1) {
+					risultato = l.get(0);
+				}
+				else {
+					StringBuffer bf = new StringBuffer();
+					for (String s : l) {
+						if(bf.length()>0) {
+							bf.append(" ");	
+						}
+						bf.append(s);
+					}
+					risultato = bf.toString();
+				}
+			}
+						
+		}catch(Exception e){
+			exceptionNodeSet = e;
+		}
+			
+		if(risultato==null || "".equals(risultato)){
+			
+			JsonNode obj = engine.getJsonNodeMatchPattern(elementJson, pattern);
+			if(obj!=null) {
+				risultato = obj.toString();
+			}
+			if(risultato!=null && risultato.startsWith("[") && risultato.endsWith("]")) {
+				risultato = risultato.substring(1, risultato.length()-1);
+			}
+			
+			if(exceptionNodeSet!=null){
+				log.debug("Non sono stati trovati risultati tramite l'invocazione del metodo getStringMatchPattern("+pattern
+						+") invocato in seguito all'errore dell'invocazione getJsonNodeMatchPattern("+
+						pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
+				// lancio questo errore.
+				// Questo errore puo' avvenire perche' ho provato a fare xpath con nodeset
+				//throw exceptionNodeSet;
+			}
+			
+		}
+		
+		return risultato;
+	}
 }

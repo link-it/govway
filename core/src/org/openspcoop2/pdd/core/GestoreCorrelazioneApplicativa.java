@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -58,6 +59,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -163,6 +165,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		Element element = null;
+		String elementJson = null;
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
@@ -172,6 +175,10 @@ public class GestoreCorrelazioneApplicativa {
 				if(MessageType.XML.equals(message.getMessageType())){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
 					element = xml.getContent();	
+				}
+				else if(MessageType.JSON.equals(message.getMessageType())){
+					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
+					elementJson = json.getContent();
 				}
 			}
 		}catch(Exception e){
@@ -411,16 +418,35 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())){
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())
+									&& !MessageType.JSON.equals(message.getMessageType())){
 								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
-							if(element==null){
+							if(element==null && elementJson==null){
 								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
-							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(element,dnc,elemento.getPattern());
+							if(element!=null) {
+								idCorrelazioneApplicativa = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getPattern(), this.log);
+							}
+							else {
+								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
+							}
+							
+							if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>255) {
+								if(bloccaIdentificazioneNonRiuscita) {
+									this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+											getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+									throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+								}
+								else {
+									this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+									correlazioneNonRiuscitaDaAccettare = true;
+									idCorrelazioneApplicativa = null;
+								}
+							}
+							
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -515,7 +541,7 @@ public class GestoreCorrelazioneApplicativa {
 	}
 
 	
-	
+
 	
 	
 	
@@ -532,6 +558,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		Element element = null;
+		String elementJson = null;
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
@@ -541,6 +568,10 @@ public class GestoreCorrelazioneApplicativa {
 				if(MessageType.XML.equals(message.getMessageType())){
 					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
 					element = xml.getContent();	
+				}
+				else if(MessageType.JSON.equals(message.getMessageType())){
+					OpenSPCoop2RestJsonMessage json = message.castAsRestJson();
+					elementJson = json.getContent();
 				}
 			}
 		}catch(Exception e){
@@ -768,16 +799,35 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())){
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())
+									&& !MessageType.JSON.equals(message.getMessageType())){
 								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
-							if(element==null){
+							if(element==null && elementJson==null){
 								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
 										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
 							}
-							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(element,dnc,elemento.getPattern());
+							if(element!=null) {
+								idCorrelazioneApplicativa = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getPattern(), this.log);
+							}
+							else {
+								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
+							}
+							
+							if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>255) {
+								if(bloccaIdentificazioneNonRiuscita) {
+									this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+											getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+									throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+								}
+								else {
+									this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+									correlazioneNonRiuscitaDaAccettare = true;
+									idCorrelazioneApplicativa = null;
+								}
+							}
+							
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -807,7 +857,7 @@ public class GestoreCorrelazioneApplicativa {
 	}
 	
 	
-	
+
 	
 	
 	
@@ -1197,5 +1247,6 @@ public class GestoreCorrelazioneApplicativa {
 	public String getIdCorrelazione() {
 		return this.idCorrelazione;
 	}
+
 }
 
