@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPMessage;
 
@@ -191,6 +192,17 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 					SAMLBuilderConfig config = SAMLBuilderConfig.getSamlConfig(value);
 					SAMLCallbackHandler samlCallbackHandler = new SAMLCallbackHandler(config);
 					msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
+				}
+				else if(SecurityConstants.SAML_PROF_REF_ID.equals(key)){
+					if(oValue instanceof Properties) {
+						Properties p = (Properties) oValue;
+						SAMLBuilderConfig config = SAMLBuilderConfig.getSamlConfig(p);
+						SAMLCallbackHandler samlCallbackHandler = new SAMLCallbackHandler(config);
+						msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
+					}
+					else {
+						throw new Exception("Property ["+key+"] with uncorrect type: "+oValue.getClass().getName());
+					}
 				}
 				else if(SecurityConstants.ENCRYPTION_PARTS.equals(key) || SecurityConstants.SIGNATURE_PARTS.equals(key)){
 					msgCtx.put(key, normalizeWss4jParts(value,message));

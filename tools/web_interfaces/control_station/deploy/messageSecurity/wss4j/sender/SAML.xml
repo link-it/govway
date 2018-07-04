@@ -1,0 +1,455 @@
+<config id="messageSecurity.wss4j.sender.saml" label="WSSec SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
+
+    <compatibility not="false" and="false">
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>REQUEST</tag>
+                    <tag>OUT</tag>
+            </tags>
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>RESPONSE</tag>
+                    <tag>IN</tag>
+            </tags>
+    </compatibility>
+	
+	<properties>
+		<collection name="samlPropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		
+	</section>
+
+	<section label="SAML Assertion">
+		
+		<item type="select" name="samlVersion" label="Versione" default="2.0" reloadOnChange="true">
+			<values>
+				<value value="2.0" label="2.0"/>
+				<value value="1.1" label="1.1"/>
+				<value value="1.0" label="1.0"/>
+			</values>
+			<property name="openspcoop2.saml.version" properties="samlPropRefId" />
+		</item>
+		
+		<item type="checkbox" name="authnStatement" label="Authentication Statement" reloadOnChange="true" defaultSelected="false">
+			<property name="openspcoop2.saml.authn.statement.enabled" properties="samlPropRefId" />
+		</item>
+
+		<item type="checkbox" name="attributeStatement" label="Attribute Statement" reloadOnChange="true" defaultSelected="false">
+			<property name="openspcoop2.saml.attribute.statement.enabled" properties="samlPropRefId" /> <!--  anche se di fatto non viene utilizzata dall'engine -->
+		</item>
+
+		<item type="checkbox" name="signatureActionChoice" label="Signature" reloadOnChange="true" defaultSelected="false">
+			<property name="openspcoop2.saml.assertion.sign"/>
+		</item>
+		
+		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
+			<conditions>
+				<condition not="true">
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+
+		<subsection label="Issuer">
+		
+			<item type="text" name="issuerValue" label="Value" required="true">
+				<property name="openspcoop2.saml.issuer.value" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="issuerNameQualifier" label="Name Qualifier" required="false">
+				<conditions>
+					<condition>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.issuer.qualifier" properties="samlPropRefId" />
+			</item>
+			<item type="checkbox" name="issuerFormatCustomChoise" label="Format Personalizzato" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="issuerFormatCustomChoise" />
+			</item>	
+			<item type="select" name="issuerFormat2" label="Format" >
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="issuerFormatCustomChoise"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.issuer.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="issuerFormatCustom" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="issuerFormatCustomChoise"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.issuer.format" properties="samlPropRefId" />
+			</item>
+		
+		</subsection>
+		
+		<subsection label="Conditions">
+		
+			<item type="number" name="conditionsDataNotBefore" label="NotBefore (minutes)" min="0" max="999999999" default="0"
+				note="The time difference, in minutes, between creation and a time instant at which the assertion is valid">
+				<property name="openspcoop2.saml.conditions.notBefore.minutes" properties="samlPropRefId" />
+			</item>
+			<item type="number" name="conditionsDataNotOnOrAfter" label="NotOnOrAfter (minutes)" min="0" max="999999999" default="60" 
+				note="The time difference, in minutes, between creation and a time instant at which the assertion has expired ">
+				<property name="openspcoop2.saml.conditions.notOnOrAfter.minutes" properties="samlPropRefId" />
+			</item>
+		
+			<item type="text" name="conditionsAudienceURI" label="AudienceURI" required="false">
+				<property name="openspcoop2.saml.conditions.audienceURI" properties="samlPropRefId" />
+			</item>	
+			
+		</subsection>
+		
+	</section>
+
+	<section label="SAML Subject">
+		
+		<item type="text" name="subjectValue" label="Value" required="true">
+			<property name="openspcoop2.saml.subject.nameID.value" properties="samlPropRefId" />
+		</item>
+		<item type="text" name="subjectNameQualifier" label="Name Qualifier" required="false">
+			<property name="openspcoop2.saml.subject.nameID.qualifier" properties="samlPropRefId" />
+		</item>
+		<item type="checkbox" name="subjectFormatCustomChoise" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+			<property name="subjectFormatCustomChoise" />
+		</item>	
+		<item type="select" name="subjectFormat2" label="Format" >
+			<conditions>
+				<condition and="true">
+					<selected not="true" name="subjectFormatCustomChoise"/>
+					<equals name="samlVersion" value="2.0"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.subject.nameID.format" properties="samlPropRefId" />
+		</item>
+		<item type="select" name="subjectFormat1" label="Format" >
+			<conditions>
+				<condition and="true">
+					<selected not="true" name="subjectFormatCustomChoise"/>
+					<equals not="true" name="samlVersion" value="2.0"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.subject.nameID.format" properties="samlPropRefId" />
+		</item>
+		<item type="text" name="subjectFormatCustom" label="Format" required="true">
+			<conditions>
+				<condition and="true">
+					<selected name="subjectFormatCustomChoise"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.subject.nameID.format" properties="samlPropRefId" />
+		</item>
+
+		
+		<subsection label="Confirmation Method">
+			
+			<item type="checkbox" name="subjectConfirmationMethodCustomChoise" label="Custom Method" defaultSelected="false" reloadOnChange="true">
+				<property name="subjectConfirmationMethodCustomChoise" />
+			</item>	
+			<item type="select" name="subjectConfirmationMethod1" label="Method" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="subjectConfirmationMethodCustomChoise"/>
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.method" properties="samlPropRefId" />
+			</item>
+			<item type="select" name="subjectConfirmationMethod2" label="Method" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="subjectConfirmationMethodCustomChoise"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.method" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="subjectConfirmationMethodCustom" label="Method" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="subjectConfirmationMethodCustomChoise"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.method" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Confirmation Method - Holder of Key - KeyStore">
+
+			<conditions>
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+					<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+				</condition>
+			</conditions>
+				
+			<item type="select" name="subjectConfirmationKeystoreType" label="Tipo" default="jks">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.type" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="subjectConfirmationKeystoreFile" label="File" required="true">
+			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.file" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="subjectConfirmationKeystorePassword" label="Password" required="true">
+			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.password" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="subjectConfirmationKeystorePrivateKeyAlias" label="Alias Certificato" required="true">
+			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoCertificateAlias" properties="samlPropRefId" />
+			</item>
+			
+
+		</subsection>
+		
+		<subsection label="Confirmation Data">
+		
+			<item type="number" name="confirmationDataNotBefore" label="NotBefore (minutes)" min="0" max="999999999" default="0"
+				note="The time difference, in minutes, between creation and a time instant before which the subject cannot be confirmed">
+				<property name="openspcoop2.saml.subject.confirmation.data.notBefore.minutes" properties="samlPropRefId" />
+			</item>
+			<item type="number" name="confirmationDataNotOnOrAfter" label="NotOnOrAfter (minutes)" min="0" max="999999999" default="60" 
+				note="The time difference, in minutes, between creation and a time instant before which the subject ca no longer be confirmed ">
+				<property name="openspcoop2.saml.subject.confirmation.data.notOnOrAfter.minutes" properties="samlPropRefId" />
+			</item>
+		
+			<item type="text" name="subjectConfirmationDataAddress" label="Address" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.data.address" properties="samlPropRefId" />
+			</item>	
+			<item type="text" name="subjectConfirmationDataInResponseTo" label="InResponseTo" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.data.inResponseTo" properties="samlPropRefId" />
+			</item>	
+			<item type="text" name="subjectConfirmationDataRecipient" label="Recipient" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.subject.confirmation.data.recipient" properties="samlPropRefId" />
+			</item>		
+
+		</subsection>
+		
+
+	</section>
+
+	<section label="SAML Authentication Statement">
+
+		<conditions>
+			<condition>
+				<selected name="authnStatement"/>
+			</condition>
+		</conditions>
+
+		<item type="select" name="authnStatementTimeMode" label="Time Mode" default="default" reloadOnChange="true">
+			<values>
+				<value value="default" label="Default"/>
+				<value value="minutes" label="Minutes from Creation Time"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="authnStatementTimeMode" />
+		</item>
+		
+		<item type="number" name="authnStatementDataNotBefore" label="NotBefore (minutes)" min="-999999999" max="999999999" default="0"
+			note="The time difference, in minutes, from creation time">
+			<conditions>
+				<condition>
+					<equals name="authnStatementTimeMode" value="minutes"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.instant.minutes" properties="samlPropRefId" />
+		</item>
+		<item type="number" name="authnStatementDataNotOnOrAfter" label="NotOnOrAfter (minutes)" min="-999999999" max="999999999" default="60" 
+			note="The time difference, in minutes, from creation time">
+			<conditions>
+				<condition>
+					<equals name="authnStatementTimeMode" value="minutes"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.notOnOrAfter.minutes" properties="samlPropRefId" />
+		</item>
+		
+		<item type="text" name="authnStatementDataNotBeforeFormat" label="NotBefore (date format)" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="authnStatementTimeMode" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.instant.minutes.format" properties="samlPropRefId" />
+		</item>	
+		<item type="text" name="authnStatementDataNotBeforeValue" label="NotBefore" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="authnStatementTimeMode" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.instant.minutes.value" properties="samlPropRefId" />
+		</item>	
+		<item type="text" name="authnStatementDataNotOnOrAfterFormat" label="NotOnOrAfter (date format)" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="authnStatementTimeMode" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.notOnOrAfter.minutes.format" properties="samlPropRefId" />
+		</item>	
+		<item type="text" name="authnStatementDataNotOnOrAfterValue" label="NotOnOrAfter" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="authnStatementTimeMode" value="custom"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.statement.notOnOrAfter.minutes.value" properties="samlPropRefId" />
+		</item>
+		
+		<item type="checkbox" name="authnContextClassRefCustomChoise" label="Custom Method" defaultSelected="false" reloadOnChange="true">
+			<property name="authnContextClassRefCustomChoise" />
+		</item>	
+		<item type="select" name="authnContextClassRef1" label="Method" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<selected not="true" name="authnContextClassRefCustomChoise"/>
+					<equals not="true" name="samlVersion" value="2.0"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn" properties="samlPropRefId" />
+		</item>
+		<item type="select" name="authnContextClassRef2" label="Method" reloadOnChange="true">
+			<conditions>
+				<condition and="true">
+					<selected not="true" name="authnContextClassRefCustomChoise"/>
+					<equals name="samlVersion" value="2.0"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn" properties="samlPropRefId" />
+		</item>
+		<item type="text" name="authnContextClassRefCustom" label="Method" required="true">
+			<conditions>
+				<condition and="true">
+					<selected name="authnContextClassRefCustomChoise"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn" properties="samlPropRefId" />
+		</item>
+		
+		<subsection label="Subject Locality">
+		
+			<item type="text" name="authnSubjectLocalityIPAddress" label="IP Address" required="false">
+				<property name="openspcoop2.saml.authn.subjectLocality.ipAddress" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="authnSubjectLocalityDNSAddress" label="DNS Address" required="false">
+				<property name="openspcoop2.saml.authn.subjectLocality.dnsAddress" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+
+	</section>
+	
+	<section label="SAML Attribute Statement">
+
+		<conditions>
+			<condition>
+				<selected name="attributeStatement"/>
+			</condition>
+		</conditions>
+
+	</section>
+
+	<section label="Signature">
+
+		<conditions>
+			<condition>
+				<selected name="signatureActionChoice"/>
+			</condition>
+		</conditions>
+		
+		<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
+			<property name="openspcoop2.saml.assertion.sign.signatureAlgorithm" properties="samlPropRefId" />
+		</item>
+		<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
+			<property name="openspcoop2.saml.assertion.sign.signatureDigestAlgorithm" properties="samlPropRefId" />
+		</item>
+		<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
+			<property name="openspcoop2.saml.assertion.sign.canonicalizationAlgorithm" properties="samlPropRefId" />
+		</item>	
+		<item type="checkbox" name="sendKey" label="Send Key" defaultSelected="true">
+			<property name="openspcoop2.saml.assertion.sign.sendKeyValue" selectedValue="true" unselectedValue="false" properties="samlPropRefId" />
+		</item>	
+
+		<subsection label="KeyStore">
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.type" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.file" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.password" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="openspcoop2.saml.assertion.sign.key.name" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			      	<property name="openspcoop2.saml.assertion.sign.key.password" properties="samlPropRefId" />
+			</item>
+			
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

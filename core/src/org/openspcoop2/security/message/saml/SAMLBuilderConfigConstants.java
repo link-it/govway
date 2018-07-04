@@ -50,6 +50,10 @@ public class SAMLBuilderConfigConstants {
 	
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION = "openspcoop2.saml.assertion.sign";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_FILE = "openspcoop2.saml.assertion.sign.cryptoProp.file";
+	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_REF_ID = "openspcoop2.saml.assertion.sign.cryptoProp.refId"; // si indica true. A questo punto il properties stesso e' usato anche come crypto
+	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_TYPE = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.type";
+	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.file";
+	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD = "openspcoop2.saml.assertion.sign.cryptoProp.keystore.password";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_NAME = "openspcoop2.saml.assertion.sign.key.name";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD = "openspcoop2.saml.assertion.sign.key.password";
 	public static final String SAML_CONFIG_BUILDER_SIGN_ASSERTION_SEND_KEY_VALUE = "openspcoop2.saml.assertion.sign.sendKeyValue";
@@ -89,7 +93,11 @@ public class SAMLBuilderConfigConstants {
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_DATA_NOT_BEFORE = "openspcoop2.saml.subject.confirmation.data.notBefore.minutes";
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_DATA_NOT_ON_OR_AFTER = "openspcoop2.saml.subject.confirmation.data.notOnOrAfter.minutes";
 	
-	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties";
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties";
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.refId"; // si indica true. A questo punto il properties stesso e' usato anche come crypto
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_TYPE = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.type";
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.file";
+	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.password";
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_ALIAS = "openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoCertificateAlias";
 	
 	public static final String SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_DATA_ADDRESS = "openspcoop2.saml.subject.confirmation.data.address";
@@ -103,8 +111,14 @@ public class SAMLBuilderConfigConstants {
 	
 	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_ENABLED = "openspcoop2.saml.authn.statement.enabled";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT = "openspcoop2.saml.authn.statement.instant.minutes";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT_FORMAT = "openspcoop2.saml.authn.statement.instant.minutes.format";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_INSTANT_VALUE = "openspcoop2.saml.authn.statement.instant.minutes.value";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER = "openspcoop2.saml.authn.statement.notOnOrAfter.minutes";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_FORMAT = "openspcoop2.saml.authn.statement.notOnOrAfter.minutes.format";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_VALUE = "openspcoop2.saml.authn.statement.notOnOrAfter.minutes.value";
 	public static final String SAML_CONFIG_BUILDER_AUTHN = "openspcoop2.saml.authn";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_IP_ADDRESS = "openspcoop2.saml.authn.subjectLocality.ipAddress";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_DNS_ADDRESS = "openspcoop2.saml.authn.subjectLocality.dnsAddress";
 	// sia 1.1 che 2.0
 	public static final String SAML_CONFIG_BUILDER_AUTHN_VALUE_UNSPECIFIED = "UNSPECIFIED";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_UNSPECIFIED_SAML10 = SAML1Constants.AUTH_METHOD_UNSPECIFIED;

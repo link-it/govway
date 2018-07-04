@@ -44,6 +44,7 @@ import org.apache.wss4j.common.saml.bean.KeyInfoBean;
 import org.apache.wss4j.common.saml.bean.KeyInfoBean.CERT_IDENTIFIER;
 import org.apache.wss4j.common.saml.bean.SubjectBean;
 import org.apache.wss4j.common.saml.bean.SubjectConfirmationDataBean;
+import org.apache.wss4j.common.saml.bean.SubjectLocalityBean;
 import org.apache.wss4j.common.saml.bean.Version;
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
@@ -195,10 +196,29 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					authBean = new AuthenticationStatementBean();
 					authBean.setSubject(subjectBean); // necessario per saml 1.1
 					
-					DateTime authnStatement_instant = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataInstant());
-					DateTime authnStatement_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfter());
+					DateTime authnStatement_instant = null;
+					if(this.samlBuilderConfig.getAuthnStatementDataInstantDate()!=null) {
+						authnStatement_instant = new DateTime(this.samlBuilderConfig.getAuthnStatementDataInstantDate());
+					}
+					else {
+						authnStatement_instant = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataInstant());
+					}
+					DateTime authnStatement_notOnOrAfter = null;
+					if(this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate()!=null) {
+						authnStatement_notOnOrAfter = new DateTime(this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate());
+					}
+					else {
+						authnStatement_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfter());
+					}
 					authBean.setAuthenticationInstant(authnStatement_instant);
 					authBean.setSessionNotOnOrAfter(authnStatement_notOnOrAfter);
+					
+					if(this.samlBuilderConfig.getAuthnSubjectLocalityIpAddress()!=null || this.samlBuilderConfig.getAuthnSubjectLocalityDnsAddress()!=null) {
+						SubjectLocalityBean subjectLocality = new SubjectLocalityBean();
+						subjectLocality.setIpAddress(this.samlBuilderConfig.getAuthnSubjectLocalityIpAddress());
+						subjectLocality.setDnsAddress(this.samlBuilderConfig.getAuthnSubjectLocalityDnsAddress());
+						authBean.setSubjectLocality(subjectLocality);
+					}
 					
 					authBean.setAuthenticationMethod(this.samlBuilderConfig.getAuthnStatementClassRef());
 					
