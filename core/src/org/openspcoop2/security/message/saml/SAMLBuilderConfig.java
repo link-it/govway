@@ -91,16 +91,20 @@ public class SAMLBuilderConfig {
     	if(propertiesName!=null){
     		propertiesName = propertiesName.trim();
     	}
-    	else{
+    	
+    	boolean cacheConfig = isTrue(p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CACHE, false);
+    	if(cacheConfig && propertiesName==null) {
     		throw new IOException("SAML Config Builder: property ["+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONFIG_NAME+"] not found");
     	}
 		
-		if(SAML_CACHE_CONFIG.containsKey(propertiesName)){
-			return SAML_CACHE_CONFIG.get(propertiesName);
-		}
+    	if(cacheConfig) {
+			if(SAML_CACHE_CONFIG.containsKey(propertiesName)){
+				return SAML_CACHE_CONFIG.get(propertiesName);
+			}
+    	}
 		try{
 			SAMLBuilderConfig config = new SAMLBuilderConfig(p);
-			if(config.cached){
+			if(cacheConfig) {
 				addSamlConfig(propertiesName,config);
 			}
 			return config;
@@ -150,7 +154,6 @@ public class SAMLBuilderConfig {
 	// ---- INSTANCE -----
 	
 	private Properties p;	
-	private boolean cached = false;
 	
 	// Version
 	private Version version = null;
@@ -215,8 +218,7 @@ public class SAMLBuilderConfig {
 	
 	public SAMLBuilderConfig(Properties p) throws IOException{
 		this.p = p;
-		this.cached = isTrue(p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CACHE, false);
-
+		
 		// Version
 		boolean saml2 = false;
 		String version = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, true);
@@ -298,7 +300,7 @@ public class SAMLBuilderConfig {
 		this.subjectConfirmationDataRecipient = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_DATA_RECIPIENT, false);
 		
 		if(holderOfKey){
-			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE, true);
+			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_FILE, false);
 			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesRefId = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_REF_ID, false);
 			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_TYPE, false);
 			this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile =  getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE, false);

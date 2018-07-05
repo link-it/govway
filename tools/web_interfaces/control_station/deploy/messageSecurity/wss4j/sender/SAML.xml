@@ -56,7 +56,7 @@
 			<property name="openspcoop2.saml.assertion.sign"/>
 		</item>
 		
-		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
+		<item type="hidden" name="signatureActionSigned" value="SAMLTokenUnsigned"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
 			<conditions>
 				<condition>
 					<selected name="signatureActionChoice"/>
@@ -239,12 +239,30 @@
 		
 		<subsection label="Confirmation Data">
 		
+			<item type="select" name="confirmationtTimeMode" label="Date" default="default" reloadOnChange="true">
+				<values>
+					<value value="default" label="Default"/>
+					<value value="minutes" label="Minutes from Creation Time"/>
+					<!-- <value value="custom" label="Configurazione Manuale"/>  va implementata proprio nell'engine come fatto per la'uthentitcation statement -->
+				</values>
+				<property name="confirmationtTimeMode" />
+			</item>
 			<item type="number" name="confirmationDataNotBefore" label="NotBefore (minutes)" min="0" max="999999999" default="0"
 				note="The time difference, in minutes, between creation and a time instant before which the subject cannot be confirmed">
+				<conditions>
+					<condition>
+						<equals name="confirmationtTimeMode" value="minutes"/>
+					</condition>
+				</conditions>
 				<property name="openspcoop2.saml.subject.confirmation.data.notBefore.minutes" properties="samlPropRefId" />
 			</item>
 			<item type="number" name="confirmationDataNotOnOrAfter" label="NotOnOrAfter (minutes)" min="0" max="999999999" default="60" 
 				note="The time difference, in minutes, between creation and a time instant before which the subject ca no longer be confirmed ">
+				<conditions>
+					<condition>
+						<equals name="confirmationtTimeMode" value="minutes"/>
+					</condition>
+				</conditions>
 				<property name="openspcoop2.saml.subject.confirmation.data.notOnOrAfter.minutes" properties="samlPropRefId" />
 			</item>
 		
@@ -286,7 +304,7 @@
 			</condition>
 		</conditions>
 
-		<item type="select" name="authnStatementTimeMode" label="Time Mode" default="default" reloadOnChange="true">
+		<item type="select" name="authnStatementTimeMode" label="Date" default="default" reloadOnChange="true">
 			<values>
 				<value value="default" label="Default"/>
 				<value value="minutes" label="Minutes from Creation Time"/>
@@ -397,6 +415,813 @@
 				<selected name="attributeStatement"/>
 			</condition>
 		</conditions>
+		
+		<item type="select" name="attributeStatementNumber" label="Numero di Attributi" default="01" reloadOnChange="true">
+			<values>
+				<value value="01" label="1" />
+				<value value="02" label="2" />
+				<value value="03" label="3" />
+				<value value="04" label="4" />
+				<value value="05" label="5" />
+				<value value="06" label="6" />
+				<value value="07" label="7" />
+				<value value="08" label="8" />
+				<value value="09" label="9" />
+				<value value="10" label="10" />
+			</values>
+			<property name="attributeStatementNumber" />
+		</item>
+		
+		<subsection label="Attribute N.1">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="01"/>
+				</condition>
+			</conditions>
+		
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_1" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_1" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_1" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_1" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_1" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_1" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.values.separator" properties="samlPropRefId" />
+			</item>			
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_1" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_1" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_1" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_1"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_1" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_1"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_1.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+
+
+		<subsection label="Attribute N.2">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="02"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_2" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_2" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_2" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_2" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_2" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_2" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_2" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_2" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_2" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_2"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_2" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_2"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_2.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.3">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="03"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_3" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_3" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_3" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_3" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_3" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_3" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_3" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_3" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_3" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_3"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_3" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_3"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_3.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.4">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="04"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_4" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_4" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_4" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_4" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_4" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_4" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_4" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_4" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_4" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_4"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_4" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_4"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_4.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.5">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="05"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_5" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_5" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_5" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_5" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_5" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_5" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_5" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_5" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_5" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_5"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_5" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_5"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_5.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.6">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="06"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_6" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_6" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_6" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_6" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_6" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_6" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_6" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_6" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_6" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_6"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_6" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_6"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_6.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.7">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="07"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_7" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_7" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_7" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_7" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_7" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_7" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_7" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_7" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_7" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_7"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_7" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_7"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_7.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.8">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="08"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_8" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_8" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_8" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_8" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_8" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_8" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_8" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_8" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_8" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_8"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_8" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_8"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_8.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.9">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="09"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_9" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_9" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_9" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_9" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_9" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_9" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_9" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_9" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_9" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_9"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_9" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_9"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_9.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Attribute N.10">
+		
+			<conditions>
+				<condition>
+					<lessEquals name="attributeStatementNumber" value="10"/>
+				</condition>
+			</conditions>
+					
+			<item type="text" name="attributeStatementNameQualifiedForSAML11_10" label="Name Qualified" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML11_10" label="Name Simple" required="true">
+				<conditions>
+					<condition and="true">
+						<equals not="true" name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.simple" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameQualifiedForSAML20_10" label="Name Qualified" required="false">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.qualified" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementNameSimpleForSAML20_10" label="Name Simple" required="false"
+				note="SAML 2.0 require almost one name between simple and qualified">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.simple" properties="samlPropRefId" />
+			</item>
+			
+			<item type="text" name="attributeStatementValues_10" label="Value(s)" required="true"
+				note="Use separator char for define more than one value">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.values" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementSeparator_10" label="Separator" required="true" default=",">
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.values.separator" properties="samlPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="attributeStatementFormatCustomChoise_10" label="Custom Format" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition and="true">
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="attributeStatementFormatCustomChoise_10" />
+			</item>	
+			<item type="select" name="attributeStatementFormat_10" label="Format">
+				<conditions>
+					<condition and="true">
+						<selected not="true" name="attributeStatementFormatCustomChoise_10"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.format" properties="samlPropRefId" />
+			</item>
+			<item type="text" name="attributeStatementFormatCustom_10" label="Format" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="attributeStatementFormatCustomChoise_10"/>
+						<equals name="samlVersion" value="2.0"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.attribute.statement.ATTR_10.name.format" properties="samlPropRefId" />
+			</item>
+			
+		</subsection>
 
 	</section>
 
@@ -407,6 +1232,10 @@
 				<selected name="signatureActionChoice"/>
 			</condition>
 		</conditions>
+		
+		<item type="hidden" name="signatureEnabled" value="true">
+			<property name="openspcoop2.saml.assertion.sign" properties="samlPropRefId" />
+		</item>
 		
 		<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
 			<property name="openspcoop2.saml.assertion.sign.signatureAlgorithm" properties="samlPropRefId" />

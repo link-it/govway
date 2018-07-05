@@ -117,6 +117,14 @@ public class SecurityProvider extends org.openspcoop2.security.message.xml.Secur
 			}
 			return l;
 		}
+		else if(id.startsWith(SecurityConstants.SAML_ATTRIBUTE_STATEMENT_FORMAT_XMLCONFIG_PREFIX_ID)) {
+			List<String> l = new ArrayList<>();
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_URI);
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_BASIC);
+			
+			return l;
+		}
 		else {
 			return super.getValues(id);
 		}
@@ -209,6 +217,14 @@ public class SecurityProvider extends org.openspcoop2.security.message.xml.Secur
 			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_TIME_SYNC_SAML20);
 			return l;
 		}
+		else if(id.startsWith(SecurityConstants.SAML_ATTRIBUTE_STATEMENT_FORMAT_XMLCONFIG_PREFIX_ID)) {
+			List<String> l = new ArrayList<>();
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_UNSPECIFIED_SAML20);
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_URI_SAML20);
+			l.add(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_BASIC_SAML20);
+			
+			return l;
+		}
 		else {
 			return super.getLabels(id);
 		}
@@ -233,6 +249,9 @@ public class SecurityProvider extends org.openspcoop2.security.message.xml.Secur
 		else if(SecurityConstants.SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_1.equals(id) ||
 				SecurityConstants.SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_2.equals(id) ) {
 			return SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_VALUE_UNSPECIFIED;
+		}
+		else if(id.startsWith(SecurityConstants.SAML_ATTRIBUTE_STATEMENT_FORMAT_XMLCONFIG_PREFIX_ID)) {
+			return SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED;
 		}
 		else {
 			return super.getDefault(id);

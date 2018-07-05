@@ -262,6 +262,8 @@ public class SecurityConstants {
 	public static final String SAML_PROF_FILE =  "samlPropFile";
 	public static final String SAML_PROF_REF_ID  =  "samlPropRefId";
 	public static final String SAML_CALLBACK_REF = ConfigurationConstants.SAML_CALLBACK_REF;
+	public static final String SAML_VERSION_XMLCONFIG_ID =  "samlVersion";
+	public static final String SAML_VERSION_XMLCONFIG_ID_VALUE_20 =  "2.0";
 	public static final String SAML_ISSUER_FORMAT_XMLCONFIG_ID_2 =  "issuerFormat2";
 	public static final String SAML_SUBJECT_FORMAT_XMLCONFIG_ID_1 =  "subjectFormat1";
 	public static final String SAML_SUBJECT_FORMAT_XMLCONFIG_ID_2 =  "subjectFormat2";
@@ -269,6 +271,7 @@ public class SecurityConstants {
 	public static final String SAML_SUBJECT_CONFIRMATION_METHOD_XMLCONFIG_ID_2 =  "subjectConfirmationMethod2";
 	public static final String SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_1 =  "authnContextClassRef1";
 	public static final String SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_2 =  "authnContextClassRef2";
+	public static final String SAML_ATTRIBUTE_STATEMENT_FORMAT_XMLCONFIG_PREFIX_ID =  "attributeStatementFormat_";
 	
 	public static final String AUTH_PDP_LOCAL = "pdpLocal"; // true/false (default true)
 	public static final String AUTH_PDP_REMOTE_URL = "pdpRemoteUrl";
