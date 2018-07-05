@@ -1,3 +1,11 @@
+2018-07-05 Giuliano Pintori <pintori@link.it>
+
+	* [PddConsole, PddLoader]
+	Aggiunta funzionalità OP-661
+	Nel menù a sinistra, quando il mouse passa sopra una voce si evidenzia l'intera riga. 
+	Però poi per accedere alla voce bisogna posizionarci esattamente sul testo della voce stessa altrimenti il click non comportava nulla.
+	E' stato quindi migliorato il menù in modo che basta cliccare sulla riga anche fuori dal testo.
+
 2018-07-02  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddMonitor]
