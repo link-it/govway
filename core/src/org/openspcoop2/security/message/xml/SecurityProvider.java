@@ -81,6 +81,26 @@ public class SecurityProvider implements IProvider {
 			}
 			return l;
 		}
+		else if(XMLCostanti.ID_SIGNATURE_C14N_ALGORITHM_EXCLUSIVE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			SignatureC14NAlgorithm [] tmp = SignatureC14NAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				if(tmp[i].name().startsWith("EXCLUSIVE")) {
+					l.add(tmp[i].getUri());
+				}
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_SIGNATURE_C14N_ALGORITHM_INCLUSIVE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			SignatureC14NAlgorithm [] tmp = SignatureC14NAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				if(tmp[i].name().startsWith("INCLUSIVE")) {
+					l.add(tmp[i].getUri());
+				}
+			}
+			return l;
+		}
 		
 		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
@@ -127,6 +147,26 @@ public class SecurityProvider implements IProvider {
 			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
 			for (int i = 0; i < tmp.length; i++) {
 				l.add(tmp[i].getUri());
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM_EXCLUSIVE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				if(tmp[i].name().startsWith("EXCLUSIVE")) {
+					l.add(tmp[i].getUri());
+				}
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM_INCLUSIVE.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				if(tmp[i].name().startsWith("INCLUSIVE")) {
+					l.add(tmp[i].getUri());
+				}
 			}
 			return l;
 		}

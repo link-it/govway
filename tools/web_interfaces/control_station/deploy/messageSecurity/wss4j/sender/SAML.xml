@@ -1243,7 +1243,7 @@
 		<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
 			<property name="openspcoop2.saml.assertion.sign.signatureDigestAlgorithm" properties="samlPropRefId" />
 		</item>
-		<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
+		<item type="select" name="signatureC14nAlgorithmExclusive" label="Canonicalization Algorithm">
 			<property name="openspcoop2.saml.assertion.sign.canonicalizationAlgorithm" properties="samlPropRefId" />
 		</item>	
 		<item type="checkbox" name="sendKey" label="Send Key" defaultSelected="true">

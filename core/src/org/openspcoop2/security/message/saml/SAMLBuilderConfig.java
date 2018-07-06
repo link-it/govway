@@ -388,8 +388,8 @@ public class SAMLBuilderConfig {
 		if(tmp!=null){
 			this.authnStatementClassRef = getAuthStatementMethod(tmp, saml2);
 		}
-		this.authnSubjectLocalityIpAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_IP_ADDRESS, this.authnStatementEnabled);
-		this.authnSubjectLocalityDnsAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_DNS_ADDRESS, this.authnStatementEnabled);
+		this.authnSubjectLocalityIpAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_IP_ADDRESS, false);
+		this.authnSubjectLocalityDnsAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_DNS_ADDRESS, false);
 
 		
 		// Attribute

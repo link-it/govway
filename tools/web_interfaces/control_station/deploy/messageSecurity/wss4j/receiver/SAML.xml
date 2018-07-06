@@ -1,0 +1,111 @@
+<config id="messageSecurity.wss4j.receiver.saml" label="WSSec SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+    <compatibility not="false" and="false">
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>RESPONSE</tag>
+                    <tag>OUT</tag>
+            </tags>
+            <tags and="true">
+                    <tag>SOAP</tag>
+                    <tag>REQUEST</tag>
+                    <tag>IN</tag>
+            </tags>
+    </compatibility>
+	
+	<properties>
+		<collection name="signaturePropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+				
+		<item type="checkbox" name="isBSPCompliant" label="Compliance BSP 1.1" defaultSelected="true">
+			<property name="isBSPCompliant" />
+		</item>		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+
+	</section>
+
+	<section label="SAML Assertion">
+	
+		<item type="checkbox" name="signatureActionChoice" label="Signature" reloadOnChange="true" defaultSelected="false">
+			<property name="openspcoop2.saml.assertion.sign"/>
+		</item>
+		
+		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
+			<conditions>
+				<condition not="true">
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+
+		<item type="checkbox" name="validateSamlSubjectConfirmation" label="Subject Confirmation" defaultSelected="true"
+			note="Whether to validate the SubjectConfirmation requirements of a received SAML Token (sender-vouches or holder-of-key).">
+			<property name="validateSamlSubjectConfirmation" />
+		</item>	
+	
+	</section>
+
+	<section label="Signature">
+
+		<conditions>
+			<condition>
+				<selected name="signatureActionChoice"/>
+			</condition>
+		</conditions>
+
+		<subsection label="TrustStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!-- <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="false">
+			      	<property name="signatureUser" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+
