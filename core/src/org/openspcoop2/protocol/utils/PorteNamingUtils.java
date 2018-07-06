@@ -22,6 +22,8 @@
 
 package org.openspcoop2.protocol.utils;
 
+import java.util.List;
+
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -175,9 +177,11 @@ public class PorteNamingUtils {
 			
 			String tipoSoggettoDefault = this.protocolConfiguration.getTipoSoggettoDefault();
 			String _tipoSoggettoDefault = tipoSoggettoDefault +"_";
+			List<String> tipiSoggetto = this.protocolConfiguration.getTipiSoggetti();
 			
 			String tipoServizioDefault = this.protocolConfiguration.getTipoServizioDefault(this.serviceBindingDefault);
 			String _tipoServizioDefault = tipoServizioDefault +"_";
+			List<String> tipiServizi = this.protocolConfiguration.getTipiServizi(this.serviceBindingDefault);
 			
 			String [] tmp = nome.split("/");
 			if(tmp.length>=3) {
@@ -209,11 +213,35 @@ public class PorteNamingUtils {
 							if(s.contains("_")==false) {
 								bf.append(_tipoSoggettoDefault);	
 							}
+							else {
+								boolean found = false;
+								for (String tipoSoggetto : tipiSoggetto) {
+									if(s.startsWith(tipoSoggetto+"_")) {
+										found = true;
+										break;
+									}
+								}
+								if(!found) {
+									bf.append(_tipoSoggettoDefault);	
+								}
+							}
 							bf.append(s);
 						}
 						else {
 							if(s.contains("_")==false) {
 								bf.append(_tipoServizioDefault);	
+							}
+							else {
+								boolean found = false;
+								for (String tipoServizio : tipiServizi) {
+									if(s.startsWith(tipoServizio+"_")) {
+										found = true;
+										break;
+									}
+								}
+								if(!found) {
+									bf.append(_tipoServizioDefault);	
+								}
 							}
 							bf.append(s);
 						}
