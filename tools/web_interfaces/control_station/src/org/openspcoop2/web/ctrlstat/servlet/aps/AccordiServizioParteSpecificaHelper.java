@@ -1389,8 +1389,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String uriASPS = this.idServizioFactory.getUriFromAccordo(asps);
 				
 				Soggetto sog = this.soggettiCore.getSoggettoRegistro(asps.getIdSoggetto());
-				boolean isPddEsterna = 
-						this.pddCore.isPddEsterna(sog.getPortaDominio());
+				boolean isPddEsterna = this.pddCore.isPddEsterna(sog.getPortaDominio());
 				
 				DataElement de = new DataElement();
 				de.setUrl(
@@ -2363,21 +2362,34 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 		return statoDump;
 	}
+	
+	public String getStatoDumpRichiestaPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione, false) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+		return statoDump;
+	}
+	
+	public String getStatoDumpRispostaPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione, true) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
+		return statoDump;
+	}
 
 
 	public String getStatoTracciamentoPortaApplicativa(PortaApplicativa paAssociata) {
 		String statoTracciamento = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
 		
-		boolean tracciamento = false;
 		boolean isCorrelazioneApplicativaAbilitataReq = false;
-		boolean isCorrelazioneApplicativaAbilitataRes = false;
-		
 		if (paAssociata.getCorrelazioneApplicativa() != null)
 			isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
-
+			
+		boolean isCorrelazioneApplicativaAbilitataRes = false;
 		if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
 			isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
 			
+		boolean tracciamento = false;
 		if(paAssociata.getTracciamento()!=null &&
 				(paAssociata.getTracciamento().getEsiti()!=null || 
 				paAssociata.getTracciamento().getSeverita()!=null)) {
@@ -2389,6 +2401,65 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		else 
 			statoTracciamento = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
 		return statoTracciamento;
+	}
+	
+	public boolean isRidefinitoTransazioniRegistratePortaApplicativa(PortaApplicativa paAssociata) {
+		return paAssociata.getTracciamento()!=null && paAssociata.getTracciamento().getEsiti()!=null;
+	}
+	
+	public String getStatoTransazioniRegistratePortaApplicativa(PortaApplicativa paAssociata) {
+		if(paAssociata.getTracciamento()!=null && paAssociata.getTracciamento().getEsiti()!=null) {
+			return CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
+		}
+		else {
+			return CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+		}
+	}
+	
+	public boolean isRidefinitoMessaggiDiagnosticiPortaApplicativa(PortaApplicativa paAssociata) {
+		return paAssociata.getTracciamento()!=null && paAssociata.getTracciamento().getSeverita()!=null;
+	}
+	
+	public String getStatoMessaggiDiagnosticiPortaApplicativa(PortaApplicativa paAssociata) {
+		if(paAssociata.getTracciamento()!=null && paAssociata.getTracciamento().getSeverita()!=null) {
+			return paAssociata.getTracciamento().getSeverita().getValue();
+		}
+		else {
+			return CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT;
+		}
+	}
+
+	public boolean isEnabledCorrelazioneApplicativaPortaApplicativa(PortaApplicativa paAssociata) {
+		boolean isCorrelazioneApplicativaAbilitataReq = false;
+		if (paAssociata.getCorrelazioneApplicativa() != null)
+			isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
+			
+		boolean isCorrelazioneApplicativaAbilitataRes = false;
+		if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
+			isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+			
+		return  isCorrelazioneApplicativaAbilitataReq || isCorrelazioneApplicativaAbilitataRes;
+	}
+	
+	public String getStatoCorrelazioneApplicativaPortaApplicativa(PortaApplicativa paAssociata) {
+		boolean isCorrelazioneApplicativaAbilitataReq = false;
+		if (paAssociata.getCorrelazioneApplicativa() != null)
+			isCorrelazioneApplicativaAbilitataReq = paAssociata.getCorrelazioneApplicativa().sizeElementoList() > 0;
+			
+		boolean isCorrelazioneApplicativaAbilitataRes = false;
+			if (paAssociata.getCorrelazioneApplicativaRisposta() != null)
+				isCorrelazioneApplicativaAbilitataRes = paAssociata.getCorrelazioneApplicativaRisposta().sizeElementoList() > 0;
+				
+		if(isCorrelazioneApplicativaAbilitataReq && isCorrelazioneApplicativaAbilitataRes)
+			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_ABILITATA;
+		
+		if(isCorrelazioneApplicativaAbilitataReq)
+			return CostantiControlStation.VALUE_PARAMETRO_DUMP_SEZIONE_RICHIESTA;
+		
+		if(isCorrelazioneApplicativaAbilitataRes)
+			return CostantiControlStation.VALUE_PARAMETRO_DUMP_SEZIONE_RISPOSTA;
+			
+		return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
 	}
 
 
@@ -2421,6 +2492,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return statoMTOM;
 	}
 
+	public MTOMProcessorType getProcessorTypeRequestMTOMPortaApplicativa(PortaApplicativa paAssociata) {
+		if(paAssociata.getMtomProcessor()!= null){
+			if(paAssociata.getMtomProcessor().getRequestFlow() != null){
+				if(paAssociata.getMtomProcessor().getRequestFlow().getMode() != null){
+					MTOMProcessorType mode = paAssociata.getMtomProcessor().getRequestFlow().getMode();
+					return mode;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public MTOMProcessorType getProcessorTypeResponseMTOMPortaApplicativa(PortaApplicativa paAssociata) {
+		if(paAssociata.getMtomProcessor()!= null){
+			if(paAssociata.getMtomProcessor().getResponseFlow() != null){
+				if(paAssociata.getMtomProcessor().getResponseFlow().getMode() != null){
+					MTOMProcessorType mode = paAssociata.getMtomProcessor().getResponseFlow().getMode();
+					return mode;
+				}
+			}
+		}
+		return null;
+	}
 
 	public String getStatoValidazionePortaApplicativa(PortaApplicativa paAssociata) {
 		String statoValidazione = null;
@@ -2436,6 +2530,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		return statoValidazione;
+	}
+
+	public String getTipoValidazionePortaApplicativa(PortaApplicativa paAssociata) {
+		String tipoValidazione = null;
+		
+		ValidazioneContenutiApplicativi vx = paAssociata.getValidazioneContenutiApplicativi();
+		if (vx != null) {
+			if(vx.getTipo()!=null) {
+				tipoValidazione = vx.getTipo().getValue();
+			}
+		}
+		return tipoValidazione;
 	}
 
 
@@ -2576,6 +2682,31 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return all;
 	}
 	
+	public boolean allActionsRedefinedMappingErogazionePaAssociate(List<String> azioni, List<PortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (PortaApplicativa paAssociata : lista) {
+					if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
+	}
+	
 	private List<MappingFruizionePortaDelegata> impostaFiltroAzioneMappingFruizione(String filtroAzione, List<MappingFruizionePortaDelegata> lista, 
 			ISearch ricerca, int idLista) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		if(StringUtils.isNotEmpty(filtroAzione) && !filtroAzione.equals(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)) {
@@ -2618,6 +2749,31 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				boolean found = false;
 				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : lista) {
 					PortaDelegata pdAssociata = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					if(pdAssociata.getAzione() != null && pdAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
+	}
+	
+	public boolean allActionsRedefinedMappingFruizionePdAssociate(List<String> azioni, List<PortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (PortaDelegata pdAssociata : lista) {
 					if(pdAssociata.getAzione() != null && pdAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
 						found = true;
 						break;

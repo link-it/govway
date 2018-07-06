@@ -1884,11 +1884,6 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public boolean useInterfaceNameInInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
-		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
-				createProtocolIntegrationConfiguration().useInterfaceNameInImplementationInvocationURL(serviceBinding);
-	}
-	
 	public void preparePorteAppList(ISearch ricerca, List<PortaApplicativa> lista, int idLista)
 			throws Exception {
 		try {

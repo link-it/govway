@@ -6607,4 +6607,9 @@ public class ConsoleHelper {
 		de.setType(DataElementType.NOTE);
 		return de;
 	}
+	
+	public boolean useInterfaceNameInInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
+		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+				createProtocolIntegrationConfiguration().useInterfaceNameInImplementationInvocationURL(serviceBinding);
+	}
 }

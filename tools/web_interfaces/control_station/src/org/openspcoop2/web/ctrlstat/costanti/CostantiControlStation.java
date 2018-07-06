@@ -300,6 +300,14 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_DOCUMENTO_SICUREZZA_XACML_NUOVA_POLICY = "Nuova";
 	public final static String LABEL_AGGIORNAMENTO_DOCUMENTO_SICUREZZA_XACML_POLICY = "Modifica Policy";
 	public final static String LABEL_DOWNLOAD_DOCUMENTO_SICUREZZA_XACML_POLICY = "Download Policy Attuale";
+
+	public static final String LABEL_SICUREZZA_MESSAGGIO_STATO = "Sicurezza Messaggio (Stato)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA = "Schema Sicurezza (Richiesta)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RISPOSTA = "Schema Sicurezza (Risposta)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO = "Nessuno";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE = "Configurazione Manuale";
+	public static final String VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT = "default";
+	
 	/** PARAMETERS **/
 	
 	public final static String PARAMETRO_ID = "id";
@@ -486,6 +494,8 @@ public class CostantiControlStation {
 	
 	public final static String VALUE_PARAMETRO_DUMP_STATO_DEFAULT = "default";
 	public final static String VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
+	public final static String VALUE_PARAMETRO_DUMP_SEZIONE_RICHIESTA = "richiesta";
+	public final static String VALUE_PARAMETRO_DUMP_SEZIONE_RISPOSTA = "risposta";
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
