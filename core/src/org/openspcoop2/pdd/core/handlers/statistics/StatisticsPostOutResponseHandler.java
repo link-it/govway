@@ -109,6 +109,7 @@ public class StatisticsPostOutResponseHandler implements PostOutResponseHandler 
 		Statistic stat =  new Statistic();
 		stat.setEsito(context.getEsito());
 		stat.setTipoPdD(context.getTipoPorta());
+		stat.setProtocollo(context.getProtocolFactory().getProtocol());
 		stat.setTimeMillisIngressoRichiesta(timeMillisIngressoRichiesta);
 		stat.setTimeMillisIngressoRisposta(timeMillisIngressoRisposta);
 		stat.setTimeMillisUscitaRichiesta(timeMillisUscitaRichiesta);

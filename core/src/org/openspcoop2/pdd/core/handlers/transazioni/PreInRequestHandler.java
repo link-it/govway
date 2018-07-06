@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
@@ -36,6 +37,7 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**     
  * PreInRequestHandler
@@ -71,22 +73,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 			context.getLogCore().error("Errore durante il recupero delle informazioni servlet: "+e.getMessage(),e);
 		}
 		if(req!=null){
-			try{
-				String remoteAddr = req.getRemoteAddress();
-				if(remoteAddr!=null){
-					context.getPddContext().addObject(Costanti.CLIENT_IP_REMOTE_ADDRESS,remoteAddr);
-				}
-			}catch(Throwable e){
-				context.getLogCore().error("Errore durante la comprensione dell'indirizzo ip del chiamante (via socket): "+e.getMessage(),e);
-			}
-			try{
-				String transportAddr = getIPClientAddressFromHeader(HttpUtilities.getClientAddressHeaders(), req);
-				if(transportAddr!=null){
-					context.getPddContext().addObject(Costanti.CLIENT_IP_TRANSPORT_ADDRESS,transportAddr);
-				}
-			}catch(Throwable e){
-				context.getLogCore().error("Errore durante la comprensione dell'indirizzo ip del chiamante (via trasporto): "+e.getMessage(),e);
-			}
+			readClientAddress(context.getLogCore(), req, context.getPddContext());
 		}
 				
 		// Creo Transazione
@@ -107,21 +94,9 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 			else {
 				requestInfo = (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 			}
-			tr.setRequestInfo(requestInfo);
 			
-			if(req.getCredential()!=null) {
-				Credenziali cr = new Credenziali(req.getCredential());
-				tr.setCredenziali(cr.toString());
-			}
+			setInfoInvocation(tr, requestInfo, req);
 			
-			if(req.getURLProtocolContext()!=null){
-				String urlInvocazione = req.getURLProtocolContext().getUrlInvocazione_formBased();
-				if(req.getURLProtocolContext().getFunction()!=null){
-					urlInvocazione = "["+req.getURLProtocolContext().getFunction()+"] "+urlInvocazione;
-				}
-				//System.out.println("SET URL INVOCAZIONE ["+urlInvocazione+"]");
-				tr.setUrlInvocazione(urlInvocazione);
-			}
 		}
 		catch(TransactionDeletedException e){
 			throw new HandlerException(e);
@@ -132,7 +107,27 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		}
 	}
 
-	private String getIPClientAddressFromHeader(List<String> headers, ConnectorInMessage req) throws ConnectorException{
+	public static void readClientAddress(Logger log,ConnectorInMessage req, PdDContext pddContext) {
+		if(req!=null){
+			try{
+				String remoteAddr = req.getRemoteAddress();
+				if(remoteAddr!=null){
+					pddContext.addObject(Costanti.CLIENT_IP_REMOTE_ADDRESS,remoteAddr);
+				}
+			}catch(Throwable e){
+				log.error("Errore durante la comprensione dell'indirizzo ip del chiamante (via socket): "+e.getMessage(),e);
+			}
+			try{
+				String transportAddr = getIPClientAddressFromHeader(HttpUtilities.getClientAddressHeaders(), req);
+				if(transportAddr!=null){
+					pddContext.addObject(Costanti.CLIENT_IP_TRANSPORT_ADDRESS,transportAddr);
+				}
+			}catch(Throwable e){
+				log.error("Errore durante la comprensione dell'indirizzo ip del chiamante (via trasporto): "+e.getMessage(),e);
+			}
+		}
+	}
+	private static String getIPClientAddressFromHeader(List<String> headers, ConnectorInMessage req) throws ConnectorException{
 		if(headers.size()>0){
 			for (String header : headers) {
 				String transportAddr = req.getHeader(header);
@@ -150,5 +145,23 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 			}
 		}
 		return null;
+	}
+	public static void setInfoInvocation(Transaction tr, RequestInfo requestInfo, ConnectorInMessage req) throws Exception {
+		
+		tr.setRequestInfo(requestInfo);
+		
+		if(req.getCredential()!=null) {
+			Credenziali cr = new Credenziali(req.getCredential());
+			tr.setCredenziali(cr.toString());
+		}
+		
+		if(req.getURLProtocolContext()!=null){
+			String urlInvocazione = req.getURLProtocolContext().getUrlInvocazione_formBased();
+			if(req.getURLProtocolContext().getFunction()!=null){
+				urlInvocazione = "["+req.getURLProtocolContext().getFunction()+"] "+urlInvocazione;
+			}
+			//System.out.println("SET URL INVOCAZIONE ["+urlInvocazione+"]");
+			tr.setUrlInvocazione(urlInvocazione);
+		}
 	}
 }

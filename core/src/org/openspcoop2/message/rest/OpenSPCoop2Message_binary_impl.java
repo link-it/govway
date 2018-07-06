@@ -49,9 +49,13 @@ public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestM
 	@Override
 	protected byte[] buildContent() throws MessageException{
 		try{
-			return Utilities.getAsByteArray(this.is);
+			return Utilities.getAsByteArray(this.countingInputStream);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
+		}finally {
+			try {
+				this.countingInputStream.close();
+			}catch(Exception eClose) {}
 		}
 	}
 

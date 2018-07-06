@@ -715,7 +715,7 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
 						messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
-						if(messageSecurityContext.processOutgoing(responseMessage) == false){
+						if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext()) == false){
 							msgDiag.logErroreGenerico(messageSecurityContext.getMsgErrore(), "Costruzione header MessageSecurity");
 							String motivazioneErrore = "Applicazione MessageSecurity non riuscita:"+messageSecurityContext.getMsgErrore();
 							ejbUtils.rollbackMessage(motivazioneErrore, esito);
@@ -1142,7 +1142,7 @@ public class InoltroRisposte extends GenericLib{
 				property.setValidazioneConSchema(configurazionePdDManager.isLivelloValidazioneRigido(implementazionePdDDestinatario));
 				property.setValidazioneProfiloCollaborazione(configurazionePdDManager.isValidazioneProfiloCollaborazione(implementazionePdDDestinatario));
 				property.setValidazioneManifestAttachments(configurazionePdDManager.isValidazioneManifestAttachments(implementazionePdDDestinatario));
-				validatoreProtocolConnectionReply = new Validatore(responseHttpReply,property, 
+				validatoreProtocolConnectionReply = new Validatore(responseHttpReply,pddContext.getContext(),property, 
 						openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
 				presenzaRispostaProtocolConnectionReply  = validatoreProtocolConnectionReply.validazioneSintattica();
 				if(presenzaRispostaProtocolConnectionReply){

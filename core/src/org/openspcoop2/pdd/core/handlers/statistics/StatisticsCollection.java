@@ -29,6 +29,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * StatisticsCollection
@@ -47,22 +48,10 @@ public class StatisticsCollection {
 	private static final long SOGLIA_DIMENSIONE = Long.MAX_VALUE-100000;
 	private static final int SOGLIA_TEMPORALE = 1000*60*30; // statistiche relative all'ultima mezz'ora.
 	
-	private static EsitiProperties esitiProperties = null;
-	private static synchronized void initEsitiProperties(){
-		if(esitiProperties==null){
-			try{
-				esitiProperties = EsitiProperties.getInstance(LoggerWrapperFactory.getLogger(StatisticsCollection.class));
-			}catch(Exception e){
-				throw new RuntimeException(e.getMessage(),e);
-			}
-		}
-	}
-	private static boolean isEsitoOk(EsitoTransazione esito){
+	private static Logger log = LoggerWrapperFactory.getLogger(StatisticsCollection.class);
+	private static boolean isEsitoOk(EsitoTransazione esito, String protocollo){
 		try{
-			if(esitiProperties==null){
-				initEsitiProperties();
-			}
-			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk();
+			List<Integer> esitiOk = EsitiProperties.getInstance(log,protocollo).getEsitiCodeOk();
 			for (Integer esitoOk : esitiOk) {
 				if(esitoOk == esito.getCode()){
 					return true;
@@ -105,15 +94,15 @@ public class StatisticsCollection {
 		}*/
 		
 		// Contatori
-		StatisticsCollection.incrementCount(stat.getEsito(), StatisticsCollection.statisticsCollection.statNumeroTransazioni);
+		StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni);
 		if(TipoPdD.APPLICATIVA.equals(stat.getTipoPdD())){
-			StatisticsCollection.incrementCount(stat.getEsito(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PA);
+			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PA);
 		}else if(TipoPdD.DELEGATA.equals(stat.getTipoPdD())){
-			StatisticsCollection.incrementCount(stat.getEsito(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PD);
+			StatisticsCollection.incrementCount(stat.getEsito(), stat.getProtocollo(), StatisticsCollection.statisticsCollection.statNumeroTransazioni_PD);
 		}
 		
 		// Latenze
-		if(isEsitoOk(stat.getEsito())){
+		if(isEsitoOk(stat.getEsito(),stat.getProtocollo())){
 			
 			long latenzaTotale = -1;
 			if(stat.getTimeMillisUscitaRisposta()>0 && stat.getTimeMillisIngressoRichiesta()>0)
@@ -332,9 +321,9 @@ public class StatisticsCollection {
 		StatisticsCollection.getStatisticsCollection().statDimensioneMessaggio_PA_out_response = new StatisticSize();
 	}
 		
-	private static void incrementCount(EsitoTransazione esito,StatisticCount statCount){
+	private static void incrementCount(EsitoTransazione esito,String protocollo, StatisticCount statCount){
 		statCount.numeroTransazioni++;
-		if(isEsitoOk(esito)){
+		if(isEsitoOk(esito,protocollo)){
 			statCount.numeroTransazioni_esitoOK++;
 		}else{
 			statCount.numeroTransazioni_esitoErrore++;

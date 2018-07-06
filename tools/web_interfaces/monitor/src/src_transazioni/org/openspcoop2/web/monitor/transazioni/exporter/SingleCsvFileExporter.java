@@ -106,7 +106,6 @@ public class SingleCsvFileExporter implements IExporter{
 	private String fileName=null;
 	private OutputStream outStream = null;
 	private SimpleDateFormat sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
-	private EsitoUtils esitoUtils;
 
 	private SingleCsvFileExporter(ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		this.enableHeaderInfo = properties.isEnableHeaderInfo();
@@ -125,8 +124,6 @@ public class SingleCsvFileExporter implements IExporter{
 		this.diagnosticiService = diagnosticiService;
 		this.transazioniExporterService = transazioniExport;
 		
-		this.esitoUtils = new EsitoUtils(SingleCsvFileExporter.log);
-
 		SingleCsvFileExporter.log.info("Single File Exporter inizializzato:");
 		SingleCsvFileExporter.log.info("\t -esportazione Tracce      abilitata: "+this.exportTracce);
 		SingleCsvFileExporter.log.info("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
@@ -334,6 +331,9 @@ public class SingleCsvFileExporter implements IExporter{
 	private List<Object> getLine(TransazioneBean t) throws ExportException {
 		List<Object> oneLine = new ArrayList<Object>();
 		try {
+			
+			EsitoUtils esitoUtils = new EsitoUtils(SingleCsvFileExporter.log, t.getProtocollo());
+			
 			for (String keyColonna : this.colonneSelezionate) {
 				if(keyColonna.equals(CostantiExport.KEY_COL_AZIONE)){
 					if(!t.getPddRuolo().equals(PddRuolo.INTEGRATION_MANAGER)){
@@ -440,10 +440,10 @@ public class SingleCsvFileExporter implements IExporter{
 						oneLine.add(CostantiExport.DUPLICATA_VALUE);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO)){
-					oneLine.add(this.esitoUtils.getEsitoLabelFromValue(t.getEsito()));
+					oneLine.add(esitoUtils.getEsitoLabelFromValue(t.getEsito()));
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO_CONTESTO)){
 					if(StringUtils.isNotEmpty(t.getEsitoContesto())){
-						oneLine.add(this.esitoUtils.getEsitoContestoLabelFromValue(t.getEsitoContesto()));
+						oneLine.add(esitoUtils.getEsitoContestoLabelFromValue(t.getEsitoContesto()));
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}

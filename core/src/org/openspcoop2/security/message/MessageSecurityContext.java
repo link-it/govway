@@ -155,8 +155,8 @@ public abstract class MessageSecurityContext{
 	
 	
     /** Process */
-	public abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta);
-	public abstract boolean processOutgoing(OpenSPCoop2Message message);
+	public abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx);
+	public abstract boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx);
 	
 
 	/** Function As Client */

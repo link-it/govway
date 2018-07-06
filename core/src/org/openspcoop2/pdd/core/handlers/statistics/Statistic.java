@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 public class Statistic {
 
 	private TipoPdD tipoPdD;
+	private String protocollo;
 	
 	private EsitoTransazione esito;
 	
@@ -53,6 +54,12 @@ public class Statistic {
 	}
 	public void setTipoPdD(TipoPdD tipoPdD) {
 		this.tipoPdD = tipoPdD;
+	}
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
 	}
 	public EsitoTransazione getEsito() {
 		return this.esito;

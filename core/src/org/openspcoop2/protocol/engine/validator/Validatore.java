@@ -25,6 +25,7 @@
 package org.openspcoop2.protocol.engine.validator;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,6 +83,7 @@ public class Validatore  {
 	
 	/** Messaggio. */
 	private OpenSPCoop2Message msg;
+	private Hashtable<String, Object> ctx;
 	/** Proprieta di Validazione. */
 	private ProprietaValidazione proprietaValidazione;
 	/** Eventuale errore avvenuto durante il processo di validazione */
@@ -153,8 +155,8 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(aMsg,aValidazione,state,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
+	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(aMsg,ctx,aValidazione,state,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
 	}
 	/**
 	 * Costruttore
@@ -165,8 +167,9 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.msg = aMsg;
+		this.ctx = ctx;
 		if(aValidazione == null)
 			this.proprietaValidazione = new ProprietaValidazione();
 		else
@@ -189,8 +192,8 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,IState state,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(aMsg,null,state,alog,false, protocolFactory);
+	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,IState state,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(aMsg,ctx,null,state,alog,false, protocolFactory);
 	}
 
 	
@@ -413,7 +416,7 @@ public class Validatore  {
 			/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
 			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
 				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
-				if(messageSecurityContext.processIncoming(this.msg,this.busta) == false){  
+				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.ctx) == false){  
 					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
 					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();

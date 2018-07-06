@@ -101,6 +101,8 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP = MimeTypeConstants.MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
 	public final static String CONTENT_TYPE_X_DOWNLOAD = MimeTypeConstants.MEDIA_TYPE_X_DOWNLOAD;
 	public final static String CONTENT_TYPE_X_WWW_FORM_URLENCODED = MimeTypeConstants.MEDIA_TYPE_X_WWW_FORM_URLENCODED;
+	public final static String CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7808 = MimeTypeConstants.MEDIA_TYPE_JSON_PROBLEM_DETAILS_RFC_7808;
+	public final static String CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7808 = MimeTypeConstants.MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7808;
 	
 	/** Content Type, Parameter */
 	public final static String CONTENT_TYPE_PARAMETER_CHARSET = "charset";

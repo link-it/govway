@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 
+import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.exception.MessageException;
@@ -44,7 +46,7 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
  */
 public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBaseOpenSPCoop2Message implements OpenSPCoop2RestMessage<T> {
 
-	protected InputStream is;
+	protected CountingInputStream countingInputStream; 
 	protected String contentType;
 	protected String contentTypeCharsetName = Charset.UTF_8.getValue();
 	
@@ -75,7 +77,8 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 					// stream vuoto
 					this.hasContent = false;
 				} else {
-					this.is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
+					InputStream seq = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
+					this.countingInputStream = new CountingInputStream(seq);
 					this.hasContent = true;
 				}
 
@@ -146,7 +149,13 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 		}
 		else {
 			this.hasContent = false;
+			this.contentType = null;
 		}
+	}
+	
+	@Override
+	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException {
+		return false;
 	}
 	
 	
@@ -174,12 +183,20 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 	public void writeTo(OutputStream os, boolean consume) throws MessageException {
 		try{
 			if(this.hasContent){
+				
+				if(!consume && this.content==null) {
+					this.initializeContent(); // per poi entrare nel ramo sotto serializeContent
+				}
+			
+				CountingOutputStream cos = new CountingOutputStream(os);
 				if(this.content!=null){
-					this.serializeContent(os, consume);
+					this.serializeContent(cos, consume);
 				}
 				else{
-					Utilities.copy(this.is, os);
+					Utilities.copy(this.countingInputStream, cos);
+					this.countingInputStream.close();
 				}
+				this.outgoingsize = cos.getByteCount();
 			}
 		}
 		catch(MessageException e){
@@ -199,6 +216,19 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 	public boolean saveRequired(){
 		return false;
 	}
+	
+	
+	/* Content Length */
+	
+	@Override
+	public long getIncomingMessageContentLength() {
+		if(this.countingInputStream!=null) {
+			return this.countingInputStream.getByteCount();
+		}
+		else {
+			return super.getIncomingMessageContentLength();
+		}
+	}	
 	
 
 }

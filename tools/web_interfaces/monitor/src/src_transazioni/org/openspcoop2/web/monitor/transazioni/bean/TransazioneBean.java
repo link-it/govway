@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -143,7 +144,7 @@ public class TransazioneBean extends Transazione{
 	public String getEsitoStyleClass(){
 
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			String name = esitiProperties.getEsitoName(this.getEsito());
 			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
 			boolean casoSuccesso = esitiProperties.getEsitiCodeOk().contains(this.getEsito());
@@ -166,7 +167,7 @@ public class TransazioneBean extends Transazione{
 
 	public boolean isEsitoOk(){	
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(this.getEsito());
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
 			return res;
@@ -177,7 +178,7 @@ public class TransazioneBean extends Transazione{
 	}
 	public boolean isEsitoFaultApplicativo(){	
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(this.getEsito());
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
 			return res;
@@ -188,7 +189,7 @@ public class TransazioneBean extends Transazione{
 	}
 	public boolean isEsitoKo(){	
 		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
 			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(this.getEsito());
 			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
 			return res;
@@ -198,15 +199,36 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 
+	public java.lang.String getEsitoLabel() {
+		try{
+			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
+			return esitoUtils.getEsitoLabelFromValue(this.esito);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
+			return "Conversione non riuscita";
+		}
+	}
+	
 	public boolean isShowContesto(){
 		try{
-			return EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).getEsitiTransactionContextCode().size()>1;
+			return EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo()).getEsitiTransactionContextCode().size()>1;
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo dei contesti: "+e.getMessage(),e);
 			return false;
 		}
 	}
 
+	public java.lang.String getEsitoContestoLabel() {
+		try{
+			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
+			return esitoUtils.getEsitoContestoLabelFromValue(this.esitoContesto);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per il contesto esito ["+this.esitoContesto+"]: "+e.getMessage(),e);
+			return "Conversione non riuscita";
+		}
+	}
+	
+	
 	public String getFaultCooperazionePretty(){
 		String f = super.getFaultCooperazione();
 		String toRet = null;

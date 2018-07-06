@@ -23,6 +23,8 @@
 package org.openspcoop2.core.controllo_traffico.beans;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * ConfigurazioneControlloTraffico 
@@ -40,13 +42,13 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 
 	private boolean debug;
 		
-	private int [] calcoloLatenzaPortaDelegataEsitiConsiderati;
+	private Map<String, int []> calcoloLatenzaPortaDelegataEsitiConsiderati;
 	
-	private int [] calcoloLatenzaPortaApplicativaEsitiConsiderati;
+	private Map<String, int []> calcoloLatenzaPortaApplicativaEsitiConsiderati;
 	
 	private boolean elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
 		
-	private int [] esitiPolicyViolate;
+	private Map<String, int []> esitiPolicyViolate;
 	
 	private boolean elaborazioneRealtime_incrementaSoloPolicyApplicabile;
 	
@@ -59,26 +61,36 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 		
 		if(this.calcoloLatenzaPortaDelegataEsitiConsiderati!=null){
 			bf.append(", ");
-			bf.append("calcoloLatenzaPortaDelegataEsitiConsiderati(size)="+this.calcoloLatenzaPortaDelegataEsitiConsiderati.length);
-			if(this.calcoloLatenzaPortaDelegataEsitiConsiderati.length>0){
-				bf.append(", calcoloLatenzaPortaDelegataEsitiConsiderati:");
-				for (int i = 0; i < this.calcoloLatenzaPortaDelegataEsitiConsiderati.length; i++) {
-					if(i>0)
-						bf.append("-");
-					bf.append(this.calcoloLatenzaPortaDelegataEsitiConsiderati[i]);
+			Iterator<String> protocolli = this.calcoloLatenzaPortaDelegataEsitiConsiderati.keySet().iterator();
+			while (protocolli.hasNext()) {
+				String protocollo = (String) protocolli.next();
+				int [] esiti = this.calcoloLatenzaPortaDelegataEsitiConsiderati.get(protocollo);
+				bf.append("calcoloLatenzaPortaDelegataEsitiConsiderati(size)["+protocollo+"]="+esiti.length);
+				if(esiti.length>0){
+					bf.append(", calcoloLatenzaPortaDelegataEsitiConsiderati["+protocollo+"]:");
+					for (int i = 0; i < esiti.length; i++) {
+						if(i>0)
+							bf.append("-");
+						bf.append(esiti[i]);
+					}
 				}
 			}
 		}
 		
 		if(this.calcoloLatenzaPortaApplicativaEsitiConsiderati!=null){
 			bf.append(", ");
-			bf.append("calcoloLatenzaPortaApplicativaEsitiConsiderati(size)="+this.calcoloLatenzaPortaApplicativaEsitiConsiderati.length);
-			if(this.calcoloLatenzaPortaApplicativaEsitiConsiderati.length>0){
-				bf.append(", calcoloLatenzaPortaApplicativaEsitiConsiderati:");
-				for (int i = 0; i < this.calcoloLatenzaPortaApplicativaEsitiConsiderati.length; i++) {
-					if(i>0)
-						bf.append("-");
-					bf.append(this.calcoloLatenzaPortaApplicativaEsitiConsiderati[i]);
+			Iterator<String> protocolli = this.calcoloLatenzaPortaApplicativaEsitiConsiderati.keySet().iterator();
+			while (protocolli.hasNext()) {
+				String protocollo = (String) protocolli.next();
+				int [] esiti = this.calcoloLatenzaPortaApplicativaEsitiConsiderati.get(protocollo);
+				bf.append("calcoloLatenzaPortaApplicativaEsitiConsiderati(size)["+protocollo+"]="+esiti.length);
+				if(esiti.length>0){
+					bf.append(", calcoloLatenzaPortaApplicativaEsitiConsiderati["+protocollo+"]:");
+					for (int i = 0; i < esiti.length; i++) {
+						if(i>0)
+							bf.append("-");
+						bf.append(esiti[i]);
+					}
 				}
 			}
 		}
@@ -88,13 +100,18 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 		
 		if(this.esitiPolicyViolate!=null){
 			bf.append(", ");
-			bf.append("esitiPolicyViolate(size)="+this.esitiPolicyViolate.length);
-			if(this.esitiPolicyViolate.length>0){
-				bf.append(", esitiPolicyViolate:");
-				for (int i = 0; i < this.esitiPolicyViolate.length; i++) {
-					if(i>0)
-						bf.append("-");
-					bf.append(this.esitiPolicyViolate[i]);
+			Iterator<String> protocolli = this.esitiPolicyViolate.keySet().iterator();
+			while (protocolli.hasNext()) {
+				String protocollo = (String) protocolli.next();
+				int [] esiti = this.esitiPolicyViolate.get(protocollo);
+				bf.append("esitiPolicyViolate(size)["+protocollo+"]="+esiti.length);
+				if(esiti.length>0){
+					bf.append(", esitiPolicyViolate["+protocollo+"]:");
+					for (int i = 0; i < esiti.length; i++) {
+						if(i>0)
+							bf.append("-");
+						bf.append(esiti[i]);
+					}
 				}
 			}
 		}
@@ -116,22 +133,22 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 	}
 
 
-	public int[] getCalcoloLatenzaPortaDelegataEsitiConsiderati() {
+	public Map<String, int []> getCalcoloLatenzaPortaDelegataEsitiConsiderati() {
 		return this.calcoloLatenzaPortaDelegataEsitiConsiderati;
 	}
 
 
-	public void setCalcoloLatenzaPortaDelegataEsitiConsiderati(int[] calcoloLatenzaPortaDelegataEsitiConsiderati) {
+	public void setCalcoloLatenzaPortaDelegataEsitiConsiderati(Map<String, int []> calcoloLatenzaPortaDelegataEsitiConsiderati) {
 		this.calcoloLatenzaPortaDelegataEsitiConsiderati = calcoloLatenzaPortaDelegataEsitiConsiderati;
 	}
 
 
-	public int[] getCalcoloLatenzaPortaApplicativaEsitiConsiderati() {
+	public Map<String, int []> getCalcoloLatenzaPortaApplicativaEsitiConsiderati() {
 		return this.calcoloLatenzaPortaApplicativaEsitiConsiderati;
 	}
 
 
-	public void setCalcoloLatenzaPortaApplicativaEsitiConsiderati(int[] calcoloLatenzaPortaApplicativaEsitiConsiderati) {
+	public void setCalcoloLatenzaPortaApplicativaEsitiConsiderati(Map<String, int []> calcoloLatenzaPortaApplicativaEsitiConsiderati) {
 		this.calcoloLatenzaPortaApplicativaEsitiConsiderati = calcoloLatenzaPortaApplicativaEsitiConsiderati;
 	}
 
@@ -147,12 +164,12 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 	}
 
 
-	public int[] getEsitiPolicyViolate() {
+	public Map<String, int []> getEsitiPolicyViolate() {
 		return this.esitiPolicyViolate;
 	}
 
 
-	public void setEsitiPolicyViolate(int[] esitiPolicyViolate) {
+	public void setEsitiPolicyViolate(Map<String, int []> esitiPolicyViolate) {
 		this.esitiPolicyViolate = esitiPolicyViolate;
 	}
 

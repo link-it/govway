@@ -1780,7 +1780,7 @@ public class RicezioneBuste {
 		ProprietaValidazione properties = new ProprietaValidazione();
 		boolean readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 		
-		Validatore validatore = new Validatore(requestMessage,properties, openspcoopstate.getStatoRichiesta(),readQualifiedAttribute, protocolFactory);
+		Validatore validatore = new Validatore(requestMessage,pddContext.getContext(),properties, openspcoopstate.getStatoRichiesta(),readQualifiedAttribute, protocolFactory);
 		
 		
 		msgDiag.logPersonalizzato("validazioneSintattica");
@@ -2561,7 +2561,7 @@ public class RicezioneBuste {
 				}
 		
 				if(fineGestione) {
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, true);
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
 					msgDiag.logPersonalizzato("gestioneTokenFallita");
 				}
 				else {
@@ -2770,7 +2770,7 @@ public class RicezioneBuste {
 						
 						if (erroreIntegrazione != null || erroreCooperazione!=null) {
 							if(autenticazioneOpzionale==false){
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 							}
 						}
 						else {
@@ -2865,6 +2865,15 @@ public class RicezioneBuste {
 										errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
 									}
 									
+//									if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+//										if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+//												ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+//											try {
+//												errorOpenSPCoopMsg.castAsRest().updateContent(null);
+//											}catch(Throwable e) {}
+//										}
+//									}
+									
 									// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 									parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
 									parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
@@ -2912,7 +2921,7 @@ public class RicezioneBuste {
 					}
 					
 					if (erroreIntegrazione != null || erroreCooperazione!=null) {
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 					}
 					else {
 						msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
@@ -2993,6 +3002,15 @@ public class RicezioneBuste {
 							if(wwwAuthenticateErrorHeader!=null) {
 								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
 							}
+							
+//							if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+//								if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+//										ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+//									try {
+//										errorOpenSPCoopMsg.castAsRest().updateContent(null);
+//									}catch(Throwable e) {}
+//								}
+//							}
 							
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
@@ -4308,6 +4326,9 @@ public class RicezioneBuste {
 					correlazioneApplicativa = gestoreCorrelazioneApplicativa.getIdCorrelazione();
 				
 			}catch(Exception e){
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA, "true");
+				
 				msgDiag.logErroreGenerico(e,"CorrelazioneApplicativa("+bustaRichiesta.getID()+")");
 				logCore.error("Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]",e);
 				
@@ -4888,7 +4909,7 @@ public class RicezioneBuste {
 					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 				}
 				if(esito.isAutorizzato()==false){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 					String descrizioneErrore = null;
 					try{
 						if(esito.getErroreCooperazione()!=null){
@@ -5405,7 +5426,7 @@ public class RicezioneBuste {
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 							}
 							if(esito.isAutorizzato()==false){
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 								try{
 									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(protocolFactory));
 								}catch(Exception e){
@@ -6603,7 +6624,7 @@ public class RicezioneBuste {
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 						}
 						else{
-							Validatore v = new Validatore(responseMessage,openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
+							Validatore v = new Validatore(responseMessage,pddContext.getContext(),openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
 							headerBustaRisposta = v.getHeaderProtocollo_senzaControlli();
 						}
 					}else{
@@ -6705,7 +6726,7 @@ public class RicezioneBuste {
 								responseMessage = responseMessage.normalizeToSaajImpl();
 							}
 							
-							if(messageSecurityContext.processOutgoing(responseMessage) == false){
+							if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext()) == false){
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , messageSecurityContext.getMsgErrore() );
 								msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
@@ -7159,7 +7180,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento());
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							this.msgContext.getPddContext());
 				}
 				else if(erroreIntegrazione!=null){
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
@@ -7170,7 +7192,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento());
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							this.msgContext.getPddContext());
 				}else{
 					responseErrorMessage = this.generatoreErrore.buildErroreProtocollo_Processamento(
 							integrationError,
@@ -7180,7 +7203,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
-							parametriGenerazioneBustaErrore.getEccezioneProcessamento());
+							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
+							this.msgContext.getPddContext());
 				}
 			}else{
 				if(erroreCooperazione!=null){
@@ -7191,7 +7215,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
-							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente));
+							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
+							this.msgContext.getPddContext());
 				}
 				else if(erroreIntegrazione!=null){
 					throw new Exception("Method 'generaBustaErroreValidazione' not supported for MessaggioErroreIntegrazione");
@@ -7204,7 +7229,8 @@ public class RicezioneBuste {
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
-							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente));
+							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
+							this.msgContext.getPddContext());
 				}
 			}
 
@@ -7223,7 +7249,7 @@ public class RicezioneBuste {
 						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseErrorMessage);
 					}
 				}
-				Validatore v = new Validatore(responseErrorMessage,openspcoopState.getStatoRichiesta(),
+				Validatore v = new Validatore(responseErrorMessage,this.msgContext.getPddContext().getContext(),openspcoopState.getStatoRichiesta(),
 						parametriGenerazioneBustaErrore.getLogCore(), protocolFactory);
 				tracciamento.registraRisposta(responseErrorMessage,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), parametriGenerazioneBustaErrore.getBusta(),esitoTraccia,
@@ -8283,7 +8309,7 @@ public class RicezioneBuste {
 //						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),msg);
 //					}
 //				}
-				Validatore v = new Validatore(msg,openspcoopstate.getStatoRichiesta(),
+				Validatore v = new Validatore(msg,this.msgContext.getPddContext().getContext(),openspcoopstate.getStatoRichiesta(),
 						log, protocolFactory);
 				tracciamento.registraRisposta(msg,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), bustaHTTPReply,esitoTraccia,

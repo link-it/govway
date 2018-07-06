@@ -29,6 +29,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ImbustamentoErrore;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -158,11 +159,13 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento){
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento,
+			PdDContext pddContext){
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -184,11 +187,13 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento){ 
+			Exception eProcessamento,
+			PdDContext pddContext){ 
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -210,11 +215,13 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento){ 
+			Exception eProcessamento,
+			PdDContext pddContext){ 
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+					this.idModulo, 
 					busta, integrazione, idTransazione, erroreIntegrazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -235,11 +242,13 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
-			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni){
+			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
+			PdDContext pddContext){
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
@@ -263,11 +272,13 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			long attesaAttiva, 
 			int checkInterval, 
 			String profiloGestione,
-			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni){
+			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni,
+			PdDContext pddContext){
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,

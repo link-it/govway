@@ -24,6 +24,7 @@
               <xsd:complexType>
                      <xsd:sequence>
                             <xsd:element name="factory" type="xsd:string"/>
+                            <xsd:element name="transaction" type="transaction" minOccurs="0"/>
                      </xsd:sequence>
                      <xsd:attribute name="name" type="xsd:string" use="required" />
                      <xsd:attribute name="label" type="xsd:string" use="required" />
@@ -32,6 +33,13 @@
                      <xsd:attribute name="logger" type="xsd:boolean" use="optional" default="false" />
               </xsd:complexType>
        </xsd:element>
+       <xsd:complexType name="transaction">
+              <xsd:attribute name="errorProtocol" type="xsd:boolean" use="optional" default="false" />
+              <xsd:attribute name="labelErrorProtocol" type="xsd:string" use="optional" />
+              <xsd:attribute name="externalFault" type="xsd:boolean" use="optional" default="false" />
+              <xsd:attribute name="labelExternalFault" type="xsd:string" use="optional" />
+       </xsd:complexType>
+       
        
        <xsd:element name="binding">
               <xsd:complexType>

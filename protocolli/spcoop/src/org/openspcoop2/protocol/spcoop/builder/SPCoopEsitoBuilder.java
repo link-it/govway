@@ -50,7 +50,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	}
 	
 	@Override
-	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazione returnEsitoOk) throws ProtocolException{
+	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
@@ -86,10 +86,10 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 														}else if(valueInt>=500 && valueInt<=599){
 															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 														}else{
-															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext);
+															return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 														}
 													}else{
-														return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext); // ???
+														return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 													}
 												}
 											}
@@ -105,7 +105,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 				}
 			}
 		}
-		return returnEsitoOk;
+		return null;
 	}
 
 }

@@ -38,9 +38,9 @@ public class EsitoTransazione {
 	public static EsitoTransazione ESITO_TRANSAZIONE_ERROR = null;
 	static{
 		ESITO_TRANSAZIONE_ERROR = new EsitoTransazione();
-		ESITO_TRANSAZIONE_ERROR.code = 3;
+		ESITO_TRANSAZIONE_ERROR.code = 5;
 		ESITO_TRANSAZIONE_ERROR.contextType = CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
-		ESITO_TRANSAZIONE_ERROR.name=EsitoTransazioneName.ERRORE_GENERICO;
+		ESITO_TRANSAZIONE_ERROR.name=EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX;
 	}
 	
 	private EsitoTransazioneName name;

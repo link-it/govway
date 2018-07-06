@@ -645,7 +645,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}catch(Exception e){
 			
 			try{
-				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX));
 	
 				if(e instanceof IntegrationManagerException){
 					IntegrationManagerException exc = (IntegrationManagerException) e;
@@ -1051,7 +1051,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}catch(Exception e){
 			
 			try{
-				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX));
 				
 				if(e instanceof IntegrationManagerException){
 					IntegrationManagerException exc = (IntegrationManagerException) e;
@@ -1296,7 +1296,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}catch(Exception e){
 			
 			try{
-				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX));
 				
 				if(e instanceof IntegrationManagerException){
 					IntegrationManagerException exc = (IntegrationManagerException) e;
@@ -1539,7 +1539,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		}catch(Exception e){
 			
 			try{
-				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_GENERICO));
+				imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX));
 				
 				if(e instanceof IntegrationManagerException){
 					IntegrationManagerException exc = (IntegrationManagerException) e;

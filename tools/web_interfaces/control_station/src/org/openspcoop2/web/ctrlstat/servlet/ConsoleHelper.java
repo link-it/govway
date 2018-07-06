@@ -134,6 +134,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.mime.MimeMultipart;
@@ -6111,7 +6112,7 @@ public class ConsoleHelper {
 		
 		
 		StringBuffer bf = new StringBuffer();
-		EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 		List<Integer> esitiCodes = esiti.getEsitiCode();
 		if(esitiCodes!=null){
 			for (Integer esito : esitiCodes) {
@@ -6152,7 +6153,7 @@ public class ConsoleHelper {
 		if(configurazioneEsiti==null ||"".equals(configurazioneEsiti.trim())){
 			
 			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
-			EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 			List<Integer> esitiCodes = esiti.getEsitiCode();
 			
 			int esitoMaxThreads = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
@@ -6284,7 +6285,7 @@ public class ConsoleHelper {
 			}
 			
 			
-			EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 			
 			List<String> values = new ArrayList<>();
 			values.add(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO);
@@ -6320,14 +6321,24 @@ public class ConsoleHelper {
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
 				for (Integer esito : listOk) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
 					de = new DataElement();
 					de.setLabelRight(esiti.getEsitoLabel(esito));
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(attivi.contains((esito+"")));
+						if(integrationManagerSpecific && this.isModalitaStandard()) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
 					}
 					else {
 						de.setType(DataElementType.HIDDEN);
@@ -6412,14 +6423,24 @@ public class ConsoleHelper {
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
 					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
 				for (Integer esito : listFalliteSenzaMax) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
 					de = new DataElement();
 					de.setLabelRight(esiti.getEsitoLabel(esito));
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
 					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-						de.setType(DataElementType.CHECKBOX);
-						de.setSelected(attivi.contains((esito+"")));
+						if(integrationManagerSpecific && this.isModalitaStandard()) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
 					}
 					else {
 						de.setType(DataElementType.HIDDEN);

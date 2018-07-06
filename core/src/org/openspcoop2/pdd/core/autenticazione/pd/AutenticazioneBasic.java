@@ -26,7 +26,9 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
@@ -61,11 +63,16 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		//		 Nel caso optional, la transazione continuera' correttamente, ma verra' comunque segnalato le credenziali errate nei diagnostici.
 		//		 a differenza dei casi ssl/principal dove credenziali che non corrispondono ad alcun attore, non comportano una segnalazione nei diagnostici.
 		
+		String realm = OpenSPCoop2Properties.getInstance().getRealmAutenticazioneBasic();
+		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali non fornite",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(realm!=null) {
+				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			}
 			return esito;
 		}
 		esito.setCredential(user);
@@ -89,6 +96,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(realm!=null) {
+				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			}
 			return esito;
 		}
 		else {

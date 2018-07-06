@@ -27,6 +27,8 @@ package org.openspcoop2.pdd.core.autenticazione.pa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
@@ -61,11 +63,16 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		//		 Nel caso optional, la transazione continuera' correttamente, ma verra' comunque segnalato le credenziali errate nei diagnostici.
 		//		 a differenza dei casi ssl/principal dove credenziali che non corrispondono ad alcun attore, non comportano una segnalazione nei diagnostici.
 		
+		String realm = OpenSPCoop2Properties.getInstance().getRealmAutenticazioneBasic();
+		
 		// Controllo credenziali fornite
 		if( (user==null) || ("".equals(user)) || (password==null) || ("".equals(password)) ){
 			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(realm!=null) {
+				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			}
 			return esito;
 		}
 		esito.setCredential(user);
@@ -90,6 +97,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
+			if(realm!=null) {
+				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			}
 			return esito;
 		}
 		else {

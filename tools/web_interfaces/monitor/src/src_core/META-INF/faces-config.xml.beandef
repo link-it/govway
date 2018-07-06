@@ -4,14 +4,6 @@
 		<converter-class>org.openspcoop2.web.monitor.core.converter.FileSizeConverter</converter-class>
 	</converter>
 	<converter>
-		<converter-id>esitoConverter</converter-id>
-		<converter-class>org.openspcoop2.web.monitor.core.converter.EsitoConverter</converter-class>
-	</converter>
-	<converter>
-		<converter-id>esitoContestoConverter</converter-id>
-		<converter-class>org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter</converter-class>
-	</converter>
-	<converter>
 		<converter-id>noneAllConverter</converter-id>
 		<converter-class>org.openspcoop2.web.monitor.core.converter.NoneAllConverter</converter-class>
 	</converter>

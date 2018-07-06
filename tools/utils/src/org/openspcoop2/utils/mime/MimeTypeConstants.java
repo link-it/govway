@@ -45,6 +45,8 @@ public class MimeTypeConstants {
 	public final static String MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP = "application/openspcoop2";
 	public final static String MEDIA_TYPE_X_DOWNLOAD = "application/x-download";
 	public final static String MEDIA_TYPE_X_WWW_FORM_URLENCODED= "application/x-www-form-urlencoded";
+	public final static String MEDIA_TYPE_JSON_PROBLEM_DETAILS_RFC_7808 = "application/problem+json";
+	public final static String MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7808 = "application/problem+xml";
 	
 }
 

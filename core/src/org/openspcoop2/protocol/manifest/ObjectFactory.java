@@ -68,6 +68,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Transaction }
+     */
+    public Transaction createTransaction() {
+        return new Transaction();
+    }
+
+    /**
      * Create an instance of {@link Protocol }
      */
     public Protocol createProtocol() {

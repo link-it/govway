@@ -38,6 +38,7 @@ import java.io.Serializable;
  * &lt;complexType name="protocol">
  * 		&lt;sequence>
  * 			&lt;element name="factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="transaction" type="{http://www.openspcoop2.org/protocol/manifest}transaction" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
@@ -56,7 +57,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "protocol", 
   propOrder = {
-  	"factory"
+  	"factory",
+  	"transaction"
   }
 )
 
@@ -72,6 +74,14 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setFactory(java.lang.String factory) {
     this.factory = factory;
+  }
+
+  public Transaction getTransaction() {
+    return this.transaction;
+  }
+
+  public void setTransaction(Transaction transaction) {
+    this.transaction = transaction;
   }
 
   public java.lang.String getName() {
@@ -125,6 +135,9 @@ public class Protocol extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="factory",required=true,nillable=false)
   protected java.lang.String factory;
+
+  @XmlElement(name="transaction",required=false,nillable=false)
+  protected Transaction transaction;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)

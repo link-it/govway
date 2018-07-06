@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
@@ -183,7 +184,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.esitoGruppo = EsitoUtils.ALL_VALUE;
 		this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 		try {
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+			EsitiProperties esitiProperties = EsitiConfigUtils.getEsitiPropertiesForContext(BaseSearchForm.log);
 			if(esitiProperties.getEsitoTransactionContextDefault()!=null){
 				this.esitoContesto = esitiProperties.getEsitoTransactionContextDefault();
 			}
@@ -222,7 +223,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.esitoGruppo = EsitoUtils.ALL_VALUE;
 		this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 		try {
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+			EsitiProperties esitiProperties = EsitiConfigUtils.getEsitiPropertiesForContext(BaseSearchForm.log);
 			if(esitiProperties.getEsitoTransactionContextDefault()!=null){
 				this.esitoContesto = esitiProperties.getEsitoTransactionContextDefault();
 			}
@@ -262,7 +263,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.esitoGruppo = EsitoUtils.ALL_VALUE;
 			this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 			try {
-				EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+				EsitiProperties esitiProperties = EsitiConfigUtils.getEsitiPropertiesForContext(BaseSearchForm.log);
 				if(esitiProperties.getEsitoTransactionContextDefault()!=null){
 					this.esitoContesto = esitiProperties.getEsitoTransactionContextDefault();
 				}
@@ -788,7 +789,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			// devo verificare il dettaglio che sia compatibile con il nuovo esito
 			if(EsitoUtils.ALL_VALUE != this.esitoGruppo){
 				try{
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 					List<Integer> codes = null;
 					if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
 						codes = esitiProperties.getEsitiCodeKo();
@@ -1083,14 +1084,20 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public List<SelectItem> getEsitiGruppo() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
-
-		list.add(new SelectItem(EsitoUtils.ALL_VALUE));
-		list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE));
-		list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE));
-		list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE));
-		list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE));
-
-		return list;
+		try{
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE)));
+	
+			return list;
+		}catch(Exception e){
+			BaseSearchForm.log.error("Errore durante il recupero della lista dei gruppi di esito "+e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
+		}
 	}
 
 	public boolean isShowDettaglioPersonalizzato(){
@@ -1103,11 +1110,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<SelectItem> getEsitiDettaglio() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-		list.add(new SelectItem(EsitoUtils.ALL_VALUE));
-
 		try{
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
@@ -1137,10 +1145,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
-				SelectItem si = new SelectItem(esito);
+				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito));
 
-				boolean pddSpecific = this.isPddSpecific(esitoTransactionName);
-				boolean integrationManagerSpecific = this.isIntegrationManagerSpecific(esitoTransactionName);				
+				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
+				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				
 				if ("spcoop".equals(this.tipoRicercaSPCoop)) {
 					if(pddSpecific || !integrationManagerSpecific){
 						list.add(si);
@@ -1166,7 +1174,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 
 			List<Integer> esiti = esitiProperties.getEsitiCodeOrderLabel();
 
@@ -1177,8 +1185,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 				SelectItem si = new SelectItem(esito.intValue(),esitiProperties.getEsitoLabel(esito));
 
-				boolean pddSpecific = this.isPddSpecific(esitoTransactionName);
-				boolean integrationManagerSpecific = this.isIntegrationManagerSpecific(esitoTransactionName);				
+				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
+				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				
 				if ("spcoop".equals(this.tipoRicercaSPCoop)) {
 					if(pddSpecific || !integrationManagerSpecific){
 						list.add(si);
@@ -1199,30 +1207,6 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		}
 	}
 
-	private boolean isPddSpecific(EsitoTransazioneName esitoTransactionName){
-		if(EsitoTransazioneName.ERRORE_APPLICATIVO.equals(esitoTransactionName) || 
-				EsitoTransazioneName.ERRORE_PROTOCOLLO.equals(esitoTransactionName) ||
-				EsitoTransazioneName.ERRORE_INVOCAZIONE.equals(esitoTransactionName) ||
-				EsitoTransazioneName.ERRORE_SERVER.equals(esitoTransactionName) ||
-				EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX.equals(esitoTransactionName) ||
-				EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX.equals(esitoTransactionName) ||
-				EsitoTransazioneName.CUSTOM.equals(esitoTransactionName)
-				){
-			return true;
-		}
-		return false;
-	}
-	private boolean isIntegrationManagerSpecific(EsitoTransazioneName esitoTransactionName){
-		if(EsitoTransazioneName.MESSAGGI_NON_PRESENTI.equals(esitoTransactionName) || 
-				EsitoTransazioneName.MESSAGGIO_NON_TROVATO.equals(esitoTransactionName) ||
-				EsitoTransazioneName.AUTENTICAZIONE_FALLITA.equals(esitoTransactionName) ||
-				EsitoTransazioneName.AUTORIZZAZIONE_FALLITA.equals(esitoTransactionName) 
-				){
-			return true;
-		}
-		return false;
-	}
-
 	public boolean isShowEsitiContesto(){
 		return this.getEsitiContesto().size()>2;
 	}
@@ -1230,16 +1214,18 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<SelectItem> getEsitiContesto() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-		list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING));
-
 		try{
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log);
+			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
+			
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
+			
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 
 			List<String> esiti = esitiProperties.getEsitiTransactionContextCodeOrderLabel();
 			for (String esito : esiti) {
 
-				SelectItem si = new SelectItem(esito);
+				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoContestoLabelFromValue(esito));
 
 				list.add(si);
 			}

@@ -72,11 +72,10 @@
 							<h:outputText id="outCorrAppRisp" value="#{dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}"/>
 													
 							<h:outputLabel value="Esito" id="esito-iconLabel" styleClass="outputFieldLabel #{dettagliBean.dettaglio.esitoStyleClass}"/>
-							<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esito}" converter="esitoConverter"/>
+							<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelEsitoContesto" value="Contesto" rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
-							<h:outputText id="outEsitoContesto" value="#{dettagliBean.dettaglio.esitoContesto}"
-								converter="esitoContestoConverter" 
+							<h:outputText id="outEsitoContesto" value="#{dettagliBean.dettaglio.esitoContestoLabel}" 
 								rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
 													
 							<h:outputLabel id="diag-iconLabel" value="Diagnostici" styleClass="outputFieldLabel icon-show-diagnostici"/>
@@ -356,7 +355,7 @@
 									</h:form>
 								</h:panelGroup>
 								
-								<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{item.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
+								<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
 								<h:panelGroup id="panelGroupFaultCooperazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 									<h:form id="formFaultCooperazione">
 	                                        <a4j:htmlCommandLink id="faultCooperazione-iconLink"
@@ -372,7 +371,7 @@
 									</h:form>
 								</h:panelGroup>
 								
-								<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{item.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
+								<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
 								<h:panelGroup id="panelGroupFaultIntegrazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 									<h:form id="formFaultIntegrazione">
 	                                        <a4j:htmlCommandLink id="faultIntegrazione-iconLink"

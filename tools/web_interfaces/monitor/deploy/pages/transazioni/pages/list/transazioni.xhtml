@@ -479,17 +479,17 @@ xmlns="http://www.w3.org/1999/xhtml"
 								</f:facet>
 								<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
 									<rich:toolTip for="outEsitoImgOk">
-										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+										<h:outputText value="#{item.esitoLabel}" />
 									</rich:toolTip>
 								</h:graphicImage>
 								<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
 									<rich:toolTip for="outEsitoImgFaultApplicativo">
-										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+										<h:outputText value="#{item.esitoLabel}" />
 									</rich:toolTip>
 								</h:graphicImage>
 								<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
 									<rich:toolTip for="outEsitoImgKo">
-										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+										<h:outputText value="#{item.esitoLabel}" />
 									</rich:toolTip>
 								</h:graphicImage>
 								<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
@@ -526,9 +526,9 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<f:facet name="header">
 									<h:outputText id="outEsitoLive1" value="Esito" />
 								</f:facet>
-								<h:outputText id="outEsitoLive2" value="#{item.esito}" converter="esitoConverter"/>
+								<h:outputText id="outEsitoLive2" value="#{item.esitoLabel}" />
 								<rich:toolTip for="outEsitoLive2">
-									<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+									<h:outputText value="#{item.esitoLabel}" />
 								</rich:toolTip>
 							</rich:column>
 							<rich:column id="colFruitoreLive">

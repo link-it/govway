@@ -576,19 +576,27 @@ public class UtilitiesIntegrazione {
 				
 				boolean infoProduct = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_INFO);
 				if(infoProduct) {
-					properties.put(CostantiPdD.HEADER_HTTP_X_PDD,this.openspcoopProperties.getHttpServer());
+					if(properties.containsKey(CostantiPdD.HEADER_HTTP_X_PDD)==false) {
+						properties.put(CostantiPdD.HEADER_HTTP_X_PDD,this.openspcoopProperties.getHttpServer());
+					}
 					if(this.openspcoopProperties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoopProperties.getHttpXPdDDetails())){
-						properties.put(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
+						if(properties.containsKey(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS)==false) {
+							properties.put(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS,this.openspcoopProperties.getHttpXPdDDetails());
+						}
 					}
 				}
 				
 				boolean userAgent = this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT);
 				if(userAgent) {
 					if(this.request) {
-						properties.put(HttpConstants.USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
+						if(properties.containsKey(HttpConstants.USER_AGENT)==false) {
+							properties.put(HttpConstants.USER_AGENT,this.openspcoopProperties.getHttpUserAgent());
+						}
 					}
 					else {
-						properties.put(HttpConstants.SERVER,this.openspcoopProperties.getHttpUserAgent());
+						if(properties.containsKey(HttpConstants.SERVER)==false) {
+							properties.put(HttpConstants.SERVER,this.openspcoopProperties.getHttpUserAgent());
+						}
 					}
 				}
 				

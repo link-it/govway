@@ -5,6 +5,9 @@
     	descrizione="Scambio sicuro ed affidabile di dati e documenti tramite il profilo 'AS4' della specifica OASIS ebMS 3.0" 
     	webSite="https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery" logger="true">
     	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
+    	<transaction 
+    		errorProtocol="true" labelErrorProtocol="Errore eDelivery"
+    	/>
     </protocol>
     
 

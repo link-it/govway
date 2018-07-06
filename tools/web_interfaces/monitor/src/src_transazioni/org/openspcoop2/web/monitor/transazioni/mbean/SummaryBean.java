@@ -228,7 +228,7 @@ public class SummaryBean implements Serializable{
 		}
 
 		try {
-			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log);
+			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log, this.protocollo);
 		} catch (Exception e) {
 			SummaryBean.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -725,7 +725,7 @@ public class SummaryBean implements Serializable{
 		//se idPorta e' null allora recupera tutti gli esiti 
 		ResLive esiti=null;
 		try {
-			esiti = this.transazioniService.getEsitiInfoLive(getPermessiUtenteOperatore(),this.lastRequest);
+			esiti = this.transazioniService.getEsitiInfoLive(getPermessiUtenteOperatore(),this.lastRequest, this.protocollo);
 		} catch (CoreException e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 			SummaryBean.log.error(e.getMessage(), e);
@@ -825,7 +825,7 @@ public class SummaryBean implements Serializable{
 			//se idPorta e' null allora recupera tutti gli esiti 
 			ResLive esiti=null;
 			try {
-				esiti = this.transazioniService.getEsitiInfoLive(this.getPermessiUtenteOperatore(),this.lastRequest);
+				esiti = this.transazioniService.getEsitiInfoLive(this.getPermessiUtenteOperatore(),this.lastRequest, this.protocollo);
 			} catch (CoreException e) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 				SummaryBean.log.error(e.getMessage(),e);
@@ -1127,14 +1127,16 @@ public class SummaryBean implements Serializable{
 	public List<SelectItem> getEsitiContesto() {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
-		list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING));
-
 		try{
 
+			EsitoUtils esitoUtils = new EsitoUtils(SummaryBean.log, this.protocollo);
+			
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
+			
 			List<String> esiti = this.esitiProperties.getEsitiTransactionContextCodeOrderLabel();
 			for (String esito : esiti) {
 
-				SelectItem si = new SelectItem(esito);
+				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoContestoLabelFromValue(esito));
 
 				list.add(si);
 			}

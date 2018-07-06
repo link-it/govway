@@ -38,31 +38,64 @@ public enum EsitoTransazioneName implements Serializable{
 
 	OK,
 	OK_PRESENZA_ANOMALIE,
-	ERRORE_PROTOCOLLO,
+	MESSAGGI_NON_PRESENTI,
+	CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY,
+	CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY,
+	HTTP_3xx,
+	
 	ERRORE_APPLICATIVO,
-	ERRORE_GENERICO,
+	
+	ERRORE_PROTOCOLLO,
+	ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE,
 	ERRORE_PROCESSAMENTO_PDD_4XX,
 	ERRORE_PROCESSAMENTO_PDD_5XX,
 	AUTENTICAZIONE_FALLITA,
 	AUTORIZZAZIONE_FALLITA,
-	MESSAGGI_NON_PRESENTI,
 	MESSAGGIO_NON_TROVATO,
 	ERRORE_INVOCAZIONE,
+	ERRORE_SERVER,
 	CONTENUTO_RICHIESTA_NON_RICONOSCIUTO,
 	CONTENUTO_RISPOSTA_NON_RICONOSCIUTO,
-	ERRORE_CONNESSIONE_CLIENT_NON_DISPONIBILE,
-	ERRORE_SERVER,
+	ERRORE_TOKEN,
 	ERRORE_AUTENTICAZIONE,
 	ERRORE_AUTORIZZAZIONE,
 	CONTROLLO_TRAFFICO_POLICY_VIOLATA,
-	CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY,
 	CONTROLLO_TRAFFICO_MAX_THREADS,
-	CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY,
+	ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA,
+	ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA,
+	ERRORE_ALLEGATI_MESSAGGIO_RICHIESTA,
+	ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA,
+	ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA,
+	ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA,
+	HTTP_4xx,
+	HTTP_5xx,
+	
 	CUSTOM;
 
 	EsitoTransazioneName()
 	{
 	}
+	
+	public static boolean isPddSpecific(EsitoTransazioneName esitoTransactionName){
+		if(!EsitoTransazioneName.OK.equals(esitoTransactionName) 
+				&&
+				!isIntegrationManagerSpecific(esitoTransactionName)
+				){
+			return true;
+		}
+		return false;
+	}
+	public static  boolean isIntegrationManagerSpecific(EsitoTransazioneName esitoTransactionName){
+		if(EsitoTransazioneName.MESSAGGI_NON_PRESENTI.equals(esitoTransactionName) || 
+				EsitoTransazioneName.MESSAGGIO_NON_TROVATO.equals(esitoTransactionName) ||
+				EsitoTransazioneName.AUTENTICAZIONE_FALLITA.equals(esitoTransactionName) ||
+				EsitoTransazioneName.AUTORIZZAZIONE_FALLITA.equals(esitoTransactionName) 
+				){
+			return true;
+		}
+		return false;
+	}
+	
 
 	public static EsitoTransazioneName convertoTo(String name){
 		EsitoTransazioneName esitoTransactionName = null;

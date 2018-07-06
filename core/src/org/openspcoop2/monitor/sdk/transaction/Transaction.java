@@ -54,7 +54,7 @@ public class Transaction {
 		this.log = log;
 		this.daoFactory = daoFactory;
 		this.idTransazione = transaction.getIdTransazione();
-		this.transactionResult = EsitiProperties.getInstance(this.log).convertToEsitoTransazione(transaction.getEsito(), transaction.getEsitoContesto());
+		this.transactionResult = EsitiProperties.getInstance(this.log,transaction.getProtocollo()).convertToEsitoTransazione(transaction.getEsito(), transaction.getEsitoContesto());
 		this.transaction = transaction;
 		this.requestTrace = requestTrace;
 		this.responseTrace = responseTrace;

@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
@@ -97,6 +98,13 @@ public class MTOMProcessor {
 							"mtom.processamentoRispostaEffettuato");
 					
 				}catch(Exception e){
+					
+					if(MessageRole.REQUEST.equals(msg.getMessageRole())) {
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RICHIESTA, "true");
+					}
+					else {
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA, "true");
+					}
 					
 					this.msgDiag.addKeywordErroreProcessamento(e);
 					this.log.error("[MTOM BeforeSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);

@@ -1737,7 +1737,7 @@ public class RicezioneContenutiApplicativi {
 				}
 		
 				if(fineGestione) {
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, true);
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
 					msgDiag.logPersonalizzato("gestioneTokenFallita");
 				}
 				else {
@@ -1922,7 +1922,7 @@ public class RicezioneContenutiApplicativi {
 				
 				if(errore!=null) {
 					if(autenticazioneOpzionale==false){
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 					}
 				}
 				else {
@@ -1975,16 +1975,26 @@ public class RicezioneContenutiApplicativi {
 						else {
 							IntegrationError integrationError = null;
 							if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(errore.getCodiceErrore())){
-								integrationError = IntegrationError.NOT_FOUND;
+								integrationError = IntegrationError.AUTHENTICATION;
 							}else{
 								integrationError = IntegrationError.INTERNAL_ERROR;
 							}
+							
 							OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
 									eAutenticazione,null));
 							
 							if(wwwAuthenticateErrorHeader!=null) {
 								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
 							}
+							
+//							if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+//								if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+//										ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+//									try {
+//										errorOpenSPCoopMsg.castAsRest().updateContent(null);
+//									}catch(Throwable e) {}
+//								}
+//							}
 							
 							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
 						}
@@ -2024,7 +2034,7 @@ public class RicezioneContenutiApplicativi {
 				}
 				
 				if (erroreIntegrazione != null) {
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 				}
 				else {
 					msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
@@ -2070,7 +2080,7 @@ public class RicezioneContenutiApplicativi {
 					else {
 						IntegrationError integrationError = null;
 						if(CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA.equals(erroreIntegrazione.getCodiceErrore())){
-							integrationError = IntegrationError.NOT_FOUND;
+							integrationError = IntegrationError.AUTHENTICATION;
 						}else{
 							integrationError = IntegrationError.INTERNAL_ERROR;
 						}
@@ -2080,6 +2090,15 @@ public class RicezioneContenutiApplicativi {
 						if(wwwAuthenticateErrorHeader!=null) {
 							errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
 						}
+						
+//						if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+//							if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+//									ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+//								try {
+//									errorOpenSPCoopMsg.castAsRest().updateContent(null);
+//								}catch(Throwable e) {}
+//							}
+//						}
 						
 						this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
 					}
@@ -2361,6 +2380,9 @@ public class RicezioneContenutiApplicativi {
 					msgDiag.logPersonalizzato("correlazioneApplicativaEsistente");
 				}
 			} catch (Exception e) {
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA, "true");
+				
 				msgDiag.logErroreGenerico(e,"CorrelazioneApplicativa");
 				logCore.error("Riscontrato errore durante il controllo di correlazione applicativa: "+ e.getMessage(),e);
 				
@@ -2588,7 +2610,7 @@ public class RicezioneContenutiApplicativi {
 					eAutorizzazione = esito.getEccezioneProcessamento();
 					errorMessageAutorizzazione = esito.getErrorMessage();
 					wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 				}
 				else{
 					msgDiag.logPersonalizzato("autorizzazioneEffettuata");
@@ -3344,7 +3366,7 @@ public class RicezioneContenutiApplicativi {
 						if (esito.isAutorizzato() == false) {
 							errore = esito.getErroreIntegrazione();
 							eAutorizzazione = esito.getEccezioneProcessamento();
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, true);
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 						}
 						else{
 							msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");

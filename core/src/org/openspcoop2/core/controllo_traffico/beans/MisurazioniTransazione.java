@@ -42,6 +42,7 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	private TipoPdD tipoPdD;
+	private String protocollo;
 	
 	private java.util.Date dataIngressoRichiesta;
 	private java.util.Date dataUscitaRichiesta;
@@ -55,6 +56,12 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 	
 	private int esitoTransazione;
 
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
 	public int getEsitoTransazione() {
 		return this.esitoTransazione;
 	}
@@ -127,6 +134,14 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 		
 		if(misurazione.tipoPdD!=null){
 			bf.append(misurazione.tipoPdD.getTipo());
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append("\n");
+		
+		if(misurazione.protocollo!=null){
+			bf.append(misurazione.protocollo);
 		}
 		else{
 			bf.append("-");
@@ -208,7 +223,7 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 		if(tmp==null){
 			throw new Exception("Wrong Format");
 		}
-		if(tmp.length!=10){
+		if(tmp.length!=11){
 			throw new Exception("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
@@ -221,52 +236,58 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 			else if(i==1){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.dataIngressoRichiesta = new Date(Long.parseLong(tmpValue));
+					misurazioni.protocollo = tmpValue;
 				}
 			}
 			else if(i==2){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.dataUscitaRichiesta = new Date(Long.parseLong(tmpValue));
+					misurazioni.dataIngressoRichiesta = new Date(Long.parseLong(tmpValue));
 				}
 			}
 			else if(i==3){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.dataIngressoRisposta = new Date(Long.parseLong(tmpValue));
+					misurazioni.dataUscitaRichiesta = new Date(Long.parseLong(tmpValue));
 				}
 			}
 			else if(i==4){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.dataUscitaRisposta = new Date(Long.parseLong(tmpValue));
+					misurazioni.dataIngressoRisposta = new Date(Long.parseLong(tmpValue));
 				}
 			}
 			else if(i==5){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.richiestaIngressoBytes = Long.parseLong(tmpValue);
+					misurazioni.dataUscitaRisposta = new Date(Long.parseLong(tmpValue));
 				}
 			}
 			else if(i==6){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.richiestaUscitaBytes = Long.parseLong(tmpValue);
+					misurazioni.richiestaIngressoBytes = Long.parseLong(tmpValue);
 				}
 			}
 			else if(i==7){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.rispostaIngressoBytes = Long.parseLong(tmpValue);
+					misurazioni.richiestaUscitaBytes = Long.parseLong(tmpValue);
 				}
 			}
 			else if(i==8){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
-					misurazioni.rispostaUscitaBytes = Long.parseLong(tmpValue);
+					misurazioni.rispostaIngressoBytes = Long.parseLong(tmpValue);
 				}
 			}
 			else if(i==9){
+				String tmpValue = tmp[i].trim();
+				if(tmpValue!=null && !"-".equals(tmpValue)){
+					misurazioni.rispostaUscitaBytes = Long.parseLong(tmpValue);
+				}
+			}
+			else if(i==10){
 				String tmpValue = tmp[i].trim();
 				if(tmpValue!=null && !"-".equals(tmpValue)){
 					misurazioni.esitoTransazione = Integer.parseInt(tmpValue);

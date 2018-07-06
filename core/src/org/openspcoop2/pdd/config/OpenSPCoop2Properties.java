@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.DBUtils;
@@ -308,8 +309,9 @@ public class OpenSPCoop2Properties {
 				}
 			}
 			
-			// EsitiProperties
-			EsitiProperties.initialize(getRootDirectory(), this.log, loaderOpenSPCoop);
+			// Non posso inizializzarli durante la validazione poich' il ProtocolFactoryManager non e' ancora stato inizializzato
+//			// EsitiProperties
+//			EsitiProperties.initialize(getRootDirectory(), this.log, loaderOpenSPCoop);
 			
 			// Repository
 			String tipoRepository = getRepositoryType();
@@ -1172,6 +1174,9 @@ public class OpenSPCoop2Properties {
 			// MustUnderstandHandler (warning)
 			this.isBypassFilterMustUnderstandEnabledForAllHeaders();
 
+			// Realm Autenticazione Basic
+			this.getRealmAutenticazioneBasic();
+			
 			// Gestori Credenziali PD
 			String [] gestoriCredenzialiPD = this.getTipoGestoreCredenzialiPD();
 			if(gestoriCredenzialiPD!=null){
@@ -1616,7 +1621,7 @@ public class OpenSPCoop2Properties {
 			
 			// ControlloTraffico
 			if(this.isControlloTrafficoEnabled()) {
-				this.initConfigurazioneControlloTraffico(loaderOpenSPCoop);
+				//this.initConfigurazioneControlloTraffico(loaderOpenSPCoop); invocato da OpenSPcoop2Startup
 				TipoGestorePolicy tipo = this.getControlloTrafficoGestorePolicyTipo();
 				if(TipoGestorePolicy.WS.equals(tipo)) {
 					this.getControlloTrafficoGestorePolicyWSUrl();
@@ -12305,6 +12310,26 @@ public class OpenSPCoop2Properties {
 	
 	/* ********  Gestore Credenziali  ******** */
 
+	private static String getRealmAutenticazioneBasic = null;
+	private static boolean getRealmAutenticazioneBasicRead = false;
+	public String getRealmAutenticazioneBasic() {
+		if(OpenSPCoop2Properties.getRealmAutenticazioneBasicRead == false){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.core.autenticazione.basic.realm"); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getRealmAutenticazioneBasic = value;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.basic.realm': "+e.getMessage());
+				OpenSPCoop2Properties.getRealmAutenticazioneBasic = null;
+			}
+			OpenSPCoop2Properties.getRealmAutenticazioneBasicRead = true;
+		}
+
+		return OpenSPCoop2Properties.getRealmAutenticazioneBasic;
+	}
+	
 	/**
 	 * Restituisce l'elenco dei tipi di gestori di credenziali da utilizzare lato Porta Delegata
 	 * 
@@ -15885,16 +15910,16 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoPolicyLetturaDaCacheDinamica;
 	}
 	
-	private static int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = null;
-	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata() throws Exception{
-		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata==null){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log);
+	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = new HashMap<>();
+	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata(String protocollo) throws Exception{
+		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.containsKey(protocollo)==false){
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log,protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = new int[split.length];
+					int [] tmp = new int[split.length];
 					for (int i = 0; i < split.length; i++) {
 						String s = split[i].trim();
 						int e = -1;
@@ -15906,38 +15931,41 @@ public class OpenSPCoop2Properties {
 						if(esitiProperties.existsEsitoCode(e)==false){
 							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido");
 						}
-						OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata[i] = e;
+						tmp[i] = e;
 					}
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.put(protocollo, tmp);
 				}
 				else{
 					// default
 					int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
 					this.log.warn("Proprieta' non presente [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsiderati] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"')");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = new int[1];
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata[0] = defaultEsito;
+					int [] tmp = new int[1];
+					tmp[0] = defaultEsito;
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.put(protocollo, tmp);
 				}
 
 			}catch(Exception e){
 				// default
 				int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
 				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaDelegata.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata = new int[1];
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata[0] = defaultEsito;
+				int [] tmp = new int[1];
+				tmp[0] = defaultEsito;
+				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.put(protocollo, tmp);
 			}
 		}
-		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata;
+		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata.get(protocollo);
 	}
 	
-	private static int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = null;
-	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa() throws Exception{
-		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa==null){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log);
+	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = new HashMap<>();
+	private int[] getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa(String protocollo) throws Exception{
+		if(OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.containsKey(protocollo)==false){
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log,protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = new int[split.length];
+					int [] tmp = new int[split.length];
 					for (int i = 0; i < split.length; i++) {
 						String s = split[i].trim();
 						int e = -1;
@@ -15949,26 +15977,29 @@ public class OpenSPCoop2Properties {
 						if(esitiProperties.existsEsitoCode(e)==false){
 							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido");
 						}
-						OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa[i] = e;
+						tmp[i] = e;
 					}
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.put(protocollo, tmp);
 				}
 				else{
 					// default
 					int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
 					this.log.warn("Proprieta' non presente [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsiderati] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"')");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = new int[1];
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa[0] = defaultEsito;
+					int [] tmp = new int[1];
+					tmp[0] = defaultEsito;
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.put(protocollo, tmp);
 				}
 
 			}catch(Exception e){
 				// default
 				int defaultEsito = esitiProperties.convertoToCode(EsitoTransazioneName.OK);
 				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.calcoloLatenza.portaApplicativa.esitiConsideratii] (Uso il default '"+EsitoTransazioneName.OK+"="+defaultEsito+"'): "+e.getMessage(),e);
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa = new int[1];
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa[0] = defaultEsito;
+				int [] tmp = new int[1];
+				tmp[0] = defaultEsito;
+				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.put(protocollo, tmp);
 			}
 		}
-		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa;
+		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa.get(protocollo);
 	}
 	
 	private static Boolean isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo = null;
@@ -15992,16 +16023,16 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo;
 	}
 	
-	private static int[] getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = null;
-	private int[] getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy() throws Exception{
-		if(getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy==null){
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log);
+	private static Map<String, int[]> getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new HashMap<>();
+	private int[] getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy(String protocollo) throws Exception{
+		if(getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.containsKey(protocollo) == false){
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
 			try{
 				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati");
 				if(value!=null){
 					value = value.trim();
 					String [] split = value.split(",");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new int[split.length];
+					int [] tmp = new int[split.length];
 					for (int i = 0; i < split.length; i++) {
 						String s = split[i].trim();
 						int e = -1;
@@ -16013,26 +16044,29 @@ public class OpenSPCoop2Properties {
 						if(esitiProperties.existsEsitoCode(e)==false){
 							throw new Exception("Valore ["+s+"] non riconosciuto come esito valido");
 						}
-						OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy[i] = e;
+						tmp[i] = e;
 					}
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.put(protocollo, tmp);
 				}
 				else{
 					// default
 					int defaultEsito =  esitiProperties.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
 					this.log.warn("Proprieta' non presente [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"')");
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new int[1];
-					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy[0] = defaultEsito;
+					int [] tmp = new int[1];
+					tmp[0] = defaultEsito;
+					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.put(protocollo, tmp);
 				}
 
 			}catch(Exception e){
 				// default
 				int defaultEsito =  esitiProperties.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
 				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"'): "+e.getMessage(),e);
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new int[1];
-				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy[0] = defaultEsito;
+				int [] tmp = new int[1];
+				tmp[0] = defaultEsito;
+				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.put(protocollo, tmp);
 			}
 		}
-		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy;
+		return OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.get(protocollo);
 	}
 	
 	private static Boolean isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = null;
@@ -16057,7 +16091,7 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static ConfigurazioneControlloTraffico controlloTrafficoConfigurazione = null;
-	private void initConfigurazioneControlloTraffico(Loader loaderOpenSPCoop) throws Exception{
+	public void initConfigurazioneControlloTraffico(Loader loaderOpenSPCoop, List<String> protocolli) throws Exception{
 		if(controlloTrafficoConfigurazione==null){
 			
 			controlloTrafficoConfigurazione = new ConfigurazioneControlloTraffico();
@@ -16071,9 +16105,12 @@ public class OpenSPCoop2Properties {
 			
 			controlloTrafficoConfigurazione.setPolicyReadedWithDynamicCache(this.isControlloTrafficoPolicyLetturaDaCacheDinamica());
 			
-			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaDelegataEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata());
-			
-			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaApplicativaEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa());
+			for (String protocollo : protocolli) {
+				getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata(protocollo);
+				getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa(protocollo);
+			}
+			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaDelegataEsitiConsiderati(getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata);
+			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaApplicativaEsitiConsiderati(getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa);
 			
 			controlloTrafficoConfigurazione.setElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente(this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo());
 			
@@ -16081,7 +16118,10 @@ public class OpenSPCoop2Properties {
 			controlloTrafficoConfigurazione.setNotifierEnabled(notifier!=null);
 			controlloTrafficoConfigurazione.setNotifier(notifier);
 			
-			controlloTrafficoConfigurazione.setEsitiPolicyViolate(this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy());
+			for (String protocollo : protocolli) {
+				getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy(protocollo);
+			}
+			controlloTrafficoConfigurazione.setEsitiPolicyViolate(getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy);
 			
 			controlloTrafficoConfigurazione.setElaborazioneRealtime_incrementaSoloPolicyApplicabile(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile());
 		}

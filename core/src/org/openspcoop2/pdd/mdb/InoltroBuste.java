@@ -1295,7 +1295,7 @@ public class InoltroBuste extends GenericLib{
 						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 					}
 					else{
-						Validatore v = new Validatore(requestMessage, openspcoopstate.getStatoRichiesta(),this.log, protocolFactory);
+						Validatore v = new Validatore(requestMessage, pddContext.getContext(), openspcoopstate.getStatoRichiesta(),this.log, protocolFactory);
 						headerBustaRichiesta = v.getHeaderProtocollo_senzaControlli();
 					}
 				}else{
@@ -1524,7 +1524,7 @@ public class InoltroBuste extends GenericLib{
 						}
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
-						if(messageSecurityContext.processOutgoing(requestMessage) == false){
+						if(messageSecurityContext.processOutgoing(requestMessage,pddContext.getContext()) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 							
@@ -2566,7 +2566,7 @@ public class InoltroBuste extends GenericLib{
 				if(openspcoopstate.getStatoRisposta() instanceof StatelessMessage){
 					((StatelessMessage) openspcoopstate.getStatoRisposta()).setBustaCorrelata(bustaRichiesta);
 				}
-				validatore = new Validatore(responseMessage,property,openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
+				validatore = new Validatore(responseMessage,pddContext.getContext(),property,openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
 						
 				msgDiag.logPersonalizzato("validazioneSintattica");
 				presenzaRispostaProtocollo  = validatore.validazioneSintattica(bustaRichiesta, Boolean.FALSE);
@@ -3283,6 +3283,9 @@ public class InoltroBuste extends GenericLib{
 					}
 					
 				}catch(Exception e){
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA, "true");
+					
 					msgDiag.logErroreGenerico(e, "gestioneCorrelazioneApplicativaRisposta");
 					this.log.error("Riscontrato errore durante il controllo di correlazione applicativa della risposta: "+ e.getMessage(),e);
 					
@@ -4001,10 +4004,10 @@ public class InoltroBuste extends GenericLib{
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								else{
-									//OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 									//hasContent = restMsg.hasContent();
 									hasContent = true; // devo controllare gli header etc...
-									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									isFault = restMsg.isProblemDetailsForHttpApis_RFC7808() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
 								if(hasContent && (isFault==false) ){

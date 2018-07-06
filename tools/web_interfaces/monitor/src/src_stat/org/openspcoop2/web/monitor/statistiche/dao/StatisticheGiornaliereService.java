@@ -135,8 +135,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
 	private org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService credenzialiMittenteDAO;
 
-	private EsitoUtils esitoUtils;
-
 	private PddMonitorProperties govwayMonitorProperties;
 	
 	public StatisticheGiornaliereService() {
@@ -156,8 +154,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
 
-			this.esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log);
-			
 			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
 			
 		} catch (Exception e) {
@@ -682,7 +678,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log);
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
 					List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 					List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1084,8 +1080,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			} 
 
 			// esito
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.andamentoTemporaleSearch.getProtocollo());
 			if(setEsito){
-				this.esitoUtils.setExpression(expr, this.andamentoTemporaleSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(expr, this.andamentoTemporaleSearch.getEsitoGruppo(), 
 						this.andamentoTemporaleSearch.getEsitoDettaglio(),
 						this.andamentoTemporaleSearch.getEsitoDettaglioPersonalizzato(),
 						this.andamentoTemporaleSearch.getEsitoContesto(),
@@ -1093,7 +1090,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						dao.newExpression());
 			}
 			else{
-				this.esitoUtils.setExpressionContesto(expr, model.ESITO_CONTESTO, this.andamentoTemporaleSearch.getEsitoContesto());
+				esitoUtils.setExpressionContesto(expr, model.ESITO_CONTESTO, this.andamentoTemporaleSearch.getEsitoContesto());
 			}
 
 			// ho 3 diversi tipi di query in base alla tipologia di ricerca
@@ -1364,7 +1361,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}			
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log, protocollo);
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, protocollo);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1379,7 +1377,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprOk.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprOk, model.ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprOk, model.ESITO_CONTESTO, esitoContesto);
 			exprOk.addGroupBy(model.DATA);
 
 			// fault
@@ -1392,7 +1390,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprFault.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprFault, model.ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprFault, model.ESITO_CONTESTO, esitoContesto);
 			exprFault.addGroupBy(model.DATA);
 
 			// ko
@@ -1405,7 +1403,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprKo.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprKo, model.ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprKo, model.ESITO_CONTESTO, esitoContesto);
 			exprKo.addGroupBy(model.DATA);
 
 			impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocollo);
@@ -1656,6 +1654,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		List<Soggetto> listaSoggettiGestione = this.distribSoggettoSearch
 				.getSoggettiGestione();
 		try {
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribSoggettoSearch.getProtocollo());
+			
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
@@ -1736,7 +1736,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				this.esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -1826,7 +1826,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				this.esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -1964,7 +1964,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				this.esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(mitExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -2090,7 +2090,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// esito
-				this.esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
+				esitoUtils.setExpression(destExpr, this.distribSoggettoSearch.getEsitoGruppo(), 
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
@@ -2200,6 +2200,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		StatisticheGiornaliereService.log
 		.debug("creo Expression per distribuzione Soggetto!");
 
+		EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribSoggettoSearch.getProtocollo());
+		
 		List<Soggetto> listaSoggettiGestione = this.distribSoggettoSearch
 				.getSoggettiGestione();
 		// ho 3 diversi tipi di query in base alla tipologia di ricerca
@@ -2271,7 +2273,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
@@ -2366,7 +2368,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
@@ -2669,7 +2671,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(erogazione_portaApplicativa_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
@@ -2946,7 +2948,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(fruizione_portaDelegata_Expr, this.distribSoggettoSearch.getEsitoGruppo(), 
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
@@ -3490,6 +3492,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribServizioSearch.getProtocollo());
+			
 			this.distribServizioSearch.getSoggettoLocale();
 
 			expr = dao.newExpression();
@@ -3529,7 +3533,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(expr, this.distribServizioSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(expr, this.distribServizioSearch.getEsitoGruppo(), 
 					this.distribServizioSearch.getEsitoDettaglio(),
 					this.distribServizioSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribServizioSearch.getEsitoContesto(),
@@ -3858,6 +3862,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribAzioneSearch.getProtocollo());
+			
 			this.distribAzioneSearch.getSoggettoLocale();
 
 			expr = dao.newExpression();
@@ -3897,7 +3903,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(expr, this.distribAzioneSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(expr, this.distribAzioneSearch.getEsitoGruppo(), 
 					this.distribAzioneSearch.getEsitoDettaglio(),
 					this.distribAzioneSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribAzioneSearch.getEsitoContesto(),
@@ -4979,6 +4985,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		List<Soggetto> listaSoggettiGestione = this.distribSaSearch.getSoggettiGestione();
 
 		try {
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribSaSearch.getProtocollo());
+			
 			this.distribSaSearch.getSoggettoLocale();
 
 			expr = dao.newExpression();
@@ -5034,7 +5042,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(expr, this.distribSaSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(expr, this.distribSaSearch.getEsitoGruppo(), 
 					this.distribSaSearch.getEsitoDettaglio(),
 					this.distribSaSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSaSearch.getEsitoContesto(),
@@ -6082,6 +6090,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				.getSoggettiGestione();
 
 		try {
+			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.statistichePersonalizzateSearch.getProtocollo());
+			
 			expr = dao.newExpression();
 
 			// Data
@@ -6138,7 +6148,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 
 			// esito
-			this.esitoUtils.setExpression(expr, this.statistichePersonalizzateSearch.getEsitoGruppo(), 
+			esitoUtils.setExpression(expr, this.statistichePersonalizzateSearch.getEsitoGruppo(), 
 					this.statistichePersonalizzateSearch.getEsitoDettaglio(),
 					this.statistichePersonalizzateSearch.getEsitoDettaglioPersonalizzato(),
 					this.statistichePersonalizzateSearch.getEsitoContesto(),

@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.slf4j.Logger;
 
@@ -37,11 +38,18 @@ import org.slf4j.Logger;
  */
 public class EsitiConfigUtils {
 
+	public static EsitiProperties getEsitiPropertiesForConfiguration(Logger log) throws ProtocolException {
+		return EsitiProperties.getInstance(log, EsitiProperties.NO_PROTOCOL_CONFIG);
+	}
+	public static EsitiProperties getEsitiPropertiesForContext(Logger log) throws ProtocolException {
+		return EsitiProperties.getInstance(log, EsitiProperties.NO_PROTOCOL_CONFIG);
+	}
+	
 	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf) throws Exception{
 		if(esitiConfig==null || "".equals(esitiConfig.trim())){
 			
 			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
-			EsitiProperties esiti = EsitiProperties.getInstance(log);
+			EsitiProperties esiti = getEsitiPropertiesForConfiguration(log);
 			List<Integer> esitiCodes = esiti.getEsitiCode();
 			
 			if(esitiCodes!=null && esitiCodes.size()>0){

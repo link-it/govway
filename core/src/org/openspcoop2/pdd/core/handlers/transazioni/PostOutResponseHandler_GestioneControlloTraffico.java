@@ -94,6 +94,7 @@ public class PostOutResponseHandler_GestioneControlloTraffico {
 								
 								MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
 								misurazioniTransazione.setTipoPdD(context.getTipoPorta());
+								misurazioniTransazione.setProtocollo( context.getProtocolFactory().getProtocol());
 								misurazioniTransazione.setEsitoTransazione(context.getEsito().getCode());
 								
 								misurazioniTransazione.setDataIngressoRichiesta(transazioneDTO.getDataIngressoRichiesta());

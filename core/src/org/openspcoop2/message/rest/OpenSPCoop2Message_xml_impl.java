@@ -28,7 +28,10 @@ import java.io.OutputStream;
 
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -53,7 +56,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 		InputStreamReader isr = null;
 		InputSource isSax = null;
 		try{
-			isr = new InputStreamReader(this.is,this.contentTypeCharsetName);
+			isr = new InputStreamReader(this.countingInputStream,this.contentTypeCharsetName);
 			isSax = new InputSource(isr);
 			return XMLUtils.getInstance().newElement(isSax);
 		}catch(Exception e){
@@ -65,9 +68,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 				}
 			}catch(Exception eClose){}
 			try{
-				if(this.is!=null){
-					this.is.close();
-				}
+				this.countingInputStream.close();
 			}catch(Exception eClose){}
 		}
 	}
@@ -91,5 +92,17 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 		}
 	}
 
+	@Override
+	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException {
+		try{
+			if(this.contentType==null) {
+				return false;
+			}
+			String baseType = ContentTypeUtilities.readBaseTypeFromContentType(this.contentType);
+			return HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7808.equalsIgnoreCase(baseType);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 	
 }

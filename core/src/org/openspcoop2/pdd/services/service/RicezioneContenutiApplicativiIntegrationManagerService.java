@@ -63,6 +63,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
@@ -191,13 +192,26 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 		}
 		
+		// Provo a creare un context (per l'id di transazione nei diagnostici)
+		RicezioneContenutiApplicativiContext context = null;
+		try {
+			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			if(openSPCoopProperties.isTransazioniEnabled()) {
+				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+			}
+		}catch(Throwable e) {
+			context = null;
+			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
+		}
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = portaDelegata;
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,IntegrationManager.ID_MODULO,nomePorta);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
 		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
-		
+		if(context!=null && protocolFactory!=null) {
+			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		}
 		
 		// GeneratoreErrore
 		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;
@@ -212,9 +226,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		// Aggiorno RequestInfo
+		ConnectorDispatcherErrorInfo cInfo = null;
 		try{
-			if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
-					generatoreErrore, serviceIdentificationReader,msgDiag)==false){
+			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
+					generatoreErrore, serviceIdentificationReader, msgDiag);
+			if(cInfo!=null){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreIntegrazione());
@@ -233,6 +249,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				logCore.error("Errore generazione SOAPFault",eError);
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
 			}
+		}finally {
+			if(cInfo!=null) {
+				RicezioneContenutiApplicativiServiceUtils.emitTransactionError(context,logCore, idModulo, IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, protocolFactory, requestInfo,
+						null, dataAccettazioneRichiesta, cInfo);
+			}
 		}
 		
 		
@@ -246,10 +267,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		OpenSPCoopStateful stato = null;
 		
-		RicezioneContenutiApplicativiContext context = null;
 		try{
 			// viene generato l'UUID
-			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			if(context==null) {
+				context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			}
 			if(dumpRaw!=null){
 				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 			}
@@ -264,6 +286,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		try{
 			if(openSPCoopProperties.isTransazioniEnabled()) {
+				// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
 				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 		}catch(Exception e){

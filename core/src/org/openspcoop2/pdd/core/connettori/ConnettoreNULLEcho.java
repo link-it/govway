@@ -179,7 +179,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				property.setValidazioneProfiloCollaborazione(false);
 				property.setValidazioneManifestAttachments(false);
 				
-				validatoreProtocollo = new Validatore(this.responseMsg,property,null,
+				validatoreProtocollo = new Validatore(this.responseMsg,this.getPddContext()!=null?this.getPddContext().getContext():null,property,null,
 						this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory);
 				
 				if(validatoreProtocollo.validazioneSintattica() == false){

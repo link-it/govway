@@ -56,15 +56,17 @@ public class TransactionContext {
 	}
 			
 	public static void createTransaction(String id) throws TransactionNotExistsException{
-		try{
-			if(gestioneStateful==null){
-				initGestioneStateful();
+		if(transactionContext.containsKey(id)==false) {
+			try{
+				if(gestioneStateful==null){
+					initGestioneStateful();
+				}
+			}catch(Exception e){
+				throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
+			Transaction transaction = new Transaction(gestioneStateful);
+			transactionContext.put(id, transaction);
 		}
-		Transaction transaction = new Transaction(gestioneStateful);
-		transactionContext.put(id, transaction);
 	}
 	
 	public static Transaction getTransaction(String id) throws TransactionNotExistsException{

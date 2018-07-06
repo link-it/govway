@@ -64,6 +64,7 @@ import org.openspcoop2.protocol.manifest.InterfaceConfiguration;
 import org.openspcoop2.protocol.manifest.Version;
 import org.openspcoop2.protocol.manifest.CollaborationProfile;
 import org.openspcoop2.protocol.manifest.ServiceType;
+import org.openspcoop2.protocol.manifest.Transaction;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping;
@@ -2665,6 +2666,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ServiceType readServiceTypeFromString(String in) throws DeserializerException {
 		return (ServiceType) this.xmlToObj(in.getBytes(), ServiceType.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transaction
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transaction readTransaction(String fileName) throws DeserializerException {
+		return (Transaction) this.xmlToObj(fileName, Transaction.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transaction readTransaction(File file) throws DeserializerException {
+		return (Transaction) this.xmlToObj(file, Transaction.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transaction readTransaction(InputStream in) throws DeserializerException {
+		return (Transaction) this.xmlToObj(in, Transaction.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transaction readTransaction(byte[] in) throws DeserializerException {
+		return (Transaction) this.xmlToObj(in, Transaction.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Transaction}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Transaction readTransactionFromString(String in) throws DeserializerException {
+		return (Transaction) this.xmlToObj(in.getBytes(), Transaction.class);
 	}	
 	
 	

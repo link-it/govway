@@ -277,7 +277,7 @@
 				<link:prop label="Esito" rendered="#{sf_bean.andamentoTemporalePerEsiti == false}">
 					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
 						defaultLabel="Seleziona esito" directInputSuggestions="true"
-						width="412" converter="esitoConverter" enableManualInput="false">
+						width="412" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
 					</rich:comboBox>
@@ -286,7 +286,7 @@
 				<link:prop label="Dettaglio Esito" rendered="#{(sf_bean.andamentoTemporalePerEsiti == false) and sf_bean.showDettaglio}">
 					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
 						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
-						width="412" converter="esitoConverter" enableManualInput="false">
+						width="412" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
 					</rich:comboBox>
@@ -300,7 +300,7 @@
 				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
 					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
 						defaultLabel="Seleziona contesto" directInputSuggestions="true"
-						width="412" converter="esitoContestoConverter" enableManualInput="false">
+						width="412" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiContesto}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
 					</rich:comboBox>

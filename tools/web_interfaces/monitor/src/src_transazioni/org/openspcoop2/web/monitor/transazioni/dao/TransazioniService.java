@@ -149,8 +149,6 @@ public class TransazioniService implements ITransazioniService {
 	
 	private Integer liveUltimiGiorni = null;
 	
-	private EsitoUtils esitoUtils;
-	
 	private List<Index> forceIndexAndamentoTemporaleFindAll;
 	private List<Index> forceIndexAndamentoTemporaleCount;
 	private List<Index> forceIndexIdApplicativoFindAll;
@@ -285,8 +283,6 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
-			this.esitoUtils = new EsitoUtils(this.log);
-			
 			this.initForceIndex(monitorProperties);
 			
 		} catch (Exception e) {
@@ -350,8 +346,6 @@ public class TransazioniService implements ITransazioniService {
 				}
 				
 			}
-			
-			this.esitoUtils = new EsitoUtils(this.log);
 			
 			this.initForceIndex(monitorProperties);
 			
@@ -657,14 +651,14 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick) {
+	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick, String protocollo) {
 
 		this.log.debug("Get Esiti Info Live[idPorta: " + permessiUtente+ "], [ LastDatePick: " + lastDatePick + "]");
 
 		try {
 			
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1495,7 +1489,8 @@ public class TransazioniService implements ITransazioniService {
 		this.log.debug("Get Esiti [permessiUtenti: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
 		try {
 			
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log);
+			EsitoUtils esitoUtils = new EsitoUtils(this.log, protocollo);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, protocollo);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1510,7 +1505,7 @@ public class TransazioniService implements ITransazioniService {
 						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprOk.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprOk, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprOk, Transazione.model().ESITO_CONTESTO, esitoContesto);
 			
 			// Fault
 			IExpression exprFault = this.transazioniSearchDAO.newExpression();
@@ -1522,7 +1517,7 @@ public class TransazioniService implements ITransazioniService {
 						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprFault.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprFault, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprFault, Transazione.model().ESITO_CONTESTO, esitoContesto);
 			
 			// Ko
 			IExpression exprKo = this.transazioniSearchDAO.newExpression();
@@ -1534,7 +1529,7 @@ public class TransazioniService implements ITransazioniService {
 						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprKo.and(permessi);
 			}
-			this.esitoUtils.setExpressionContesto(exprKo, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			esitoUtils.setExpressionContesto(exprKo, Transazione.model().ESITO_CONTESTO, esitoContesto);
 			
 			exprOk.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
 			exprFault.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
@@ -2124,7 +2119,8 @@ public class TransazioniService implements ITransazioniService {
 		
 		
 		// esito
-		this.esitoUtils.setExpression(filter, this.searchForm.getEsitoGruppo(), 
+		EsitoUtils esitoUtils = new EsitoUtils(this.log, this.searchForm.getProtocollo());
+		esitoUtils.setExpression(filter, this.searchForm.getEsitoGruppo(), 
 				this.searchForm.getEsitoDettaglio(),
 				this.searchForm.getEsitoDettaglioPersonalizzato(),
 				this.searchForm.getEsitoContesto(),

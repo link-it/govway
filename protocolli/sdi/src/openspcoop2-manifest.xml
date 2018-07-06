@@ -5,6 +5,9 @@
     	descrizione="Invio e Ricezione di Fatture verso il Sistema di Interscambio (SdI) "
     	webSite="http://www.fatturapa.gov.it/">
     	<factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
+    	<transaction 
+    		errorProtocol="true" labelErrorProtocol="Errore SDI"
+    	/>
     </protocol>
 
 	<binding>

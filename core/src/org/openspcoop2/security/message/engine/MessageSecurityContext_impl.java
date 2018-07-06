@@ -24,7 +24,10 @@
 
 package org.openspcoop2.security.message.engine;
 
+import java.util.Hashtable;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -47,12 +50,22 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	
 	/** MessageSecurity Process */
 	@Override
-	public boolean processIncoming(OpenSPCoop2Message message, Busta busta){
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx){
 		
 		this.receiver = new MessageSecurityReceiver_impl(this);
 		
 		boolean result = this.receiver.process(message, busta);
 		if(!result){
+			
+			if(ctx!=null) {
+				if(MessageRole.REQUEST.equals(message.getMessageRole())) {
+					ctx.put(org.openspcoop2.core.constants.Costanti.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA, "true");
+				}
+				else {
+					ctx.put(org.openspcoop2.core.constants.Costanti.ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA, "true");
+				}
+			}
+				
 			this.codiceErrore = this.receiver.getCodiceErrore();
 			this.msgErrore = this.receiver.getMsgErrore();
 			this.listaSubCodiceErrore = this.receiver.getListaSubCodiceErrore();
@@ -61,12 +74,22 @@ public class MessageSecurityContext_impl extends MessageSecurityContext{
 	}
 	
 	@Override
-	public boolean processOutgoing(OpenSPCoop2Message message){
+	public boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx){
 		
 		this.sender = new MessageSecuritySender_impl(this);
 		
 		boolean result = this.sender.process(message);
 		if(!result){
+			
+			if(ctx!=null) {
+				if(MessageRole.REQUEST.equals(message.getMessageRole())) {
+					ctx.put(org.openspcoop2.core.constants.Costanti.ERRORE_SICUREZZA_MESSAGGIO_RICHIESTA, "true");
+				}
+				else {
+					ctx.put(org.openspcoop2.core.constants.Costanti.ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA, "true");
+				}
+			}
+			
 			this.codiceErrore = this.sender.getCodiceErrore();
 			this.msgErrore = this.sender.getMsgErrore();
 		}

@@ -110,5 +110,14 @@ public class WWWAuthenticateGenerator {
 		return bf.toString();
 	}
 	
+	public static String buildBasicHeaderValue(String realm) {
+		
+		StringBuffer bf = new StringBuffer(HttpConstants.AUTHORIZATION_PREFIX_BASIC);
+		bf.append("realm=\"");
+		bf.append(realm);
+		bf.append("\"");
+		return bf.toString();
+	}
+	
 }
 

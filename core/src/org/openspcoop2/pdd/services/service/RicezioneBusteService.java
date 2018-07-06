@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.services.service;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPBody;
 
@@ -49,13 +50,14 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -63,6 +65,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneBusteConnector;
@@ -142,10 +145,11 @@ public class RicezioneBusteService  {
 		}catch(Exception e){
 			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -154,10 +158,11 @@ public class RicezioneBusteService  {
 		if (openSPCoopProperties == null) {
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, null, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -171,10 +176,11 @@ public class RicezioneBusteService  {
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -196,10 +202,11 @@ public class RicezioneBusteService  {
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -210,20 +217,42 @@ public class RicezioneBusteService  {
 		}catch(Exception e){
 			String msg = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			return;
+		}
+		
+		// Provo a creare un context (per l'id di transazione nei diagnostici)
+		RicezioneBusteContext context = null;
+		IProtocolFactory<?> protocolFactory = null;
+		try {
+			context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
+			protocolFactory = req.getProtocolFactory();
+			if(openSPCoopProperties.isTransazioniEnabled()) {
+				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+			}
+		}catch(Throwable e) {
+			context = null;
+			protocolFactory = null;
+			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
 		}
 		
 		// Logger dei messaggi diagnostici
 		String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,idModulo,nomePorta);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+		if(context!=null && protocolFactory!=null) {
+			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		}
 		
 		// Aggiorno RequestInfo
-		if(RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, serviceIdentificationReader,msgDiag)==false){
+		ConnectorDispatcherErrorInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
+				this.generatoreErrore, serviceIdentificationReader,msgDiag);
+		if(cInfo!=null){
+			RicezioneBusteServiceUtils.emitTransactionError(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);
@@ -253,12 +282,10 @@ public class RicezioneBusteService  {
 		// PostOutResponseContext
 		PostOutResponseContext postOutResponseContext = null;
 
-		RicezioneBusteContext context = null;
 		PdDContext pddContext = null;
 		OpenSPCoop2Message requestMessage = null;
 		
 		
-		IProtocolFactory<?> protocolFactory = null;
 		String protocol = null;
 		MessageType messageTypeReq = null;
 		ServiceBinding protocolServiceBinding = null;
@@ -266,7 +293,9 @@ public class RicezioneBusteService  {
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
-			protocolFactory = req.getProtocolFactory();
+			if(protocolFactory==null) {
+				protocolFactory = req.getProtocolFactory();
+			}
 			protocol = protocolFactory.getProtocol();
 			
 			protocolServiceBinding = requestInfo.getProtocolServiceBinding();
@@ -275,7 +304,9 @@ public class RicezioneBusteService  {
 			proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol()));
 			proprietaErroreAppl.setIdModulo(idModulo);
 			
-			context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
+			if(context==null) {
+				context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
+			}
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
 			context.setTipoPorta(TipoPdD.APPLICATIVA);
@@ -285,6 +316,7 @@ public class RicezioneBusteService  {
 			
 			try{
 				if(openSPCoopProperties.isTransazioniEnabled()) {
+					// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
 					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				}
 			}catch(Exception e){
@@ -693,6 +725,15 @@ public class RicezioneBusteService  {
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
 		}
+		if(context.getHeaderIntegrazioneRisposta()==null) {
+			context.setHeaderIntegrazioneRisposta(new Properties());
+		}
+		try {
+			UtilitiesIntegrazione utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
+			utilitiesIntegrazione.setInfoProductTransportProperties(context.getHeaderIntegrazioneRisposta());
+		}catch(Exception e){
+			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
+		}
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){
@@ -811,6 +852,17 @@ public class RicezioneBusteService  {
 							statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
 						}
 					}
+				}
+				else if(responseMessage.castAsRest().isProblemDetailsForHttpApis_RFC7808() || 
+						(MessageRole.FAULT.equals(responseMessage.getMessageRole()) &&
+							(
+							MessageType.XML.equals(responseMessage.getMessageType()) 
+									|| 
+							MessageType.JSON.equals(responseMessage.getMessageType())
+							)
+						)
+					) {
+					consume = false; // può essere usato nel post out response handler
 				}
 				res.setStatus(statoServletResponse);
 				

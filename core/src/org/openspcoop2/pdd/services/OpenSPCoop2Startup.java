@@ -1546,7 +1546,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ----------- Gestori utilizzati dal Controllo Traffico ------------ */
 			if(propertiesReader.isControlloTrafficoEnabled()){
-							
+						
+				try{
+					propertiesReader.initConfigurazioneControlloTraffico(loader, ProtocolFactoryManager.getInstance().getProtocolNamesAsList());
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione Configurazione ControlloTraffico");
+					return;
+				}
+				
 				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
 				
 				// Cache ControlloTraffico DatiStatistici

@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -143,7 +144,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						}
 					}
 					
-					EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+					EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 					
 					List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
 					if(confHelper.isCompleteEnabled(attivi, listOk)) {

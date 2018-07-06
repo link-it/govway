@@ -96,9 +96,6 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	 */
 	private OpenSPCoop2Properties openspcoopProperties = null;
 	private ConfigurazionePdDManager configPdDManager = null;
-	private EsitiProperties esitiProperties = null;
-	private List<String> esitiOk = new ArrayList<String>();
-	private List<String> esitiKo = new ArrayList<String>();
 
 	/**
 	 * Tracciamento e MsgDiagnostici appender
@@ -160,22 +157,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				
 				// configPdDManager
 				this.configPdDManager = ConfigurazionePdDManager.getInstance();
-				
-				// EsitiProperties
-				this.esitiProperties = EsitiProperties.getInstance(this.log);
-				List<Integer> tmpEsitiOk = this.esitiProperties.getEsitiCodeOk();
-				if(tmpEsitiOk!=null && tmpEsitiOk.size()>0){
-					for (Integer esito : tmpEsitiOk) {
-						this.esitiOk.add(esito+"");
-					}
-				}
-				List<Integer> tmpEsitiKo = this.esitiProperties.getEsitiCodeKo();
-				if(tmpEsitiKo!=null && tmpEsitiKo.size()>0){
-					for (Integer esito : tmpEsitiKo) {
-						this.esitiKo.add(esito+"");
-					}
-				}
-				
+								
 			} catch (Exception e) {
 				throw new HandlerException("Errore durante la lettura della configurazione: " + e.getLocalizedMessage(), e);
 			}
@@ -382,19 +364,30 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					this.log.debug("["+idTransazione+"] Esiti delle Transazioni da registare: "+bf.toString()); 
 				}
 				if(context.getEsito()!=null){
+					
+					// EsitiProperties
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(this.log, context.getProtocolFactory().getProtocol());
+					List<Integer> tmpEsitiOk = esitiProperties.getEsitiCodeOk();
+					List<String> esitiOk = new ArrayList<>();
+					if(tmpEsitiOk!=null && tmpEsitiOk.size()>0){
+						for (Integer esito : tmpEsitiOk) {
+							esitiOk.add(esito+"");
+						}
+					}
+					
 					int code = context.getEsito().getCode();
 					String codeAsString = code+"";
 					if(esitiDaRegistrare.contains(codeAsString)==false){
-						String msg = "Transazione ID["+idTransazione+"] non salvata nello storico: esito [name:"+this.esitiProperties.getEsitoName(context.getEsito().getCode())+" code:"+codeAsString+"]";
-						if(this.esitiOk.contains(codeAsString)){
+						String msg = "Transazione ID["+idTransazione+"] non salvata nello storico: esito [name:"+esitiProperties.getEsitoName(context.getEsito().getCode())+" code:"+codeAsString+"]";
+						if(esitiOk.contains(codeAsString)){
 							this.log.warn(msg);
 						}
 						else{
 							this.log.error(msg);
 						}
-						int esitoViolazioneRateLimiting = this.esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.name());
-						int esitoViolazioneRateLimitingWarningOnly = this.esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY.name());
-						int esitoMaxThreadsWarningOnly = this.esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY.name());
+						int esitoViolazioneRateLimiting = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.name());
+						int esitoViolazioneRateLimitingWarningOnly = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY.name());
+						int esitoMaxThreadsWarningOnly = esitiProperties.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS_WARNING_ONLY.name());
 						if((esitoViolazioneRateLimiting == code) || //  Violazione Rate Limiting
 								(esitoViolazioneRateLimitingWarningOnly == code) ||  // Violazione Rate Limiting WarningOnly
 								(esitoMaxThreadsWarningOnly == code) // Superamento Limite Richieste WarningOnly

@@ -161,9 +161,9 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 					List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
 					List<Integer> esitiCodeFaultApplicativo = null;
 					try {
-						esitiCodeOk = EsitiProperties.getInstance(log).getEsitiCodeOk();
-						esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();
-						esitiCodeFaultApplicativo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();
+						esitiCodeOk = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeOk();
+						esitiCodeKo_senzaFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeKo_senzaFaultApplicativo();
+						esitiCodeFaultApplicativo = EsitiProperties.getInstance(log,dati.getProtocollo()).getEsitiCodeFaultApplicativo();
 					}catch(Exception e) {
 						throw new PolicyException(e.getMessage(),e);
 					}

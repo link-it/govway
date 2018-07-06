@@ -812,6 +812,22 @@ public class Tracciamento {
 						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
 					}
 				}
+				else {
+					if(msg.castAsRest().isProblemDetailsForHttpApis_RFC7808()) {
+						found = true;
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						msg.writeTo(bout, false);
+						bout.flush();
+						bout.close();
+						StringBuffer bf = new StringBuffer();
+						if(esito.getDettaglio()!=null){
+							bf.append(esito.getDettaglio());
+							bf.append("\n");
+						}
+						bf.append(bout.toString());
+						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
+					}
+				}
 
 				if(!found && MessageRole.FAULT.equals(msg.getMessageRole())){
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();

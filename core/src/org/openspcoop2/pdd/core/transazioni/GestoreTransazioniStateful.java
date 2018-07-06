@@ -378,7 +378,7 @@ public class GestoreTransazioniStateful {
 		List<Map<String, Object>> result = null;
 		try{
 			result = transazioneService.select(expression,
-					Transazione.model().ESITO, Transazione.model().ESITO_CONTESTO);
+					Transazione.model().PROTOCOLLO,Transazione.model().ESITO, Transazione.model().ESITO_CONTESTO);
 			if(result==null || result.size()<=0){
 				if(this.debug){
 					this.log.debug("Transazione con id ["+idTransazione+"] non trovata");
@@ -401,6 +401,12 @@ public class GestoreTransazioniStateful {
 		TransactionDB tr = new TransactionDB();
 		tr.setIdTransazione(idTransazione);
 				
+		Object oProtocollo = map.get(Transazione.model().PROTOCOLLO.getFieldName());
+		if(oProtocollo==null || !(oProtocollo instanceof String) ){
+			throw new Exception("Salvata transazione senza protocollo ["+oProtocollo+"]");
+		}
+		String protocollo = (String) oProtocollo;
+		
 		Object oEsito = map.get(Transazione.model().ESITO.getFieldName());
 		if(oEsito==null || !(oEsito instanceof Integer) ){
 			throw new Exception("Salvata transazione senza esito ["+oEsito+"]");
@@ -413,7 +419,7 @@ public class GestoreTransazioniStateful {
 		}
 		String esitoContesto = (String) oEsitoContesto;
 		
-		tr.setEsitoTransazione(EsitiProperties.getInstance(this.log).convertToEsitoTransazione(esito, esitoContesto));
+		tr.setEsitoTransazione(EsitiProperties.getInstance(this.log,protocollo).convertToEsitoTransazione(esito, esitoContesto));
 		
 		if(this.debug){
 			this.log.debug("Trovata transazione");

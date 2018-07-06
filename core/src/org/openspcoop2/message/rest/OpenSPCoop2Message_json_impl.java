@@ -29,7 +29,10 @@ import java.io.Writer;
 
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi json
@@ -50,9 +53,13 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 	@Override
 	protected String buildContent() throws MessageException{
 		try{
-			return Utilities.getAsString(this.is, this.contentTypeCharsetName);
+			return Utilities.getAsString(this.countingInputStream, this.contentTypeCharsetName);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
+		}finally {
+			try {
+				this.countingInputStream.close();
+			}catch(Exception eClose) {}
 		}
 	}
 	
@@ -76,6 +83,19 @@ public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMes
 					w.close();
 				}
 			}catch(Exception eClose){}
+		}
+	}
+	
+	@Override
+	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException {
+		try{
+			if(this.contentType==null) {
+				return false;
+			}
+			String baseType = ContentTypeUtilities.readBaseTypeFromContentType(this.contentType);
+			return HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7808.equalsIgnoreCase(baseType);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
 		}
 	}
 

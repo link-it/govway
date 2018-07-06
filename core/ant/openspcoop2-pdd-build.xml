@@ -57,7 +57,7 @@
 						</svn>
 				    	
 						<!-- Imposto versione -->
-						<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
+						<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches|tags|trunk)/(.*)" replace="\2" />
 						<propertyregex property="pddVersion"
 						               input="${pddVersionTmp}"
 						               regexp="/"
@@ -65,8 +65,8 @@
 						<property name="pddDetails" value="GovWay Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />		
 						
 						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
-								 token="public static final String OPENSPCOOP2_VERSION" 
-								 value="public static final String OPENSPCOOP2_VERSION = &quot;${pddVersion}&quot; ; //" />
+								 token="public static final String OPENSPCOOP2_PRODUCT_VERSION" 
+								 value="public static final String OPENSPCOOP2_PRODUCT_VERSION = &quot;GovWay/${pddVersion}&quot; ; //" />
 						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
 								 token="public static final String OPENSPCOOP2_DETAILS" 
 								 value="public static final String OPENSPCOOP2_DETAILS = &quot;${pddDetails}&quot; ; //" />

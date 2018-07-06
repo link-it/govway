@@ -169,7 +169,8 @@ public class DatiStatisticiDAOManager  {
 				}
 			}
 			
-			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, datiTransazione.getTipoPdD(), groupByPolicy);
+			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, 
+					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy);
 						
 			FunctionField ff = new  FunctionField(model.NUMERO_TRANSAZIONI, Function.SUM, "somma");
 			
@@ -213,9 +214,10 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
+			String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
 
     	expr.isNotNull(model.NUMERO_TRANSAZIONI);
     	
@@ -272,7 +274,8 @@ public class DatiStatisticiDAOManager  {
 				}
 			}
 			
-			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, datiTransazione.getTipoPdD(), groupByPolicy, tipoBanda);
+			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, 
+					datiTransazione.getTipoPdD(),datiTransazione.getProtocollo(), groupByPolicy, tipoBanda);
 						
 			FunctionField ff = null;
 			switch (tipoBanda) {
@@ -328,10 +331,11 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
+			String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy,
 			TipoBanda tipoBanda) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
 
     	switch (tipoBanda) {
 		case COMPLESSIVA:
@@ -392,7 +396,8 @@ public class DatiStatisticiDAOManager  {
 				}
 			}
 			
-			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, datiTransazione.getTipoPdD(), groupByPolicy, tipoLatenza);
+			IExpression expression = this.createWhereExpressionLatenza(dao, model, tipoRisorsa, leftInterval, rightInterval, 
+					datiTransazione.getTipoPdD(), datiTransazione.getProtocollo(), groupByPolicy, tipoLatenza);
 						
 			FunctionField ff = null;
 			switch (tipoLatenza) {
@@ -448,17 +453,18 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
+			String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy,
 			TipoLatenza tipoLatenza) throws Exception {
     	
-    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, groupByPolicy);
+    	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocollo, groupByPolicy);
 
 		int [] esiti = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
-			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaDelegataEsitiConsiderati();		
+			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaDelegataEsitiConsiderati().get(protocollo);
 		}
 		else{
-			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaApplicativaEsitiConsiderati();			
+			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaApplicativaEsitiConsiderati().get(protocollo);		
 		}
 		
 		// esito
@@ -497,6 +503,7 @@ public class DatiStatisticiDAOManager  {
 			TipoRisorsa tipoRisorsa,
 			Date dataInizio, Date dataFine,
 			TipoPdD tipoPdDTransazioneInCorso,
+			String protocollo,
 			IDUnivocoGroupByPolicy groupByPolicy) throws Exception {
 
 		IExpression expr = null;
@@ -511,7 +518,7 @@ public class DatiStatisticiDAOManager  {
 
 		
         // escludo le transazioni con esito policy violate
-		int [] esitiPolicyViolate = this.configurazioneControlloTraffico.getEsitiPolicyViolate();    
+		int [] esitiPolicyViolate = this.configurazioneControlloTraffico.getEsitiPolicyViolate().get(protocollo);    
 		IExpression exprEsitiPolicyViolate = dao.newExpression();
 		exprEsitiPolicyViolate.or();
 		for (int i = 0; i < esitiPolicyViolate.length; i++) {
@@ -530,13 +537,13 @@ public class DatiStatisticiDAOManager  {
 			break;
 
 		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger).getEsitiCodeOk());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeOk());
 			break;
 		case NUMERO_RICHIESTE_FALLITE:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger).getEsitiCodeKo_senzaFaultApplicativo());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeKo_senzaFaultApplicativo());
 			break;
 		case NUMERO_FAULT_APPLICATIVI:
-			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger).getEsitiCodeFaultApplicativo());
+			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocollo).getEsitiCodeFaultApplicativo());
 			break;
 		}
 		
@@ -586,11 +593,11 @@ public class DatiStatisticiDAOManager  {
 		}
 		
 		// protocollo
-		String protocollo = groupByPolicy.getProtocolloIfDefined();
-		if(protocollo!=null){
+		String protocolloGroupBy = groupByPolicy.getProtocolloIfDefined();
+		if(protocolloGroupBy!=null){
 			if(fruitore==null && erogatore==null && idServizio==null){
 				// il tipo se è definito uno dei 3 elementi è insito nell'elemento stesso
-				List<String> listaTipiSoggetto = ProtocolFactoryManager.getInstance().getOrganizationTypes().get(protocollo);
+				List<String> listaTipiSoggetto = ProtocolFactoryManager.getInstance().getOrganizationTypes().get(protocolloGroupBy);
 				expr.in(model.TIPO_MITTENTE, listaTipiSoggetto);
 				expr.in(model.TIPO_DESTINATARIO, listaTipiSoggetto);
 			}

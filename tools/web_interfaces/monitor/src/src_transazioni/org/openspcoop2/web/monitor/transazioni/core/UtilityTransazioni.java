@@ -45,8 +45,6 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.xml.XMLUtils;
-import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
-import org.openspcoop2.web.monitor.core.converter.EsitoConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -395,7 +393,7 @@ public class UtilityTransazioni {
 		}
 		
 		
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+		EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),t.getProtocollo());
 		
 		// Esito di una transazione
 		if (t.getEsito() >= 0) {
@@ -1285,6 +1283,8 @@ public class UtilityTransazioni {
 		
 		// esito
 		
+		EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(),searchForm.getProtocollo());
+		
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito esito = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Esito();
 		Integer esitoNumber = null;
 		if(EsitoUtils.ALL_VALUE!=searchForm.getEsitoDettaglio()){
@@ -1294,14 +1294,12 @@ public class UtilityTransazioni {
 			esitoNumber = searchForm.getEsitoGruppo();
 		}
 		esito.setCodice(new BigInteger(esitoNumber+""));
-		EsitoConverter esitoConverter = new EsitoConverter();
-		esito.setValue(UtilityTransazioni.escapeXmlValue(esitoConverter.getAsString(null, null, esitoNumber)));
+		esito.setValue(UtilityTransazioni.escapeXmlValue(esitoUtils.getEsitoLabelFromValue(esitoNumber)));
 		transazione.setEsito(esito);
 		
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Contesto contesto = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Contesto();
 		contesto.setCodice(searchForm.getEsitoContesto());
-		EsitoContestoConverter contestoConverter = new EsitoContestoConverter();
-		contesto.setValue(UtilityTransazioni.escapeXmlValue(contestoConverter.getAsString(null, null, searchForm.getEsitoContesto())));
+		contesto.setValue(UtilityTransazioni.escapeXmlValue(esitoUtils.getEsitoContestoLabelFromValue(searchForm.getEsitoContesto())));
 		transazione.setContesto(contesto);
 
 		// id-egov

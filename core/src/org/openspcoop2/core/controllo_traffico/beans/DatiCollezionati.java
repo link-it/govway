@@ -1107,10 +1107,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			int [] esitiValidi = null;
 			
 			if(TipoPdD.DELEGATA.equals(dati.getTipoPdD())){
-				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
+				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati().get(dati.getProtocollo());
 			}
 			else{
-				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
+				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati().get(dati.getProtocollo());
 			}
 			boolean found = false;
 			for (int esitoValido : esitiValidi) {
@@ -1135,7 +1135,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		if(this.policyRealtime!=null && this.policyRealtime){
 		
-            int [] esitiPolicyViolate = activePolicy.getConfigurazioneControlloTraffico().getEsitiPolicyViolate();
+            int [] esitiPolicyViolate = activePolicy.getConfigurazioneControlloTraffico().getEsitiPolicyViolate().get(dati.getProtocollo());
             boolean foundEsitoDeny = false;
             for (int esitoViolato : esitiPolicyViolate) {
             	if(dati.getEsitoTransazione() == esitoViolato){
@@ -1204,10 +1204,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				int [] esitiValidi = null;
 				
 				if(TipoPdD.DELEGATA.equals(dati.getTipoPdD())){
-					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
+					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati().get(dati.getProtocollo());
 				}
 				else{
-					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
+					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati().get(dati.getProtocollo());
 				}
 				boolean found = false;
 				for (int esitoValido : esitiValidi) {

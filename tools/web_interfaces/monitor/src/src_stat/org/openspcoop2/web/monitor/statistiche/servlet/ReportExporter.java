@@ -506,6 +506,9 @@ public class ReportExporter extends HttpServlet{
 			}
 			statSearchForm.setProtocollo(protocollo);
 		}
+		else {
+			throw new ParameterUncorrectException("Parametro obbligatorio '"+CostantiExporter.PROTOCOLLO+"' non fornito");
+		}
 		
 		String mittente = req.getParameter(CostantiExporter.MITTENTE);
 		if(mittente!=null){
@@ -559,7 +562,7 @@ public class ReportExporter extends HttpServlet{
 		
 		// ** Esito **
 		
-		EsitiProperties esitiProperties = EsitiProperties.getInstance(log);
+		EsitiProperties esitiProperties = EsitiProperties.getInstance(log, protocollo);
 
 		statSearchForm.setEsitoGruppo(EsitoUtils.ALL_VALUE);
 		statSearchForm.setEsitoDettaglio(EsitoUtils.ALL_VALUE);

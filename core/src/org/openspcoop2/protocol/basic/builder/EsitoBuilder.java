@@ -33,6 +33,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
@@ -49,6 +50,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.w3c.dom.Node;
 
@@ -62,10 +64,14 @@ import org.w3c.dom.Node;
 public class EsitoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IEsitoBuilder {
 	
 	protected EsitiProperties esitiProperties;
+	protected boolean erroreProtocollo = false;
+	protected boolean faultEsterno = false;
 	
 	public EsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
-		this.esitiProperties = EsitiProperties.getInstance(this.log);
+		this.esitiProperties = EsitiProperties.getInstance(this.log, protocolFactory.getProtocol());
+		this.erroreProtocollo = this.esitiProperties.isErroreProtocollo();
+		this.faultEsterno = this.esitiProperties.isFaultEsterno();
 	}
 
 
@@ -134,10 +140,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	
 	private EsitoTransazione getEsitoErroreGenerale(InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, String tipoContext) throws ProtocolException{
 		if(informazioniErroriInfrastrutturali.isRicevutoSoapFaultServerPortaDelegata()){
-			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_SERVER, tipoContext);
+			if(this.faultEsterno) {
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_SERVER, tipoContext);
+			}
+			else {
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+			}
 		}
 		else{
-			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext);
+			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 		}
 	}
 	
@@ -191,19 +202,17 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		try{
 			
 					
-			SOAPBody body = null;
+			SOAPBody soapBody = null;
 			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())
 					&& !message.isForcedEmptyResponse() && message.getForcedResponse()==null){
-				body = message.castAsSoap().getSOAPBody();
+				soapBody = message.castAsSoap().getSOAPBody();
 			}
-			
+						
 			if(informazioniErroriInfrastrutturali==null){
 				// inizializzo con valori di default
 				informazioniErroriInfrastrutturali = new InformazioniErroriInfrastrutturali();
 			}
-			
-			ITraduttore trasl = this.protocolFactory.createTraduttore();
-			
+						
 			String tipoContext = this.getTipoContext(transportRequestContext);
 			
 			// Emissione diagnostici di livello error
@@ -219,10 +228,10 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			}
 			
 			// Esito 4xx
-			EsitoTransazione esito4xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+			EsitoTransazione esitoErrore4xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
 			
 			// Esito 5xx
-			EsitoTransazione esito5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+			EsitoTransazione esitoErrore5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 			
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
 			if(context!=null){
@@ -278,185 +287,105 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			else if(informazioniErroriInfrastrutturali.isErroreUtilizzoConnettore()){
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
-			else if(informazioniErroriInfrastrutturali.isErroreAutenticazione()){
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTENTICAZIONE, tipoContext);
+			else if(soapBody!=null && soapBody.hasFault()){
+				return getEsitoSoapFault(message, soapBody, erroreApplicativo, informazioniErroriInfrastrutturali, tipoContext);
 			}
-			else if(informazioniErroriInfrastrutturali.isErroreAutorizzazione()){
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE, tipoContext);
-			}
-			else if(body==null){
-				if(serviceBinding==null || ServiceBinding.SOAP.equals(serviceBinding)) {
-					if(returnCode>=200 && returnCode<=399) {
-						return returnEsitoOk;
+			else if(message!=null) {
+				
+				boolean checkElementSeContieneFaultPdD = true; // fix
+				// bisogna controllare il messaggio xml, json o soap fault per vedere se porta al suo interno un errore di protocollo
+				// e' necessario farlo pero' solo se siamo in un caso FAULT.
+				
+				boolean checkReturnCodeForFault = false;
+				switch (message.getMessageType()) {
+				case SOAP_11:
+				case SOAP_12:
+					// body letto precedentemente
+					if(MessageRole.FAULT.equals(message.getMessageRole())) {
+						if(checkElementSeContieneFaultPdD) {
+							if(soapBody!=null) {
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, soapBody, tipoContext);
+								if(esitoErrore!=null) {
+									return esitoErrore;
+								}
+							}
+						}
+						checkReturnCodeForFault = true;
 					}
-					else if(returnCode>=400 && returnCode<=499) {
-						return esito4xx;
+					break;
+				case XML:	
+					if(message.castAsRestXml().isProblemDetailsForHttpApis_RFC7808()) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+					}
+					if(MessageRole.FAULT.equals(message.getMessageRole())) {
+						if(checkElementSeContieneFaultPdD) {
+							if(message.castAsRestXml().hasContent()) {
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestXml().getContent(), tipoContext);
+								if(esitoErrore!=null) {
+									return esitoErrore;
+								}
+							}
+						}
+						checkReturnCodeForFault = true;
+					}
+					break;
+				case JSON:	
+					if(message.castAsRestJson().isProblemDetailsForHttpApis_RFC7808()) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+					}
+					if(MessageRole.FAULT.equals(message.getMessageRole())) {
+						if(checkElementSeContieneFaultPdD) {
+							if(message.castAsRestJson().hasContent()) {
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext);
+								if(esitoErrore!=null) {
+									return esitoErrore;
+								}
+							}
+						}
+						checkReturnCodeForFault = true;
+					}
+					break;
+				default:
+					if(MessageRole.FAULT.equals(message.getMessageRole())) {
+						checkReturnCodeForFault = true;
+					}
+					break;
+				}
+				if(checkReturnCodeForFault) {
+					if(returnCode>=400 && returnCode<=499) {
+						return esitoErrore4xx;
 					}
 					else {
-						return esito5xx;
+						return esitoErrore5xx;
 					}
 				}
-				return returnEsitoOk; // oneway
+				else {
+					if(returnCode>=200 && returnCode<=299) {
+						return returnEsitoOk;
+					}
+					else if(returnCode>=300 && returnCode<=399) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_3xx, tipoContext);
+					}
+					else if(returnCode>=400 && returnCode<=499) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_4xx, tipoContext);
+					}
+					else {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_5xx, tipoContext);
+					}
+				}
 			}
-			else{
-				if(body.hasFault()){
-					SOAPFault fault = body.getFault();
-					String actor = fault.getFaultActor();
-					String reason = fault.getFaultString();
-					String codice = null;
-					String namespaceCodice = null;
-					if(fault.getFaultCodeAsQName()!=null){
-						codice = fault.getFaultCodeAsQName().getLocalPart();	
-						namespaceCodice = fault.getFaultCodeAsQName().getNamespaceURI();
-					}
-					else{
-						codice = fault.getFaultCode();
-					}
-					//System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"] namespaceCodice["+namespaceCodice+"]");	
-
-					Object backwardCompatibilityActorObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR);
-					String backwardCompatibilityActor = null;
-					if(backwardCompatibilityActorObject!=null){
-						backwardCompatibilityActor = (String) backwardCompatibilityActorObject;
-					}
-					
-					boolean faultActorOpenSPCoopV2 = (erroreApplicativo!=null &&
-							erroreApplicativo.getFaultActor()!=null &&
-							erroreApplicativo.getFaultActor().equals(actor));
-					
-					boolean faultActorBackwardCompatibility = (backwardCompatibilityActor!=null &&
-							backwardCompatibilityActor.equals(actor));
-					
-					if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility){
-
-						// L'errore puo' essere generato da GovWay, l'errore puo' essere un :
-						// msg di errore 4XX
-						// msg di errore 5xx
-						// msg dovuto alla ricezione di una busta.
-
-						if(codice==null){
-							// CASO NON PREVISTO ???
-							return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
-						}
-						else{
-							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-							if(prefixFaultCode==null){
-								prefixFaultCode=org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-							}
-							boolean prefixOpv2 = codice.startsWith(prefixFaultCode);
-							
-							Object backwardCompatibilityPrefixObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE);
-							String backwardCompatibilityPrefix = null;
-							if(backwardCompatibilityPrefixObject!=null){
-								backwardCompatibilityPrefix = (String) backwardCompatibilityPrefixObject;
-							}
-							boolean prefixBackwardCompatibility = (backwardCompatibilityPrefix!=null && codice.startsWith(backwardCompatibilityPrefix));
-							
-							if(prefixOpv2 || prefixBackwardCompatibility){
-								// EccezioneProcessamento
-								String value = null;
-								if(prefixOpv2){
-									value = codice.substring(prefixFaultCode.length());
-								}
-								else{
-									value = codice.substring(backwardCompatibilityPrefix.length());
-								}
-								try{
-									int valueInt = Integer.parseInt(value);
-									if(valueInt>=400 && valueInt<=499){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
-									}else if(valueInt>=500 && valueInt<=599){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-									}else{
-										return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
-									}
-								}catch(Throwable t){
-									String error = "Errore calcolato da codice["+codice+"] prefixOpv2["+prefixOpv2+"] prefixFaultCode["+
-											prefixFaultCode+"] prefixBackwardCompatibility["+prefixBackwardCompatibility+
-											"] prefixBackwardCompatibility["+prefixBackwardCompatibility+"] value["+value+"]";
-									if(this.log!=null)
-										this.log.error(error+": "+t.getMessage(),t);
-									else{
-										System.err.print(error);
-										t.printStackTrace(System.err);
-									}
-									return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
-								}
-							}else{
-								// EccezioneBusta
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-							}
-						}
-
-					}
-					else{
-
-						if("Client".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(reason) ){
-							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-						}
-						else if("Server".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(reason) ){
-							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-						}
-						else{
-							
-							// Devo riconoscere eventuali altre codifiche custom
-							List<Integer> customCodeForSoapFault = this.esitiProperties.getEsitiCodeForSoapFaultIdentificationMode();
-							if(customCodeForSoapFault!=null && customCodeForSoapFault.size()>0){
-								for (Integer customCodeSF : customCodeForSoapFault) {
-									List<EsitoIdentificationModeSoapFault> l = this.esitiProperties.getEsitoIdentificationModeSoapFaultList(customCodeSF);
-									for (int i = 0; i < l.size(); i++) {
-										EsitoIdentificationModeSoapFault e = l.get(i);
-										if(e.getFaultCode()!=null){
-											if(!e.getFaultCode().equals(codice)){
-												continue;
-											}
-										}
-										if(e.getFaultNamespaceCode()!=null){
-											if(!e.getFaultNamespaceCode().equals(namespaceCodice)){
-												continue;
-											}
-										}
-										if(e.getFaultReason()!=null){
-											if(e.getFaultReasonContains()!=null && e.getFaultReasonContains()){
-												if(reason==null || !reason.contains(e.getFaultReason())){
-													continue;
-												}
-											}
-											else{ 
-												if(!e.getFaultReason().equals(reason)){
-													continue;
-												}
-											}
-										}
-										if(e.getFaultActor()!=null){
-											if(!e.getFaultActor().equals(actor)){
-												continue;
-											}
-										}
-										if(e.getFaultActorNotDefined()!=null && e.getFaultActorNotDefined()){
-											if(actor!=null){
-												continue;
-											}
-										}
-										// match
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCodeSF, tipoContext);
-									}
-								}
-							}
-							
-							if(informazioniErroriInfrastrutturali.isRicevutoSoapFaultServerPortaDelegata()){
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_SERVER, tipoContext);
-							}
-							else{
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
-							}
-						}
-
-					}
-
+			else {
+				if(returnCode>=200 && returnCode<=299) {
+					return returnEsitoOk;
 				}
-				else{
-					return getEsitoMessaggioApplicativo(erroreApplicativo, body, tipoContext, returnEsitoOk);
+				else if(returnCode>=300 && returnCode<=399) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_3xx, tipoContext);
+				}
+				else if(returnCode>=400 && returnCode<=499) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_4xx, tipoContext);
+				}
+				else {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.HTTP_5xx, tipoContext);
 				}
 			}
 		}catch(Exception e){
@@ -464,55 +393,293 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		}
 	}
 
+	private EsitoTransazione getEsitoSoapFault(OpenSPCoop2Message message, SOAPBody soapBody,
+			ProprietaErroreApplicativo erroreApplicativo, InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali,
+			String tipoContext) throws ProtocolException {
+		SOAPFault fault = soapBody.getFault();
+		String actor = fault.getFaultActor();
+		String reason = fault.getFaultString();
+		String codice = null;
+		String namespaceCodice = null;
+		if(fault.getFaultCodeAsQName()!=null){
+			codice = fault.getFaultCodeAsQName().getLocalPart();	
+			namespaceCodice = fault.getFaultCodeAsQName().getNamespaceURI();
+		}
+		else{
+			codice = fault.getFaultCode();
+		}
+		//System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"] namespaceCodice["+namespaceCodice+"]");	
+
+		Object backwardCompatibilityActorObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR);
+		String backwardCompatibilityActor = null;
+		if(backwardCompatibilityActorObject!=null){
+			backwardCompatibilityActor = (String) backwardCompatibilityActorObject;
+		}
+		
+		boolean faultActorOpenSPCoopV2 = (erroreApplicativo!=null &&
+				erroreApplicativo.getFaultActor()!=null &&
+				erroreApplicativo.getFaultActor().equals(actor));
+		
+		boolean faultActorBackwardCompatibility = (backwardCompatibilityActor!=null &&
+				backwardCompatibilityActor.equals(actor));
+		
+		if(faultActorOpenSPCoopV2 || faultActorBackwardCompatibility){
+
+			// L'errore puo' essere generato da GovWay, l'errore puo' essere un :
+			// msg di errore 4XX
+			// msg di errore 5xx
+			// msg dovuto alla ricezione di una busta.
+
+			if(codice==null){
+				// CASO NON PREVISTO ???
+				return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
+			}
+			else{
+				String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+				if(prefixFaultCode==null){
+					prefixFaultCode=org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+				}
+				boolean prefixOpv2 = codice.startsWith(prefixFaultCode);
+				
+				Object backwardCompatibilityPrefixObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_PREFIX_FAULT_CODE);
+				String backwardCompatibilityPrefix = null;
+				if(backwardCompatibilityPrefixObject!=null){
+					backwardCompatibilityPrefix = (String) backwardCompatibilityPrefixObject;
+				}
+				boolean prefixBackwardCompatibility = (backwardCompatibilityPrefix!=null && codice.startsWith(backwardCompatibilityPrefix));
+				
+				if(prefixOpv2 || prefixBackwardCompatibility){
+					// EccezioneProcessamento
+					String value = null;
+					if(prefixOpv2){
+						value = codice.substring(prefixFaultCode.length());
+					}
+					else{
+						value = codice.substring(backwardCompatibilityPrefix.length());
+					}
+					try{
+						int valueInt = Integer.parseInt(value);
+						if(valueInt>=400 && valueInt<=499){
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+						}else if(valueInt>=500 && valueInt<=599){
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+						}else{
+							return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
+						}
+					}catch(Throwable t){
+						String error = "Errore calcolato da codice["+codice+"] prefixOpv2["+prefixOpv2+"] prefixFaultCode["+
+								prefixFaultCode+"] prefixBackwardCompatibility["+prefixBackwardCompatibility+
+								"] prefixBackwardCompatibility["+prefixBackwardCompatibility+"] value["+value+"]";
+						if(this.log!=null)
+							this.log.error(error+": "+t.getMessage(),t);
+						else{
+							System.err.print(error);
+							t.printStackTrace(System.err);
+						}
+						return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
+					}
+				}else{
+					// EccezioneBusta
+					if(this.erroreProtocollo) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+					}
+					else {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}
+				}
+			}
+
+		}
+		else{
+
+			ITraduttore trasl = this.protocolFactory.createTraduttore();
+			
+			if("Client".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(reason) ){
+				if(this.erroreProtocollo) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+				}
+				else {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+				}
+			}
+			else if("Server".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(reason) ){
+				if(this.erroreProtocollo) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+				}
+				else {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+				}
+			}
+			else{
+				
+				// Devo riconoscere eventuali altre codifiche custom
+				List<Integer> customCodeForSoapFault = this.esitiProperties.getEsitiCodeForSoapFaultIdentificationMode();
+				if(customCodeForSoapFault!=null && customCodeForSoapFault.size()>0){
+					for (Integer customCodeSF : customCodeForSoapFault) {
+						List<EsitoIdentificationModeSoapFault> l = this.esitiProperties.getEsitoIdentificationModeSoapFaultList(customCodeSF);
+						for (int i = 0; i < l.size(); i++) {
+							EsitoIdentificationModeSoapFault e = l.get(i);
+							if(e.getFaultCode()!=null){
+								if(!e.getFaultCode().equals(codice)){
+									continue;
+								}
+							}
+							if(e.getFaultNamespaceCode()!=null){
+								if(!e.getFaultNamespaceCode().equals(namespaceCodice)){
+									continue;
+								}
+							}
+							if(e.getFaultReason()!=null){
+								if(e.getFaultReasonContains()!=null && e.getFaultReasonContains()){
+									if(reason==null || !reason.contains(e.getFaultReason())){
+										continue;
+									}
+								}
+								else{ 
+									if(!e.getFaultReason().equals(reason)){
+										continue;
+									}
+								}
+							}
+							if(e.getFaultActor()!=null){
+								if(!e.getFaultActor().equals(actor)){
+									continue;
+								}
+							}
+							if(e.getFaultActorNotDefined()!=null && e.getFaultActorNotDefined()){
+								if(actor!=null){
+									continue;
+								}
+							}
+							// match
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CUSTOM, customCodeSF, tipoContext);
+						}
+					}
+				}
+				
+				if(informazioniErroriInfrastrutturali.isRicevutoSoapFaultServerPortaDelegata()){
+					if(this.faultEsterno) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_SERVER, tipoContext);
+					}
+					else {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+					}
+				}
+				else{
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+				}
+			}
+
+		}
+	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, EsitoTransazione returnEsitoOk) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
-				if(childNode.getNextSibling()==null){
-					
-					if(XMLUtils.isErroreApplicativo(childNode)){
-						
-						try{
-							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
-							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
-							Eccezione ecc = erroreApplicativoObject.getException();
-							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-							}
-							else{
-								String value = ecc.getCode().getBase();
-								String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-								if(prefixFaultCode==null){
-									prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-								}
-								if(value.startsWith(prefixFaultCode)){
-									value = value.substring(prefixFaultCode.length());
-									int valueInt = Integer.parseInt(value);
-									if(valueInt>=400 && valueInt<=499){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
-									}else if(valueInt>=500 && valueInt<=599){
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-									}else{
-										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext);
-									}
-								}else{
-									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_GENERICO, tipoContext); // ???
-								}
-							}
-							
-						}catch(Exception e){
-							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
-						}
-						
-					}
-					
-				}
+				return getEsitoMessaggioApplicativo(erroreApplicativo, childNode, tipoContext);
 			}
 		}
 
-		return returnEsitoOk;
+		return null;
 
+	}
+	
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext) throws ProtocolException{
+		if(childNode!=null){
+			if(childNode.getNextSibling()==null){
+				
+				if(XMLUtils.isErroreApplicativo(childNode)){
+					
+					try{
+						byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
+						ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
+						Eccezione ecc = erroreApplicativoObject.getException();
+						if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
+							if(this.erroreProtocollo) {
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+							}
+							else {
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+							}
+						}
+						else{
+							String value = ecc.getCode().getBase();
+							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+							if(prefixFaultCode==null){
+								prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+							}
+							if(value.startsWith(prefixFaultCode)){
+								value = value.substring(prefixFaultCode.length());
+								int valueInt = Integer.parseInt(value);
+								if(valueInt>=400 && valueInt<=499){
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+								}else if(valueInt>=500 && valueInt<=599){
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+								}else{
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+								}
+							}else{
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+							}
+						}
+						
+					}catch(Exception e){
+						this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+					}
+					
+				}
+				
+			}
+		}
+
+		return null;
+
+	}
+	
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,String jsonBody,String tipoContext) throws ProtocolException{
+		
+		// tipo dell'errore
+		// $.exception.type
+		
+		// codice 
+		//$.exception.code.value
+		try {
+			String tipo = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
+			if(TipoEccezione.PROTOCOL.getValue().equals(tipo)){
+				if(this.erroreProtocollo) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+				}
+				else {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+				}
+			}
+			else{
+				String value = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.code.value", this.log);
+				String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+				if(prefixFaultCode==null){
+					prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+				}
+				if(value.startsWith(prefixFaultCode)){
+					value = value.substring(prefixFaultCode.length());
+					int valueInt = Integer.parseInt(value);
+					if(valueInt>=400 && valueInt<=499){
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+					}else if(valueInt>=500 && valueInt<=599){
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}else{
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}
+				}else{
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+				}
+			}
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+		}
+		
+		return null;
 	}
 	
 }

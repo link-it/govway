@@ -83,14 +83,14 @@ public class ProtocolFactoryManager {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocolDefault,false);
 			// Inizializzo anche Esiti.properties
-			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader());
+			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
 		}
 	}
 	public synchronized static void initializeSingleProtocol(Logger log,ConfigurazionePdD configPdD,String protocol) throws ProtocolException {
 		if(ProtocolFactoryManager.protocolFactoryManager==null){
 			ProtocolFactoryManager.protocolFactoryManager = new ProtocolFactoryManager(log,configPdD,protocol,true);
 			// Inizializzo anche Esiti.properties
-			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader());
+			EsitiProperties.initialize(configPdD.getConfigurationDir(), log, configPdD.getLoader(), protocolFactoryManager.getProtocolFactories());
 		}
 	}
 	public static ProtocolFactoryManager getInstance() throws ProtocolException {
@@ -1323,6 +1323,16 @@ public class ProtocolFactoryManager {
 	
 	public Enumeration<String> getProtocolNames(){
 		return this.factories.keys();
+	}
+	
+	public List<String> getProtocolNamesAsList(){
+		List<String> protocolli = new ArrayList<>();
+		Enumeration<String> en = getProtocolNames();
+		while (en.hasMoreElements()) {
+			String protocollo = (String) en.nextElement();
+			protocolli.add(protocollo);
+		}
+		return protocolli;
 	}
 	
 	

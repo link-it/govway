@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.services.connector;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
@@ -43,6 +45,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -56,6 +59,9 @@ import org.w3c.dom.Document;
  */
 public class ConnectorDispatcherUtils {
 
+	public static final boolean CLIENT_ERROR = true;
+	public static final boolean GENERAL_ERROR = false;
+	
 	public static void doServiceBindingNotSupported(HttpServletRequest req, HttpServletResponse res, HttpRequestMethod httpMethod, ServiceBinding serviceBinding, IDService idService) throws IOException{
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -264,29 +270,19 @@ public class ConnectorDispatcherUtils {
 		
 	}
 	
-	public static void doError(RequestInfo requestInfo,
+	public static ConnectorDispatcherErrorInfo doError(RequestInfo requestInfo,
 			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
 			IntegrationError integrationError, Throwable e, ParseException parseException,
-			ConnectorOutMessage res, Logger log) throws ConnectorException{
+			ConnectorOutMessage res, Logger log, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
-			
+		
 		if(generatoreErrore!=null){
+			
 			OpenSPCoop2Message msgErrore = generatoreErrore.build(integrationError, erroreIntegrazione, e, parseException);
-			if(msgErrore.getForcedResponseCode()!=null){
-				res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
-			}
-			try{
-				res.sendResponse(msgErrore, true);
-			}catch(Throwable error){
-				log.error("Errore durante la serializzazione dell'errore: "+error.getMessage(),error);
-				try{
-					throw new ConnectorException(erroreIntegrazione.getDescrizione(protocolFactory),e);
-				}catch(Throwable eInternal){
-					// rilancio eccezione originale
-					throw new ConnectorException(e.getMessage(),e);
-				}
-			}
+			
+			return _doError(requestInfo, res, log, true, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
+			
 		}
 		else{
 			try{
@@ -331,19 +327,118 @@ public class ConnectorDispatcherUtils {
 		
 	}
 	
-	public static void doError(RequestInfo requestInfo,
+	public static ConnectorDispatcherErrorInfo doError(RequestInfo requestInfo,
 			RicezioneBusteExternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
 			IntegrationError integrationError, Throwable e, ParseException parseException,
-			ConnectorOutMessage res, Logger log) throws ConnectorException{
+			ConnectorOutMessage res, Logger log, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
-							
-		OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
-		if(msgErrore.getForcedResponseCode()!=null){
-			res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
+				
+		if(generatoreErrore!=null){
+		
+			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
+			
+			return _doError(requestInfo, res, log, false, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
+			
 		}
+		else{
+			try{
+				String errore = erroreIntegrazione.getDescrizione(protocolFactory);
+				throw new ConnectorException(errore);
+			}catch(Throwable eInternal){
+				throw new ConnectorException(eInternal.getMessage(),eInternal);
+			}
+		}
+		
+	}
+	
+	
+	
+	private static ConnectorDispatcherErrorInfo _doError(RequestInfo requestInfo,ConnectorOutMessage res,Logger log,boolean portaDelegata,
+			ErroreIntegrazione erroreIntegrazione,
+			IntegrationError integrationError, Throwable e, ParseException parseException,
+			OpenSPCoop2Message msgErrore, boolean clientError) throws ConnectorException{
+		
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
+		
+		Properties trasporto = new Properties();
+		try {
+			UtilitiesIntegrazione utilitiesIntegrazione = null;
+			if(portaDelegata) {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(log);
+			}
+			else {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(log);
+			}
+			utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
+			if(trasporto.size()>0){
+				java.util.Enumeration<?> en = trasporto.keys();
+		    	while(en.hasMoreElements()){
+		    		String key = (String) en.nextElement();
+		    		String value = null;
+		    		value = trasporto.getProperty(key);
+		    		res.setHeader(key,value);
+		    	}	
+			}
+			
+		}catch(Throwable error){
+			log.error("Errore durante la serializzazione degli headers: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(erroreIntegrazione.getDescrizione(protocolFactory),e);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+		
+		int status = 200;
+		String contentTypeRisposta = null;
+		if(msgErrore.getForcedResponseCode()!=null){
+			status = Integer.parseInt(msgErrore.getForcedResponseCode());
+			res.setStatus(status);
+		}
+		
+		// content type
+		// Alcune implementazioni richiedono di aggiornare il Content-Type
 		try{
-			res.sendResponse(msgErrore, true);
+			if(msgErrore!=null) {
+				msgErrore.updateContentType();
+				contentTypeRisposta = msgErrore.getContentType();
+				if (contentTypeRisposta != null) {
+					res.setContentType(contentTypeRisposta);
+					trasporto.put(HttpConstants.CONTENT_TYPE, contentTypeRisposta);
+				}
+			}
+		}catch(Throwable error){
+			log.error("Errore durante la serializzazione del contentType: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(erroreIntegrazione.getDescrizione(protocolFactory),e);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+		
+		ConnectorDispatcherErrorInfo errorInfo = null;
+		try{
+			if(clientError) {
+				errorInfo = ConnectorDispatcherErrorInfo.getClientError(msgErrore, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);
+			}else{
+				errorInfo = ConnectorDispatcherErrorInfo.getGenericError(msgErrore, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);	
+			}
+		}catch(Throwable error){
+			log.error("Errore durante la generazione delle informazioni di errore: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(erroreIntegrazione.getDescrizione(protocolFactory),e);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+
+		boolean consume = false; // può essere usato nel post out response handler
+		try{
+			res.sendResponse(msgErrore, consume);
 		}catch(Throwable error){
 			log.error("Errore durante la serializzazione dell'errore: "+error.getMessage(),error);
 			try{
@@ -354,6 +449,6 @@ public class ConnectorDispatcherUtils {
 			}
 		}
 		
+		return errorInfo;
 	}
-	
 }

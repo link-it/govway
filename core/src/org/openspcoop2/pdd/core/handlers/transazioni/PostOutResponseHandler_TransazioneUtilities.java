@@ -32,7 +32,9 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -47,7 +49,10 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
@@ -328,6 +333,64 @@ public class PostOutResponseHandler_TransazioneUtilities {
 								formatoFault = soapMsg.getMessageType().name();
 							}
 
+						}
+						else {
+							OpenSPCoop2RestMessage<?> restMsg = context.getMessaggio().castAsRest();
+							if(restMsg.isProblemDetailsForHttpApis_RFC7808() || MessageRole.FAULT.equals(restMsg.getMessageRole())) {
+								switch (restMsg.getMessageType()) {
+								case XML:
+									
+									ByteArrayOutputStream bout = new ByteArrayOutputStream();
+									restMsg.writeTo(bout, false);
+									bout.flush();
+									bout.close();
+									
+									Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioni(op2Properties.isTransazioniDebug());
+									if(op2Properties.isTransazioniFaultPrettyPrint()){
+										// Faccio una pretty-print: potevo fare anche direttamente passando il fault a metodo prettyPrint,
+										// Pero' non veniva stampato correttamente il SOAPFault. Mi appoggio allora a SoapUtils.
+										//byte [] content = org.openspcoop2.message.soap.TunnelSoapUtils.sbustamentoMessaggio(context.getMessaggio());
+										byte [] content = bout.toByteArray();
+										fault = DumpUtility.toString(XMLUtils.getInstance().newDocument(content), log, context.getMessaggio());
+										//System.out.println("IMPOSTATO FAULT IN TRANSACTION ["+fault+"]");
+									}
+									else{
+										
+										fault = bout.toString();
+									}
+									
+									formatoFault = restMsg.getMessageType().name();
+									
+									break;
+									
+								case JSON:
+									
+									bout = new ByteArrayOutputStream();
+									restMsg.writeTo(bout, false);
+									bout.flush();
+									bout.close();
+									
+									if(op2Properties.isTransazioniFaultPrettyPrint()){
+										
+										JSONUtils jsonUtils = JSONUtils.getInstance(true);
+										byte [] content = bout.toByteArray();
+										JsonNode jsonNode = jsonUtils.getAsNode(content);
+										fault = jsonUtils.toString(jsonNode);
+										
+									}
+									else{
+										
+										fault = bout.toString();
+									}
+									
+									formatoFault = restMsg.getMessageType().name();
+									
+									break;
+
+								default:
+									break;
+								}
+							}
 						}
 					}
 				}catch(Throwable e){

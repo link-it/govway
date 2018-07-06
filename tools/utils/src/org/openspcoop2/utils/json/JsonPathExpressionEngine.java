@@ -30,6 +30,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.jayway.jsonpath.JsonPath;
 
 import net.minidev.json.JSONArray;
@@ -252,6 +253,7 @@ public class JsonPathExpressionEngine {
 
 		return JsonPath.read(contenuto, pattern);
 	}
+	
 
 	/* ---------- METODI RITORNANO JSON NODE -------------- */
 
@@ -263,9 +265,8 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		try {
-			JSONArray jsonObject = JsonPath.read(input, pattern);
-			
-			return getJsonUtils().getAsNode(jsonObject.toString());
+			Object object = JsonPath.read(input, pattern);
+			return this.convertToJsonNode(object);
 		} catch(Exception e) {
 			throw new JsonPathException(e.getMessage(), e);
 		}
@@ -279,9 +280,8 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 		try {
 			String inputString = getAsString(document);
-			JSONArray jsonObject = JsonPath.read(inputString, pattern);
-			
-			return getJsonUtils().getAsNode(jsonObject.toString());
+			Object object = JsonPath.read(inputString, pattern);
+			return this.convertToJsonNode(object);
 		} catch(Exception e) {
 			throw new JsonPathException(e.getMessage(), e);
 		}
@@ -295,8 +295,8 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 		
 		try {
-			JSONArray jsonObject = JsonPath.read(is, pattern);
-			return getJsonUtils().getAsNode(jsonObject.toString());
+			Object object = JsonPath.read(is, pattern);
+			return this.convertToJsonNode(object);
 		} catch(Exception e) {
 			throw new JsonPathException(e.getMessage(), e);
 		}
@@ -310,12 +310,28 @@ public class JsonPathExpressionEngine {
 			throw new JsonPathException("Pattern is null");
 
 		try {
-			JSONArray jsonObject = JsonPath.read(contenuto, pattern);
-			return getJsonUtils().getAsNode(jsonObject.toString());
+			Object object = JsonPath.read(contenuto, pattern);
+			return this.convertToJsonNode(object);
 		} catch(Exception e) {
 			throw new JsonPathException(e.getMessage(), e);
 		}
 
+	}
+	private JsonNode convertToJsonNode(Object object) throws UtilsException {
+		if(object instanceof String) {
+			return getJsonUtils().getAsNode("\""+((String) object)+"\"");
+		}
+		else  if(object instanceof JSONArray) {
+			JSONArray jsonObject = (JSONArray) object;
+			return getJsonUtils().getAsNode(jsonObject.toString());
+		}
+		else if(object instanceof JSONObject) {
+			JSONObject jsonObject = (JSONObject) object;
+			return getJsonUtils().getAsNode(jsonObject.toString());
+		}
+		else {
+			return getJsonUtils().getAsNode(object.toString());
+		}
 	}
 	
 
@@ -452,7 +468,13 @@ public class JsonPathExpressionEngine {
 			
 			JsonNode obj = engine.getJsonNodeMatchPattern(elementJson, pattern);
 			if(obj!=null) {
-				risultato = obj.toString();
+				if(obj instanceof TextNode) {
+					TextNode text = (TextNode) obj;
+					risultato = text.asText();
+				}
+				else {
+					risultato = obj.toString();
+				}
 			}
 			if(risultato!=null && risultato.startsWith("[") && risultato.endsWith("]")) {
 				risultato = risultato.substring(1, risultato.length()-1);

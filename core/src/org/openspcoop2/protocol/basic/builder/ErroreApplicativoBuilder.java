@@ -559,17 +559,21 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				
 					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, eccezioneProtocollo, eccezioneIntegrazione);
 					OpenSPCoop2MessageParseResult pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
-					return pr.getMessage_throwParseException();
+					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+					msg.setContentType(HttpConstants.CONTENT_TYPE_XML);
+					return msg;
 
 				case JSON:
 				
 					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, eccezioneProtocollo, eccezioneIntegrazione);
 					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
-					return pr.getMessage_throwParseException();
+					msg = pr.getMessage_throwParseException();
+					msg.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+					return msg;
 					
 				case BINARY:
+				case MIME_MULTIPART:
 					// Viene usato per l'opzione None dove viene ritornato solamente il return code
-					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT,null, null);
 					return  this.msgFactory.createEmptyMessage(messageType, MessageRole.FAULT);
 
 				default:

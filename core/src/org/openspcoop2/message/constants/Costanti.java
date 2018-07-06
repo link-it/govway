@@ -60,6 +60,9 @@ public class Costanti {
 	public static final String FIND_ERROR_ENCRYPTED_REFERENCES = "[WSS-Encrypt ReferencesSearch]";
 	public static final String FIND_ERROR_SIGNATURE_REFERENCES = "[WSS-Signature ReferencesSearch]";
 	
+	/** RFC 7807 Problem Details for HTTP APIs */
+	public static final String XML_PROBLEM_DETAILS_RFC_7808_NAMESPACE = "urn:ietf:rfc:7807";
+	
 	/** Context Empty */
 	public static final String CONTEXT_EMPTY = "@EMPTY@";
 }

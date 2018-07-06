@@ -56,6 +56,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -2527,10 +2528,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								else{
-									//OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 									//hasContent = restMsg.hasContent();
 									hasContent = true; // devo controllare gli header etc...
-									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									isFault = restMsg.isProblemDetailsForHttpApis_RFC7808() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
 								if(hasContent && (isFault==false) ){
@@ -2750,6 +2751,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
 								
 							}catch(Exception e){
+								
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA, "true");
+								
 								msgDiag.logErroreGenerico(e,"CorrelazioneApplicativaRisposta");
 								this.log.error("Riscontrato errore durante il controllo di correlazione applicativa della risposta: "+ e.getMessage(),e);
 								

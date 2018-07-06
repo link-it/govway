@@ -48,7 +48,7 @@
 							<link:prop label="Contesto" rendered="#{summaryBean.showEsitiContesto}">
 								<rich:comboBox id="esitoContestoCombo" value="#{summaryBean.esitoContesto}"
 									defaultLabel="Seleziona contesto" directInputSuggestions="true"
-									converter="esitoContestoConverter" enableManualInput="false">
+									converter="selectItemConverter" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.esitiContesto}"/>
 									<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
 								</rich:comboBox>

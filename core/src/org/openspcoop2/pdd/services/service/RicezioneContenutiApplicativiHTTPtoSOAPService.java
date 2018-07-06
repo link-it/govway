@@ -59,6 +59,7 @@ import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -66,6 +67,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
@@ -139,10 +141,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}catch(Exception e){
 			String msg = "Inizializzazione Generatore Errore fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, // il metodo doError gestisce il generatoreErrore a null
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -151,10 +154,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if (openSPCoopProperties == null) {
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: OpenSPCoopProperties";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, null, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -168,10 +172,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: ConfigurazionePdDManager";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 			
@@ -198,10 +203,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}catch(Throwable e){
 			String msg = "Inizializzazione di OpenSPCoop non correttamente effettuata: DumpRaw";
 			logCore.error(msg);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
+			ConnectorDispatcherErrorInfo cInfo = ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore, 
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 			
@@ -212,20 +218,42 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		}catch(Exception e){
 			String msg = "Inizializzazione RegistryReader fallita: "+Utilities.readFirstErrorValidMessageFromException(e);
 			logCore.error(msg,e);
-			ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
+			ConnectorDispatcherErrorInfo cInfo =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
-					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
+					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			return;
 		}
 	
+		// Provo a creare un context (per l'id di transazione nei diagnostici)
+		RicezioneContenutiApplicativiContext context = null;
+		IProtocolFactory<?> protocolFactory = null;
+		try {
+			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+			protocolFactory = req.getProtocolFactory();
+			if(openSPCoopProperties.isTransazioniEnabled()) {
+				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+			}
+		}catch(Throwable e) {
+			context = null;
+			protocolFactory = null;
+			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
+		}
+		
 		// Logger dei messaggi diagnostici
 		String nomePorta = requestInfo.getProtocolContext().getInterfaceName();
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,idModulo,nomePorta);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
+		if(context!=null && protocolFactory!=null) {
+			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		}
 		
 		// Aggiorno RequestInfo
-		if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, serviceIdentificationReader,msgDiag)==false){
+		ConnectorDispatcherErrorInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
+				this.generatoreErrore, serviceIdentificationReader, msgDiag);
+		if(cInfo!=null){
+			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);	
@@ -241,14 +269,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		// PostOutResponseContext
 		PostOutResponseContext postOutResponseContext = null;
 		
-		RicezioneContenutiApplicativiContext context = null;
-		
 		PdDContext pddContext = null;
 		String errorImbustamentoSoapNonRiuscito = null;
 		MessageType messageTypeReq = null;
 		OpenSPCoop2Message requestMessage = null;
 		OpenSPCoop2Message responseMessage = null;
-		IProtocolFactory<?> protocolFactory = null;
 		String protocol = null;
 		byte[] inputBody = null;
 		
@@ -256,10 +281,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
-			protocolFactory = req.getProtocolFactory();
+			if(protocolFactory==null) {
+				protocolFactory = req.getProtocolFactory();
+			}
 			protocol = protocolFactory.getProtocol();
 			
-			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+			if(context==null) {
+				context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+			}
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 			context.setIdModulo(idModulo);
@@ -270,6 +299,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			try{
 				if(openSPCoopProperties.isTransazioniEnabled()) {
+					// NOTA: se gia' esiste con l'id di transazione, non viene ricreata
 					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				}
 			}catch(Exception e){
@@ -634,6 +664,15 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
 		}
+		if(context.getHeaderIntegrazioneRisposta()==null) {
+			context.setHeaderIntegrazioneRisposta(new Properties());
+		}
+		try {
+			UtilitiesIntegrazione utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(logCore);
+			utilitiesIntegrazione.setInfoProductTransportProperties(context.getHeaderIntegrazioneRisposta());
+		}catch(Exception e){
+			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
+		}
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){
@@ -801,6 +840,17 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					
 					// http status
 					boolean consume = true;
+					if(responseMessage.castAsRest().isProblemDetailsForHttpApis_RFC7808() || 
+							(MessageRole.FAULT.equals(responseMessage.getMessageRole()) &&
+								(
+								MessageType.XML.equals(responseMessage.getMessageType()) 
+										|| 
+								MessageType.JSON.equals(responseMessage.getMessageType())
+								)
+							)
+						) {
+						consume = false; // può essere usato nel post out response handler
+					}
 					res.setStatus(statoServletResponse);
 					
 					// esito calcolato prima del sendResponse, per non consumare il messaggio

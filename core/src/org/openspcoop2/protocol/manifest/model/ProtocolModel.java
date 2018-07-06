@@ -43,6 +43,7 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 		super();
 	
 		this.FACTORY = new Field("factory",java.lang.String.class,"protocol",Protocol.class);
+		this.TRANSACTION = new org.openspcoop2.protocol.manifest.model.TransactionModel(new Field("transaction",org.openspcoop2.protocol.manifest.Transaction.class,"protocol",Protocol.class));
 		this.NAME = new Field("name",java.lang.String.class,"protocol",Protocol.class);
 		this.LABEL = new Field("label",java.lang.String.class,"protocol",Protocol.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"protocol",Protocol.class);
@@ -56,6 +57,7 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 		super(father);
 	
 		this.FACTORY = new ComplexField(father,"factory",java.lang.String.class,"protocol",Protocol.class);
+		this.TRANSACTION = new org.openspcoop2.protocol.manifest.model.TransactionModel(new ComplexField(father,"transaction",org.openspcoop2.protocol.manifest.Transaction.class,"protocol",Protocol.class));
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"protocol",Protocol.class);
 		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"protocol",Protocol.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"protocol",Protocol.class);
@@ -67,6 +69,8 @@ public class ProtocolModel extends AbstractModel<Protocol> {
 	
 
 	public IField FACTORY = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.TransactionModel TRANSACTION = null;
 	 
 	public IField NAME = null;
 	 
