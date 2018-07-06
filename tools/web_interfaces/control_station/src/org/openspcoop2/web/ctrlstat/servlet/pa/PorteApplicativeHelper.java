@@ -1786,7 +1786,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) ) {
+		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) && ServiceBinding.SOAP.equals(serviceBinding) ) {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);

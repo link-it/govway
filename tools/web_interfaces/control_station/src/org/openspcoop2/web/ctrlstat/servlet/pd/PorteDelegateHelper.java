@@ -129,7 +129,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy) throws Exception {
 
-
+		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
 
 //		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -862,7 +862,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
 		de.setSize(alternativeSize);
-		if (this.isModalitaStandard() || localForwardShow==false || (isConfigurazione && !datiAltro)) {
+		if (this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltro)) {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(localForward);
 			dati.addElement(de);
@@ -1060,7 +1060,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) ) {
+		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) && ServiceBinding.SOAP.equals(serviceBinding) ) {
 		
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
