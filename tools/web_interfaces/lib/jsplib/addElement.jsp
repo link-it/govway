@@ -48,7 +48,9 @@ String customListViewName = pd.getCustomListViewName();
 <meta charset="UTF-8">
 <title><%= gd.getTitle() %></title>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js"></script>
 <!-- JQuery lib-->

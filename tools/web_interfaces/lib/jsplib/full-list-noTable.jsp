@@ -324,11 +324,11 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							 }
 					 	 %>
 							<% if(customListViewName.equals("erogazioni")){ %>
-								<jsp:include page="/jsp/erogazioni.jsp" flush="true">
+								<jsp:include page="/jsp/list/erogazioni.jsp" flush="true">
 									<jsp:param name="numeroEntry" value="<%=i %>"/>
 								</jsp:include>
 							<% } else if(customListViewName.equals("fruizioni")){ %>
-								<jsp:include page="/jsp/fruizioni.jsp" flush="true">
+								<jsp:include page="/jsp/lista/fruizioni.jsp" flush="true">
 									<jsp:param name="numeroEntry" value="<%=i %>"/>
 								</jsp:include>
 							<% } %>						

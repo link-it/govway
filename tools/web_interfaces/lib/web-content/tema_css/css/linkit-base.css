@@ -31,11 +31,11 @@ p {
 
 legend {
 	font-family: 'Roboto';
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: bold;
 	padding-left: 10px;
-    	padding-right: 10px;
-    	color: ${legend.color};
+   	padding-right: 10px;
+   	color: ${legend.color};
 }
 
 a {
@@ -1238,3 +1238,140 @@ div.prop-slider{
 	cursor: default;
 }
 
+.fieldsetBody {
+    display: flex;
+}
+
+.box {
+	width: 180px;
+	height: 140px;
+	margin: 16px 12px 16px 16px;
+	padding: 16px 12px;
+	position: relative;
+	color: ${configurazione.color};
+	border: 1px solid ${configurazione.border.color};
+	background-color: ${configurazione.background.color};
+	border-radius: 5px;
+}
+
+
+.addBox {
+	margin: 24px 0px 0px 0px;
+}
+
+.addBoxSoloAggiungi {
+	margin: 16px 8px 16px 16px;
+}
+
+.addBox a,
+.addBox input[type="button"],
+.addBox input[type="submit"],
+.addBoxSoloAggiungi a,
+.addBoxSoloAggiungi input[type="button"],
+.addBoxSoloAggiungi input[type="submit"]  {
+	color: ${input.button.background.color};
+	border: 1px solid ${input.button.background.color};
+	background-color: ${input.button.color};
+	background-image: none;
+	font-size: 13px; 
+	font-weight: bold;
+	padding: 7px;
+	border-radius: 5px;
+/* 	margin: 5px; */
+	min-width: 120px;
+	cursor:pointer;
+	font-family: 'Roboto';
+	text-decoration: none;
+}
+
+.addBox input[type="submit"]:hover, 
+.addBox input[type="button"]:hover, 
+.addBox a:hover,
+.addBoxSoloAggiungi input[type="submit"]:hover, 
+.addBoxSoloAggiungi input[type="button"]:hover, 
+.addBoxSoloAggiungi a:hover {
+   	border: 1px solid ${input.button.hover.background.color};
+	background-color: ${input.button.color};
+	color: ${input.button.hover.background.color};
+	background-image: none;
+}
+
+.boxTitle {
+}
+
+.boxTitleSpan {
+	font-size: 14px;
+    font-weight: bold;
+    color: ${input.button.color};
+} 
+
+.contenutoBox {
+	padding: 16px 12px 12px 0px;
+}
+
+.propBox {
+	padding: 2px 0px;
+}
+
+div.propBox label, span.spanLink{
+	margin-right: 10px;	
+/* 	padding-right: 10px; */
+	width: 88px;
+	display: block;
+	float: left;
+/* 	text-align: right; */
+	position: relative;
+	color: ${body.secondary.color};
+	padding-top: 2px;
+}
+
+
+.boxButtonrowform{
+	display: block;
+    position: absolute;
+	bottom: 20px;
+    right: 8px;
+}
+
+.boxButtonrow{
+	
+}
+
+.boxButtonrow a,
+.boxButtonrow input[type="button"],
+.boxButtonrow input[type="submit"] {
+	color: ${input.button.color};
+	border: 1px solid ${input.button.color};
+	background-color: ${configurazione.background.color};
+	background-image: none;
+	font-size: 13px; 
+	font-weight: bold;
+	padding: 7px;
+	border-radius: 5px;
+	margin: 5px;
+	min-width: 120px;
+	cursor:pointer;
+	font-family: 'Roboto';
+	text-decoration: none;
+}
+
+.boxButtonrow input[type="submit"]:hover, 
+.boxButtonrow input[type="button"]:hover, 
+.boxButtonrow a:hover{
+   	border: 1px solid ${input.button.hover.background.color};
+	background-color: ${configurazione.background.color};
+	color: ${input.button.hover.background.color};
+	background-image: none;
+}
+
+.boxButtonrow .icon-box {
+	vertical-align: sub;
+}
+
+.hiddenBox {
+	display: none;
+}
+
+.fieldsetSecondRowBody {
+	margin: 16px 8px 16px 16px;
+}
