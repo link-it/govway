@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -44,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -107,23 +109,33 @@ public final class PorteApplicativeAzioneDel extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
 			
+			StringBuffer bfCT = new StringBuffer();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
 				// .elementAt(idToRemove[i])).elementAt(0);
 				// servizioApplicativo = de.getValue();
 				azione = idsToRemove.get(i);
-				for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
-					String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
-					if (azione.equals(azioneDelegata)) {
-						pa.getAzione().removeAzioneDelegata(j);
-						break;
+				
+				if(confCore.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy.APPLICATIVA, pa.getNome(), azione)) {
+					if(bfCT.length()>0) {
+						bfCT.append(",");
+					}
+					bfCT.append(azione);
+				}else {
+					for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
+						if (azione.equals(azioneDelegata)) {
+							pa.getAzione().removeAzioneDelegata(j);
+							break;
+						}
 					}
 				}
 			}
@@ -142,7 +154,11 @@ public final class PorteApplicativeAzioneDel extends Action {
 			// non posso eliminare tutte le azioni
 			if(pa.getAzione().sizeAzioneDelegataList() == 0) {
 				pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
-			} else {
+			}
+			else if(bfCT.length()>0) {
+				pd.setMessage("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
+			}
+			else {
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			}

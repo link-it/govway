@@ -284,7 +284,7 @@ public abstract class AbstractArchiveEngine {
 		Connection con = null;
 		try{
 			con = this.driverRegistroServizi.getConnection("archive.isSoggettoRegistroInUso");
-			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, whereIsInUso);
+			return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.driverRegistroServizi.getTipoDB(), idSoggetto, true, whereIsInUso);
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -328,7 +328,7 @@ public abstract class AbstractArchiveEngine {
 		Connection con = null;
 		try{
 			con = this.driverConfigurazione.getConnection("archive.isSoggettoConfigurazioneInUso");
-			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, whereIsInUso);
+			return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.driverConfigurazione.getTipoDB(), idSoggetto, true, whereIsInUso);
 		}
 		catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);

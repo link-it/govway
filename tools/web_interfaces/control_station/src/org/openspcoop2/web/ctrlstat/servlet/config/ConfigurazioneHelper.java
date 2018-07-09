@@ -87,6 +87,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -5325,10 +5326,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
 		de.setType(DataElementType.LINK);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
-		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK+" (" + sizeGlobalPolicy+ ")");
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK+" (" + sizeGlobalPolicy+ ")");
 		dati.addElement(de);
 //		}
 		
@@ -6339,7 +6340,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID, policy.getId() + ""); 
 
 					DataElement de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
 					
 					if(StringUtils.isNotEmpty(policy.getAlias()))
 						de.setValue(policy.getIdPolicy());
@@ -6381,7 +6387,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 					Parameter pJmx = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+"");
 					if(policy.isEnabled()){
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx, parRuoloPorta, parNomePorta);
+						if(ruoloPorta!=null) {
+							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx, parRuoloPorta, parNomePorta);
+						}
+						else {
+							de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx);
+						}
 					}
 					e.addElement(de);
 								
@@ -6393,7 +6404,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(filtro);
 					}
 					de.setToolTip(filtro);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6404,7 +6420,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(groupBy);
 					}
 					de.setToolTip(groupBy);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
 					e.addElement(de);
 					
 					dati.addElement(e);
@@ -6576,6 +6597,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			bf.append("Disabilitato");
 		}
 
+		if(bf.length()<=0 && (delegata || applicativa)) {
+			bf.append("Disabilitato");
+		}
+		
 		return bf.toString();
 	}
 	
@@ -9573,6 +9598,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
+		Parameter parRuoloPorta = null;
+		if(ruoloPorta!=null) {
+			parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA, ruoloPorta.getValue());
+		}
+		Parameter parNomePorta = null;
+		if(nomePorta!=null) {
+			parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA, nomePorta);
+		}
+		
 		DataElement de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_IS_ATTIVAZIONE_GLOBALE);
 		de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_IS_ATTIVAZIONE_GLOBALE_VALORE);
@@ -9686,7 +9720,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			if(infoPolicy!=null){
 				// stato
-				boolean hidden = ruoloPorta!=null;
+				//boolean hidden = (ruoloPorta!=null);
+				boolean hidden = false; // anche una policy di rate limiting sulla singola porta puo' essere disabiltiata temporaneamente
 				addToDatiDataElementStato(dati, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ENABLED, 
 						ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ENABLED, policy.isEnabled(), false,
 						true, policy.isWarningOnly(), hidden);
@@ -9699,9 +9734,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+								parRuoloPorta,parNomePorta);			
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
+					}
 					de.setType(DataElementType.LINK);
 					dati.addElement(de);
 				}
@@ -9827,9 +9870,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_REFRESH);
 			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_REFRESH);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-					new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
+			if(ruoloPorta!=null) {
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+						parRuoloPorta, parNomePorta);
+			}
+			else {
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""));
+			}
 			de.setType(DataElementType.LINK);
 			dati.addElement(de);
 
@@ -9839,10 +9890,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_RESET);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET_ALL_NODES);
 				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET_ALL_NODES);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
-						new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET_ALL_VALUE));
+				if(ruoloPorta!=null) {
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, 
+									ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET_ALL_VALUE),
+							parRuoloPorta, parNomePorta);
+				}
+				else {
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, 
+									ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET_ALL_VALUE));
+				}
 				de.setType(DataElementType.LINK);
 				dati.addElement(de);
 			}
@@ -9887,10 +9949,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_RESET+"_"+i);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET);
 					de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_VISUALIZZA_STATO_RESET);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
-							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
-							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
-							new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, alias));
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, alias),
+								parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, 
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID,policy.getId()+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+""),
+								new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_RESET, alias));
+					}
 					de.setType(DataElementType.LINK);
 					dati.addElement(de);
 				}
@@ -10013,6 +10084,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
+		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
 		
 		// Elaboro valori con dipendenze
 		
@@ -10139,8 +10211,32 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					erogatoriLabel = new ArrayList<>();
 					erogatoriValue = new ArrayList<>();
 					for (IDSoggetto idSoggetto : listErogatori) {
-						erogatoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
-						erogatoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+						
+						if(!multitenant && policy.getFiltro().getRuoloPorta()!=null && 
+								(policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA) || policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA))) {
+							Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+							boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
+							if( policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA)) {
+								// devo prendere i soggetti interni
+								if(!isPddEsterna) {
+									erogatoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+									erogatoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+								}
+							}
+							else {
+								policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA);
+								// devo prendere i soggetti esterni
+								if(isPddEsterna) {
+									erogatoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+									erogatoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+								}
+							}
+						}
+						else {
+							erogatoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+							erogatoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+						}
+						
 					}
 					if(policy.getFiltro().getTipoErogatore()!=null && policy.getFiltro().getNomeErogatore()!=null){
 						datiIdentificativiErogatoreSelezionatoValue = policy.getFiltro().getTipoErogatore() + "/" + policy.getFiltro().getNomeErogatore();
@@ -10368,14 +10464,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					datiIdentificativiFruitoreSelezionatoLabel = idSoggetto!=null ? this.getLabelNomeSoggetto(idSoggetto) :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
 				}
 				else {
-					List<IDSoggetto> listFruitori = this.confCore.getSoggettiFruitori(protocolloSelezionatoValue, protocolliValue,
-							policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
-							policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio());
+//					List<IDSoggetto> listFruitori = this.confCore.getSoggettiFruitori(protocolloSelezionatoValue, protocolliValue,
+//							policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
+//							policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio());
+					List<IDSoggetto> listSoggetti = this.confCore.getSoggetti(protocolloSelezionatoValue, protocolliValue);
 					fruitoriLabel = new ArrayList<>();
 					fruitoriValue = new ArrayList<>();
-					for (IDSoggetto idSoggetto : listFruitori) {
-						fruitoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
-						fruitoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+					for (IDSoggetto idSoggetto : listSoggetti) {
+						if(!multitenant && policy.getFiltro().getRuoloPorta()!=null && 
+								(policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA) || policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA))) {
+							Soggetto s = this.soggettiCore.getSoggettoRegistro(idSoggetto);
+							boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
+							if( policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.APPLICATIVA)) {
+								// devo prendere i soggetti esterni
+								if(isPddEsterna) {
+									fruitoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+									fruitoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+								}
+							}
+							else {
+								policy.getFiltro().getRuoloPorta().equals(RuoloPolicy.DELEGATA);
+								// devo prendere i soggetti interni
+								if(!isPddEsterna) {
+									fruitoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+									fruitoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+								}
+							}
+						}
+						else {
+							fruitoriLabel.add(this.getLabelNomeSoggetto(idSoggetto));
+							fruitoriValue.add(idSoggetto.getTipo()+"/"+idSoggetto.getNome());
+						}
 					}
 					if(policy.getFiltro().getTipoFruitore()!=null && policy.getFiltro().getNomeFruitore()!=null){
 						datiIdentificativiFruitoreSelezionatoValue = policy.getFiltro().getTipoFruitore() + "/" + policy.getFiltro().getNomeFruitore();
@@ -10387,6 +10506,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					fruitoriLabel = enrichListConQualsiasi(fruitoriLabel);
 					fruitoriValue = enrichListConQualsiasi(fruitoriValue);
+				}
+			}
+			else {
+				if(delegata) {
+					if(policy.getFiltro().getTipoFruitore()!=null && policy.getFiltro().getNomeFruitore()!=null){
+						datiIdentificativiFruitoreSelezionatoValue = policy.getFiltro().getTipoFruitore() + "/" + policy.getFiltro().getNomeFruitore();
+					}
 				}
 			}
 			
@@ -10406,10 +10532,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						serviziApplicativiFruitoreValue = new ArrayList<>();
 						if(datiIdentificativiFruitoreSelezionatoValue!=null) {
 							List<IDServizioApplicativo> listSA = this.confCore.getServiziApplicativiFruitore(protocolloSelezionatoValue, protocolliValue,
-									policy.getFiltro().getTipoFruitore(), policy.getFiltro().getNomeFruitore(), 
-									policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(),
-									policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio(),
-									azioneSelezionataValue);
+									policy.getFiltro().getTipoFruitore(), policy.getFiltro().getNomeFruitore());
 							for (IDServizioApplicativo idServizioApplicativo : listSA) {
 								serviziApplicativiFruitoreLabel.add(idServizioApplicativo.getNome());
 								serviziApplicativiFruitoreValue.add(idServizioApplicativo.getNome());

@@ -85,7 +85,7 @@ public class ConfigurazioneControlloTraffico extends Action {
 
 			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			long sizePolicy = confCore.countConfigurazionePolicy(null);
-			long sizeGlobalPolicy = confCore.countAttivazionePolicy(null);
+			long sizeGlobalPolicy = confCore.countAttivazionePolicy(null,null,null);
 			
 			// Stato [si usa per capire se sono entrato per la prima volta nella schermata]		
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME); 

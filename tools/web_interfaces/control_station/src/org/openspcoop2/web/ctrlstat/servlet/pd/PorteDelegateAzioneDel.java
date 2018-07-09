@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
@@ -46,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -109,6 +111,7 @@ public final class PorteDelegateAzioneDel extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 			
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
@@ -139,6 +142,7 @@ public final class PorteDelegateAzioneDel extends Action {
 				}
 			}
 			
+			StringBuffer bfCT = new StringBuffer();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -146,20 +150,27 @@ public final class PorteDelegateAzioneDel extends Action {
 				// servizioApplicativo = de.getValue();
 				azione = idsToRemove.get(i);
 				
-				for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
-					String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
-					if (azione.equals(azioneDelegata)) {
-						portaDelegata.getAzione().removeAzioneDelegata(j);
-						break;
+				if(confCore.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy.DELEGATA, portaDelegata.getNome(), azione)) {
+					if(bfCT.length()>0) {
+						bfCT.append(",");
 					}
-				}
-				
-				if(configAzioni!=null) {
-					for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
-						if(configAzioni.getAzione(j).equals(azione)) {
-							configAzioni.removeAzione(j);
-							updateASPS = true;
+					bfCT.append(azione);
+				}else {
+					for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
+						if (azione.equals(azioneDelegata)) {
+							portaDelegata.getAzione().removeAzioneDelegata(j);
 							break;
+						}
+					}
+					
+					if(configAzioni!=null) {
+						for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
+							if(configAzioni.getAzione(j).equals(azione)) {
+								configAzioni.removeAzione(j);
+								updateASPS = true;
+								break;
+							}
 						}
 					}
 				}
@@ -180,7 +191,11 @@ public final class PorteDelegateAzioneDel extends Action {
 			// non posso eliminare tutte le azioni
 			if(portaDelegata.getAzione().sizeAzioneDelegataList() == 0) {
 				pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
-			} else {
+			} 
+			else if(bfCT.length()>0) {
+				pd.setMessage("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
+			}
+			else {
 				
 				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
 				

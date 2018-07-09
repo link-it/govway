@@ -1888,12 +1888,12 @@ public class DriverControlStationDB  {
 			
 			if(soggettoRegistro!=null){
 				
-				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, whereIsInUso);
+				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso);
 			
 			}
 			else{
 				
-				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, whereIsInUso);
+				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso);
 				
 			}
 
@@ -2456,7 +2456,7 @@ public class DriverControlStationDB  {
 	 * @return Configurazione
 	 * 
 	 */
-	public long countConfigurazioneControlloTrafficoAttivazionePolicy(ISearch ricerca) throws DriverControlStationException {
+	public long countConfigurazioneControlloTrafficoAttivazionePolicy(ISearch ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException {
 		String nomeMetodo = "countConfigurazioneControlloTrafficoAttivazionePolicy";
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
@@ -2490,6 +2490,14 @@ public class DriverControlStationDB  {
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+			}
 			
 			if(search != null  && !"".equals(search)){
 				expr.ilike(AttivazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
@@ -2626,6 +2634,9 @@ public class DriverControlStationDB  {
 			if(ruoloPorta!=null && nomePorta!=null) {
 				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
 				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				expr.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
 			}
 			
 			if(search != null  && !"".equals(search)){
@@ -3628,6 +3639,67 @@ public class DriverControlStationDB  {
 		}
 	}
 	
+	public boolean checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy ruoloPorta, String nomePorta, String azione) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloTrafficoAttivazionePolicyListUsedAction";
+		// ritorna la configurazione controllo del traffico della PdD
+		Connection con = null;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
+			else {
+				throw new Exception("Metodo non invocabile senza il parametro nomePorta e ruoloPorta");
+			}
+			
+			expr.equals(AttivazionePolicy.model().FILTRO.AZIONE, azione);
+			
+			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.offset(0).limit(1000); // per un controllo di presenza per l'azione è sufficente
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(AttivazionePolicy.model().ALIAS);
+			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);
+			
+			return serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr).size()>0;
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	
 	public List<IDSoggetto> getSoggettiErogatori(String protocolloSelezionato,List<String> protocolliSupportati) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiErogatori"; 
 		Connection con = null;
@@ -3792,6 +3864,44 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
+	public List<IDSoggetto> getSoggetti(String protocolloSelezionato,List<String> protocolliSupportati) throws DriverControlStationException{
+		String nomeMetodo = "getSoggetti"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getSoggetti(serviceManager, protocolloSelezionato);
+			}
+			else {
+				return RegistroCore.getSoggetti(serviceManager, protocolliSupportati);
+			}
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	public List<IDSoggetto> getSoggettiFruitori(String protocolloSelezionato,List<String> protocolliSupportati, 
 			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiFruitori"; 
@@ -3866,6 +3976,47 @@ public class DriverControlStationDB  {
 						tipoFruitore, nomeFruitore, 
 						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, 
 						azione);
+			}
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<IDServizioApplicativo> getServiziApplicativiFruitore(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoFruitore, String nomeFruitore) throws DriverControlStationException{
+		String nomeMetodo = "getServiziApplicativiFruitore"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocolloSelezionato, 
+						tipoFruitore, nomeFruitore);
+			}
+			else {
+				return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocolliSupportati, 
+						tipoFruitore, nomeFruitore);
 			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);

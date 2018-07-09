@@ -43,6 +43,8 @@ import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.commons.search.ServizioApplicativo;
+import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneAzioneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IFruitoreServiceSearch;
@@ -50,7 +52,10 @@ import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IServizioApplicativoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -89,6 +94,49 @@ public class RegistroCore {
 //		return ProtocolFactoryReflectionUtils.getProtocolli();
 //	}
 //	
+	
+	public static List<IDSoggetto> getSoggetti(JDBCServiceManager manager, String protocollo) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		return getSoggetti(manager, protocolli);
+	}
+	public static List<IDSoggetto> getSoggetti(JDBCServiceManager manager, List<String> protocolli) throws Exception{
+		
+		List<IDSoggetto> list = new ArrayList<IDSoggetto>();
+		
+		ISoggettoServiceSearch soggettoServiceSearch = manager.getSoggettoServiceSearch();
+		IPaginatedExpression pag = soggettoServiceSearch.newPaginatedExpression();
+		pag.and();
+		
+		if(protocolli!=null && protocolli.size()>0){
+			List<String> types = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				types.addAll(ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo));
+			}
+			pag.in(Soggetto.model().TIPO_SOGGETTO, types);
+		}
+		
+		pag.addOrder(Soggetto.model().NOME_SOGGETTO,SortOrder.ASC);
+		pag.addOrder(Soggetto.model().TIPO_SOGGETTO,SortOrder.ASC);
+		
+		List<Map<String, Object>> result = null;
+		try{
+			result = soggettoServiceSearch.select(pag, true, Soggetto.model().TIPO_SOGGETTO, Soggetto.model().NOME_SOGGETTO);
+		}catch(NotFoundException notFound){}
+		if(result!=null && result.size()>0){
+			for (Map<String, Object> map : result) {
+				String tipo = (String) map.get(Soggetto.model().TIPO_SOGGETTO.getFieldName());
+				String nome = (String) map.get(Soggetto.model().NOME_SOGGETTO.getFieldName());
+				list.add(new IDSoggetto(tipo, nome));
+			}
+		}
+		
+		return list;
+	}
+	
 	public static List<IDSoggetto> getSoggettiFruitori(JDBCServiceManager manager, String protocollo,
 			String tipoSoggettoErogatore,String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
 		List<String> protocolli = null;
@@ -674,6 +722,76 @@ public class RegistroCore {
 						"."+
 						PortaDelegata.model().ID_SOGGETTO.TIPO.getFieldName());
 				String nomeSoggetto = (String) map.get(PortaDelegata.model().ID_SOGGETTO.getBaseField().getFieldName()+
+						"."+
+						PortaDelegata.model().ID_SOGGETTO.NOME.getFieldName());
+		
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto,nomeSoggetto);
+				idSA.setIdSoggettoProprietario(idSoggetto);
+				idSA.setNome(nomeSA);
+				
+				list.add(idSA);
+			}	
+		}
+		
+		return list;
+	}
+	
+	
+	
+	public static List<IDServizioApplicativo> getServiziApplicativiFruitore(JDBCServiceManager manager, String protocollo, 
+			String tipoSoggettoFruitore, String nomeSoggettoFruitore) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		return getServiziApplicativiFruitore(manager, protocolli, 
+				tipoSoggettoFruitore, nomeSoggettoFruitore);
+	}
+	public static List<IDServizioApplicativo> getServiziApplicativiFruitore(JDBCServiceManager manager, List<String> protocolli, 
+			String tipoSoggettoFruitore, String nomeSoggettoFruitore) throws Exception{
+		List<IDServizioApplicativo> list = new ArrayList<IDServizioApplicativo>();
+			
+		IServizioApplicativoServiceSearch saServiceSearch = manager.getServizioApplicativoServiceSearch();
+		IPaginatedExpression pag = saServiceSearch.newPaginatedExpression();
+		pag.and();
+		
+		if(protocolli!=null && protocolli.size()>0){
+			List<String> types = new ArrayList<>();
+			for (String protocollo : protocolli) {
+				types.addAll(ProtocolFactoryReflectionUtils.getOrganizationTypes(protocollo));
+			}
+			pag.in(ServizioApplicativo.model().ID_SOGGETTO.TIPO, types);
+		}
+		
+		if(tipoSoggettoFruitore!=null && nomeSoggettoFruitore!=null){
+			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.TIPO, tipoSoggettoFruitore);
+			pag.equals(ServizioApplicativo.model().ID_SOGGETTO.NOME, nomeSoggettoFruitore);
+		}
+		
+		pag.notEquals(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE, TipologiaFruizione.DISABILITATO.getValue());
+		pag.isNotNull(ServizioApplicativo.model().TIPOLOGIA_FRUIZIONE);
+		
+		pag.addOrder(ServizioApplicativo.model().NOME,SortOrder.ASC);
+		pag.addOrder(ServizioApplicativo.model().ID_SOGGETTO.NOME,SortOrder.ASC);
+		pag.addOrder(ServizioApplicativo.model().ID_SOGGETTO.TIPO,SortOrder.ASC);
+		
+		List<Map<String, Object>> result = null;
+		try{
+			result = saServiceSearch.select(pag, true, ServizioApplicativo.model().NOME,
+					ServizioApplicativo.model().ID_SOGGETTO.TIPO,
+					ServizioApplicativo.model().ID_SOGGETTO.NOME);
+		}catch(NotFoundException notFound){}
+		if(result!=null && result.size()>0){
+			for (Map<String, Object> map : result) {
+				
+				String nomeSA = (String) map.get(ServizioApplicativo.model().NOME.getFieldName());
+				
+				String tipoSoggetto = (String) map.get(ServizioApplicativo.model().ID_SOGGETTO.getBaseField().getFieldName()+
+						"."+
+						PortaDelegata.model().ID_SOGGETTO.TIPO.getFieldName());
+				String nomeSoggetto = (String) map.get(ServizioApplicativo.model().ID_SOGGETTO.getBaseField().getFieldName()+
 						"."+
 						PortaDelegata.model().ID_SOGGETTO.NOME.getFieldName());
 		

@@ -115,28 +115,6 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			}
 			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
 			
-			if(ruoloPorta!=null) {
-				
-				String protocollo = null;
-				if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
-					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setNome(nomePorta);
-					PortaDelegata porta = pdCore.getPortaDelegata(idPD);
-					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
-				}
-				else {
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(nomePorta);
-					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
-					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
-				}
-				
-				policy.getFiltro().setEnabled(true);
-				policy.getFiltro().setProtocollo(protocollo);
-				policy.getFiltro().setRuoloPorta(ruoloPorta);
-				policy.getFiltro().setNomePorta(nomePorta);
-				
-			}
 			
 			// nome della Policy
 			String idPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
@@ -163,6 +141,38 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyAdd extends Action 
 			String errorAttivazione = confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, first, tipoOperazione, infoPolicy);
 			if(errorAttivazione!=null){
 				confHelper.addParsingError(sbParsingError,errorAttivazione); 
+			}
+			
+			if(ruoloPorta!=null) {
+				
+				String protocollo = null;
+				String tipoSoggettoProprietario = null;
+				String nomeSoggettoProprietario = null;
+				if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(nomePorta);
+					PortaDelegata porta = pdCore.getPortaDelegata(idPD);
+					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
+					// il tipo e nome serve per l'applicativo fruitore
+					tipoSoggettoProprietario = porta.getTipoSoggettoProprietario();
+					nomeSoggettoProprietario = porta.getNomeSoggettoProprietario();
+				}
+				else {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePorta);
+					PortaApplicativa porta = paCore.getPortaApplicativa(idPA);
+					protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(porta.getTipoSoggettoProprietario());
+				}
+				
+				policy.getFiltro().setEnabled(true);
+				policy.getFiltro().setProtocollo(protocollo);
+				policy.getFiltro().setRuoloPorta(ruoloPorta);
+				policy.getFiltro().setNomePorta(nomePorta);
+				if(RuoloPolicy.DELEGATA.equals(ruoloPorta)) {
+					policy.getFiltro().setTipoFruitore(tipoSoggettoProprietario);
+					policy.getFiltro().setNomeFruitore(nomeSoggettoProprietario);
+				}
+				
 			}
 			
 			// Preparo il menu
