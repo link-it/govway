@@ -499,7 +499,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE = "Mode";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_GRUPPO = "Gruppo";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "Force Interface";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";

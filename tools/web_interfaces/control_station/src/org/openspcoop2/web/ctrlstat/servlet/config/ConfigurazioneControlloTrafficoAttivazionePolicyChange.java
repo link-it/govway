@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -88,6 +89,13 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			// uso nome porta per capire se sono entrato per la prima volta nella schermata
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 			
+			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
+			RuoloPolicy ruoloPorta = null;
+			if(ruoloPortaParam!=null) {
+				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
+			}
+			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
+			
 			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			long idPolicyL = Long.parseLong(id);
 			AttivazionePolicy policy = confCore.getAttivazionePolicy(idPolicyL);
@@ -123,11 +131,21 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			confHelper.makeMenu();
 			
 			// setto la barra del titolo
-			List<Parameter> lstParam = new ArrayList<Parameter>();
-
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST));
-			lstParam.add(new Parameter(policy.getIdPolicy(),null));
+			List<Parameter> lstParamPorta = null;
+			if(ruoloPorta!=null) {
+				lstParamPorta = confHelper.getTitleListAttivazionePolicy(ruoloPorta, nomePorta, policy.getIdPolicy());
+			}
+			
+			List<Parameter> lstParam = null;
+			if(lstParamPorta!=null) {
+				lstParam = lstParamPorta;
+			}
+			else {
+				lstParam = new ArrayList<Parameter>();
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST));
+				lstParam.add(new Parameter(policy.getIdPolicy(),null));
+			}
 			
 			List<InfoPolicy> infoPolicies = confCore.infoPolicyList();
 			
@@ -151,7 +169,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				}
 				
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
@@ -166,7 +184,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy);
+			boolean isOk = confHelper.attivazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy,infoPolicy, ruoloPorta, nomePorta);
 			if (!isOk) {
 				
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -176,7 +194,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// Attivazione
-				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies);
+				confHelper.addAttivazionePolicyToDati(dati, tipoOperazione, policy,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY, infoPolicies, ruoloPorta, nomePorta);
 				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
@@ -206,9 +224,9 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyChange extends Acti
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca);
+			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

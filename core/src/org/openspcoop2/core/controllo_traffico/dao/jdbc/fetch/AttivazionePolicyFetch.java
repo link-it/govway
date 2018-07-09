@@ -79,6 +79,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_protocollo", AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType()));
 				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
 					jdbcParameterUtilities.readParameter(rs, "filtro_ruolo", AttivazionePolicy.model().FILTRO.RUOLO_PORTA.getFieldType())+"");
+				setParameter(object.getFiltro(), "setNomePorta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "filtro_porta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType()));
 				setParameter(object.getFiltro(), "setTipoFruitore", AttivazionePolicy.model().FILTRO.TIPO_FRUITORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_tipo_fruitore", AttivazionePolicy.model().FILTRO.TIPO_FRUITORE.getFieldType()));
 				setParameter(object.getFiltro(), "setNomeFruitore", AttivazionePolicy.model().FILTRO.NOME_FRUITORE.getFieldType(),
@@ -181,6 +183,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.protocollo"));
 				setParameter(object.getFiltro(), "set_value_ruoloPorta", String.class,
 					this.getObjectFromMap(map,"filtro.ruolo-porta"));
+				setParameter(object.getFiltro(), "setNomePorta", AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType(),
+					this.getObjectFromMap(map,"filtro.nome-porta"));
 				setParameter(object.getFiltro(), "setTipoFruitore", AttivazionePolicy.model().FILTRO.TIPO_FRUITORE.getFieldType(),
 					this.getObjectFromMap(map,"filtro.tipo-fruitore"));
 				setParameter(object.getFiltro(), "setNomeFruitore", AttivazionePolicy.model().FILTRO.NOME_FRUITORE.getFieldType(),

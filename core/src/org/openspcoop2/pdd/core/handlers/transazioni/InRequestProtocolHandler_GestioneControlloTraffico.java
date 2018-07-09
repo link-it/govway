@@ -33,6 +33,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
@@ -77,7 +78,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 	
 	public void process(InRequestProtocolContext context, Transaction tr) throws HandlerException{
 		
-		ElencoIdPolicyAttive idActivePolicy = null;
+		ElencoIdPolicyAttive idActivePolicyFiltratoPerPorta = null;
 	
 		DatiTransazione datiTransazione = null;
 		
@@ -111,6 +112,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 											
 				// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
 				configPdDManager = ConfigurazionePdDManager.getInstance();
+				ElencoIdPolicyAttive idActivePolicy = null;
 				try {
 					idActivePolicy = configPdDManager.getElencoIdPolicyAttive(ConfigurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
 				}catch(DriverConfigurazioneNotFound notFound) {}
@@ -132,6 +134,27 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					}
 					includiDescrizioneErrore = configurazioneGenerale.getRateLimiting().isTipoErroreIncludiDescrizione();
 				}
+				
+				// Conservo tutte le policy attive che non riguardano alcuna porta specifica e solamente quelle attive per questa porta
+				// Le altre non ha senso vederle poichè sono di poco interesse per la porta invocata, essendo sempre filtrate
+				idActivePolicyFiltratoPerPorta = new ElencoIdPolicyAttive();
+				if(idActivePolicy!=null && idActivePolicy.sizeIdActivePolicyList()>0){
+					for (IdActivePolicy idActive : idActivePolicy.getIdActivePolicyList()) {
+						if(idActive.getFiltroNomePorta()==null) {
+							idActivePolicyFiltratoPerPorta.addIdActivePolicy(idActive);
+						}
+						else {
+							if(datiTransazione.getNomePorta().equals(idActive.getFiltroNomePorta())) {
+								// verifico che sia anche stessa tipologia fruizione o erogazione
+								if(idActive.getFiltroRuoloPorta()==null || RuoloPolicy.ENTRAMBI.equals(idActive.getFiltroRuoloPorta()) ||
+										idActive.getFiltroRuoloPorta().getValue().equals(context.getTipoPorta().getTipo())	) {
+									idActivePolicyFiltratoPerPorta.addIdActivePolicy(idActive);
+								}
+							}
+						}
+					}
+				}
+				
 			}
 			
 			//System.out.println("PROCESS registerThread["+registerThread+"] datiControlloTraffico["+(datiControlloTraffico!=null)+"]");
@@ -154,11 +177,11 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 				
 				
 				// Effettuo controllo di rate limiting
-				if(idActivePolicy!=null && idActivePolicy.sizeIdActivePolicyList()>0){
+				if(idActivePolicyFiltratoPerPorta!=null && idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList()>0){
 									
 					// Emetto Diagnostico  Controllo di RateLimiting
-					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicy.sizeIdActivePolicyList()+"");
-					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicy.sizeIdActivePolicyList());
+					msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList()+"");
+					context.getPddContext().addObject(GeneratoreMessaggiErrore.TEMPLATE_NUMERO_POLICY, idActivePolicyFiltratoPerPorta.sizeIdActivePolicyList());
 					msgDiag.logPersonalizzato(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO);
 					
 					int policyDisabilitate = 0;
@@ -179,7 +202,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 					
 					try{
 					
-						for (IdActivePolicy idActive : idActivePolicy.getIdActivePolicyList()) {
+						for (IdActivePolicy idActive : idActivePolicyFiltratoPerPorta.getIdActivePolicyList()) {
 							
 							msgDiag.addKeyword(GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ID, idActive.getNome());
 													

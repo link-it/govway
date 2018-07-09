@@ -95,6 +95,14 @@ public class PolicyUtilities {
 					bf.append("Ruolo:Erogatore");
 				}
 			}
+			
+			if( !(filtro.getNomePorta()==null || "".equals(filtro.getNomePorta())) ){
+				if(bf.length()>0){
+					bf.append(", ");
+				}
+				bf.append("Porta:");
+				bf.append(filtro.getNomePorta());
+			}
 
 			if( !(filtro.getProtocollo()==null || "".equals(filtro.getProtocollo())) ){
 				if(bf.length()>0){

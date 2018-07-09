@@ -108,6 +108,10 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		idAttivazionePolicy.setIdPolicy(attivazionePolicy.getIdPolicy());
 		idAttivazionePolicy.setEnabled(attivazionePolicy.isEnabled());
 		idAttivazionePolicy.setUpdateTime(attivazionePolicy.getUpdateTime());
+		if(attivazionePolicy.getFiltro()!=null) {
+			idAttivazionePolicy.setFiltroRuoloPorta(attivazionePolicy.getFiltro().getRuoloPorta());
+			idAttivazionePolicy.setFiltroNomePorta(attivazionePolicy.getFiltro().getNomePorta());
+		}
 		
 		return idAttivazionePolicy;
 		
@@ -490,6 +494,7 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.ENABLED,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.PROTOCOLLO,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_PORTA,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_PORTA,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_FRUITORE,true));
 		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_FRUITORE,true));

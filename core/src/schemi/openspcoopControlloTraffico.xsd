@@ -199,6 +199,8 @@
 
 			<xsd:element name="ruolo-porta" type="ruolo-policy" minOccurs="0" />
 			
+			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0" />
+			
 			<xsd:element name="tipo-fruitore" type="xsd:string" minOccurs="0" />
 			<xsd:element name="nome-fruitore" type="xsd:string" minOccurs="0" />
 			<xsd:element name="ruolo-fruitore" type="xsd:string" minOccurs="0" />
@@ -264,6 +266,8 @@
 			<xsd:element name="id-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="enabled" type="xsd:boolean" minOccurs="0" />
 			<xsd:element name="update-time" type="xsd:dateTime" minOccurs="0" />
+			<xsd:element name="filtro-ruolo-porta" type="ruolo-policy" minOccurs="0" />
+			<xsd:element name="filtro-nome-porta" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

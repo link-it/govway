@@ -252,6 +252,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_RIPRISTINA_STATO = "backToStato";
 	public final static String PARAMETRO_APS_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	public final static String PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
+	public final static String PARAMETRO_APS_GESTIONE_GRUPPI = "gestioneGruppi";
+	public final static String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
 	
 	/* ATTRIBUTI SESSIONE */
 	

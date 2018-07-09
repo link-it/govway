@@ -158,6 +158,7 @@ CREATE TABLE ct_active_policy
 	filtro_enabled NUMBER NOT NULL,
 	filtro_protocollo VARCHAR2(255),
 	filtro_ruolo VARCHAR2(255),
+	filtro_porta VARCHAR2(4000),
 	filtro_tipo_fruitore VARCHAR2(255),
 	filtro_nome_fruitore VARCHAR2(255),
 	filtro_ruolo_fruitore VARCHAR2(255),
@@ -199,6 +200,8 @@ CREATE TABLE ct_active_policy
 	CONSTRAINT pk_ct_active_policy PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_cong_att_policy_1 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
 ALTER TABLE ct_active_policy MODIFY policy_warning DEFAULT 0;
 ALTER TABLE ct_active_policy MODIFY filtro_enabled DEFAULT 0;

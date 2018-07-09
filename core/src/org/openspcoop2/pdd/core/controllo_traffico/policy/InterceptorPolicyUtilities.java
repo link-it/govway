@@ -112,6 +112,10 @@ public class InterceptorPolicyUtilities {
 		String idTransazione = (String) context.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
 		datiTransazione.setIdTransazione(idTransazione);		
 		
+		if(context.getConnettore()!=null && context.getConnettore().getUrlProtocolContext()!=null) {
+			datiTransazione.setNomePorta(context.getConnettore().getUrlProtocolContext().getInterfaceName());
+		}
+		
 		if(context.getProtocolFactory()!=null)
 			datiTransazione.setProtocollo(context.getProtocolFactory().getProtocol());
 		
@@ -175,6 +179,9 @@ public class InterceptorPolicyUtilities {
 		else if(datiTransazione.getIdTransazione()==null){
 			registerThread = false; // i dati sull'identificativo transazione ci devono essere
 		}
+		else if(datiTransazione.getNomePorta()==null) {
+			registerThread = false; // i dati sul nome della porta ci deve essere
+		}
 		else if(datiTransazione.getSoggettoFruitore()==null || 
 				datiTransazione.getSoggettoFruitore().getTipo()==null ||
 						datiTransazione.getSoggettoFruitore().getNome()==null){
@@ -221,6 +228,15 @@ public class InterceptorPolicyUtilities {
 					}
 				}
 				
+			}
+			
+			if(filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta())){
+				if(datiTransazione.getNomePorta()==null){
+					return false;
+				}
+				if(filtro.getNomePorta().equals(datiTransazione.getNomePorta())==false){
+					return false;
+				}
 			}
 			
 			if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){

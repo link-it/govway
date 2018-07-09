@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruolo-porta" type="{http://www.openspcoop2.org/core/controllo_traffico}ruolo-policy" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tipo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="nome-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruolo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -73,6 +74,7 @@ import java.io.Serializable;
   	"enabled",
   	"protocollo",
   	"ruoloPorta",
+  	"nomePorta",
   	"tipoFruitore",
   	"nomeFruitore",
   	"ruoloFruitore",
@@ -150,6 +152,14 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
 
   public void setRuoloPorta(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy ruoloPorta) {
     this.ruoloPorta = ruoloPorta;
+  }
+
+  public java.lang.String getNomePorta() {
+    return this.nomePorta;
+  }
+
+  public void setNomePorta(java.lang.String nomePorta) {
+    this.nomePorta = nomePorta;
   }
 
   public java.lang.String getTipoFruitore() {
@@ -304,6 +314,10 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
 
   @XmlElement(name="ruolo-porta",required=false,nillable=false)
   protected RuoloPolicy ruoloPorta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome-porta",required=false,nillable=false)
+  protected java.lang.String nomePorta;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-fruitore",required=false,nillable=false)

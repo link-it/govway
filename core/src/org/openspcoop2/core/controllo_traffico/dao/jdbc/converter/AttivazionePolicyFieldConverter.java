@@ -145,6 +145,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "filtro_ruolo";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".filtro_porta";
+			}else{
+				return "filtro_porta";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".filtro_tipo_fruitore";
@@ -385,6 +392,9 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA)){
+			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA)){
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE)){

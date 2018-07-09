@@ -51,6 +51,7 @@ import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -486,7 +487,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
+	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta)  throws DriverControlStationNotFound, DriverControlStationException{
 		String nomeMetodo = "attivazionePolicyList";
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -497,7 +498,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);	
 			
-			return driver.configurazioneControlloTrafficoAttivazionePolicyList(ricerca);
+			return driver.configurazioneControlloTrafficoAttivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

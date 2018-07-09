@@ -115,6 +115,7 @@ CREATE TABLE ct_active_policy
 	filtro_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
+	filtro_porta VARCHAR(4000),
 	filtro_tipo_fruitore VARCHAR(255),
 	filtro_nome_fruitore VARCHAR(255),
 	filtro_ruolo_fruitore VARCHAR(255),
@@ -158,5 +159,6 @@ CREATE TABLE ct_active_policy
 
 -- index
 CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);
+CREATE INDEX idx_cong_att_policy_2 ON ct_active_policy (filtro_ruolo,filtro_porta);
 
 

@@ -86,6 +86,18 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateList extend
 			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
+			String paramGestioneGruppi = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+			if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
+				boolean gestioneGruppi = Boolean.valueOf(paramGestioneGruppi);
+				ServletUtils.setObjectIntoSession(session, gestioneGruppi+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
+			}
+			
+			String paramGestioneConfigurazioni = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+			if(paramGestioneConfigurazioni!=null && !"".equals(paramGestioneConfigurazioni)) {
+				boolean gestioneConfigurazioni = Boolean.valueOf(paramGestioneConfigurazioni);
+				ServletUtils.setObjectIntoSession(session, gestioneConfigurazioni+"", AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI);
+			}
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 	

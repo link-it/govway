@@ -451,6 +451,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CONFIGURAZIONE_CACHE_DATI_STATISTICI = "Configurazione Cache Controllo del Traffico";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_POLICY = "Registro Policy";
 	public final static String LABEL_CONFIGURAZIONE_RATE_LIMITING = "Rate Limiting";
+	public final static String LABEL_CONFIGURAZIONE_RATE_LIMITING_DI = "Rate Limiting di ";
 	public final static String LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA = "Tempi Risposta";
 	public final static String LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_FRUIZIONE = "Tempi Risposta Fruizione";
 	public final static String LABEL_CONFIGURAZIONE_TEMPI_RISPOSTA_EROGAZIONE = "Tempi Risposta Erogazione";
@@ -669,6 +670,8 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK = "CTVisualizzaPolicyGlobali";
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE = "CTRateLimitTipoErrore";
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE = "CTRateLimitTipoErroreDescr";
+	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA = "CTPolicyRuoloPorta";
+	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA = "CTPolicyNomePorta";
 
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_STATO = "CTCacheStato";
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE = "CTCacheDimensione";

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import java.io.Serializable;
 
 
@@ -41,6 +42,8 @@ import java.io.Serializable;
  * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="update-time" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="filtro-ruolo-porta" type="{http://www.openspcoop2.org/core/controllo_traffico}ruolo-policy" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="filtro-nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -57,7 +60,9 @@ import java.io.Serializable;
   	"nome",
   	"idPolicy",
   	"enabled",
-  	"updateTime"
+  	"updateTime",
+  	"filtroRuoloPorta",
+  	"filtroNomePorta"
   }
 )
 
@@ -117,6 +122,34 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBean impleme
     this.updateTime = updateTime;
   }
 
+  public void set_value_filtroRuoloPorta(String value) {
+    this.filtroRuoloPorta = (RuoloPolicy) RuoloPolicy.toEnumConstantFromString(value);
+  }
+
+  public String get_value_filtroRuoloPorta() {
+    if(this.filtroRuoloPorta == null){
+    	return null;
+    }else{
+    	return this.filtroRuoloPorta.toString();
+    }
+  }
+
+  public org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy getFiltroRuoloPorta() {
+    return this.filtroRuoloPorta;
+  }
+
+  public void setFiltroRuoloPorta(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy filtroRuoloPorta) {
+    this.filtroRuoloPorta = filtroRuoloPorta;
+  }
+
+  public java.lang.String getFiltroNomePorta() {
+    return this.filtroNomePorta;
+  }
+
+  public void setFiltroNomePorta(java.lang.String filtroNomePorta) {
+    this.filtroNomePorta = filtroNomePorta;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -140,5 +173,15 @@ public class IdActivePolicy extends org.openspcoop2.utils.beans.BaseBean impleme
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="update-time",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date updateTime;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_filtroRuoloPorta;
+
+  @XmlElement(name="filtro-ruolo-porta",required=false,nillable=false)
+  protected RuoloPolicy filtroRuoloPorta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="filtro-nome-porta",required=false,nillable=false)
+  protected java.lang.String filtroNomePorta;
 
 }

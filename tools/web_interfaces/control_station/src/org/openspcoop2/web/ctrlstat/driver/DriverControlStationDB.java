@@ -2581,7 +2581,7 @@ public class DriverControlStationDB  {
 		return listaPolicy;
 	}
 
-	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca) throws DriverControlStationException{
+	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca, RuoloPolicy ruoloPorta, String nomePorta) throws DriverControlStationException{
 		String nomeMetodo = "configurazioneControlloTrafficoAttivazionePolicyList";
 		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
@@ -2622,6 +2622,11 @@ public class DriverControlStationDB  {
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			if(ruoloPorta!=null && nomePorta!=null) {
+				expr.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, ruoloPorta);
+				expr.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, nomePorta);
+			}
 			
 			if(search != null  && !"".equals(search)){
 				expr.ilike(AttivazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);

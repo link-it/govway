@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -68,6 +69,13 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 		try {
 			ConfigurazioneHelper confHelper = new ConfigurazioneHelper(request, pd, session);
 
+			String ruoloPortaParam = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA);
+			RuoloPolicy ruoloPorta = null;
+			if(ruoloPortaParam!=null) {
+				ruoloPorta = RuoloPolicy.toEnumConstant(ruoloPortaParam);
+			}
+			String nomePorta = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA);
+			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 			// Preparo il menu
@@ -80,9 +88,9 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca);
+			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca, ruoloPorta, nomePorta);
 			
-			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista); 
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista, ruoloPorta, nomePorta); 
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

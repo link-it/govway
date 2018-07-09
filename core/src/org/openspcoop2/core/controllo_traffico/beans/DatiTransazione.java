@@ -45,6 +45,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 	private static final long serialVersionUID = 1L;
 
 	private TipoPdD tipoPdD;
+	private String nomePorta;
 	private IDSoggetto dominio;
 	private String modulo;
 	private String idTransazione;
@@ -129,5 +130,12 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
+	}
+	public String getNomePorta() {
+		return this.nomePorta;
+	}
+
+	public void setNomePorta(String nomePorta) {
+		this.nomePorta = nomePorta;
 	}
 }

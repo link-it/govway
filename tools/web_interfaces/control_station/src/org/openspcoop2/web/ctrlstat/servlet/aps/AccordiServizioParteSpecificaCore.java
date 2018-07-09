@@ -276,6 +276,21 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
+	public long getIdFruizioneAccordoServizioParteSpecifica(IDSoggetto idFruitore, IDServizio idAccordo) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getIdFruizioneAccordoServizioParteSpecifica";
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			return DBUtils.getIdFruizioneServizio(idAccordo, idFruitore, con, this.tipoDB);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	
 	public List<AccordoServizioParteComune> findAccordiParteComuneBySoggettoAndNome(String nomeAccordoParteComune,IDSoggetto idSoggetto) throws DriverRegistroServiziException {
 		String nomeMetodo = "findAccordiParteComuneBySoggettoAndNome(" + nomeAccordoParteComune + ", "+idSoggetto.toString()+")";
@@ -1140,6 +1155,10 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
+	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziException {
+		return mappingServiziPorteAppList(idAccordoServizioParteSpecifica, this.getIdAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica), null, ricerca);
+	}
+	
 	public List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList(IDServizio idAccordoServizioParteSpecifica, Long idServizio, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		return mappingServiziPorteAppList(idAccordoServizioParteSpecifica, idServizio, null, ricerca);
 	}
@@ -1441,6 +1460,26 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idFru,idSoggettoFruitore,  
+					idAccordoServizio, 
+					ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<MappingFruizionePortaDelegata> serviziFruitoriMappingList(IDSoggetto idSoggettoFruitore,
+			IDServizio idAccordoServizio,
+			ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		String nomeMetodo = "serviziFruitoriMappingList";
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			return DBMappingUtils.mappingFruizionePortaDelegataList(con,this.tipoDB,idSoggettoFruitore,  
 					idAccordoServizio, 
 					ricerca);
 

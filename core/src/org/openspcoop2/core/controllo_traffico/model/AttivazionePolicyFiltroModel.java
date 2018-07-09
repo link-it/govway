@@ -45,6 +45,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.ENABLED = new Field("enabled",boolean.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_PORTA = new Field("ruolo-porta",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.NOME_PORTA = new Field("nome-porta",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.TIPO_FRUITORE = new Field("tipo-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.NOME_FRUITORE = new Field("nome-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_FRUITORE = new Field("ruolo-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -71,6 +72,7 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_PORTA = new ComplexField(father,"ruolo-porta",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
+		this.NOME_PORTA = new ComplexField(father,"nome-porta",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.TIPO_FRUITORE = new ComplexField(father,"tipo-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.NOME_FRUITORE = new ComplexField(father,"nome-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
 		this.RUOLO_FRUITORE = new ComplexField(father,"ruolo-fruitore",java.lang.String.class,"attivazione-policy-filtro",AttivazionePolicyFiltro.class);
@@ -97,6 +99,8 @@ public class AttivazionePolicyFiltroModel extends AbstractModel<AttivazionePolic
 	public IField PROTOCOLLO = null;
 	 
 	public IField RUOLO_PORTA = null;
+	 
+	public IField NOME_PORTA = null;
 	 
 	public IField TIPO_FRUITORE = null;
 	 

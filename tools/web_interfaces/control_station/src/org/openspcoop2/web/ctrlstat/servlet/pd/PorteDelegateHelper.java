@@ -3421,14 +3421,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta);
 
-			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);
+			this.pd.setSearchLabel(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
 			if(search.equals("")){
 				this.pd.setSearchDescription("");
 				lstParam.add(new Parameter(labelPerPorta,null));
 			}
 			else{
 				lstParam.add(new Parameter(labelPerPorta,
-						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFruizione	));
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFruizione	));
 				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
 
 			}

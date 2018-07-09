@@ -82,6 +82,7 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.ENABLED,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.PROTOCOLLO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_PORTA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_PORTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_FRUITORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_FRUITORE,false),"?");
@@ -125,6 +126,7 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getEnabled(),AttivazionePolicy.model().FILTRO.ENABLED.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getProtocollo(),AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getRuoloPorta(),AttivazionePolicy.model().FILTRO.RUOLO_PORTA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getNomePorta(),AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getTipoFruitore(),AttivazionePolicy.model().FILTRO.TIPO_FRUITORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getNomeFruitore(),AttivazionePolicy.model().FILTRO.NOME_FRUITORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(attivazionePolicy.getFiltro().getRuoloFruitore(),AttivazionePolicy.model().FILTRO.RUOLO_FRUITORE.getFieldType()),
@@ -231,6 +233,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getProtocollo(), AttivazionePolicy.model().FILTRO.PROTOCOLLO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.RUOLO_PORTA,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getRuoloPorta(), AttivazionePolicy.model().FILTRO.RUOLO_PORTA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_PORTA,false), "?");
+		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getNomePorta(), AttivazionePolicy.model().FILTRO.NOME_PORTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE,false), "?");
 		lstObjects.add(new JDBCObject(attivazionePolicy_filtro.getTipoFruitore(), AttivazionePolicy.model().FILTRO.TIPO_FRUITORE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().FILTRO.NOME_FRUITORE,false), "?");

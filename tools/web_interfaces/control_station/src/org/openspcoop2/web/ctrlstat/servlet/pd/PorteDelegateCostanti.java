@@ -497,7 +497,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE = "Mode";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "Nuova";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING = "Configurazione";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_GRUPPO = "Gruppo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT = "register-input";
