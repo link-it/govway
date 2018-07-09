@@ -6265,11 +6265,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		try {
 			List<Parameter> lstParamSession = new ArrayList<Parameter>();
 
+			Parameter parRuoloPorta = null;
 			if(ruoloPorta!=null) {
-				lstParamSession.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA, ruoloPorta.getValue()));
+				parRuoloPorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_RUOLO_PORTA, ruoloPorta.getValue());
+				lstParamSession.add(parRuoloPorta);
 			}
+			Parameter parNomePorta = null;
 			if(nomePorta!=null) {
-				lstParamSession.add(new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA, nomePorta));
+				parNomePorta = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK_NOME_PORTA, nomePorta);
+				lstParamSession.add(parNomePorta);
 			}
 			
 			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, lstParamSession);
@@ -6335,7 +6339,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID, policy.getId() + ""); 
 
 					DataElement de = new DataElement();
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
 					
 					if(StringUtils.isNotEmpty(policy.getAlias()))
 						de.setValue(policy.getIdPolicy());
@@ -6377,7 +6381,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 					Parameter pJmx = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_JMX_STATE, true+"");
 					if(policy.isEnabled()){
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx);
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId,pJmx, parRuoloPorta, parNomePorta);
 					}
 					e.addElement(de);
 								
@@ -6389,7 +6393,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(filtro);
 					}
 					de.setToolTip(filtro);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
 					e.addElement(de);
 					
 					de = new DataElement();
@@ -6400,7 +6404,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(groupBy);
 					}
 					de.setToolTip(groupBy);
-					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
 					e.addElement(de);
 					
 					dati.addElement(e);
@@ -10203,82 +10207,80 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				azioneSelezionataLabel = azioneSelezionataValue!=null ? azioneSelezionataValue :  ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_QUALSIASI;
 			}
 			else {
-				if(datiIdentificativiServizioSelezionatoValue!=null) {
-					if(configurazione) {
-						azioni = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
-								policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
-								policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio());
+				if(configurazione && datiIdentificativiServizioSelezionatoValue!=null) {
+					azioni = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
+							policy.getFiltro().getTipoErogatore(), policy.getFiltro().getNomeErogatore(), 
+							policy.getFiltro().getTipoServizio(), policy.getFiltro().getNomeServizio(), policy.getFiltro().getVersioneServizio());
+				}
+				else if(delegata) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(policy.getFiltro().getNomePorta());
+					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
+					if(pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
+						azioni = pd.getAzione().getAzioneDelegataList();
 					}
-					else if(delegata) {
-						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setNome(policy.getFiltro().getNomePorta());
-						PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPD);
-						if(pd.getAzione()!=null && pd.getAzione().sizeAzioneDelegataList()>0) {
-							azioni = pd.getAzione().getAzioneDelegataList();
-						}
-						else {
-							List<String> azioniAll = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
-									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
-									pd.getServizio().getTipo(), pd.getServizio().getNome(), pd.getServizio().getVersione());
-							
-							MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
-							IDServizio idServizio = mappingPD.getIdServizio();
-							IDSoggetto idSoggettoFruitore = mappingPD.getIdFruitore();
-							List<MappingFruizionePortaDelegata> listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idSoggettoFruitore, idServizio, null);
-							List<String> azioniOccupate = new ArrayList<>();
-							int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
-							if(listaMappingFruizioneSize > 0) {
-								for (int i = 0; i < listaMappingFruizione.size(); i++) {
-									MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-									// colleziono le azioni gia' configurate
-									PortaDelegata portaDelegataTmp = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-									if(portaDelegataTmp.getAzione() != null && portaDelegataTmp.getAzione().getAzioneDelegataList() != null)
-										azioniOccupate.addAll(portaDelegataTmp.getAzione().getAzioneDelegataList());
-								}
+					else {
+						List<String> azioniAll = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+								pd.getServizio().getTipo(), pd.getServizio().getNome(), pd.getServizio().getVersione());
+						
+						MappingFruizionePortaDelegata mappingPD = this.porteDelegateCore.getMappingFruizionePortaDelegata(pd);
+						IDServizio idServizio = mappingPD.getIdServizio();
+						IDSoggetto idSoggettoFruitore = mappingPD.getIdFruitore();
+						List<MappingFruizionePortaDelegata> listaMappingFruizione = this.apsCore.serviziFruitoriMappingList(idSoggettoFruitore, idServizio, null);
+						List<String> azioniOccupate = new ArrayList<>();
+						int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
+						if(listaMappingFruizioneSize > 0) {
+							for (int i = 0; i < listaMappingFruizione.size(); i++) {
+								MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
+								// colleziono le azioni gia' configurate
+								PortaDelegata portaDelegataTmp = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+								if(portaDelegataTmp.getAzione() != null && portaDelegataTmp.getAzione().getAzioneDelegataList() != null)
+									azioniOccupate.addAll(portaDelegataTmp.getAzione().getAzioneDelegataList());
 							}
-							
-							azioni = new ArrayList<>();
-							for (int i = 0; i < azioniAll.size(); i++) {
-								String az = azioniAll.get(i);
-								if(azioniOccupate.contains(az)==false) {
-									azioni.add(az);
-								}
+						}
+						
+						azioni = new ArrayList<>();
+						for (int i = 0; i < azioniAll.size(); i++) {
+							String az = azioniAll.get(i);
+							if(azioniOccupate.contains(az)==false) {
+								azioni.add(az);
 							}
 						}
 					}
-					else if(applicativa) {
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setNome(policy.getFiltro().getNomePorta());
-						PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
-						if(pa.getAzione()!=null && pa.getAzione().sizeAzioneDelegataList()>0) {
-							azioni = pa.getAzione().getAzioneDelegataList();
-						}
-						else {
-							List<String> azioniAll = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
-									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
-									pa.getServizio().getTipo(), pa.getServizio().getNome(), pa.getServizio().getVersione());
-							
-							MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-							IDServizio idServizio = mappingPA.getIdServizio();
-							List<MappingErogazionePortaApplicativa> listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idServizio, null);
-							List<String> azioniOccupate = new ArrayList<>();
-							int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
-							if(listaMappingErogazioneSize > 0) {
-								for (int i = 0; i < listaMappingErogazione.size(); i++) {
-									MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-									// colleziono le azioni gia' configurate
-									PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-									if(portaApplicativaTmp.getAzione() != null && portaApplicativaTmp.getAzione().getAzioneDelegataList() != null)
-										azioniOccupate.addAll(portaApplicativaTmp.getAzione().getAzioneDelegataList());
-								}
+				}
+				else if(applicativa) {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(policy.getFiltro().getNomePorta());
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
+					if(pa.getAzione()!=null && pa.getAzione().sizeAzioneDelegataList()>0) {
+						azioni = pa.getAzione().getAzioneDelegataList();
+					}
+					else {
+						List<String> azioniAll = this.confCore.getAzioni(protocolloSelezionatoValue, protocolliValue,
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+								pa.getServizio().getTipo(), pa.getServizio().getNome(), pa.getServizio().getVersione());
+						
+						MappingErogazionePortaApplicativa mappingPA = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+						IDServizio idServizio = mappingPA.getIdServizio();
+						List<MappingErogazionePortaApplicativa> listaMappingErogazione = this.apsCore.mappingServiziPorteAppList(idServizio, null);
+						List<String> azioniOccupate = new ArrayList<>();
+						int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
+						if(listaMappingErogazioneSize > 0) {
+							for (int i = 0; i < listaMappingErogazione.size(); i++) {
+								MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
+								// colleziono le azioni gia' configurate
+								PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+								if(portaApplicativaTmp.getAzione() != null && portaApplicativaTmp.getAzione().getAzioneDelegataList() != null)
+									azioniOccupate.addAll(portaApplicativaTmp.getAzione().getAzioneDelegataList());
 							}
-							
-							azioni = new ArrayList<>();
-							for (int i = 0; i < azioniAll.size(); i++) {
-								String az = azioniAll.get(i);
-								if(azioniOccupate.contains(az)==false) {
-									azioni.add(az);
-								}
+						}
+						
+						azioni = new ArrayList<>();
+						for (int i = 0; i < azioniAll.size(); i++) {
+							String az = azioniAll.get(i);
+							if(azioniOccupate.contains(az)==false) {
+								azioni.add(az);
 							}
 						}
 					}
@@ -10717,7 +10719,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			else {
 				de.setValue(datiIdentificativiFruitoreSelezionatoValue);
-				if(protocolloAssociatoFiltroNonSelezionatoUtente || (!configurazione && !delegata)) {
+				if(protocolloAssociatoFiltroNonSelezionatoUtente || delegata) {
 					de.setType(DataElementType.HIDDEN);
 					dati.addElement(de);
 					
@@ -10745,7 +10747,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE);
 				de.setValue(servizioApplicativoFruitoreSelezionatoValue);
-				if(protocolloAssociatoFiltroNonSelezionatoUtente || (!configurazione && !applicativa)) {
+				if(protocolloAssociatoFiltroNonSelezionatoUtente || applicativa) {
 					de.setType(DataElementType.HIDDEN);
 					dati.addElement(de);
 					
