@@ -102,6 +102,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -1047,19 +1048,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				policyValues[(i+1)] = genericProperties.getNome();
 			}
 			
+			String servletList = null;
+			String labelList = null;
+			
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				servletList = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
+				if(gestioneFruitori) {
+					labelList = ErogazioniCostanti.LABEL_ASPS_FRUIZIONI;
+				}
+				else {
+					labelList = ErogazioniCostanti.LABEL_ASPS_EROGAZIONI;
+				}
+			} else {
+				servletList = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
+				if(gestioneFruitori) {
+					labelList = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
+				}
+				else {
+					labelList = AccordiServizioParteSpecificaCostanti.LABEL_APS;
+				}
+			}
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// setto la barra del titolo
-				String label = null;
-				if(gestioneFruitori) {
-					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
-				}
-				else {
-					label = AccordiServizioParteSpecificaCostanti.LABEL_APS;
-				}
-				ServletUtils.setPageDataTitle_ServletAdd(pd, label,
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, labelList,servletList);
 				
 
 				if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
@@ -1473,15 +1487,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			if (!isOk) {
 				// setto la barra del titolo
-				String label = null;
-				if(gestioneFruitori) {
-					label = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
-				}
-				else {
-					label = AccordiServizioParteSpecificaCostanti.LABEL_APS;
-				}
-				ServletUtils.setPageDataTitle_ServletAdd(pd, label,
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+				ServletUtils.setPageDataTitle_ServletAdd(pd, labelList, servletList);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -1670,15 +1676,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					pd.setMessage(validazione.toString());
 
 					// setto la barra del titolo
-					String label = null;
-					if(gestioneFruitori) {
-						label = AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI;
-					}
-					else {
-						label = AccordiServizioParteSpecificaCostanti.LABEL_APS;
-					}
-					ServletUtils.setPageDataTitle_ServletAdd(pd, label,
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+					ServletUtils.setPageDataTitle_ServletAdd(pd, labelList,servletList);
 
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();

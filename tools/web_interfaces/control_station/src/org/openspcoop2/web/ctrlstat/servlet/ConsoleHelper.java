@@ -6608,8 +6608,12 @@ public class ConsoleHelper {
 		return de;
 	}
 	
-	public boolean useInterfaceNameInInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
+	public boolean useInterfaceNameInImplementationInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
 		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
 				createProtocolIntegrationConfiguration().useInterfaceNameInImplementationInvocationURL(serviceBinding);
+	}
+	public boolean useInterfaceNameInSubscriptionInvocationURL(String protocollo, ServiceBinding serviceBinding) throws ProtocolException{
+		return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).
+				createProtocolIntegrationConfiguration().useInterfaceNameInSubscriptionInvocationURL(serviceBinding);
 	}
 }

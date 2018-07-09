@@ -90,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -618,12 +619,25 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
 			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
 			
-			// Se idhid = null, devo visualizzare la pagina per la
-			// modifica dati
-			if (ServletUtils.isEditModeInProgress(this.editMode)) {
-				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-
+			
+			
+			// setto la barra del titolo
+			List<Parameter> lstParm = new ArrayList<Parameter>();
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				if(gestioneFruitori) {
+					lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				} else {
+					lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				}
+				lstParm.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+				
+				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO, null));
+				
+			} else {
 				if(gestioneFruitori) {
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
@@ -631,7 +645,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
 				lstParm.add(new Parameter(tmpTitle, null));
-
+			}
+			
+			// Se idhid = null, devo visualizzare la pagina per la
+			// modifica dati
+			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -1115,17 +1133,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-
-				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				lstParm.add(new Parameter(tmpTitle, null));
-
-				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 				portType = (portType != null && !"".equals(portType) ? portType : asps.getPortType());
@@ -1225,17 +1232,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// I dati dell'utente sono validi, se ha scelto di modificare lo stato da finale ad operativo visualizzo la schermata di conferma
 			if( actionConfirm == null){
 				if(  backToStato != null){
-					// setto la barra del titolo
-					List<Parameter> lstParm = new ArrayList<Parameter>();
-
-					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					}
-					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					}
-					lstParm.add(new Parameter(tmpTitle, null));
-
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );
 
@@ -1469,17 +1465,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 					// Setto messaggio di errore
 					pd.setMessage(validazioneException.toString());
-
-					// setto la barra del titolo
-					List<Parameter> lstParm = new ArrayList<Parameter>();
-
-					if(gestioneFruitori) {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					}
-					else {
-						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-					}
-					lstParm.add(new Parameter(tmpTitle, null));
 
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );

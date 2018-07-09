@@ -79,6 +79,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -556,10 +557,15 @@ public final class PorteDelegateChange extends Action {
 //				} else {
 //					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
 //				}
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 				
 				if(datiInvocazione) {
 					lstParam.remove(lstParam.size()-1);
-					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_PORTE_DELEGATE_MODIFICA_DATI_INVOCAZIONE,null));
+					} else {
+						lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					}
 					nomeBreadCrumb=null;
 				}
 				else if(datiAltro) {

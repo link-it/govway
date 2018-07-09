@@ -76,6 +76,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -545,6 +546,9 @@ public final class PorteApplicativeChange extends Action {
 			
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+
+			
 			String nomeBreadCrumb = oldNomePA;
 			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
 //				List<MappingErogazionePortaApplicativa> mappingServiziPorteAppList = apsCore.mappingServiziPorteAppList(idServizioCheck, idAspsLong, null);
@@ -566,7 +570,11 @@ public final class PorteApplicativeChange extends Action {
 				boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
 				if(datiInvocazione) {
 					lstParm.remove(lstParm.size()-1);
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_DATI_INVOCAZIONE,null));
+					} else {
+						lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_DATI_INVOCAZIONE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					}
 					nomeBreadCrumb=null;
 				}
 				else if(datiAltro) {

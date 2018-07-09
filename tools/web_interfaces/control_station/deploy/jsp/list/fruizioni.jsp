@@ -90,31 +90,33 @@ for (int j = 0; j < riga.size(); j++) {
 		</div>
 	</div>
 </td>
-<td>
-	<div id="funzionalita_<%=numeroEntryS %>" class="funzionalitaFruizione">
-		<% 
-		
-		for (int j = 0; j < vectorImmagini.size(); j++) {
-		    DataElement de = (DataElement) vectorImmagini.elementAt(j);
-		 	String deValue = de.getValue();
-		    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
-			int wCount = deValue.split(" ") != null ? deValue.split(" ").length : 1;
-			String spanClass= wCount == 1 ? "configurazioneFruizioneSpanOneLine" : "configurazioneFruizioneSpan";			
-		  	%>
-		  		<div id="configurazione_<%=j %>" class="configurazioneFruizione" title="<%=deValue %>">
-		  			<div class="configurazioneFruizioneIcon">
-			  			<span class="configurazioneFruizioneIcon" id="iconConfigurazione_<%=j %>">
-							<i class="material-icons md-18 md-light">&#xE5CA;</i>
-						</span>
-					</div>
-					<div class="<%=spanClass %>">
-		  				<span class="<%=spanClass %>" ><%=deValue %></span>
-	  				</div>
-		  		</div>
-	  		<%
-		  	
-		} // for
-		%>
-	</div>
-</td>
+<% if(vectorImmagini.size() > 0){ %>
+	<td>
+		<div id="funzionalita_<%=numeroEntryS %>" class="funzionalitaFruizione">
+			<% 
+			
+			for (int j = 0; j < vectorImmagini.size(); j++) {
+			    DataElement de = (DataElement) vectorImmagini.elementAt(j);
+			 	String deValue = de.getValue();
+			    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
+				int wCount = deValue.split(" ") != null ? deValue.split(" ").length : 1;
+				String spanClass= wCount == 1 ? "configurazioneFruizioneSpanOneLine" : "configurazioneFruizioneSpan";			
+			  	%>
+			  		<div id="configurazione_<%=j %>" class="configurazioneFruizione" title="<%=deValue %>">
+			  			<div class="configurazioneFruizioneIcon">
+				  			<span class="configurazioneFruizioneIcon" id="iconConfigurazione_<%=j %>">
+								<i class="material-icons md-18 md-light">&#xE5CA;</i>
+							</span>
+						</div>
+						<div class="<%=spanClass %>">
+			  				<span class="<%=spanClass %>" ><%=deValue %></span>
+		  				</div>
+			  		</div>
+		  		<%
+			  	
+			} // for
+			%>
+		</div>
+	</td>
+<% } %>
 
