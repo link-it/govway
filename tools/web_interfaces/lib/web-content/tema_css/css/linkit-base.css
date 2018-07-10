@@ -221,7 +221,7 @@ textarea.inputLinkLong {
 	background: ${page.header.background.color};
 	color: ${page.header.text.color};
 	height:25px;
-	border-bottom: 1px solid ${page.header.border.bottom.color};
+	border-bottom: 2px solid ${page.header.border.bottom.color};
 }
 
 .tdPageHeader {
@@ -1390,4 +1390,12 @@ div.propRiepilogo label, span.spanLink{
 	position: relative;
 	color: ${body.secondary.color};
 	padding-top: 2px;
+}
+
+.edit-link {
+	padding: 2px 0px;
+}
+
+.edit-link span.icon-box {
+	vertical-align: middle;
 }
