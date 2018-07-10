@@ -1375,3 +1375,19 @@ div.propBox label, span.spanLink{
 .fieldsetSecondRowBody {
 	margin: 16px 8px 16px 16px;
 }
+
+.propRiepilogo {
+	padding: 2px 0px;
+}
+
+div.propRiepilogo label, span.spanLink{
+	margin-right: 10px;	
+/* 	padding-right: 10px; */
+	width: 140px;
+	display: block;
+	float: left;
+/* 	text-align: right; */
+	position: relative;
+	color: ${body.secondary.color};
+	padding-top: 2px;
+}
