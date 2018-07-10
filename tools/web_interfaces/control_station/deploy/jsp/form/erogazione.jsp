@@ -185,7 +185,7 @@
 								                					String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 								                					String classLink = "";
 								                					%>
-								                					<a class="<%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
+								                					<a class="edit-link <%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
 								                					<span class="icon-box">
 																		<i class="material-icons md-12">&#xE3C9;</i>
 																	</span>
