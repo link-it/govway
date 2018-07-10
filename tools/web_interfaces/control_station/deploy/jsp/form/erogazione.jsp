@@ -167,16 +167,16 @@
 							        		} else { // else subtitle
 							        			if (type.equals("link")){
 							        				%>
-							            			<div class="prop prop-link">
-							            				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
-							            				<span><a href="<%= de.getUrl() %>"><%= de.getValue() %></a></span>
+							            			<div class="propRiepilogo prop-link">
+							            				<label class="<%= labelStyleClass %>"><a href="<%= de.getUrl() %>"><%= de.getValue() %></a></label>
+							            				<span>&nbsp;</span>
 							            			</div>
 							            			<%
 							            		} else { // else link
 							            			if (type.equals("text")){
 							            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 							            				%>
-							                			<div class="prop">
+							                			<div class="propRiepilogo">
 							                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 							                				<div class="<%=classDivNoEdit %>"> 
 								                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
@@ -187,7 +187,7 @@
 								                					%>
 								                					<a class="<%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
 								                					<span class="icon-box">
-																		<i class="material-icons md-18">&#xE3C9;</i>
+																		<i class="material-icons md-12">&#xE3C9;</i>
 																	</span>
 								                				</a>
 								                				<% }%>
