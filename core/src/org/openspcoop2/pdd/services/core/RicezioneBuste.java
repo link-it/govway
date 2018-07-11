@@ -621,6 +621,11 @@ public class RicezioneBuste {
 				if (msgRisposta!=null) {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
+					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
+						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
+					}
+					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
+					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, false, outResponseContext.getPddContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());

@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -579,6 +580,11 @@ public class RicezioneContenutiApplicativi {
 				if (msgRisposta!=null) {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
+					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
+						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
+					}
+					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
+					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());

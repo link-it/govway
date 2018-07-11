@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.services;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
@@ -41,6 +42,8 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
@@ -317,6 +320,32 @@ public class ServicesUtils {
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
+	}
+	
+	
+	public static void setGovWayHeaderResponse(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext) {
+		try {
+			UtilitiesIntegrazione utilitiesIntegrazione = null;
+			if(portaDelegata) {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(logCore);
+			}
+			else {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
+			}
+			utilitiesIntegrazione.setInfoProductTransportProperties(propertiesTrasporto);
+		}catch(Exception e){
+			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
+		}
+		if(pddContext.containsKey(CostantiControlloTraffico.PDD_CONTEXT_HEADER_RATE_LIMITING)) {
+			Properties pHeaderRateLimiting = (Properties) pddContext.getObject(CostantiControlloTraffico.PDD_CONTEXT_HEADER_RATE_LIMITING);
+			if(pHeaderRateLimiting.size()>0) {
+				java.util.Enumeration<?> en = pHeaderRateLimiting.keys();
+		    	while(en.hasMoreElements()){
+		    		String key = (String) en.nextElement();
+		    		propertiesTrasporto.put(key, pHeaderRateLimiting.getProperty(key));
+		    	}	
+			}
+		}
 	}
 	
 }

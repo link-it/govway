@@ -50,6 +50,10 @@ public class RisultatoVerificaPolicy {
 	
 	private boolean warningOnly;
 	
+	private Long maxValue;
+	private Long actualValue;
+	private Long msBeforeResetCounters; // solo nel caso di finestra corrente
+	
 	public boolean isViolata() {
 		return this.violata;
 	}
@@ -109,5 +113,24 @@ public class RisultatoVerificaPolicy {
 	}
 	public void setApplicabilitaStatoAllarme(boolean applicabilitaStatoAllarme) {
 		this.applicabilitaStatoAllarme = applicabilitaStatoAllarme;
+	}
+	
+	public Long getMaxValue() {
+		return this.maxValue;
+	}
+	public void setMaxValue(Long maxValue) {
+		this.maxValue = maxValue;
+	}
+	public Long getActualValue() {
+		return this.actualValue;
+	}
+	public void setActualValue(Long actualValue) {
+		this.actualValue = actualValue;
+	}
+	public Long getMsBeforeResetCounters() {
+		return this.msBeforeResetCounters;
+	}
+	public void setMsBeforeResetCounters(Long secondBeforeResetCounters) {
+		this.msBeforeResetCounters = secondBeforeResetCounters;
 	}
 }

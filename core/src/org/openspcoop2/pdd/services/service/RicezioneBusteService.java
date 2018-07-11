@@ -57,7 +57,6 @@ import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
-import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -728,12 +727,7 @@ public class RicezioneBusteService  {
 		if(context.getHeaderIntegrazioneRisposta()==null) {
 			context.setHeaderIntegrazioneRisposta(new Properties());
 		}
-		try {
-			UtilitiesIntegrazione utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
-			utilitiesIntegrazione.setInfoProductTransportProperties(context.getHeaderIntegrazioneRisposta());
-		}catch(Exception e){
-			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
-		}
+		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, false, context.getPddContext());
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){

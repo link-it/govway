@@ -52,14 +52,13 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
-import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -667,12 +666,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(context.getHeaderIntegrazioneRisposta()==null) {
 			context.setHeaderIntegrazioneRisposta(new Properties());
 		}
-		try {
-			UtilitiesIntegrazione utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(logCore);
-			utilitiesIntegrazione.setInfoProductTransportProperties(context.getHeaderIntegrazioneRisposta());
-		}catch(Exception e){
-			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
-		}
+		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, true, context.getPddContext());
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){

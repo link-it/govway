@@ -304,7 +304,13 @@ public class PolicyVerifier {
 				
 				if(activePolicy.getConfigurazionePolicy().isSimultanee()){
 					
-					if(!(datiCollezionatiReaded.getActiveRequestCounter()<=valoreSoglia)){
+					long valoreAttuale = datiCollezionatiReaded.getActiveRequestCounter();
+					risultatoVerificaPolicy.setActualValue(valoreAttuale);
+					risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					if(datiCollezionatiReaded.getRightDateWindowCurrentInterval()!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(datiCollezionatiReaded.getRightDateWindowCurrentInterval().getTime()-DateManager.getTimeMillis());
+					}
+					if(!(valoreAttuale<=valoreSoglia)){
 						
 						//System.out.println("@@@addThread ERR NUMERO_RICHIESTE SIMULTANEE ["+datiCollezionatiReaded.getActiveRequestCounter()+"]<=["+valoreSoglia
 						//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
@@ -359,7 +365,16 @@ public class PolicyVerifier {
 						valoreAttuale = risultatoStatistico.getRisultato();
 						checkDate = risultatoStatistico.getDateCheck();
 					}
-										
+							
+					risultatoVerificaPolicy.setActualValue(valoreAttuale);
+					risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+					if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) || 
+							TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+						if(rightDate!=null) {
+							risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+						}
+					}
+					
 					if(!(valoreAttuale<=valoreSoglia)){
 						
 						//System.out.println("@@@addThread ERR NUMERO_RICHIESTE ["+valoreAttuale+"]<=["+valoreSoglia
@@ -448,6 +463,15 @@ public class PolicyVerifier {
 						
 				long kb = DatiCollezionati.translateToKb(valoreAttuale);
 				
+				risultatoVerificaPolicy.setActualValue(kb);
+				risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) || 
+						TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					if(rightDate!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+					}
+				}
+				
 				if(!(kb<=valoreSoglia)){ 
 					
 					//System.out.println("@@@addThread ERR OCCUPAZIONE BANDA ["+kb+"]<=["+valoreSoglia
@@ -509,6 +533,15 @@ public class PolicyVerifier {
 				}
 						
 				long secondi = DatiCollezionati.translateToSeconds(valoreAttuale);
+				
+				risultatoVerificaPolicy.setActualValue(secondi);
+				risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) || 
+						TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					if(rightDate!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+					}
+				}
 				
 				if(!(secondi<=valoreSoglia)){ 
 					
@@ -577,6 +610,15 @@ public class PolicyVerifier {
 					checkDate = risultatoStatistico.getDateCheck();
 				}
 					
+				risultatoVerificaPolicy.setActualValue(valoreAttuale);
+				risultatoVerificaPolicy.setMaxValue(valoreSoglia);
+				if(TipoFinestra.CORRENTE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione()) || 
+						TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
+					if(rightDate!=null) {
+						risultatoVerificaPolicy.setMsBeforeResetCounters(rightDate.getTime()-DateManager.getTimeMillis());
+					}
+				}
+				
 				if(!(valoreAttuale<=valoreSoglia)){
 					
 					//System.out.println("@@@addThread ERR TEMPO MEDIO ["+valoreAttuale+"]<=["+valoreSoglia
