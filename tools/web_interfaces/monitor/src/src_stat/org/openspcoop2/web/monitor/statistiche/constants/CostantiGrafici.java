@@ -149,7 +149,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX = "Token Client ID";
 	public static final String DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX = "Token Subject";
 	public static final String DISTRIBUZIONE_PER_TOKEN_USERNAME_LABEL_SUFFIX = "Token Username";
-	public static final String DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX = "Token E-Mail";
+	public static final String DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX = "Token eMail";
 	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX = "per Servizio";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX = "per Soggetto Locale";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX = "per Soggetto Remoto";

@@ -2007,7 +2007,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareServiziConfigurazioneList(List<MappingErogazionePortaApplicativa> lista, String id, String idSoggettoErogatoreDelServizio, ISearch ricerca)
+	public void prepareServiziConfigurazioneList(List<MappingErogazionePortaApplicativa> listaParam, String id, String idSoggettoErogatoreDelServizio, ISearch ricerca)
 			throws Exception {
 		try {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -2051,19 +2051,26 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
-			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
-			
+						
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setSearch("");
 			
-			lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, lista,ricerca, idLista);
+			List<MappingErogazionePortaApplicativa> lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, listaParam,ricerca, idLista);
 			boolean allActionRedefined = false;
 			if(lista.size()>1) {
 				List<String> azioniL = new ArrayList<>();
 				if(azioni != null && azioni.size() > 0)
 					azioniL.addAll(azioni.keySet());
 				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, lista);
+			}
+			
+
+			if(!gestioneGruppi && listaParam.size()<=1) {
+				ServletUtils.disabledPageDataSearch(this.pd);
+			}
+			else {
+				this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			}
 			
 			// Utilizza la configurazione come parent
@@ -2082,8 +2089,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			// setto i dati come campi hidden nel pd per portarmeli dietro
 			this.pd.addHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
-
-
 
 			String servizioTmpTile = this.getLabelIdServizio(asps);
 			
@@ -2131,7 +2136,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> listaLabel = new ArrayList<String>();
 
 			//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE); // spostata direttamente nell'elenco delle erogazioni
-			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
+			if(gestioneGruppi || listaParam.size()>1) {
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO);
+			}
 			if(gestioneGruppi) {
 				listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			}
@@ -2201,16 +2208,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				e.addElement(de);
 				
 				// NomeGruppo
-				DataElement de = new DataElement();
-				de.setValue(mapping.getDescrizione());
-				if(gestioneGruppi) {
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE,pIdSogg, pIdPorta, pIdAsps);
+				if(gestioneGruppi || listaParam.size()>1) {
+					DataElement de = new DataElement();
+					de.setValue(mapping.getDescrizione());
+					if(gestioneGruppi) {
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE,pIdSogg, pIdPorta, pIdAsps);
+					}
+					e.addElement(de);
 				}
-				e.addElement(de);
 				
 				// azioni
 				if(gestioneGruppi) {
-					de = new DataElement();
+					DataElement de = new DataElement();
 					if(!mapping.isDefault()) {
 						List<String> listaAzioni = paAssociata.getAzione()!= null ?  paAssociata.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
@@ -2250,7 +2259,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(gestioneConfigurazioni) {
 					// connettore
 					if(this.isModalitaAvanzata()) {
-						de = new DataElement();
+						DataElement de = new DataElement();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
 						PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
@@ -2275,12 +2284,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					}
 					
 					// controllo accessi
-					de = new DataElement();
+					DataElement de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
-					
 					String statoControlloAccessi = getStatoControlloAccessiPortaApplicativa(paAssociata); 
-					
 					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					
@@ -3125,7 +3132,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 	
-	public void serviziFruitoriMappingList(List<MappingFruizionePortaDelegata> lista, String idServizio, String idSoggettoFruitore, String idFruzione, ISearch ricerca)	throws Exception {
+	public void serviziFruitoriMappingList(List<MappingFruizionePortaDelegata> listaParam, String idServizio, String idSoggettoFruitore, String idFruzione, ISearch ricerca)	throws Exception {
 		try {
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -3169,8 +3176,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
-			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
-
+				
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setSearch("");
@@ -3178,13 +3184,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Utilizza la configurazione come parent
 			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 			
-			lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, lista,ricerca, idLista);
+			List<MappingFruizionePortaDelegata> lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, listaParam,ricerca, idLista);
 			boolean allActionRedefined = false;
 			if(lista.size()>1) {
 				List<String> azioniL = new ArrayList<>();
 				if(azioni != null && azioni.size() > 0)
 					azioniL.addAll(azioni.keySet());
 				allActionRedefined = this.allActionsRedefinedMappingFruizione(azioniL, lista);
+			}
+			
+			if(!gestioneGruppi && listaParam.size()<=1) {
+				ServletUtils.disabledPageDataSearch(this.pd);
+			}
+			else {
+				this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			}
 			
 			boolean visualizzaMTOM = true;
@@ -3232,7 +3245,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
-
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
@@ -3275,7 +3288,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParam );
 
 			List<String> listaLabel = new ArrayList<String>();
-			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
+			if(gestioneGruppi || listaParam.size()>1) {
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO);
+			}
 			if(gestioneGruppi) {
 				listaLabel.add(this.getLabelAzioni(serviceBindingMessage));
 			}
@@ -3346,16 +3361,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				e.addElement(de);
 				
 				// NomeGruppo
-				DataElement de = new DataElement();
-				de.setValue(mapping.getDescrizione());
-				if(gestioneGruppi) {
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+				if(gestioneGruppi || listaParam.size()>1) {
+					DataElement de = new DataElement();
+					de.setValue(mapping.getDescrizione());
+					if(gestioneGruppi) {
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+					}
+					e.addElement(de);
 				}
-				e.addElement(de);
 					
 				if(gestioneGruppi) {
 					// lista delle azioni
-					de = new DataElement();
+					DataElement de = new DataElement();
 					if(!mapping.isDefault()) {
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_AZIONE_LIST,pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
@@ -3386,7 +3403,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//if(gestioneFruitori) {
 					// connettore	
 					if(this.isModalitaAvanzata() && !connettoreStatic) {
-						de = new DataElement();
+						DataElement de = new DataElement();
 						if(!gestioneFruitori && mapping.isDefault()) {
 							de.setValue("-");
 						}
@@ -3444,7 +3461,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//}
 	
 					// Controllo Accessi
-					de = new DataElement();
+					DataElement de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);				
 					String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(pdAssociata); 				
 					de.setValue(statoControlloAccessi);
