@@ -29,8 +29,8 @@ import java.util.List;
  * GruppoAnalisiStatistica
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14213 $, $Date: 2018-06-25 12:27:04 +0200 (Mon, 25 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  *
  */
 public class GruppoAnalisiStatistica implements Serializable{

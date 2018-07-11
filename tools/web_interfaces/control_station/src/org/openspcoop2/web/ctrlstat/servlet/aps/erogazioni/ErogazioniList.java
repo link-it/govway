@@ -51,8 +51,8 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
  * 
  * @author Andrea Poli (poli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14207 $, $Date: 2018-06-25 10:55:15 +0200 (Mon, 25 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class ErogazioniList extends Action {

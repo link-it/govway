@@ -70,8 +70,8 @@ import org.w3c.dom.Element;
  *  ZipConfigurationReader
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14183 $, $Date: 2018-06-24 12:22:25 +0200 (Sun, 24 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PreLoadingConfig  {
 

@@ -34,8 +34,8 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
  * ConnectorDispatcherErrorInfo
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14183 $, $Date: 2018-06-24 12:22:25 +0200 (Sun, 24 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ConnectorDispatcherErrorInfo {
 

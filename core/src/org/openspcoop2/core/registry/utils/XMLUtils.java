@@ -34,8 +34,8 @@ import org.w3c.dom.Node;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14220 $, $Date: 2018-06-26 17:25:04 +0200 (Tue, 26 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class XMLUtils  {

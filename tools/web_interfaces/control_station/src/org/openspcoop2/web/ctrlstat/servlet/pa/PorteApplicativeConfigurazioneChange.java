@@ -61,8 +61,8 @@ import org.openspcoop2.web.lib.users.dao.PermessiUtente;
  * PorteApplicativeConfigurazioneChange
  * 
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: pintori $
- * @version $Rev: 14261 $, $Date: 2018-07-02 13:01:59 +0200 (Mon, 02 Jul 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class PorteApplicativeConfigurazioneChange extends Action {
 

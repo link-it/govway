@@ -36,8 +36,8 @@ import org.openspcoop2.protocol.sdk.properties.StringProperty;
  * ProtocolPropertiesUtils
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 14182 $, $Date: 2018-06-23 21:12:23 +0200 (Sat, 23 Jun 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ProtocolUtils {
 
