@@ -157,14 +157,14 @@
 						reRenderIds="configurazioniTbl"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
-						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata'}">
+						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' and configurazioniGeneraliSearchForm.multitenant}">
 							<f:facet name="header">
 								<h:outputText value="Fruitore"  id="outFruitore"/>
 							</f:facet>
 							<h:outputText value="#{item.fruitore}" />
 						</rich:column>
 						
-						<rich:column>
+						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' or configurazioniGeneraliSearchForm.multitenant}">
 							<f:facet name="header">
 								<h:outputText value="Erogatore"  id="outErogatore"/>
 							</f:facet>

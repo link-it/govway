@@ -685,6 +685,14 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return PermessiUtenteOperatore.getPermessiUtenteOperatore(user, tipoSoggettoLocale, nomeSoggettoLocale);
 
 	}
+	
+	public boolean isMultitenant() {
+		User u = getUser();
+		if(u!=null) {
+			return u.isPermitMultiTenant();
+		}
+		return false;
+	}
 
 	public String getTipoTrafficoPerSoggetto() {
 		return Utility.parseTipoSoggetto(this.tipoNomeTrafficoPerSoggetto);
