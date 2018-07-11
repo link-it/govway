@@ -77,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -1269,6 +1270,13 @@ public final class PorteApplicativeChange extends Action {
 				
 				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				if(datiInvocazione) {
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+					}
+					
 					idLista = Liste.SERVIZI;
 					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 					
@@ -1322,9 +1330,6 @@ public final class PorteApplicativeChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
-			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 					ForwardParams.CHANGE());
 		} catch (Exception e) {

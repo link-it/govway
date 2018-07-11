@@ -103,6 +103,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
@@ -238,7 +239,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		try {
 			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
 			
-			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 
 			this.parametersPOST = null;
@@ -1884,16 +1885,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}else{
 				listaAccordi = apsCore.soggettiServizioList(userLogin, ricerca, permessi, gestioneFruitori);
 			}
+			
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				apsHelper.prepareErogazioniList(ricerca, listaAccordi);
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.ADD());
+			}
 
 			apsHelper.prepareServiziList(ricerca, listaAccordi);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.ADD());
-			}
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
-					ForwardParams.ADD());
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, ForwardParams.ADD());
 
 
 

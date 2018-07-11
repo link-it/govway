@@ -22,10 +22,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,30 +30,14 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -92,93 +72,11 @@ public final class ErogazioniChange extends Action {
 			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			String id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			long idInt  = Long.parseLong(id);
-
-			apsHelper.makeMenu();
-
-			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-			boolean gestioneFruitori = false;
-			boolean gestioneErogatori = false;
-			if(tipologia!=null) {
-				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
-					gestioneFruitori = true;
-				}
-				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-					gestioneErogatori = true;
-				}
-			}
-
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
-			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
-
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-			String tmpTitle = gestioneFruitori ? apsHelper.getLabelIdServizio(idServizio) :  apsHelper.getLabelIdServizioSenzaErogatore(idServizio);
 			
-			String tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
-			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
+			apsHelper.prepareErogazioneChange(tipoOp, asps);
 			
-			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
-			List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
-			if(gestioneErogatori) {
-				// lettura delle configurazioni associate
-				listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
-				for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
-					listaPorteApplicativeAssociate.add(porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
-				}
-			}
-
-			List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = new ArrayList<>();
-			List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
-			Fruitore fruitore = null;
-			if(gestioneFruitori) {
-				// In questa modalità ci deve essere solo un fruitore
-				fruitore = asps.getFruitore(0);
-				IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-				listaMappingFruzionePortaDelegata = apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
-				for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
-					listaPorteDelegateAssociate.add(porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
-				}
-			}
-
-			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
-
-			if(gestioneFruitori) {
-				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-			}
-			else {
-				lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-			}
-			lstParm.add(new Parameter(tmpTitle, null));
-
-			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(pd, lstParm );
-
-//			if (apsHelper.isEditModeInProgress()) {
-
-				// preparo i campi
-				Vector<Vector<DataElement>> datiPagina = new Vector<Vector<DataElement>>();
-				Vector<DataElement> dati = new Vector<DataElement>();
-				datiPagina.add(dati);
-				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-
-				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
-
-				datiPagina = apsHelper.addErogazioneToDati(datiPagina, tipoOp, asps, as, tipoProtocollo, serviceBinding, gestioneErogatori, gestioneFruitori, listaMappingErogazionePortaApplicativa, listaPorteApplicativeAssociate, listaMappingFruzionePortaDelegata, listaPorteDelegateAssociate, fruitore);
-
-				pd.setDati(datiPagina);
-				pd.disableEditMode();
-
-//				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
-//				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
-//			}
-
-
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());

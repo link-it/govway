@@ -88,6 +88,7 @@ import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -930,6 +931,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 //			TipiConnettore.NULL 
 //			TipiConnettore.CUSTOM -> connettore custom
 			String tipo = connis.getTipo();
+			// TODO poli
+			String tipoLabel = "[" + connis.getTipo() + "] ";
 			if ((connis.getCustom()!=null && connis.getCustom()) && 
 					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
 					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
@@ -941,18 +944,18 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
 				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
 			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-				urlConnettore = ConnettoreNULL.LOCATION;
+				urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
 			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-				urlConnettore = ConnettoreNULLEcho.LOCATION;
+				urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
 			} else {  
 				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
 				if(tipo.equals(TipiConnettore.FILE.getNome()))
-					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+					propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
 			
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
 					if (singlecp.getNome().equals(propertyName)) {
-						urlConnettore = singlecp.getValore();
+						urlConnettore = tipoLabel + singlecp.getValore();
 						break;
 					}
 				}
@@ -1032,7 +1035,10 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
 //			TipiConnettore.NULL 
 //			TipiConnettore.CUSTOM -> connettore custom
+			
 			String tipo = connettore.getTipo();
+			// TODO poli
+			String tipoLabel = "[" + connettore.getTipo() + "] ";
 			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
 					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
@@ -1044,15 +1050,15 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
 				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
 			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-				urlConnettore = ConnettoreNULL.LOCATION;
+				urlConnettore =  tipoLabel + ConnettoreNULL.LOCATION;
 			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-				urlConnettore = ConnettoreNULLEcho.LOCATION;
+				urlConnettore = tipoLabel +  ConnettoreNULLEcho.LOCATION;
 			} else {  
 				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
 				if(tipo.equals(TipiConnettore.FILE.getNome()))
 					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
 			
-				urlConnettore = props.get(propertyName);
+				urlConnettore = tipoLabel + props.get(propertyName);
 			}
 			
 			// Controllo se richiedere il connettore
@@ -1088,16 +1094,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		Parameter pConfigurazioneTrue =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true");
 		Parameter pConfigurazioneFalse =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"false");
 		
-		// Gestione Gruppi
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		if(gestioneErogatori)
-			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST, pId, pNomeServizio, pTipoServizio, pIdSoggettoErogatore, pConfigurazioneFalse, pGruppiTrue);
-		if(gestioneFruitori)
-			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore, pConfigurazioneFalse, pGruppiTrue);
-		de.setValue(MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding))); 
-		dati.addElement(de);
-		
 		// configurazioni
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
@@ -1106,6 +1102,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(gestioneFruitori)
 			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore,pConfigurazioneTrue,pGruppiFalse);
 		de.setValue(ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI);
+		dati.addElement(de);
+		
+		// Gestione Gruppi
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		if(gestioneErogatori)
+			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST, pId, pNomeServizio, pTipoServizio, pIdSoggettoErogatore, pConfigurazioneFalse, pGruppiTrue);
+		if(gestioneFruitori)
+			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore, pConfigurazioneFalse, pGruppiTrue);
+		de.setValue(MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding))); 
 		dati.addElement(de);
 
 		if(visualizzaGruppi)
@@ -2307,4 +2313,78 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 		}
 	}
+	
+	public void prepareErogazioneChange(TipoOperazione tipoOp, AccordoServizioParteSpecifica asps) throws Exception {
+		
+		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+		boolean gestioneFruitori = false;
+		boolean gestioneErogatori = false;
+		if(tipologia!=null) {
+			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+				gestioneFruitori = true;
+			}
+			else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+				gestioneErogatori = true;
+			}
+		}
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		String tmpTitle = gestioneFruitori ? this.getLabelIdServizio(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
+		
+		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+		AccordoServizioParteComune as = this.apcCore.getAccordoServizio(asps.getIdAccordo());
+		ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
+		
+		List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+		List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
+		if(gestioneErogatori) {
+			// lettura delle configurazioni associate
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				listaPorteApplicativeAssociate.add(this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
+			}
+		}
+
+		List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = new ArrayList<>();
+		List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
+		Fruitore fruitore = null;
+		if(gestioneFruitori) {
+			// In questa modalità ci deve essere solo un fruitore
+			fruitore = asps.getFruitore(0);
+			IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+			listaMappingFruzionePortaDelegata = this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
+			for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
+				listaPorteDelegateAssociate.add(this.porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
+			}
+		}
+		
+		this.makeMenu();
+		
+		// setto la barra del titolo
+		List<Parameter> lstParm = new ArrayList<Parameter>();
+
+		if(gestioneFruitori) {
+			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+		}
+		else {
+			lstParm.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+		}
+		lstParm.add(new Parameter(tmpTitle, null));
+
+		// setto la barra del titolo
+		ServletUtils.setPageDataTitle(this.pd, lstParm );
+
+		Vector<Vector<DataElement>> datiPagina = new Vector<Vector<DataElement>>();
+		Vector<DataElement> dati = new Vector<DataElement>();
+		datiPagina.add(dati);
+		dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+		dati = this.addHiddenFieldsToDati(tipoOp, asps.getId()+"", null, null, dati);
+
+		datiPagina = this.addErogazioneToDati(datiPagina, tipoOp, asps, as, tipoProtocollo, serviceBinding, gestioneErogatori, gestioneFruitori, listaMappingErogazionePortaApplicativa, listaPorteApplicativeAssociate, listaMappingFruzionePortaDelegata, listaPorteDelegateAssociate, fruitore);
+
+		this.pd.setDati(datiPagina);
+		this.pd.disableEditMode();
+	}
+	
 }

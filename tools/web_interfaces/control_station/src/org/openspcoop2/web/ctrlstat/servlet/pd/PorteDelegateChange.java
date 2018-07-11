@@ -80,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -1283,6 +1284,12 @@ public final class PorteDelegateChange extends Action {
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				
 				if(datiInvocazione) {
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+					}
 					
 					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 					boolean gestioneFruitori = false;
@@ -1350,9 +1357,6 @@ public final class PorteDelegateChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
-			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.CHANGE());
 
 		} catch (Exception e) {

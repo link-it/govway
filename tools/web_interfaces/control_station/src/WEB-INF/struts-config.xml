@@ -684,6 +684,7 @@
             <forward name="accordiServizioParteSpecificaChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaDel"
             scope="request" validate="true">
@@ -754,6 +755,7 @@
             <forward name="accordiServizioParteSpecificaFruitoriChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/accordiServizioParteSpecificaFruitoriDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriDel" 
             scope="request" validate="true">
@@ -815,6 +817,7 @@
             <forward name="accordiServizioParteSpecificaAddOk" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaAddCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniAddOk" path="/jsplib/listElement.jsp"/>
         </action>
 		<action path="/aspsErogazioniList" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniList"
             scope="request" validate="true">
@@ -1015,6 +1018,7 @@
             <forward name="porteDelegateChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/porteDelegateDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateDel" 
         	scope="request" validate="true">
@@ -1456,6 +1460,7 @@
             <forward name="porteApplicativeChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/porteApplicativeDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeDel"
             scope="request" validate="true">

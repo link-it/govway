@@ -91,6 +91,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -1985,6 +1986,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+				erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,

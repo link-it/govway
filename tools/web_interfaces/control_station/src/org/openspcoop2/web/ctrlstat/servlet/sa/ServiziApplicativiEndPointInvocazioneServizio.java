@@ -73,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -301,8 +302,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				
 				if(accessoDaListaAPS) {
 					if(!multitenant) {
-						
-						
 						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE;
 						} else {
@@ -866,6 +865,16 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			switch (parentSA) { 
 			case ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE:
 				if(accessoDaListaAPS) {
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+						int idServizio = Integer.parseInt(idAsps);
+						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+					}
+					
 					idLista = Liste.SERVIZI;
 					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 					if(gestioneErogatori) {
@@ -919,10 +928,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
-			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
-				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
-			}
+
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,  ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 
 		} catch (Exception e) {
