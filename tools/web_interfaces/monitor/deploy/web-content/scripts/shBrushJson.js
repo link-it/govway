@@ -24,32 +24,32 @@
 		this.regexList = [
 			// chiavi  
 			{ 
-				regex: /"([^\\"\n]|\\.)*"(?=\s*:\s*)/gm, 
+				regex: /"([^\\"\n]|\\.)*" *(?=: *)/g, 
 				css: 'keyword' 
 			},   			
 			// timestamp YYYY-MM-DDTHH:MM:SS.mmm+hh:ss
 			{ 
-				regex: /"\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}"/gm,
+				regex: /"\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}"/g,
 				css: 'color3' 
 			},			
 			// email
 			{ 
-				regex: /"\w+@.+\.\w{1,3}"/gm,
+				regex: /"\w+@.+\.\w{1,3}"/g,
 				css: 'script' 
 			},	 				 
 			// valori
 			{ 
-				regex: /"([^\\"\n]|\\.)*"/gm, 
+				regex: /"([^@\\"\n]|\\.)*"/g, 
 				css: 'string' 
 			},      						
 			// int/dec/exp
 			{ 
-				regex: /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/gm, 
+				regex: /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/g, 
 				css: 'color1' 
 			},    	
 			// chiavi private
 			{ 
-				regex: /false|true|null|undefined/gm, 
+				regex: /false|true|null|undefined/g, 
 				css: 'variable' 
 			}
 			
