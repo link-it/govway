@@ -182,9 +182,15 @@ public class InterceptorPolicyUtilities {
 		else if(datiTransazione.getNomePorta()==null) {
 			registerThread = false; // i dati sul nome della porta ci deve essere
 		}
-		else if(datiTransazione.getSoggettoFruitore()==null || 
-				datiTransazione.getSoggettoFruitore().getTipo()==null ||
-						datiTransazione.getSoggettoFruitore().getNome()==null){
+		else if(
+				TipoPdD.DELEGATA.equals(datiTransazione.getTipoPdD()) 
+				&&
+				(datiTransazione.getSoggettoFruitore()==null 
+					|| 
+				datiTransazione.getSoggettoFruitore().getTipo()==null 
+					||
+				datiTransazione.getSoggettoFruitore().getNome()==null)
+				){
 			registerThread = false; // i dati sul fruitore ci devono essere
 		}
 		else if(datiTransazione.getIdServizio()==null ||

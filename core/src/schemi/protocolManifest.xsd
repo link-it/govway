@@ -149,6 +149,7 @@
                      <xsd:element name="authorization" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="notFound" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="badRequest" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="tooManyRequests" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="internalError" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="default" type="DefaultIntegrationError" />
               </xsd:sequence>

@@ -566,6 +566,10 @@ public class ServiceBindingConfigurationReader  {
 			integrationErrorConfiguration.addIntegrationError(IntegrationError.BAD_REQUEST, 
 					convertToMessageType(config.getBadRequest().getMessageType()), config.getBadRequest().getHttpReturnCode());
 		}
+		if(config.getTooManyRequests()!=null){
+			integrationErrorConfiguration.addIntegrationError(IntegrationError.TOO_MANY_REQUESTS, 
+					convertToMessageType(config.getTooManyRequests().getMessageType()), config.getTooManyRequests().getHttpReturnCode());
+		}
 		if(config.getInternalError()!=null){
 			integrationErrorConfiguration.addIntegrationError(IntegrationError.INTERNAL_ERROR, 
 					convertToMessageType(config.getInternalError().getMessageType()), config.getInternalError().getHttpReturnCode());

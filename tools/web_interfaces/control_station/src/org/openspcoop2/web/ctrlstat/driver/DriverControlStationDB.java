@@ -3471,6 +3471,13 @@ public class DriverControlStationDB  {
 				else{
 					expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, RuoloPolicy.ENTRAMBI);
 				}
+				
+				if(filtro.getNomePorta()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.NOME_PORTA, filtro.getNomePorta());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.NOME_PORTA);
+				}
 					
 				if(filtro.getProtocollo()!=null){
 					expression.equals(AttivazionePolicy.model().FILTRO.PROTOCOLLO, filtro.getProtocollo());

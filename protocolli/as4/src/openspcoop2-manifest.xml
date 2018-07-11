@@ -79,6 +79,7 @@
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
 	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
 	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</internal>	
@@ -87,6 +88,7 @@
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
 	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
 	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</external>	
@@ -156,6 +158,7 @@
 	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
 	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
 	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
 	    			<default httpReturnCode="500" messageType="xml" />
     			</internal>
@@ -164,6 +167,7 @@
 	    			<authorization httpReturnCode="403" messageType="none" />
 	    			<notFound httpReturnCode="404" messageType="none" />
 	    			<badRequest httpReturnCode="400" messageType="none" />
+	    			<tooManyRequests httpReturnCode="429" messageType="none" />
 	    			<internalError httpReturnCode="500" messageType="none" />
 	    			<default httpReturnCode="500" messageType="none" />
     			</external>

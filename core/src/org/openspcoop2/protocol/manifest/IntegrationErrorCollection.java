@@ -40,6 +40,7 @@ import java.io.Serializable;
  * 			&lt;element name="authorization" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="notFound" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="badRequest" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tooManyRequests" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="internalError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}DefaultIntegrationError" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
@@ -59,6 +60,7 @@ import java.io.Serializable;
   	"authorization",
   	"notFound",
   	"badRequest",
+  	"tooManyRequests",
   	"internalError",
   	"_default"
   }
@@ -102,6 +104,14 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this.badRequest = badRequest;
   }
 
+  public IntegrationError getTooManyRequests() {
+    return this.tooManyRequests;
+  }
+
+  public void setTooManyRequests(IntegrationError tooManyRequests) {
+    this.tooManyRequests = tooManyRequests;
+  }
+
   public IntegrationError getInternalError() {
     return this.internalError;
   }
@@ -133,6 +143,9 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
 
   @XmlElement(name="badRequest",required=false,nillable=false)
   protected IntegrationError badRequest;
+
+  @XmlElement(name="tooManyRequests",required=false,nillable=false)
+  protected IntegrationError tooManyRequests;
 
   @XmlElement(name="internalError",required=false,nillable=false)
   protected IntegrationError internalError;

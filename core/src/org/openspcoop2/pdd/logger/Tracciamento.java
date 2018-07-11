@@ -799,7 +799,7 @@ public class Tracciamento {
 		try{
 			if(RuoloMessaggio.RISPOSTA.equals(tipoTraccia) && msg!=null){
 				boolean found = false;
-				if(ServiceBinding.SOAP.equals(msg)){
+				if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 					SOAPBody body = msg.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						found = true;

@@ -3886,6 +3886,7 @@ public class RicezioneBuste {
 			GestoreHandlers.inRequestProtocol(inRequestProtocolContext, msgDiag, logCore);
 		}catch(Exception e){		
 			ErroreIntegrazione erroreIntegrazione = null;
+			IntegrationError integrationError = null; 
 			if(e instanceof HandlerException){
 				HandlerException he = (HandlerException) e;
 				if(he.isEmettiDiagnostico()){
@@ -3894,6 +3895,7 @@ public class RicezioneBuste {
 				logCore.error("Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
 				if(this.msgContext.isGestioneRisposta()){
 					erroreIntegrazione = he.convertToErroreIntegrazione();
+					integrationError = he.getIntegrationError();
 				}
 			}else{
 				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
@@ -3905,7 +3907,11 @@ public class RicezioneBuste {
 					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST);
 				}
+				if(integrationError==null) {
+					integrationError = IntegrationError.INTERNAL_ERROR;
+				}
 				
+				parametriGenerazioneBustaErrore.setIntegrationError(integrationError);
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
 				OpenSPCoop2Message errorMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);

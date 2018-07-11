@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.handlers;
 
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 
@@ -113,6 +114,14 @@ public class HandlerException extends Exception {
 		this.identitaHandler = identitaHandler;
 	}
 
+	private IntegrationError integrationError = null;
+	public IntegrationError getIntegrationError() {
+		return this.integrationError;
+	}
+	public void setIntegrationError(IntegrationError integrationError) {
+		this.integrationError = integrationError;
+	}
+	
 	public ErroreIntegrazione convertToErroreIntegrazione() {
 		if(this.customizedResponse==false) {
 			return null;

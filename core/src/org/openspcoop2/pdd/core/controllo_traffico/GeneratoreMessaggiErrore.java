@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.util.List;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
+import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -249,6 +250,7 @@ public class GeneratoreMessaggiErrore {
 			bfCode.append(toCode(risultato));
 		}
 		he.setCustomizedResponseCode(bfCode.toString());
+		he.setIntegrationError(IntegrationError.TOO_MANY_REQUESTS);
 		
 		return he;
 	} 

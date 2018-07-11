@@ -74,7 +74,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI = "Contesto JNDI";
 	public final static String LABEL_CONNETTORE_REQUEST_OUTPUT = "Richiesta";
 	public final static String LABEL_CONNETTORE_RESPONSE_INPUT = "Risposta";
-	public final static String LABEL_CONNETTORE_CUSTOM = "Connettore Custom";
+	public final static String LABEL_CONNETTORE_CUSTOM = "Personalizzato";
 
 	/* PARAMETRI */
 

@@ -88,7 +88,6 @@ import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -931,7 +930,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 //			TipiConnettore.NULL 
 //			TipiConnettore.CUSTOM -> connettore custom
 			String tipo = connis.getTipo();
-			// TODO poli
+			
 			String tipoLabel = "[" + connis.getTipo() + "] ";
 			if ((connis.getCustom()!=null && connis.getCustom()) && 
 					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
@@ -940,7 +939,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}  
 
 			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-				urlConnettore = ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
 			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
 				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
 			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
@@ -955,7 +954,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
 					if (singlecp.getNome().equals(propertyName)) {
-						urlConnettore = tipoLabel + singlecp.getValore();
+						if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+							urlConnettore = tipoLabel + singlecp.getValore();
+						}
+						else {
+							urlConnettore = singlecp.getValore();
+						}
+						
 						break;
 					}
 				}
@@ -1037,7 +1042,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 //			TipiConnettore.CUSTOM -> connettore custom
 			
 			String tipo = connettore.getTipo();
-			// TODO poli
 			String tipoLabel = "[" + connettore.getTipo() + "] ";
 			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
@@ -1046,7 +1050,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}  
 
 			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-				urlConnettore = ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
 			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
 				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
 			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
@@ -1058,7 +1062,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				if(tipo.equals(TipiConnettore.FILE.getNome()))
 					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
 			
-				urlConnettore = tipoLabel + props.get(propertyName);
+				if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+					urlConnettore = tipoLabel + props.get(propertyName);
+				}
+				else {
+					urlConnettore = props.get(propertyName);
+				}
 			}
 			
 			// Controllo se richiedere il connettore

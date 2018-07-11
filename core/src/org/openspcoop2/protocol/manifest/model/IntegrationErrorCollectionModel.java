@@ -46,6 +46,7 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 		this.AUTHORIZATION = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("authorization",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.NOT_FOUND = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("notFound",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.BAD_REQUEST = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("badRequest",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
+		this.TOO_MANY_REQUESTS = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("tooManyRequests",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.INTERNAL_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new Field("internalError",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.DEFAULT = new org.openspcoop2.protocol.manifest.model.DefaultIntegrationErrorModel(new Field("default",org.openspcoop2.protocol.manifest.DefaultIntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 	
@@ -59,6 +60,7 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 		this.AUTHORIZATION = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"authorization",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.NOT_FOUND = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"notFound",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.BAD_REQUEST = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"badRequest",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
+		this.TOO_MANY_REQUESTS = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"tooManyRequests",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.INTERNAL_ERROR = new org.openspcoop2.protocol.manifest.model.IntegrationErrorModel(new ComplexField(father,"internalError",org.openspcoop2.protocol.manifest.IntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 		this.DEFAULT = new org.openspcoop2.protocol.manifest.model.DefaultIntegrationErrorModel(new ComplexField(father,"default",org.openspcoop2.protocol.manifest.DefaultIntegrationError.class,"IntegrationErrorCollection",IntegrationErrorCollection.class));
 	
@@ -73,6 +75,8 @@ public class IntegrationErrorCollectionModel extends AbstractModel<IntegrationEr
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel NOT_FOUND = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel BAD_REQUEST = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel TOO_MANY_REQUESTS = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.IntegrationErrorModel INTERNAL_ERROR = null;
 	 
