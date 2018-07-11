@@ -836,7 +836,13 @@ public class PorteDelegateCore extends ControlStationCore {
 	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd) throws DriverConfigurazioneException {
 		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, 50);
 	}
+	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd, boolean forceGroupName) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, 50, forceGroupName);
+	}
 	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd, int sizeSubstring) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingFruizionePortaDelegata(functionDi, function, pd, sizeSubstring, false);
+	}
+	public String getLabelRegolaMappingFruizionePortaDelegata(String functionDi, String function, PortaDelegata pd, int sizeSubstring, boolean forceGroupName) throws DriverConfigurazioneException {
 		
 		boolean showGroup = true;
 		
@@ -847,7 +853,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		
 		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);
 		if(mapping.isDefault()) {
-			if(this.countMappingFruizionePortaDelegata(mapping.getIdFruitore(),mapping.getIdServizio()).size()>1) {
+			if(this.countMappingFruizionePortaDelegata(mapping.getIdFruitore(),mapping.getIdServizio()).size()>1 || forceGroupName) {
 				if(showGroup) {
 					return prefix+getLabelGroup(mapping.getDescrizione());
 				}

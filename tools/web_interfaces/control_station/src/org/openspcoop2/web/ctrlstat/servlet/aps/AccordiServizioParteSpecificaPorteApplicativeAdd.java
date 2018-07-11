@@ -362,12 +362,13 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
 					//String nomeMappingNoDefault = mappingErogazionePortaApplicativa.getNome();
 					String nomeMappingNoDefault = null;
-					if(!mappingErogazionePortaApplicativa.isDefault()) {
-						PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-						nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,70);
-					}
-					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
-							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
+					//if(!mappingErogazionePortaApplicativa.isDefault()) {
+					PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,70,true);
+					//}
+//					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
+//							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
+					listaMappingLabels[i] = nomeMappingNoDefault;
 					listaMappingValues[i] = mappingErogazionePortaApplicativa.getNome();
 					
 					// calcolo del nome automatico

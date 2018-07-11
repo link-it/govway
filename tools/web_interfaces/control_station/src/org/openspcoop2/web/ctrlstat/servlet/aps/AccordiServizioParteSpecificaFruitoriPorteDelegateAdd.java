@@ -354,12 +354,13 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
 					//String nomeMappingNoDefault = mappingFruizionePortaDelegata.getNome();
 					String nomeMappingNoDefault = null;
-					if(!mappingFruizionePortaDelegata.isDefault()) {
-						PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-						nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,70);
-					}
-					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
-							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
+					//if(!mappingFruizionePortaDelegata.isDefault()) {
+					PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+					nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,70,true);
+					//}
+//					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
+//							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
+					listaMappingLabels[i] = nomeMappingNoDefault;
 					listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
 					
 					// calcolo del nome automatico

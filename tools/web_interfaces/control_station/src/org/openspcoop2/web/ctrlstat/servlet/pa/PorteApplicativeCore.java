@@ -918,9 +918,15 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa) throws DriverConfigurazioneException {
-		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, 50);
+		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, 50, false);
+	}
+	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa, boolean forceGroupName) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, 50, forceGroupName);
 	}
 	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa, int sizeSubstring) throws DriverConfigurazioneException {
+		return getLabelRegolaMappingErogazionePortaApplicativa(functionDi, function, pa, sizeSubstring, false);
+	}
+	public String getLabelRegolaMappingErogazionePortaApplicativa(String functionDi, String function, PortaApplicativa pa, int sizeSubstring, boolean forceGroupName) throws DriverConfigurazioneException {
 		
 		boolean showGroup = true;
 		
@@ -932,7 +938,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
 				
 		if(mapping.isDefault()) {
-			if(this.countMappingErogazionePortaApplicativa(mapping.getIdServizio()).size()>1) {
+			if(this.countMappingErogazionePortaApplicativa(mapping.getIdServizio()).size()>1 || forceGroupName) {
 				if(showGroup) {
 					return prefix+getLabelGroup(mapping.getDescrizione());
 				}
