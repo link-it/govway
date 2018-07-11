@@ -1393,9 +1393,36 @@ div.propRiepilogo label, span.spanLink{
 }
 
 .edit-link {
-	padding: 2px 0px;
+	float: right;
 }
 
 .edit-link span.icon-box {
 	vertical-align: middle;
+}
+
+.tdTextRiepilogo {
+    text-align: left;
+    padding: 8px;
+}
+
+.tdTextRiepilogo.labelRiepilogo{
+   background-color: ${table.thead.background.color};
+   font-weight: 600;
+   width: 140px;
+}
+
+.riepilogo-spacer {
+	
+}
+
+.tdTextRiepilogo.riepilogo-links{
+    padding: 8px 0px;
+}
+
+.riepilogo-links {
+	display: flex;
+}
+
+.riepilogo-links-pipe {
+    padding: 0px 4px;
 }
