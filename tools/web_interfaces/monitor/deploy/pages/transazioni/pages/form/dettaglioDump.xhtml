@@ -12,7 +12,11 @@
 	<ui:define name="navbar">
 		<ul>
 			<li>
-				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniStart" value="Storico" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
+			<li>
+				<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
 				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}"/>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
@@ -30,6 +34,7 @@
 	<ui:define name="body">
 		<a4j:keepAlive beanName="dettagliBean" />
 		<a4j:keepAlive beanName="dettagliDump" />
+		<a4j:loadScript src="/scripts/XRegExp.js" />
 		<a4j:loadScript src="/scripts/shCore.js" />
 		<a4j:loadScript src="/scripts/shBrushXml.js" />
 		<a4j:loadScript src="/scripts/shBrushJson.js" />

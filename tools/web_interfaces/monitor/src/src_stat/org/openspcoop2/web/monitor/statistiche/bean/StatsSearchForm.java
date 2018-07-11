@@ -270,6 +270,10 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.dataInizioDellaRicerca = this.getDataInizio();
 		this.dataFineDellaRicerca = this.getDataFine();
 		this.periodoDellaRicerca = this.getPeriodo();
+		
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
+			
+		}
 	}
 
 	@Override
@@ -742,5 +746,9 @@ public class StatsSearchForm extends BaseSearchForm{
 			}
 		}
 		return "yyyy-MM-dd";
+	}
+	
+	public boolean isShowGroupByDatiMittente() {
+		return this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO);
 	}
 }

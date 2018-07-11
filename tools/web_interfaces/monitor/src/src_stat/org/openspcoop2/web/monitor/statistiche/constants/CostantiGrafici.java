@@ -144,6 +144,7 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX = "per Azione";
 	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "Applicativo";
 	public static final String DISTRIBUZIONE_PER_IDENTIFICATIVO_AUTENTICATO_LABEL_SUFFIX = "Identificativo Autenticato";
+	public static final String DISTRIBUZIONE_PER_TOKEN_INFO_LABEL_SUFFIX = "Token Info";
 	public static final String DISTRIBUZIONE_PER_TOKEN_ISSUER_LABEL_SUFFIX = "Token Issuer";
 	public static final String DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX = "Token Client ID";
 	public static final String DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX = "Token Subject";
@@ -273,6 +274,8 @@ public class CostantiGrafici {
 	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL = "Distribuzione per Esiti";
 	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL = "Distribuzione per Azione";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
+	public static final String TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL = "Distribuzione per Identificativo Autenticato";
+	public static final String TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL = "Distribuzione per Token Info";
 	public static final String TIPO_DISTRIBUZIONE_MITTENTE_LABEL = "Distribuzione per Mittente";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL = "Distribuzione per Servizio";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
@@ -296,4 +299,31 @@ public class CostantiGrafici {
 	public static final String SEARCH_DISTRIBUZIONE_SOGGETTO_REMOTO = "distribuzioneSoggettoSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_SOGGETTO_LOCALE = "distribuzioneSoggettoSearchForm";
 	public static final String SEARCH_DISTRIBUZIONE_PERSONALIZZATA = "statistichePersonalizzateSearchForm";
+	
+	public static final String ICONA_ANDAMENTO_TEMPORALE = "show_chart"; // "&#xE3C9;";
+	public static final String ICONA_BAR_CHART = "equalizer"; //"&#xE3C9;";
+	public static final String ICONA_LINE_CHART = "show_chart"; // "&#xE3C9;";
+	public static final String ICONA_PIE_CHART = "pie_chart"; // "&#xE3C9;";
+	public static final String ICONA_TABELLA = "view_quilt"; // "&#xE3C9;";
+	
+	
+	public static final String TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_SHORT = "Temporale";
+	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL_SHORT= "Per esiti";
+	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL_SHORT = "Per azione";
+	public static final String TIPO_DISTRIBUZIONE_MITTENTE_SERVIZIO_APPLICATIVO_LABEL_SHORT = "Per applicativo";
+	public static final String TIPO_DISTRIBUZIONE_MITTENTE_IDENTIFICATIVO_AUTENTICATO_SHORT = "Per identificativo autenticato";
+	public static final String TIPO_DISTRIBUZIONE_MITTENTE_TOKEN_INFO_SHORT = "Per token info";
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SHORT = "Per servizio";
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_SHORT = "Per soggetto remoto";
+	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_SHORT = "Per soggetto locale";
+	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_SHORT = "Personalizzata";
+	public static final String PAGINA_REPORT_LABEL = "Report";
+	
+	
+	public static final String TIPO_REPORT_LINE_CHART = "Line chart";
+	public static final String TIPO_REPORT_BAR_CHART = "Bar chart";
+	public static final String TIPO_REPORT_PIE_CHART = "Pie chart";
+	public static final String TIPO_REPORT_TABELLA = "Tabella";
+	public static final String TIPO_REPORT_ANDAMENTO_TEMPORALE = "Andamento Temporale";
+	
 }

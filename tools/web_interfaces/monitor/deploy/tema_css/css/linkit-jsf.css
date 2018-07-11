@@ -55,7 +55,7 @@
 
 .rich-page-header {
 	background: ${body.background.color};
-	border-bottom: 1px solid ${page.header.border.bottom.color};
+	border-bottom: 2px solid ${page.header.border.bottom.color};
 	color: ${page.header.text.color};
 	padding: 0px;
 }

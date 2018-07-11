@@ -1,0 +1,93 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:fc="http://www.fusioncharts.com"
+    xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="analisiStatisticaStart" value="Analisi Statistica" rendered="true" actionListener="#{analisiStatisticaBean.menuActionListener}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<h:outputText value="#{analisiStatisticaBean.labelFiltriRicerca}" styleClass="ultimo-path"/>
+			</li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="analisiStatisticaBean" />
+		<rich:panel id="analisiStatisticaSearch" >
+		    <f:facet name="header">
+		    	<h:outputText id="titoloFiltri" value="#{analisiStatisticaBean.labelFiltriRicerca}" />
+		    </f:facet>
+		    <div class="form-container noborder">
+				<h:form prependId="false">
+					<a4j:jsFunction name="refreshPnl" reRender="altriCriteri"/>
+					<a4j:outputPanel id="distribuzioneSearchPnl" ajaxRendered="false">
+						<a4j:outputPanel id="distribuzioneSearchPnlSubtitle" styleClass="subtitle" layout="block" rendered="#{analisiStatisticaBean.mBean.search.showListaProtocolli}">
+							<h:outputText id="idTipoAnalisi" value="Analisi Statistica" styleClass="subtitle"/>
+						</a4j:outputPanel>
+						
+						<h:inputHidden value="#{analisiStatisticaBean.tipoDistribuzione}" />
+						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'temporale' or analisiStatisticaBean.tipoDistribuzione == 'esiti'}">
+							<ui:include src="/stat/includes/searchFormDistribTemporale.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'soggetto_remoto' or analisiStatisticaBean.tipoDistribuzione == 'soggetto_locale'}">
+							<ui:include src="/stat/includes/searchFormDistribSoggetto.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio'}">
+							<ui:include src="/stat/includes/searchFormDistribServizio.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'azione'}">
+							<ui:include src="/stat/includes/searchFormDistribAzione.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
+						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-applicativo' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-identificativoAutenticato' or analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo-tokenInfo'}">
+							<ui:include src="/stat/includes/searchFormDistribSA.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+						
+						<c:if test="#{applicationBean.showStatistichePersonalizzate and analisiStatisticaBean.tipoDistribuzione == 'personalizzata'}">
+							<ui:include src="/stat/includes/searchFormDistribPersonalizzata.xhtml">
+				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
+				               	<ui:param name="search" value="#{mBean.search}" />
+				           	</ui:include>
+						</c:if>
+					
+					</a4j:outputPanel>
+						
+					<h:panelGroup layout="block" styleClass="buttonrow">
+						<a4j:commandButton styleClass="icon-refresh" action="#{analisiStatisticaBean.filtra}" value="Genera Report"  process="distribuzioneSearchPnl" id="generaReport" />
+						<a4j:commandButton id="svuota" value="Ripulisci" styleClass="icon-refresh" process="distribuzioneSearchPnl"
+							reRender="distribuzioneSearchPnl" rendered="#{true}" action="#{analisiStatisticaBean.ripulisci}"	/>
+					</h:panelGroup>
+				</h:form>
+			</div>
+		</rich:panel>
+	 	<rich:spacer height="4"/>	
+	</ui:define>
+</ui:composition>

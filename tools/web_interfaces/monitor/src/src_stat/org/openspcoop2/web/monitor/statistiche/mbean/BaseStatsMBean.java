@@ -489,4 +489,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 
 		return modalita.toString().toLowerCase();
 	}
+	
+	public String getLabelPaginaReport() {
+		return CostantiGrafici.PAGINA_REPORT_LABEL;
+	}
 }

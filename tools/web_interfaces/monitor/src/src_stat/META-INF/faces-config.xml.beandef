@@ -207,7 +207,7 @@
 <navigation-rule>
   <from-view-id>*</from-view-id>
    <navigation-case>
-   <from-outcome>analisiStatistica</from-outcome>
+   <from-outcome>analisiStatisticaStart</from-outcome>
    <to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   </navigation-case>
    <navigation-case>
@@ -220,34 +220,37 @@
 	<navigation-rule>
 	   <from-view-id>/stat/pages/form/analisiStatistica.xhtml</from-view-id>
  		<navigation-case>
+		<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+  	
+	<!-- Analisi Statistica Filtri Ricerca -->
+	<navigation-rule>
+	   <from-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</from-view-id>
+ 		<navigation-case>
 		<from-outcome>andamentoTemporaleGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/andamentoTemporaleGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribSoggettoGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/distribSoggettoGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribServizioGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/distribServizioGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribSAGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/distribSAGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>statsPersonalizzateGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/statsPersonalizzateGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribAzioneGrafico</from-outcome>
 			<to-view-id>/stat/pages/form/distribAzioneGrafico.xhtml</to-view-id>
-			<redirect/>
 		</navigation-case>
 	</navigation-rule>
  
@@ -255,52 +258,76 @@
 	<navigation-rule>
 		<from-view-id>/stat/pages/form/andamentoTemporaleGrafico.xhtml</from-view-id>
    		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Distribuzione Azione grafico -->
  	<navigation-rule>
 		<from-view-id>/stat/pages/form/distribAzioneGrafico.xhtml</from-view-id>
 		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 			<!-- Distribuzione Servizio grafico -->
  	<navigation-rule>
 		<from-view-id>/stat/pages/form/distribServizioGrafico.xhtml</from-view-id>
 		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Distribuzione Soggetto grafico -->
  	<navigation-rule>
 		<from-view-id>/stat/pages/form/distribSoggettoGrafico.xhtml</from-view-id>
 		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 		<!-- Distribuzione SA grafico -->
  	<navigation-rule>
 		<from-view-id>/stat/pages/form/distribSAGrafico.xhtml</from-view-id>
 		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 		<!-- Statistiche Personalizzate grafico -->
  	<navigation-rule>
 		<from-view-id>/stat/pages/form/statsPersonalizzateGrafico.xhtml</from-view-id>
 		<navigation-case>
-   			<from-outcome>analisiStatistica</from-outcome>
+   			<from-outcome>analisiStatisticaStart</from-outcome>
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
+		<navigation-case>
+			<from-outcome>analisiStatistica</from-outcome>
+			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>

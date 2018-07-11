@@ -64,4 +64,14 @@ public class Costanti {
 	public static final String VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO = "applicativo";
 	
 	public static final String VALUE_CREDENZIALE_TRASPORTO_PREFIX = "trasporto";
+	
+	public static final String ICONA_ANDAMENTO_TEMPORALE = "timelapse";
+	public static final String ICONA_ID_APPLICATIVO = "apps";
+	public static final String ICONA_ID_MESSAGGIO = "message";
+	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
+	
+	public static final String LABEL_STORICO_ANDAMENTO_TEMPORALE = "Intervallo Temporale";
+	public static final String LABEL_STORICO_ID_APPLICATIVO = "Identificativo Applicativo";
+	public static final String LABEL_STORICO_ID_MESSAGGIO = "Identificativo Messaggio";
+	public static final String LABEL_STORICO_ID_TRANSAZIONE = "Identificativo Transazione";
 }

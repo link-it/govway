@@ -235,22 +235,15 @@
 				</a4j:outputPanel>
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="filtriRicercaGroupByDatiMittente" layout="block" rendered="#{sf_showGroupByDatiMittente}">
+			<a4j:outputPanel id="filtriRicercaGroupByDatiMittente" layout="block" rendered="#{sf_bean.showGroupByDatiMittente}">
 			
 					
-				<div class="subtitle">
+				<a4j:outputPanel id="filtriRicercaGroupByDatiMittenteSubtitle" layout="block" styleClass="subtitle" rendered="#{sf_bean.showGroupByDatiMittente and sf_bean.riconoscimento == 'tokenInfo'}">
 					<h:outputText id="idGroupByDatiMittente" value="Filtro Dati Mittente" styleClass="subtitle"/>
-				</div>	
+				</a4j:outputPanel>
 				
-				<link:prop label="Tipo" rendered="" required="true">
-					<rich:comboBox id="riconoscimentoComboGroupBy" value="#{sf_bean.riconoscimento}" 
-								defaultLabel="Selezione Tipo" converter="selectItemConverter"
-								directInputSuggestions="true" width="412" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.listaTipiRiconoscimento}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>
-				
+				<h:inputHidden value="#{sf_bean.riconoscimento}" id="riconoscimentoComboGroupBy"/> 
+			
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoGroupByPnl" rendered="#{not empty sf_bean.riconoscimento}">
 					<a4j:outputPanel layout="block" id="tokenInfoComboGroupByCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
 						<link:prop label="Claim" required="true">
@@ -268,7 +261,7 @@
 				</a4j:outputPanel>
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="filtriRicercaTransazione" layout="block">
+			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" rendered="#{(sf_bean.andamentoTemporalePerEsiti == false) or sf_bean.showEsitiContesto}">
 			
 				<div class="subtitle">
 					<h:outputText id="idDatiTransazione" value="Filtro Dati Transazione" styleClass="subtitle"/>
@@ -309,26 +302,10 @@
 			</a4j:outputPanel>
 			 
 			 
+		 	<h:inputHidden value="#{sf_tipoReport}" id="tipoReportCombo"/> 
 			<div class="subtitle">
 				<h:outputText id="idTipoReport" value="Report" styleClass="subtitle"/>
 			</div> 
-			 
-			<link:prop label="Tipo">
-				<rich:comboBox id="tipoReportCombo" value="#{sf_tipoReport}" defaultLabel="Seleziona Tipo Report" rendered="#{sf_bean._value_tipoStatistica != 'andamentoTemporale'}"
-					 directInputSuggestions="true" enableManualInput="false" width="412" converter="selectItemConverter">
-					<f:selectItem itemLabel="Tabella" itemValue="tabella"/>
-					<f:selectItem itemLabel="Bar Chart" itemValue="bar_chart"/>
-					<f:selectItem itemLabel="Pie Chart" itemValue="pie_chart"/>
-					<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
-				</rich:comboBox>
-				<rich:comboBox id="tipoReportComboAT" value="#{sf_tipoReport}" defaultLabel="Seleziona Tipo Report" rendered="#{sf_bean._value_tipoStatistica == 'andamentoTemporale'}" 
-					directInputSuggestions="true" enableManualInput="false" width="412" converter="selectItemConverter">
-					<f:selectItem itemLabel="Tabella" itemValue="tabella"/>
-					<f:selectItem itemLabel="Line Chart" itemValue="line_chart"/>
-					<f:selectItem itemLabel="Bar Chart" itemValue="bar_chart"/>
-					<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
-				</rich:comboBox>
-			</link:prop>
 							
 	</a4j:outputPanel>
 </ui:composition>

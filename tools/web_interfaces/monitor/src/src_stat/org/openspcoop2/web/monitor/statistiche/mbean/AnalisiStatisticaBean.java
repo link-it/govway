@@ -30,10 +30,13 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
-
+import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.statistiche.bean.AnalisiStatistica;
+import org.openspcoop2.web.monitor.statistiche.bean.GruppoAnalisiStatistica;
+import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 
@@ -56,6 +59,7 @@ public class AnalisiStatisticaBean implements Serializable {
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
 	private List<SelectItem> tipiDistribuzione;
+	private List<GruppoAnalisiStatistica> tipiAnalisiStatistica;
 
 	private String tipoDistribuzione = CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE;
 
@@ -94,6 +98,110 @@ public class AnalisiStatisticaBean implements Serializable {
 		}
 
 		return this.tipiDistribuzione;
+	}
+	
+	public List<GruppoAnalisiStatistica> getTipiAnalisiStatistica() {
+		if(this.tipiAnalisiStatistica == null){
+			this.tipiAnalisiStatistica = new ArrayList<GruppoAnalisiStatistica>();
+			
+			GruppoAnalisiStatistica gruppoAndamentoTemporale = new GruppoAnalisiStatistica();
+			gruppoAndamentoTemporale.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoAndamentoTemporale = new ArrayList<>();
+			listaAnalisiGruppoAndamentoTemporale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE,CostantiGrafici.TIPO_REPORT_LINE_CHART,TipoReport.LINE_CHART));
+			listaAnalisiGruppoAndamentoTemporale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoAndamentoTemporale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoAndamentoTemporale.setListaAnalisiStatistica(listaAnalisiGruppoAndamentoTemporale);
+			this.tipiAnalisiStatistica.add(gruppoAndamentoTemporale);
+			
+			GruppoAnalisiStatistica gruppoEsiti = new GruppoAnalisiStatistica();
+			gruppoEsiti.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoEsiti = new ArrayList<>();
+			listaAnalisiGruppoEsiti.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoEsiti.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI,CostantiGrafici.TIPO_REPORT_LINE_CHART,TipoReport.LINE_CHART));
+			listaAnalisiGruppoEsiti.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoEsiti.setListaAnalisiStatistica(listaAnalisiGruppoEsiti);
+			this.tipiAnalisiStatistica.add(gruppoEsiti);
+			
+			
+			GruppoAnalisiStatistica gruppoSoggettoRemoto = new GruppoAnalisiStatistica();
+			gruppoSoggettoRemoto.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoSoggettoRemoto = new ArrayList<>();
+			listaAnalisiGruppoSoggettoRemoto.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoSoggettoRemoto.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoSoggettoRemoto.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoSoggettoRemoto.setListaAnalisiStatistica(listaAnalisiGruppoSoggettoRemoto);
+			this.tipiAnalisiStatistica.add(gruppoSoggettoRemoto);
+			
+			GruppoAnalisiStatistica gruppoSoggettoLocale = new GruppoAnalisiStatistica();
+			gruppoSoggettoLocale.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoSoggettoLocale = new ArrayList<>();
+			listaAnalisiGruppoSoggettoLocale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoSoggettoLocale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoSoggettoLocale.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoSoggettoLocale.setListaAnalisiStatistica(listaAnalisiGruppoSoggettoLocale);
+			this.tipiAnalisiStatistica.add(gruppoSoggettoLocale);
+			
+			GruppoAnalisiStatistica gruppoServizio = new GruppoAnalisiStatistica();
+			gruppoServizio.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_LABEL);
+			List<AnalisiStatistica> listaAnalisiGrupposervizio = new ArrayList<>();
+			listaAnalisiGrupposervizio.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGrupposervizio.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGrupposervizio.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoServizio.setListaAnalisiStatistica(listaAnalisiGrupposervizio);
+			this.tipiAnalisiStatistica.add(gruppoServizio);
+			
+			GruppoAnalisiStatistica gruppoAzione = new GruppoAnalisiStatistica();
+			gruppoAzione.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoAzione = new ArrayList<>();
+			listaAnalisiGruppoAzione.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoAzione.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoAzione.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoAzione.setListaAnalisiStatistica(listaAnalisiGruppoAzione);
+			this.tipiAnalisiStatistica.add(gruppoAzione);
+			
+			GruppoAnalisiStatistica gruppoApplicativo = new GruppoAnalisiStatistica();
+			gruppoApplicativo.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoApplicativo = new ArrayList<>();
+			listaAnalisiGruppoApplicativo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoApplicativo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoApplicativo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoApplicativo.setListaAnalisiStatistica(listaAnalisiGruppoApplicativo);
+			this.tipiAnalisiStatistica.add(gruppoApplicativo);
+			
+			GruppoAnalisiStatistica gruppoIdentificativoAutenticato = new GruppoAnalisiStatistica();
+			gruppoIdentificativoAutenticato.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoIdentificativoAutenticato = new ArrayList<>();
+			listaAnalisiGruppoIdentificativoAutenticato.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoIdentificativoAutenticato.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoIdentificativoAutenticato.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoIdentificativoAutenticato.setListaAnalisiStatistica(listaAnalisiGruppoIdentificativoAutenticato);
+			this.tipiAnalisiStatistica.add(gruppoIdentificativoAutenticato);
+			
+			GruppoAnalisiStatistica gruppoTokeniinfo = new GruppoAnalisiStatistica();
+			gruppoTokeniinfo.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL);
+			List<AnalisiStatistica> listaAnalisiGruppoTokeniInfo = new ArrayList<>();
+			listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+			listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+			listaAnalisiGruppoTokeniInfo.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO +"-" + org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+			gruppoTokeniinfo.setListaAnalisiStatistica(listaAnalisiGruppoTokeniInfo);
+			this.tipiAnalisiStatistica.add(gruppoTokeniinfo);
+		
+			if(this.applicationBean.getShowStatistichePersonalizzate()) {
+				GruppoAnalisiStatistica gruppoPersonalizzate = new GruppoAnalisiStatistica();
+				gruppoPersonalizzate.setLabel(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL);
+				List<AnalisiStatistica> listaAnalisiGruppoPersonalizzate = new ArrayList<>();
+				listaAnalisiGruppoPersonalizzate.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA,CostantiGrafici.TIPO_REPORT_BAR_CHART,TipoReport.BAR_CHART));
+				listaAnalisiGruppoPersonalizzate.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA,CostantiGrafici.TIPO_REPORT_PIE_CHART,TipoReport.PIE_CHART));
+				listaAnalisiGruppoPersonalizzate.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA,CostantiGrafici.TIPO_REPORT_ANDAMENTO_TEMPORALE,TipoReport.ANDAMENTO_TEMPORALE));
+				listaAnalisiGruppoPersonalizzate.add(new AnalisiStatistica(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA,CostantiGrafici.TIPO_REPORT_TABELLA,TipoReport.TABELLA));
+				gruppoPersonalizzate.setListaAnalisiStatistica(listaAnalisiGruppoPersonalizzate);
+				this.tipiAnalisiStatistica.add(gruppoPersonalizzate);
+			}
+		
+		}
+
+		return this.tipiAnalisiStatistica;
+		
 	}
 
 
@@ -176,7 +284,7 @@ public class AnalisiStatisticaBean implements Serializable {
 			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_AZIONE, DistribuzionePerAzioneBean.class);
 //				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_AZIONE, StatsSearchForm.class);
-			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
+			} else if(this.tipoDistribuzione.startsWith(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
 				this.mBean = getBean(CostantiGrafici.MBEAN_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, DistribuzionePerSABean.class);
 //				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, StatsSearchForm.class);
 			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
@@ -188,6 +296,52 @@ public class AnalisiStatisticaBean implements Serializable {
 			}
 		}
 	}
+	
+	public void setDistribuzione(String tipoDistribuzioneTmp) {
+		if(this.tipoDistribuzione != null && this.mBean != null) {
+			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE)) {
+				//this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_TEMPORALE, StatsSearchForm.class);
+				((AndamentoTemporaleBean) this.mBean).initSearchListenerAndamentoTemporale(null); 
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_ESITI, StatsSearchForm.class);
+				((AndamentoTemporaleBean) this.mBean).initSearchListenerDistribuzionePerEsiti(null); 
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
+				((DistribuzionePerSoggettoBean<?>) this.mBean).initSearchListenerRemoto(null);
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SOGGETTO_REMOTO, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE)) {
+				((DistribuzionePerSoggettoBean<?>) this.mBean).initSearchListenerLocale(null); 
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SOGGETTO_LOCALE, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO)) {
+				((DistribuzionePerServizioBean<?>) this.mBean).getSearch().initSearchListener(null); 
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE)) {
+				((DistribuzionePerAzioneBean<?>) this.mBean).getSearch().initSearchListener(null);
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_AZIONE, StatsSearchForm.class);
+			} else if(this.tipoDistribuzione.startsWith(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
+				((DistribuzionePerSABean<?>) this.mBean).getSearch().initSearchListener(null);
+				String[] mittenteType = this.tipoDistribuzione.split("-");
+				this.mBean.getSearch().setRiconoscimento(mittenteType[1]); 
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_SERVIZIO_APPLICATIVO, StatsSearchForm.class);
+			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
+				((StatsPersonalizzateBean) this.mBean).getSearch().initSearchListener(null);
+//				this.search = getBean(CostantiGrafici.SEARCH_DISTRIBUZIONE_PERSONALIZZATA, StatsSearchForm.class);
+			} else {
+//				this.mBean = null;
+//				this.search = null;
+			}
+		}
+	}
+	
+	public void setTipoReport(String tipoReport) {
+		if(tipoReport != null && this.mBean != null) {
+			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
+				((StatistichePersonalizzateSearchForm)this.mBean.getSearch()).set_value_tipoReport(tipoReport);
+			}else {
+				((StatsSearchForm)this.mBean.getSearch()).set_value_tipoReport(tipoReport);	
+			}
+		}
+	}
+	
 	
 	public String submit(){
 		if(this.mBean != null){
@@ -203,7 +357,26 @@ public class AnalisiStatisticaBean implements Serializable {
 
 	public String ripulisci(){
 		if(this.mBean != null && this.mBean.getSearch() != null){
-			return this.mBean.getSearch().ripulisci();
+			String tipoReport = null;
+			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
+				tipoReport =((StatistichePersonalizzateSearchForm)this.mBean.getSearch()).get_value_tipoReport();
+			}else {
+				tipoReport = ((StatsSearchForm)this.mBean.getSearch()).get_value_tipoReport();	
+			}
+			String ripulisciOutcome = this.mBean.getSearch().ripulisci();
+			
+			if(this.tipoDistribuzione.startsWith(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
+				String[] mittenteType = this.tipoDistribuzione.split("-");
+				this.mBean.getSearch().setRiconoscimento(mittenteType[1]); 
+			}
+			
+			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
+				((StatistichePersonalizzateSearchForm)this.mBean.getSearch()).set_value_tipoReport(tipoReport);
+			}else {
+				((StatsSearchForm)this.mBean.getSearch()).set_value_tipoReport(tipoReport);	
+			}
+			
+			return ripulisciOutcome;
 		}
 		
 		return null;
@@ -246,5 +419,33 @@ public class AnalisiStatisticaBean implements Serializable {
 	public void setSearch(StatsSearchForm search) {
 	}
 	
-	
+	public String getLabelFiltriRicerca() {
+		if(this.tipoDistribuzione != null) {
+			if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_TEMPORALE_LABEL;
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_ESITI_LABEL;
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL;
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL;
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_LABEL;
+			} else if(this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_AZIONE_LABEL;
+			} else if(this.tipoDistribuzione.startsWith(CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO)) {
+				String[] mittenteType = this.tipoDistribuzione.split("-");
+				if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+					return CostantiGrafici.TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL;
+				}  else if(mittenteType[1].equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+					return CostantiGrafici.TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL;
+				} else {
+					return CostantiGrafici.TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL;
+				}
+			} else if(this.applicationBean.getShowStatistichePersonalizzate() && this.tipoDistribuzione.equals(CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA)) {
+				return CostantiGrafici.TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL;
+			}  
+		}
+		return "Filtri Ricerca";
+	}
 }

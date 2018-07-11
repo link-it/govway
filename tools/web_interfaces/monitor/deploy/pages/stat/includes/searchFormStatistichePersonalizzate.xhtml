@@ -278,17 +278,9 @@
 				<div class="subtitle">
 					<h:outputText id="idTipoReport" value="Report" styleClass="subtitle"/>
 				</div> 
-					
-				<link:prop label="Tipo">
-					<rich:comboBox id="tipoReportComboDistribuzione" value="#{sf_tipoReport}" defaultLabel="Seleziona Tipo Report" directInputSuggestions="true" enableManualInput="false" width="412" converter="selectItemConverter">
-						<f:selectItem itemLabel="Tabella" itemValue="tabella"/>
-						<f:selectItem itemLabel="Pie Chart" itemValue="pie_chart"/>
-						<f:selectItem itemLabel="Bar Chart" itemValue="bar_chart"/>
-						<f:selectItem itemLabel="Andamento Temporale" itemValue="andamentoTemporale"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()" actionListener="#{sf_bean.tipoReportSelected}"/>
-					</rich:comboBox>
-				</link:prop>
 				
+				<h:inputHidden value="#{sf_tipoReport}" id="tipoReportComboDistribuzione"/>
+					
 				<a4j:outputPanel id="valoreRisorsaCtr" layout="block" >
 					<link:prop label="Valore Risorsa" required="true" rendered="#{sf_tipoReport == 'andamentoTemporale' and !empty sf_bean.statisticaSelezionata}">
 						<h:selectManyListbox id="valoreRisorsa" value="#{sf_bean.valoriRisorsa}" style="width:412px;" size="5">

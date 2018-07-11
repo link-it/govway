@@ -1,0 +1,38 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:c="http://java.sun.com/jstl/core">
+		
+	<ui:define name="body">
+		<style>
+			#crumbs {display: none;	}		
+			}
+		</style>
+		<a4j:keepAlive beanName="transazioniBean" />
+		<rich:panel id="transazioniSearch" >
+		    <f:facet name="header">
+		    	<h:outputText id="titoloFiltri" value="Storico" />
+		    </f:facet>
+		    <div class="form-container noborder">
+				<h:form prependId="false">
+					<div class="tipologie">
+						<c:forEach items="#{transazioniBean.tipiStorico}" var="tipoStorico">
+							<a4j:outputPanel styleClass="tipologia-button-div" layout="block">
+								<a4j:htmlCommandLink action="transazioni"  rendered="#{tipoStorico.rendered}" styleClass="tipologia-button">
+									<i class="material-icons md-48">#{tipoStorico.icona}</i>
+									<span class="tipologia-button-text">#{tipoStorico.label}</span>
+									<f:setPropertyActionListener value="#{tipoStorico.value}" target="#{transazioniBean.tipoStorico}" />
+								</a4j:htmlCommandLink>
+							</a4j:outputPanel>
+						</c:forEach>
+					</div>
+				</h:form>
+			</div>
+		</rich:panel>
+	</ui:define>
+</ui:composition>

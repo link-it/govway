@@ -17,32 +17,51 @@
 ;(function()
 {
 	// CommonJS
-	typeof(require) != 'undefined' ? SyntaxHighlighter = require('shCore').SyntaxHighlighter : null;
+	SyntaxHighlighter = SyntaxHighlighter || (typeof require !== 'undefined'? require('shCore').SyntaxHighlighter : null);
 
 	function Brush()
 	{
-		var keywords =	'null';
-		
-	    var valoriBoolean = 'true false';
-
-		var r = SyntaxHighlighter.regexLib;
-		
 		this.regexList = [
-			{ regex: /"\w+"(?=(\s*\:))/gm,						   		   css: 'keyword' },			// chiavi Json
-			{ regex: /(?!("\w+"(\s*\:)\s+))"(\w+\D\s*|\d\D?|\w|(https?\:\/\/.)|\{\\n.*\}*)*"/gm,	   css: 'string' },				// valori Json
-			{ regex: /\d+/gm,                                			   css: 'color1' },   			// integers
-			{ regex: /(?:0|[1-9][0-9]*)\.[0-9]+/gm,            			   css: 'color1' },   			// decimali
-			{ regex: new RegExp(this.getKeywords(keywords), 'gm'),		   css: 'variable' },		// keywords
-			{ regex: new RegExp(this.getKeywords(valoriBoolean), 'gm'),    css: 'color1' }      		// boolean
-			];
-	
-		this.forHtmlScript(r.scriptScriptTags);
+			// chiavi  
+			{ 
+				regex: /"([^\\"\n]|\\.)*"(?=\s*:\s*)/gm, 
+				css: 'keyword' 
+			},   			
+			// timestamp YYYY-MM-DDTHH:MM:SS.mmm+hh:ss
+			{ 
+				regex: /"\d{4}\-\d{2}\-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}"/gm,
+				css: 'color3' 
+			},			
+			// email
+			{ 
+				regex: /"\w+@.+\.\w{1,3}"/gm,
+				css: 'script' 
+			},	 				 
+			// valori
+			{ 
+				regex: /"([^\\"\n]|\\.)*"/gm, 
+				css: 'string' 
+			},      						
+			// int/dec/exp
+			{ 
+				regex: /-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/gm, 
+				css: 'color1' 
+			},    	
+			// chiavi private
+			{ 
+				regex: /false|true|null|undefined/gm, 
+				css: 'variable' 
+			}
+			
+		];
+		
+		this.forHtmlScript(SyntaxHighlighter.regexLib.aspScriptTags);
 	};
 
 	Brush.prototype	= new SyntaxHighlighter.Highlighter();
 	Brush.aliases	= ['json'];
 
-	SyntaxHighlighter.brushes.JScript = Brush;
+	SyntaxHighlighter.brushes.Json = Brush;
 
 	// CommonJS
 	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;

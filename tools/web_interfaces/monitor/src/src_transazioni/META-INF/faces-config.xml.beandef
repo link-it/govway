@@ -131,6 +131,10 @@
 	<navigation-rule>
 		<from-view-id>*</from-view-id>
 		<navigation-case>
+			<from-outcome>transazioniStart</from-outcome>
+			<to-view-id>/transazioni/pages/form/transazioni.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>transazioni</from-outcome>
 			<to-view-id>/transazioni/pages/list/transazioni.xhtml</to-view-id>
 		</navigation-case>

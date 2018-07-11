@@ -1320,6 +1320,25 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.modalitaRicercaStorico = modalitaRicercaStorico;
 	}
 	
+	public String getTipoStoricoLabel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+				return Costanti.LABEL_STORICO_ANDAMENTO_TEMPORALE;
+			case ID_APPLICATIVO:
+				return Costanti.LABEL_STORICO_ID_APPLICATIVO;
+			case ID_MESSAGGIO:
+				return Costanti.LABEL_STORICO_ID_MESSAGGIO;
+			case ID_TRANSAZIONE:
+			default:
+				return Costanti.LABEL_STORICO_ID_TRANSAZIONE;
+			}
+		}
+		
+		return "Visualizza Transazioni";
+	}
+	
 	public String getModalita() {
 		if(this.modalita == null)
 			return Utility.getLoginBean().getModalita();

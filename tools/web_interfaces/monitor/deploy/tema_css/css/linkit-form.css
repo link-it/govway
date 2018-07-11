@@ -431,3 +431,30 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 	text-align: right;
 	width: 33%;
 }
+
+
+.tipologie {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tipologie > div {
+/*   background-color: #f1f1f1; */
+  width: 140px;
+  margin: 10px;
+  text-align: center;
+  height: 80px;
+}
+.tipologia-button {
+    position: relative;
+    text-decoration: none;
+}
+
+
+.tipologia-button-text {
+    /* position: absolute; */
+    display: block;
+    white-space: nowrap;
+    text-decoration: none;
+    margin-top: 8px;
+}

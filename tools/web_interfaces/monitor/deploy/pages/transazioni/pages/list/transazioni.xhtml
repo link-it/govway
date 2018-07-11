@@ -7,15 +7,28 @@ xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:link="http://www.link.it">
 		
+	<ui:define name="navbar">
+		<a4j:outputPanel id="transazioniCrumbsCtr" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">	
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="transazioniStart" value="Storico" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="msgLabelRicercaSceltaDiag" value="#{searchFormTransazioni.tipoStoricoLabel}" styleClass="ultimo-path"/></li>
+		</ul>	
+		</a4j:outputPanel>
+	</ui:define>	
 	<ui:define name="body">
-		<style>
-			#crumbs {display: none;	}					
-		</style>
+		<a4j:outputPanel id="panelPaginaTransazioniCssCtr" rendered="#{searchFormTransazioni.periodo eq 'Live'}">	
+			<style>
+				#crumbs {display: none;	}					
+			</style>
+		</a4j:outputPanel>
 		<a4j:loadStyle src="resource:///css/transazioni.css" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" />
 		<a4j:loadScript src="resource://scripts/utils.min.js" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
 		<a4j:outputPanel id="panelPaginaTransazioniCtr" layout="block">
 			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live')}" 
-				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : 'Visualizza Transazioni'}" switchType="client">
+				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : searchFormTransazioni.tipoStoricoLabel}" switchType="client">
 				<f:facet name="openMarker">
 					<span class="icon-search-box">
 						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>

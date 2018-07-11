@@ -46,6 +46,8 @@ import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazio
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -55,6 +57,7 @@ import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.Storico;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
@@ -95,9 +98,12 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private boolean exportCsvAbilitato = false;
 	private boolean exportCsvCompletato = false;
 	private boolean visualizzaDataAccettazione = false;
-	
 
 	private ApplicationBean applicationBean = null;
+	
+	private List<Storico> tipiStorico;
+	private String tipoStorico;
+	
 
 	public TransazioniBean(){
 		super();
@@ -881,4 +887,34 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	private Boolean showSelezioneColonne = false;
 
+
+	public List<Storico> getTipiStorico() {
+		if(this.tipiStorico == null){
+			this.tipiStorico = new ArrayList<Storico>();
+
+			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE.getValue(), Costanti.LABEL_STORICO_ANDAMENTO_TEMPORALE, ModalitaRicercaTransazioni.ANDAMENTO_TEMPORALE));
+			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue(), Costanti.LABEL_STORICO_ID_APPLICATIVO, ModalitaRicercaTransazioni.ID_APPLICATIVO));
+			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), Costanti.LABEL_STORICO_ID_MESSAGGIO, ModalitaRicercaTransazioni.ID_MESSAGGIO));
+			this.tipiStorico.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), Costanti.LABEL_STORICO_ID_TRANSAZIONE, ModalitaRicercaTransazioni.ID_TRANSAZIONE));
+		}
+		
+		return this.tipiStorico;
+	}
+
+	public void setTipiStorico(List<Storico> tipiStorico) {
+		this.tipiStorico = tipiStorico;
+	}
+
+	public String getTipoStorico() {
+		return this.tipoStorico;
+	}
+
+	public void setTipoStorico(String tipoStorico) {
+		this.tipoStorico = tipoStorico;
+		
+		this.search.initSearchListener(null);
+		this.search.setModalitaRicercaStorico(this.tipoStorico);
+		
+	}
+	
 }

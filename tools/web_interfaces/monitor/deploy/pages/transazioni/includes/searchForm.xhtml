@@ -9,22 +9,14 @@
  <a4j:region renderRegionOnly="true"> 
 		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
 			
-			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" rendered="#{sf_bean.periodo != 'Live'}">
+			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
+				rendered="#{sf_bean.periodo != 'Live' and sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
 				<div class="subtitle">
 					<h:outputText id="idModalitaRicerca" value="Modalità Ricerca" styleClass="subtitle" />
 				</div>
-				
-				<link:prop label="Tipo">
-					<rich:comboBox id="tipologiaRicercaCombo" value="#{sf_bean.modalitaRicercaStorico}" defaultLabel="Seleziona Modalità di Ricerca" converter="selectItemConverter"
-							width="412" enableManualInput="false">
-						<f:selectItem itemLabel="Intervallo Temporale" itemValue="intervalloTemporale" />
-						<f:selectItem itemLabel="Identificativo Applicativo" itemValue="idApplicativo" />
-						<f:selectItem itemLabel="Identificativo Messaggio" itemValue="idMessaggio" />
-						<f:selectItem itemLabel="Identificativo Transazione" itemValue="idTransazione" />
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" actionListener="#{sf_bean.modalitaRicercaListener}" limitToList="true" oncomplete="#{outOfRegionToRefresh}()" />
-					</rich:comboBox>
-				</link:prop>
 			</a4j:outputPanel>
+			
+			<h:inputHidden value="#{sf_mbean.tipoStorico}" rendered="#{sf_bean.periodo != 'Live'}"/>
 			
 			<a4j:outputPanel id="panelProtocollo" layout="block" 
 				rendered="#{sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}" >
