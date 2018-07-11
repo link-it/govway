@@ -1636,11 +1636,6 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		List<SelectItem> lst = new ArrayList<>();
 		
 		lst.add(new SelectItem("--", "--"));  
-		/*
-				<f:selectItem itemValue="applicativo" itemLabel="Applicativo"/>
-		<f:selectItem itemValue="identificatoAutenticato" itemLabel="Identificativo Autenticato"/>
-		<f:selectItem itemValue="tokenInfo" itemLabel="Token Info"/>
-		*/
 		
 		if(!this.getTipologiaRicerca().equals("ingresso")) {
 			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));  

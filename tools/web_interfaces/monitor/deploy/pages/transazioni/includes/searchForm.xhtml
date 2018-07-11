@@ -184,8 +184,8 @@
 							<rich:toolTip id="saToolTip" rendered="#{not empty sf_servizioApplicativo}" direction="top-right" for="saCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizioApplicativo}"/>
 						</link:prop>
 					</a4j:outputPanel>
-					
-					<a4j:outputPanel layout="block" id="idAutenticatoComboCtr" rendered="#{sf_bean.riconoscimento == 'identificatoAutenticato'}">
+
+					<a4j:outputPanel layout="block" id="idAutenticatoComboCtr" rendered="#{sf_bean.riconoscimento == 'identificativoAutenticato'}">
 						<link:prop label="Autenticazione" required="true">
 							<rich:comboBox id="authCombo" value="#{sf_bean.autenticazione}" defaultLabel="Selezione Autenticazione" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="412" enableManualInput="false">
@@ -210,7 +210,7 @@
 					
 					</a4j:outputPanel>
 					
-					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificatoAutenticato'}">
+					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificativoAutenticato'}">
 						<link:prop label="Ricerca Esatta">
 							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
 								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
