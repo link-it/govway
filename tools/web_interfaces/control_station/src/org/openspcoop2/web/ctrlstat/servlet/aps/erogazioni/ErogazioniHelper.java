@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -65,6 +66,8 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
+import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -797,11 +800,6 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// sezione 1 riepilogo
 		Vector<DataElement> dati = datiPagina.elementAt(0);
 
-//		DataElement de = new DataElement();
-//		de.setLabel(ErogazioniCostanti.LABEL_ASPS_RIEPILOGO);
-//		de.setType(DataElementType.TITLE);
-//		dati.addElement(de);
-
 		// Titolo Servizio
 		DataElement de = new DataElement();
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
@@ -817,8 +815,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		dati.addElement(de);
 		
 		// soggetto erogatore
-		
-		
+		if(gestioneFruitori) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SOGGETTO_EROGATORE);
+			de.setValue(this.getLabelNomeSoggetto(protocollo,asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
+			de.setType(DataElementType.TEXT);
+			dati.addElement(de);
+		}
 
 		// Metadati Servizio 
 		de = new DataElement();
@@ -919,13 +922,42 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
 			String urlConnettore = "";
-			for (int i = 0; i < connis.sizePropertyList(); i++) {
-				Property singlecp = cp.get(i);
-				if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
-					urlConnettore = singlecp.getValore();
-					break;
+
+			//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+			//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+			//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+			//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+//			TipiConnettore.NULL 
+//			TipiConnettore.CUSTOM -> connettore custom
+			String tipo = connis.getTipo();
+			if ((connis.getCustom()!=null && connis.getCustom()) && 
+					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+				tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+			}  
+
+			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+				urlConnettore = ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+				urlConnettore = ConnettoreNULL.LOCATION;
+			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+				urlConnettore = ConnettoreNULLEcho.LOCATION;
+			} else {  
+				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+				if(tipo.equals(TipiConnettore.FILE.getNome()))
+					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+			
+				for (int i = 0; i < connis.sizePropertyList(); i++) {
+					Property singlecp = cp.get(i);
+					if (singlecp.getNome().equals(propertyName)) {
+						urlConnettore = singlecp.getValore();
+						break;
+					}
 				}
 			}
+			
 			de.setValue(urlConnettore);
 			de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, paIdProvider, paIdPortaPerSA, paIdAsps,
 					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
@@ -992,7 +1024,36 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setType(DataElementType.TEXT);
 			org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
 			Map<String, String> props = connettore.getProperties();
-			String urlConnettore = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
+			String urlConnettore = "";
+
+			//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+			//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+			//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+			//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+//			TipiConnettore.NULL 
+//			TipiConnettore.CUSTOM -> connettore custom
+			String tipo = connettore.getTipo();
+			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+				tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+			}  
+
+			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+				urlConnettore = ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+				urlConnettore = ConnettoreNULL.LOCATION;
+			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+				urlConnettore = ConnettoreNULLEcho.LOCATION;
+			} else {  
+				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+				if(tipo.equals(TipiConnettore.FILE.getNome()))
+					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+			
+				urlConnettore = props.get(propertyName);
+			}
 			
 			// Controllo se richiedere il connettore
 			boolean connettoreStatic = false;

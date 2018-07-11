@@ -1322,6 +1322,9 @@ public final class PorteApplicativeChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE, 
 					ForwardParams.CHANGE());
 		} catch (Exception e) {

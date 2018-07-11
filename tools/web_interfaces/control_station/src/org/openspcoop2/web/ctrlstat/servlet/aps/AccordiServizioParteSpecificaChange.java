@@ -1983,7 +1983,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			apsHelper.prepareServiziList(ricerca, listaServizi);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
+			
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.CHANGE());
 		} catch (Exception e) {

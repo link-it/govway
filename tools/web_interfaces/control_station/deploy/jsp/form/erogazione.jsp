@@ -44,12 +44,6 @@
 	Vector<?> datiConGruppi = pd.getDati();
 	Vector<?> dati = (Vector<?>) datiConGruppi.elementAt(0);
 	
-	boolean elementsRequired = false;
-	boolean elementsRequiredEnabled = true;
-	if (pd.getMode().equals("view-noeditbutton")) {
-		elementsRequiredEnabled = false;
-	}
-	
 	boolean visualizzaPanelLista = !pd.isPageBodyEmpty();
 	
 	String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
@@ -67,6 +61,22 @@
 	boolean mostraFormHeader = false;
 	int colFormHeader = (mostraFormHeader ? 2 : 1);
 	String classPanelTitolo = mostraFormHeader ? "panelDettaglioForm" : "panelDettaglioNoForm";
+	
+	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
+	Vector<DataElement> vectorLink = new Vector<DataElement>();
+
+	for (int j = 0; j < dati.size(); j++) {
+	    DataElement de = (DataElement) dati.elementAt(j);
+	    
+	    if (de.getType().equals("link")) {
+	    	vectorLink.add(de);
+	    } else {
+	    	vectorRiepilogo.add(de);
+	    }
+	}
+	
+	String classSpanNoEdit="spanNoEdit";
+	String classDivNoEdit="divNoEdit";
 %>
 <tbody>
 	<% if(titoloSezione != null) { %>
@@ -99,118 +109,122 @@
 				<div class="<%=classDivPanelLista %>">
 					<table class="<%=classTabellaPanelLista %>">
 					<%
-						if(elementsRequiredEnabled){
-							for (int i = 0; i < dati.size(); i++) {
-							  DataElement de = (DataElement) dati.elementAt(i);
-							  if(de.isRequired()){
-							     elementsRequired=true;
-							     break;
-							  }
-							}
-							if(elementsRequired){
-								// inserisco la riga con le note
-								%>
-								<tr class="even" name="row_CampiObbligatori">
-									<td class="campiObbligatori" colspan="2">
-										<p class="legend">
-											<strong>Note: </strong>(<em>*</em>) Campi obbligatori
-										</p>
-									</td>
-									<td class="tdInput">&nbsp;</td>
-								</tr>
-								<%
-							}
-						}
-						
 						%><tr class="even">
 							<td colspan="2">
-						<%
-							String classSpanNoEdit="spanNoEdit";
-							String classDivNoEdit="divNoEdit";
-							boolean fieldsetOpen = false;
-							for (int i = 0; i < dati.size(); i++) {
-								DataElement de = (DataElement) dati.elementAt(i);
+							
+							
+							<table class="<%=classTabellaPanelLista %>">
+								<%
+							
+							for (int i = 0; i < vectorRiepilogo.size(); i++) {
+								DataElement de = (DataElement) vectorRiepilogo.elementAt(i);
 							  
 								String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 							  	String type = de.getType();
 							  	String rowName="row_"+deName;
-							  	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
+							  	String deLabel = !de.getLabel().equals("") ? de.getLabel() : "&nbsp;";
 							  	String deNote = de.getNote();
 							  	String classInput= de.getStyleClass();
 							  	String labelStyleClass= de.getLabelStyleClass();
+							  	
+							  	String stile=null;
+							  	//per ogni entry:
+								if ((i % 2) != 0) {
+							    	stile = "odd";
+							  	} else {
+								    stile = "even";
+							  	}
 								
-							    	if (type.equals("hidden")) {
-							    		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
-							    	} else { // else hidden
-							    		if (type.equals("title")){
-							    			// se c'e' un altro field set aperto viene chiuso
-							    			if(fieldsetOpen){
-							    				%>
-							    				</fieldset>
-							        			<%
-							        			fieldsetOpen = false;
-							    			}
-							    			if(!fieldsetOpen){
-								    			%>
-								    				<fieldset>
-								    					<legend><%=deLabel %></legend>
-								    			<%
-								    			fieldsetOpen = true;
-							    			}
-							    		} else { // else title
-							    			if (type.equals("subtitle")){
-							    				%>
+							  	if (type.equals("hidden")) {
+						    		%>
+						    			<tr>
+											<td colspan="2">
+						    					<input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/>
+					    					</td>
+				    					</tr>
+			    					<%
+						    	} else { // else hidden
+						    		if (type.equals("subtitle")){
+					    				%>
+					    				<tr>
+											<td colspan="2">
 							        			<div class="subtitle <%= labelStyleClass %>">
 							        				<span class="subtitle"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
 							        			</div>
-							        			<%
-							        		} else { // else subtitle
-							        			if (type.equals("link")){
+						        			</td>
+										</tr>
+		        					<%
+					        		} else { // else subtitle		
+					        			if (type.equals("text")){
+				            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+				            				%>
+				                			<tr class="">
+												<td class="tdTextRiepilogo labelRiepilogo">
+													<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+												</td>
+												<td class="tdTextRiepilogo <%= stile %>">
+													<div class="<%=classDivNoEdit %>"> 
+						                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
+					                				
+													<% if(!de.getUrl().equals("")){
+					                					String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+					                					String classLink = "";
+					                					%>
+					                					<a class="edit-link <%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
+					                					<span class="icon-box">
+															<i class="material-icons md-14">&#xE3C9;</i>
+														</span>
+					                				</a>
+					                				<%
+							                		} // end edit-link
+													%>
+													</div>
+												</td>
+											</tr>
+				                			<%
+					                		} else { // else text
+					                		} // end else text
+											%>
+											
+										<% 
+					        			} // end else subtitle
+						    		} // end else hidden
+				        		} %>	
+								
+								<tr class="riepilogo-spacer">
+									<td colspan="2" class="tdTextRiepilogo">&nbsp;</td>
+								</tr>
+								
+								<tr>
+									<td colspan="2" class="tdTextRiepilogo">
+										<div class="riepilogo-links">
+											<%						
+											for (int i = 0; i < vectorLink.size(); i++) {
+												DataElement de = (DataElement) vectorLink.elementAt(i);
+											  
+												String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
+											  	String type = de.getType();
+											  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+											  	String classInput= de.getStyleClass();
+											  	String labelStyleClass= de.getLabelStyleClass();
+											  	
+											  	if (type.equals("link")){
+											  		if(i > 0){
+											  			%>
+								            				<span class="riepilogo-links-pipe">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+								            			<%
+												  	}
 							        				%>
-							            			<div class="propRiepilogo prop-link">
-							            				<label class="<%= labelStyleClass %>"><a href="<%= de.getUrl() %>"><%= de.getValue() %></a></label>
-							            				<span>&nbsp;</span>
-							            			</div>
+							            				<span><a href="<%= de.getUrl() %>" <%= deTip %> ><%= de.getValue() %></a></span>
 							            			<%
-							            		} else { // else link
-							            			if (type.equals("text")){
-							            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-							            				%>
-							                			<div class="propRiepilogo">
-							                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
-							                				<div class="<%=classDivNoEdit %>"> 
-								                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
-								                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
-								                				<% if(!de.getUrl().equals("")){
-								                					String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-								                					String classLink = "";
-								                					%>
-								                					<a class="edit-link <%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
-								                					<span class="icon-box">
-																		<i class="material-icons md-12">&#xE3C9;</i>
-																	</span>
-								                				</a>
-								                				<% }%>
-								                			</div>
-							                				<% if(!deNote.equals("")){ %>
-													      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
-													      	<% } %>
-							                			</div>
-							                			<%
-							                		} else { // else text
-							                		} // end else text
-							            		} // end else link
-							    			} // end else subtitle
-							    		} // end else title
-							    	} // end else hidden
-								} // for
-							
-								if(fieldsetOpen){ // se c'e' un fieldset aperto ed ho finito gli elementi devo chiudere
-									%>
-									</fieldset>
-									<%
-								}
-								%>
+							            		}
+											}
+											%>
+										</div>
+									</td>
+								</tr>
+							</table>
 								
 								<%
 								if(datiConGruppi.size() > 1) {
@@ -220,7 +234,7 @@
 										boolean buttonGroupOpen = false;
 										Vector<?> gruppo = (Vector<?>) datiConGruppi.elementAt(z);	
 										DataElement deAbilitazione =  (DataElement) gruppo.elementAt(gruppo.size() - 2);
-										String deAbilitazioneLabel = !deAbilitazione.getLabel(elementsRequiredEnabled).equals("") ? deAbilitazione.getLabel(elementsRequiredEnabled) : "&nbsp;";
+										String deAbilitazioneLabel = !deAbilitazione.getLabel().equals("") ? deAbilitazione.getLabel() : "&nbsp;";
 					  					String deAbilitazioneType = deAbilitazione.getType();
 					  					String deAbilitazioneName = !deAbilitazione.getName().equals("") ? deAbilitazione.getName() : "de_name_"+ (gruppo.size() - 2);
 					  					String deAbilitazioneNote = deAbilitazione.getNote();
@@ -228,7 +242,7 @@
 					  					String deAbilitazioneTip =  " title=\"" + deAbilitazione.getToolTip() + "\"";
 					  					
 					  					DataElement deNuovaConfigurazione =  (DataElement) gruppo.elementAt(gruppo.size() - 1);
-										String deNuovaConfigurazioneLabel = !deNuovaConfigurazione.getLabel(elementsRequiredEnabled).equals("") ? deNuovaConfigurazione.getLabel(elementsRequiredEnabled) : "&nbsp;";
+										String deNuovaConfigurazioneLabel = !deNuovaConfigurazione.getLabel().equals("") ? deNuovaConfigurazione.getLabel() : "&nbsp;";
 					  					String deNuovaConfigurazioneType = deNuovaConfigurazione.getType();
 									  	String deNuovaConfigurazioneNote = deNuovaConfigurazione.getNote();
 									  	String deNuovaConfigurazioneClassInput= deNuovaConfigurazione.getStyleClass();
@@ -244,7 +258,7 @@
 											String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 										  	String type = de.getType();
 										  	String rowName="row_"+deName;
-										  	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
+										  	String deLabel = !de.getLabel().equals("") ? de.getLabel() : "&nbsp;";
 										  	String deNote = de.getNote();
 										  	String classInput= de.getStyleClass();
 										  	String labelStyleClass= de.getLabelStyleClass();

@@ -1889,6 +1889,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.ADD());
+			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,
 					ForwardParams.ADD());
 

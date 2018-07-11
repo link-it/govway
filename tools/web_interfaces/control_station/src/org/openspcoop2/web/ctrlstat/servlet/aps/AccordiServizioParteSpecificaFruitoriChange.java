@@ -159,6 +159,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		
 		try {
 			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
 			PageData pdOld = ServletUtils.getPageDataFromSession(session);
@@ -514,7 +515,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				String labelPerPorta = null;
 				if(accessoDaListaAPS) {
 					if(!multitenant) {
-						Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_DELEGATE_MODIFICA_CONNETTORE;
 						} else {
@@ -1341,7 +1341,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+			}
 			return ServletUtils.getStrutsForwardEditModeFinished( mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,
 					ForwardParams.CHANGE());
 

@@ -119,7 +119,7 @@ public final class PorteDelegateChange extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(request, pd, session);
 
 			String idPorta = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
@@ -557,7 +557,6 @@ public final class PorteDelegateChange extends Action {
 //				} else {
 //					nomeBreadCrumb = mappingFruizionePortaDelegata.getNome(); 
 //				}
-				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 				
 				if(datiInvocazione) {
 					lstParam.remove(lstParam.size()-1);
@@ -1351,6 +1350,9 @@ public final class PorteDelegateChange extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
+			}
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE, ForwardParams.CHANGE());
 
 		} catch (Exception e) {

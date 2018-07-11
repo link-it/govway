@@ -309,6 +309,7 @@
             <forward name="serviziApplicativiEndPointInvocazioneServizioOk" path="/jsplib/listElement.jsp"/>
             <forward name="serviziApplicativiEndPointInvocazioneServizioCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/serviziApplicativiEndPointRispostaAsincrona" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiEndPointRispostaAsincrona"
             scope="request" validate="true">

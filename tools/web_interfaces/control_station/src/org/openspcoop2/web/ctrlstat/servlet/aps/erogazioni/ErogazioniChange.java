@@ -173,7 +173,7 @@ public final class ErogazioniChange extends Action {
 				pd.setDati(datiPagina);
 				pd.disableEditMode();
 
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+//				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 //				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 //			}
