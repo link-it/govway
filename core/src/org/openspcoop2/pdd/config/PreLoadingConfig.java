@@ -49,11 +49,14 @@ import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.utils.Utilities;
@@ -92,6 +95,12 @@ public class PreLoadingConfig  {
 		List<String> registryNameList = new ArrayList<>();
 		List<byte[]> registryList = new ArrayList<>();
 		
+		List<String> controllaTrafficoConfigPolicyNameList = new ArrayList<>();
+		List<byte[]> controllaTrafficoConfigPolicyList = new ArrayList<>();
+		
+		List<String> controllaTrafficoActivePolicyNameList = new ArrayList<>();
+		List<byte[]> controllaTrafficoActivePolicyList = new ArrayList<>();
+		
 		File fTmp = File.createTempFile("preLoadConfiguration", ".zip");
 		//System.out.println("TMP: "+fTmp.getAbsolutePath());
 		try {
@@ -121,6 +130,14 @@ public class PreLoadingConfig  {
 							else if(org.openspcoop2.core.registry.utils.XMLUtils.isRegistroServizi(element)) {
 								registryNameList.add(zipEntry.getName());
 								registryList.add(bytes);
+							}
+							else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isConfigurazionePolicy(element)) {
+								controllaTrafficoConfigPolicyNameList.add(zipEntry.getName());
+								controllaTrafficoConfigPolicyList.add(bytes);
+							}
+							else if(org.openspcoop2.core.controllo_traffico.utils.XMLUtils.isAttivazionePolicy(element)) {
+								controllaTrafficoActivePolicyNameList.add(zipEntry.getName());
+								controllaTrafficoActivePolicyList.add(bytes);
 							}
 							else {
 								throw new Exception("unknown type");
@@ -278,6 +295,86 @@ public class PreLoadingConfig  {
 				}catch(Exception e) {
 					this.log.error("PreLoad Config ["+name+"] failed: "+e.getMessage(),e);
 				}
+			}
+		}
+		
+		
+		
+		if(controllaTrafficoConfigPolicyNameList.size()>0) {
+			org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer deserializerCT = new  org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer (); 
+			DriverConfigurazioneDB driverConfigurazione = (DriverConfigurazioneDB) ConfigurazionePdDReader.getDriverConfigurazionePdD();
+			Connection con = null;
+			try {
+				con = driverConfigurazione.getConnection("preloading controllaTrafficoConfigPolicies");
+				ServiceManagerProperties jdbcProperties = new ServiceManagerProperties();
+				jdbcProperties.setDatabaseType(driverConfigurazione.getTipoDB());
+				jdbcProperties.setShowSql(true);
+				org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = 
+						new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, jdbcProperties, this.log);
+				org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyService service = serviceManager.getConfigurazionePolicyService();
+				
+				org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions cleaner = new org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions();
+				
+				for (int i = 0; i < controllaTrafficoConfigPolicyNameList.size(); i++) {
+					String name = controllaTrafficoConfigPolicyNameList.get(i);
+					byte [] content = controllaTrafficoConfigPolicyList.get(i);
+					
+					try {
+						this.log.info("PreLoading ControlloTraffico ConfigPolicy ["+name+"] ...");
+						org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy policy = deserializerCT.readConfigurazionePolicy(content);
+						IdPolicy id = new IdPolicy();
+						id.setNome(policy.getIdPolicy());
+						if(service.exists(id)==false) {
+							cleaner.clean(policy);
+							service.create(policy);
+						}
+						this.log.info("PreLoading ControlloTraffico ConfigPolicy ["+name+"] effettuato con successo");
+		
+					}catch(Exception e) {
+						this.log.error("PreLoad ControlloTraffico ConfigPolicy ["+name+"] failed: "+e.getMessage(),e);
+					}
+				}
+			}finally {
+				driverConfigurazione.releaseConnection(con);
+			}
+		}
+		
+		if(controllaTrafficoActivePolicyNameList.size()>0) {
+			org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer deserializerCT = new  org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer (); 
+			DriverConfigurazioneDB driverConfigurazione = (DriverConfigurazioneDB) ConfigurazionePdDReader.getDriverConfigurazionePdD();
+			Connection con = null;
+			try {
+				con = driverConfigurazione.getConnection("preloading controllaTrafficoActivePolicies");
+				ServiceManagerProperties jdbcProperties = new ServiceManagerProperties();
+				jdbcProperties.setDatabaseType(driverConfigurazione.getTipoDB());
+				jdbcProperties.setShowSql(true);
+				org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = 
+						new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, jdbcProperties, this.log);
+				org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyService service = serviceManager.getAttivazionePolicyService();
+				
+				org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions cleaner = new org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions();
+				
+				for (int i = 0; i < controllaTrafficoActivePolicyNameList.size(); i++) {
+					String name = controllaTrafficoActivePolicyNameList.get(i);
+					byte [] content = controllaTrafficoActivePolicyList.get(i);
+					
+					try {
+						this.log.info("PreLoading ControlloTraffico ActivePolicy ["+name+"] ...");
+						org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = deserializerCT.readAttivazionePolicy(content);
+						IdActivePolicy id = new IdActivePolicy();
+						id.setNome(policy.getIdActivePolicy());
+						if(service.exists(id)==false) {
+							cleaner.clean(policy);
+							service.create(policy);
+						}
+						this.log.info("PreLoading ControlloTraffico ActivePolicy ["+name+"] effettuato con successo");
+		
+					}catch(Exception e) {
+						this.log.error("PreLoad ControlloTraffico ActivePolicy ["+name+"] failed: "+e.getMessage(),e);
+					}
+				}
+			}finally {
+				driverConfigurazione.releaseConnection(con);
 			}
 		}
 
