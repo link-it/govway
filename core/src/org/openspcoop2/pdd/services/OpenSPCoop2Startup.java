@@ -58,7 +58,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.eventi.Evento;
-import org.openspcoop2.core.eventi.constants.CodiceEventoStatoPortaDominio;
+import org.openspcoop2.core.eventi.constants.CodiceEventoStatoGateway;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
@@ -2285,8 +2285,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 					if(propertiesReader.isEventiRegistrazioneStatoPorta()){
 						Evento evento = new Evento();
-						evento.setTipo(TipoEvento.STATO_PORTA_DOMINIO.getValue());
-						evento.setCodice(CodiceEventoStatoPortaDominio.START.getValue());
+						evento.setTipo(TipoEvento.STATO_GATEWAY.getValue());
+						evento.setCodice(CodiceEventoStatoGateway.START.getValue());
 						evento.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
 						evento.setClusterId(clusterID);
 						OpenSPCoop2Startup.this.gestoreEventi.log(evento);
@@ -2391,8 +2391,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(OpenSPCoop2Startup.this.gestoreEventi!=null){
 					if(properties.isEventiRegistrazioneStatoPorta()){
 						eventoShutdown = new Evento();
-						eventoShutdown.setTipo(TipoEvento.STATO_PORTA_DOMINIO.getValue());
-						eventoShutdown.setCodice(CodiceEventoStatoPortaDominio.STOP.getValue());
+						eventoShutdown.setTipo(TipoEvento.STATO_GATEWAY.getValue());
+						eventoShutdown.setCodice(CodiceEventoStatoGateway.STOP.getValue());
 						eventoShutdown.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
 						eventoShutdown.setClusterId(clusterID);
 						OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown,true);

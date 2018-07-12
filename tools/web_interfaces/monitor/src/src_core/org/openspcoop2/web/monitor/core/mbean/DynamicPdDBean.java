@@ -342,14 +342,25 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		}
 		if(!this.serviziApplicativiSelectItemsWidthCheck){
 			this.serviziApplicativi = new ArrayList<SelectItem>();
+			
+			String tipoProtocollo =   this.search.getProtocollo();
+			
 			String nomeSoggetto = null;
 			String tipoSoggetto = null;
 			if (StringUtils.isNotBlank(this.search.getSoggettoLocale()) ) {
 				tipoSoggetto = this.search.getTipoSoggettoLocale();
 				nomeSoggetto = this.search.getSoggettoLocale();
 			}
-
-			String tipoProtocollo =   this.search.getProtocollo();
+			else {
+				boolean multiTenant = Utility.getLoggedUtente().isPermitMultiTenant();
+				if(!multiTenant) {
+					List<Soggetto> lista = this.dynamicUtils.getListaSoggetti(tipoProtocollo, TipoPdD.OPERATIVO);
+					if(lista!=null && lista.size()==1) { // se maggiore di 1 e' saltato il multitenat
+						nomeSoggetto = lista.get(0).getNomeSoggetto();
+						tipoSoggetto = lista.get(0).getTipoSoggetto();
+					}
+				}
+			}
 
 			this.serviziApplicativi = this.dynamicUtils.getListaSelectItemsServiziApplicativiFromSoggettoLocale(tipoProtocollo,tipoSoggetto, nomeSoggetto);
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.serviziApplicativi);

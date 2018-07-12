@@ -562,11 +562,11 @@ public class PorteApplicativeControlloAccessi extends Action {
 				if(pa.getGestioneToken().getAutenticazione()==null) {
 					pa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
 				}
-				pa.getGestioneToken().getAutenticazione().setIssuer(StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
-				pa.getGestioneToken().getAutenticazione().setClientId(StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
-				pa.getGestioneToken().getAutenticazione().setSubject(StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
-				pa.getGestioneToken().getAutenticazione().setUsername(StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
-				pa.getGestioneToken().getAutenticazione().setEmail(StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
+				pa.getGestioneToken().getAutenticazione().setIssuer(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
+				pa.getGestioneToken().getAutenticazione().setClientId(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
+				pa.getGestioneToken().getAutenticazione().setSubject(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
+				pa.getGestioneToken().getAutenticazione().setUsername(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
+				pa.getGestioneToken().getAutenticazione().setEmail(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
 			} else {
 				pa.getGestioneToken().setPolicy(null);
 				pa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO); 

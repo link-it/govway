@@ -195,11 +195,11 @@ public class PorteApplicativeCore extends ControlStationCore {
 			if(portaApplicativa.getGestioneToken().getAutenticazione()==null) {
 				portaApplicativa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
 			}
-			portaApplicativa.getGestioneToken().getAutenticazione().setIssuer(StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
-			portaApplicativa.getGestioneToken().getAutenticazione().setClientId(StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
-			portaApplicativa.getGestioneToken().getAutenticazione().setSubject(StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
-			portaApplicativa.getGestioneToken().getAutenticazione().setUsername(StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
-			portaApplicativa.getGestioneToken().getAutenticazione().setEmail(StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setIssuer(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setClientId(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setSubject(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setUsername(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setEmail(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail) ? StatoFunzionalita.ABILITATO : StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
 		} else {
 			portaApplicativa.getGestioneToken().setPolicy(null);
 			portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO); 
