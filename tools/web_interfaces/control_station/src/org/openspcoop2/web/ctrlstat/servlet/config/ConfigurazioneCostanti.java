@@ -488,7 +488,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_TIPO_ERRORE_HTTP_503 = "Http 503 (Service Unavailable)";
 	public final static String LABEL_CONFIGURAZIONE_TIPO_ERRORE_HTTP_500 = "Http 500 (Internal Server Error)";	
 	public final static String CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE_TEMPLATE = "NUM";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE = "La PdD viene considerata congestionata se vengono superate le "+
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE = "GovWay viene considerato congestionato se vengono superate le "+
 			CONFIGURAZIONE_CONTROLLO_CONGESTIONE_THRESHOLD_DESCRIZIONE_TEMPLATE+" richieste simultanee";
 	
 	public final static String LABEL_CONFIGURAZIONE_POLICY_POSSIBILI_COMPLETATE_GLOBALI = "Non esistono policy da attivare";
@@ -970,11 +970,11 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_NUMERO = "_NUMERO_RICHIESTE_PER_CONGESTIONE_"; 
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_PREFIX = 
-			"La policy viene applicata se la PdD è congestionata dalle richieste.\n"+
+			"La policy viene applicata se GovWay è congestionato dalle richieste.\n"+
 				"I Livelli di soglia sono indicati nella configurazione di Controllo del Traffico.\n";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_CONGESTION_ACTIVE_AS_TEXT = 
 			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_PREFIX+
-	 			"La PdD viene considerata congestionata se vengono superate le "+
+	 			"GovWay viene considerato congestionato se vengono superate le "+
 	 			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_NUMERO+" richieste simultanee.";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_CONGESTION_NOT_ACTIVE_AS_TEXT = 
 			LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_CON_CONGESTIONE_NOTE_PREFIX+
@@ -996,9 +996,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_NOT_STATO = "Not";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_APPLICABILITA_STATO_ALLARME_STATO = "Stato";
 		
-	public final static String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio della PdD";
-	public final static String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio della PdD";
-	public final static String PERSISTENTI = "<BR><b>Attenzione:</b> La modifica effettuata rimarrà persistente anche dopo un riavvio della PdD";
+	public final static String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio di GovWay";
+	public final static String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio di GovWay";
+	public final static String PERSISTENTI = "<BR><b>Attenzione:</b> La modifica effettuata rimarrà persistente anche dopo un riavvio di GovWay";
 	public final static String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO = "Configurazione Generale modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_REGISTRO+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING+" modificata con successo"+RIAVVIO;

@@ -198,14 +198,14 @@
 	
 	<xsd:simpleType name="TipoEvento">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="StatoPortaDominio"/>
+			<xsd:enumeration value="StatoGateway"/>
 			<xsd:enumeration value="ControlloTraffico_NumeroMassimoRichiesteSimultanee"/>
 			<xsd:enumeration value="ControlloTraffico_SogliaCongestione"/>
 			<xsd:enumeration value="RateLimiting_Policy"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:simpleType name="CodiceEventoStatoPortaDominio">
+	<xsd:simpleType name="CodiceEventoStatoGateway">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Start"/>
 			<xsd:enumeration value="Stop"/>

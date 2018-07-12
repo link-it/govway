@@ -232,7 +232,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			IDSoggetto dominio = this.requestInfo!=null ? this.requestInfo.getIdentitaPdD() : this.openspcoopProperties.getIdentitaPortaDefault(this.outRequestContext.getProtocolFactory().getProtocol());
 			String nomePorta = (this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) ? this.requestInfo.getProtocolContext().getInterfaceName() : null;
 			try{
-				this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), nomePorta, this.outRequestContext.getPddContext());
+				if(this.outRequestContext!=null) {
+					// sara' null nel caso in cui il connettore viene utilizzato per funzionalita' esterne come ad esempio il token. Es: org.openspcoop2.pdd.core.token.GestoreToken.http
+					this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), nomePorta, this.outRequestContext.getPddContext());
+				}
 			}catch(Exception e){
 				this.eccezioneProcessamento = e;
 				this.logger.error("Errore durante l'inizializzazione del dump binario: "+this.readExceptionMessageFromException(e),e);

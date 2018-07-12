@@ -38,8 +38,8 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum TipoEvento implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("StatoPortaDominio")
-	STATO_PORTA_DOMINIO ("StatoPortaDominio"),
+	@javax.xml.bind.annotation.XmlEnumValue("StatoGateway")
+	STATO_GATEWAY ("StatoGateway"),
 	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_NumeroMassimoRichiesteSimultanee")
 	CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE ("ControlloTraffico_NumeroMassimoRichiesteSimultanee"),
 	@javax.xml.bind.annotation.XmlEnumValue("ControlloTraffico_SogliaCongestione")
