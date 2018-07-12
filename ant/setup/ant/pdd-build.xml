@@ -144,7 +144,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
 					<!-- <param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/> -->
-					<param name="value" value="OpenSPCoopSPCoopIT"/>
+					<param name="value" value="GovWaySPCoopIT"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -164,8 +164,8 @@
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
 							<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-							<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-							<param name="value" value="GovWay"/>
+							<!--<param name="value" value="domain/${antinstaller_tiposoggetto_trasparente}/${antinstaller_nomesoggetto}"/>-->
+							<param name="value" value="domain/${antinstaller_tiposoggetto_trasparente}/GovWay"/>
 						</antcall>
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
@@ -186,7 +186,7 @@
 								    <param name="file" value="${file}"/>
 									<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
 									<!-- <param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/> -->
-									<param name="value" value="OpenSPCoopSPCoopIT"/>
+									<param name="value" value="GovWaySPCoopIT"/>
 								</antcall>
 								<antcall target="set_property">
 								    <param name="file" value="${file}"/>
@@ -205,8 +205,8 @@
 									<antcall target="set_property">
 									    <param name="file" value="${file}"/>
 										<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-										<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-										<param name="value" value="GovWay"/>
+										<!--<param name="value" value="domain/${antinstaller_tiposoggetto_as4}/${antinstaller_nomesoggetto}"/>-->
+										<param name="value" value="domain/${antinstaller_tiposoggetto_as4}/GovWay"/>
 									</antcall>
 									<antcall target="set_property">
 									    <param name="file" value="${file}"/>
@@ -226,8 +226,8 @@
 											<antcall target="set_property">
 											    <param name="file" value="${file}"/>
 												<param name="token" value="org.openspcoop2.pdd.identificativoPorta.dominio"/>
-												<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-												<param name="value" value="GovWay"/>
+												<!--<param name="value" value="domain/${antinstaller_tiposoggetto_sdi}/${antinstaller_nomesoggetto}"/>-->
+												<param name="value" value="domain/${antinstaller_tiposoggetto_sdi}/GovWay"/>
 											</antcall>
 											<antcall target="set_property">
 											    <param name="file" value="${file}"/>
@@ -249,7 +249,7 @@
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.identificativoPorta.nome"/>
 			<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
-			<param name="value" value="OpenSPCoop"/>
+			<param name="value" value="GovWay"/>
 		</antcall>
 		
 		<!-- PROTOCOL SOGGETTO DEFAULT -->
@@ -260,7 +260,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.dominio"/>
 					<!--<param name="value" value="${antinstaller_nomesoggetto}SPCoopIT"/>-->
-					<param name="value" value="OpenSPCoopSPCoopIT"/>
+					<param name="value" value="GovWaySPCoopIT"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -271,7 +271,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.spcoop.identificativoPorta.nome"/>
 					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
-					<param name="value" value="OpenSPCoop"/>
+					<param name="value" value="GovWay"/>
 				</antcall>
 			</then>
 		</if>
@@ -281,8 +281,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.dominio"/>
-					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-					<param name="value" value="GovWay"/>
+					<!--<param name="value" value="domain/${antinstaller_tiposoggetto_trasparente}/${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="domain/${antinstaller_tiposoggetto_trasparente}/GovWay"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -293,7 +293,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.trasparente.identificativoPorta.nome"/>
 					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
-					<param name="value" value="OpenSPCoop"/>
+					<param name="value" value="GovWay"/>
 				</antcall>
 			</then>
 		</if>
@@ -303,8 +303,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.as4.identificativoPorta.dominio"/>
-					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-					<param name="value" value="GovWay"/>
+					<!--<param name="value" value="domain/${antinstaller_tiposoggetto_as4}/${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="domain/${antinstaller_tiposoggetto_as4}/GovWay"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -315,7 +315,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.as4.identificativoPorta.nome"/>
 					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
-					<param name="value" value="OpenSPCoop"/>
+					<param name="value" value="GovWay"/>
 				</antcall>
 			</then>
 		</if>
@@ -325,8 +325,8 @@
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.dominio"/>
-					<!--<param name="value" value="${antinstaller_nomesoggetto}PdD"/>-->
-					<param name="value" value="GovWay"/>
+					<!--<param name="value" value="domain/${antinstaller_tiposoggetto_sdi}/${antinstaller_nomesoggetto}"/>-->
+					<param name="value" value="domain/${antinstaller_tiposoggetto_sdi}/GovWay"/>
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -337,7 +337,7 @@
 				    <param name="file" value="${file}"/>
 					<param name="token" value="org.openspcoop2.pdd.sdi.identificativoPorta.nome"/>
 					<!--<param name="value" value="${antinstaller_nomesoggetto}"/>-->
-					<param name="value" value="OpenSPCoop"/>
+					<param name="value" value="GovWay"/>
 				</antcall>
 			</then>
 		</if>

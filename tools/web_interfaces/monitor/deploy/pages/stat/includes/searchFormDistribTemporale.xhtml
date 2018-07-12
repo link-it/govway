@@ -72,7 +72,7 @@
 					rendered="#{search.andamentoTemporalePerEsiti == false}">
 					<f:selectItem itemLabel="Latenza Totale" itemValue="0"/>
 					<f:selectItem itemLabel="Latenza Servizio" itemValue="1"/>
-					<f:selectItem itemLabel="Latenza Porta" itemValue="2"/>
+					<f:selectItem itemLabel="Latenza Gateway" itemValue="2"/>
 					<a4j:support event="onchange" actionListener="#{search.tipoLatenzaCBListener}" reRender="tipoLatenzaCtr"/>
 				</h:selectManyCheckbox>
 				<rich:comboBox id="tipoLatenzaCombo" value="#{search._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
@@ -80,7 +80,7 @@
 					rendered="#{search.andamentoTemporalePerEsiti}">
 					<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
 	 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>
-	 				<f:selectItem itemLabel="Latenza Porta" itemValue="Latenza Porta"/>
+	 				<f:selectItem itemLabel="Latenza Gateway" itemValue="Latenza Gateway"/>
 					<a4j:support event="onselect" actionListener="#{search.tipoLatenzaListener}"/>
 				</rich:comboBox>
 			</link:prop>

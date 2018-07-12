@@ -188,7 +188,7 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
 	 */
 	@Override
 	public String getIdentificativoPortaDefault(IDSoggetto soggetto){
-		return getIdentificativoPorta_Nome(soggetto)+"PdD";
+		return "domain/"+getIdentificativoPorta_Nome(soggetto);
 	}
 	protected String getIdentificativoPorta_Nome(IDSoggetto idSoggetto){
 		// non standard, utilizzo tipo/nome per avere l'univocita'

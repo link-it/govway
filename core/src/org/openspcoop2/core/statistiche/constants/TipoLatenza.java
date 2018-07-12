@@ -35,7 +35,7 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  */
 public enum TipoLatenza  implements IEnumeration , Serializable , Cloneable{
 
-	LATENZA_TOTALE ("Latenza Totale"), LATENZA_SERVIZIO ("Latenza Servizio"), LATENZA_PORTA ("Latenza Porta");
+	LATENZA_TOTALE ("Latenza Totale"), LATENZA_SERVIZIO ("Latenza Servizio"), LATENZA_PORTA ("Latenza Gateway");
 
 	/** Value */
 	private String value;

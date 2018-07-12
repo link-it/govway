@@ -320,13 +320,13 @@ public class StatisticsUtils {
 		FunctionField fLatenzaServizioAvg = new FunctionField(latenzaServizio, Function.AVG, "latenza_servizio");
 		selectList.add(fLatenzaServizioAvg);
 		
-		// Latenza Porta Richiesta
+		// Latenza Gateway Richiesta
 		UnixTimestampIntervalField latenzaPortaRichiesta = new UnixTimestampIntervalField("unix_latenza_richiesta", fieldConverter, true, 
 				Transazione.model().DATA_USCITA_RICHIESTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
 		FunctionField fLatenzaPortaRichiestaAvg = new FunctionField(latenzaPortaRichiesta, Function.AVG, "latenza_porta_richiesta");
 		selectList.add(fLatenzaPortaRichiestaAvg);
 		
-		// Latenza Porta Risposta
+		// Latenza Gateway Risposta
 		UnixTimestampIntervalField latenzaPortaRisposta = new UnixTimestampIntervalField("unix_latenza_risposta", fieldConverter, true, 
 				Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RISPOSTA);
 		FunctionField fLatenzaPortaRispostaAvg = new FunctionField(latenzaPortaRisposta, Function.AVG, "latenza_porta_risposta");
@@ -487,7 +487,7 @@ public class StatisticsUtils {
 		}
 		stat.setLatenzaServizio(latenzaServizioValue);
 		
-		// Latenza Porta
+		// Latenza Gateway
 		long latenzaPortaRichiestaValue = -1;
 		tmp = StatisticsUtils.readLongValue(row, "latenza_porta_richiesta");
 		if(tmp!=null){

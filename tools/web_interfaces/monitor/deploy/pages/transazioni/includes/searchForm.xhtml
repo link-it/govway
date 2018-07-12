@@ -10,7 +10,7 @@
 		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
 			
 			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
-				rendered="#{sf_bean.periodo != 'Live' and sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')}">
+				rendered="#{sf_bean.periodo != 'Live' and ( (sf_bean.showListaProtocolli and (sf_bean.modalitaRicercaStorico == 'intervalloTemporale' or sf_bean.modalitaRicercaStorico == 'idApplicativo')) or (appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale') )  }">
 				<div class="subtitle">
 					<h:outputText id="idModalitaRicerca" value="Modalità Ricerca" styleClass="subtitle" />
 				</div>
@@ -25,6 +25,18 @@
 						defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="412" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.protocolli}"/>
 						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="panelFunzionePorta" layout="block" rendered="#{appInfo.transazioni_im_enabled and sf_bean.modalitaRicercaStorico == 'intervalloTemporale'}">
+				<link:prop label="Funzione Gateway">
+					<rich:comboBox id="tipologiaTransazioneCombo" value="#{sf_bean.tipoRicercaSPCoop}" defaultLabel="Seleziona Funzione Gateway" converter="selectItemConverter"
+							width="412" rendered="#{appInfo.transazioni_im_enabled}" enableManualInput="false">
+						<f:selectItem itemLabel="Proxy Trasparente" itemValue="spcoop" />
+						<f:selectItem itemLabel="Integration Manager" itemValue="im" />
+						<f:selectItem itemLabel="Entrambe" itemValue="all" />
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
 					</rich:comboBox>
 				</link:prop>
 			</a4j:outputPanel>
@@ -80,17 +92,7 @@
 				<div class="subtitle">
 					<h:outputText id="idDatiServizio" value="Filtro Dati Servizio" styleClass="subtitle"/>
 				</div>
-								
-				<link:prop label="Funzione Porta" rendered="#{appInfo.transazioni_im_enabled}">
-					<rich:comboBox id="tipologiaTransazioneCombo" value="#{sf_bean.tipoRicercaSPCoop}" defaultLabel="Seleziona Funzione Porta" converter="selectItemConverter"
-							width="412" rendered="#{appInfo.transazioni_im_enabled}" enableManualInput="false">
-						<f:selectItem itemLabel="Proxy Trasparente" itemValue="spcoop" />
-						<f:selectItem itemLabel="Integration Manager" itemValue="im" />
-						<f:selectItem itemLabel="Entrambe" itemValue="all" />
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
-					</rich:comboBox>
-				</link:prop>
-					
+													
 				<link:prop label="Tipo" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">

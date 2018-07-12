@@ -172,23 +172,23 @@
 					</rich:toolTip>
 				</rich:column>
 				
-				<rich:column id="colPdd" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}" sortable="false" label="PdD (ID)" visible="false">
+				<rich:column id="colPdd" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}" sortable="false" label="Dominio (ID)" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outPdd1" value="PdD (ID)" />
+						<h:outputText id="outPdd1" value="Dominio (ID)" />
 					</f:facet>
 					<h:outputText id="outPdd2" value="#{item.pddCodice}"/>
 					<rich:toolTip for="outPdd2" value="#{item.pddCodice}"/>
 				</rich:column>
-				<rich:column id="colSoggetto" sortable="false" label="PdD (Soggetto)" visible="false">
+				<rich:column id="colSoggetto" sortable="false" label="Dominio (Soggetto)" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outSoggetto1" value="PdD (Soggetto)" />
+						<h:outputText id="outSoggetto1" value="Dominio (Soggetto)" />
 					</f:facet>
 					<h:outputText id="outSoggetto2" value="#{item.soggettoPdd}" rendered="#{not empty item.pddNomeSoggetto}" />
 					<rich:toolTip for="outSoggetto2" value="#{item.soggettoPdd}" rendered="#{not empty item.pddNomeSoggetto}"/>
 				</rich:column>
-				<rich:column id="colIDFruitore" sortable="false" label="Fruitore (ID PdD)" visible="false">
+				<rich:column id="colIDFruitore" sortable="false" label="Fruitore (Dominio)" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outIDFruitore1" value="Fruitore (ID PdD)" />
+						<h:outputText id="outIDFruitore1" value="Fruitore (Dominio)" />
 					</f:facet>
 					<h:outputText id="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}" />
 					<rich:toolTip for="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}"/>
@@ -200,9 +200,9 @@
 					<h:outputText id="outFruitore2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}" />
 					<rich:toolTip for="outFruitore2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
 				</rich:column>
-				<rich:column id="colIDErogatore" sortable="false" label="Erogatore (ID PdD)" visible="false">
+				<rich:column id="colIDErogatore" sortable="false" label="Erogatore (Dominio)" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outIDErogatore1" value="Erogatore (ID PdD)" width="160px"/>
+						<h:outputText id="outIDErogatore1" value="Erogatore (Dominio)" width="160px"/>
 					</f:facet>
 					<h:outputText id="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}" />
 					<rich:toolTip for="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}"/>
@@ -250,9 +250,9 @@
 						<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter"/>
 					</rich:toolTip>
 				</rich:column>
-				<rich:column id="colLatenzaPorta" sortable="false" label="Latenza Porta" width="120px" visible="false">
+				<rich:column id="colLatenzaPorta" sortable="false" label="Latenza Gateway" width="120px" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outLatenzaPorta1" value="Latenza Porta" />
+						<h:outputText id="outLatenzaPorta1" value="Latenza Gateway" />
 					</f:facet>
 					<h:outputText id="outLatenzaPorta2" value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 					<rich:toolTip for="outLatenzaPorta2">

@@ -66,9 +66,6 @@
 							<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt}"/>
 							<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoErogatore" value="Applicativo Erogatore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
-							<h:outputText id="outServizioApplicativoErogatore" value="#{dettagliBean.dettaglio.servizioApplicativoErogatore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
-							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCorrApp" value="ID Applicativo Richiesta" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativa}"/>
 							<h:outputText id="outCorrApp" value="#{dettagliBean.dettaglio.idCorrelazioneApplicativa}" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativa}"/>
 													
@@ -560,13 +557,15 @@
 								<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 									rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
 								
-								<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Porta Delegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Porta Applicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
-									rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
-								<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
-								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
+								<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
+							
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Indirizzo Client" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								<h:outputText id="outIndirizzoClient" value="#{dettagliBean.dettaglio.socketClientAddress}" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
 								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelXForwardedFor" value="X-Forwarded-For" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
+								<h:outputText id="outXForwardedFor" value="#{dettagliBean.dettaglio.transportClientAddress}" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
+							
 								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 								<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 								
@@ -626,15 +625,12 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
 							<h:outputText id="outIdCluster" value="#{dettagliBean.dettaglio.clusterId}" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
 												
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdD" value="PdD (ID)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdD" value="Dominio (ID)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 							<h:outputText id="outPdD" value="#{dettagliBean.dettaglio.pddCodice}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 						
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="PdD (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="Dominio (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 							<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.soggettoPdd}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 																		
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
-							<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
-							
 							<h:outputText styleClass="outputFieldLabel" id="outLabelConnettore" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'URL Inoltro' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'URL Consegna' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'URL Inoltro' : 'URL Inoltro'}"
 							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
 							<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
@@ -642,16 +638,13 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
 							<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelXForwardedFor" value="X-Forwarded-For" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
-							<h:outputText id="outXForwardedFor" value="#{dettagliBean.dettaglio.transportClientAddress}" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
-							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaTotale" value="Latenza Totale" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" />
 							<h:outputText id="outLatenzaTotale" value="#{dettagliBean.dettaglio.latenzaTotale}" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" converter="latenzaConverter" />
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaServizio" value="Latenza Servizio" rendered="#{not empty dettagliBean.dettaglio.latenzaServizio}" />
 							<h:outputText id="outLatenzaServizio" value="#{dettagliBean.dettaglio.latenzaServizio}" rendered="#{not empty dettagliBean.dettaglio.latenzaServizio}" converter="latenzaConverter" />
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaPorta" value="Latenza Porta" rendered="#{not empty dettagliBean.dettaglio.latenzaPorta}" />
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaPorta" value="Latenza Gateway" rendered="#{not empty dettagliBean.dettaglio.latenzaPorta}" />
 							<h:outputText id="outLatenzaPorta" value="#{dettagliBean.dettaglio.latenzaPorta}" rendered="#{not empty dettagliBean.dettaglio.latenzaPorta}" converter="latenzaConverter" />
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelEventiGestione" value="Eventi" rendered="#{not empty dettagliBean.dettaglio.eventiGestioneHTML}" />
@@ -659,7 +652,14 @@
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelStato" value="Stato" rendered="#{not empty dettagliBean.dettaglio.stato}" />
 							<h:outputText id="outStato" value="#{dettagliBean.dettaglio.stato}" rendered="#{not empty dettagliBean.dettaglio.stato}" />
-						
+							
+							<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Porta Delegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Porta Applicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
+									rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
+							<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoErogatore" value="Applicativo Erogatore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
+							<h:outputText id="outServizioApplicativoErogatore" value="#{dettagliBean.dettaglio.servizioApplicativoErogatore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
+							
 						</h:panelGrid>
 					
 					</link:fieldset>
