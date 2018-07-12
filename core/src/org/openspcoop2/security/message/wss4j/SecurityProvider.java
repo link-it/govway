@@ -25,9 +25,13 @@ package org.openspcoop2.security.message.wss4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.security.message.constants.EncryptionKeyTransportAlgorithm;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
@@ -42,6 +46,51 @@ import org.openspcoop2.security.message.xml.XMLCostanti;
  */
 public class SecurityProvider extends org.openspcoop2.security.message.xml.SecurityProvider  {
 
+	@Override
+	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
+
+		Properties defaultProperties = MultiPropertiesUtilities.getDefaultProperties(mapProperties);
+		Properties samlConfig = mapProperties.get(SecurityConstants.SAML_PROF_REF_ID);
+		
+		boolean envelopedSaml = false;
+		if(defaultProperties.containsKey(SecurityConstants.SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID)) {
+			String tmp = defaultProperties.getProperty(SecurityConstants.SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID);
+			envelopedSaml = Boolean.parseBoolean(tmp);
+		}
+		
+		boolean holderOfKey = false;
+		// receiver
+		if(defaultProperties.containsKey(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID)) {
+			String tmp = defaultProperties.getProperty(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID);
+			holderOfKey = SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_HOLDER_OF_KEY.equals(tmp);
+		}
+		// sender
+		else if(samlConfig!=null) {
+			if(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) {
+				String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
+				holderOfKey = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_HOLDER_OF_KEY.equals(tmp);
+			}
+		}
+		
+		if(holderOfKey && !envelopedSaml) {
+			throw new ProviderValidationException("Subject Confirmation Method 'Holder of Key' require Enveloped SAML Signature");
+		}
+		
+		boolean bearer = false;
+		// sender
+		if(samlConfig!=null) {
+			if(samlConfig.containsKey(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD)) {
+				String tmp = samlConfig.getProperty(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD);
+				bearer = SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_BEARER.equals(tmp);
+			}
+		}
+		
+		if(bearer && !envelopedSaml) {
+			throw new ProviderValidationException("Subject Confirmation Method 'Bearer' require Enveloped SAML Signature");
+		}
+		
+	}	
+	
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
 		if(SecurityConstants.USERNAME_TOKEN_PASSWORD_TYPE.equals(id)) {

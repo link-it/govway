@@ -36,7 +36,6 @@ import java.util.Properties;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.saml.bean.Version;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.openspcoop2.utils.Utilities;
@@ -749,26 +748,21 @@ public class SAMLBuilderConfig {
     public boolean isSignAssertion() {
 		return this.signAssertion;
 	}
-	public Crypto getSignAssertionCrypto() throws WSSecurityException {
+	public Crypto getSignAssertionCrypto() throws Exception {
 		if(this.signAssertionCrypto==null){
 			initSignAssertionCrypto();
 		}
 		return this.signAssertionCrypto;
 	}
-	private synchronized void initSignAssertionCrypto() throws WSSecurityException{
+	private synchronized void initSignAssertionCrypto() throws Exception{
 		if(this.signAssertionCrypto==null){
 			if(this.signAssertionCryptoPropFile!=null) {
 				this.signAssertionCrypto = 
 					CryptoFactory.getInstance(this.signAssertionCryptoPropFile);
 			}
 			else if(this.signAssertionCryptoPropCustomKeystoreFile!=null) {
-				Properties p = new Properties();
-				p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-				if(this.signAssertionCryptoPropCustomKeystoreType!=null) {
-					p.put("org.apache.ws.security.crypto.merlin.keystore.type", this.signAssertionCryptoPropCustomKeystoreType);
-				}
-				p.put("org.apache.ws.security.crypto.merlin.file", this.signAssertionCryptoPropCustomKeystoreFile);
-				p.put("org.apache.ws.security.crypto.merlin.keystore.password", this.signAssertionCryptoPropCustomKeystorePassword);
+				Properties p = SAMLUtilities.convertToMerlinProperties(this.signAssertionCryptoPropCustomKeystoreType, 
+						this.signAssertionCryptoPropCustomKeystoreFile, this.signAssertionCryptoPropCustomKeystorePassword);
 				this.signAssertionCrypto = CryptoFactory.getInstance(p);
 			}
 			else {
@@ -828,26 +822,21 @@ public class SAMLBuilderConfig {
 	public String getSubjectConfirmationDataRecipient() {
 		return this.subjectConfirmationDataRecipient;
 	}
-	public Crypto getSubjectConfirmationMethod_holderOfKey_crypto() throws WSSecurityException {
+	public Crypto getSubjectConfirmationMethod_holderOfKey_crypto() throws Exception {
 		if(this.subjectConfirmationMethod_holderOfKey_crypto==null){
 			initSubjectConfirmationMethod_holderOfKey_crypto();
 		}
 		return this.subjectConfirmationMethod_holderOfKey_crypto;
 	}
-	private synchronized void initSubjectConfirmationMethod_holderOfKey_crypto() throws WSSecurityException{
+	private synchronized void initSubjectConfirmationMethod_holderOfKey_crypto() throws Exception{
 		if(this.subjectConfirmationMethod_holderOfKey_crypto==null){
 			if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile!=null) {
 				this.subjectConfirmationMethod_holderOfKey_crypto = 
 					CryptoFactory.getInstance(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesFile);	
 			}
 			else if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile!=null) {
-				Properties p = new Properties();
-				p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-				if(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType!=null) {
-					p.put("org.apache.ws.security.crypto.merlin.keystore.type", this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType);
-				}
-				p.put("org.apache.ws.security.crypto.merlin.file", this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile);
-				p.put("org.apache.ws.security.crypto.merlin.keystore.password", this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword);
+				Properties p = SAMLUtilities.convertToMerlinProperties(this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreType, 
+						this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystoreFile, this.subjectConfirmationMethod_holderOfKey_cryptoPropertiesCustomKeystorePassword);
 				this.subjectConfirmationMethod_holderOfKey_crypto = CryptoFactory.getInstance(p);
 			}
 			else {

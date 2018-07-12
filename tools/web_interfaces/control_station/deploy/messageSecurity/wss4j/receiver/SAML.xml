@@ -1,4 +1,5 @@
-<config id="messageSecurity.wss4j.receiver.saml" label="WSSec SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+<config id="messageSecurity.wss4j.receiver.saml" label="WSSec SAML Token" sortLabel="Z_SamlToken" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+provider="org.openspcoop2.security.message.wss4j.SecurityProvider">
 
     <compatibility not="false" and="false">
             <tags and="true">
@@ -41,39 +42,83 @@
 
 	<section label="SAML Assertion">
 	
-		<item type="checkbox" name="signatureActionChoice" label="Signature" reloadOnChange="true" defaultSelected="false">
-			<property name="openspcoop2.saml.assertion.sign"/>
+		<item type="select" name="samlVersion" label="Versione" default="2.0">
+			<values>
+				<value value="2.0" label="2.0"/>
+				<value value="1.1" label="1.1"/>
+				<value value="1.0" label="1.0"/>
+			</values>
+			<property name="samlVersion" />
+		</item>
+	
+		<item type="checkbox" name="signatureActionChoice" label="Enveloped SAML Signature" reloadOnChange="true" defaultSelected="false">
+			<property name="signatureActionChoice"/>
 		</item>
 		
+		<item type="checkbox" name="validateSamlSubjectConfirmation" label="Subject Confirmation" defaultSelected="true" reloadOnChange="true" 
+			note="Whether to validate the SubjectConfirmation requirements (sender vouches or holder of key).">
+			<property name="validateSamlSubjectConfirmation" />
+		</item>
+		<item type="select" name="validateSamlSubjectConfirmationType" label="Tipo" default="sender-vouches"
+			note="For Sender Vouches, a Signature must be present that covers both the SOAP Body and the SAML Assertion.&lt;br/>For Holder of Key, a Signature must be present that signs some part of the SOAP request using the key information contained in the SAML Subject"
+			>
+			<conditions>
+				<condition>
+					<selected name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="sender-vouches" label="Sender Vouches"/>
+				<value value="holder-of-key" label="Holder of Key"/>
+			</values>
+			<property name="validateSamlSubjectConfirmationType" />
+		</item>
+		
+		<item type="hidden" name="signatureActionSignedConfirm" value="Signature SAMLTokenSigned">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+					<selected name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
+		<item type="hidden" name="signatureActionUnsignedConfirm" value="Signature SAMLTokenUnsigned">
+			<conditions>
+				<condition>
+					<selected not="true" name="signatureActionChoice"/>
+					<selected name="validateSamlSubjectConfirmation"/>
+				</condition>
+			</conditions>
+			<property name="action" />
+		</item>
 		<item type="hidden" name="signatureActionSigned" value="SAMLTokenSigned">
 			<conditions>
 				<condition>
 					<selected name="signatureActionChoice"/>
+					<selected not="true" name="validateSamlSubjectConfirmation"/>
 				</condition>
 			</conditions>
 			<property name="action" />
 		</item>
 		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
 			<conditions>
-				<condition not="true">
-					<selected name="signatureActionChoice"/>
+				<condition>
+					<selected not="true" name="signatureActionChoice"/>
+					<selected not="true" name="validateSamlSubjectConfirmation"/>
 				</condition>
 			</conditions>
 			<property name="action" />
 		</item>
-
-		<item type="checkbox" name="validateSamlSubjectConfirmation" label="Subject Confirmation" defaultSelected="true"
-			note="Whether to validate the SubjectConfirmation requirements of a received SAML Token (sender-vouches or holder-of-key).">
-			<property name="validateSamlSubjectConfirmation" />
-		</item>	
-	
+		
 	</section>
 
 	<section label="Signature">
 
 		<conditions>
-			<condition>
+			<condition and="false">
 				<selected name="signatureActionChoice"/>
+				<selected name="validateSamlSubjectConfirmation"/>
 			</condition>
 		</conditions>
 

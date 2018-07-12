@@ -33,6 +33,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
@@ -54,9 +55,15 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.reference.AttachmentReference;
 import org.openspcoop2.message.soap.reference.ElementReference;
 import org.openspcoop2.message.soap.reference.Reference;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -477,9 +484,39 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			    		if(referenceWithSharp.startsWith("#")){
 				    		String reference = referenceWithSharp.substring(1);
 				    		
-				    		SOAPElement signedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(this.getSOAPPartForSearchWSSecurity().getEnvelope(), reference, true);
+				    		SOAPEnvelope soapEnvelope = this.getSOAPPartForSearchWSSecurity().getEnvelope();
+				    		
+				    		SOAPElement signedElement = (SOAPElement) org.apache.wss4j.common.util.XMLUtils.findElementById(soapEnvelope, reference, true);
 				    		if(signedElement==null){
-				    			throw new SOAPException("Element with 'Id' attribute value ("+referenceWithSharp+") not found "+Costanti.FIND_ERROR_SIGNATURE_REFERENCES);
+				    			
+				    			// Provo a vedere se l'elemento firmato e' una Assertion
+				    			
+				    			DynamicNamespaceContext dnc = null;
+				    			if(MessageType.SOAP_11.equals(this.getMessageType())) {
+				    				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(soapEnvelope);
+				    			} else {
+				    				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(soapEnvelope);
+				    			}
+				    	    	
+				    			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+				    			
+				    			try {
+				    				String xpath = Costanti.XPATH_SAML_20_ASSERTION + "[@"+Costanti.SAML_20_ASSERTION_ID+"='"+reference+"']";
+				    				Object o = xpathExpressionEngine.getMatchPattern(security, dnc, xpath, XPathReturnType.NODE);
+				    				signedElement = (SOAPElement) o;
+				    			} catch(XPathNotFoundException e) {}
+				    			
+				    			if(signedElement==null){
+					    			try {
+					    				String xpath = Costanti.XPATH_SAML_11_ASSERTION + "[@"+Costanti.SAML_11_ASSERTION_ID+"='"+reference+"']";
+					    				Object o = xpathExpressionEngine.getMatchPattern(security, dnc, xpath, XPathReturnType.NODE);
+					    				signedElement = (SOAPElement) o;
+					    			} catch(XPathNotFoundException e) {}
+				    			}
+				    			
+				    			if(signedElement==null){
+				    				throw new SOAPException("Element with 'Id' attribute value ("+referenceWithSharp+") not found "+Costanti.FIND_ERROR_SIGNATURE_REFERENCES);
+				    			}
 				    		}
 				   			references.add(new ElementReference (signedElement, ElementReference.TYPE_SIGNATURE, reference));
 			    		} else if(referenceWithSharp.startsWith("cid:")){

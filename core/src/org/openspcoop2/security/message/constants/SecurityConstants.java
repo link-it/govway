@@ -271,7 +271,14 @@ public class SecurityConstants {
 	public static final String SAML_SUBJECT_CONFIRMATION_METHOD_XMLCONFIG_ID_2 =  "subjectConfirmationMethod2";
 	public static final String SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_1 =  "authnContextClassRef1";
 	public static final String SAML_AUTHN_CONTEXT_CLASS_REF_XMLCONFIG_ID_2 =  "authnContextClassRef2";
+	public static final String SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID =  "signatureActionChoice";
 	public static final String SAML_ATTRIBUTE_STATEMENT_FORMAT_XMLCONFIG_PREFIX_ID =  "attributeStatementFormat_";
+	public static final String SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID =  "validateSamlSubjectConfirmationType";
+	public static final String SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_SENDER_VOUCHES =  "sender-vouches";
+	public static final String SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_HOLDER_OF_KEY =  "holder-of-key";
+	public static final String SAML_SIGNATURE_PARAM_CONVERTO_INTO_SAML_CONFIG = "signaturePropRefId_convertParamsIntoSamlPropRefId";
+	public static final String SAML_SIGNATURE_PARAM_CONVERTO_INTO_SAML_CONFIG_HOLDER_OF_KEY = "signaturePropRefId_convertParamsIntoSamlPropRefId_holderOfKey";
+	public static final String SAML_NAMESPACE_TEMPLATE = "SAML_TEMPLATE_NS";
 	
 	public static final String AUTH_PDP_LOCAL = "pdpLocal"; // true/false (default true)
 	public static final String AUTH_PDP_REMOTE_URL = "pdpRemoteUrl";

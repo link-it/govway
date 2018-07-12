@@ -211,8 +211,9 @@ public enum ErroriCooperazione {
 	public ErroreCooperazione getErroreMessageSecurity(String descrizione,CodiceErroreCooperazione codiceErrore) {
 		if(this.equals(MESSAGE_SECURITY)){
 			if(CodiceErroreCooperazione.isEccezioneMessageSecurity(codiceErrore)==false &&
-					CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(codiceErrore)==false){ //messageSecurity internamente possiede anche un engine di autorizzazione
-				throw new RuntimeException("Il metodo può essere utilizzato solo con codici associati alla sicurezza, relativamente ad errori di messageSecurity o erroreAutorizzazione, codice fornito: "+codiceErrore);
+					CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(codiceErrore)==false &&
+					CodiceErroreCooperazione.isEccezioneSicurezzaToken(codiceErrore)==false){ //messageSecurity internamente possiede anche un engine di autorizzazione
+				throw new RuntimeException("Il metodo può essere utilizzato solo con codici associati alla sicurezza, relativamente ad errori di messageSecurity, token o erroreAutorizzazione, codice fornito: "+codiceErrore);
 			}
 			return newErroreCooperazione(descrizione, codiceErrore);	
 		}else{

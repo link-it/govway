@@ -52,6 +52,7 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfig;
 import org.openspcoop2.security.message.saml.SAMLCallbackHandler;
+import org.openspcoop2.security.message.saml.SAMLUtilities;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
 import org.openspcoop2.utils.Utilities;
@@ -171,8 +172,11 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
     	boolean mustUnderstand = false;
     	boolean signatureUser = false;
     	boolean user = false;
-    	Hashtable<?,?> wssOutgoingProperties = wssContext.getOutgoingProperties();
+    	Hashtable<String,Object> wssOutgoingProperties = wssContext.getOutgoingProperties();
 		if (wssOutgoingProperties != null && wssOutgoingProperties.size() > 0) {
+			
+			// preprocess per SAML
+			SAMLUtilities.injectSignaturePropRefIdIntoSamlConfig(wssOutgoingProperties);
 			
 			for (Enumeration<?> e = wssOutgoingProperties.keys(); e.hasMoreElements();) {
 				String key = (String) e.nextElement();

@@ -37,6 +37,8 @@ import java.util.Properties;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
@@ -50,13 +52,19 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reference.Reference;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.saml.SAMLConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.slf4j.Logger;
 
 /**
@@ -580,11 +588,16 @@ public abstract class MessageSecurityContext{
 							// potenziale header, verifico l'actor
 						String actorCheck = SoapUtils.getSoapActor(headerElement, msg.getMessageType());
 						if(actor==null){
-							return actorCheck==null;
+							if(actorCheck==null) {
+								return true;
+							}
 						}else{
-							return actor.equals(actorCheck);
+							if(actor.equals(actorCheck)) {
+								return true;
+							}
 						}
 					}
+					
 				}
 				return false;
 	    	}
@@ -599,5 +612,108 @@ public abstract class MessageSecurityContext{
     	}
     }
 
+    public SOAPHeaderElement getSecurityHeader(OpenSPCoop2Message msg,String actor){
+    	try{
+	    	if(msg==null){
+	    		return null;
+	    	}
+	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+	    		SOAPEnvelope envelope = msg.castAsSoap().getSOAPPart().getEnvelope();
+		    	SOAPHeader header = envelope.getHeader();
+		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(header).size()==0) ){
+		    		return null;
+		    	}
+		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
+				while( it.hasNext()  ){
+					
+					// Test Header Element
+					SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
+					if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
+							SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
+							// potenziale header, verifico l'actor
+						String actorCheck = SoapUtils.getSoapActor(headerElement, msg.getMessageType());
+						if(actor==null){
+							if(actorCheck==null) {
+								return headerElement;
+							}
+						}else{
+							if(actor.equals(actorCheck)) {
+								return headerElement;
+							}
+						}
+					}
+					
+				}
+				return null;
+	    	}
+	    	else{
+	    		return null;
+	    	}
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);
+    		return null;
+    	}
+    }
+    
+    /** Utility per verificare l'esistenza di un header di sicurezza */
+    public SOAPElement getSAMLTokenInSecurityHeader(SOAPHeaderElement securityHeader,String samlVersion){
+    	try{
+    		SOAPElement samlElement = null;
+						
+    		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+    		dnc.findPrefixNamespace(securityHeader);
+						
+    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+    		String xpath =null;
+    		if(SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion)) {
+    			xpath = SAMLConstants.XPATH_SAML_20_ASSERTION;
+    		}
+    		else {
+    			xpath = SAMLConstants.XPATH_SAML_11_ASSERTION;
+    		}
+    		try {
+    			Object o = xpathExpressionEngine.getMatchPattern(securityHeader, dnc, xpath, XPathReturnType.NODE);
+    			samlElement = (SOAPElement) o;
+    		} catch(XPathNotFoundException e) {}
+    		
+    		return samlElement;
+
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("getSAMLTokenInSecurityHeader error, saml version: ["+samlVersion+"]",e);
+    		return null;
+    	}
+    }
+
+    public String getSAMLTokenSubjectConfirmationMethodInSecurityHeader(SOAPElement samlToken,String samlVersion){
+    	try{
+    			
+    		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+    		dnc.findPrefixNamespace(samlToken);
+					
+    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+    		String xpath =null;
+    		if(SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion)) {
+    			xpath = SAMLConstants.XPATH_SAML_20_ASSERTION_SUBJECT_CONFIRMATION_METHOD;
+    		}
+    		else {
+    			xpath = SAMLConstants.XPATH_SAML_11_ASSERTION_SUBJECT_CONFIRMATION_METHOD;
+    		}
+    		String method = null;
+			try {
+				Object o = xpathExpressionEngine.getMatchPattern(samlToken, dnc, xpath, XPathReturnType.STRING);
+				method = (String) o;
+			} catch(XPathNotFoundException e) {}
+    		
+			return method;
+
+    	}catch(Exception e){
+    		if(this.log!=null)
+    			this.log.error("getSAMLTokenSubjectConfirmationMethodInSecurityHeader error, saml version: ["+samlVersion+"]",e);
+    		return null;
+    	}	
+}
+    
 }
 

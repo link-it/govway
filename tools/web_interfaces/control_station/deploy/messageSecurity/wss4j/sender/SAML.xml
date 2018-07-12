@@ -16,6 +16,7 @@
 	
 	<properties>
 		<collection name="samlPropRefId"/>
+		<collection name="signaturePropRefId"/>
 	</properties>
 	
 	<section label="Informazioni Generali">
@@ -52,27 +53,10 @@
 			<property name="openspcoop2.saml.attribute.statement.enabled" properties="samlPropRefId" /> <!--  anche se di fatto non viene utilizzata dall'engine -->
 		</item>
 
-		<item type="checkbox" name="signatureActionChoice" label="Signature" reloadOnChange="true" defaultSelected="false">
-			<property name="openspcoop2.saml.assertion.sign"/>
+		<item type="checkbox" name="signatureActionChoice" label="Enveloped SAML Signature" reloadOnChange="true" defaultSelected="false">
+			<property name="signatureActionChoice"/>
 		</item>
 		
-		<item type="hidden" name="signatureActionSigned" value="SAMLTokenUnsigned"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
-			<conditions>
-				<condition>
-					<selected name="signatureActionChoice"/>
-				</condition>
-			</conditions>
-			<property name="action" />
-		</item>
-		<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
-			<conditions>
-				<condition not="true">
-					<selected name="signatureActionChoice"/>
-				</condition>
-			</conditions>
-			<property name="action" />
-		</item>
-
 		<subsection label="Issuer">
 		
 			<item type="text" name="issuerValue" label="Value" required="true">
@@ -205,36 +189,74 @@
 				<property name="openspcoop2.saml.subject.confirmation.method" properties="samlPropRefId" />
 			</item>
 			
-		</subsection>
-		
-		<subsection label="Confirmation Method - Holder of Key - KeyStore">
-
-			<conditions>
-				<condition and="false">
-					<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
-					<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
-				</condition>
-			</conditions>
-				
-			<item type="select" name="subjectConfirmationKeystoreType" label="Tipo" default="jks">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-				</values>
-				<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.type" properties="samlPropRefId" />
+			<item type="hidden" name="signatureSamlSubjectConfirmationSenderVouches" value="true">
+				<conditions>
+					<condition and="false">
+						<equals name="subjectConfirmationMethod1" value="SENDER_VOUCHES"/>
+						<equals name="subjectConfirmationMethod2" value="SENDER_VOUCHES"/>
+					</condition>
+				</conditions>
+				<property name="signatureSamlSubjectConfirmationSenderVouches" />
 			</item>
-			<item type="text" name="subjectConfirmationKeystoreFile" label="File" required="true">
-			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.file" properties="samlPropRefId" />
-			</item>
-			<item type="text" name="subjectConfirmationKeystorePassword" label="Password" required="true">
-			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoProperties.keystore.password" properties="samlPropRefId" />
-			</item>
-			<item type="text" name="subjectConfirmationKeystorePrivateKeyAlias" label="Alias Certificato" required="true">
-			      	<property name="openspcoop2.saml.subject.confirmation.method.holderOfKey.cryptoCertificateAlias" properties="samlPropRefId" />
+			<item type="hidden" name="signatureSamlSubjectConfirmationHolderOfKey" value="true">
+				<conditions>
+					<condition and="false">
+						<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+						<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+					</condition>
+				</conditions>
+				<property name="signatureSamlSubjectConfirmationHolderOfKey" />
 			</item>
 			
-
+			<item type="hidden" name="signatureActionSigned" value="SAMLTokenUnsigned"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition not="true" and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" />
+			</item>
+			<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
+				<conditions>
+					<condition not="true">
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition not="true" and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" />
+			</item>
+			<item type="hidden" name="signatureActionSignedConfirmation" value="SAMLTokenUnsigned Signature"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" />
+			</item>
+			<item type="hidden" name="signatureActionUnsignedConfirmation" value="SAMLTokenUnsigned Signature">
+				<conditions>
+					<condition not="true">
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" />
+			</item>
+			
 		</subsection>
 		
 		<subsection label="Confirmation Data">
@@ -1227,30 +1249,132 @@
 
 	<section label="Signature">
 
-		<conditions>
+		<conditions and="false">
 			<condition>
 				<selected name="signatureActionChoice"/>
 			</condition>
+			<condition and="false">
+				<equals name="subjectConfirmationMethod1" value="SENDER_VOUCHES"/>
+				<equals name="subjectConfirmationMethod2" value="SENDER_VOUCHES"/>
+			</condition>
+			<condition and="false">
+				<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+				<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+			</condition>
 		</conditions>
 		
-		<item type="hidden" name="signatureEnabled" value="true">
+		<item type="hidden" name="signatureEnabled" value="true"> <!-- serve ad abilitare la firma dentro la SAML -->
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
 			<property name="openspcoop2.saml.assertion.sign" properties="samlPropRefId" />
 		</item>
 		
+		<item type="hidden" name="signaturePropRefId_convertParamsIntoSamlPropRefId" value="samlPropRefId">
+			<conditions>
+				<condition>
+					<selected name="signatureActionChoice"/>
+				</condition>
+			</conditions>
+			<property name="signaturePropRefId_convertParamsIntoSamlPropRefId" />
+		</item>
+		<item type="hidden" name="signaturePropRefId_convertParamsIntoSamlPropRefId_holderOfKey" value="samlPropRefId">
+			<conditions and="false">
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+					<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+				</condition>
+			</conditions>
+			<property name="signaturePropRefId_convertParamsIntoSamlPropRefId_holderOfKey" />
+		</item>
+		
 		<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
-			<property name="openspcoop2.saml.assertion.sign.signatureAlgorithm" properties="samlPropRefId" />
+			<property name="signatureAlgorithm" />
 		</item>
 		<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
-			<property name="openspcoop2.saml.assertion.sign.signatureDigestAlgorithm" properties="samlPropRefId" />
+			<property name="signatureDigestAlgorithm" />
 		</item>
-		<item type="select" name="signatureC14nAlgorithmExclusive" label="Canonicalization Algorithm">
-			<property name="openspcoop2.saml.assertion.sign.canonicalizationAlgorithm" properties="samlPropRefId" />
-		</item>	
-		<item type="checkbox" name="sendKey" label="Send Key" defaultSelected="true">
-			<property name="openspcoop2.saml.assertion.sign.sendKeyValue" selectedValue="true" unselectedValue="false" properties="samlPropRefId" />
+		<item type="select" name="signatureC14nAlgorithmExclusive" label="Canonicalization Algorithm"> <!-- Devo usare exclusive altrimenti la validazione fallisce della SAML Enveloped -->
+			<property name="signatureC14nAlgorithmExclusive" />
 		</item>	
 
+		<item type="hidden" name="signaturePartsBody" value="{Element}{SOAP_TEMPLATE_NS}Body; {Element}{SAML_TEMPLATE_NS}Assertion">
+			<conditions and="false">
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="SENDER_VOUCHES"/>
+					<equals name="subjectConfirmationMethod2" value="SENDER_VOUCHES"/>
+				</condition>
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+					<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+
+		<subsection label="Key Identifier - Enveloped SAML Signature">
+
+			<item type="checkbox" name="sendKey" label="Send Key" defaultSelected="true">
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+				</conditions>
+				<property name="openspcoop2.saml.assertion.sign.sendKeyValue" selectedValue="true" unselectedValue="false" properties="samlPropRefId" />
+			</item>	
+			
+		</subsection>
+			
+		<subsection label="Key Identifier - External Signature">
+
+			<conditions and="false">
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="SENDER_VOUCHES"/>
+					<equals name="subjectConfirmationMethod2" value="SENDER_VOUCHES"/>
+				</condition>
+				<condition and="false">
+					<equals name="subjectConfirmationMethod1" value="HOLDER_OF_KEY"/>
+					<equals name="subjectConfirmationMethod2" value="HOLDER_OF_KEY"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="signatureKeyIdentifier" label="Tipo" reloadOnChange="true" default="DirectReference" >
+			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/signature-and-encryption-key.html"> -->
+				<values>
+					<value value="DirectReference" label="DirectReference"/>
+					<value value="IssuerSerial" label="IssuerSerial"/>
+					<value value="X509KeyIdentifier" label="X509KeyIdentifier"/>
+					<value value="SKIKeyIdentifier" label="SKIKeyIdentifier"/>
+					<value value="EmbeddedKeyName" label="EmbeddedKeyName"/>
+					<value value="Thumbprint" label="Thumbprint"/>
+					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
+					<value value="KeyValue" label="KeyValue"/>
+				</values>
+				<property name="signatureKeyIdentifier" />
+			</item>
+			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" defaultSelected="true">
+				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+			<item type="checkbox" name="includeSignatureToken" label="Include Signature Token" defaultSelected="false">
+				<conditions>
+		            <condition and="false">
+		            	<equals name="signatureKeyIdentifier" value="IssuerSerial" />
+		            	<equals name="signatureKeyIdentifier" value="Thumbprint" />
+		            	<equals name="signatureKeyIdentifier" value="SKIKeyIdentifier" />
+		            </condition>
+	           	</conditions>
+				<property name="includeSignatureToken" selectedValue="true" unselectedValue="false"/>
+			</item>
+
+		</subsection>
+
 		<subsection label="KeyStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
 
 			<item type="select" name="keystoreType" label="Tipo" default="jks">
 				<values>
@@ -1258,19 +1382,22 @@
 					<value value="pkcs12" label="PKCS12"/>
 					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
-				<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.type" properties="samlPropRefId" />
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystoreFile" label="File" required="true">
-			      	<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.file" properties="samlPropRefId" />
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">
-			      	<property name="openspcoop2.saml.assertion.sign.cryptoProp.keystore.password" properties="samlPropRefId" />
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			      	<property name="openspcoop2.saml.assertion.sign.key.name" properties="samlPropRefId" />
+			      	<property name="signatureUser" />
 			</item>
 			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			      	<property name="openspcoop2.saml.assertion.sign.key.password" properties="samlPropRefId" />
+			      	<property name="signaturePassword" />
+			</item>
+			<item type="hidden" name="keystorePrivateKeyPasswordCallback" value="true">
+			      	<property name="passwordCallbackRef" />
 			</item>
 			
 

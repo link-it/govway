@@ -33,18 +33,22 @@ package org.openspcoop2.security.message.saml;
  */
 public class SAMLConstants {
 
-	public static final String SAML_20_NAMESPACE = "urn:oasis:names:tc:SAML:2.0:assertion";
+	public static final String SAML_20_NAMESPACE = org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE;
+	public static final String SAML_20_ASSERTION_ID = org.openspcoop2.message.constants.Costanti.SAML_20_ASSERTION_ID;
 	
-	public static final String XPATH_SAML_20_ASSERTION = "//{"+SAML_20_NAMESPACE+"}:Assertion";
+	public static final String XPATH_SAML_20_ASSERTION = org.openspcoop2.message.constants.Costanti.XPATH_SAML_20_ASSERTION;
 	public static final String XPATH_SAML_20_ASSERTION_SUBJECT_NAMEID = "//{"+SAML_20_NAMESPACE+"}:Assertion/{"+SAML_20_NAMESPACE+"}:Subject/{"+SAML_20_NAMESPACE+"}:NameID/text()";
+	public static final String XPATH_SAML_20_ASSERTION_SUBJECT_CONFIRMATION_METHOD = "//{"+SAML_20_NAMESPACE+"}:Assertion/{"+SAML_20_NAMESPACE+"}:Subject/{"+SAML_20_NAMESPACE+"}:SubjectConfirmation/@Method";
 	public static final String XPATH_SAML_20_ASSERTION_ISSUER = "//{"+SAML_20_NAMESPACE+"}:Assertion/{"+SAML_20_NAMESPACE+"}:Issuer/text()";	
 	public static final String XPATH_SAML_20_ASSERTION_ATTRIBUTESTATEMENT_ATTRIBUTE = "//{"+SAML_20_NAMESPACE+"}:Assertion/{"+SAML_20_NAMESPACE+"}:AttributeStatement/{"+SAML_20_NAMESPACE+"}:Attribute";
 
-	public static final String SAML_11_NAMESPACE = "urn:oasis:names:tc:SAML:1.0:assertion";
+	public static final String SAML_11_NAMESPACE = org.openspcoop2.message.constants.Costanti.SAML_11_NAMESPACE;
+	public static final String SAML_11_ASSERTION_ID = org.openspcoop2.message.constants.Costanti.SAML_11_ASSERTION_ID;
 	
-	public static final String XPATH_SAML_11_ASSERTION = "//{"+SAML_11_NAMESPACE+"}:Assertion";
+	public static final String XPATH_SAML_11_ASSERTION = org.openspcoop2.message.constants.Costanti.XPATH_SAML_11_ASSERTION;
 	public static final String XPATH_SAML_11_ASSERTION_AUTHENTICATIONSTATEMENT_SUBJECT_NAMEID = "//{"+SAML_11_NAMESPACE+"}:Assertion/{"+SAML_11_NAMESPACE+"}:AuthenticationStatement/{"+SAML_11_NAMESPACE+"}:Subject/{"+SAML_11_NAMESPACE+"}:NameIdentifier/text()";
 	public static final String XPATH_SAML_11_ASSERTION_ATTRIBUTESTATEMENT_SUBJECT_NAMEID = "//{"+SAML_11_NAMESPACE+"}:Assertion/{"+SAML_11_NAMESPACE+"}:AttributeStatement/{"+SAML_11_NAMESPACE+"}:Subject/{"+SAML_11_NAMESPACE+"}:NameIdentifier/text()";
+	public static final String XPATH_SAML_11_ASSERTION_SUBJECT_CONFIRMATION_METHOD = "//{"+SAML_11_NAMESPACE+"}:Assertion/{"+SAML_11_NAMESPACE+"}:AuthenticationStatement/{"+SAML_11_NAMESPACE+"}:Subject/{"+SAML_11_NAMESPACE+"}:SubjectConfirmation/{"+SAML_11_NAMESPACE+"}:ConfirmationMethod/text()";
 	public static final String XPATH_SAML_11_ASSERTION_ISSUER = "//{"+SAML_11_NAMESPACE+"}:Assertion/@Issuer";	
 	public static final String XPATH_SAML_11_ASSERTION_ATTRIBUTESTATEMENT_ATTRIBUTE = "//{"+SAML_11_NAMESPACE+"}:Assertion/{"+SAML_11_NAMESPACE+"}:AttributeStatement/{"+SAML_11_NAMESPACE+"}:Attribute";
 

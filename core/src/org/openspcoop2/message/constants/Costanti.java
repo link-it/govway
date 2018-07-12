@@ -65,4 +65,13 @@ public class Costanti {
 	
 	/** Context Empty */
 	public static final String CONTEXT_EMPTY = "@EMPTY@";
+	
+	/** SAML */
+	public static final String SAML_20_NAMESPACE = "urn:oasis:names:tc:SAML:2.0:assertion";
+	public static final String SAML_20_ASSERTION_ID = "ID";
+	public static final String XPATH_SAML_20_ASSERTION = "//{"+SAML_20_NAMESPACE+"}:Assertion";
+	
+	public static final String SAML_11_NAMESPACE = "urn:oasis:names:tc:SAML:1.0:assertion";
+	public static final String SAML_11_ASSERTION_ID = "AssertionID";
+	public static final String XPATH_SAML_11_ASSERTION = "//{"+SAML_11_NAMESPACE+"}:Assertion";
 }

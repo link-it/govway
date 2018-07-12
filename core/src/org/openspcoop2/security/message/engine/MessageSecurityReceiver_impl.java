@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -44,6 +46,7 @@ import org.openspcoop2.security.message.authorization.IMessageSecurityAuthorizat
 import org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationRequest;
 import org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationResult;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 
 
 
@@ -122,6 +125,51 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE;
 					}
 					return false;
+				}
+				
+				// se e' richiesta la verifica SAML la faccio.
+				if(action.contains(SecurityConstants.ACTION_SAML_TOKEN_SIGNED) || action.contains(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED)) {
+					String samlVersion = (String) this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.SAML_VERSION_XMLCONFIG_ID);
+					if(samlVersion!=null && !"".equals(samlVersion)) {
+						
+						SOAPHeaderElement securityHeader = this.messageSecurityContext.getSecurityHeader(message, actor); // verificato prima
+						SOAPElement samlToken = this.messageSecurityContext.getSAMLTokenInSecurityHeader(securityHeader, samlVersion);
+						if(samlToken==null) {
+							this.msgErrore =  "SAMLToken (versione:"+samlVersion+"), richiesto dalla configurazione (action:"+action+"), non riscontrato nell'header Message Security presente all'interno della SOAPEnvelope ricevuta";
+							this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE;
+							return false;
+						}
+						
+						String samlConfirmationType = (String) this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID);
+						if(samlConfirmationType!=null && !"".equals(samlConfirmationType)) {
+							String confirmationMethod = this.messageSecurityContext.getSAMLTokenSubjectConfirmationMethodInSecurityHeader(samlToken, samlVersion);
+							if(confirmationMethod==null) {
+								this.msgErrore =  "SAMLToken (versione:"+samlVersion+"), richiesto dalla configurazione (action:"+action+"), non possiede un metodo di subject confirmation";
+								this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO;
+								return false;
+							}
+							
+							String atteso = null;
+							if(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_HOLDER_OF_KEY.equals(samlConfirmationType)) {
+								atteso = SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion) ? 
+										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_SAML_20 :
+											SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_SAML_10;
+							}
+							else if(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_SENDER_VOUCHES.equals(samlConfirmationType)) {
+								atteso = SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion) ? 
+										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_SENDER_VOUCHES_SAML_20 :
+											SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_SENDER_VOUCHES_SAML_10;
+							}
+							if(atteso!=null) {
+								if(atteso.equals(confirmationMethod)==false) {
+									this.msgErrore =  "SAMLToken (versione:"+samlVersion+"), richiesto dalla configurazione (action:"+action+"), possiede un metodo di subject confirmation ("+confirmationMethod+") diverso da quello atteso ("+atteso+")";
+									this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO;
+									return false;
+								}
+							}
+						}
+						
+					}
 				}
 			}
 			
