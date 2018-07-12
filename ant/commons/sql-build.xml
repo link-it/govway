@@ -13,44 +13,56 @@
 
 
 	<!-- SCRIPT SQL -->
-	<target name="svn-version-sql-replace">
+	<target name="git-version-sql-replace">
 						
-		<!-- Info svn -->
-		<runtarget target="checksvn" />
+		<!-- Info git -->
+		<runtarget target="checkgit" />
 		
 		<if>
-			<istrue value="${svnant.jar.presente}"/>
+			<istrue value="${jgit.jar.presente}"/>
 			<then>
-				<svnSetting
-			          svnkit="true"
-			          username="${svnant.repository.user}"
-			          password="${svnant.repository.passwd}"
-			          id="svn.settings"
-				      javahl="false"
-			      />
-				<svn refid="svn.settings">
-					<status path="${src}/../"
-		                revisionProperty="svn.actualRevision"
-		                lastCommitAuthorProperty="svn.lastCommitAuthor"
-		                lastChangedRevisionProperty="svn.lastChangedRev"
-		                lastChangedDateProperty="svn.lastChangedDate" 
-						urlProperty="svn.url"
-						/>
-				</svn>
-				<!--<echo message="TEST A[${svn.actualRevision}] B[${svn.lastCommitAuthor}] C[${svn.lastChangedRev}] D[${svn.lastChangedDate}] E[${svn.url}]"/>-->
+			      <GitProperties src="${gitrepo_root}" 
+                	        authorNameProperty="git.authorName"
+                        	authorMailProperty="git.authorMail"
+	                        authorCommitDateProperty="git.authorDate"
+        	                shortHashProperty="git.commitShortHash"
+		        	/>
+
+				<!--<echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/>-->
+						<!-- Imposto versione -->
+						<var name="pddVersion" value="Undefined" />	
+						<var name="pddDetails" value="Undefined" />	
+						<isfalse value="${buildAsRelease}"/>
+						<then>
+							<if>
+								<istrue value="${compile_src_openspcoop2.GITINFO}"/>
+								<then>
+									<var name="pddVersion" value="${git.commitShortHash}" />
+									<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />	
+								</then>
+								<else>
+									<if>
+									    <isset property="env.BUILD_VERSION]"/>
+									    <then>
+									    	<var name="pddVersion" value="${env.BUILD_VERSION]}" />
+									    </then>
+									</if>						
+								</else>
+							</if>
+						</then>
+						<else>
+							<if>
+								<isset property="env.RELEASE_VERSION]"/>
+								<then>
+									<var name="pddVersion" value="${env.RELEASE_VERSION]}" />
+								</then>
+							</if>						
+						</else>
 				
-				<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
-				<propertyregex property="pddVersion"
-				               input="${pddVersionTmp}"
-				               regexp="/"
-				               replace="_" />
-				
-				<property name="pddDetails" value="GovWay_${pddVersion} Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />
-				
-				<propertyregex property="pddVersionMajorMinorTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(.*)" replace="\1" />
-				<propertyregex property="pddVersionMajor" input="${pddVersionMajorMinorTmp}" regexp="(branches|tags)/(\d)\.(\d).*" replace="\2" />
-				<propertyregex property="pddVersionMinor" input="${pddVersionMajorMinorTmp}" regexp="(branches|tags)/(\d)\.(\d).*" replace="\3" />				
-				
+				<!-- TODO: calcolare queste due variabili -->
+				 <var name="pddVersionMajor" value="3" />
+                                 <var name="pddVersionMinor" value="0" />
+	
 				<!--<echo message="DETAILS[${pddDetails}] FULL_VERSION[${pddVersion}] MAJOR[${pddVersionMajor}] MINOR[${pddVersionMinor}]"/>-->
 				
 				<replace file="${SQLDestFile}" 
@@ -121,7 +133,7 @@
 ${SQLInsertDBInfo}
 
 </concat>
-		<antcall target="svn-version-sql-replace"/>
+		<antcall target="git-version-sql-replace"/>
 	</target>
 	
 	<target name="build_sql_utility" description="Genera i file SQL di utilita' (delete, drop)">

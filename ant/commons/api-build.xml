@@ -88,91 +88,59 @@
 				
 				<!-- **** PRODUZIONE JavaDocJar ***** -->
 				
-				<!-- SVN Info -->
-				<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}] ROOT_DIR[${svn_rootDir}]"/> -->
+				<!-- GIT Info -->
+				<!-- <echo message="GIT:[${compile_src_openspcoop2.GITINFO}] ROOT_DIR[${gitrepo_root}]"/> -->
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 					<then>
-						<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+						<echo message="Raccolta informazioni git per inserimento in manifest..."/>
 						
 						<if>
-							<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+							<equals arg1="${gitrepo_root}" arg2="$${gitrepo_root}"/>
 							<then>
-								<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+								<fail message="gitrepo_root non fornita: non e' possibile recuperare le informazioni git"/>
 							</then>
 						</if>
+					        <GitProperties src="${gitrepo_root}" 
+								authorNameProperty="git.authorName"
+								authorMailProperty="git.authorMail"
+								authorCommitDateProperty="git.authorDate"
+								shortHashProperty="git.commitShortHash"
+						/>
 						
-						<svnSetting
-					          svnkit="true"
-					          username="${svnant.repository.user}"
-					          password="${svnant.repository.passwd}"
-					          id="svn.settings"
-						      javahl="false"
-					      />
-						<svn refid="svn.settings" >
-							<status path="${svn_rootDir}"
-		                                		revisionProperty="svn.actualRevision"
-		                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
-		                                		lastChangedRevisionProperty="svn.lastChangedRev"
-		                                		lastChangedDateProperty="svn.lastChangedDate" 
-												urlProperty="svn.url"/>
-						</svn>
 					</then>
 				</if>
-				<!--
-				<echo message="ACTUAL:[${svn.actualRevision}]"/>
-				<echo message="LAST_COMMIT[${svn.lastCommitAuthor}]"/>
-				<echo message="LAST_CHANGE[${svn.lastChangedRev}]"/>
-				<echo message="DATE:[${svn.lastChangedDate}]"/>
-				-->
 				
 				<!-- JavaDocJar -->
 				<if>
 					<isfalse value="${buildAsRelease}"/>
 					<then>
 						<if>
-							<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+							<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 							<then>
-									<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+								<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${git.commitShortHash}" />
 							</then>
 							<else>					
-		                        <if>
-									<isset property="env.BUILD_VERSION"/>
-		                            <then>
-		                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
-		                            </then>
-		                            <else>
-		                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
-		                            </else>
-		                        </if>
+								<if>
+								    <isset property="env.BUILD_VERSION"/>
+								    <then>
+								    	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+								    </then>
+								    <else>
+								    	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+								    </else>
+								</if>
 							</else>
 						</if>
 					</then>
 					<else>
 						<if>
-							<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+							<isset property="env.RELEASE_VERSION"/>
 							<then>
-								<!-- <echo message="URL [${svn.url}]"/> -->
-								<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
-								<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
-								<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
-								<!-- <echo message="Versione [${compileVersion}]"/> -->
-								<!-- <propertyregex property="compileVersion"
-												input="${compileVersionTmp2}"
-												regexp="/"
-												replace="_" /> -->
-								<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
 							</then>
 							<else>
-								<if>
-									<isset property="env.RELEASE_VERSION"/>
-									<then>
-										<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
-									</then>
-									<else>
-										<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
-									</else>
-								</if>
+								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
 							</else>
 						</if>
 					</else>

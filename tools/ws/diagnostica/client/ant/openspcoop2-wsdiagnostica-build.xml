@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.core.diagnostica.ws.client
     </description>
 
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
@@ -22,17 +22,17 @@
 			<istrue value="${buildDiagnosticaWS}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
+				<!-- Info git -->
+				<runtarget target="checkgit" />
 							
 				<!-- org.openspcoop2.core.diagnostica.ws.client -->
 				<var name="packagesCompiled" value="org.openspcoop2.core.diagnostica.ws.client" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.utils" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_diagnostica_ws_client}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="ws-diagnostica-client"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="ws-diagnostica-client"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.diagnostica.ws.client"/>
@@ -65,9 +65,9 @@
 		 			<available file="${build_classes_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/package-info.class" type="file"/>
 					<then>
 						<antcall target="build_jar_schema">
-							<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+							<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${build_diagnostica_ws_client}/classes"/>
-							<param name="compile_src_openspcoop2.SVN_ID_NAME" value="ws-diagnostica-client"/>
+							<param name="compile_src_openspcoop2.GIT_ID_NAME" value="ws-diagnostica-client"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**/org/openspcoop2/core/diagnostica/ws/client/*/*"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_2" value="**/ws/client/utils/RequestContextUtils.class"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_3" value="**/org/openspcoop2/core/diagnostica/*.class"/> <!-- Classi rimaste non presenti in API -->
@@ -84,9 +84,9 @@
 		 			<available file="${build_classes_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico/search/package-info.class" type="file"/>
 					<then>
 						<antcall target="build_jar_schema">
-							<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+							<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${build_diagnostica_ws_client}/classes"/>
-							<param name="compile_src_openspcoop2.SVN_ID_NAME" value="ws-diagnostica-client-search"/>
+							<param name="compile_src_openspcoop2.GIT_ID_NAME" value="ws-diagnostica-client-search"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**/org/openspcoop2/core/diagnostica/ws/client/*/search/*"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_2" value="**/ws/client/utils/RequestContextUtils.class"/>
 							<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_3" value="**/org/openspcoop2/core/diagnostica/*.class"/> <!-- Classi rimaste non presenti in API -->
@@ -112,7 +112,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="ws-diagnostica-client"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc_diagnostica_ws_client}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="src" value="${src_diagnostica_ws_client}"/>
 					<param name="doc" value="${doc_diagnostica_ws_client}"/>
 					<param name="dist" value="${dist_diagnostica_ws_client}"/>

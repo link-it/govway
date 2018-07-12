@@ -7,12 +7,12 @@
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 
 	<!-- Properties -->
 	<property name="src_sdi" location="src" />
@@ -76,9 +76,9 @@
 	
 	<target name="compile_sdi_plugin" description="compila il plugin sdi" depends="init_compile">
 
-		<!-- Info svn -->
-		<runtarget target="checksvn" />
-		<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 				
 		<!-- it.gov.fatturapa.sdi.fatturapa.v1_0 -->
 		<var name="packagesCompiled" value="it.gov.fatturapa.sdi.fatturapa.v1_0" />
@@ -87,9 +87,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.fatturapa.v1_0.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/fatturapa/v1_0"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-fatturapa-v10"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.fatturapa.v1_0"/>
@@ -103,9 +103,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.fatturapa.v1_1.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/fatturapa/v1_1"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-fatturapa-v11"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v11"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.fatturapa.v1_1"/>
@@ -119,9 +119,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/agenziaentrate/ivaservizi/docs/xsd/fatture/v1_2/"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-fatturapa-v12"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v12"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2"/>
@@ -135,9 +135,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.messaggi.v1_0.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/messaggi/v1_0"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-messaggi-v10"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-messaggi-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.messaggi.v1_0"/>
@@ -151,9 +151,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/ws/ricezione/v1_0/types"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-wsricezione-v10"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-wsricezione-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.ws.ricezione.v1_0.types"/>
@@ -167,9 +167,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/ws/trasmissione/v1_0/types"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-wstrasmissione-v10"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-wstrasmissione-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types"/>
@@ -184,9 +184,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.validator" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/org/openspcoop2/protocol/sdi"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-plugin"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-plugin"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.protocol.sdi"/>
@@ -195,9 +195,9 @@
 
 		<!-- Jar contenente la configurazione -->
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-config"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-config"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value=""/>
 			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.xml"/>
 			<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.properties"/>
@@ -209,9 +209,9 @@
 		
 		<!-- schemi xsd -->
 		<antcall target="build_jar_schema">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src_sdi}/schemi"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol-schemi"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-schemi"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_EXCLUDES" value="openspcoop2/**"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
@@ -221,8 +221,8 @@
 				
 		<!-- Jar Complessivo -->
 		<antcall target="jar_2_jar_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="sdi-protocol"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
 		</antcall>
 		
@@ -237,7 +237,7 @@
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 			<param name="compile_src_openspcoop2.API_NAME" value="sdi"/>
 			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="src" value="${src_sdi}"/>
 		</antcall>
 			

@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.pools.core
     </description>
 
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
@@ -22,8 +22,8 @@
 			<istrue value="${buildOpenSPCoop2Pools}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
+				<!-- Info git -->
+				<runtarget target="checkgit" />
 				
 				<!-- driver -->
 				<var name="packagesCompiled" value="org.openspcoop2.pools.core.commons" />
@@ -32,9 +32,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pools.pdd.jms.connectionsession" />	
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pools.pdd.jms.session" />	
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_openspcoop2Pools}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-driver"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-driver"/>
 					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/driver/*.java"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="org/openspcoop2/pools/core/commons/*.java"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES_2" value="org/openspcoop2/pools/pdd/db/**/*.java"/>
@@ -47,9 +47,9 @@
 				</antcall>
 				
 				<antcall target="build_jar_schema">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_openspcoop2Pools}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-driver-properties"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-driver-properties"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="deploy/properties"/>
 					<!-- Non ci vuole senno non si può cambiare a meno di aprirlo
                                          <param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="openspcoop2_pools.log4j2.properties"/> -->
@@ -62,8 +62,8 @@
 								
 				<!-- Jar Complessivo -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-driver"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-driver"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="driver"/>
 					<param name="dist" value="${dist_openspcoop2Pools}"/>
 					<param name="build" value="${build_openspcoop2Pools}"/>
@@ -80,7 +80,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="pools-driver"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc_openspcoop2Pools}"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="src" value="${src_openspcoop2Pools}"/>
 					<param name="doc" value="${doc_openspcoop2Pools}"/>
 					<param name="dist" value="${dist_openspcoop2Pools}"/>
@@ -101,15 +101,15 @@
 			<istrue value="${buildOpenSPCoop2Pools}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
+				<!-- Info git -->
+				<runtarget target="checkgit" />
 				
 				<!-- core -->
 				<var name="packagesCompiled" value="org.openspcoop2.pools.core" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_openspcoop2Pools}/org/openspcoop2/pools/core"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-core-beans"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-core-beans"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pools.core"/>
@@ -124,9 +124,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pools.pdd" />	
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pools.pdd.jmx" />	
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_openspcoop2Pools}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-core"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-core"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES_1" value="org/openspcoop2/pools/core/driver/*.java"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES_2" value="org/openspcoop2/pools/pdd/*.java"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES_3" value="org/openspcoop2/pools/pdd/jmx/*.java"/>
@@ -139,8 +139,8 @@
 								
 				<!-- Jar Complessivo -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pools-core"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pools-core"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
 					<param name="dist" value="${dist_openspcoop2Pools}"/>
 					<param name="build" value="${build_openspcoop2Pools}"/>
@@ -157,7 +157,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="pools-core"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc_openspcoop2Pools}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="src" value="${src_openspcoop2Pools}"/>
 					<param name="doc" value="${doc_openspcoop2Pools}"/>
 					<param name="dist" value="${dist_openspcoop2Pools}"/>

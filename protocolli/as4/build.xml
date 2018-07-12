@@ -7,13 +7,13 @@
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	<import file="${openspcoop2}/ant/commons/stub-build.xml" />
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 
 	<!-- Properties -->
 	<property name="src_as4" location="src" />
@@ -74,9 +74,9 @@
 	
 	<target name="compile_as4_plugin" description="compila il plugin as4" depends="init_compile">
 
-		<!-- Info svn -->
-		<runtarget target="checksvn" />
-		<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 		
 		<!-- org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704 -->
 		<var name="packagesCompiled" value="org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704" />
@@ -85,9 +85,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}/org/oasis_open/docs/ebxml_msg/ebms/v3_0/ns/core/_200704"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-ebms-v3_0"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-ebms-v3_0"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704"/>
@@ -101,9 +101,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},backend.ecodex.org._1_1.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},backend.ecodex.org._1_1.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}/backend/ecodex/org/_1_1"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-backend-ecodex-v1_1"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-backend-ecodex-v1_1"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="backend.ecodex.org._1_1"/>
@@ -117,9 +117,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},eu.domibus.configuration.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}/eu/domibus/configuration"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-eu-domibus-configuration"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-eu-domibus-configuration"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="eu.domibus.configuration"/>
@@ -141,9 +141,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.services" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.as4.services.message" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-plugin"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-plugin"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="org/openspcoop2/protocol/as4/**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.ftl"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -153,9 +153,9 @@
 
 		<!-- Jar contenente la configurazione -->
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_as4}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-config"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-config"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value=""/>
 			<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.xml"/>
 			<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.properties"/>
@@ -167,9 +167,9 @@
 		
 		<!-- schemi xsd -->
 		<antcall target="build_jar_schema">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src_as4}/schemi"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol-schemi"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol-schemi"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="**"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
@@ -178,8 +178,8 @@
 				
 		<!-- Jar Complessivo -->
 		<antcall target="jar_2_jar_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="as4-protocol"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="as4-protocol"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
 		</antcall>
 		
@@ -194,7 +194,7 @@
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 			<param name="compile_src_openspcoop2.API_NAME" value="as4"/>
 			<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="src" value="${src_as4}"/>
 		</antcall>
 			

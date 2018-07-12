@@ -118,7 +118,6 @@ public class BusteEGov11LineeGuida11 {
 			File[] dir =  new java.io.File(Utilities.testSuiteProperties.getPathBusteLineeGuida11()).listFiles();
 			Vector<File> dirV = new Vector<File>();
 			for(int i=0; i<dir.length; i++){
-				if(".svn".equals(dir[i].getName())==false)
 					dirV.add(dir[i]);
 			}
 			dir = new File[1];

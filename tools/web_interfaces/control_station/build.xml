@@ -17,7 +17,7 @@
 	<import file="./ant/openspcoop2-govwayConsole-sincronizzatore.xml" />
 	
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
 	<property name="src_govwayConsole" location="src/" />

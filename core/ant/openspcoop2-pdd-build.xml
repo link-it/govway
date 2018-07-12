@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.pdd
     </description>
 
-	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/git-build.xml" />
 	<import file="${rootDir}/ant/commons/compile-build.xml" />
 	<import file="${rootDir}/ant/commons/api-build.xml" />
 	
@@ -22,9 +22,9 @@
 			<istrue value="${buildPdd}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
-				<!-- <echo pdd="SVN:[${svnant.jar.presente}]"/> -->
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				<!-- <echo pdd="GIT:[${jgit.jar.presente}]"/> -->
 				
 				<!-- Preparo SRC per sovrascrivere versione -->
 				<property name="src_overwrite_version" value="${build}/SRC_VERSION" />
@@ -36,40 +36,68 @@
 				
 				<!-- Estraggo informazioni sulla versione e la imposto -->
 				<if>
-					<istrue value="${svnant.jar.presente}"/>
+				    <istrue value="${jgit.jar.presente}"/>
 				    <then>
 				    	
-					    <echo message="Raccolta informazioni svn per impostazione versione..."/>
-				    	<svnSetting
-    				          svnkit="true"
-    				          username="${svnant.repository.user}"
-    				          password="${svnant.repository.passwd}"
-    				          id="svn.settings"
-    					      javahl="false"
-    				      />
-						<svn refid="svn.settings">
-							<status path="${svn_rootDir}"
-		                                		revisionProperty="svn.actualRevision"
-		                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
-		                                		lastChangedRevisionProperty="svn.lastChangedRev"
-		                                		lastChangedDateProperty="svn.lastChangedDate" 
-												urlProperty="svn.url"/>
-						</svn>
+					      <echo message="Raccolta informazioni git per impostazione versione..."/>
+					      <GitProperties src="${gitrepo_root}" 
+								authorNAMEProperty="git.authorNAME"
+								authorMailProperty="git.authorMail"
+								authorCommitDateProperty="git.authorDate"
+								shortHashProperty="git.commitShortHash"
+						/>
 				    	
 						<!-- Imposto versione -->
-						<propertyregex property="pddVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches|tags|trunk)/(.*)" replace="\2" />
-						<propertyregex property="pddVersion"
-						               input="${pddVersionTmp}"
-						               regexp="/"
-						               replace="_" />
-						<property name="pddDetails" value="GovWay Revision N.${svn.actualRevision}, LastChangedRevision N.${svn.lastChangedRev}, ${svn.lastChangedDate}" />		
-						
-						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
-								 token="public static final String OPENSPCOOP2_PRODUCT_VERSION" 
-								 value="public static final String OPENSPCOOP2_PRODUCT_VERSION = &quot;GovWay/${pddVersion}&quot; ; //" />
-						<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
-								 token="public static final String OPENSPCOOP2_DETAILS" 
-								 value="public static final String OPENSPCOOP2_DETAILS = &quot;${pddDetails}&quot; ; //" />
+						<var name="pddVersion" value="Undefined" />	
+						<var name="pddDetails" value="Undefined" />
+						<if>	
+							<isfalse value="${buildAsRelease}"/>
+							<then>
+								<if>
+									<istrue value="${compile_src_openspcoop2.GITINFO}"/>
+									<then>
+										<var name="pddVersion" value="${git.commitShortHash}" />
+										<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />	
+									</then>
+									<else>
+										<if>
+										    <isset property="env.BUILD_VERSION]"/>
+										    <then>
+										    	<var name="pddVersion" value="${env.BUILD_VERSION]}" />
+										    </then>
+										</if>						
+									</else>
+								</if>
+							</then>
+							<else>
+								<if>
+									<isset property="env.RELEASE_VERSION]"/>
+									<then>
+										<var name="pddVersion" value="${env.RELEASE_VERSION]}" />
+									</then>
+								</if>						
+							</else>
+						</if>
+						<if>
+							<not>
+								<equals arg1="${pddVersion}" arg2="Undefined"/>
+							</not>
+							<then>
+								<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
+										 token="public static final String OPENSPCOOP2_PRODUCT_VERSION]" 
+										 value="public static final String OPENSPCOOP2_PRODUCT_VERSION] = &quot;GovWay/${pddVersion}&quot; ; //" />
+							</then>
+						</if>
+						<if>
+							<not>
+								<equals arg1="${pddDetails}" arg2="Undefined"/>
+							</not>
+							<then>
+								<replace file="${src_overwrite_version}/org/openspcoop2/pdd/core/CostantiPdD.java" 
+										 token="public static final String OPENSPCOOP2_DETAILS" 
+										 value="public static final String OPENSPCOOP2_DETAILS = &quot;${pddDetails}&quot; ; //" />
+							</then>
+						</if>
 				    	
 					</then>
 				</if>
@@ -126,22 +154,22 @@
 																							
 				<!-- org.openspcoop.2.pdd -->
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_overwrite_version}/org/openspcoop2/pdd"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pdd"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pdd"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="pdd"/>
-					<param name="svnInfo_openspcoop2.SRC_DIR" value="true"/>
-					<param name="svnInfo_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/pdd"/>
+					<param name="gitInfo_openspcoop2.SRC_DIR" value="true"/>
+					<param name="gitInfo_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/pdd"/>
 				</antcall>
 				
 				<!-- Jar Complessivo -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="pdd"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="pdd"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="pdd"/>
 				</antcall>
 				
@@ -150,7 +178,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="pdd"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 				</antcall>
 
 				<!-- Elimino SRC per sovrascrivere versione -->

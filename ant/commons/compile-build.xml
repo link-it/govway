@@ -96,43 +96,28 @@
 		<!-- init -->
 		<mkdir dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
 		
-		<!-- SVN Info -->
-		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}] ROOT_DIR[${svn_rootDir}]"/> -->
+		<!-- GIT Info -->
+
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
-				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+				<echo message="Raccolta informazioni git per inserimento in manifest..."/>
 				
 				<if>
-					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<equals arg1="${gitrepo_root}" arg2="$${gitrepo_root}"/>
 					<then>
-						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+						<fail message="gitrepo_root non fornita: non e' possibile recuperare le informazioni git"/>
 					</then>
 				</if>
-				
-				<svnSetting
-			          svnkit="true"
-			          username="${svnant.repository.user}"
-			          password="${svnant.repository.passwd}"
-			          id="svn.settings"
-				      javahl="false"
-			      />
-				<svn refid="svn.settings" >
-					<status path="${svn_rootDir}"
-                                		revisionProperty="svn.actualRevision"
-                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
-                                		lastChangedRevisionProperty="svn.lastChangedRev"
-                                		lastChangedDateProperty="svn.lastChangedDate" 
-										urlProperty="svn.url"/>
-				</svn>
+		
+			        <GitProperties src="${gitrepo_root}" 
+						authorNameProperty="git.authorName"
+						authorMailProperty="git.authorMail"
+						authorCommitDateProperty="git.authorDate"
+						shortHashProperty="git.commitShortHash"
+				/>
 			</then>
 		</if>
-		<!--
-		<echo message="ACTUAL:[${svn.actualRevision}]"/>
-		<echo message="LAST_COMMIT[${svn.lastCommitAuthor}]"/>
-		<echo message="LAST_CHANGE[${svn.lastChangedRev}]"/>
-		<echo message="DATE:[${svn.lastChangedDate}]"/>
-		-->
 		
 
 		<!-- Compile the java code  -->
@@ -228,93 +213,97 @@
 			</classpath>
 		</javac>
 	
-		<!-- Crezione informazioni svn -->
+		<!-- Crezione informazioni git -->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
-				<svnSetting
-			          svnkit="true"
-			          username="${svnant.repository.user}"
-			          password="${svnant.repository.passwd}"
-			          id="svn.settings"
-				      javahl="false"
-			      />
 				<if>
-					<istrue value="${svnInfo_openspcoop2.SRC_DIR}"/>
+					<istrue value="${gitInfo_openspcoop2.SRC_DIR}"/>
 					<then>
-						<svn refid="svn.settings">
-							<status path="${svnInfo_src_openspcoop2.SRC_DIR}"
-								revisionProperty="svn.package.actualRevision"
-								lastCommitAuthorProperty="svn.package.lastCommitAuthor"
-								lastChangedRevisionProperty="svn.package.lastChangedRev"
-								lastChangedDateProperty="svn.package.lastChangedDate" />
-						</svn>
+						<!--echo>gitInfo_src_openspcoop2.SRC_DIR : ${gitInfo_src_openspcoop2.SRC_DIR}</echo>
+						<echo>REGEX : ^${gitrepo_root}${file.separator}(.*)</echo-->
+						<pathconvert property="gitInfo_src_openspcoop2.SRC_DIR.inrepo" pathsep="${line.separator}">
+						<propertyresource name="gitInfo_src_openspcoop2.SRC_DIR" />
+						    <mapper type="regexp"
+						        from="^${gitrepo_root}${file.separator}(.*)"
+						        to="\1"/>
+						</pathconvert>
+						<!--echo>gitInfo_src_openspcoop2.SRC_DIR.inrepo : ${gitInfo_src_openspcoop2.SRC_DIR.inrepo}</echo-->
+					      <GitProperties src="${gitrepo_root}" 
+								path="${gitInfo_src_openspcoop2.SRC_DIR.inrepo}"
+								authorNameProperty="git.package.authorName"
+								authorMailProperty="git.package.authorMail"
+								authorCommitDateProperty="git.package.authorDate"
+								shortHashProperty="git.package.commitShortHash"
+						/>
 					</then>
 					<else>
-						<svn refid="svn.settings">
-							<status path="${compile_src_openspcoop2.SRC_DIR}"
-								revisionProperty="svn.package.actualRevision"
-								lastCommitAuthorProperty="svn.package.lastCommitAuthor"
-								lastChangedRevisionProperty="svn.package.lastChangedRev"
-								lastChangedDateProperty="svn.package.lastChangedDate" />
-						</svn>
+						<!--
+						<echo>GITREPO: ${gitrepo_root}</echo>
+						<echo>compile_src_openspcoop2.SRC_DIR : ${compile_src_openspcoop2.SRC_DIR}</echo>
+						<echo>REGEX : ^${gitrepo_root}${file.separator}(.*)</echo>
+						-->
+						<pathconvert property="compile_src_openspcoop2.SRC_DIR.inrepo" pathsep="${line.separator}">
+						  <propertyresource name="compile_src_openspcoop2.SRC_DIR" />
+						  <mapper type="regexp"
+						      from="^${gitrepo_root}${file.separator}(.*)"
+						      to="\1"/>
+						</pathconvert>
+
+						<!--echo>compile_src_openspcoop2.SRC_DIR.inrepo : ${compile_src_openspcoop2.SRC_DIR.inrepo}</echo-->
+					      <GitProperties src="${gitrepo_root}" 
+								path="${compile_src_openspcoop2.SRC_DIR.inrepo}"
+								authorNameProperty="git.package.authorName"
+								authorMailProperty="git.package.authorMail"
+								authorCommitDateProperty="git.package.authorDate"
+								shortHashProperty="git.package.commitShortHash"
+						/>
+						<!--
+					        <echo>Nome Autore             : ${git.package.authorName}</echo>
+					        <echo>Email Autore            : ${git.package.authorMail}</echo>
+					        <echo>Data Commit (autore)    : ${git.package.authorDate}</echo>
+					        <echo>Hash commit (short)     : ${git.package.commitShortHash}</echo>
+						-->
 					</else>
 				</if>
 			</then>
 		</if>
 		
-		<!-- Release Name -->
+		<!-- Release NAME -->
 		<if>
 			<isfalse value="${buildAsRelease}"/>
 			<then>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 					<then>
-							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${git.commitShortHash}" />
 					</then>
 					<else>
-                        <if>
-							<isset property="env.BUILD_VERSION"/>
-                            <then>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
-                            </then>
-                            <else>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
-                            </else>
-                        </if>						
+						<if>
+						    <isset property="env.BUILD_VERSION"/>
+						    <then>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+						    </then>
+						    <else>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+						    </else>
+						</if>						
 					</else>
 				</if>
 			</then>
 			<else>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<isset property="env.RELEASE_VERSION"/>
 					<then>
-						<!-- <echo message="URL [${svn.url}]"/> -->
-						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
-						<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
-						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
-						<!-- <echo message="Versione [${compileVersion}]"/> -->
-						<!-- <propertyregex property="compileVersion"
-										input="${compileVersionTmp2}"
-										regexp="/"
-										replace="_" /> -->
-						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+						<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
 					</then>
 					<else>
-						<if>
-							<isset property="env.RELEASE_VERSION"/>
-							<then>
-								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
-							</then>
-							<else>
-								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
-							</else>
-						</if>						
+						<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
 					</else>
-				</if>
+				</if>						
 			</else>
 		</if>
-		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
 		<!-- Comprensione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
@@ -341,7 +330,7 @@
 		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
 				<available file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" property="package-info-presente"/>
 				<if>
@@ -349,12 +338,12 @@
 					<then>
 		                <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info">
 ----------------------------------------
-[SVN] Version Information
-Url: ${svn.url}
-Actual-Revision-Number: ${svn.actualRevision}
-Last-Changed-Revision: ${svn.lastChangedRev}
-Last-Commit-Author: ${svn.lastCommitAuthor}
-Last-Changed-Date:  ${svn.lastChangedDate}   	
+[GIT] Version Information
+Url: ${git.url}
+Actual-Revision-Number: ${git.commitShortHash}
+Last-Changed-Revision: ${git.commitShortHash}
+Last-Commit-Author: ${git.authorName}
+Last-Changed-Date:  ${git.authorDate}   	
 ----------------------------------------
 		                        
 		                </concat>
@@ -362,33 +351,33 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 				</if>
                 <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" append="yes">
 ----------------------------------------
-[SVN] Package Details
+[GIT] Package Details
 Package-Info: ${compile_src_openspcoop2.PACKAGE}
-Last-Changed-Revision: ${svn.package.lastChangedRev}
-Last-Commit-Author: ${svn.package.lastCommitAuthor}
-Last-Changed-Date:  ${svn.package.lastChangedDate}   	
+Last-Changed-Revision: ${git.package.commitShortHash}
+Last-Commit-Author: ${git.package.authorDate}
+Last-Changed-Date:  ${git.package.authorDate}   	
 ----------------------------------------
                         
                 </concat>
 								
 				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
-						<section name="[SVN] Version Information">
-							<attribute name="Url" value="${svn.url}" />
-							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
-							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
-							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
-							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						<section name="[GIT] Version Information">
+							<attribute name="Url" value="${git.url}" />
+							<attribute name="Actual-Revision-Number" value="${git.commitShortHash}"/>
+							<attribute name="Last-Changed-Revision" value="${git.commitShortHash}"/>
+							<attribute name="Last-Commit-Author" value="${git.authorName}"/>
+							<attribute name="Last-Changed-Date" value="${git.authorDate}"/>
 						</section>
-						<section name="[SVN] Package Details">
+						<section name="[GIT] Package Details">
 							<attribute name="Package-Info"  
 										value="${compile_src_openspcoop2.PACKAGE}"/>
 							<attribute name="Last-Changed-Revision"
-										value="${svn.package.lastChangedRev}"/>
+										value="${git.package.commitShortHash}"/>
 							<attribute name="Last-Commit-Author"
-										value="${svn.package.lastCommitAuthor}"/>
+										value="${git.package.authorDate}"/>
 							<attribute name="Last-Changed-Date"
-										value="${svn.package.lastChangedDate}"/>
+										value="${git.package.authorDate}"/>
 						</section>
 					</manifest>
 					<zipfileset dir="${build}/compile-jar-openspcoop2" />
@@ -513,90 +502,64 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 		<!-- init -->
 		<mkdir dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
 		
-		<!-- SVN Info -->
-		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}]"/> -->
+		<!-- GIT Info -->
+		<!-- <echo message="GIT:[${compile_src_openspcoop2.GITINFO}]"/> -->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
-				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+				<echo message="Raccolta informazioni git per inserimento in manifest..."/>
 
 				<if>
-					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<equals arg1="${gitrepo_root}" arg2="$${gitrepo_root}"/>
 					<then>
-						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+						<fail message="gitrepo_root non fornita: non e' possibile recuperare le informazioni git"/>
 					</then>
 				</if>
+			        <GitProperties src="${gitrepo_root}" 
+						authorNameProperty="git.authorName"
+						authorMailProperty="git.authorMail"
+						authorCommitDateProperty="git.authorDate"
+						shortHashProperty="git.commitShortHash"
+				/>
 				
-				<svnSetting
-			          svnkit="true"
-			          username="${svnant.repository.user}"
-			          password="${svnant.repository.passwd}"
-			          id="svn.settings"
-				      javahl="false"
-			      />
-				<svn refid="svn.settings">
-					<status path="${svn_rootDir}"
-                                		revisionProperty="svn.actualRevision"
-                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
-                                		lastChangedRevisionProperty="svn.lastChangedRev"
-                                		lastChangedDateProperty="svn.lastChangedDate" 
-										urlProperty="svn.url"/>
-				</svn>
 			</then>
 		</if>
 		
-		<!-- Release Name -->
+		<!-- Release NAME -->
 		<if>
 			<isfalse value="${buildAsRelease}"/>
 			<then>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 					<then>
-							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${git.commitShortHash}" />
 					</then>
 					<else>					
-                        <if>
-							<isset property="env.BUILD_VERSION"/>
-                            <then>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
-                            </then>
-                            <else>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
-                            </else>
-                        </if>
+						<if>
+						    <isset property="env.BUILD_VERSION"/>
+						    <then>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+						    </then>
+						    <else>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+						    </else>
+						</if>
 					</else>
 				</if>
 			</then>
 			<else>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<isset property="env.RELEASE_VERSION"/>
 					<then>
-						<!-- <echo message="URL [${svn.url}]"/> -->
-						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
-						<!-- <echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/> -->
-						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
-						<!-- <echo message="Versione [${compileVersion}]"/> -->
-						<!-- <propertyregex property="compileVersion"
-										input="${compileVersionTmp2}"
-										regexp="/"
-										replace="_" /> -->
-						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+						<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
 					</then>
 					<else>
-						<if>
-							<isset property="env.RELEASE_VERSION"/>
-							<then>
-								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
-							</then>
-							<else>
-								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
-							</else>
-						</if>
+						<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
 					</else>
 				</if>
 			</else>
 		</if>
-		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
 		<!-- Comprensione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
@@ -623,7 +586,7 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
 				<available file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" property="package-info-presente"/>
 				<if>
@@ -631,12 +594,12 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 					<then>
 		                <concat destfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info">
 ----------------------------------------
-[SVN] Version Information
-Url: ${svn.url}
-Actual-Revision-Number: ${svn.actualRevision}
-Last-Changed-Revision: ${svn.lastChangedRev}
-Last-Commit-Author: ${svn.lastCommitAuthor}
-Last-Changed-Date:  ${svn.lastChangedDate}   	
+[GIT] Version Information
+Url: ${git.url}
+Actual-Revision-Number: ${git.commitShortHash}
+Last-Changed-Revision: ${git.commitShortHash}
+Last-Commit-Author: ${git.authorName}
+Last-Changed-Date:  ${git.authorDate}   	
 ----------------------------------------
 		                        
 		                </concat>
@@ -645,12 +608,12 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 				
 				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
-						<section name="[SVN] Version Information">
-							<attribute name="Url" value="${svn.url}" />
-							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
-							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
-							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
-							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						<section name="[GIT] Version Information">
+							<attribute name="Url" value="${git.url}" />
+							<attribute name="Actual-Revision-Number" value="${git.commitShortHash}"/>
+							<attribute name="Last-Changed-Revision" value="${git.commitShortHash}"/>
+							<attribute name="Last-Commit-Author" value="${git.authorName}"/>
+							<attribute name="Last-Changed-Date" value="${git.authorDate}"/>
 						</section>
 					</manifest>
 					<zipfileset dir="${compile_src_openspcoop2.JAR_SRC_DIR}" prefix="${compile_src_openspcoop2.JAR_SRC_PREFIX}">
@@ -758,90 +721,63 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 
 		<echo message="Java home: ${java_home}"/>
 		
-		<!-- SVN Info -->
-		<!-- <echo message="SVN:[${compile_src_openspcoop2.SVNINFO}]"/> -->
+		<!-- GIT Info -->
+		<!-- <echo message="GIT:[${compile_src_openspcoop2.GITINFO}]"/> -->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
-				<echo message="Raccolta informazioni svn per inserimento in manifest..."/>
+				<echo message="Raccolta informazioni git per inserimento in manifest..."/>
 
 				<if>
-					<equals arg1="${svn_rootDir}" arg2="$${svn_rootDir}"/>
+					<equals arg1="${gitrepo_root}" arg2="$${gitrepo_root}"/>
 					<then>
-						<fail message="svn_rootDir non fornita: non e' possibile recuperare le informazioni svn"/>
+						<fail message="gitrepo_root non fornita: non e' possibile recuperare le informazioni git"/>
 					</then>
 				</if>
-				
-				<svnSetting
-			          svnkit="true"
-			          username="${svnant.repository.user}"
-			          password="${svnant.repository.passwd}"
-			          id="svn.settings"
-				      javahl="false"
-			      />
-				<svn refid="svn.settings">
-					<status path="${svn_rootDir}"
-                                		revisionProperty="svn.actualRevision"
-                                		lastCommitAuthorProperty="svn.lastCommitAuthor"
-                                		lastChangedRevisionProperty="svn.lastChangedRev"
-                                		lastChangedDateProperty="svn.lastChangedDate" 
-										urlProperty="svn.url"/>
-				</svn>
+			       <GitProperties src="${gitrepo_root}" 
+						authorNameProperty="git.authorName"
+						authorMailProperty="git.authorMail"
+						authorCommitDateProperty="git.authorDate"
+						shortHashProperty="git.commitShortHash"
+				/>
 			</then>
 		</if>
 		
-		<!-- Release Name -->
+		<!-- Release NAME -->
 		<if>
 			<isfalse value="${buildAsRelease}"/>
 			<then>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 					<then>
-							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${svn.actualRevision}" />
+							<var name="compile_src_openspcoop2.ReleaseName" value="BUILD-${git.commitShortHash}" />
 					</then>
 					<else>
-                        <if>
-							<isset property="env.BUILD_VERSION"/>
-                            <then>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
-                            </then>
-                            <else>
-                            	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
-                            </else>
-                        </if>
+						<if>
+						    <isset property="env.BUILD_VERSION"/>
+						    <then>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="${env.BUILD_VERSION}.RELEASE" />
+						    </then>
+						    <else>
+						    	<var name="compile_src_openspcoop2.ReleaseName" value="BUILD" />
+						    </else>
+						</if>
 					</else>
 				</if>
 			</then>
 			<else>
 				<if>
-					<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+					<isset property="env.RELEASE_VERSION"/>
 					<then>
-						<!--<echo message="URL [${svn.url}]"/>-->
-						<propertyregex property="compileVersionTmp" input="${svn.url}" regexp="svn://openspcoop.org/gov4j/openspcoop2/(branches||tags||trunk)/(.*)" replace="\2" />
-						<!--<echo message="VERSIONE_COMPLETA [${compileVersionTmp}]"/>-->
-						<propertyregex property="compileVersion" input="${compileVersionTmp}" regexp="([0-9A-Za-z-_.]*)/?(.*)" replace="\1" />
-						<!--<echo message="Versione [${compileVersion}]"/>--> 
-						<!-- <propertyregex property="compileVersion"
-										input="${compileVersionTmp2}"
-										regexp="/"
-										replace="_" /> -->
-						<var name="compile_src_openspcoop2.ReleaseName" value="${compileVersion}.RELEASE" />
+						<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
 					</then>
 					<else>
-						<if>
-							<isset property="env.RELEASE_VERSION"/>
-							<then>
-								<var name="compile_src_openspcoop2.ReleaseName" value="${env.RELEASE_VERSION}.RELEASE" />
-							</then>
-							<else>
-								<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
-							</else>
-						</if>					
+						<var name="compile_src_openspcoop2.ReleaseName" value="RELEASE" />
 					</else>
-				</if>
+				</if>					
 			</else>
 		</if>
-		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
+		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.GIT_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 	
 		<!-- Comprensione valore 'duplicate' jar task -->
 		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
@@ -868,16 +804,16 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
-			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
+			<istrue value="${compile_src_openspcoop2.GITINFO}"/>
 			<then>
 				<jar jarfile="${dist}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
-						<section name="[SVN] Version Information">
-							<attribute name="Url" value="${svn.url}" />
-							<attribute name="Actual-Revision-Number" value="${svn.actualRevision}"/>
-							<attribute name="Last-Changed-Revision" value="${svn.lastChangedRev}"/>
-							<attribute name="Last-Commit-Author" value="${svn.lastCommitAuthor}"/>
-							<attribute name="Last-Changed-Date" value="${svn.lastChangedDate}"/>
+						<section name="[GIT] Version Information">
+							<attribute name="Url" value="${git.url}" />
+							<attribute name="Actual-Revision-Number" value="${git.commitShortHash}"/>
+							<attribute name="Last-Changed-Revision" value="${git.commitShortHash}"/>
+							<attribute name="Last-Commit-Author" value="${git.authorName}"/>
+							<attribute name="Last-Changed-Date" value="${git.authorDate}"/>
 						</section>
 					</manifest>
 					<zipfileset file="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/package.info" prefix="META-INF"/>

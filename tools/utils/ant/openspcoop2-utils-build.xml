@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.utils
     </description>
 
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
@@ -22,18 +22,18 @@
 			<istrue value="${buildUtils}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
-				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 				
 				<var name="packagesCompiled" value="" />
 				
 				<!-- org.openspcoop2.utils -->
 				<var name="packagesCompiled" value="org.openspcoop2.utils" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -46,9 +46,9 @@
 				<!-- org.openspcoop2.utils.resources -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.resources" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/resources"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-resources"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-resources"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -61,9 +61,9 @@
 				<!-- org.openspcoop2.utils.mime -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.mime" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/mime"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-mime"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-mime"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="mime.types"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/mime"/>
@@ -79,9 +79,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.transport.http.credential" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.transport.jms" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/transport"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-transport"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-transport"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="http/httpheader.types"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/transport"/>
@@ -94,9 +94,9 @@
 				<!-- org.openspcoop2.utils.jmx -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jmx" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jmx"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-jmx"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jmx"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jmx"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
@@ -107,9 +107,9 @@
 				<!-- org.openspcoop2.utils.properties -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.properties" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/properties"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-properties"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-properties"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -122,9 +122,9 @@
 				<!-- org.openspcoop2.utils.regexp -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.regexp" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/regexp"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-regexp"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-regexp"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -138,9 +138,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.cache" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.cache.test" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/cache"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-cache"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-cache"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -153,9 +153,9 @@
 				<!-- org.openspcoop2.utils.checksum -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.checksum" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/checksum"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-checksum"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-checksum"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -168,9 +168,9 @@
 				<!-- org.openspcoop2.utils.crypt -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.crypt" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/crypt"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-crypt"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-crypt"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/crypt/"/>
@@ -183,9 +183,9 @@
 				<!-- org.openspcoop2.utils.csv -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.csv" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/csv"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-csv"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-csv"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.csv"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.properties"/>
@@ -199,9 +199,9 @@
 				<!-- org.openspcoop2.utils.date -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.date" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/date"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-date"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-date"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -214,9 +214,9 @@
 				<!-- org.openspcoop2.utils.dch -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.dch" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/dch"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-dch"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-dch"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.dch"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
@@ -227,9 +227,9 @@
 				<!-- org.openspcoop2.utils.sql -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.sql" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/sql"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-sql"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-sql"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -244,9 +244,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.io.notifier" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.io.notifier.unblocked" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/io"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-io"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-io"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -259,9 +259,9 @@
 				<!-- org.openspcoop2.utils.jaxb -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxb" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxb"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-jaxb"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxb"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -274,9 +274,9 @@
 				<!-- org.openspcoop2.utils.jdbc -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jdbc" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jdbc"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-jdbc"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jdbc"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test.pdf"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/jdbc"/>
@@ -293,9 +293,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.serial" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.id.serial.sql" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/id"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-id"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-id"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.sql"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/id"/>
@@ -308,9 +308,9 @@
 				<!-- org.openspcoop2.utils.serialization -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.serialization" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/serialization"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-serialization"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-serialization"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -323,9 +323,9 @@
 				<!-- org.openspcoop2.utils.xml -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.xml" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/xml"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-xml"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-xml"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="pretty-print.xsl"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/xml"/>
@@ -340,9 +340,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.json.validation" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.json.validation.test" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/json"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-json"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-json"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -355,9 +355,9 @@
 				<!-- org.openspcoop2.utils.xml2json -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.xml2json" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/xml2json"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-xml2json"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-xml2json"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/xml2json"/>
@@ -370,9 +370,9 @@
 				<!-- org.openspcoop2.utils.digest -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.digest" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/digest"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-digest"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-digest"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -385,9 +385,9 @@
 				<!-- org.openspcoop.2.utils.beans -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.beans" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/beans"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-beans"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-beans"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -400,9 +400,9 @@
 				<!-- org.openspcoop.2.utils.security -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.security" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/security"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-security"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-security"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.jks"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/security"/>
@@ -415,9 +415,9 @@
 				<!-- org.openspcoop2.utils.wsdl -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wsdl" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/wsdl"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-wsdl"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-wsdl"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -432,9 +432,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.rest.entity" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.rest.api" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/rest"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-rest"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-rest"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -448,9 +448,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.wadl.validator" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/wadl"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-wadl"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-wadl"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -464,9 +464,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.openapi" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.openapi.validator" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/openapi"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-openapi"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-openapi"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.json"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="**/*.yaml"/>
@@ -481,9 +481,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.xacml" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.xacml.test" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/xacml"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-xacml"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-xacml"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test/*.xml"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/xacml"/>
@@ -496,9 +496,9 @@
 				<!-- org.openspcoop2.utils.mail -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.mail" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/mail"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-mail"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-mail"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -515,9 +515,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.log4j" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.test" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/logger"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-logger"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-logger"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/logger"/>
@@ -531,9 +531,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.datasource" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.datasource.test" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/datasource"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-datasource"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-datasource"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
@@ -546,9 +546,9 @@
 				<!-- org.openspcoop.2.utils.sonde -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.sonde" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/sonde"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-sonde"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-sonde"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.sql"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/sonde/sql"/>
@@ -562,9 +562,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.semaphore" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.semaphore.sql" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/semaphore"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-semaphore"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-semaphore"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="**/*.sql"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/semaphore"/>
@@ -578,9 +578,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.threads" />
 
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/threads"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils-threads"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-threads"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/threads"/>
@@ -592,8 +592,8 @@
 				
 				<!-- Jar Complessivo -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="utils"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
@@ -604,7 +604,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="utils"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc_utils}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="src" value="${src_utils}"/>
 					<param name="doc" value="${doc_utils}"/>
 					<param name="dist" value="${dist_utils}"/>

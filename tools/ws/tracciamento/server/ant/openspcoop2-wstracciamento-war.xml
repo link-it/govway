@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.core.tracciamento.ws.server
     </description>
 
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	<import file="${openspcoop2}/ant/commons/utils.xml" />

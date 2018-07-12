@@ -10,7 +10,7 @@
 	<import file="./ant/openspcoop2-backwardCompatibility-war.xml" />
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
 	<property name="src_backwardCompatibility" location="src/" />

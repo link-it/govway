@@ -7,7 +7,7 @@
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/git-build.xml" />
 	<import file="${rootDir}/ant/commons/as-check.xml" />
 	<import file="./ant/openspcoop2-schemi-build.xml" />
 	<import file="./ant/openspcoop2-message-build.xml" />
@@ -98,7 +98,7 @@
 	<!-- Indicazione se produrre la versione Threads -->
 	<var name="build_openspcoop_with_linkit_threads" value="false"/>	
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${rootDir}" />
+	<property name="gitrepo_root" location="${rootDir}" />
 	<!-- directory sorgente -->
 	<property name="src" location="src" />
 	<!-- directory da dove ripulire i .class di un ambiente di editing -->
@@ -264,7 +264,7 @@
 							<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 							<param name="compile_src_openspcoop2.API_NAME" value="all-packages"/>
 							<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
-							<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+							<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 						</antcall>
 					</then>
 				</if>

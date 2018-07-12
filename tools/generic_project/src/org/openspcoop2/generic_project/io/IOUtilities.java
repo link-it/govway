@@ -94,10 +94,8 @@ public class IOUtilities {
 			String files[] = srcPath.list();
 
 			for(int i = 0; i < files.length; i++){
-				if(".svn".equals(files[i])==false){
 					IOUtilities.copyDirectory(new File(srcPath, files[i]), 
 							new File(dstPath, files[i]));
-				}
 			}
 		}
 		else{

@@ -3,7 +3,7 @@
         Produzione dei jar relativi agli schemi di openspcoop2
     </description>
 
-	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/git-build.xml" />
 	<import file="${rootDir}/ant/commons/compile-build.xml" />
 	
 	<!-- estensione di ant (if .... ) -->
@@ -20,15 +20,15 @@
 			<istrue value="${buildSchemi}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
-				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 					
 				<!-- Jar contenente gli schemi del prodotto -->	
 				<antcall target="build_jar_schema">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src}/schemi"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="schemi-xsd-openspcoop2"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="schemi-xsd-openspcoop2"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="*.xsd"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="schemi"/>
@@ -38,9 +38,9 @@
 				
 				<!-- Jar contenente gli schemi -->	
 				<antcall target="build_jar_schema">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src}/schemi/standard"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="schemi-xsd-standard"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="schemi-xsd-standard"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES" value="*.xsd"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_INCLUDES_2" value="*.dtd"/>
 					<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
@@ -51,8 +51,8 @@
 				
 				<!-- Jar Complessivo -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="schemi-xsd"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="schemi-xsd"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="schemi"/>
 				</antcall>
 				

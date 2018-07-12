@@ -10,11 +10,12 @@
       </classpath>
     </taskdef>
 
-                                  <classpath id="jgit.classpath">
-                                      <pathelement location="${required_lib}/git/GitTask-1.0.jar"/>
-                                      <pathelement location="${required_lib}/git/org.eclipse.jgit-5.0.1.201806211838-r.jar"/>
-                                      <pathelement location="${required_lib}/log/slf4j-api-1.7.21.jar"/>
-                                  </classpath>
+                                  <path id="jgit.classpath">
+			                <fileset dir="${required_lib}" id="jgit.jar">
+                        		<include name="git/*.jar"/>
+					<include name="log/*.jar"/>
+                			</fileset>
+                                  </path>
 	
 
 	<!-- Che presenza jar jgit -->
@@ -22,7 +23,7 @@
 	<target name="checkgit" >
 		<fileset dir="${required_lib}" id="jgit.jar">
 			<include name="git/*.jar"/>
-			<include name="log/slf4j-api-1.7.21.jar" />
+			<include name="log/*.jar" />
 		</fileset>
 		<pathconvert pathsep=" " property="jgit.jar.list" refid="jgit.jar">
 			<map from="${basedir}/${required_lib}/" to="lib/"/>

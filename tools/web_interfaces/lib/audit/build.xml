@@ -7,14 +7,14 @@
 
 	<import file="local_env.xml" />
 	<import file="./local_env.xml" />
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	<import file="${openspcoop2}/ant/commons/sql-build.xml" />
 	<import file="${mvc}/build.xml" />
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 
 	<!-- set properties for this build -->
 	<property name="src_audit" location="src" />
@@ -61,15 +61,15 @@
 	<!-- Compilazione -->
 	<target name="compile_audit" depends="init_compile_audit,compile_mvc" description="compila la libreria">
 
-		<!-- Info svn -->
-		<runtarget target="checksvn" />
+		<!-- Info git -->
+		<runtarget target="checkgit" />
 		
 		<!-- org.openspcoop2.web.lib.audit.dao -->
 		<var name="packagesCompiled" value="org.openspcoop2.web.lib.audit.costanti" />	
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/costanti"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-costanti"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit-costanti"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.costanti"/>
@@ -85,9 +85,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/log"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-log"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit-log"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.log"/>
@@ -99,9 +99,9 @@
 		<!-- org.openspcoop2.web.lib.audit.dao -->
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.dao" />	
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/dao"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-dao"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit-dao"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.dao"/>
@@ -115,9 +115,9 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.appender" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.web" />		
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/audit/dao/*.java"/>
 			<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="**/audit/costanti/*.java"/>
@@ -130,10 +130,10 @@
 				
 		<!-- Jar Complessivo -->
 		<antcall target="jar_2_jar_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
-			<param name="svn_rootDir" value="."/>
+			<param name="gitrepo_root" value="."/>
 			<param name="dist" value="${dist_audit}"/>
 			<param name="build" value="${build_audit}"/>
 		</antcall>
@@ -149,7 +149,7 @@
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 			<param name="compile_src_openspcoop2.API_NAME" value="web-lib-audit"/>
 			<param name="compile_src_openspcoop2.API_DIR" value="${doc_audit}/api"/>
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="src" value="${src_audit}"/>
 			<param name="doc" value="${doc_audit}"/>
 			<param name="dist" value="${dist_audit}"/>

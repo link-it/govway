@@ -13,7 +13,7 @@
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
 	
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 
 	<!-- estensione di ant (if .... ) -->
 	<!--

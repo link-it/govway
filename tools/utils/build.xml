@@ -18,7 +18,7 @@
 	</taskdef>
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 	
 	<property name="src_utils" location="src" />
 	<property name="build_utils" location="build" />

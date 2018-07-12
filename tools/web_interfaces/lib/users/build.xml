@@ -8,13 +8,13 @@
 
 	<import file="local_env.xml" />
 	<import file="./local_env.xml" />
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	<import file="${openspcoop2}/ant/commons/sql-build.xml" />
 
 	<!-- directory root -->
-	<property name="svn_rootDir" location="${openspcoop2}" />
+	<property name="gitrepo_root" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
 	<property name="src_users" location="src" />
@@ -61,16 +61,16 @@
 	<!-- Compilazione -->
 	<target name="compile_users" depends="init_compile_users" description="compila la libreria Users">
 
-		<!-- Info svn -->
-		<runtarget target="checksvn" />
+		<!-- Info git -->
+		<runtarget target="checkgit" />
 		
 		<!-- org.openspcoop2.web.lib.users -->
 		<var name="packagesCompiled" value="org.openspcoop2.web.lib.users" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.users.dao" />
 		<antcall target="compile_src_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_users}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-users"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-users"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.users"/>
@@ -81,10 +81,10 @@
 				
 		<!-- Jar Complessivo -->
 		<!-- <antcall target="jar_2_jar_openspcoop2">
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-users"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-users"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="web-lib-users"/>
-			<param name="svn_rootDir" value="."/>
+			<param name="gitrepo_root" value="."/>
 		</antcall> -->
 		
 		<!-- API -->
@@ -98,7 +98,7 @@
 			<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 			<param name="compile_src_openspcoop2.API_NAME" value="web-lib-users"/>
 			<param name="compile_src_openspcoop2.API_DIR" value="${doc_users}/api"/>
-			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="src" value="${src_users}"/>
 			<param name="doc" value="${doc_users}"/>
 			<param name="dist" value="${dist_users}"/>

@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.generic_project
     </description>
 
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
@@ -23,8 +23,8 @@
 			<istrue value="${buildOpenSPCoop2GenericProject}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
+				<!-- Info git -->
+				<runtarget target="checkgit" />
 				
 				<!-- genericProject -->
 				<var name="packagesCompiled" value="org.openspcoop2.generic_project" />
@@ -46,9 +46,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.generic_project.utils" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_genericProject}/"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="generic-project"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="generic-project"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.generic_project"/>
@@ -60,8 +60,8 @@
 				<!-- Jar Complessivo -->
 				<!--
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="generic-project"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="generic-project"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="genericProject"/>
 					<param name="dist" value="${dist_genericProject}"/>
 					<param name="build" value="${build_genericProject}"/>
@@ -79,7 +79,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="generic-project"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc_genericProject}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="src" value="${src_genericProject}"/>
 					<param name="doc" value="${doc_genericProject}"/>
 					<param name="dist" value="${dist_genericProject}"/>

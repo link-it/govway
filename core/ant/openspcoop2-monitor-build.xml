@@ -3,7 +3,7 @@
         Produzione dei jar relativi al package org.openspcoop2.monitor.engine.*
     </description>
 
-	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/git-build.xml" />
 	<import file="${rootDir}/ant/commons/compile-build.xml" />
 	<import file="${rootDir}/ant/commons/api-build.xml" />
 	
@@ -22,17 +22,17 @@
 			<istrue value="${buildMonitorEngine}"/>
 			<then>
 		
-				<!-- Info svn -->
-				<runtarget target="checksvn" />
-				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 					
 				<!-- org.openspcoop2.monitor.engine.config.base -->	
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.base,org.openspcoop2.monitor.engine.config.base.constants,org.openspcoop2.monitor.engine.config.base.models,org.openspcoop2.monitor.engine.config.base.utils,org.openspcoop2.monitor.engine.config.base.utils.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.base.dao,org.openspcoop2.monitor.engine.config.base.dao.jdbc,org.openspcoop2.monitor.engine.config.base.jdbc.converter,org.openspcoop2.monitor.engine.config.base.dao.jdbc.fetch" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine/config/base"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-base"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-base"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/monitor/engine/config/base"/>
@@ -44,9 +44,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.transazioni,org.openspcoop2.monitor.engine.config.transazioni.constants,org.openspcoop2.monitor.engine.config.transazioni.models,org.openspcoop2.monitor.engine.config.transazioni.utils,org.openspcoop2.monitor.engine.config.transazioni.utils.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.transazioni.dao,org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc,org.openspcoop2.monitor.engine.config.transazioni.jdbc.converter,org.openspcoop2.monitor.engine.config.transazioni.dao.jdbc.fetch" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine/config/transazioni"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-transazioni"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-transazioni"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/monitor/engine/config/transazioni"/>
@@ -58,9 +58,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.ricerche,org.openspcoop2.monitor.engine.config.ricerche.constants,org.openspcoop2.monitor.engine.config.ricerche.models,org.openspcoop2.monitor.engine.config.ricerche.utils,org.openspcoop2.monitor.engine.config.ricerche.utils.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.ricerche.dao,org.openspcoop2.monitor.engine.config.ricerche.dao.jdbc,org.openspcoop2.monitor.engine.config.ricerche.jdbc.converter,org.openspcoop2.monitor.engine.config.ricerche.dao.jdbc.fetch" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine/config/ricerche"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-ricerche"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-ricerche"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/monitor/engine/config/ricerche"/>
@@ -72,9 +72,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.statistiche,org.openspcoop2.monitor.engine.config.statistiche.constants,org.openspcoop2.monitor.engine.config.statistiche.models,org.openspcoop2.monitor.engine.config.statistiche.utils,org.openspcoop2.monitor.engine.config.statistiche.utils.serializer" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.config.statistiche.dao,org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc,org.openspcoop2.monitor.engine.config.statistiche.jdbc.converter,org.openspcoop2.monitor.engine.config.statistiche.dao.jdbc.fetch" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine/config/statistiche"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-statistiche"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-statistiche"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/monitor/engine/config/statistiche"/>
@@ -94,9 +94,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.transaction" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.utils" />
 				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor-engine"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-engine"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_EXCLUDES" value="config/base/**"/>
@@ -110,8 +110,8 @@
 				
 				<!-- Jar Complessivo API -->
 				<antcall target="jar_2_jar_openspcoop2">
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="monitor"/>
 				</antcall>
 								
@@ -120,7 +120,7 @@
 					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
 					<param name="compile_src_openspcoop2.API_NAME" value="monitor"/>
 					<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
-					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 				</antcall>
 
 			</then>

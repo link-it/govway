@@ -96,7 +96,6 @@ public class BusteEGovConEccezioni {
 			File[] dir =  new java.io.File(Utilities.testSuiteProperties.getPathBusteConEccezioni()).listFiles();
 			Vector<File> dirV = new Vector<File>();
 			for(int i=0; i<dir.length; i++){
-				if(".svn".equals(dir[i].getName())==false)
 					dirV.add(dir[i]);
 			}
 			dir = new File[1];

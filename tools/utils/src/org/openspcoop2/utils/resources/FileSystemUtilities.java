@@ -99,10 +99,8 @@ public class FileSystemUtilities {
 			String files[] = srcPath.list();
 
 			for(int i = 0; i < files.length; i++){
-				if(".svn".equals(files[i])==false){
 					FileSystemUtilities.copyDirectory(new File(srcPath, files[i]), 
 							new File(dstPath, files[i]));
-				}
 			}
 		}
 		else{
