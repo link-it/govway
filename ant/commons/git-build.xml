@@ -1,0 +1,44 @@
+<project name="git-info" default="checkgit" basedir=".">
+    <description>
+        Raccolta informazioni GIT inserite nel META-INF/MANIFEST.MF dei jar
+    </description>
+
+	<!-- estensione di ant (if .... ) -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+      <classpath>
+          <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+      </classpath>
+    </taskdef>
+
+                                  <classpath id="jgit.classpath">
+                                      <pathelement location="${required_lib}/git/GitTask-1.0.jar"/>
+                                      <pathelement location="${required_lib}/git/org.eclipse.jgit-5.0.1.201806211838-r.jar"/>
+                                      <pathelement location="${required_lib}/log/slf4j-api-1.7.21.jar"/>
+                                  </classpath>
+	
+
+	<!-- Che presenza jar jgit -->
+	<var name="jgit.jar.presente" value="false"/>
+	<target name="checkgit" >
+		<fileset dir="${required_lib}" id="jgit.jar">
+			<include name="git/*.jar"/>
+			<include name="log/slf4j-api-1.7.21.jar" />
+		</fileset>
+		<pathconvert pathsep=" " property="jgit.jar.list" refid="jgit.jar">
+			<map from="${basedir}/${required_lib}/" to="lib/"/>
+		</pathconvert>
+		<!-- <echo message="Jar: [${jgit.jar.list}]"/> -->
+ 		<if>
+			<not>
+				<equals arg1="${jgit.jar.list}" arg2="" />
+			</not>
+			<then>
+				<var name="jgit.jar.presente" value="true"/>
+			        <taskdef name="GitProperties" classname="it.link.git.GitStatus" classpathref="jgit.classpath" />
+
+		    </then>
+		</if>
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+	</target>
+	
+</project>
