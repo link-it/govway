@@ -28,15 +28,15 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento CodiceEventoStatoPortaDominio xsd (tipo:string) 
+ * Enumeration dell'elemento CodiceEventoStatoGateway xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CodiceEventoStatoPortaDominio")
+@javax.xml.bind.annotation.XmlType(name = "CodiceEventoStatoGateway")
 @javax.xml.bind.annotation.XmlEnum(String.class)
-public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable , Cloneable {
+public enum CodiceEventoStatoGateway implements IEnumeration , Serializable , Cloneable {
 
 	@javax.xml.bind.annotation.XmlEnumValue("Start")
 	START ("Start"),
@@ -54,7 +54,7 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 
 
 	/** Official Constructor */
-	CodiceEventoStatoPortaDominio(String value)
+	CodiceEventoStatoGateway(String value)
 	{
 		this.value = value;
 	}
@@ -65,7 +65,7 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(CodiceEventoStatoPortaDominio object){
+	public boolean equals(CodiceEventoStatoGateway object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)
@@ -82,10 +82,10 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof CodiceEventoStatoPortaDominio) ){
+		if( !(object instanceof CodiceEventoStatoGateway) ){
 			throw new RuntimeException("Wrong type: "+object.getClass().getName());
 		}
-		return this.equals(((CodiceEventoStatoPortaDominio)object));
+		return this.equals(((CodiceEventoStatoGateway)object));
 	}
 	public String toString(boolean reportHTML){
 		return toString();
@@ -106,7 +106,7 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoStatoPortaDominio tmp : values()) {
+		for (CodiceEventoStatoGateway tmp : values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
@@ -115,7 +115,7 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 	public static String[] toStringArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoStatoPortaDominio tmp : values()) {
+		for (CodiceEventoStatoGateway tmp : values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
@@ -124,7 +124,7 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 	public static String[] toEnumNameArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoStatoPortaDominio tmp : values()) {
+		for (CodiceEventoStatoGateway tmp : values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -135,16 +135,16 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 		return toEnumConstant(value)!=null;
 	}
 	
-	public static CodiceEventoStatoPortaDominio toEnumConstant(String value){
+	public static CodiceEventoStatoGateway toEnumConstant(String value){
 		try{
 			return toEnumConstant(value,false);
 		}catch(NotFoundException notFound){
 			return null;
 		}
 	}
-	public static CodiceEventoStatoPortaDominio toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
-		CodiceEventoStatoPortaDominio res = null;
-		for (CodiceEventoStatoPortaDominio tmp : values()) {
+	public static CodiceEventoStatoGateway toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		CodiceEventoStatoGateway res = null;
+		for (CodiceEventoStatoGateway tmp : values()) {
 			if(tmp.getValue().equals(value)){
 				res = tmp;
 				break;
@@ -164,8 +164,8 @@ public enum CodiceEventoStatoPortaDominio implements IEnumeration , Serializable
 		}
 	}
 	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
-		CodiceEventoStatoPortaDominio res = null;
-		for (CodiceEventoStatoPortaDominio tmp : values()) {
+		CodiceEventoStatoGateway res = null;
+		for (CodiceEventoStatoGateway tmp : values()) {
 			if(tmp.toString().equals(value)){
 				res = tmp;
 				break;
