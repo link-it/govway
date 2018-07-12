@@ -530,7 +530,7 @@ public class ConfigurazioniCsvExporter {
 					}
 				}
 				oneLine.add(sb.toString());
-			}
+			}	
 		}
 		
 		// STATO
@@ -557,7 +557,7 @@ public class ConfigurazioniCsvExporter {
 			if(useInterfaceNameInInvocationURL) {
 				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
 				if(StringUtils.isNotEmpty(portaApplicativa.getNomePortaDeleganteAzione())) {
-					urlInvocazione = urlInvocazione + n.enrichPA(portaApplicativa.getNomePortaDeleganteAzione());
+					urlInvocazione = urlInvocazione + n.normalizePA(portaApplicativa.getNomePortaDeleganteAzione());
 				} else {
 					urlInvocazione = urlInvocazione + configurazione.getLabel();
 				}
@@ -1098,7 +1098,7 @@ public class ConfigurazioniCsvExporter {
 			if(useInterfaceNameInInvocationURL) {
 				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
 				if(StringUtils.isNotEmpty(portaDelegata.getNomePortaDeleganteAzione())) {
-					urlInvocazione = urlInvocazione + n.enrichPD(portaDelegata.getNomePortaDeleganteAzione());
+					urlInvocazione = urlInvocazione + n.normalizePD(portaDelegata.getNomePortaDeleganteAzione());
 				} else {
 					urlInvocazione = urlInvocazione + configurazione.getLabel();
 				}
