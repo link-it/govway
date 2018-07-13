@@ -35,9 +35,9 @@
 			</not>
 			<then>
 				<var name="jgit.jar.presente" value="true"/>
-			        <taskdef name="GitProperties" classname="it.link.git.GitStatus" classpathref="jgit.classpath" />
-
-		    </then>
+				<taskdef name="GitProperties" classname="it.link.git.GitStatus" classpathref="jgit.classpath" />
+				<var name="git.url" value="master" />
+			</then>
 		</if>
 		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
 	</target>

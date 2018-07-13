@@ -1,6 +1,6 @@
 # Ignore everything in this directory
 build
 dist
+bin
 # Except this file
 !.gitignore
-/bin/
