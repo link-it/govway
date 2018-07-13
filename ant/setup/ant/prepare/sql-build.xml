@@ -82,11 +82,11 @@
 		
 		<!-- gestione db_info -->
 		
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="CREATE TABLE db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql" token="CREATE TABLE db_info" 
 				                                 value="CREATE TABLE db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="CONSTRAINT pk_db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql" token="CONSTRAINT pk_db_info" 
 						                         value="CONSTRAINT pk_db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql" token="INSERT INTO db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql" token="INSERT INTO db_info" 
 								                 value="INSERT INTO db_info_console"/>
 		
 		<antcall target="_correctSQL_${TIPO_DB}" />
@@ -101,22 +101,22 @@
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryGovWay.sql RepositoryPddConsoleGovWay.sql RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"/>
+                           files="RepositoryGovWay.sql RepositoryGovWayConsole.sql RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
 		</concat>
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsoleGovWay.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
 		
 		<!-- creo govway_drop.sql -->
 				
 		<delete file="${deploy_sql}/${TIPO_DB}/govway_drop.sql"/>
 
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP TABLE db_info_init_seq" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql" token="DROP TABLE db_info_init_seq" 
 				                                 value="DROP TABLE db_info_init_seq_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP TABLE db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql" token="DROP TABLE db_info" 
 				                                 value="DROP TABLE db_info_console"/>
-		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql" token="DROP SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql" token="DROP SEQUENCE seq_db_info" 
 				                                 value="DROP SEQUENCE seq_db_info_console"/>
 		
 		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_drop.sql" append="yes" >
@@ -126,12 +126,12 @@
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="Repositorygovway_drop.sql RepositoryPddConsolegovway_drop.sql RepositoryPddConsole-SinglePdDAdjunct-govway_drop.sql"/>
+                           files="Repositorygovway_drop.sql RepositoryGovWayConsole_drop.sql RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
 		</concat>
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_drop.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_drop.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
 		
 		<!-- creo govway_delete.sql -->
 				
@@ -165,7 +165,7 @@
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryPddConsolegovway_delete.sql"/>
+                           files="RepositoryGovWayConsole_delete.sql"/>
 		</concat>		
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/govway_configPdD_delete.sql"/>
@@ -176,25 +176,25 @@
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryPddConsolegovway_config_delete.sql RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql"/>
+                           files="RepositoryGovWayConsole_config_delete.sql RepositoryGovWayConsole-SinglePdDAdjunct_config_delete.sql"/>
 		</concat>
 		
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsolegovway_config_delete.sql"/>
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
-		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_config_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct_config_delete.sql" />
 		
 		
 	</target>
 	
 	<!-- Postgresql -->
 	<target name="_correctSQL_postgresql">
-		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/postgresql/RepositoryGovWayConsole.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/postgresql/RepositoryPddConsoleGovWay.sql" token="id BIGINT DEFAULT nextval('seq_db_info')" 
+		<replace file="${deploy_sql}/postgresql/RepositoryGovWayConsole.sql" token="id BIGINT DEFAULT nextval('seq_db_info')" 
 						                         value="id BIGINT DEFAULT nextval('seq_db_info_console')"/>
 	</target>
 	
@@ -204,21 +204,21 @@
 	
 	<!-- Oracle -->
 	<target name="_correctSQL_oracle">
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryGovWayConsole.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="insert on db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryGovWayConsole.sql" token="insert on db_info" 
 						                         value="insert on db_info_console"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="SELECT seq_db_info.nextval" 
+		<replace file="${deploy_sql}/oracle/RepositoryGovWayConsole.sql" token="SELECT seq_db_info.nextval" 
 								                 value="SELECT seq_db_info_console.nextval"/>
-		<replace file="${deploy_sql}/oracle/RepositoryPddConsoleGovWay.sql" token="CREATE TRIGGER trg_db_info" 
+		<replace file="${deploy_sql}/oracle/RepositoryGovWayConsole.sql" token="CREATE TRIGGER trg_db_info" 
 								                 value="CREATE TRIGGER trg_db_info_console"/>
 	</target>
 	
 	<!-- Hsql -->
 	<target name="_correctSQL_hsql">
-		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleGovWay.sql" token="CREATE SEQUENCE seq_db_info" 
+		<replace file="${deploy_sql}/hsql/RepositoryGovWayConsole.sql" token="CREATE SEQUENCE seq_db_info" 
 		                                         value="CREATE SEQUENCE seq_db_info_console"/>
-		<replace file="${deploy_sql}/hsql/RepositoryPddConsoleGovWay.sql" token="(NEXT VALUE FOR seq_db_info)" 
+		<replace file="${deploy_sql}/hsql/RepositoryGovWayConsole.sql" token="(NEXT VALUE FOR seq_db_info)" 
 						                         value="(NEXT VALUE FOR seq_db_info_console)"/>
 	</target>
 	

@@ -182,28 +182,28 @@
 		
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles}"/>
 			<param name="SQLDataFiles" value="${sqlDataFiles}"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Console di Gestione di GovWay');"/>
 		</antcall>
 		
 		<!-- Replace per audit Appender (DB) -->
-		<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql" 
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql" 
 				 token="'org.govway.datasource.audit'" 
 				 value="'org.govway.datasource.console'" />
-		<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql" 
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql" 
 				 token="INDICARE_IL_TIPO_DI_DATABASE" 
 				 value="${tipoDatabase}" />
 		
 		<!-- Replace per audit Appender (Log4J) -->
-		<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql" 
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql" 
 				 token="'audit.log4j2.properties'" 
 				 value="'console.audit.log4j2.properties'" />
-		<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql" 
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql" 
 				 token="'audit_local.log4j2.properties'" 
 				 value="'console_local.audit.log4j2.properties'" />
-		<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql" 
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql" 
 				 token="'OPENSPCOOP2_AUDIT_LOG_PROPERTIES'" 
 				 value="'OPENSPCOOP2_CONSOLE_AUDIT_LOG_PROPERTIES'" />		 	
 
@@ -211,7 +211,7 @@
                 <if>
                         <matches string="${as}" pattern="tomcat.*"/>
                         <then>
-				<replace file="${dist_govwayConsole}/RepositoryPddConsoleGovWay.sql"
+				<replace file="${dist_govwayConsole}/RepositoryGovWayConsole.sql"
 					token="org.govway.datasource.console"
 					value="java:/comp/env/org.govway.datasource.console"/>
 			</then>
@@ -241,7 +241,7 @@
 		<!-- Non devo svuotare questa tabella <var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} DBInfo_delete.sql"/> -->		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsolegovway_delete.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole_delete.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_delete}"/>
 		</antcall>
 			
@@ -252,7 +252,7 @@
 		<var name="sqlSourceFiles_delete_config" value="${sqlSourceFiles_delete_config} Audit_delete.sql"/>				
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsolegovway_config_delete.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole_config_delete.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_delete_config}"/>
 		</antcall>
 		
@@ -283,7 +283,7 @@
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsolegovway_drop.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole_drop.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_drop}"/>
 		</antcall>
 
@@ -319,7 +319,7 @@
 		
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles}"/>
 			<param name="SQLDataFiles" value="${sqlDataFiles}"/>
 			<param name="SQLInsertDBInfo" value="" />
@@ -329,7 +329,7 @@
                 <if>
                         <matches string="${as}" pattern="tomcat.*"/>
                         <then>
-                                <replace file="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-GovWay.sql"
+                                <replace file="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct.sql"
                                         token="org.govway.datasource.console"
                                         value="java:/comp/env/org.govway.datasource.console"/>
                         </then>
@@ -354,7 +354,7 @@
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-govway_delete.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct_delete.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_delete}"/>
 		</antcall>
 		
@@ -366,22 +366,22 @@
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct_config_delete.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_delete_config}"/>
 		</antcall>
 		
 		
 		<!-- Sistemo la delete dati del task precedente, poiche' la compilazione in singlePdD aggiunge dei requisiti -->
 		<antcall target="replace_token">
-			<param name="file" value="${dist_govwayConsole}/RepositoryPddConsolegovway_delete.sql"/>
+			<param name="file" value="${dist_govwayConsole}/RepositoryGovWayConsole_delete.sql"/>
 			<param name="token" value="DELETE FROM pdd"/>
 			<param name="value" value="DELETE FROM pdd where tipo&lt;>'operativo'"/>
 		</antcall>
 		<antcall target="dos2unix">
 			<param name="dir" value="${dist_govwayConsole}"/>
-			<param name="file" value="RepositoryPddConsolegovway_delete.sql"/>
+			<param name="file" value="RepositoryGovWayConsole_delete.sql"/>
 		</antcall>
-		<replace file="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql">
+		<replace file="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct_config_delete.sql">
 		  <replacetoken><![CDATA[DELETE FROM registri;]]></replacetoken>
 		  <replacevalue><![CDATA[DELETE FROM registri;
 
@@ -390,7 +390,7 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 		</replace>
 		<antcall target="dos2unix">
 			<param name="dir" value="${dist_govwayConsole}"/>
-			<param name="file" value="RepositoryPddConsole-SinglePdDAdjunct-govway_config_delete.sql"/>
+			<param name="file" value="RepositoryGovWayConsole-SinglePdDAdjunct_config_delete.sql"/>
 		</antcall>
 		
 		
@@ -414,7 +414,7 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_govwayConsole}"/>
-			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryPddConsole-SinglePdDAdjunct-govway_drop.sql"/>
+			<param name="SQLDestFile" value="${dist_govwayConsole}/RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles_drop}"/>
 		</antcall>
 		
