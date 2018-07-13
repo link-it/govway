@@ -252,7 +252,7 @@
 	</path>	
 	
 	<target name="build">
-			
+
 		<delete dir="${dist}"/>	
 		<delete dir="${build}"/>
 		
@@ -358,7 +358,13 @@
 		<antcall target="compile_openspcoop2_govwayMonitor" >
 			<param name="as" value="${as}"/>
 			<param name="rootDir" value="${rootDir}"/>
+			<param name="govwayMonitor" value="${web.govwayMonitor.dir}"/>
 			<param name="src_govwayMonitor" value="${web.govwayMonitor.dir}/src"/>
+			<param name="src_webinf_govwayMonitor" value="${web.govwayMonitor.dir}/src/WEB-INF" />
+			<param name="src_core_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_core" />
+			<param name="src_stat_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_stat" />
+			<param name="src_transazioni_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_transazioni" />
+			<param name="src_eventi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_eventi" />
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 		</antcall>

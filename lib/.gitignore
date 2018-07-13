@@ -1,0 +1,34 @@
+# Ignore everything in this directory
+ant
+antinstaller
+applicationServer
+axiom
+axis14
+commons
+cxf
+faces
+git
+httpcore
+jackson
+javax
+jax
+jetty
+jminix
+json
+log
+lucene
+opensaml
+proguard
+reports
+saaj
+security
+shared
+soapbox
+spring
+spring-security
+swagger
+testsuite
+wadl
+wss4j
+# Except this file
+!.gitignore

@@ -133,7 +133,8 @@
 			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="web-lib-audit"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
-			<param name="gitrepo_root" value="."/>
+			<param name="gitrepo_root" value="${gitrepo_root}"/>
+			<param name="gitrepo_path" value="tools/web_interfaces/lib/audit"/>
 			<param name="dist" value="${dist_audit}"/>
 			<param name="build" value="${build_audit}"/>
 		</antcall>

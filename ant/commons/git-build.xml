@@ -1,21 +1,21 @@
 <project name="git-info" default="checkgit" basedir=".">
-    <description>
-        Raccolta informazioni GIT inserite nel META-INF/MANIFEST.MF dei jar
-    </description>
+	<description>
+	Raccolta informazioni GIT inserite nel META-INF/MANIFEST.MF dei jar
+	</description>
 
 	<!-- estensione di ant (if .... ) -->
-    <taskdef resource="net/sf/antcontrib/antlib.xml">
-      <classpath>
-          <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
-      </classpath>
-    </taskdef>
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+		  <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
 
-                                  <path id="jgit.classpath">
-			                <fileset dir="${required_lib}" id="jgit.jar">
-                        		<include name="git/*.jar"/>
-					<include name="log/*.jar"/>
-                			</fileset>
-                                  </path>
+	<path id="jgit.classpath">
+		<fileset dir="${required_lib}" id="jgit.jar">
+		<include name="git/*.jar"/>
+		<include name="log/*.jar"/>
+		</fileset>
+	</path>
 	
 
 	<!-- Che presenza jar jgit -->

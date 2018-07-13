@@ -23,6 +23,7 @@
 	
 	<!-- set properties for this build -->
 	<property name="govwayMonitor" location="${basedir}" />
+	
 	<property name="src_govwayMonitor" value="${govwayMonitor}/src" />
 	<property name="src_webinf_govwayMonitor" value="${src_govwayMonitor}/WEB-INF" />
 	<property name="src_core_govwayMonitor" value="${src_govwayMonitor}/src_core" />
@@ -414,7 +415,8 @@
 	<target name="compile_dipendenze_invoke" depends="compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddMonitor-->
-	<target name="compile_govwayMonitor" depends="init_compile_govwayMonitor,compile_dipendenze,compile_openspcoop2_govwayMonitor_core,compile_openspcoop2_govwayMonitor_transazioni,compile_openspcoop2_govwayMonitor_statistiche,compile_openspcoop2_govwayMonitor_eventi" description="compila govwayMonitor"/>
+	<target name="compile_openspcoop2_govwayMonitor" depends="compile_openspcoop2_govwayMonitor_core,compile_openspcoop2_govwayMonitor_transazioni,compile_openspcoop2_govwayMonitor_statistiche,compile_openspcoop2_govwayMonitor_eventi" description="compila govwayMonitor"/>
+	<target name="compile_govwayMonitor" depends="init_compile_govwayMonitor,compile_dipendenze,compile_openspcoop2_govwayMonitor" description="compila govwayMonitor"/>
 
 
 	<!-- Creazione del modulo .WAR -->

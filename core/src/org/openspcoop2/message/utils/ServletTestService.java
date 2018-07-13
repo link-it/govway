@@ -40,6 +40,7 @@ import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -200,6 +201,38 @@ public class ServletTestService extends HttpServlet {
 			}
 
 			
+			
+			
+			
+			// Cookie
+			String cookie = getParameter_checkWhiteList(req, this.whitePropertiesList, "cookie");
+			boolean foundCookie = false;
+			if(cookie!=null) {
+				Cookie [] cookies = req.getCookies();
+				if(cookies!=null && cookies.length>0) {
+					for (int i = 0; i < cookies.length; i++) {
+						if(cookie.equals(cookies[i].getName())) {
+							System.out.println("name: "+cookies[i].getName());
+							System.out.println("path: "+cookies[i].getPath());
+							System.out.println("domain: "+cookies[i].getDomain());
+							System.out.println("comment: "+cookies[i].getComment());
+							System.out.println("maxAge: "+cookies[i].getMaxAge());
+							System.out.println("secure: "+cookies[i].getSecure());
+							System.out.println("value: "+cookies[i].getValue());
+							System.out.println("version: "+cookies[i].getVersion());
+							foundCookie = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(cookie!=null && foundCookie==false) {
+				org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator uuidGeneratore = new org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator();
+				Cookie newCookie = new Cookie(cookie, uuidGeneratore.newID().getAsString());
+				newCookie.setMaxAge(5 * 60); // 5 minuti
+				res.addCookie(newCookie);
+			}
 			
 			
 			

@@ -112,6 +112,7 @@
 		</antcall>
 		
 		<!-- schemi xsd -->
+		<!--
 		<antcall target="build_jar_schema">
 			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 			<param name="compile_src_openspcoop2.JAR_SRC_DIR" value="${src_trasparente}/schemi"/>
@@ -120,6 +121,7 @@
 			<param name="compile_src_openspcoop2.JAR_SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="trasparente"/>
 		</antcall>
+		-->
 
 				
 		<!-- Jar Complessivo -->

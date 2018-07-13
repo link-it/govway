@@ -39,7 +39,7 @@
 			<zipfileset dir="${jsp}" prefix="jsp"/>
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
 			<!--Copio i file javascript tutti nella stessa dir prefix="js" -->
-			<zipfileset dir="${js}" prefix="js"/>
+			<!-- <zipfileset dir="${js}" prefix="js"/> -->
 			<zipfileset dir="${jslib}" prefix="js" />
 			<fileset dir="${deploy.dir}">
 				<include name="index.html"/>

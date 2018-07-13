@@ -354,7 +354,7 @@ Last-Changed-Date:  ${git.authorDate}
 [GIT] Package Details
 Package-Info: ${compile_src_openspcoop2.PACKAGE}
 Last-Changed-Revision: ${git.package.commitShortHash}
-Last-Commit-Author: ${git.package.authorDate}
+Last-Commit-Author: ${git.package.authorName}
 Last-Changed-Date:  ${git.package.authorDate}   	
 ----------------------------------------
                         
@@ -375,7 +375,7 @@ Last-Changed-Date:  ${git.package.authorDate}
 							<attribute name="Last-Changed-Revision"
 										value="${git.package.commitShortHash}"/>
 							<attribute name="Last-Commit-Author"
-										value="${git.package.authorDate}"/>
+										value="${git.package.authorName}"/>
 							<attribute name="Last-Changed-Date"
 										value="${git.package.authorDate}"/>
 						</section>
@@ -734,6 +734,7 @@ Last-Changed-Date:  ${git.authorDate}
 						<fail message="gitrepo_root non fornita: non e' possibile recuperare le informazioni git"/>
 					</then>
 				</if>
+				<echo message="GIT Repo:[${gitrepo_root}]"/>
 			       <GitProperties src="${gitrepo_root}" 
 						authorNameProperty="git.authorName"
 						authorMailProperty="git.authorMail"
