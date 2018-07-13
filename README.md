@@ -1,6 +1,17 @@
 # GovWay
 API Gateway per la Pubblica Amministrazione italiana
 
+## Documentazione
+
+* [Manuale di Installazione](./resources/doc/pdf/GovWay-ManualeInstallazione.pdf)
+* [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
+* [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
+
+## Contatti
+
+- Mailing list: [Utenti GovPay](http://www.gov4j.it/mailman/listinfo/utenti-govway)
+- Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
+
 ## Licenza
 GovWay - A customizable API Gateway 
 http://www.govway.org
