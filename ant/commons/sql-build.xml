@@ -28,52 +28,49 @@
         	                shortHashProperty="git.commitShortHash"
 		        	/>
 
-				<!--<echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/>-->
-						<!-- Imposto versione -->
-						<var name="pddVersion" value="Undefined" />	
-						<var name="pddDetails" value="Undefined" />	
-						<isfalse value="${buildAsRelease}"/>
-						<then>
-							<if>
-								<istrue value="${compile_src_openspcoop2.GITINFO}"/>
-								<then>
-									<var name="pddVersion" value="${git.commitShortHash}" />
-									<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />	
-								</then>
-								<else>
-									<if>
-									    <isset property="env.BUILD_VERSION]"/>
-									    <then>
-									    	<var name="pddVersion" value="${env.BUILD_VERSION]}" />
-									    </then>
-									</if>						
-								</else>
-							</if>
-						</then>
-						<else>
-							<if>
-								<isset property="env.RELEASE_VERSION]"/>
-								<then>
-									<var name="pddVersion" value="${env.RELEASE_VERSION]}" />
-								</then>
-							</if>						
-						</else>
-				
-				<!-- TODO: calcolare queste due variabili -->
-				 <var name="pddVersionMajor" value="3" />
-                                 <var name="pddVersionMinor" value="0" />
-	
-				<!--<echo message="DETAILS[${pddDetails}] FULL_VERSION[${pddVersion}] MAJOR[${pddVersionMajor}] MINOR[${pddVersionMinor}]"/>-->
-				
+				<!-- <echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/> -->
+				<!-- Imposto versione -->	
+				<var name="pddDetails" value="" />
+				<var name="pddVersionMajor" value="3" />
+                                <var name="pddVersionMinor" value="0" />
+				<if>
+					<isfalse value="${buildAsRelease}"/>
+					<then>
+						<var name="pddDetails" value="GovWay commit.${git.commitShortHash}, ${git.authorDate}" />	
+					</then>
+					<else>
+						<if>
+							<isset property="env.RELEASE_VERSION_MAJOR]"/>
+							<then>
+								<var name="pddVersionMajor" value="${env.RELEASE_VERSION_MAJOR}" />
+							</then>
+						</if>
+						<if>
+							<isset property="env.RELEASE_VERSION_MINOR]"/>
+							<then>
+								<var name="pddVersionMinor" value="${env.RELEASE_VERSION_MINOR}" />
+							</then>
+						</if>
+						<if>
+							<isset property="env.RELEASE_DETAILS]"/>
+							<then>
+								<var name="pddDetails" value="${env.RELEASE_DETAILS}" />	
+							</then>
+						</if>						
+					</else>
+					
+					<!--<echo message="DETAILS[${pddDetails}] FULL_VERSION[${pddVersion}] MAJOR[${pddVersionMajor}] MINOR[${pddVersionMinor}]"/>-->
+				</if>
 				<replace file="${SQLDestFile}" 
-						 token="@MAJOR_VERSION@" 
-						 value="${pddVersionMajor}" />
+					 token="@MAJOR_VERSION@" 
+					 value="${pddVersionMajor}" />
 				<replace file="${SQLDestFile}" 
-						 token="@MINOR_VERSION@" 
-						 value="${pddVersionMinor}" />
+					 token="@MINOR_VERSION@" 
+					 value="${pddVersionMinor}" />
 				<replace file="${SQLDestFile}"  
-						 token="v@FULL_VERSION@" 
-						 value="${pddDetails}" />
+					 token="v@FULL_VERSION@" 
+					 value="${pddDetails}" />
+
 				
 			</then>
 		</if>
