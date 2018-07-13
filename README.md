@@ -9,7 +9,7 @@ API Gateway per la Pubblica Amministrazione italiana
 
 ## Contatti
 
-- Mailing list: [Utenti GovPay](http://www.gov4j.it/mailman/listinfo/utenti-govway)
+- Mailing list: [Utenti GovWay](http://www.gov4j.it/mailman/listinfo/utenti-govway)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
 
 ## Licenza
