@@ -3,5 +3,8 @@ build
 dist
 doc
 bin
+local_env.xml
+RisultatiTestSuite/
+.ant-targets-build.xml
 # Except this file
 !.gitignore

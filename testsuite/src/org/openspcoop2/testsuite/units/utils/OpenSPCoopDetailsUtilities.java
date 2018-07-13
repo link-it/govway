@@ -31,7 +31,6 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.testng.Assert;
@@ -373,7 +372,7 @@ public class OpenSPCoopDetailsUtilities {
 								boolean okTipo = false;
 								// Non invertire altrimenti non funziona poi per i codici personalizzabili sull'integrazione
 								if(
-										valoreCodiceEccezione.startsWith(SPCoopCostanti.ECCEZIONE_PREFIX_CODE) 
+										valoreCodiceEccezione.startsWith("EGOV_IT_") // SPCoopCostanti.ECCEZIONE_PREFIX_CODE) non e' possibile usare la classe per non aggiungere una dipendenza di compilazione 
 										|| 
 										(valoreCodiceEccezione.startsWith(org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE) && 
 												org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_NAMESPACE.equals(namespaceCodiceEccezione))

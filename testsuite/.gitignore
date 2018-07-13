@@ -3,5 +3,6 @@ build
 dist
 doc
 bin
+local_env.xml
 # Except this file
 !.gitignore
