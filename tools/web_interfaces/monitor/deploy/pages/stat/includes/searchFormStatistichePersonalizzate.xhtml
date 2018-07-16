@@ -14,7 +14,7 @@
 			<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 				<link:prop label="#{applicationBean.labelProfilo}">
 					<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
-						defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
+						defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="416" enableManualInput="false" >
 						<f:selectItems value="#{sf_bean.protocolli}"/>
 						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl"/>
 					</rich:comboBox>
@@ -29,7 +29,7 @@
 				
 		 		<link:prop label="Unità di tempo">
 		 			<rich:comboBox id="unitaTempo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Unità di Tempo"
-							converter="selectItemConverter"  width="412" enableManualInput="false">
+							converter="selectItemConverter"  width="416" enableManualInput="false">
 			 			<f:selectItems value="#{sf_bean.intervalliTemporali}"/>
 			 			<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.modalitaTemporaleListener}" reRender="periodoCtr"/>
 					</rich:comboBox>
@@ -38,7 +38,7 @@
 				<link:prop label="Periodo" labelId="labelPeriodoCombo">
 					<rich:comboBox id="periodoCombo" value="#{sf_periodo}" defaultLabel="Seleziona Periodo"
 						required="true"
-						requiredMessage="E' necessario selezionare un periodo" width="412" enableManualInput="false">
+						requiredMessage="E' necessario selezionare un periodo" width="416" enableManualInput="false">
 						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='oraria'}">
 							<f:selectItem itemValue="Ultime 12 ore" />
 							<f:selectItem itemValue="Ieri" />
@@ -93,7 +93,7 @@
 				
 				<link:prop label="Tipologia">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
-							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
+							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 						<f:selectItem itemLabel="Erogazione" itemValue="ingresso" />
 						<f:selectItem itemLabel="Fruizione" itemValue="uscita" />
 						<f:selectItem itemLabel="Erogazione/Fruizione" itemValue="all" />
@@ -164,7 +164,7 @@
 				<link:prop label="Tipo" rendered="">
 					<rich:comboBox id="riconoscimentoCombo" value="#{sf_bean.riconoscimento}" 
 								defaultLabel="Selezione Tipo" converter="selectItemConverter"
-								directInputSuggestions="true" width="412" enableManualInput="false">
+								directInputSuggestions="true" width="416" enableManualInput="false">
 							<f:selectItems value="#{sf_bean.listaTipiRiconoscimento}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
@@ -177,7 +177,7 @@
 							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
 										defaultLabel="Selezione Applicativo" 
 										directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
-										width="412" enableManualInput="false">
+										width="416" enableManualInput="false">
 								<f:selectItem itemValue="--"/>
 								<f:selectItems value="#{sf_serviziApplicativi}"/>
 								<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,saToolTip" limitToList="true"/>
@@ -189,7 +189,7 @@
 					<a4j:outputPanel layout="block" id="idAutenticatoComboCtr" rendered="#{sf_bean.riconoscimento == 'identificativoAutenticato'}">
 						<link:prop label="Autenticazione" required="true">
 							<rich:comboBox id="authCombo" value="#{sf_bean.autenticazione}" defaultLabel="Selezione Autenticazione" 
-									converter="selectItemConverter"	directInputSuggestions="true" width="412" enableManualInput="false">
+									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItems value="#{sf_bean.listaAutenticazioni}"/>
 							</rich:comboBox>
 						</link:prop>
@@ -199,7 +199,7 @@
 					<a4j:outputPanel layout="block" id="tokenInfoComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
 						<link:prop label="Claim" required="true">
 							<rich:comboBox id="claimCombo" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
-									converter="selectItemConverter"	directInputSuggestions="true" width="412" enableManualInput="false">
+									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItem itemValue="token_issuer" itemLabel="Issuer"/>
 								<f:selectItem itemValue="token_clientId" itemLabel="Client ID"/>
@@ -213,14 +213,14 @@
 					
 					<a4j:outputPanel layout="block" id="modRicercaComboCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'identificativoAutenticato'}">
 						<link:prop label="Ricerca Esatta">
-							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
+							<h:selectOneRadio id="modRicercaRadio" value="#{sf_bean.mittenteMatchingType}" styleClass="controlset">
 								<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
 								<f:selectItem itemValue="LIKE" itemLabel="No"/>
 							</h:selectOneRadio>
 						</link:prop>
 						
 						<link:prop label="Case Sensitive">
-							<h:selectOneRadio id="modRicercaRadioCaseSens" value="#{sf_bean.mittenteCaseSensitiveType}" styleClass="controlset" style="margin-left: 170px; padding-top: 2px;">
+							<h:selectOneRadio id="modRicercaRadioCaseSens" value="#{sf_bean.mittenteCaseSensitiveType}" styleClass="controlset">
 								<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
 								<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
 							</h:selectOneRadio>
@@ -242,7 +242,7 @@
 				<link:prop label="Esito">
 					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
 						defaultLabel="Seleziona esito" directInputSuggestions="true"
-						width="412" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
 					</rich:comboBox>
@@ -251,13 +251,13 @@
 				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
 					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
 						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
-						width="412" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
 					</rich:comboBox>
 				</link:prop>
 				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
-					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:412px;" size="5">
+					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:416px;" size="5">
 						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
 					</h:selectManyListbox>
 				</link:prop>
@@ -265,7 +265,7 @@
 				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
 					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
 						defaultLabel="Seleziona contesto" directInputSuggestions="true"
-						width="412" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="false">
 						<f:selectItems value="#{sf_bean.esitiContesto}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
 					</rich:comboBox>
@@ -283,7 +283,7 @@
 					
 				<a4j:outputPanel id="valoreRisorsaCtr" layout="block" >
 					<link:prop label="Valore Risorsa" required="true" rendered="#{sf_tipoReport == 'andamentoTemporale' and !empty sf_bean.statisticaSelezionata}">
-						<h:selectManyListbox id="valoreRisorsa" value="#{sf_bean.valoriRisorsa}" style="width:412px;" size="5">
+						<h:selectManyListbox id="valoreRisorsa" value="#{sf_bean.valoriRisorsa}" style="width:416px;" size="5">
 							<f:selectItems value="#{sf_mbean.valoriRisorse}"/>
 							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
 						</h:selectManyListbox>
@@ -292,7 +292,7 @@
 							
 				<link:prop label="Visualizza per ">
 		 			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{sf_bean._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
-							enableManualInput="false" width="412" converter="selectItemConverter">
+							enableManualInput="false" width="416" converter="selectItemConverter">
 			 			<f:selectItem itemLabel="Numero Transazioni" itemValue="numeroTransazioni"/>
 			 			<f:selectItem itemLabel="Occupazione Banda" itemValue="dimensioneTransazioni"/>
 			 			<f:selectItem itemLabel="Tempo Medio Risposta" itemValue="tempoMedioRisposta"/>
@@ -303,7 +303,7 @@
 		 		<a4j:outputPanel id="tipoBandaCtr" layout="block" rendered="#{sf_bean._value_tipoVisualizzazione == 'dimensioneTransazioni'}">
 					<link:prop label="Tipo Banda">
 						<rich:comboBox id="tipoBandaCombo" value="#{sf_bean._value_tipoBanda}" defaultLabel="Seleziona Tipo di Banda"
-							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="412" enableManualInput="false">
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="416" enableManualInput="false">
 							<f:selectItem itemLabel="Banda Complessiva" itemValue="Banda Complessiva"/>
 							<f:selectItem itemLabel="Banda Interna" itemValue="Banda Interna"/>
 							<f:selectItem itemLabel="Banda Esterna" itemValue="Banda Esterna"/>
@@ -315,7 +315,7 @@
 		 		<a4j:outputPanel id="tipoLatenzaCtr" layout="block" rendered="#{sf_bean._value_tipoVisualizzazione == 'tempoMedioRisposta'}">
 					<link:prop label="Tipo Latenza">
 						<rich:comboBox id="tipoLatenzaCombo" value="#{sf_bean._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
-							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="412" enableManualInput="false">
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="416" enableManualInput="false">
 							<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
 			 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>
 			 				<f:selectItem itemLabel="Latenza Gateway" itemValue="Latenza Gateway"/>
@@ -335,7 +335,7 @@
 					<link:prop label="Statistica" rendered="#{!empty sf_bean.statistichePersonalizzate}">
 						<rich:comboBox id="statistichePersonalizzate" value="#{sf_bean.nomeStatisticaPersonalizzata}"
 								defaultLabel="Personalizza Statistica" directInputSuggestions="true"
-								width="412" validator="#{sf_bean.validateSelectedPlugin}"
+								width="416" validator="#{sf_bean.validateSelectedPlugin}"
 								enableManualInput="false">
 						<f:selectItem itemValue="--"/>
 						<f:selectItems value="#{sf_bean.statistichePersonalizzate.statisticheSelectItems}"/>

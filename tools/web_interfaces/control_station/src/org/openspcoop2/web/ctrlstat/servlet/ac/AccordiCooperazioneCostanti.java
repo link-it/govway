@@ -99,7 +99,7 @@ public class AccordiCooperazioneCostanti {
 	public final static String LABEL_ACCORDI_COOPERAZIONE_PARTECIPANTI  = "Partecipanti";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATI = "Allegati";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ALLEGATO = "Allegato";
-	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI = "Esporta Selezionati";
+	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT ="Esporta('"+ArchiveType.ACCORDO_COOPERAZIONE.name()+"')";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_SOGGETTO_REFERENTE_12 = "referenteLabelAccordo1.2";
 	public final static String LABEL_ACCORDI_COOPERAZIONE_SOGGETTI_PARTECIPANTI = "Soggetti Partecipanti";

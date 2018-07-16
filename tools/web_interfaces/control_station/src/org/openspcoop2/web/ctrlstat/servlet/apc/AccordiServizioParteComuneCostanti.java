@@ -238,7 +238,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_INFORMAZIONI_WSDL = "Informazioni WSDL";
 	public final static String LABEL_INFORMAZIONI_WSDL_PART = "Informazioni WSDL Part";
 	public final static String LABEL_STYLE = "Style";
-	public final static String LABEL_APC_ESPORTA_SELEZIONATI = "Esporta Selezionati";
+	public final static String LABEL_APC_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_APC_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE.name()+"')";
 	public final static String LABEL_ASC_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_COMPOSTO.name()+"')";
 	public final static String LABEL_AZIONE_CORRELATA = "Azione correlata";

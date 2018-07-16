@@ -1991,7 +1991,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				AreaBottoni ab = new AreaBottoni();
 				Vector<DataElement> otherbott = new Vector<DataElement>();
 				DataElement de = new DataElement();
-				de.setValue("Esporta Selezionati");
+				de.setValue("Esporta");
 				de.setOnClick("Esporta()");
 				otherbott.addElement(de);
 				ab.setBottoni(otherbott);

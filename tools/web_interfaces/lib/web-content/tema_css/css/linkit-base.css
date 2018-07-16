@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 h2 {
@@ -17,7 +17,8 @@ fieldset {
 	border: 1px solid ${fieldset.border.color}; 
 	border-radius: 5px;
 	margin: 10px 0px 16px 0px;
-	padding: 16px 10px 24px 10px;;
+/* 	padding: 16px 10px 24px 10px; */
+    padding: 20px 14px 28px 14px;
 }
 
 img {
@@ -25,13 +26,13 @@ img {
 }
 
 p {
-	margin: .5em;
+	margin: .8em;
 	font-family: 'Roboto';
 }
 
 legend {
 	font-family: 'Roboto';
-	font-size: 13px;
+	font-size: 17px;
 	font-weight: bold;
 	padding-left: 10px;
    	padding-right: 10px;
@@ -41,7 +42,7 @@ legend {
 a {
 	text-decoration: underline;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 	cursor: pointer;
 	color: ${a.color};
 }
@@ -69,16 +70,24 @@ table {
 }
 
 select, textarea, input[type="text"], input[type="password"], input[type="checkbox"], input[type="radio"], input[type="number"] {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color} ;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
+	background-color: ${input.background.color};
+	background-image: none;
+}
+input[type="file"] {
+	padding: 4px;
+	font-family: 'Roboto';
+	font-size: 16px;
 	background-color: ${input.background.color};
 	background-image: none;
 }
 option  {
 	background-color: ${input.background.color};
-	color: ${input.color}	;
+	color: ${input.color};
+	font-size: 16px;
 }
 
 option:checked {
@@ -112,13 +121,13 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 select.inputLinkLong {
-	width: 412px;
+	width: 422px;
 }
 
 .inputLinkLong {
 	background-color: ${input.background.color} ;	
 	background-image: none !important;
-	width: 406px;
+	width: 412px;
 	color: ${input.color};
 }
 
@@ -162,7 +171,7 @@ textarea.inputLinkLong {
 	background-image: none;
 	background-color: ${panel.header.background.color};
 	color: ${panel.header.color};
-	padding: 8px;
+	padding: 13px;
 }
 
 .panelListaRicerca .titoloSezione {
@@ -171,8 +180,15 @@ textarea.inputLinkLong {
 
 .panelListaRicerca .titoloSezione span,
 .panelListaRicercaNoForm .titoloSezione span{
-	padding-left: 8px;
-    font-size: 14px;
+	padding-left: 12px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.panelListaRicerca .titoloSezione.titoloSezione-right span,
+.panelListaRicercaNoForm .titoloSezione.titoloSezione-right span{
+	padding-left: 6px;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -188,7 +204,7 @@ textarea.inputLinkLong {
 	background-image: none;
 	background-color: ${panel.header.background.color};
 	color: ${panel.header.color};
-	padding: 8px;
+	padding: 13px;
 }
 
 .panelDettaglioForm .titoloSezione {
@@ -197,8 +213,15 @@ textarea.inputLinkLong {
 
 .panelDettaglioNoForm .titoloSezione span,
 .panelDettaglioForm .titoloSezione span{
-	padding-left: 8px;
-    font-size: 14px;
+	padding-left: 12px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.panelDettaglioForm .titoloSezione.titoloSezione-right span,
+.panelDettaglioNoForm .titoloSezione.titoloSezione-right span{
+	padding-left: 6px;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -240,8 +263,9 @@ a.td2PageHeader:visited {
 }
 
 .consoleTitle {
+	font-weight: bold;
 	color: ${page.header.text.color};
-	font-size: 28px;
+	font-size: 24px;
 }
 
 
@@ -286,7 +310,7 @@ a.td2PageHeader:visited {
 	background-image: none;
 	background-color: ${menu.header.background.color};
 	color: ${menu.header.color};
-	padding: 8px;
+	padding: 16px;
 }
 
 .titoloSezione-right {
@@ -302,31 +326,32 @@ a.td2PageHeader:visited {
 
 .titoloSezione span{
 	padding-left: 16px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 .voceMenu {
 	color: ${menu.label.color};
-	padding-left: 12px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+	padding-left: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 div.voceMenu:hover {
 	cursor: pointer;
 	background: ${menu.element.hover.background.color};
 	color: ${menu.element.hover.color};
-	border-left: 8px solid ${menu.element.hover.border.color};
+	border-left: 12px solid ${menu.element.hover.border.color};
 	padding-left: 4px;
-    padding-top: 6px;
-   	padding-bottom: 6px;
+    padding-top: 8px;
+   	padding-bottom: 8px;
    	font-weight: 600;
 }
 
 .voceMenu a{
 	color: ${menu.header.hover.color};
 	text-decoration: none;
+	font-size: 16px;
 }
 
 .voceMenu a:hover{
@@ -382,7 +407,7 @@ div.voceMenu:hover {
 
 .tableHeader span{
     font-size: 14px;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 p.legend {
@@ -426,7 +451,7 @@ p.legend em {
 
 .tdText {
 	text-align: left;
-	padding: 8px;
+	padding: 12px;
 	border: 1px solid ${table.thead.border.color};
 }
 
@@ -462,19 +487,19 @@ p.legend em {
 .buttonrowlista{
 	display: block;
 	float: right;
-	padding-top: 20px;
+	padding-top: 4px;
 }
 
 .buttonrowform{
 	display: block;
-	margin-left: 170px;
-	padding-top: 20px;
+	margin-left: 246px;
+	padding-top: 4px;
 }
 
 .buttonrowricerca{
 	display: block;
 	padding-top: 20px;
-	margin-left: 170px;
+	margin-left: 232px;
 	margin-bottom: 24px;
 }
 
@@ -486,14 +511,15 @@ button,
 	border: 1px solid ${input.button.border.color};
 	background-color: ${input.button.background.color};
 	background-image: none;
-	font-size: 13px; 
+	font-size: 14px; 
 	font-weight: bold;
-	padding: 7px;
+	padding: 11px;
 	border-radius: 5px;
-	margin: 5px;
-	min-width: 120px;
+    margin: 8px 0px 8px 12px;
+    min-width: 100px;
 	cursor:pointer;
 	font-family: 'Roboto';
+   	text-transform: uppercase;	
 }
 
 button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover{
@@ -505,6 +531,7 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 
 .buttonrowdatascroller {
 	border: 1px solid ${table.datascroller.border.color};
+	color: ${table.datascroller.color};
 }
 
 .buttonrowdatascroller td{
@@ -525,13 +552,14 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 .buttonrowdatascroller input[type="submit"] {
 	color: ${input.button.color};
 	border: none;
-	font-size: 13px; 
+	font-size: 14px; 
 	font-weight: bold;
-	padding: 7px;
+	padding: 11px;
 	border-radius: 5px;
-	margin: 5px;
+    margin: 8px 0px 8px 12px;
 	cursor:pointer;
 	font-family: 'Roboto';
+   	text-transform: uppercase;
 }
 
 .buttonrowdatascroller a:hover,
@@ -713,7 +741,7 @@ div.messages-title {
 }
 
 .messages-title-text{
-	font-size: 14px;
+	font-size: 16px;
 	vertical-align: middle;
 }
 
@@ -742,7 +770,7 @@ div.messages-title {
 span.nomeUtente {
 	padding-left: 4px;
     padding-right: 4px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 span.nomeUtenteImg {
@@ -759,7 +787,7 @@ span.nomeUtenteImg {
 span.modalita {
 /* 	padding-left: 4px; */
 /*     padding-right: 4px; */
-    font-size: 14px;
+    font-size: 16px;
 }
 
 span.modalitaImg {
@@ -775,7 +803,7 @@ span.modalitaImg {
 
 .text-decor {
 	font-family: 'Roboto';
-	font-size: 14px;
+	font-size: 18px;
 	font-weight: bold;
 /* 	padding: 4px 8px; */
 	text-align: right;
@@ -783,7 +811,7 @@ span.modalitaImg {
 
 .ddmenu-label {
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 #menuUtente {
@@ -791,14 +819,14 @@ span.modalitaImg {
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
 /* 	min-width: 140px; */
-	padding-right: 12px;
+	padding-right: 16px;
 	cursor: pointer;
 }  
 
 #menuUtente_menu {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 154px;
+	min-width: 170px;
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
@@ -811,15 +839,15 @@ span.modalitaImg {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 184px;
-	padding-right: 12px;
+	min-width: 200px;
+	padding-right: 16px;
 	cursor: pointer;
 }  
 
 #menuModalita_menu {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 184px;
+	min-width: 200px;
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
@@ -838,12 +866,12 @@ span.modalitaImg {
 
 .menu-item {
 	color: ${page.header.text.color};
-	padding: 6px 0px 6px 22px; 
+	padding: 8px 0px 8px 24px; 
 }
 
 .menu-item-with-icon {
 	color: ${page.header.text.color};
-	padding: 6px 0px 6px 6px; 
+	padding: 8px 0px 8px 8px;
 }
 
 .menu-item a{
@@ -859,26 +887,26 @@ span.item-label {
 }
 
 span.item-label a{
-	font-size: 13px;
+	font-size: 14px;
 }
 
 span.item-label a:hover{
-	font-size: 13px;
+	font-size: 14px;
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
 }
 
 span.item-label-with-icon {
 	padding: 12px 12px 12px 4px;
-	font-size: 13px;
+	font-size: 14px;
 }
 
 span.item-label-with-icon a, span.item-label-with-icon span{
-	font-size: 13px;
+	font-size: 14px;
 }
 
 span.item-label-with-icon a:hover{
-	font-size: 13px;
+	font-size: 14px;
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
 }
@@ -963,8 +991,8 @@ div.prop table.controlset label{
 }
 
 div.prop table.controlset {
-	margin-top: 2px;
-	margin-bottom: 2px;
+    margin-top: 8px;
+    margin-bottom: 2px;
 }
 
 span.controlset {
@@ -972,7 +1000,7 @@ span.controlset {
 }
 
 div.prop{
-	padding: 3px 5px 5px 5px;  /* padding top 0px IE7 fix */
+    padding: 5px 8px 5px 8px;  /* padding top 0px IE7 fix */
 }
 
 div.prop-link{
@@ -980,15 +1008,16 @@ div.prop-link{
 }
 
 div.prop label, span.spanLink{
-	margin-right: 10px;	
-	padding-right: 10px;
-	width: 150px;
+	margin-right: 16px;	
+	padding-right: 16px;
+	width: 200px;
 	display: block;
 	float: left;
 	text-align: right;
 	position: relative;
 	color: ${label.color};
-	padding-top: 2px;
+	padding-top: 4px;
+	font-size: 16px;
 }
 
 div.prop label em {
@@ -1000,35 +1029,35 @@ div.prop label em {
 }
 
 div.prop label.labelMedium{
-	width: 180px;
+	width: 230px;
 }
 
 div.prop label.labelLong{
-	width: 220px;
+	width: 270px;
 }
 	
 
 p.note {
-	margin-left: 170px;
+	margin-left: 232px;
     /* font-size: 90%; */
     color: ${p.note.color};
 }
 
 p.note-ricerca {
-	margin-left: 170px;
+	margin-left: 232px;
     font-weight: bold;
-    margin-top: 12px;
+    margin-top: 16px;
     color: ${p.note.color};
 }
 
 p.note.labelMedium {
-	margin-left: 200px;
+	margin-left: 262px;
     /* font-size: 90%; */
     color: ${p.note.color};
 }
 
 p.note.labelLong {
-	margin-left: 240px;
+	margin-left: 302px;
     /* font-size: 90%; */
     color: ${p.note.color};
 }
@@ -1048,28 +1077,28 @@ p.note.labelLong {
 }
 
 .divNoEdit {
-	padding-top: 2px;
+	padding-top: 4px;
 }
 
 .subtitle {
 	padding: 16px 20px 12px 5px;
-    margin-left: 166px;
+    margin-left: 232px;
 }
 
 .subtitle.labelMedium {
-    margin-left: 196px;
+    margin-left: 262px;
 }
 
 .subtitle.labelLong {
-    margin-left: 236px;
+    margin-left: 302px;
 }
 
 
 .subtitle span {
-	font-size: 12px;
+	font-size: 16px;
     font-weight: bold;
     margin-left: 0px;
-    color: #46464e;
+    color: ${legend.color};
 }
 
 .subtitle.noBold span{
@@ -1107,7 +1136,7 @@ div.prop-slider{
 }
 
 .contenutoModal ul {
-	margin-left: 20px;
+	margin-left: 32px;
 }
 
 .contenutoModal ul li{
@@ -1118,7 +1147,7 @@ div.prop-slider{
 .resource-method-block {
 	width: 50px;
 	display: block;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
 /*     min-width: 72px; */
     padding: 6px 12px;
@@ -1186,7 +1215,7 @@ div.prop-slider{
 .entryFruizione .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .entryErogazione .metadatiEntry,
@@ -1273,15 +1302,16 @@ div.prop-slider{
 	border: 1px solid ${input.button.background.color};
 	background-color: ${input.button.color};
 	background-image: none;
-	font-size: 13px; 
+	font-size: 14px; 
 	font-weight: bold;
-	padding: 7px;
+	padding: 11px;
 	border-radius: 5px;
-/* 	margin: 5px; */
-	min-width: 120px;
+/* 	    margin: 8px 0px 8px 12px; */
+    min-width: 100px;
 	cursor:pointer;
 	font-family: 'Roboto';
 	text-decoration: none;
+	text-transform: uppercase;
 }
 
 .addBox input[type="submit"]:hover, 
@@ -1300,7 +1330,7 @@ div.prop-slider{
 }
 
 .boxTitleSpan {
-	font-size: 14px;
+	font-size: 18px;
     font-weight: bold;
     color: ${input.button.color};
 } 
@@ -1344,15 +1374,16 @@ div.propBox label, span.spanLink{
 	border: 1px solid ${input.button.color};
 	background-color: ${configurazione.background.color};
 	background-image: none;
-	font-size: 13px; 
+	font-size: 14px; 
 	font-weight: bold;
 	padding: 7px;
 	border-radius: 5px;
-	margin: 5px;
-	min-width: 120px;
+    margin: 8px 0px 8px 12px;
+    min-width: 100px;
 	cursor:pointer;
 	font-family: 'Roboto';
 	text-decoration: none;
+   	text-transform: uppercase;
 }
 
 .boxButtonrow input[type="submit"]:hover, 
@@ -1402,13 +1433,13 @@ div.propRiepilogo label, span.spanLink{
 
 .tdTextRiepilogo {
     text-align: left;
-    padding: 8px;
+    padding: 16px;
 }
 
 .tdTextRiepilogo.labelRiepilogo{
    background-color: ${table.thead.background.color};
    font-weight: 600;
-   width: 140px;
+   width: 180px;
 }
 
 .riepilogo-spacer {
@@ -1424,5 +1455,5 @@ div.propRiepilogo label, span.spanLink{
 }
 
 .riepilogo-links-pipe {
-    padding: 0px 4px;
+    padding: 0px 8px;
 }

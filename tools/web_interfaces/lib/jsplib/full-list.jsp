@@ -97,7 +97,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							<% if(mostraFormHeader) { %>
 								<td class="titoloSezione titoloSezione-right">
 									<span class="icon-box" id="iconaPanelListaSpan">
-										<i class="material-icons md-18" id="iconaPanelLista">&#xE152;</i>
+										<i class="material-icons md-24" id="iconaPanelLista">&#xE152;</i>
 									</span>
 								</td>
 							<% }%>
@@ -613,7 +613,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					
 									//Bottone di Remove
 									if (v.size() > 0 && pd.getRemoveButton()) {
-									  %><input id='rem_btn' type="button" value='Rimuovi Selezionati' class="negative" /><%
+									  %><input id='rem_btn' type="button" value='Elimina' class="negative" /><%
 									}
 									
 									//Bottone di Add

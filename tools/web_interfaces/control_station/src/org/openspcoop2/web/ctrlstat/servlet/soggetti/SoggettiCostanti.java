@@ -87,7 +87,7 @@ public class SoggettiCostanti {
 	//public final static String LABEL_SERVER = "Erogazioni";
 	public final static String LABEL_CLIENT = "Porte Delegate";
 	public final static String LABEL_SERVER = "Porte Applicative";
-	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI = "Esporta Selezionati";
+	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SOGGETTO.name()+"')";
 	public final static String LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA = "Soggetti";
 

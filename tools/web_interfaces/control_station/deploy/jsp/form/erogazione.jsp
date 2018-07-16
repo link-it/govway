@@ -175,7 +175,7 @@
 					                					%>
 					                					<a class="edit-link <%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
 					                					<span class="icon-box">
-															<i class="material-icons md-14">&#xE3C9;</i>
+															<i class="material-icons md-18">&#xE3C9;</i>
 														</span>
 					                				</a>
 					                				<%

@@ -32,7 +32,7 @@
 
 .rich-page {
 	margin: 0px;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 /* Elementi per modificare la dimensione del menù e del body */
@@ -73,7 +73,8 @@
 
 .appTitle{
 	color: ${page.header.text.color};
-	font-size: 28px;
+	font-size: 24px;
+	font-weight: bold;
 }
 
 /* Status */
@@ -116,15 +117,15 @@
 .rich-panel-header {
 	background-image: none;
 	background-color: ${panel.header.background.color};
-	font-size: 14px; 
+	font-size: 20px; 
 	font-weight: bold;
 	border: none;
-	padding: 8px;
+	padding: 16px 16px 16px 28px;
 	color: ${panel.header.color};
 }
 
 .rich-panel-header span {
-	font-size: 14px; 
+	font-size: 20px; 
 	font-weight: bold;
 }
 
@@ -168,10 +169,10 @@
 .rich-stglpanel-header {
 	background-image: none;
 	background-color: ${panel.header.background.color};
-	font-size: 14px; 
+	font-size: 20px; 
 	font-weight: bold;
 	border: none;
-	padding: 8px;
+   	padding: 16px 16px 16px 28px;	
 	color: ${panel.header.color};
 }
 
@@ -180,7 +181,7 @@
 	background-image: none;
 	background-color: ${menu.header.background.color};
 	color: ${menu.header.color};
-	padding: 8px;
+	padding: 16px;
 /* 	border-collapse: separate; */
 }
 
@@ -190,12 +191,13 @@
 
 .rich-pmenu-item {
 	border: none;
+    font-size: 16px;
 }
 
 .rich-pmenu-hovered-element td.rich-pmenu-item-label {
 	color: ${menu.element.hover.color};
-	border-left: 8px solid ${menu.element.hover.border.color};
-	padding-left: 16px;
+	border-left: 12px solid ${menu.element.hover.border.color};
+	padding-left: 20px;
 	font-weight: 600;
 }
 
@@ -229,13 +231,14 @@
 }
 
 .rich-pmenu-item-label {
-	padding-left: 24px;
-	padding-top: 5px;
-    padding-bottom: 5px;
+    padding-left: 32px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-size: 16px;
 }
 .rich-pmenu-top-group-self-label {
 	padding-left: 16px;
-	font-size: 14px; 
+	font-size: 16px; 
 	font-weight: bold;
 	color: ${menu.header.color};
 }
@@ -262,13 +265,13 @@
 	font-weight: bold;
 	background-color: ${table.thead.background.color};
 	font-family: 'Roboto';
-	padding: 8px;
+	padding: 8px 12px;
 }
 
 .rich-table-subheadercell span {
 	font-family: 'Roboto';
 	font-size: 14px;
-	font-weight: normal;
+	font-weight: bold;
 	color: ${table.thead.color};
 }
 
@@ -285,7 +288,7 @@
 .extdt-subheadercell span {
 	font-family: 'Roboto';
 	font-size: 14px;
-	font-weight: normal;
+	font-weight: bold;
 }
 
 .rich-table-header {
@@ -299,11 +302,11 @@
 .rich-table-headercell  {
 	font-family: 'Roboto';
 	font-size: 14px;
-	font-weight: normal;
+	font-weight: bold;
 	border: 1px solid ${table.thead.border.color};
 	padding: 8px;
+	color: ${table.thead.color};
 }
-
 
 .extdt-menu-div-on {
 	background-color: ${table.thead.action.button.background.color};
@@ -312,9 +315,13 @@
 .extdt-cell, .rich-table-cell, .extdt-empty-cell {
 	border: 1px solid ${table.thead.action.menu.background.color};
 	font-family: 'Roboto';
-	padding: 8px;
-	font-size: 12px;
+    padding: 12px;
+    font-size: 14px;
 	color: ${table.thead.action.menu.color};
+}
+
+th.extdt-empty-cell.rich-extdt-subheadercell {
+    padding: 8px;
 }
 
 .extdt-subheader {
@@ -345,6 +352,7 @@
 
 .rich-dtascroller-table {
 	border: none;
+	color: ${table.datascroller.color};
 }
 
 .rich-datascr-button {
@@ -394,7 +402,7 @@
 
 .rich-ddmenu-label {
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .rich-ddmenu-label-unselect {
@@ -452,7 +460,7 @@ span.nomeUtenteImg {
 	border-color: ${page.header.background.color};
 	min-width: 154px;
 	color: ${page.header.text.color};
-	padding-bottom: 12px;
+	padding-bottom: 4px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -465,11 +473,12 @@ span.nomeUtenteImg {
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item {
 	color: ${page.header.text.color};
-	padding: 5px 0px 5px 12px; 
+	padding: 8px 0px 8px 12px; 
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
 	padding: 12px;
+	font-size: 14px;
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
@@ -484,14 +493,14 @@ span.nomeUtenteImg {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
 	background-color: ${page.header.background.color};
-	padding: 5px 0px 5px 12px; 
+	padding: 8px 0px 8px 12px; 
 	border: none;
 }
 
 span.modalita {
 	padding-left: 4px;
     padding-right: 4px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 span.modalitaImg {
@@ -510,7 +519,7 @@ span.modalitaImg {
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
 	min-width: 184px;
-	padding-right: 8px;
+	padding-right: 4px;
 }
 
 #menuModalita.rich-ddmenu-label-select {
@@ -523,7 +532,7 @@ span.modalitaImg {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	min-width: 184px;
-	padding-bottom: 12px;
+	padding-bottom: 4px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -536,11 +545,12 @@ span.modalitaImg {
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item {
 	color: ${page.header.text.color};
-	padding: 5px 0px 5px 12px; 
+	padding: 8px 0px 8px 12px; 
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
-	padding: 12px;
+	padding: 8px;
+	font-size: 14px;
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
@@ -555,7 +565,7 @@ span.modalitaImg {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
 	background-color: ${page.header.background.color};
-	padding: 5px 0px 5px 12px; 
+	padding: 8px 0px 8px 12px; 
 	border: none;
 }
 
@@ -616,13 +626,13 @@ span.modalitaImg {
 .rich-shuttle-source-cell, .rich-shuttle-target-cell {
 	padding: 4px;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .rich-shuttle-source-cell-selected, .rich-shuttle-target-cell-selected{
 	padding: 4px;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .rich-shuttle-source-cell-active, .rich-shuttle-target-cell-active{
@@ -842,7 +852,7 @@ span.modalitaImg {
 }
 
 .rich-mpnl-header span {
-	font-size: 14px;
+	font-size: 16px;
 	font-family: 'Roboto';
 }
 
@@ -884,15 +894,27 @@ input.rich-combobox-input{
 	background: ${input.background.color};
 }
 
+.rich-combobox-list-position {
+    position: absolute;
+    top: 14px;
+    left: 0;
+}
+
+.rich-combobox-shadow {
+    position: absolute;
+    top: 14px;
+}
+
 .rich-combobox-item {
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
+	padding: 4px;
 }
 .rich-combobox-item-selected {
 	background-color: ${select.selected.background.color};
 	background-image: none;
 	border: none;
-	padding: 2px;
+	padding: 4px;
 }
 
 .rich-combobox-list-decoration {
@@ -1049,7 +1071,7 @@ input.rich-combobox-input{
 
 .rich-fileupload-font {
 	font-family: 'Roboto';
-	font-size: 12px; 
+	font-size: 14px; 
 }
 
 .rich-fileupload-button {

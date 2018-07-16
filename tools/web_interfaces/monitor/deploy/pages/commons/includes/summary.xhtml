@@ -39,7 +39,7 @@
 							</link:prop>
 							<link:prop label="#{applicationBean.labelProfilo}" rendered="#{summaryBean.showListaProtocolli}">
 								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
-									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="412" enableManualInput="false">
+									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.protocolli}"/>
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
 								</rich:comboBox>
@@ -57,7 +57,7 @@
 							<c:if test="#{!applicationBean.amministratore}">
 								<link:prop label="#{loginBean.loggedUser.labelTipiNomiSoggettiServiziAssociati}" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
 									<a4j:region renderRegionOnly="true">
-										<rich:comboBox width="412" id="sogLocaleCombo" converter="selectItemConverter"
+										<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter"
 														value="#{summaryBean.soggettoLocale}" directInputSuggestions="true"
 														listWidth="#{summaryBean.soggettiAssociatiSelectItemsWidth}" enableManualInput="false">
 												<f:selectItem itemValue="--" itemLabel="--"/>
@@ -71,7 +71,7 @@
 								<link:prop label="Soggetto Locale / Servizio">
 									<a4j:region renderRegionOnly="true">
 										<h:inputText id="sogLocaleCombo" value="#{summaryBean.soggettoLocale}" styleClass="inputLinkLong" />
-										<rich:suggestionbox id="sogLocaleComboSuggestion" width="412"
+										<rich:suggestionbox id="sogLocaleComboSuggestion" width="416"
 											for="sogLocaleCombo" listWidth="#{summaryBean.soggettiSelectItemsWidth}"
 											suggestionAction="#{summaryBean.soggettiServiziAutoComplete}" var="selectItem" fetchValue="#{selectItem.value}"
 											ajaxSingle="true" nothingLabel="--" param="sogLocaleCombo">

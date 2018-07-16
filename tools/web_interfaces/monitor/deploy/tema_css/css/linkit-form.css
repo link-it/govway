@@ -164,7 +164,7 @@ div.messages-title {
 }
 
 .messages-title-text{
-	font-size: 14px;
+	font-size: 16px;
 	vertical-align: middle;
 }
 
@@ -189,22 +189,22 @@ div.messages-title {
 }
 
 div.form-container form p,div.form-container .display-form p{
-	margin: .5em;
+	margin: .8em;
 }
 
-div.form-container form p.note, div.form-container .display-form p.note {
-	margin-left: 170px;
+div.form-container form p.note, div.form-container .display-form p.note, div.prop p.note {
+	margin-left: 232px;
 	color: ${p.note.color};
 	line-height: 100%;
 }
 
 div.form-container form div.prop ,div.form-container .display-form div.prop, div.form-container div.prop{
-	padding: 3px 5px 5px 5px;  /* padding top 0px IE7 fix */
+	padding: 5px 8px 5px 8px;  /* padding top 0px IE7 fix */
 }
 
 div.form-container form fieldset,div.form-container .display-form fieldset, div.form-container fieldset {
 	margin: 10px 0px 16px 0px;
-	padding: 16px 10px 24px 10px;
+	padding: 20px 14px 28px 14px;;
 }
 
 div.form-container form legend,div.form-container .display-form legend, div.form-container legend {
@@ -214,27 +214,29 @@ div.form-container form legend,div.form-container .display-form legend, div.form
 }
 
 div.form-container label,div.form-container .display-form label {
-	margin-right: 10px;	
-	padding-right: 10px;
-	width: 150px;
+    margin-right: 16px;
+    padding-right: 16px;
+    width: 200px;
 	display: block;
 	float: left;
 	text-align: right;
 	position: relative;
 	color: ${label.color};
-	padding-top: 2px;
+	padding-top: 4px;
+	font-size: 16px;
 }
 
 label.longLabel{
-    margin-right: 10px;
-    padding-right: 10px;
-    width: 180px !important;
+    margin-right: 16px;
+    padding-right: 16px;
+    width: 270px !important;
     display: block;
     float: left;
     text-align: right;
     position: relative;
     color: ${label.color};
-	padding-top: 2px;
+	padding-top: 4px;
+	font-size: 16px;
 }
 
 div.form-container label em ,div.form-container .display-form label em{
@@ -246,57 +248,60 @@ div.form-container label em ,div.form-container .display-form label em{
 }
 
 div.form-container div.controlset div,
-div.form-container .display-form div.controlset div {
-	margin-left: 170px;
+div.form-container .display-form div.controlset div,
+div.form-container table.controlset ,
+div.form-container .display-form table.controlset  {
+	margin-left: 232px;
+	padding-top: 4px;
+    margin-bottom: 2px;
 }
 
 div.form-container div.buttonrow,
 div.form-container .display-form div.buttonrow {
 	margin-top: 20px;
-	margin-left: 170px;
+	margin-left: 232px;
 }
 
 div.form-container div.rich-combobox,
 div.form-container .display-form div.rich-combobox{
-	margin-left: 170px;
-	padding-bottom: 5px; 
+	margin-left: 232px;
+/* 	padding-bottom: 10px;  */
+   	height: 29px;	
 }
 
 /* 	personalizzazioni */
 div.form-container table.controlset label,
 div.form-container .display-form table.controlset label{
 	float: right;
-	padding-left: 2px;
+	padding-top: 2px;
 	text-align: left;
 	width: auto;
+	padding-left: 4px;
+    margin-right: 10px;
+    padding-right: 10px;
 }
 
 div.form-container input[type="checkbox"].controlset,
 div.form-container .display-form input[type="checkbox"].controlset {
 	margin-bottom: 2px;
-    margin-top: 2px;
+    margin-top: 8px;
 }
 
 .spanNoEdit {
 /* 	vertical-align: middle; */
 }
 
-.divNoEdit {
-	padding-top: 2px;
-}
-
-
-.subtitle {
+	.subtitle {
 /* 	padding: 10px 20px 6px 5px; */
 	padding: 16px 20px 12px 5px;
-    margin-left: 166px;
+    margin-left: 232px;
 }
 
 .subtitle span {
-	font-size: 12px;
+	font-size: 16px;
     font-weight: bold;
     margin-left: 0px;
-	color: ${label.color};
+	color: ${legend.color};
 }
 
 .subtitle-nopaddingleft-nomarginleft {
@@ -304,10 +309,10 @@ div.form-container .display-form input[type="checkbox"].controlset {
 }
 
 .subtitle-nopaddingleft-nomarginleft span {
-	font-size: 12px;
+	font-size: 16px;
     font-weight: bold;
     margin-left: 0px;
-	color: ${label.color};
+	color: ${legend.color};
 }
 
 /* /* BUTTONS */ 
@@ -320,7 +325,7 @@ div.form-container .display-form input[type="checkbox"].controlset {
 
 .buttonrowmodal {
 	text-align: center;
-	padding: 20px;
+	padding: 16px;
 	margin: 0px;
 }
 
@@ -330,7 +335,7 @@ div.form-container .display-form input[type="checkbox"].controlset {
 }
 
 .buttonrowsonda {
-	margin-top: 16px;
+	margin-top: 20px;
 	margin-left: 170px;
 	margin-bottom: 12px;
 }
@@ -338,7 +343,7 @@ div.form-container .display-form input[type="checkbox"].controlset {
 .buttonrowlistaLeft{
 	display: block;
 /* 	float: right; */
-	padding-top: 20px;
+	padding-top: 32px;
 }
 
 .buttonrowsonda a,
@@ -354,15 +359,16 @@ div.form-container .display-form input[type="checkbox"].controlset {
 	border: 1px solid ${input.button.border.color};
 	background-color: ${input.button.background.color};
 	background-image: none;
-	font-size: 13px; 
+	font-size: 14px; 
 	font-weight: bold;
-	padding: 7px;
+	padding: 11px;
 	border-radius: 5px;
-	margin: 5px;
-	min-width: 120px;
+    margin: 8px 0px 8px 12px;
+    min-width: 100px;
 	cursor:pointer;
 	font-family: 'Roboto';
 	text-decoration: none;
+	text-transform: uppercase;	
 }
 
 input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .buttonrowmodal a:hover, .buttonrowsonda a:hover{
@@ -440,8 +446,8 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 
 .tipologie > div {
 /*   background-color: #f1f1f1; */
-  width: 140px;
-  margin: 10px;
+  width: 160px;
+  margin: 12px;
   text-align: center;
   height: 80px;
 }
@@ -456,5 +462,5 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
     display: block;
     white-space: nowrap;
     text-decoration: none;
-    margin-top: 8px;
+    margin-top: 12px;
 }

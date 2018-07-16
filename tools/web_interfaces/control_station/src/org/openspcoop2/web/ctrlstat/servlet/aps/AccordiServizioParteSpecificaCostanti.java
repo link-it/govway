@@ -148,7 +148,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	//public final static String LABEL_APS_DATI_INVOCAZIONE_DI = "URL Invocazione di ";
 	public final static String LABEL_APS_DATI_INVOCAZIONE_DI = "";
 	public final static String LABEL_APS_STATO = "Stato";
-	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta Selezionati";
+	public final static String LABEL_APS_ESPORTA_SELEZIONATI = "Esporta";
 	public final static String LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name()+"')";
 	public final static String LABEL_APS_USA_VERSIONE_EROGATORE = "usa versione erogatore";
 	public final static String LABEL_APS_SPECIFICA_PORTI_ACCESSO = "Specifica dei Porti di Accesso";

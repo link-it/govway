@@ -16,13 +16,13 @@
 				label="Eventi" switchType="client">
 				<f:facet name="openMarker">
 					<span class="icon-search-box">
-						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
 					</span>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
 					<span class="icon-search-box">
-						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
 					</span>
 				</f:facet>
 	
@@ -43,7 +43,7 @@
 									<link:prop label="Periodo" labelId="labelPeriodoCombo">
 										<rich:comboBox id="periodoCombo" value="#{searchFormEventi.periodo}" defaultLabel="Seleziona Periodo"
 											required="true"
-											requiredMessage="E' necessario selezionare un periodo" width="412" enableManualInput="false">
+											requiredMessage="E' necessario selezionare un periodo" width="416" enableManualInput="false">
 											<f:selectItem itemValue="Ultime 24 ore" />
 											<f:selectItem itemValue="Ultima settimana" />
 											<f:selectItem itemValue="Ultimo mese" />
@@ -82,7 +82,7 @@
 									<link:prop label="Severità">
 										<rich:comboBox id="severitaCombo" value="#{searchFormEventi.severita}" defaultLabel="Seleziona Severità"
 											required="true"
-											requiredMessage="E' necessario selezionare una severità" width="412" enableManualInput="false">
+											requiredMessage="E' necessario selezionare una severità" width="416" enableManualInput="false">
 											<f:selectItems value="#{eventiBean.tipiSeverita}" />
 										</rich:comboBox>
 									</link:prop>
@@ -128,7 +128,7 @@
 										<h:inputText id="idClusterFilter" value="#{searchFormEventi.idCluster}" styleClass="inputLinkLong" rendered="#{eventiBean.visualizzaIdClusterAsSelectList == false}"/>
 										<rich:comboBox id="idClusterCombo" value="#{searchFormEventi.idCluster}"
 											defaultLabel="Seleziona Id" directInputSuggestions="true"
-											width="412" converter="selectItemConverter" enableManualInput="false"
+											width="416" converter="selectItemConverter" enableManualInput="false"
 											rendered="#{eventiBean.visualizzaIdClusterAsSelectList == true}">
 											<f:selectItems value="#{eventiBean.listIdCluster}"/>
 											<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
@@ -195,7 +195,7 @@
 								item.severitaReadable!='FATAL'}"/>
 						</rich:column>
 		
-						<rich:column id="colData" width="150">
+						<rich:column id="colData" width="170">
 							<f:facet name="header">
 								<h:outputText id="outData" value="Ora Registrazione" />
 							</f:facet>

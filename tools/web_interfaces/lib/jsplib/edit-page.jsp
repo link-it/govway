@@ -117,7 +117,7 @@ String classPanelTitolo = mostraFormHeader ? "panelDettaglioForm" : "panelDettag
 							<% if(mostraFormHeader) { %>
 							<td class="titoloSezione titoloSezione-right">
 								<span class="icon-box" id="iconaPanelDettaglioSpan">
-									<i class="material-icons md-18" id="iconaPanelDettaglio">&#xE5CF;</i>
+									<i class="material-icons md-24" id="iconaPanelDettaglio">&#xE5CF;</i>
 								</span>
 							</td>
 							<% }%>
@@ -547,7 +547,7 @@ if (pd.getMode().equals("view")) {
 			      %><input type=button onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
 			    }
 			  } else {
-			    %><input type=button onClick="EditPage()" value="Edit" /><%
+			    %><input type=button onClick="EditPage()" value="Modifica" /><%
 			  }
 		  %></div>
 	  </td>
@@ -558,12 +558,12 @@ if (pd.getMode().equals("view")) {
     %><tr class="buttonrownobuttons">
     	<td colspan="2" >&nbsp;</td>
     </tr><%
-  } else {  
+  } else {
+	  // 	    		<input type=button onClick='document.form.reset();' value="Cancella" />
     %><tr class="buttonrow">
 	    <td colspan="2" >
 	    	<div class="buttonrowform">
-	    		<input type=submit onClick='CheckDati();return false;' value="Invia" />
-	    		<input type=button onClick='document.form.reset();' value="Cancella" />
+	    		<input type=submit onClick='CheckDati();return false;' value="Salva" />
 	    	</div>
 	    </td>
     </tr><%

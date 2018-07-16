@@ -36,7 +36,7 @@
 	<a4j:outputPanel layout="block" id="altriCriteri">
  		<link:prop label="Visualizza per ">
  			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{search._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
-					enableManualInput="false" width="412" converter="selectItemConverter">
+					enableManualInput="false" width="416" converter="selectItemConverter">
 	 			<f:selectItem itemLabel="Numero Transazioni" itemValue="numeroTransazioni"/>
 	 			<f:selectItem itemLabel="Occupazione Banda" itemValue="dimensioneTransazioni"/>
 	 			<f:selectItem itemLabel="Tempo Medio Risposta" itemValue="tempoMedioRisposta"/>
@@ -47,7 +47,7 @@
  		<a4j:outputPanel id="tipoBandaCtr" layout="block" rendered="#{search._value_tipoVisualizzazione == 'dimensioneTransazioni'}">
 			<link:prop label="Tipo Banda">
 				<h:selectManyCheckbox id="tipoBandacheckBox" value="#{search.tipiBanda}"
-					requiredMessage="E' necessario selezionare un tipo Banda" width="412" styleClass="controlset" 
+					requiredMessage="E' necessario selezionare un tipo Banda" width="416" styleClass="controlset" 
 					rendered="#{search.andamentoTemporalePerEsiti == false}">
 					<f:selectItem itemLabel="Banda Complessiva" itemValue="0"/>
 					<f:selectItem itemLabel="Banda Interna" itemValue="1"/>
@@ -55,7 +55,7 @@
 					<a4j:support event="onchange" actionListener="#{search.tipoBandaCBListener}" reRender="tipoBandaCtr"/>
 				</h:selectManyCheckbox>
 				<rich:comboBox id="tipoBandaCombo" value="#{search._value_tipoBanda}" defaultLabel="Seleziona Tipo di Banda"
-					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="412"
+					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="416"
 					rendered="#{search.andamentoTemporalePerEsiti}">
 					<f:selectItem itemLabel="Banda Complessiva" itemValue="Banda Complessiva"/>
 	 				<f:selectItem itemLabel="Banda Interna" itemValue="Banda Interna"/>
@@ -68,7 +68,7 @@
  		<a4j:outputPanel id="tipoLatenzaCtr" layout="block" rendered="#{search._value_tipoVisualizzazione == 'tempoMedioRisposta'}">
 			<link:prop label="Tipo Latenza">
 				<h:selectManyCheckbox id="tipoLatenzacheckBox" value="#{search.tipiLatenza}"
-					requiredMessage="E' necessario selezionare un tipo Latenza" width="412" styleClass="controlset" 
+					requiredMessage="E' necessario selezionare un tipo Latenza" width="416" styleClass="controlset" 
 					rendered="#{search.andamentoTemporalePerEsiti == false}">
 					<f:selectItem itemLabel="Latenza Totale" itemValue="0"/>
 					<f:selectItem itemLabel="Latenza Servizio" itemValue="1"/>
@@ -76,7 +76,7 @@
 					<a4j:support event="onchange" actionListener="#{search.tipoLatenzaCBListener}" reRender="tipoLatenzaCtr"/>
 				</h:selectManyCheckbox>
 				<rich:comboBox id="tipoLatenzaCombo" value="#{search._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
-					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="412"
+					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="416"
 					rendered="#{search.andamentoTemporalePerEsiti}">
 					<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
 	 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>

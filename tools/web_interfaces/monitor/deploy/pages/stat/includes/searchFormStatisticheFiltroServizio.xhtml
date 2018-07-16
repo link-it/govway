@@ -15,7 +15,7 @@
 		<link:prop label="Servizio">
 			<rich:comboBox value="#{sf_servizio}" id="servizioCombo2" enableManualInput="false" converter="selectItemConverter"
 				defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
-				width="412">
+				width="416">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_servizi}" />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl"/>

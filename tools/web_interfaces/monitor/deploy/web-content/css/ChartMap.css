@@ -2,19 +2,19 @@
     font-family: Roboto;
 }
 .c3-chart-nodata{
-    font-size: 18px;
+    font-size: 20px;
 }
 .c3-chart-title {
-    font-size: 18px;
+    font-size: 20px;
 }
 .c3-chart-subtitle {
-    font-size: 13px;
+    font-size: 16px;
 }
 .c3-axis-y-label {
     font-size: 14px;
 }
 g.c3-legend-item text {
-    font-size: 12px;
+    font-size: 14px;
 }
 g.tick text,
 .c3 svg g g.c3-axis.c3-axis-x {

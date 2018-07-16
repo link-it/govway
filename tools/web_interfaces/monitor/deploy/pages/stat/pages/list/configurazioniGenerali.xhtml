@@ -18,13 +18,13 @@
 				label="Configurazione Servizi" opened="true">
 				<f:facet name="openMarker">
 					<span class="icon-search-box">
-						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
 					</span>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
 					<span class="icon-search-box">
-						<i class="material-icons md-18" id="iconaSearchOpen">&#xE152;</i>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
 					</span>
 				</f:facet>
 	
@@ -38,7 +38,7 @@
 							<link:prop label="Tipologia">
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
 										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
-										width="412" enableManualInput="false">
+										width="416" enableManualInput="false">
 									<f:selectItem itemLabel="Erogazione" itemValue="applicativa" />
 									<f:selectItem itemLabel="Fruizione" itemValue="delegata" />
 									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,servizioComboCtr" actionListener="#{configurazioniGeneraliSearchForm.tipologiaTransazioniListener}" />
@@ -49,7 +49,7 @@
 								ajaxRendered="true">
 								<link:prop label="#{applicationBean.labelProfilo}">
 									<rich:comboBox id="protocolloCombo" value="#{configurazioniGeneraliSearchForm.protocollo}"
-										converter="selectItemConverter" defaultLabel="Seleziona #{applicationBean.labelProfilo}" enableManualInput="false" directInputSuggestions="true" width="412">
+										converter="selectItemConverter" defaultLabel="Seleziona #{applicationBean.labelProfilo}" enableManualInput="false" directInputSuggestions="true" width="416">
 										<f:selectItems value="#{configurazioniGeneraliSearchForm.protocolli}" />
 										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
 											reRender="soggettoErogatoreComboCtr,servizioComboCtr" />

@@ -12,7 +12,7 @@
 			<c:if test="#{!applicationBean.amministratore}">
 					<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
 						
-							<rich:comboBox width="412" id="sogLocaleSuggestion" 
+							<rich:comboBox width="416" id="sogLocaleSuggestion" 
 											value="#{sf_soggettoLocale}" 
 											suggestionValues="#{sf_mbean.tipiNomiSoggettiAssociati}"
 											enableManualInput="false">
@@ -33,7 +33,7 @@
 						<h:inputText id="sogLocaleInput" value="#{sf_soggettoLocale}" styleClass="inputLinkLong"/>
 						<rich:suggestionbox 
 									id="sogLocaleSuggestion"
-									width="412" 
+									width="416" 
 									for="sogLocaleInput" 
 									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
 									var="soggetto"
@@ -56,7 +56,7 @@
 				<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogDestSuggestion" 
-							width="412" 
+							width="416" 
 							for="sogDestCombo" 
 							suggestionAction="#{sf_mbean.soggettiAutoComplete}"
 							var="soggetto"
@@ -79,7 +79,7 @@
 				<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}"  styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogMitSuggestion" 
-							width="412" 
+							width="416" 
 							for="sogMitCombo" 
 							suggestionAction="#{sf_mbean.soggettiAutoComplete}"
 							var="soggetto"
@@ -101,7 +101,7 @@
 				<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}"   styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogRemotoSuggestion" 
-							width="412" 
+							width="416" 
 							for="sogCombo" 
 							suggestionAction="#{sf_mbean.soggettiAutoComplete}"
 							var="soggetto"
@@ -121,7 +121,7 @@
     	<c:if test="#{applicationBean.user}">
 			<c:if test="#{!applicationBean.amministratore}">
 					<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}" >
-						<rich:comboBox width="412" id="sogLocaleSuggestion"  converter="selectItemConverter"
+						<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
 										value="#{sf_soggettoLocale}" directInputSuggestions="true"
 										defaultLabel="Selezione Soggetto Locale" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
 										enableManualInput="false">
@@ -141,7 +141,7 @@
 			<link:prop label="Soggetto Locale">
 				<rich:comboBox id="sogLocaleCombo" value="#{sf_soggettoLocale}" converter="selectItemConverter"
 					defaultLabel="Selezione Soggetto Locale" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
-					width="412"   enableManualInput="false">
+					width="416"   enableManualInput="false">
 					<f:selectItem itemValue="--" itemLabel="--"/>
 					<f:selectItems value="#{sf_soggettiLocale}"  />
 					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
@@ -153,7 +153,7 @@
 		<link:prop label="Soggetto Destinatario" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
 			<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
 					defaultLabel="Selezione Soggetto Destinatario" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="412"   enableManualInput="false">
+					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
@@ -164,7 +164,7 @@
 		<link:prop label="Soggetto Mittente" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
 			<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
 					defaultLabel="Selezione Soggetto Mittente" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="412"   enableManualInput="false">
+					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
@@ -175,7 +175,7 @@
 		<link:prop label="Soggetto Remoto" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
 			<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 					defaultLabel="Selezione Soggetto Remoto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="412"   enableManualInput="false">
+					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true" />

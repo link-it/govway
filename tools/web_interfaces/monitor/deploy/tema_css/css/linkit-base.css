@@ -2,7 +2,7 @@
 	margin: 0;
 	padding: 0;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 h2 {
@@ -17,7 +17,8 @@ fieldset {
 	border: 1px solid ${fieldset.border.color}; 
 	border-radius: 5px;
 	margin: 10px 0px 16px 0px;
-	padding: 16px 10px 24px 10px;
+/* 	padding: 16px 10px 24px 10px; */
+    padding: 20px 14px 28px 14px;
 }
 
 img {
@@ -25,14 +26,14 @@ img {
 }
 
 p {
-	margin: .5em;
+	margin: .8em;
 	font-family: 'Roboto';
 	line-height: normal;
 }
 
 legend {
 	font-family: 'Roboto';
-	font-size: 13px;
+	font-size: 17px;
 	font-weight: bold;
 	padding-left: 10px;
     padding-right: 10px;
@@ -43,7 +44,7 @@ a {
 	color: ${a.color};
 	text-decoration: underline;
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 14px;
 }
 
 a:hover {
@@ -69,10 +70,10 @@ table {
 }
 
 select {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 	background: none;
 }
 
@@ -81,10 +82,10 @@ select:focus {
 }
 
 textarea {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 }
 textarea:focus {
 	border: 1px solid  ${input.focus.border.color};
@@ -95,10 +96,10 @@ input:focus {
 }
 
 input[type="text"] {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 }
 
 input[type="text"]:disabled{
@@ -111,10 +112,10 @@ input[type="text"]:focus {
 }
 
 input[type="password"] {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 }
 
 input[type="password"]:disabled {
@@ -127,12 +128,13 @@ input[type="password"]:focus {
 }
 
 input[type="checkbox"] {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 	background-color: ${input.background.color} ;	
 	background-image: none !important;
+	margin-top: 4px;
 }
 
 input[type="checkbox"]:focus {
@@ -140,16 +142,23 @@ input[type="checkbox"]:focus {
 }
 
 input[type="radio"] {
-	padding: 2px;
+	padding: 4px;
 	border: 1px solid  ${input.border.color};
 	font-family: 'Roboto';
-	font-size: 12px;
+	font-size: 16px;
 	background-color: ${input.background.color};	
 	background-image: none !important;
+	margin-top: 4px;
 }
 
 input[type="radio"]:focus {
 	border: 1px solid  ${input.focus.border.color};
+}
+
+option  {
+	background-color: ${input.background.color};
+	color: ${input.color};
+	font-size: 16px;
 }
 
 option:checked  {
@@ -189,27 +198,27 @@ ul {
 
 .titleRight {
 	vertical-align: middle; 
-	font-size: 13px;
+	font-size: 16px;
 	color: ${page.header.text.color};
 }
 
 .titleRight label,
 .titleRight span{
-	font-size: 13px;
+/* 	font-size: 16px; */
 }
 
 .titleLinkRight  {
-	font-size: 13px;
+	font-size: 16px;
 	color: ${page.header.text.color};
 }
 
 a.titleLinkRight:visited {
-	font-size: 13px;
+	font-size: 16px;
 	color: ${page.header.text.color} !important;
 }
 
 a.titleLinkRight:hover {
-	font-size: 13px;
+	font-size: 16px;
 	color: ${page.header.text.color};
 }
 
@@ -350,7 +359,7 @@ a.titleLinkRight:hover {
 .labelAllineataDxFixedWidth130 {
 	text-align: right;
 	padding: 0px 10px;
-	width: 130px;
+	width: 160px;
 }
 
 .labelAllineataSx {
@@ -399,5 +408,5 @@ span.iconLinkie{
 }
 
 .divNoEdit {
-	padding-top: 2px;
+	padding-top: 6px;
 }
