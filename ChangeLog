@@ -1,4 +1,29 @@
-2018-07-05 Giuliano Pintori <pintori@link.it>
+2017-07-16  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.0.0.rc1
+
+2018-07-16  Andrea Poli <apoli@link.it>
+
+	* [GovWay, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-104
+	Il prodotto è stato trasformato in un API Gateway che include le seguenti funzionalità:
+	- Gestione API REST e SOAP
+	- Caricamento API tramite interfacce OpenAPI, Swagger 2, WADL (REST) e WSDL (SOAP)
+	- Validazione dei messaggi tramite interfacce API, JSON Schema, XSD Schema
+	- Gestione dei messaggi SOAP, XML, JSON, MimeMultipart e Binary
+	- Rate Limiting
+	- Tracciamento applicativo tramite XPath e JsonPath
+	- Gestione Token OAuth2 (Introspection, UserInfo e Validazione JWT)
+	- Autorizzazione (Applicativo o Utente Autenticato, Ruoli, Scopes, XAML-Policy)
+	- Autenticazione (basic, ssl, princpal)
+	- Registrazione dei Messaggi in transito
+	- Gestione MTOM
+	- Interfaccia di configurazione (govwayConsole) rivista e ottimizzata per la gestione dell'API
+	- Interfaccia di monitoraggio (govwayMonitor) che consente di controllare il transito dei messaggi sul gateway
+	- Report statistici
+	- Rinominato il prodotto in GovWay
+
+2018-07-05  Giuliano Pintori <pintori@link.it>
 
 	* [PddConsole, PddLoader]
 	Aggiunta funzionalità OP-661
