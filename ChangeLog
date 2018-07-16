@@ -12,6 +12,7 @@
 	- Validazione dei messaggi tramite interfacce API, JSON Schema, XSD Schema
 	- Gestione dei messaggi SOAP, XML, JSON, MimeMultipart e Binary
 	- Rate Limiting
+	- Sicurezza Messaggio (WSSecurity, JOSE, XMLSignature e XMLEncrypt)
 	- Tracciamento applicativo tramite XPath e JsonPath
 	- Gestione Token OAuth2 (Introspection, UserInfo e Validazione JWT)
 	- Autorizzazione (Applicativo o Utente Autenticato, Ruoli, Scopes, XAML-Policy)
@@ -22,6 +23,15 @@
 	- Interfaccia di monitoraggio (govwayMonitor) che consente di controllare il transito dei messaggi sul gateway
 	- Report statistici
 	- Rinominato il prodotto in GovWay
+
+2018-07-16  Andrea Poli <apoli@link.it>
+
+	* [GovWay, GovWayConsole]
+	Aggiunta funzionalità OP-68
+	L'effettiva adozione di WS-Security era complicata dalla necessità di immettere file di configurazione (crypto.properties) 
+	e classi java (password callback) all'interno dell'archivio applicativo in deploy sull'AS.
+	Si è aggiunta la possibilità, nel contesto delle maschere di configurazione di WS-Security, 
+	di fornire informazioni equivalenti tramite gui sollevando l'utente dall'onere di intervenire direttamente sull'ear deployato.
 
 2018-07-05  Giuliano Pintori <pintori@link.it>
 
