@@ -137,7 +137,7 @@
 				enableContextMenu="true"
 				selectionMode="none">
 				
-				<rich:column width="40px" rendered="#{showSelectAll and not empty mBean}" id="ckbClmn" label="CheckAll" sortable="false">
+				<rich:column width="42px" rendered="#{showSelectAll and not empty mBean}" id="ckbClmn" label="CheckAll" sortable="false">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="" layout="block" id="chkClmnPg">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});" />
