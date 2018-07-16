@@ -1,5 +1,10 @@
 # GovWay
-API Gateway per la Pubblica Amministrazione italiana
+Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle normative della Pubblica Amministrazione:
+- Conforme alle nuove linee guida AGID per l’interoperabilità ModI 2018 (profilo API Gateway)
+- Conforme alle specifiche per l’interoperabilità europea (profilo eDelivery)
+- Conforme alle specifiche per la fatturazione elettronica sul canale SdiCoop (profilo Fatturazione Elettronica)
+- Retrocompatibile con il paradigma di cooperazione applicativa (profilo SPCoop)
+- Connettori preconfigurati (GovLet) per l’accesso ai principali servizi pubblici italiani
 
 ## Documentazione
 
@@ -12,7 +17,40 @@ API Gateway per la Pubblica Amministrazione italiana
 - Mailing list: [Utenti GovWay](http://www.gov4j.it/mailman/listinfo/utenti-govway)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
 
-## Licenza
+# Le funzionalità principali
+## Standard di Mercato
+Conforme ai protocolli standard di mercato, tramite la gestione di API Web Services (SOAP 1.1 e 1.2) e API REST che scambiano messaggi in Json, XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native,indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
+## Specifiche Italiane per L'interoperabilità
+Conformità alle specifiche italiane per l'interoperabilità: supporto delle nuove linee guida per l'interoperabilità di AGID (MI 2018) e supporto retrocompatibile con il protocollo SPCoop, ancora ampiamente adottatto per i servizi della PA.
+## Specifiche europee di interoperabilità
+Conformità alle specifiche europee di interoperabilità: supporto del protocollo AS4, tramite integrazione con il Building Block eDelivery.
+## Descrittori delle API
+La registrazione delle API può avvenire manualmente o tramite caricamento dei descrittori delle interfacce (OpenAPI 3.0, Swagger e WADL per i servizi REST, WSDL per i servizi SOAP, Accordi di Servizio per i servizi SPCoop).
+## Gestione token JWT, OAuth2, OIDConnect
+L'API Gateway è in grado di processare le richieste contenenti token di autenticazione che rispettano gli standard OAuth2 e OIDConnect. E' inoltre in grado di processare i claim interni ai token in funzione dell'Authorization Server (es. Google).
+## Autenticazione dei client
+Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita dal proprio dominio, tramite supporto nativo dei protocolli HTTP-Basic e TLS o tramite integrazione di sistemi esterni di Identity Management.
+## Autorizzazione
+Gestione dell'autorizzazione delle richieste applicative, tramite registrazione dei fruitori delle API gestite e dei loro ruoli, o tramite integrazione con sistemi esterni di Identity Management. Supporto dei protocolli di Autorizzazione Oauth2 e XACML, con la possibilità di gestire la valutazione delle policy XACML.
+## Rate Limiting
+Regolamentazione del traffico in ingresso su GovWay, limitando il numero di richieste o la dimensione di banda occupata per una specifica erogazione o fruizione. Il prodotto permette inoltre complesse politiche di rate limiting analizzando la congestione del sistema.
+##  Validazione
+Validazione dei contenuti delle richieste applicative, con verifica dei messaggi XML per i servizi SOAP, e XML/JSON  per i servizi REST. La validazione viene effettuata rispetto alle descrizioni delle API (OpenAPI, Swagger, WSDL, JSON Schema, XSD) registrate in fase di configurazione del servizio.
+## Sicurezza dei contenuti
+Il gateway può intervenire per introdurre o verificare la sicurezza delle richieste applicative. Nel caso di API SOAP è supportato lo standard WS-Security. Nel caso di API REST sono supportati i protocolli XMLEncryption, XMLSignature per i messaggi XML e JOSE (JWS/JWE) per i messaggi JSON.
+## Gestione del formato MTOM
+Il gateway è in grado di imbustare o sbustare in accordo al protocollo MTOM il messaggio in transito. In caso di validazione di un messaggio MTOM, il gateway potrà normalizzare il messaggio prima di effettuarne la validazione per poi ripristinare il formato originale una volta completato il processo di validazione.
+## Tracciamento
+Emissione di una traccia conforme alle normative per ogni richiesta applicativa. Oltre ai metadati riguardanti la richiesta di servizio (id transazione, mittente, destinatario, ...) è possibile indicare gli eventuali elementi parte dei messaggi in transito da includere nelle tracce; la modalità di estrazione supportate dal prodotto sono: XPath, Espressioni Regolari e JSONPath.
+## Routing della richiesta
+Consegna della richiesta ai servizi di backend, con supporto nativo per i seguenti protocolli di connessione: http, https con mutua autenticazione, jms e scrittura su file. Ulteriori connettori possono essere realizzati come semplici plugin.
+## Console di Gestione
+Cruscotto web per la registrazione di API (interfacce), Erogazioni (implementazioni), Fruizioni (subscription) e delle varie policy che le regolano. La gestione di vari profili di utenza permette di selezionare le funzioni di gestione sulla base dei ruoli dei diversi gestori. Tutte le operazioni sono sottoposte ad auditing, in modo da poter sempre individuare gli autori delle modifiche effettuate alle configurazioni.
+## Console di Monitoraggio
+Cruscotto web rivolto alla diagnostica ed al monitoraggio del traffico gestito dall'API gateway; ai gestori dell'infrastruttura permette un controllo totale sui messaggi in transito, aiutando a diagnosticare e prevenire qualunque tipo di anomalia; ai responsabili di progetto offre la possibilità di analizzare i flussi di utilizzo, gli esiti e l'efficienza complessiva delle API utilizzate nel proprio progetto.
+
+
+# Licenza
 GovWay - A customizable API Gateway 
 http://www.govway.org
 
