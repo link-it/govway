@@ -274,7 +274,7 @@
             </types>
         </organization>
 
-        <service>
+        <service trace="false">
             <types>
             
                 <!-- Il tipo proxy supporta sia soap che rest 

@@ -106,6 +106,7 @@ public class Tracciamento {
 	/** Protocol Factory */
 	private ProtocolFactoryManager protocolFactoryManager = null;
 	private IProtocolFactory<?> protocolFactory;
+	private boolean tracciamentoSupportatoProtocollo = true;
 	
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
 	private List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = null; 
@@ -161,6 +162,7 @@ public class Tracciamento {
 		try{
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
 			this.protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			this.tracciamentoSupportatoProtocollo = this.protocolFactory.createProtocolConfiguration().isAbilitataGenerazioneTracce();
 		} catch(Throwable e){
 			throw new TracciamentoException(e.getMessage(),e);
 		}
@@ -233,7 +235,7 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			Busta busta,EsitoElaborazioneMessaggioTracciato esito,String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.configurazionePdDManager.tracciamentoBuste()){
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -321,7 +323,7 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			byte[] busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito,String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.configurazionePdDManager.tracciamentoBuste()){
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -408,7 +410,7 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.configurazionePdDManager.tracciamentoBuste()) {
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()) {
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -500,7 +502,7 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			Busta busta,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException {
-		if(this.configurazionePdDManager.tracciamentoBuste()){
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -588,7 +590,7 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			byte[] busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException{
-		if(this.configurazionePdDManager.tracciamentoBuste()){
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -675,7 +677,7 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException {
-		if(this.configurazionePdDManager.tracciamentoBuste()){
+		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
 			boolean erroreAppender = false;
 			
@@ -983,5 +985,6 @@ public class Tracciamento {
 		}
 		
 	}
+	
 }
 

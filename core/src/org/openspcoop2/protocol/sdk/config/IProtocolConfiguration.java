@@ -245,6 +245,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se se il protocollo, per la correlazione applicativa, supporta il riuso dell'id di protocollo
 	 */
 	public boolean isAbilitatoRiusoIdCorrelazioneApplicativa();
+	
+	/**
+	 * Ritorna l'indicazione se il protocollo, supporta la generazione delle tracce
+	 * 
+	 * @return True se se il protocollo, supporta la generazione delle tracce
+	 */
+	public boolean isAbilitataGenerazioneTracce();
 		
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo

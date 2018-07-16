@@ -44,6 +44,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="protocolEnvelopeManagement" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="faultChoice" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="correlationReuseProtocolId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="trace" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -134,6 +135,18 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.correlationReuseProtocolId = correlationReuseProtocolId;
   }
 
+  public boolean isTrace() {
+    return this.trace;
+  }
+
+  public boolean getTrace() {
+    return this.trace;
+  }
+
+  public void setTrace(boolean trace) {
+    this.trace = trace;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -160,5 +173,9 @@ public class Service extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="correlationReuseProtocolId",required=false)
   protected boolean correlationReuseProtocolId = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="trace",required=false)
+  protected boolean trace = true;
 
 }

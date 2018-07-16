@@ -424,6 +424,7 @@
               <xsd:attribute name="protocolEnvelopeManagement" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="faultChoice" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="correlationReuseProtocolId" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="trace" type="xsd:boolean" use="optional" default="true"/>
        </xsd:complexType>
        
        <xsd:complexType name="ServiceTypes">
