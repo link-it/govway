@@ -127,6 +127,9 @@ public final class UtenteChange extends Action {
 				multiTenant = Costanti.CHECK_BOX_ENABLED;
 			}
 
+			if(!forceEnableMultitenant && interfaceType.equals(InterfaceType.COMPLETA)) {
+				forceEnableMultitenant = true;
+			}
 
 			// Preparo il menu
 			utentiHelper.makeMenu();

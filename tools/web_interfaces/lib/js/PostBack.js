@@ -21,7 +21,7 @@ function postBack(dataElementName) {
     location += "?isPostBack=true&edit-mode=in_progress_postback";
     if(dataElementName!=null){
     	location += "&postBackElementName="+dataElementName;
-    	navigationAnchor = addPageNavigationAnchor(dataElementName);
+    	navigationAnchor = '#'+ dataElementName;
     }
     
     for (var k=0; k<document.form.elements.length; k++) {
@@ -80,7 +80,7 @@ function postVersion_postBack(dataElementName) {
     var navigationAnchor = null;
     if(dataElementName!=null){
     	addHidden(document.form, 'postBackElementName' , dataElementName);
-    	navigationAnchor = addPageNavigationAnchor(dataElementName);
+    	navigationAnchor = '#'+ dataElementName;
     }
     
     // dump 
@@ -126,29 +126,27 @@ function postVersion_postBack(dataElementName) {
     
     // form submit
     document.form.submit();
-}	
+}
 
-function addPageNavigationAnchor(dataElementName){
-	
-	var elem = $( "input[name='"+dataElementName+"']");
-	if(elem.length == 0) {
-		elem = $( "select[name='"+dataElementName+"']");
-	}
-	
-	if(elem.length > 0) {
-		var elemPosiz = elem.closest('div.prop').prevAll('div.subtitle').find('span > a.navigatorAnchor');
+function scrollToPostBackElement(destElement) {
+	if(destElement) {
+		console.log("ElemName");
+		console.log(destElement);
 		
-		if(elemPosiz.length == 0) {
-			elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchor');
+		var elem = $('[name="'+ destElement+ '"]');
+		if(elem.length > 0) {
+			var elemPosiz = elem.closest('div.prop').prevAll('div.subtitle').find('span > a.navigatorAnchor');
+			
+			if(elemPosiz.length == 0) {
+				elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchor');
+			}
+			 
+			if(elemPosiz.length > 0){
+				var baseUrl = elemPosiz[0].name; //navAnc.attr('name');
+				console.log(baseUrl);
+				if(elemPosiz.length > 0)
+					elemPosiz[0].scrollIntoView();
+			}
 		}
-		 
-		if(elemPosiz.length > 0){
-			 var baseUrl = elemPosiz[0].name; //navAnc.attr('name');
-			 console.log(baseUrl);
-			 return '#'+baseUrl;
-		}
-		 
 	}
-	
-	return null;
 }

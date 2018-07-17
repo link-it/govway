@@ -101,6 +101,9 @@ public final class LoginAsSu extends Action {
 			// refresh page-data
 			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
 			
+			// reinit del console helper per aggiornare le impostazioni sull'interfaccia
+			loginHelper = new LoginHelper(request, pd, session);
+			
 			// Preparo il menu
 			loginHelper.makeMenu();
 	

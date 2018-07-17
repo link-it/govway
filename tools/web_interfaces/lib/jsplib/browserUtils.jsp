@@ -78,7 +78,15 @@ public String getBrowserVersion(String []info){
 	return null;
 }
 %>
+<script type="text/javascript">
+var destElement;
+console.log("Windows HASH:");
+console.log(window.location.hash);
 
+if(window.location.hash){
+	destElement = window.location.hash.substr(1);
+}  
+</script>
 <%
 boolean debug = false;
 String userAgent = request.getHeader("user-agent");

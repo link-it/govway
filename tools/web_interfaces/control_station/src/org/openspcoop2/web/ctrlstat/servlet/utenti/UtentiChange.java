@@ -194,6 +194,10 @@ public final class UtentiChange extends Action {
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
 			
+			if(!forceEnableMultitenant && interfaceType.equals(InterfaceType.COMPLETA)) {
+				forceEnableMultitenant = true;
+			}
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 

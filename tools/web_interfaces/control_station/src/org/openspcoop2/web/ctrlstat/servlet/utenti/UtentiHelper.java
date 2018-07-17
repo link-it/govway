@@ -283,34 +283,50 @@ public class UtentiHelper extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
-		de.setType(DataElementType.SELECT);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 		boolean permitInterfaceComplete = false;
+		boolean showSelectTipoInterfaccia = true;
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
 			User user = this.utentiCore.getUser(nomesu);
 			permitInterfaceComplete = user.isPermitInterfaceComplete();
+			showSelectTipoInterfaccia = !interfaceType.equals(InterfaceType.COMPLETA);
 		}
-		String[] tipiInterfacce=null;
-		String[] tipiInterfacceLabel=null;
-		if(permitInterfaceComplete) {
-			tipiInterfacce = new String[3];			
+		
+		if(showSelectTipoInterfaccia) {
+			de.setType(DataElementType.SELECT);
+			String[] tipiInterfacce=null;
+			String[] tipiInterfacceLabel=null;
+			if(permitInterfaceComplete) {
+				tipiInterfacce = new String[3];			
+			}
+			else {
+				tipiInterfacce = new String[2];
+			}
+			tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+			tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+			if(permitInterfaceComplete) {
+				tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+			}
+			tipiInterfacceLabel = new String[tipiInterfacce.length];
+			for (int i = 0; i < tipiInterfacce.length; i++) {
+				tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+			}
+			de.setValues(tipiInterfacce);
+			de.setLabels(tipiInterfacceLabel);
+			de.setSelected(interfaceType.toString());
+			dati.addElement(de);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(interfaceType.toString());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_TIPO_GUI);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+ "_text");
+			de.setType(DataElementType.TEXT);
+			de.setValue(interfaceType.toString().toLowerCase());
+			dati.addElement(de);
 		}
-		else {
-			tipiInterfacce = new String[2];
-		}
-		tipiInterfacce[0]=InterfaceType.STANDARD.toString();
-		tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
-		if(permitInterfaceComplete) {
-			tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
-		}
-		tipiInterfacceLabel = new String[tipiInterfacce.length];
-		for (int i = 0; i < tipiInterfacce.length; i++) {
-			tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
-		}
-		de.setValues(tipiInterfacce);
-		de.setLabels(tipiInterfacceLabel);
-		de.setSelected(interfaceType.toString());
-		dati.addElement(de);
 
 		// se sono in modifica ed e' stato selezionato il diritto diagnostica mostro i link per la definizione di soggetti e servizi
 		boolean isDiagnosticaEnabled = ServletUtils.isCheckBoxEnabled(isDiagnostica);
@@ -613,28 +629,43 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue(interfaceType.toString());
 		}
 		else {
-			de.setType(DataElementType.SELECT);		
-			User user = ServletUtils.getUserFromSession(this.session);
-			String[] tipiInterfacce=null;
-			String[] tipiInterfacceLabel=null;
-			if(user.isPermitInterfaceComplete()) {
-				tipiInterfacce = new String[3];			
+			if(interfaceType.equals(InterfaceType.COMPLETA)) {
+				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+				de.setType(DataElementType.TEXT);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI+"_text");
+				de.setValue(interfaceType.toString().toLowerCase());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(UtentiCostanti.LABEL_MODALITA_INTERFACCIA);
+				de.setName(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
+				de.setType(DataElementType.HIDDEN);	
+				de.setValue(interfaceType.toString());
+				
+			} else {
+				de.setType(DataElementType.SELECT);		
+				User user = ServletUtils.getUserFromSession(this.session);
+				String[] tipiInterfacce=null;
+				String[] tipiInterfacceLabel=null;
+				if(user.isPermitInterfaceComplete()) {
+					tipiInterfacce = new String[3];			
+				}
+				else {
+					tipiInterfacce = new String[2];
+				}
+				tipiInterfacce[0]=InterfaceType.STANDARD.toString();
+				tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
+				if(user.isPermitInterfaceComplete()) {
+					tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
+				}
+				tipiInterfacceLabel = new String[tipiInterfacce.length];
+				for (int i = 0; i < tipiInterfacce.length; i++) {
+					tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
+				}
+				de.setValues(tipiInterfacce);
+				de.setLabels(tipiInterfacceLabel);
+				de.setSelected(interfaceType.toString());
 			}
-			else {
-				tipiInterfacce = new String[2];
-			}
-			tipiInterfacce[0]=InterfaceType.STANDARD.toString();
-			tipiInterfacce[1]=InterfaceType.AVANZATA.toString();
-			if(user.isPermitInterfaceComplete()) {
-				tipiInterfacce[2]=InterfaceType.COMPLETA.toString();
-			}
-			tipiInterfacceLabel = new String[tipiInterfacce.length];
-			for (int i = 0; i < tipiInterfacce.length; i++) {
-				tipiInterfacceLabel[i] = tipiInterfacce[i].toLowerCase();
-			}
-			de.setValues(tipiInterfacce);
-			de.setLabels(tipiInterfacceLabel);
-			de.setSelected(interfaceType.toString());
 		}
 		dati.addElement(de);
 		

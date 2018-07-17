@@ -362,6 +362,12 @@ public class DriverUsersDB {
 					user.setPermitMultiTenant(false);
 				}
 				
+				// Fix: se completa, siamo per forza in multitentant
+				if(user.isPermitInterfaceComplete()) {
+					user.setPermitMultiTenant(true);
+					user.setInterfaceType(InterfaceType.COMPLETA);
+				}
+				
 			}
 			rs.close();
 			stm.close();

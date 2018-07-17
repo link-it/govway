@@ -167,24 +167,26 @@ public class GeneralHelper {
 				// 2. modalita' standard/avanzata
 				GeneralLink glUtente = new GeneralLink();
 				InterfaceType tipoInterfaccia = u.getInterfaceType();
-				if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
-					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
-					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
-							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
-							);
-
-				} else {
-					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
-					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_CHECKED);
-					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
-							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
+				if(!tipoInterfaccia.equals(InterfaceType.COMPLETA)){
+					if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
+						glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+						glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
+								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
+								);
+	
+					} else {
+						glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+						glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_CHECKED);
+						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
+								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
+					}
+					link.addElement(glUtente);
 				}
-				link.addElement(glUtente);
 
 				// 3. informazioni/about
 				GeneralLink glO = new GeneralLink();

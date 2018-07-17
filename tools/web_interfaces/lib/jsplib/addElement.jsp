@@ -51,10 +51,10 @@ String customListViewName = pd.getCustomListViewName();
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">
 <link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 <link rel="stylesheet" href="css/materialIcons.css" type="text/css">
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="js/webapps.js"></script>
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-latest.js"></script>
+<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+<script type="text/javascript" src="js/webapps.js"></script>
 <!--Funzioni di utilita -->
 <script type="text/javascript">
 var iddati = '<%= iddati %>';
@@ -100,18 +100,21 @@ function CheckDati() {
                 
                 var numInputs = document.querySelectorAll('input[type=number]');
 
-                numInputs.forEach(function (input) {
-                	  input.addEventListener('change', function (e) {
-                	    if (e.target.value == '') {
-                	    	if(input.min){
-                	         e.target.value = input.min;
-                	    	} else {
-                	    		e.target.value = 0;
-                	    	}
-                	    }
-                	  })
-                	});
+               	for(var i = 0 ; i < numInputs.length; i++){
+               		numInputs[i].addEventListener('change', inputNumberChangeEventHandler	);
+               	}
+               	
+               	function inputNumberChangeEventHandler(e){
+               		if (e.target.value == '') {
+               	    	if(e.target.min){
+               	         e.target.value = e.target.min;
+               	    	} else {
+               	    		e.target.value = 0;
+               	    	}
+               	    }
+               	}
                 
+                scrollToPostBackElement(destElement);
         });
 </script>
 
