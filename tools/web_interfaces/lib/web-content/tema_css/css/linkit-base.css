@@ -21,6 +21,19 @@ fieldset {
     padding: 20px 14px 28px 14px;
 }
 
+.navigatorAnchor {
+	cursor: default;
+	text-decoration: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.navigatorAnchor:hover {
+	cursor: default;
+	text-decoration: none;
+	color: ${a.color} !important;
+}
+
 img {
 	border: none;
 }
@@ -30,7 +43,7 @@ p {
 	font-family: 'Roboto';
 }
 
-legend {
+legend, legend > a {
 	font-family: 'Roboto';
 	font-size: 17px;
 	font-weight: bold;
@@ -1094,7 +1107,7 @@ p.note.labelLong {
 }
 
 
-.subtitle span {
+.subtitle span{
 	font-size: 16px;
     font-weight: bold;
     margin-left: 0px;
@@ -1103,6 +1116,13 @@ p.note.labelLong {
 
 .subtitle.noBold span{
 	font-weight: normal;
+}
+
+.subtitle span > a.navigatorAnchor {
+	font-size: 16px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
 }
 
 div.prop-slider{

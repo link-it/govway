@@ -16,13 +16,13 @@ function postBack(dataElementName) {
     var thirdSlash = document.form.action.indexOf("/", secondSlash+1);
     var location = document.form.action.substr(thirdSlash);
     
+    var navigationAnchor = null;
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
     location += "?isPostBack=true&edit-mode=in_progress_postback";
-    if(dataElementName!=null)
-	location += "&postBackElementName="+dataElementName;
-    
-    //nn piu necessario xe' devo sempre aggiungere un &
-    //var appendAnd = false;
+    if(dataElementName!=null){
+    	location += "&postBackElementName="+dataElementName;
+    	navigationAnchor = addPageNavigationAnchor(dataElementName);
+    }
     
     for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
@@ -51,19 +51,15 @@ function postBack(dataElementName) {
 		    		valore = "no";
 		    }
 		    if (tipo == "text" || tipo == "hidden" || tipo == "select-one" || tipo == "checkbox" || tipo == "textarea"|| tipo == "number") {
-// || (tipo == "file" && valore != "")) {
-			
-			    //if (appendAnd)
-		
 			    	location += "&" + nome + "=" + encodeURIComponent(valore);
-		
-		//		else {
-		//		    location += "?" + nome + "=" + encodeURIComponent(valore);
-		//		    appendAnd = true;
-		//		}
 		    }
 		}
     }
+    
+    if(navigationAnchor!=null){
+    	location += navigationAnchor;
+    }
+    
     document.location = location;
 }	
 
@@ -81,11 +77,14 @@ function postVersion_postBack(dataElementName) {
     //aggiungo parametro per indicare che si tratta di postback e azzero idhid
     addHidden(document.form, 'isPostBack' , true);
 //    addHidden(document.form, 'edit-mode' , 'in_progress_postback');
-    if(dataElementName!=null)
+    var navigationAnchor = null;
+    if(dataElementName!=null){
     	addHidden(document.form, 'postBackElementName' , dataElementName);
+    	navigationAnchor = addPageNavigationAnchor(dataElementName);
+    }
     
     // dump 
-    var dump = true;
+    var dump = false;
     
    
 	for (var k=0; k<document.form.elements.length; k++) {
@@ -128,3 +127,28 @@ function postVersion_postBack(dataElementName) {
     // form submit
     document.form.submit();
 }	
+
+function addPageNavigationAnchor(dataElementName){
+	
+	var elem = $( "input[name='"+dataElementName+"']");
+	if(elem.length == 0) {
+		elem = $( "select[name='"+dataElementName+"']");
+	}
+	
+	if(elem.length > 0) {
+		var elemPosiz = elem.closest('div.prop').prevAll('div.subtitle').find('span > a.navigatorAnchor');
+		
+		if(elemPosiz.length == 0) {
+			elemPosiz = elem.closest("fieldset").find('legend > a.navigatorAnchor');
+		}
+		 
+		if(elemPosiz.length > 0){
+			 var baseUrl = elemPosiz[0].name; //navAnc.attr('name');
+			 console.log(baseUrl);
+			 return '#'+baseUrl;
+		}
+		 
+	}
+	
+	return null;
+}

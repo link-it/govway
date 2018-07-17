@@ -55,7 +55,7 @@ if(vBL != null){
 
 boolean mime = false;
 
-Vector dati = pd.getDati();
+Vector<?> dati = pd.getDati();
 for (int i = 0; i < dati.size(); i++) {
   DataElement de = (DataElement) dati.elementAt(i);
   if (de.getType().equals("file")) {
@@ -194,7 +194,7 @@ for (int i = 0; i < dati.size(); i++) {
     			if(!fieldsetOpen){
 	    			%>
 	    				<fieldset>
-	    					<legend><%=deLabel %></legend>
+	    					<legend><a name="<%=rowName %>" class="navigatorAnchor"><%=deLabel %></a></legend>
 	    			<%
 	    			fieldsetOpen = true;
     			}
@@ -202,7 +202,7 @@ for (int i = 0; i < dati.size(); i++) {
     			if (type.equals("subtitle")){
     				%>
         			<div class="subtitle <%= labelStyleClass %>">
-        				<span class="subtitle"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        				<span class="subtitle"><a name="<%=rowName %>" class="navigatorAnchor"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
         			</div>
         			<%
         		} else { // else subtitle
