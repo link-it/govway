@@ -1044,27 +1044,55 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String tmpTitle = this.getLabelIdServizio(asps);
 
 			// setto la barra del titolo
-			List<Parameter> lstParm = new ArrayList<Parameter>();
+			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			if(gestioneFruitori) {
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				if(gestioneFruitori) {
+					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				} else {
+					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				}
+				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				lstParam.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+				
+				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio, pNomeServizio, pTipoServizio));
+				
+				if(search.equals("")){
+					this.pd.setSearchDescription("");
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, null));
+				}else{
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI,
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + "")
+							));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+				}
+			} else {
+				if(gestioneFruitori) {
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
+				else {
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+				}
+				
+				if(search.equals("")){
+					this.pd.setSearchDescription("");
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle, null));
+				}else{
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle,
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
+							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + "")
+							));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+				}
 			}
-			else {
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			}
-			if(search.equals("")){
-				this.pd.setSearchDescription("");
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle, null));
-			}else{
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle,
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + "")
-						));
-				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
-			}
+			
 
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(this.pd, lstParm );
+			ServletUtils.setPageDataTitle(this.pd, lstParam );
 
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
@@ -4793,28 +4821,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				dati.addElement(de);
 	
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
-				if(contaListe){
-					try{
-						// BugFix OP-674
-						//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-						Search searchForCount = new Search(true,1);
-						this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
-						int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
-					}catch(Exception e){
-						this.log.error("Calcolo numero Allegati non riuscito",e);
-						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
-					}
-				}else{
-					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
-				}
-				dati.addElement(de);
 			}
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(
+					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+			if(contaListe){
+				try{
+					// BugFix OP-674
+					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
+				}catch(Exception e){
+					this.log.error("Calcolo numero Allegati non riuscito",e);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+				}
+			}else{
+				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
+			}
+			dati.addElement(de);
 
 		}
 

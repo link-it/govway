@@ -46,6 +46,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -139,26 +140,45 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				}
 			}
 
-			// Se idhid = null, devo visualizzare la pagina per l'inserimento
-			// dati
-			if (apsHelper.isEditModeInProgress()) {
-				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-				
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				} else {
+					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
+				}
+				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				lstParam.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+				
+				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio, pNomeServizio, pTipoServizio));
+				
+				lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio)));
+			} else {
+				if(gestioneFruitori) {
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
 				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
+					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 				}
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle,
+				lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle,
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio)
 						));
-				lstParm.add(ServletUtils.getParameterAggiungi());
+			}
+			lstParam.add(ServletUtils.getParameterAggiungi());
+			
+			// Se idhid = null, devo visualizzare la pagina per l'inserimento
+			// dati
+			if (apsHelper.isEditModeInProgress()) {
+				
 					
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, lstParm );
+				ServletUtils.setPageDataTitle(pd, lstParam );
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -202,22 +222,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,ff,documento);
 			if (!isOk) {
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<Parameter>();
-				
-				if(gestioneFruitori) {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				else {
-					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				}
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI_DI + tmpTitle,
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio)
-						));
-				lstParm.add(ServletUtils.getParameterAggiungi());
-					
-				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, lstParm );
+				ServletUtils.setPageDataTitle(pd, lstParam );
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
