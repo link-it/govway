@@ -2902,6 +2902,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean isInterfacciaAvanzata = this.isModalitaAvanzata();
 		boolean ripristinoStatoOperativo = this.core.isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 
+		boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+		
 		boolean modificheAbilitate = false;
 		if( tipoOperazione.equals(TipoOperazione.ADD) ){
 			modificheAbilitate = true;
@@ -3388,7 +3390,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		}
 		
-		if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+		if(TipoOperazione.CHANGE.equals(tipoOperazione) && multiTenant) {
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST, 

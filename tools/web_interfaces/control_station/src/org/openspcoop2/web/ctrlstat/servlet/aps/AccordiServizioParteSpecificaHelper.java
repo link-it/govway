@@ -39,8 +39,10 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -4496,6 +4498,30 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		if(tipoOp.equals(TipoOperazione.ADD) == false && !this.isModalitaCompleta()) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(
+					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+			if(contaListe){
+				try{
+					// BugFix OP-674
+					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
+					Search searchForCount = new Search(true,1);
+					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
+					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
+				}catch(Exception e){
+					this.log.error("Calcolo numero Allegati non riuscito",e);
+					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+				}
+			}else{
+				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
+			}
+			dati.addElement(de);
+		}
+		
 		
 		//Sezione Soggetto Fruitore
 		if(gestioneFruitori) {
@@ -4680,14 +4706,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo Accesso
 			
+			// Creo un oggetto vuoto tanto per passare l'informazione sul tipo protocollo
+			PortaApplicativa pa = new PortaApplicativa();
+			pa.setServizio(new PortaApplicativaServizio());
+			pa.getServizio().setTipo(tipoServizio);
+			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
 			this.controlloAccessiAutenticazione(dati, tipoOp, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
-			
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
+						
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
@@ -4701,6 +4732,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo Accesso Fruizione
 			
+			// Creo un oggetto vuoto tanto per passare l'informazione sul tipo protocollo
+			PortaDelegata pd = new PortaDelegata();
+			pd.setServizio(new PortaDelegataServizio());
+			pd.getServizio().setTipo(tipoServizio);
+			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
@@ -4708,7 +4744,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 		
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
 					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 					fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 					fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
@@ -4821,30 +4857,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				dati.addElement(de);
 	
-			}
-			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(
-					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
-					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
-			if(contaListe){
-				try{
-					// BugFix OP-674
-					//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
-					Search searchForCount = new Search(true,1);
-					this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
-					int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
-				}catch(Exception e){
-					this.log.error("Calcolo numero Allegati non riuscito",e);
-					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(
+						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST,
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id));
+				if(contaListe){
+					try{
+						// BugFix OP-674
+						//int num = this.apsCore.serviziAllegatiList(Integer.parseInt(id), new Search(true)).size();
+						Search searchForCount = new Search(true,1);
+						this.apsCore.serviziAllegatiList(Integer.parseInt(id), searchForCount);
+						int num = searchForCount.getNumEntries(Liste.SERVIZI_ALLEGATI);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, (long) num);
+					}catch(Exception e){
+						this.log.error("Calcolo numero Allegati non riuscito",e);
+						ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI, AccordiServizioParteSpecificaCostanti.LABEL_N_D);
+					}
+				}else{
+					de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
 				}
-			}else{
-				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI  );
-			}
-			dati.addElement(de);
+				dati.addElement(de);
 
+			}
 		}
 
 		return dati;

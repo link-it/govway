@@ -85,7 +85,7 @@ public class AboutHelper extends ConsoleHelper {
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setValue(AboutCostanti.LICENSE);
 		de.setRows(11);
-		de.setCols(60);
+		de.setCols(70);
 		dati.addElement(de);
 		
 		return dati;

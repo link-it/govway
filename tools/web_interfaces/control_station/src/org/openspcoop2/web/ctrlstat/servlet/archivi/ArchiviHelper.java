@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Operation;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
+import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingCollection;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingException;
@@ -75,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -629,7 +632,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
 			List<ArchiveModeType> importTypes,String importType,
-			boolean deleter){
+			boolean deleter) throws Exception{
 
 		DataElement dataElement = new DataElement();
 		if(deleter){
@@ -646,7 +649,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if(protocolliSelectList.size()>2){
 			de.setType(DataElementType.SELECT);
 			de.setValues(protocolliSelectList.toArray(new String[1]));
-			de.setLabels(protocolliSelectList.toArray(new String[1]));
+			List<String> protocolliSelectListLabels = new ArrayList<>();
+			for (String p : protocolliSelectList) {
+				if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(p)) {
+					protocolliSelectListLabels.add(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+				}
+				else {
+					protocolliSelectListLabels.add(this.getLabelProtocollo(p));
+				}
+			}
+			de.setLabels(protocolliSelectListLabels);
 			de.setSelected(protocollo);
 		}else{
 			de.setType(DataElementType.HIDDEN);
@@ -659,22 +671,26 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
-		if(importModes.size()>1){
-			List<String> tmp = new ArrayList<String>();
-			for (ImportMode imp : importModes) {
-				tmp.add(imp.toString());
-			}
-			de.setType(DataElementType.SELECT);
-			de.setValues(tmp.toArray(new String[1]));
-			de.setLabels(tmp.toArray(new String[1]));
-			de.setSelected(importMode);
-		}else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(importMode);
+		//if(importModes.size()>1){
+		// Lo vediamo sempre anche se solo con un valore, poiche' vogliamo vedere govlet e fuori dalla select list non e' bello graficamente.
+		List<String> tmpArchivi = new ArrayList<String>();
+		for (ImportMode imp : importModes) {
+			tmpArchivi.add(imp.toString());
 		}
+		de.setType(DataElementType.SELECT);
+		de.setValues(tmpArchivi.toArray(new String[1]));
+		de.setLabels(tmpArchivi.toArray(new String[1]));
+		de.setSelected(importMode);
+//		}else{
+//			//de.setType(DataElementType.HIDDEN);
+//			de.setType(DataElementType.TEXT);
+//			de.setValue(importMode);
+//		}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);
 		de.setSize(this.getSize());
-		de.setPostBack(true);
+		if(importModes.size()>1){
+			de.setPostBack(true);
+		}
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -1412,7 +1428,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.SELECT);
 				de.setLabel(labelSoggettoDataElement);
 				de.setValues(soggettiLabel.toArray(new String[1]));
-				de.setLabels(soggettiLabel.toArray(new String[1]));
+				List<String> labelSoggettiByProtocol = new ArrayList<>();
+				for (String soggetto : soggettiLabel) {
+					if(soggetto.contains("/")) {
+						IDSoggetto idSoggetto = new IDSoggetto(soggetto.split("/")[0], soggetto.split("/")[1]);
+						labelSoggettiByProtocol.add(this.getLabelNomeSoggetto(idSoggetto));
+					}else {
+						labelSoggettiByProtocol.add(soggetto);
+					}
+				}
+				de.setLabels(labelSoggettiByProtocol.toArray(new String[1]));
 				if(soggettiLabel.size()>1)
 					de.setSelected(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED);
 				else
@@ -1562,7 +1587,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 				
 				// read WSDL Base sfruttando il BasicArchive (non serve il protocollo)
-				BasicArchive basicArchive = new BasicArchive(null);
+				BasicArchive basicArchive = new BasicArchive(new BasicProtocolFactory(this.log));
 				basicArchive.setProtocolInfo(aspc,ControlStationCore.getLog());
 								
 				if(aspc.sizePortTypeList()>0){
@@ -1613,10 +1638,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 							}
 	
 							de = new DataElement();
-							de.setType(DataElementType.TEXT);
+							de.setType(DataElementType.SUBTITLE);
 							de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_OPERATION_TITLE.
 									replace(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_OPERATION_TITLE_KEY, opWSDL.getNome()));
-							de.setValue(" ");
 							de.setSize(this.getSize());
 							dati.addElement(de);
 

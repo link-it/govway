@@ -66,11 +66,11 @@ public class Costanti {
     public static final String ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";
     
 	/** Archive mode */
-	public static final ArchiveMode OPENSPCOOP_ARCHIVE_MODE = new ArchiveMode("openspcoop");
+	public static final ArchiveMode OPENSPCOOP_ARCHIVE_MODE = new ArchiveMode("govlet");
 	public static final ImportMode OPENSPCOOP_IMPORT_ARCHIVE_MODE = new ImportMode(OPENSPCOOP_ARCHIVE_MODE);
 	public static final ExportMode OPENSPCOOP_EXPORT_ARCHIVE_MODE = new ExportMode(OPENSPCOOP_ARCHIVE_MODE,true);
 	/** Archive mode type */
-	public static final ArchiveModeType OPENSPCOOP_ARCHIVE_MODE_TYPE = new ArchiveModeType("openspcoop");
+	public static final ArchiveModeType OPENSPCOOP_ARCHIVE_MODE_TYPE = new ArchiveModeType("govlet");
 	/** Archive extension */
 	public static final String OPENSPCOOP_ARCHIVE_EXT = "zip";
 	

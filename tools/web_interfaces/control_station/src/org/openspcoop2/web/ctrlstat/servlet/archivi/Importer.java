@@ -516,6 +516,20 @@ public final class Importer extends Action {
 					isOk = false;
 				}
 			}
+			
+			// finalizeArchive
+			if(isOk){
+				if(archive!=null){
+					try{
+						archiviCore.finalize(archive, archiveModeType, archiveMode, protocolloEffettivo,this.validazioneDocumenti,
+								this.importInformationMissing_globalPlaceholder);
+					}catch(Exception e){
+						ControlStationCore.logError(e.getMessage(), e);
+						pd.setMessage(e.getMessage());
+						isOk = false;
+					}
+				}
+			}
 						
 			if (!isOk) {
 				

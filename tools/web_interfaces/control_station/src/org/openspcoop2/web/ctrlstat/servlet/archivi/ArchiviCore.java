@@ -304,6 +304,30 @@ public class ArchiviCore extends ControlStationCore {
 		}
 	}
 	
+	public void finalize(Archive archive,ArchiveModeType type,ArchiveMode mode,String protocol,boolean validateDocuments,
+			MapPlaceholder importInformationMissing_globalPlaceholder) throws Exception {
+		Connection con = null;
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			RegistryReader registryReader = new RegistryReader(driver.getDriverRegistroServiziDB(),ControlStationCore.getLog());
+			ConfigIntegrationReader configReader = new ConfigIntegrationReader(driver.getDriverConfigurazioneDB(),ControlStationCore.getLog());
+			
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IArchive archiveEngine = pf.createArchive();
+			archiveEngine.finalizeImportArchive(archive, mode, type, registryReader, configReader,
+					validateDocuments, importInformationMissing_globalPlaceholder);
+			
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	
 	public Documento getDocumento(long idDocumento,boolean readBytes) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;

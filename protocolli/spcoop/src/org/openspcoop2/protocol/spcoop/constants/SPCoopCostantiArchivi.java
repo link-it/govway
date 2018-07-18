@@ -37,10 +37,10 @@ import it.gov.spcoop.sica.dao.Costanti;
  */
 public class SPCoopCostantiArchivi {
 
-	public static final ArchiveMode CNIPA_MODE = new ArchiveMode("cnipa");
+	public static final ArchiveMode CNIPA_MODE = new ArchiveMode("spcoop");
 	
-	public static final ArchiveMode EXPORT_MODE_COMPATIBILITA_CLIENT_SICA = new ArchiveMode("cnipa (compatibile con Client SICA)");
-	public static final ArchiveMode EXPORT_MODE_INFORMAZIONI_COMPLETE = new ArchiveMode("cnipa (informazioni complete)");
+	public static final ArchiveMode EXPORT_MODE_COMPATIBILITA_CLIENT_SICA = new ArchiveMode("spcoop (compatibile con Client SICA)");
+	public static final ArchiveMode EXPORT_MODE_INFORMAZIONI_COMPLETE = new ArchiveMode("spcoop (informazioni complete)");
 	
 	public static final ArchiveModeType TYPE_ALL = new ArchiveModeType("*");
 	public static final ArchiveModeType TYPE_APC = new ArchiveModeType("Accordo Servizio Parte Comune ("+Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_COMUNE+")");

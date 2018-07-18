@@ -243,7 +243,7 @@ public class SICAtoOpenSPCoopContext {
 	}
 	
 	public String getCodiceIPA(String nomeSoggetto){
-		return this.getCodiceIPA(new IDSoggetto("SPC", nomeSoggetto));
+		return this.getCodiceIPA(new IDSoggetto("spc", nomeSoggetto));
 	}
 	
 	public IDSoggetto getIDSoggetto(String codiceIPA){

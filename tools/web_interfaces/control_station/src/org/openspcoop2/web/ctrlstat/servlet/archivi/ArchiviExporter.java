@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -51,6 +52,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -231,7 +233,13 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
-				redirect = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+					redirect = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
+				}
+				else {
+					redirect = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
+				}
 				break;
 			case ACCORDO_COOPERAZIONE:
 				identificativi = exporterUtils.getIdsAccordiCooperazione(objToExport);
@@ -298,7 +306,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 				if(identificativi.size()>1){
-					fileName = "AccordiServizioParteComune."+ext;
+					fileName = "APIs."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -330,16 +338,14 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 				if(identificativi.size()>1){
-					fileName = "AccordiServizioParteSpecifica."+ext;
+					fileName = "Servizi."+ext;
 				}
 				else{
-					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
-					fileName = idAccordo.getNome();
-					if(idAccordo.getSoggettoReferente()!=null){
-						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();
-	                }
-	                if(idAccordo.getVersione()!=null && !"".equals(idAccordo.getVersione())){
-	                	fileName+="_"+idAccordo.getVersione();
+					IDServizio idServizio = ((IDServizio)identificativi.get(0));
+					fileName = idServizio.getTipo()+idServizio.getNome();
+					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
+	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
+	                	fileName+="_"+idServizio.getVersione();
 	                }
 					fileName +="."+extSingleArchive;
 				}

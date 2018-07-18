@@ -31,6 +31,8 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
 import org.openspcoop2.core.config.GestioneErrore;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -775,10 +777,30 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	// Inefficente
+	@Deprecated 
 	public void initMappingErogazione(Logger log) throws DriverRegistroServiziException {
 		try{
 			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
 			utilities.initMappingErogazione();
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	public void initMappingErogazioneById(Logger log, List<IDPortaApplicativa> listPA) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.gestioneMappingErogazionePAbyId(listPA);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	public void initMappingErogazione(Logger log, List<PortaApplicativa> listPA) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.gestioneMappingErogazionePA(listPA);
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
@@ -982,10 +1004,30 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	// Inefficente
+	@Deprecated 
 	public void initMappingFruizione(Logger log) throws DriverRegistroServiziException {
 		try{
 			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
 			utilities.initMappingFruizione();
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	public void initMappingFruizioneById(Logger log, List<IDPortaDelegata> listPD) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.gestioneMappingFruizionePDbyId(listPD);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	public void initMappingFruizione(Logger log, List<PortaDelegata> listPD) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.gestioneMappingFruizionePD(listPD);
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);

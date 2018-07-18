@@ -44,7 +44,9 @@ import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -52,11 +54,9 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -168,7 +168,7 @@ public class SICAtoOpenSPCoopUtilities {
 	// Da utilizzare con cautela
 	public static String buildIDSoggettoSica(IDSoggetto idSoggetto,boolean createURI) throws SICAToOpenSPCoopUtilitiesException{
 		String soggetto = null;
-		if("SPC".equals(idSoggetto.getTipo())){
+		if("spc".equals(idSoggetto.getTipo())){
 			// standard, utilizzo solo il nome
 			soggetto = idSoggetto.getNome();
 		}else{
@@ -197,7 +197,7 @@ public class SICAtoOpenSPCoopUtilities {
 			throw new SICAToOpenSPCoopUtilitiesException("IDSoggetto.tipo non definito");
 		if(idSoggetto.getNome()==null)
 			throw new SICAToOpenSPCoopUtilitiesException("IDSoggetto.nome non definito");
-		if("SPC".equals(idSoggetto.getTipo())==false)
+		if("spc".equals(idSoggetto.getTipo())==false)
 			throw new SICAToOpenSPCoopUtilitiesException("Tipo soggetto diverso da SPC non utilizzabile");
 		
 		return SICAtoOpenSPCoopUtilities.buildIDSoggettoSica(idSoggetto.getNome(),true);
@@ -251,7 +251,7 @@ public class SICAtoOpenSPCoopUtilities {
 		}
 		
 		org.openspcoop2.core.id.IDSoggetto idSoggetto = 
-			 new org.openspcoop2.core.id.IDSoggetto("SPC",senzaSpazi.substring(index+lenghtPrefixO,endSoggetto));
+			 new org.openspcoop2.core.id.IDSoggetto("spc",senzaSpazi.substring(index+lenghtPrefixO,endSoggetto));
 		return idSoggetto;
 	}
 	public static String readDNSoggettoFromUriAccordo(String uriAccordo) throws SICAToOpenSPCoopUtilitiesException{
@@ -309,17 +309,18 @@ public class SICAtoOpenSPCoopUtilities {
 		String nomeAccordo = null;
 		try{
 			AccordoCooperazione ac = registryReader.getAccordoCooperazione(idAccordo);
-			if(ac.sizeProtocolPropertyList()<=0){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
-			}
-			for (int i = 0; i < ac.sizeProtocolPropertyList(); i++) {
-				if(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(ac.getProtocolProperty(i).getName())){
-					nomeAccordo = ac.getProtocolProperty(i).getValue();
-				}		
-			}
-			if(nomeAccordo==null){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
-			}
+//			if(ac.sizeProtocolPropertyList()<=0){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
+//			}
+//			for (int i = 0; i < ac.sizeProtocolPropertyList(); i++) {
+//				if(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(ac.getProtocolProperty(i).getName())){
+//					nomeAccordo = ac.getProtocolProperty(i).getValue();
+//				}		
+//			}
+//			if(nomeAccordo==null){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
+//			}
+			nomeAccordo = ac.getNome();
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
 		}
@@ -354,9 +355,9 @@ public class SICAtoOpenSPCoopUtilities {
 		try{
 			FiltroRicercaAccordi filtro = new FiltroRicercaAccordi();
 			filtro.setVersione(versioneInt);
-			ProtocolProperties protocolProperties = new ProtocolProperties();
-			protocolProperties.addProperty(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
-			filtro.setProtocolProperties(protocolProperties);
+//			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
+//			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
+//			filtro.setProtocolProperties(protocolProperties);
 			List<IDAccordoCooperazione> list = registryReader.findIdAccordiCooperazione(filtro);
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
@@ -411,17 +412,18 @@ public class SICAtoOpenSPCoopUtilities {
 		String nomeAccordo = null;
 		try{
 			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
-			if(aspc.sizeProtocolPropertyList()<=0){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
-			}
-			for (int i = 0; i < aspc.sizeProtocolPropertyList(); i++) {
-				if(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(aspc.getProtocolProperty(i).getName())){
-					nomeAccordo = aspc.getProtocolProperty(i).getValue();
-				}		
-			}
-			if(nomeAccordo==null){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
-			}
+//			if(aspc.sizeProtocolPropertyList()<=0){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
+//			}
+//			for (int i = 0; i < aspc.sizeProtocolPropertyList(); i++) {
+//				if(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(aspc.getProtocolProperty(i).getName())){
+//					nomeAccordo = aspc.getProtocolProperty(i).getValue();
+//				}		
+//			}
+//			if(nomeAccordo==null){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
+//			}
+			nomeAccordo = aspc.getNome();
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
 		}
@@ -439,17 +441,18 @@ public class SICAtoOpenSPCoopUtilities {
 		String nomeAccordo = null;
 		try{
 			AccordoServizioParteComune aspc = registryReader.getAccordoServizioParteComune(idAccordo, false);
-			if(aspc.sizeProtocolPropertyList()<=0){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
-			}
-			for (int i = 0; i < aspc.sizeProtocolPropertyList(); i++) {
-				if(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(aspc.getProtocolProperty(i).getName())){
-					nomeAccordo = aspc.getProtocolProperty(i).getValue();
-				}		
-			}
-			if(nomeAccordo==null){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
-			}
+//			if(aspc.sizeProtocolPropertyList()<=0){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
+//			}
+//			for (int i = 0; i < aspc.sizeProtocolPropertyList(); i++) {
+//				if(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(aspc.getProtocolProperty(i).getName())){
+//					nomeAccordo = aspc.getProtocolProperty(i).getValue();
+//				}		
+//			}
+//			if(nomeAccordo==null){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
+//			}
+			nomeAccordo = aspc.getNome();
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
 		}
@@ -467,17 +470,18 @@ public class SICAtoOpenSPCoopUtilities {
 		String nomeAccordo = null;
 		try{
 			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
-			if(asps.sizeProtocolPropertyList()<=0){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
-			}
-			for (int i = 0; i < asps.sizeProtocolPropertyList(); i++) {
-				if(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(asps.getProtocolProperty(i).getName())){
-					nomeAccordo = asps.getProtocolProperty(i).getValue();
-				}		
-			}
-			if(nomeAccordo==null){
-				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
-			}
+//			if(asps.sizeProtocolPropertyList()<=0){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato: non esistono proprieta' di protocollo all'interno dell'accordo di servizio");
+//			}
+//			for (int i = 0; i < asps.sizeProtocolPropertyList(); i++) {
+//				if(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA.equals(asps.getProtocolProperty(i).getName())){
+//					nomeAccordo = asps.getProtocolProperty(i).getValue();
+//				}		
+//			}
+//			if(nomeAccordo==null){
+//				throw new Exception("Nome dell'accordo da utilizzare non trovato all'interno delle proprieta' di protocollo dell'accordo di servizio");
+//			}
+			nomeAccordo = asps.getNome();
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
 		}
@@ -503,7 +507,7 @@ public class SICAtoOpenSPCoopUtilities {
 			throw new SICAToOpenSPCoopUtilitiesException("IDAccordo.soggetto.tipo non definito");
 		if(soggettoAccordo.getNome()==null)
 			throw new SICAToOpenSPCoopUtilitiesException("IDAccordo.soggetto.nome non definito");
-		if("SPC".equals(soggettoAccordo.getTipo())==false)
+		if("spc".equals(soggettoAccordo.getTipo())==false)
 			throw new SICAToOpenSPCoopUtilitiesException("Tipo soggetto referente diverso da SPC non utilizzabile");
 		
 		String codiceIPASoggettoReferente = 
@@ -552,9 +556,9 @@ public class SICAtoOpenSPCoopUtilities {
 			FiltroRicercaAccordi filtro = new FiltroRicercaAccordi();
 			filtro.setVersione(versioneInt);
 			filtro.setSoggetto(idSoggetto);
-			ProtocolProperties protocolProperties = new ProtocolProperties();
-			protocolProperties.addProperty(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
-			filtro.setProtocolProperties(protocolProperties);
+//			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
+//			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
+//			filtro.setProtocolProperties(protocolProperties);
 			List<IDAccordo> list = registryReader.findIdAccordiServizioParteComune(filtro);
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
@@ -603,9 +607,9 @@ public class SICAtoOpenSPCoopUtilities {
 			FiltroRicercaServizi filtro = new FiltroRicercaServizi();
 			filtro.setVersioneServizio(versioneInt);
 			filtro.setSoggettoErogatore(idSoggetto);
-			ProtocolProperties protocolProperties = new ProtocolProperties();
-			protocolProperties.addProperty(SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
-			filtro.setProtocolPropertiesServizi(protocolProperties);
+//			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
+//			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
+//			filtro.setProtocolPropertiesServizi(protocolProperties);
 			List<IDServizio> list = registryReader.findIdAccordiServizioParteSpecifica(filtro);
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
@@ -1062,6 +1066,8 @@ public class SICAtoOpenSPCoopUtilities {
 		boolean documentoSpecificaEGOV_asClientSICAEnabled_childUnquilified = sicaToOpenspcoopContext.isInformazioniEGov_wscpEnabled_childUnqualified();
 		
 		org.openspcoop2.core.registry.AccordoServizioParteComune accServizioOpenspcoop = new org.openspcoop2.core.registry.AccordoServizioParteComune();
+		accServizioOpenspcoop.setServiceBinding(ServiceBinding.SOAP);
+		accServizioOpenspcoop.setFormatoSpecifica(FormatoSpecifica.WSDL_11);
 		
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
 		it.gov.spcoop.sica.manifest.AccordoServizio manifest = accordoServizioSICA.getManifesto();
@@ -1801,7 +1807,7 @@ public class SICAtoOpenSPCoopUtilities {
 				nomeServizioCorrelato = "Errore lettura dati Wsdl: wsdl implementativo fruitore non esistente o corrotto";
 			}
 			//else{
-			aspsOpenSPCoop.setTipo("SPC");
+			aspsOpenSPCoop.setTipo("spc");
 			aspsOpenSPCoop.setNome(nomeServizioCorrelato);
 			aspsOpenSPCoop.setPortType(nomeServizioCorrelato);
 			//}
@@ -1812,7 +1818,7 @@ public class SICAtoOpenSPCoopUtilities {
 				nomeServizio = "Errore lettura dati Wsdl: wsdl implementativo erogatore non esistente o corrotto";
 			}
 			//else{
-			aspsOpenSPCoop.setTipo("SPC");
+			aspsOpenSPCoop.setTipo("spc");
 			aspsOpenSPCoop.setNome(nomeServizio);
 			aspsOpenSPCoop.setPortType(nomeServizio);
 			//}
@@ -2350,6 +2356,8 @@ public class SICAtoOpenSPCoopUtilities {
 		boolean documentoSpecificaEGOV_asClientSICAEnabled_childUnquilified = sicaToOpenspcoopContext.isInformazioniEGov_wscpEnabled_childUnqualified();
 		
 		org.openspcoop2.core.registry.AccordoServizioParteComune accServizioOpenspcoop = new org.openspcoop2.core.registry.AccordoServizioParteComune();
+		accServizioOpenspcoop.setServiceBinding(ServiceBinding.SOAP);
+		accServizioOpenspcoop.setFormatoSpecifica(FormatoSpecifica.WSDL_11);
 		
 		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		

@@ -42,12 +42,15 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
@@ -134,6 +137,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String sbustamento = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 			String sbustamentoInformazioniProtocolloRichiesta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
 			String getmsg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			String getmsgUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String getmsgPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			
 			String invrifRichiesta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
 			
@@ -254,11 +259,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			}
 			//}
 			
-			boolean forceEnabled = false;
-			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				forceEnabled = true;
-			}
-			
 			
 			// Preparo il menu
 			saHelper.makeMenu();
@@ -271,10 +271,29 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
+			InvocazionePorta invocazionePorta = sa.getInvocazionePorta();
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
+			
+			boolean forceEnabled = false;
+			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+				if(!saHelper.isModalitaStandard() && 
+						( (getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) 
+								||
+						  (getmsg==null && is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage()))
+						)
+					) {
+					forceEnabled = false;
+				}
+				else {
+					forceEnabled = true;
+					if(endpointtype==null || TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
+						endpointtype = TipiConnettore.HTTP.getNome();
+					}
+				}
+			}
 			
 			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			long soggLong = -1;
@@ -366,8 +385,21 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						sbustamentoInformazioniProtocolloRichiesta = is.getSbustamentoInformazioniProtocollo().toString();
 				}
 				if (getmsg == null){
-					if(is.getGetMessage()!=null)
+					if(is.getGetMessage()!=null) {
 						getmsg = is.getGetMessage().toString();
+						if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+							if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+								for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
+									Credenziali c = invocazionePorta.getCredenziali(i);
+									if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
+										getmsgUsername = c.getUser();
+										getmsgPassword = c.getPassword();
+										break;
+									}
+								}
+							}
+						}
+					}
 				}
 				
 				if (invrifRichiesta == null) {
@@ -678,7 +710,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true,
+						getmsg,getmsgUsername,getmsgPassword,true,
+						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
@@ -726,7 +759,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrifRichiesta,risprif,nomeProtocollo,true,true, true,
+						getmsg,getmsgUsername,getmsgPassword,true,
+						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro);
 				
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
@@ -851,6 +885,31 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 					}
 
+				}
+			}
+			
+			if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+				boolean found = false;
+				if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+					for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
+						Credenziali c = invocazionePorta.getCredenziali(i);
+						if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
+							c.setUser(getmsgUsername);
+							c.setPassword(getmsgPassword);
+							found = true;
+						}
+					}
+				}
+				if(!found) {
+					if(invocazionePorta==null) {
+						sa.setInvocazionePorta(new InvocazionePorta());
+						invocazionePorta = sa.getInvocazionePorta();
+					}
+					Credenziali c = new Credenziali();
+					c.setTipo(CredenzialeTipo.BASIC);
+					c.setUser(getmsgUsername);
+					c.setPassword(getmsgPassword);
+					invocazionePorta.addCredenziali(c);
 				}
 			}
 

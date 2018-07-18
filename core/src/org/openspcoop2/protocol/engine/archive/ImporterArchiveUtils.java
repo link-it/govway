@@ -476,10 +476,18 @@ public class ImporterArchiveUtils {
 			
 			// Creazione mapping in caso di importazione package creati prima dell'introduzione dei mapping fruizione ed erogazione
 			if(archive.getPorteApplicative().size()>0){
-				this.importerEngine.initMappingErogazione(this.log);
+				List<PortaApplicativa> listPA = new ArrayList<>();
+				for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
+					listPA.add(archive.getPorteApplicative().get(i).getPortaApplicativa());
+				}
+				this.importerEngine.initMappingErogazione(this.log,listPA);
 			}
 			if(archive.getPorteDelegate().size()>0){
-				this.importerEngine.initMappingFruizione(this.log);
+				List<PortaDelegata> listPD = new ArrayList<>();
+				for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
+					listPD.add(archive.getPorteDelegate().get(i).getPortaDelegata());
+				}
+				this.importerEngine.initMappingFruizione(this.log,listPD);
 			}
 			
 			return esito;

@@ -135,7 +135,7 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaConcettuale non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo())==false){
+							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 					}
 				}
@@ -146,7 +146,7 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoErogatore non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo())==false){
+							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 					}
 				}
@@ -155,7 +155,7 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoFruitore non definito\n");
 					}
 					if(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo())==false){
+							TipiDocumentoInterfaccia.WSDL.toString().equals(parteComune.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 					}
 				}
@@ -166,8 +166,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneConcettuale non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo())==false){
+							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false &&
+							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 					}
 				}
@@ -176,8 +176,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoErogatore non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo())==false){
+							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false &&
+							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 					}
 				}
@@ -186,8 +186,8 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoFruitore non definito\n");
 					}
 					if(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo()!=null && 
-							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo())==false &&
-							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo())==false){
+							TipiDocumentoConversazione.BPEL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false &&
+							TipiDocumentoConversazione.WSBL.toString().equals(parteComune.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 					}
 				}
@@ -212,7 +212,7 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto PortiAccessoErogatore non definito\n");
 					}
 					if(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo())==false){
+							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoErogatore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo PortiAccessoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 					}
 				}
@@ -221,7 +221,7 @@ public class XMLUtils  {
 						motivoErroreValidazione.append("contenuto PortiAccessoFruitore non definito\n");
 					}
 					if(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo()!=null && 
-							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo())==false){
+							TipiDocumentoInterfaccia.WSDL.toString().equals(parteSpecifica.getSpecificaPortiAccesso().getPortiAccessoFruitore().getTipo().name())==false){
 						motivoErroreValidazione.append("tipo PortiAccessoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 					}
 				}
@@ -415,7 +415,7 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaConcettuale non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo())==false){
+						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaConcettuale().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo SpecificaInterfacciaConcettuale diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 				}
 			}
@@ -426,7 +426,7 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoErogatore non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo())==false){
+						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoErogatore().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoErogatore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 				}
 			}
@@ -435,7 +435,7 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto SpecificaInterfacciaLogicaLatoFruitore non definito\n");
 				}
 				if(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo()!=null && 
-						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo())==false){
+						TipiDocumentoInterfaccia.WSDL.toString().equals(manifestoSC.getSpecificaInterfaccia().getInterfacciaLogicaLatoFruitore().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo SpecificaInterfacciaLogicaLatoFruitore diverso da "+TipiDocumentoInterfaccia.WSDL.toString()+"\n");
 				}
 			}
@@ -446,8 +446,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneConcettuale non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo())==false){
+						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false &&
+						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneConcettuale().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo ConversazioneConcettuale diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 				}
 			}
@@ -456,8 +456,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoErogatore non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo())==false){
+						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false &&
+						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoErogatore().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoErogatore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 				}
 			}
@@ -466,8 +466,8 @@ public class XMLUtils  {
 					motivoErroreValidazione.append("contenuto ConversazioneLogicaLatoFruitore non definito\n");
 				}
 				if(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo()!=null && 
-						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo())==false &&
-						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo())==false){
+						TipiDocumentoConversazione.BPEL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false &&
+						TipiDocumentoConversazione.WSBL.toString().equals(manifestoSC.getSpecificaConversazione().getConversazioneLogicaLatoFruitore().getTipo().name())==false){
 					motivoErroreValidazione.append("tipo ConversazioneLogicaLatoFruitore diverso da "+TipiDocumentoConversazione.BPEL.toString()+"/"+TipiDocumentoConversazione.WSBL.toString()+"\n");
 				}
 			}

@@ -786,6 +786,13 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 	}
 	
 	@Override
+	public void finalizeImportArchive(Archive archive,ArchiveMode mode,ArchiveModeType type,
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
+		return; // nop;
+	}
+	
+	@Override
 	public String toString(ArchiveEsitoImport esito, ArchiveMode archiveMode) throws ProtocolException{
 		return this.esitoUtils.toString(esito,true,true);
 	}

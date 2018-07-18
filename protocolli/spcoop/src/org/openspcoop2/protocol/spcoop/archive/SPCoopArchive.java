@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
+import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -308,6 +309,16 @@ public class SPCoopArchive extends BasicArchive {
 				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				this.esitoUtils.serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
+				if(archiveAccordoServizioParteSpecifica.getState()!=null &&
+						(ArchiveStatoImport.CREATED.equals(archiveAccordoServizioParteSpecifica.getState())) || 
+						ArchiveStatoImport.UPDATED.equals(archiveAccordoServizioParteSpecifica.getState())) {
+					if(archive.getPorteApplicative().size()>0) {
+						bfEsito.append("\n\n!!Attenzione!!: E' stata creata un'erogazione con stato disabilitato.\n\tDefinire correttamente il connettore ed abilitare l'erogazione per renderla operativa");
+					}
+					else if(archive.getPorteDelegate().size()>0) {
+						bfEsito.append("\n\n!!Attenzione!!: E' stata creata una fruizione con stato disabilitato.\n\tDefinire correttamente il connettore ed abilitare la fruizione per renderla operativa");
+					}
+				}
 			}catch(Exception e){
 				bfEsito.append("\t- non importato: ").append(e.getMessage());
 			}
@@ -460,6 +471,48 @@ public class SPCoopArchive extends BasicArchive {
 		}
 		return this.importArchive(bytes, mode, type, registryReader, configIntegrationReader,
 				validationDocuments, placeholder);
+	}
+	
+	@Override
+	public void finalizeImportArchive(Archive archive,ArchiveMode mode,ArchiveModeType type,
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
+		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_IMPORT_ARCHIVE_MODE.equals(mode)){
+			super.finalizeImportArchive(archive, mode, type, registryReader,configIntegrationReader,
+					validationDocuments, placeholder);
+		}
+		else if(SPCoopCostantiArchivi.CNIPA_MODE.equals(mode)){
+			
+			if(SPCoopCostantiArchivi.TYPE_APC.equals(type)){
+				// nop;
+			}
+			else if(SPCoopCostantiArchivi.TYPE_ASC.equals(type)){
+				// nop;
+			}
+			else if(SPCoopCostantiArchivi.TYPE_APS.equals(type)){
+				try{
+					this.importEngine.finalizeAccordoServizioParteSpecifica(archive, registryReader,validationDocuments);
+				}catch(SPCoopConvertToPackageCNIPAException e){
+					throw new ProtocolException(e.getMessage(), e);
+				}
+			}
+			else if(SPCoopCostantiArchivi.TYPE_ADC.equals(type)){
+				// nop;
+			}
+			else if(SPCoopCostantiArchivi.TYPE_ALL.equals(type)){
+				try{
+					this.importEngine.finalizeAccordoServizioParteSpecifica(archive, registryReader,validationDocuments);
+				}catch(SPCoopConvertToPackageCNIPAException e){
+					throw new ProtocolException(e.getMessage(), e);
+				}
+			}
+			else{
+				throw new ProtocolException("Type ["+type+"] unknown");
+			}
+		}
+		else{
+			throw new ProtocolException("Mode ["+mode+"] unknown");
+		}
 	}
 	
 	@Override

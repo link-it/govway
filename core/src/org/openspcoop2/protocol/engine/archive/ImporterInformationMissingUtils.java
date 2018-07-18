@@ -1170,7 +1170,13 @@ public class ImporterInformationMissingUtils {
 		
 		// *** object id ***
 		AccordoServizioParteSpecifica asps = archiveAsps.getAccordoServizioParteSpecifica();
-		String uri = this.idServizioFactory.getUriFromAccordo(asps);
+		String uri = null;
+		if(asps.getTipoSoggettoErogatore()==null || asps.getNomeSoggettoErogatore()==null || asps.getVersione()==null) {
+			uri = asps.getTipo()+"/"+asps.getNome();
+		}
+		else {
+			uri = this.idServizioFactory.getUriFromAccordo(asps);
+		}
 		String objectId = "[[ASPS]]"+uri; 
 		String objectIdDescription = "Accordo di Servizio Parte Specifica ["+uri+"]";
 		if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune().trim())){

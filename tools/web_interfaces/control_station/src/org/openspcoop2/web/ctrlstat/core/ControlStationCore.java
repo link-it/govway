@@ -702,8 +702,21 @@ public class ControlStationCore {
 	public String getAutenticazione_generazioneAutomaticaPorteApplicative() {
 		return this.autenticazione_generazioneAutomaticaPorteApplicative;
 	}
-	public boolean isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative() {
-		return this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative;
+	public boolean isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative(boolean erogazioneIsSupportatoAutenticazioneSoggetti) {
+		if(this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative) {
+			return true;
+		}
+		else {
+			if(erogazioneIsSupportatoAutenticazioneSoggetti) {
+				// valore impostato
+				return this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative;
+			}
+			else {
+				// Fix spcoop: se non e' supportata l'autenticazione dei soggetti, devo abilitare per default l'autorizzazione, altrimenti si crea un buco di sicurezza
+				// ritorno quindi l'indicazione originale impostata per l'autenticazione
+				return this.enabledAutenticazione_generazioneAutomaticaPorteApplicative;
+			}
+		}
 	}
 	public String getAutorizzazione_generazioneAutomaticaPorteApplicative() {
 		return this.autorizzazione_generazioneAutomaticaPorteApplicative;

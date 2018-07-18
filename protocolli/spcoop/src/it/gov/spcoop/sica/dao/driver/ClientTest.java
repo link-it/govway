@@ -505,8 +505,8 @@ public class ClientTest {
 			// 3. Ritrasformazione in oggetto java
 			AccordoServizioComposto asComposto = xmlSICAUtilities.getAccordoServizioComposto(fileName);
 			// aggiungo mapping dei servizi SPCoop to uriAPS
-			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("SPC", "ASParteSpecifica","SPC", "SoggettoEsempio",2));
-			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("SPC", "ASParteSpecifica2","SPC", "SoggettoEsempio",2)); 
+			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("spc", "ASParteSpecifica","spc", "SoggettoEsempio",2));
+			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("spc", "ASParteSpecifica2","spc", "SoggettoEsempio",2)); 
 			org.openspcoop2.core.registry.AccordoServizioParteComune asCompostoOpenSPCoop = 
 				SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(registryReader,asComposto,context,log);
 			ClientTest.printAccordoServizioParteComune(log,asCompostoOpenSPCoop,false,true);

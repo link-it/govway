@@ -125,7 +125,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO = "Servizio (PortType) implementato non esistente";
 	public final static String LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY = "@ID_PORT_TYPE@";
 	public final static String LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO = "Il servizio implementato ("+
-			LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY+") non risulta registrato nell'accordo di servizio parte comune (o composto) riferito<br>Selezionare uno dei servizi esistenti";
+			LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO_KEY+") non risulta registrato nell'accordo di servizio parte comune (o composto) riferito. Selezionare uno dei servizi esistenti";
 	
 	
 	/* PARAMETRI */
@@ -199,7 +199,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION ="Descrizione";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT = "Soggetto";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT = "Versione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT = "Acquisizione informazioni di protocollo";
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT = "Modalità Acquisizione";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_TITLE_KEY = "@PT_NAME@";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_TITLE = 
 			"Informazioni per il port type '"+LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_MODALITA_ACQUISIZIONE_INPUT_PORT_TYPE_TITLE_KEY+"'";

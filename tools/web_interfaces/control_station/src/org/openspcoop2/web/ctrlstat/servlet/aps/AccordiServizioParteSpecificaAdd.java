@@ -627,6 +627,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROTOCOLLO)){
 						this.accordo = null;
 						this.versione = null;
+						this.erogazioneAutenticazione = null;
+						this.fruizioneAutenticazione = null;
+						this.erogazioneAutorizzazione = null;
+						this.fruizioneAutorizzazione = null;
 					}
 					
 					this.provider = null;

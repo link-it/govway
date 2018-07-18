@@ -115,6 +115,22 @@ public interface IArchive extends IComponentFactory {
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException;
 	
 	/**
+	 * Finalizza l'archivio
+	 * 
+	 * @param archive Archivio da finalizzare
+	 * @param mode ArchiveMode
+	 * @param type ArchiveModeType
+	 * @param registryReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
+	 * @param validationDocuments Indicazione se devono essere validati i documenti
+	 * @param placeholder MapPlaceholder
+	 * @throws ProtocolException
+	 */
+	public void finalizeImportArchive(Archive archive,ArchiveMode mode,ArchiveModeType type,
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException;
+	
+	/**
 	 * Converte l'esito dell'operazione di import di un archivio in una stringa
 	 * 
 	 * @param esito esito dell'operazione di import

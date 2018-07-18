@@ -1113,7 +1113,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
 			if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
 					!TipiConnettore.HTTPS.toString().equals(endpointtype) &&
-					!TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+					(
+							!TipiConnettore.DISABILITATO.toString().equals(endpointtype)
+							|| 
+							(TipiConnettore.DISABILITATO.toString().equals(endpointtype) && forceEnabled)
+					)){
 				de.setLabel(null);
 				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 				de.setType(DataElementType.TEXT);

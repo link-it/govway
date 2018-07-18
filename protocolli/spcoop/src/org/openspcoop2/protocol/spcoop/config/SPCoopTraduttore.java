@@ -894,7 +894,7 @@ public class SPCoopTraduttore extends BasicTraduttore {
 	@Override
 	protected String getIdentificativoCodiceIPA_Nome(IDSoggetto idSoggetto){
 		String soggetto = null;
-		if("SPC".equals(idSoggetto.getTipo())){
+		if("spc".equals(idSoggetto.getTipo())){
 			// standard, utilizzo solo il nome
 			soggetto = idSoggetto.getNome();
 		}else{

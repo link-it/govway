@@ -58,6 +58,8 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -101,7 +103,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
@@ -116,6 +118,8 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 					gestioneFruitori = true;
 				}
 			}
+						
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			
 			//User utente = ServletUtils.getUserFromSession(session);
 			
@@ -336,6 +340,12 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				lista = apsCore.soggettiServizioList(superUser, ricerca, permessi, session);
 			}
 
+			if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+				apsHelper.prepareErogazioniList(ricerca, lista);
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForward(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.DEL());
+			}
+			
 			apsHelper.prepareServiziList(ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

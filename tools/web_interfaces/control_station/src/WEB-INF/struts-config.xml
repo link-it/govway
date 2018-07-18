@@ -690,6 +690,7 @@
             scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniDel" path="/jsplib/listElement.jsp"/>
         </action>   
         <action path="/accordiServizioParteSpecificaWSDLChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaWSDLChange" 
         	scope="request" validate="true">
@@ -819,16 +820,22 @@
             <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
             <forward name="aspsErogazioniAddOk" path="/jsplib/listElement.jsp"/>
         </action>
+		<action path="/aspsErogazioniChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniChange"
+            scope="request" validate="true">
+            <forward name="aspsErogazioniChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="aspsErogazioniError" path="/jsplib/info.jsp"/>
+        </action>
 		<action path="/aspsErogazioniList" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniList"
             scope="request" validate="true">
             <forward name="aspsErogazioniList" path="/jsplib/listElement.jsp"/>
             <forward name="aspsErogazioniError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/aspsErogazioniChange" type="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniChange"
+        <action path="/aspsErogazioniDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaDel"
             scope="request" validate="true">
-            <forward name="aspsErogazioniChangeForm" path="/jsplib/addElement.jsp"/>
-            <forward name="aspsErogazioniChangeOk" path="/jsplib/addElement.jsp"/>
-            <forward name="aspsErogazioniError" path="/jsplib/info.jsp"/>
+            <forward name="accordiServizioParteSpecificaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaError" path="/jsplib/info.jsp"/>
+            <forward name="aspsErogazioniDel" path="/jsplib/listElement.jsp"/>
         </action>
 		
 		<!--  Accordi di Cooperazione -->

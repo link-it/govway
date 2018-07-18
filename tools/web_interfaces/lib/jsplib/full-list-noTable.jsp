@@ -307,10 +307,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 						
 						  	for (int j = 0; j < e.size(); j++) {
 						  	    DataElement de = (DataElement) e.elementAt(j);
-								if(de.getType().equals("text")) {
+								//if(de.getType().equals("text")) {
 									// setto l'id per la rimozione in caso non sia settato, N.B. spostato qui perche ora le checkbox statnno a sx.
 									if(idToRemove==null) idToRemove = de.getIdToRemove();
-								}
+								//}
 						  	}
 						  	
 							if (pd.getSelect()) {

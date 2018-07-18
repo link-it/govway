@@ -3527,8 +3527,25 @@ public class ConsoleHelper {
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions, BinaryParameter allegatoXacmlPolicy) throws Exception{
 		
+		String protocollo = null;
+		if(oggetto!=null){
+			if(isPortaDelegata){
+				PortaDelegata pd = (PortaDelegata) oggetto;
+				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pd.getServizio().getTipo());
+				}
+			}
+			else {
+				PortaApplicativa pa = (PortaApplicativa) oggetto;
+				if(pa!=null && pa.getServizio()!=null && pa.getServizio().getTipo()!=null) {
+					protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(pa.getServizio().getTipo());
+				}
+			}
+		}
+		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
-				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative());
+				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : 
+					this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative(protocollo==null ? true : this.soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo)));
 		
 		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
 				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);

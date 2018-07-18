@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -99,6 +100,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String sbustamento= this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 			String sbustamentoInformazioniProtocolloRichiesta = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
 			String getmsg = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			String getmsgUsername = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String getmsgPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			String tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauth == null) {
 				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
@@ -149,8 +152,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
 			if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
-				this.pd.setMessage("Get Message dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+				this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 				return false;
+			}
+			if (getmsg!=null && getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) ){
+				if(getmsgUsername==null || "".equals(getmsgUsername)) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					return false;
+				}
+				if(getmsgPassword==null || "".equals(getmsgPassword)) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					return false;
+				}
+				if (((getmsgUsername.indexOf(" ") != -1) || (getmsgPassword.indexOf(" ") != -1))) {
+					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					return false;
+				}
 			}
 			if (!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && 
 					!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_SSL.toString()) && 
@@ -1669,10 +1686,25 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 	}
 	
-
 	public void addEndPointToDati(Vector<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
-			String getmsg,String invrif,String risprif, String nomeProtocollo, boolean showName,
+			String getmsg,
+			String invrif,String risprif, String nomeProtocollo, boolean showName,
+			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
+			Integer parentSA, ServiceBinding serviceBinding,
+			String accessoDaAPSParametro) throws Exception{
+		this.addEndPointToDati(dati, 
+				idsil, nomeservizioApplicativo, sbustamento, sbustamentoInformazioniProtocolloRichiesta, 
+				getmsg, null, null, true, 
+				invrif, risprif, nomeProtocollo, showName, 
+				isInvocazioneServizio, showTitleTrattamentoMessaggio, 
+				parentSA, serviceBinding, 
+				accessoDaAPSParametro);
+	}
+	public void addEndPointToDati(Vector<DataElement> dati,
+			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
+			String getmsg,String usernameGetMsg, String passwordGetMsg,boolean gestioneCredenzialiGetMsg,
+			String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
 			String accessoDaAPSParametro) throws Exception{
@@ -1780,7 +1812,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		dati.addElement(de);
 
-		if (this.isModalitaStandard()) {
+		if (!this.isModalitaCompleta()) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 			de.setType(DataElementType.HIDDEN);
@@ -1838,14 +1870,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		if(!this.isModalitaStandard()) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoGM);
-//			if (this.isModalitaStandard() && isInvocazioneServizio) {
-//				de.setPostBack(true);
-//			}
 			if(getmsg==null){
 				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
 			}else{
 				de.setSelected(getmsg);
 			}
+			de.setPostBack(true);
 		} else {
 			de.setType(DataElementType.HIDDEN);
 			if(getmsg==null){
@@ -1854,8 +1884,38 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setValue(getmsg);
 			}
 		}
-		
 		dati.addElement(de);
+		
+		if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
+			if(!this.isModalitaStandard()) {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			de.setSize(this.getSize());
+			de.setRequired(true);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+			if(!this.isModalitaStandard()) {
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			de.setSize(this.getSize());
+			de.setRequired(true);
+			dati.addElement(de);
+		}
+		
 	}
 
 

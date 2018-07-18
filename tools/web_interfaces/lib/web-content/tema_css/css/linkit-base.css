@@ -843,9 +843,9 @@ span.modalitaImg {
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
-	top: 20px;
+	top: 18px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-	right: -28px;
+	right: -36px;
 } 
 
 #menuModalita {
@@ -864,9 +864,9 @@ span.modalitaImg {
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
-	top: 20px;
+	top: 18px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-	left: 0px;
+	left: 8px;
 } 
 
 .menu-separator {

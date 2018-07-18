@@ -441,7 +441,7 @@ public class XMLUtils  {
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
 				else if(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-				else if(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO.toString().equals(profiloCollaborazione))
+				else if(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 				else
 					throw new XMLUtilsException("Profilo di collaborazione non valido ["+profiloCollaborazione+"]");

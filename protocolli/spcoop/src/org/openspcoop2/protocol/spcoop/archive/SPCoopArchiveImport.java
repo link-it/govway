@@ -25,9 +25,37 @@ package org.openspcoop2.protocol.spcoop.archive;
 import it.gov.spcoop.sica.dao.driver.XMLUtils;
 
 import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.RispostaAsincrona;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -35,8 +63,16 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
+import org.openspcoop2.protocol.sdk.config.Implementation;
+import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
 
@@ -256,7 +292,7 @@ public class SPCoopArchiveImport {
 				
 				ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione("CnipaPackageASPS");
 				
-				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,idCorrelazione,true);
+				ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,idCorrelazione, true);
 				archiveObject.getAccordiServizioParteSpecifica().add(archiveASPS);
 								
 				return archiveObject;
@@ -265,6 +301,184 @@ public class SPCoopArchiveImport {
 				throw new ProtocolException("Conversione dell'archivio, da formato CNIPA a formato OpenSPCoop2, non riuscita: "+e.getMessage(),e);
 			}
 
+				
+		}catch(SPCoopConvertToPackageCNIPAException convert){
+			throw convert;
+		}catch(Exception e){
+			throw new ProtocolException("Conversione archivio non riuscita: "+e.getMessage(),e);
+		}
+		
+	} 
+	
+	public void finalizeAccordoServizioParteSpecifica(Archive archiveObject,
+			IRegistryReader registryReader, boolean validationDocuments) throws ProtocolException, SPCoopConvertToPackageCNIPAException{
+		
+		try{
+			AccordoServizioParteSpecifica aspsOpenSPCoop2 = null;
+			ArchiveIdCorrelazione idCorrelazione = null;
+			if(archiveObject.getAccordiServizioParteSpecifica()!=null && archiveObject.getAccordiServizioParteSpecifica().size()>0) {
+				aspsOpenSPCoop2 = archiveObject.getAccordiServizioParteSpecifica().get(0).getAccordoServizioParteSpecifica();
+				idCorrelazione = archiveObject.getAccordiServizioParteSpecifica().get(0).getIdCorrelazione();
+			}
+			else {
+				return;
+			}
+			
+			
+			boolean informazioniComplete = true;
+			if(aspsOpenSPCoop2.getTipoSoggettoErogatore()==null || aspsOpenSPCoop2.getNomeSoggettoErogatore()==null) {
+				informazioniComplete = false;
+			}
+			if(aspsOpenSPCoop2.getVersione()==null) {
+				informazioniComplete = false;
+			}
+			if(aspsOpenSPCoop2.getAccordoServizioParteComune()==null) {
+				informazioniComplete = false;
+			}
+			
+			ArchiveAccordoServizioParteSpecifica archiveASPS = new ArchiveAccordoServizioParteSpecifica(aspsOpenSPCoop2,idCorrelazione,!informazioniComplete);
+			
+			if(informazioniComplete) {
+			
+				// Devo creare una erogazione o fruizione
+				IDServizio idServizio = archiveASPS.getIdAccordoServizioParteSpecifica();
+				IDSoggetto idSoggettoErogatore = archiveASPS.getIdSoggettoErogatore();
+				Soggetto soggetto = registryReader.getSoggetto(idSoggettoErogatore);
+				String portaDominio = soggetto.getPortaDominio();
+				boolean operativo = false;
+				List<String> pddOperative = null;
+				try {
+					pddOperative = registryReader.findIdPorteDominio(true);
+				}catch(RegistryNotFound notFound) {}
+				if(portaDominio!=null) {
+					if(pddOperative!=null && !pddOperative.isEmpty()) {
+						for (String pdd : pddOperative) {
+							if(portaDominio.equals(pdd)) {
+								operativo = true;
+								break;
+							}
+						}
+					}
+				}
+				
+				if(operativo) {
+					
+					// creo Porta Applicativa
+					
+					Implementation implementationDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+							createDefaultImplementation(ServiceBinding.SOAP, idServizio);
+					
+					PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
+					portaApplicativa.setIdSoggetto(soggetto.getId());
+					portaApplicativa.setStato(StatoFunzionalita.DISABILITATO);
+					// Per non creare un buco di sicurezza per default, abilito l'autorizzazione dei soggetti
+					portaApplicativa.setAutorizzazione(TipoAutorizzazione.AUTHENTICATED.getValue());
+					
+					// Viene creata in automatico
+					MappingErogazionePortaApplicativa mappingErogazione = implementationDefault.getMapping();
+					
+					ServizioApplicativo sa = new ServizioApplicativo();
+					sa.setNome(portaApplicativa.getNome());
+					sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
+					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+					sa.setIdSoggetto(soggetto.getId());
+					sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
+					sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
+						
+					RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+					rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					sa.setRispostaAsincrona(rispostaAsinc);
+						
+					InvocazioneServizio invServizio = new InvocazioneServizio();
+					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+					Connettore connettore = new Connettore();
+					connettore.setTipo(TipiConnettore.HTTP.getNome());
+					org.openspcoop2.core.config.Property prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_LOCATION);
+					prop.setValore("http://undefined");
+					connettore.addProperty(prop);
+					invServizio.setConnettore(connettore);
+					sa.setInvocazioneServizio(invServizio);
+								
+					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+					paSA.setNome(sa.getNome());
+					portaApplicativa.addServizioApplicativo(paSA);
+			
+					if(archiveASPS.getMappingPorteApplicativeAssociate()==null) {
+						archiveASPS.setMappingPorteApplicativeAssociate(new ArrayList<>());
+					}
+					archiveASPS.getMappingPorteApplicativeAssociate().add(mappingErogazione);
+					
+					ArchiveServizioApplicativo archiveSA = new ArchiveServizioApplicativo(sa, idCorrelazione, false);
+					archiveObject.getServiziApplicativi().add(archiveSA);	
+					
+					ArchivePortaApplicativa archivePA = new ArchivePortaApplicativa(portaApplicativa, idCorrelazione,false);
+					archiveObject.getPorteApplicative().add(archivePA);
+				}
+				else {
+					
+					// creo Porta Delegata
+					
+					IDSoggetto idFruitore = null;
+					if(pddOperative==null) {
+						throw new Exception("Non esistono pdd operative");
+					}
+					for (String pddOperativa : pddOperative) {
+						FiltroRicercaSoggetti filtro = new FiltroRicercaSoggetti();
+						filtro.setTipo("spc");
+						filtro.setNomePdd(pddOperativa);
+						List<IDSoggetto> idSoggetti = null;
+						try {
+							idSoggetti = registryReader.findIdSoggetti(filtro);
+						}catch(RegistryNotFound notFound) {}
+						if(idSoggetti!=null && !idSoggetti.isEmpty()) {
+							idFruitore = idSoggetti.get(0);
+						}
+					}
+					if(idFruitore==null) {
+						throw new Exception("Non esistone un soggetto interno al dominio");
+					}
+					Soggetto soggettoFruitore = registryReader.getSoggetto(idFruitore);
+															
+					Subscription subscriptionDefault = this.protocolFactory.createProtocolIntegrationConfiguration().
+							createDefaultSubscription(ServiceBinding.SOAP, idFruitore, idServizio);
+					
+					PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
+					portaDelegata.setIdSoggetto(soggettoFruitore.getId());
+					portaDelegata.setStato(StatoFunzionalita.DISABILITATO);
+					// Per non creare un buco di sicurezza per default, abilito l'autenticazione degli applicativi
+					portaDelegata.setAutenticazione(TipoAutenticazione.SSL.getValue());
+					
+					@SuppressWarnings("unused")
+					// Viene creata in automatico
+					MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
+
+					Fruitore fruitore = new Fruitore();
+					fruitore.setTipo(idFruitore.getTipo());
+					fruitore.setNome(idFruitore.getNome());
+					org.openspcoop2.core.registry.Connettore connettore = new org.openspcoop2.core.registry.Connettore();
+					connettore.setTipo(TipiConnettore.HTTP.getNome());
+					org.openspcoop2.core.registry.Property prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_LOCATION);
+					prop.setValore("http://undefined");
+					connettore.addProperty(prop);
+					fruitore.setStatoPackage(StatiAccordo.operativo.name());
+					fruitore.setConnettore(connettore);
+										
+					ArchivePortaDelegata archivePD = new ArchivePortaDelegata(portaDelegata, idCorrelazione, false);
+					archiveObject.getPorteDelegate().add(archivePD);
+					
+					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idServizio, fruitore, idCorrelazione, false);
+					archiveObject.getAccordiFruitori().add(archiveFruitore);
+					
+					if(archiveFruitore.getMappingPorteDelegateAssociate()==null) {
+						archiveFruitore.setMappingPorteDelegateAssociate(new ArrayList<>());
+					}
+					archiveFruitore.getMappingPorteDelegateAssociate().add(mappingFruizione);
+				}
+			}
 				
 		}catch(SPCoopConvertToPackageCNIPAException convert){
 			throw convert;
