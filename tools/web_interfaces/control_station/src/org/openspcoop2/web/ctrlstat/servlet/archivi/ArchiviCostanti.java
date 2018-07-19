@@ -289,5 +289,12 @@ public class ArchiviCostanti {
 	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };
 			//"Dati applicativi", "Parametri di configurazione" };
 	
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA = "interfaccia";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_STANDARD = "standard";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_AVANZATA = "avanzata";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE = "connettore";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_HTTP = "http";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_QUALSIASI = "qualsiasi";
+	
 
 }

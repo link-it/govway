@@ -158,7 +158,6 @@ public class ImporterInformationMissingUtils {
 						}else{
 							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
 							infoException.setMissingInfoSoggetto(true);
-							infoException.setMissingInfoSoggetto_protocollo(soggettoMissingInfo.getProtocollo());
 							if(soggettoMissingInfo.getTipoPdd()!=null)
 								infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());
 							throwException = true;
@@ -172,13 +171,18 @@ public class ImporterInformationMissingUtils {
 							else{
 								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
 								infoException.setMissingInfoInvocazioneServizio(true);
-								infoException.setMissingInfoSoggetto_protocollo(soggettoMissingInfo.getProtocollo());
 								if(soggettoMissingInfo.getTipoPdd()!=null)
 									infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());	
 								throwException = true;
 							}
 						}
 						break;
+					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(soggettoMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(soggettoMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(soggettoMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(soggettoMissingInfo.getDefault());
 					}
 					
 					if(!throwException && updateInfo){
@@ -296,6 +300,12 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(saMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(saMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(saMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(saMissingInfo.getDefault());
+					}
 					
 					if(!throwException && updateInfo){
 						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
@@ -351,6 +361,12 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(acMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(acMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(acMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(acMissingInfo.getDefault());
+					}
 					
 					if(!throwException && updateInfo){
 						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
@@ -404,6 +420,12 @@ public class ImporterInformationMissingUtils {
 							updateInfo = true;
 						}
 						break;
+					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(asMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(asMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(asMissingInfo.getDefault());
 					}
 					
 					if(!throwException && updateInfo){
@@ -460,7 +482,13 @@ public class ImporterInformationMissingUtils {
 							updateInfo = true;
 						}
 						break;
-					}					
+					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(aspsMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(aspsMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(aspsMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(aspsMissingInfo.getDefault());
+					}
 					
 					if(!throwException && updateInfo){
 						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
@@ -514,6 +542,12 @@ public class ImporterInformationMissingUtils {
 						}
 						break;
 					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(asMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(asMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(asMissingInfo.getDefault());
+					}
 					
 					if(!throwException && updateInfo){
 						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
@@ -551,18 +585,41 @@ public class ImporterInformationMissingUtils {
 					// *** campi da verificare ***
 					boolean updateInfo = false;
 					switch (fruitoreMissingInfo.getTipo()) {
+					case CONNETTORE:
+						if(delete==false) {
+							if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoConnettore(true);
+								throwException = true;
+							}
+						}
+						break;
 					case STATO_ARCHIVIO:
 						if(delete==false) {
 							updateInfo = true;
 						}
 						break;
 					}
+					if(infoException!=null) {
+						infoException.setMissingInfoProtocollo(fruitoreMissingInfo.getProtocollo());
+						infoException.setMissingInfoHeader(fruitoreMissingInfo.getHeader());
+						infoException.setMissingInfoFooter(fruitoreMissingInfo.getFooter());
+						infoException.setMissingInfoDefault(fruitoreMissingInfo.getDefault());
+					}
 					
 					if(!throwException && updateInfo){
 						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
 						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
 						// di information missing
-						ImporterInformationMissingSetter.setInformationMissingFruitore(this.archive, fruitoreMissingInfo);
+						Connettore importInformationMissing_connettore = null;
+						if(importInformationMissing!=null){
+							importInformationMissing_connettore = importInformationMissing.getConnettore();
+						}
+						ImporterInformationMissingSetter.setInformationMissingFruitore(this.archive, fruitoreMissingInfo,
+								importInformationMissing_connettore);
 					}
 					else{
 						break;

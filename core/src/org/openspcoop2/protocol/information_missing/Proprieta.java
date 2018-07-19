@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.information_missing;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -35,6 +36,10 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="Proprieta">
+ * 		&lt;sequence>
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="footer" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
  * 		&lt;attribute name="placeholder" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -49,12 +54,33 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Proprieta")
+@XmlType(name = "Proprieta", 
+  propOrder = {
+  	"header",
+  	"footer"
+  }
+)
 
 @XmlRootElement(name = "Proprieta")
 
 public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Proprieta() {
+  }
+
+  public Description getHeader() {
+    return this.header;
+  }
+
+  public void setHeader(Description header) {
+    this.header = header;
+  }
+
+  public Description getFooter() {
+    return this.footer;
+  }
+
+  public void setFooter(Description footer) {
+    this.footer = footer;
   }
 
   public java.lang.String getPlaceholder() {
@@ -96,6 +122,12 @@ public class Proprieta extends org.openspcoop2.utils.beans.BaseBean implements S
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="header",required=false,nillable=false)
+  protected Description header;
+
+  @XmlElement(name="footer",required=false,nillable=false)
+  protected Description footer;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="placeholder",required=true)

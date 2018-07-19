@@ -278,6 +278,15 @@ public final class ServiziApplicativiAdd extends Action {
 				soggLong = Long.parseLong(provider);
 			}
 			
+			String postBackElementName = saHelper.getPostBackElementName();
+
+			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
+			if(postBackElementName != null ){
+				if(!useIdSogg && postBackElementName.equalsIgnoreCase(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO)) {
+					provider = null;
+				}
+			}
+			
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = saCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false);
 			
@@ -305,6 +314,7 @@ public final class ServiziApplicativiAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ForwardParams.ADD());
 			}
+
 			
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 

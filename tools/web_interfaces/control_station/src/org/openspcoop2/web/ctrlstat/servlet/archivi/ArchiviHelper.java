@@ -38,6 +38,8 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
@@ -55,8 +57,12 @@ import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingCollection;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingException;
+import org.openspcoop2.protocol.information_missing.Default;
+import org.openspcoop2.protocol.information_missing.Description;
+import org.openspcoop2.protocol.information_missing.DescriptionType;
 import org.openspcoop2.protocol.information_missing.Input;
 import org.openspcoop2.protocol.information_missing.Proprieta;
+import org.openspcoop2.protocol.information_missing.ProprietaDefault;
 import org.openspcoop2.protocol.information_missing.Wizard;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
@@ -1296,14 +1302,14 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		de = new DataElement();
 		de.setValue(""+validazioneDocumenti);
-		de.setType("hidden");
+		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setValue(""+updateEnabled);
-		de.setType("hidden");
+		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
@@ -1421,14 +1427,18 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				dati.addElement(de);
 			}
 
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			if ( importInformationMissingException.isMissingInfoSoggetto() ){
 			
 				List<String> soggettiLabel = null;
 				try{
 					soggettiLabel = importerUtils.getIdSoggetti(protocolliForModes,inputMode,
-							importInformationMissingException.getMissingInfoSoggetto_protocollo(),
+							importInformationMissingException.getMissingInfoProtocollo(),
 							importInformationMissingException.getMissingInfoSoggetto_tipoPdD(),
-							wizard);
+							wizard, this);
 				}catch(Exception e){
 					this.pd.setMessage(this.pd.getMessage()+ArchiviCostanti.LABEL_IMPORT_ERRORE+e.getMessage());
 					this.pd.disableEditMode();
@@ -1440,6 +1450,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.SELECT);
 				de.setLabel(labelSoggettoDataElement);
 				de.setValues(soggettiLabel.toArray(new String[1]));
+				
 				List<String> labelSoggettiByProtocol = new ArrayList<>();
 				for (String soggetto : soggettiLabel) {
 					if(soggetto.contains("/")) {
@@ -1450,10 +1461,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 				}
 				de.setLabels(labelSoggettiByProtocol.toArray(new String[1]));
-				if(soggettiLabel.size()>1)
-					de.setSelected(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED);
-				else
-					de.setSelected(soggettiLabel.get(0));
+			
+				String selected = null;
+				if(importInformationMissingException.getMissingInfoDefault()!=null && importInformationMissingException.getMissingInfoDefault().getValore()!=null) {
+					if(soggettiLabel.contains(importInformationMissingException.getMissingInfoDefault().getValore())) {
+						selected = importInformationMissingException.getMissingInfoDefault().getValore();
+					}
+				}
+				if(selected==null) {
+					if(soggettiLabel.size()>1)
+						selected = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED;
+					else
+						selected = soggettiLabel.get(0);
+				}
+				de.setSelected(selected);
+				
 				de.setSize(this.getSize());
 				dati.addElement(de);
 				
@@ -1465,7 +1487,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_VERSIONE_INPUT);
-				de.setValue("1");
+				Integer version = null;
+				if(importInformationMissingException.getMissingInfoDefault()!=null && importInformationMissingException.getMissingInfoDefault().getValore()!=null) {
+					try {
+						version = Integer.valueOf(importInformationMissingException.getMissingInfoDefault().getValore());
+					}catch(Exception e) {}
+				}
+				if(version==null) {
+					version = 1;
+				}
+				de.setValue(version.intValue()+"");
 				de.setSize(30);
 				dati.addElement(de);
 				
@@ -1473,15 +1504,33 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if ( importInformationMissingException.isMissingInfoAccordoServizioParteComune() ){
 				
-				List<String> accordiServizioParteComuneLabel = importerUtils.getIdAccordiServizioParteComune(protocolliForModes,inputMode);
+				List<String> accordiServizioParteComuneLabel = importerUtils.getIdAccordiServizioParteComune(protocolliForModes,inputMode,
+						importInformationMissingException.getMissingInfoProtocollo(), this);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
 				de.setType(DataElementType.SELECT);
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT);
 				de.setValues(accordiServizioParteComuneLabel.toArray(new String[1]));
-				de.setLabels(accordiServizioParteComuneLabel.toArray(new String[1]));
-				de.setSelected(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
+				
+				List<String> labelAccordiByProtocol = new ArrayList<>();
+				for (String uriAccordo : accordiServizioParteComuneLabel) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordo);
+					labelAccordiByProtocol.add(this.getLabelIdAccordo(idAccordo));
+				}
+				de.setLabels(labelAccordiByProtocol.toArray(new String[1]));
+				
+				String selected = null;
+				if(importInformationMissingException.getMissingInfoDefault()!=null && importInformationMissingException.getMissingInfoDefault().getValore()!=null) {
+					if(accordiServizioParteComuneLabel.contains(importInformationMissingException.getMissingInfoDefault().getValore())) {
+						selected = importInformationMissingException.getMissingInfoDefault().getValore();
+					}
+				}
+				if(selected==null) {
+					selected = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED;
+				}
+				de.setSelected(selected);
+
 				de.setSize(this.getSize());
 				dati.addElement(de);
 				
@@ -1489,20 +1538,41 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			if ( importInformationMissingException.isMissingInfoAccordoCooperazione() ){
 				
-				List<String> accordiCooperazioneLabel = importerUtils.getIdAccordiCooperazione(protocolliForModes,inputMode);
+				List<String> accordiCooperazioneLabel = importerUtils.getIdAccordiCooperazione(protocolliForModes,inputMode,
+						importInformationMissingException.getMissingInfoProtocollo(), this);
 				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
 				de.setType(DataElementType.SELECT);
 				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT);
 				de.setValues(accordiCooperazioneLabel.toArray(new String[1]));
-				de.setLabels(accordiCooperazioneLabel.toArray(new String[1]));
-				de.setSelected(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
+				
+				List<String> labelAccordiByProtocol = new ArrayList<>();
+				for (String uriAccordo : accordiCooperazioneLabel) {
+					IDAccordoCooperazione idAccordo = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(uriAccordo);
+					labelAccordiByProtocol.add(this.getLabelIdAccordoCooperazione(idAccordo));
+				}
+				de.setLabels(labelAccordiByProtocol.toArray(new String[1]));
+				
+				String selected = null;
+				if(importInformationMissingException.getMissingInfoDefault()!=null && importInformationMissingException.getMissingInfoDefault().getValore()!=null) {
+					if(accordiCooperazioneLabel.contains(importInformationMissingException.getMissingInfoDefault().getValore())) {
+						selected = importInformationMissingException.getMissingInfoDefault().getValore();
+					}
+				}
+				if(selected==null) {
+					selected = ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED;
+				}
+				de.setSelected(selected);
+				
 				de.setSize(this.getSize());
 				dati.addElement(de);
 				
 			}
 			
+			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
+			}
 		}
 
 		
@@ -1532,6 +1602,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					continue;
 				}
 				
+				if(p.getHeader()!=null) {
+					this.addDescriptionInformationMissingToDati(dati,  p.getHeader() );
+				}
+				
 				de = new DataElement();
 				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN+i);
 				de.setType(DataElementType.HIDDEN);
@@ -1547,6 +1621,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setValue(p.getDefault());
 				de.setSize(this.getSize());
 				dati.addElement(de);
+				
+				if(p.getFooter()!=null) {
+					this.addDescriptionInformationMissingToDati(dati,  p.getFooter() );
+				}
 			}
 			
 		}
@@ -1567,6 +1645,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				dati.addElement(de);
 			}
 
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			String[] modalitaAcquisizione = { ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI_RICONOSCIMENTO_WSDL_MODE, 
 					ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PROTOCOLLO_MANCANTI_RICONOSCIMENTO_USER_INPUT };
 
@@ -1762,6 +1844,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				dati.addElement(de);
 			}
 			
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			de = new DataElement();
 			de.setType(DataElementType.NOTE);
 			de.setValue(ArchiviCostanti.LABEL_IMPORT_ERROR_INFORMAZIONI_PORT_TYPE_RIFERITO_MESSAGGIO.
@@ -1780,6 +1866,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT);
 			dati.addElement(de);
 
+			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
+			}
 		}
 		
 		
@@ -1790,12 +1879,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		if( importInformationMissingException.isMissingInfoInvocazioneServizio() ){
 			
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			InterfaceType originalInterfaceType = null;
 			User userSession = null;
 			try{
 				
 				// Impostazione protocollo
-				String protocollo = importInformationMissingException.getMissingInfoSoggetto_protocollo();
+				String protocollo = importInformationMissingException.getMissingInfoProtocollo();
 				if(protocollo==null){
 					protocollo = protocolloEffettivo; // uso l'impostazione associata al tipo in package scelto.
 					// NOTA: non devo impostare il protocollo. Serve solo per visualizzare l'info "Sbustamento Info Protocollo 'xxx'"
@@ -1804,65 +1897,80 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					// che contiene diversi protocolli (e nella select list dei protocolli non e' stato scelto alcun protocollo)
 				}
 				
+				InterfaceType interfaceType = InterfaceType.STANDARD; 
+				TipologiaConnettori tipologiaConnettori = null;
+				
+				Default defaultProperties = importInformationMissingException.getMissingInfoDefault();
+				if(defaultProperties!=null && defaultProperties.sizeProprietaList()>0) {
+					for (ProprietaDefault p : defaultProperties.getProprietaList()) {
+						if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA.equalsIgnoreCase(p.getNome())) {
+							if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_STANDARD.equalsIgnoreCase(p.getValore())) {
+								interfaceType = InterfaceType.STANDARD; 
+							}
+							else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_AVANZATA.equalsIgnoreCase(p.getValore())) {
+								interfaceType = InterfaceType.AVANZATA; 
+							}
+						}
+						else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE.equalsIgnoreCase(p.getNome())) {
+							if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_HTTP.equalsIgnoreCase(p.getValore())) {
+								tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP; 
+							}
+							else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_QUALSIASI.equalsIgnoreCase(p.getValore())) {
+								tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL; 
+							}
+						}
+					}
+				}
+				
 				userSession = ServletUtils.getUserFromSession(this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
-				userSession.setInterfaceType(InterfaceType.STANDARD);
-				this.setTipoInterfaccia(InterfaceType.STANDARD);
+				userSession.setInterfaceType(interfaceType);
+				this.setTipoInterfaccia(interfaceType);
 			
 				String sbustamento = null;
 				String sbustamentoInformazioniProtocolloRichiesta = null;
 				String getmsg = null;
+				String getmsgUsername = null;
+				String getmsgPassword = null;
 				
-				if(readedDatiConnettori==false){
-					sbustamento = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-					sbustamentoInformazioniProtocolloRichiesta = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
-					getmsg = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-				}
+				// gestito nel metodo getParameter: if(readedDatiConnettori==false){
+				sbustamento = this.getParameter(readedDatiConnettori,defaultProperties,ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+				sbustamentoInformazioniProtocolloRichiesta = this.getParameter(readedDatiConnettori,defaultProperties,ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
+				getmsg = this.getParameter(readedDatiConnettori,defaultProperties,ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+				getmsgUsername = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				getmsgPassword = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				//}
 				
 				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,null,null,protocollo,false,true, showSection, null,null, null);
-				
-				if(CostantiConfigurazione.ABILITATO.equals(getmsg)){
+						getmsg,getmsgUsername,getmsgPassword,true,
+						null,null,protocollo,false,true, showSection, null,null, null);
+							
+				boolean forceEnabled = true; // non ha senso non fornire un connettore a meno che non vi sia la possibilita' di utilizzare l'integration manager
+				boolean showSectionTitle = false;
+				if(InterfaceType.STANDARD.equals(interfaceType)==false) {
+					showSectionTitle = true;
 					
-//					String tipoauth = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
-//					if (tipoauth == null) {
-//						tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
-//					}
-//					String utente = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-//					String password = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-//					String confpw = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA);
-//					String subject = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
-//					
-//					if(tipoauth==null || tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)){
-//						tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-//					} 
-//						
-//					// Credenziali di accesso
-//					if (utente == null) {
-//						utente = "";
-//					}
-//					if (password == null) {
-//						password = "";
-//					}
-//					if (confpw == null) {
-//						confpw = "";
-//					}
-//					if (subject == null) {
-//						subject = "";
-//					}
-//					dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
-//							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, true, null, false, true, null);
-					this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, true);
+					if(	getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg) ) {
+						forceEnabled = false;
+					}
+					else {
+						forceEnabled = true;
+					}
 					
 				}
 				
-				addDatiConnettore(dati, readedDatiConnettori, false, ConnettoreServletType.WIZARD_CONFIG);
+				addDatiConnettore(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSectionTitle, 
+						ConnettoreServletType.WIZARD_CONFIG, forceEnabled, tipologiaConnettori);
 			}
 			finally{
 				// ripristino originale
 				if(userSession!=null)
 					userSession.setInterfaceType(originalInterfaceType);
+			}
+			
+			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
 			}
 		}
 		
@@ -1872,21 +1980,57 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		if( importInformationMissingException.isMissingInfoConnettore() ){
 			
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			InterfaceType originalInterfaceType = null;
 			User userSession = null;
 			try{
+				InterfaceType interfaceType = InterfaceType.STANDARD; 
+				TipologiaConnettori tipologiaConnettori = null;
+				
+				Default defaultProperties = importInformationMissingException.getMissingInfoDefault();
+				if(defaultProperties!=null && defaultProperties.sizeProprietaList()>0) {
+					for (ProprietaDefault p : defaultProperties.getProprietaList()) {
+						if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA.equalsIgnoreCase(p.getNome())) {
+							if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_STANDARD.equalsIgnoreCase(p.getValore())) {
+								interfaceType = InterfaceType.STANDARD; 
+							}
+							else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_AVANZATA.equalsIgnoreCase(p.getValore())) {
+								interfaceType = InterfaceType.AVANZATA; 
+							}
+						}
+						else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE.equalsIgnoreCase(p.getNome())) {
+							if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_HTTP.equalsIgnoreCase(p.getValore())) {
+								tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP; 
+							}
+							else if(ArchiviCostanti.DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_QUALSIASI.equalsIgnoreCase(p.getValore())) {
+								tipologiaConnettori = TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL; 
+							}
+						}
+					}
+				}
+				
 				userSession = ServletUtils.getUserFromSession(this.session);
 				originalInterfaceType = userSession.getInterfaceType();
 				// forzo standard
-				userSession.setInterfaceType(InterfaceType.STANDARD);
-				this.setTipoInterfaccia(InterfaceType.STANDARD);
-			
-				addDatiConnettore(dati, readedDatiConnettori, showSection, ConnettoreServletType.WIZARD_REGISTRY);
+				userSession.setInterfaceType(interfaceType);
+				this.setTipoInterfaccia(interfaceType);
+
+				boolean forceEnabled = true; // non ha senso non fornire un connettore
+				
+				addDatiConnettore(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSection, 
+						ConnettoreServletType.WIZARD_REGISTRY, forceEnabled, tipologiaConnettori);
 			}
 			finally{
 				// ripristino originale
 				if(userSession!=null)
 					userSession.setInterfaceType(originalInterfaceType);
+			}
+			
+			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
 			}
 		}
 		
@@ -1896,6 +2040,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 		if( importInformationMissingException.isMissingInfoCredenziali() ){
 			
+			if ( importInformationMissingException.getMissingInfoHeader()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoHeader() );
+			}
+			
 			InterfaceType originalInterfaceType = null;
 			User userSession = null;
 			try{
@@ -1905,17 +2053,53 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				userSession.setInterfaceType(InterfaceType.STANDARD);
 				this.setTipoInterfaccia(InterfaceType.STANDARD);
 			
-				this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, showSection);
+				this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSection);
 			}
 			finally{
 				// ripristino originale
 				if(userSession!=null)
 					userSession.setInterfaceType(originalInterfaceType);
 			}
+			
+			if ( importInformationMissingException.getMissingInfoFooter()!=null ){
+				this.addDescriptionInformationMissingToDati(dati,  importInformationMissingException.getMissingInfoFooter() );
+			}
 		}
 	}
 	
-	private void addDatiCredenzialiAccesso(Vector<DataElement> dati, boolean readedDatiConnettori, boolean showSectionTitle) throws Exception{
+	private void addDescriptionInformationMissingToDati(Vector<DataElement> dati, Description header) {
+		
+		for (DescriptionType item : header.getItemList()) {
+			DataElement de = new DataElement();
+			switch (item.getTipo()) {
+			case TITLE:
+				de.setType(DataElementType.TITLE);
+				break;
+			case SUBTITLE:
+				de.setType(DataElementType.SUBTITLE);
+				break;
+			case NOTE:
+				de.setType(DataElementType.NOTE);
+				break;
+			case TEXT:
+				de.setType(DataElementType.TEXT);
+				break;
+			}
+			if(item.getLabel()!=null) {
+				de.setLabel(item.getLabel());
+			}
+			if(item.getValore()!=null) {
+				de.setValue(item.getValore());
+			}
+			if(item.isBold()) {
+				de.setBold(true);
+			}
+			dati.addElement(de);
+		}
+
+	}
+	
+	private void addDatiCredenzialiAccesso(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties, boolean showSectionTitle) throws Exception{
 				
 		String tipoauth = null;
 		String utente = null;
@@ -1923,45 +2107,51 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		String subject = null;
 		String principal = null;
 		
-		if(readedDatiConnettori==false){
-			tipoauth = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
-			if (tipoauth == null) {
-				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
-			}
-			utente = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			password = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-			principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
-			
-			if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
-				tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-			} 
-				
-			// Credenziali di accesso
-			if (utente == null) {
-				utente = "";
-			}
-			if (password == null) {
-				password = "";
-			}
-			if (subject == null) {
-				subject = "";
-			}
-			if (principal == null) {
-				principal = "";
-			}
+		// gestito nel metodo getParameter: if(readedDatiConnettori==false){
+		tipoauth = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+		if (tipoauth == null) {
+			tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 		}
+		utente = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+		password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+		subject = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+		principal = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+		
+		if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
+			tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+		} 
+			
+		// Credenziali di accesso
+		if (utente == null) {
+			utente = "";
+		}
+		if (password == null) {
+			password = "";
+		}
+		if (subject == null) {
+			subject = "";
+		}
+		if (principal == null) {
+			principal = "";
+		}
+		//}
 		dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
 				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null, true);
 	}
 	
-	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori,
-			boolean showSectionTitle,ConnettoreServletType connettoreServletType) throws Exception{
+	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,
+			boolean showSectionTitle,ConnettoreServletType connettoreServletType,
+			boolean forceEnabled, TipologiaConnettori tipologiaConnettoriInfoMissing) throws Exception{
 		
 		TipologiaConnettori tipologiaConnettoriOriginale = null;
 		try{
 			tipologiaConnettoriOriginale = Utilities.getTipologiaConnettori(this.core);
-			Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
+			if(tipologiaConnettoriInfoMissing!=null) {
+				Utilities.setTipologiaConnettori(tipologiaConnettoriInfoMissing);
+			}
+			else {
+				Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
+			}
 		
 			String endpointtype = null;
 			String tipoconn = null;
@@ -2030,105 +2220,107 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String responseInputFileNameHeaders = null;
 			String responseInputDeleteAfterRead = null;
 			String responseInputWaitTime = null;
+
+			// gestito nel metodo getParameter:  if(readedDatiConnettori==false){
 			
-			if(readedDatiConnettori==false){
-			
-				endpointtype = this.readEndPointType();
-				if(endpointtype==null){
-					endpointtype = TipiConnettore.HTTP.toString();
-				}
-				tipoconn = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-				autenticazioneHttp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				
-				connettoreDebug = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-				
-				// proxy
-				proxy_enabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-				proxy_hostname = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-				proxy_port = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-				proxy_username = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-				proxy_password = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-				
-				// tempi risposta
-				tempiRisposta_enabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-				tempiRisposta_connectionTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
-				tempiRisposta_readTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
-				tempiRisposta_tempoMedioRisposta = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
-				
-				// opzioni avanzate
-				transfer_mode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-				transfer_mode_chunk_size = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-				redirect_mode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-				redirect_max_hop = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
-				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transfer_mode, redirect_mode);
-				
-				// http
-				url = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-				if(TipiConnettore.HTTP.toString().equals(endpointtype)){
-					user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-					password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				}
-				
-				// jms
-				nomeCodaJMS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-				tipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-				initcont = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
-				urlpgk = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
-				provurl = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
-				connfact = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-				sendas = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
-				if(TipiConnettore.JMS.toString().equals(endpointtype)){
-					user = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-					password = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
-				}
-				
-				// https
-				httpsurl = url;
-				httpstipologia = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
-				httpshostverifyS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
-				httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
-				httpspath = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-				httpstipo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-				httpspwd = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-				httpsalgoritmo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-				httpsstatoS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
-				httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
-				httpskeystore = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-				httpspwdprivatekeytrust = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
-				httpspathkey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
-				httpstipokey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-				httpspwdkey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-				httpspwdprivatekey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
-				httpsalgoritmokey = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
-				if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
-					user = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-					password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				}
-				
-				// file
-				requestOutputFileName = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
-				requestOutputFileNameHeaders = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
-				requestOutputParentDirCreateIfNotExists = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
-				requestOutputOverwriteIfExists = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
-				responseInputMode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
-				responseInputFileName = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
-				responseInputFileNameHeaders = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
-				responseInputDeleteAfterRead = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
-				responseInputWaitTime = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			// NON POSSO USARE QUESTO METODO, SENNO NON LEGGO I PARMETRI DI DEFAULT: endpointtype = this.readEndPointType();
+			endpointtype = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+			String endpointtype_check = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
+			String endpointtype_ssl = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
+			endpointtype = this.readEndPointType(endpointtype, endpointtype_check, endpointtype_ssl);
+			if(endpointtype==null || (forceEnabled && TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) ){
+				endpointtype = TipiConnettore.HTTP.toString();
 			}
+			tipoconn = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+			autenticazioneHttp = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			
+			connettoreDebug = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
+			// proxy
+			proxy_enabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			proxy_hostname = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			proxy_port = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			proxy_username = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			proxy_password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// tempi risposta
+			tempiRisposta_enabled = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			tempiRisposta_connectionTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			tempiRisposta_readTimeout = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			tempiRisposta_tempoMedioRisposta = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+			
+			// opzioni avanzate
+			transfer_mode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			transfer_mode_chunk_size = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			redirect_mode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			redirect_max_hop = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this, transfer_mode, redirect_mode);
+			
+			// http
+			url = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
+			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
+				user = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// jms
+			nomeCodaJMS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+			tipo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			initcont = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+			urlpgk = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
+			provurl = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+			connfact = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+			sendas = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+			if(TipiConnettore.JMS.toString().equals(endpointtype)){
+				user = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
+				password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+			}
+			
+			// https
+			httpsurl = url;
+			httpstipologia = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
+			httpshostverifyS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+			httpspath = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+			httpstipo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			httpspwd = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			httpsalgoritmo = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			httpsstatoS = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
+			httpskeystore = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+			httpspwdprivatekeytrust = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			httpspathkey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+			httpstipokey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+			httpspwdkey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			httpspwdprivatekey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			httpsalgoritmokey = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
+				user = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				password = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			}
+			
+			// file
+			requestOutputFileName = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			requestOutputFileNameHeaders = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			requestOutputParentDirCreateIfNotExists = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			requestOutputOverwriteIfExists = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			responseInputMode = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			responseInputFileName = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			responseInputFileNameHeaders = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			responseInputDeleteAfterRead = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			responseInputWaitTime = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			//}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 						
-			if(endpointtype==null){
+			if(endpointtype==null || (forceEnabled && TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) ){
 				endpointtype = TipiConnettore.HTTP.toString();
 			}
 			
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, connettoreServletType, this, false, endpointtype);
-			
-			boolean forceEnabled = true;
-			
+
 			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipo, user, password, initcont, urlpgk, provurl,
@@ -2210,5 +2402,21 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 	}
 
+	private String getParameter(boolean readedDatiConnettori, Default defaultProperties, String name) throws Exception {
+		String value = null;
+		if(readedDatiConnettori==false) {
+			value = this.getParameter(name);
+		}
+		if(value==null) {
+			if(defaultProperties!=null && defaultProperties.sizeProprietaList()>0) {
+				for (ProprietaDefault defaultProperty : defaultProperties.getProprietaList()) {
+					if(name.equals(defaultProperty.getNome())) {
+						return defaultProperty.getValore();
+					}
+				}
+			}
+		}
+		return value;
+	}
 
 }

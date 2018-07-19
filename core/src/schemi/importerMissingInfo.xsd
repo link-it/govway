@@ -51,6 +51,9 @@
 	<xsd:complexType name="Soggetto">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="SoggettoReplaceType" use="required"/>
@@ -80,9 +83,13 @@
 	<xsd:complexType name="ServizioApplicativo">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="ServizioApplicativoReplaceType" use="required"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:simpleType name="ServizioApplicativoReplaceType">
@@ -102,10 +109,14 @@
 	<xsd:complexType name="AccordoCooperazione">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="AccordoCooperazioneReplaceType" use="required"/>
 		<xsd:attribute name="stato" type="statoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:simpleType name="AccordoCooperazioneReplaceType">
@@ -124,10 +135,14 @@
 	<xsd:complexType name="AccordoServizioParteComune">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="AccordoServizioParteComuneReplaceType" use="required"/>
 		<xsd:attribute name="stato" type="statoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:simpleType name="AccordoServizioParteComuneReplaceType">
@@ -145,10 +160,14 @@
 	<xsd:complexType name="AccordoServizioParteSpecifica">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="AccordoServizioParteSpecificaReplaceType" use="required"/>
 		<xsd:attribute name="stato" type="statoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:simpleType name="AccordoServizioParteSpecificaReplaceType">
@@ -166,14 +185,19 @@
 	<xsd:complexType name="Fruitore">
 		<xsd:sequence>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="FruitoreReplaceType" use="required"/>
 		<xsd:attribute name="stato" type="statoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:simpleType name="FruitoreReplaceType">
 		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CONNETTORE"/>
 			<xsd:enumeration value="STATO_ARCHIVIO"/>
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -203,11 +227,61 @@
 	</xsd:complexType>
 	
 	<xsd:complexType name="Proprieta">
+		<xsd:sequence>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="placeholder" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="default" type="xsd:string" use="optional"/>
 		<xsd:attribute name="use-in-delete" type="xsd:boolean" use="optional" default="true"/>
 	</xsd:complexType>
+	
+	
+	
+	<!-- Descrizione -->
+	
+	<xsd:element name="header" type="Description" />
+	<xsd:element name="footer" type="Description" />
+	
+	<xsd:complexType name="Description">
+		<xsd:sequence>
+			<xsd:element name="item" type="DescriptionType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DescriptionType">
+		<xsd:attribute name="tipo" type="DescriptionItemType" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="optional"/>
+		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+		<xsd:attribute name="bold" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	<xsd:simpleType name="DescriptionItemType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="title"/>
+			<xsd:enumeration value="subtitle"/>
+			<xsd:enumeration value="note"/>
+			<xsd:enumeration value="text"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	<!-- Default -->
+	
+	<xsd:element name="default" type="Default" />
+	
+	<xsd:complexType name="Default">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="ProprietaDefault" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="valore" type="xsd:string"/> <!-- Default senza nome -->
+	</xsd:complexType>
+	
+	<xsd:complexType name="ProprietaDefault">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
 	
 	<!-- Wizard -->	
 	

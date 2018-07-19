@@ -42,6 +42,8 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 	
 		super();
 	
+		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"Proprieta",Proprieta.class));
+		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"Proprieta",Proprieta.class));
 		this.PLACEHOLDER = new Field("placeholder",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.NOME = new Field("nome",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.DEFAULT = new Field("default",java.lang.String.class,"Proprieta",Proprieta.class);
@@ -53,6 +55,8 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 	
 		super(father);
 	
+		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"Proprieta",Proprieta.class));
+		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"Proprieta",Proprieta.class));
 		this.PLACEHOLDER = new ComplexField(father,"placeholder",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"Proprieta",Proprieta.class);
 		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"Proprieta",Proprieta.class);
@@ -62,6 +66,10 @@ public class ProprietaModel extends AbstractModel<Proprieta> {
 	
 	
 
+	public org.openspcoop2.protocol.information_missing.model.DescriptionModel HEADER = null;
+	 
+	public org.openspcoop2.protocol.information_missing.model.DescriptionModel FOOTER = null;
+	 
 	public IField PLACEHOLDER = null;
 	 
 	public IField NOME = null;

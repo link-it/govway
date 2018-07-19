@@ -166,9 +166,13 @@ public class ImporterInformationMissingSetter {
 		
 	}
 	
-	public static void setInformationMissingFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitore) throws ProtocolException{
+	public static void setInformationMissingFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitore,
+			Connettore connettore) throws ProtocolException{
 		
 		switch (fruitore.getTipo()) {
+		case CONNETTORE:
+			setInformationMissing_ConnettoreFruitore(archive, fruitore, connettore);
+			break;
 		case STATO_ARCHIVIO:
 			setInformationMissing_StatoFruitore(archive, fruitore);
 			break;
@@ -764,12 +768,7 @@ public class ImporterInformationMissingSetter {
 					boolean matchTipoNome = matchServizio(aspsMissingInfo.getReplaceMatch(), 
 							asps.getTipo(), asps.getNome());
 						
-					String uriAccordo = null;
-					try{
-						uriAccordo = IDServizioFactory.getInstance().getUriFromAccordo(asps);
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
+					String uriAccordo = asps.getAccordoServizioParteComune();
 					boolean matchAccordo = matchAccordo(aspsMissingInfo.getReplaceMatch(), 
 							uriAccordo);
 								
@@ -825,6 +824,36 @@ public class ImporterInformationMissingSetter {
 	
 	
 	// ******* FRUITORE **********
+	
+	private static void setInformationMissing_ConnettoreFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo, 
+			Connettore connettore) throws ProtocolException{
+		
+		// Accordi
+		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+			Fruitore fruitore = archive.getAccordiFruitori().get(i).getFruitore();
+			if(fruitore!=null){
+				
+				if(matchSoggetto(fruitoreMissingInfo.getReplaceMatch(), 
+						fruitore.getTipo(), fruitore.getNome())){
+					
+					if(fruitore.getConnettore()==null) {
+						fruitore.setConnettore(connettore);
+					}
+					else {
+						fruitore.getConnettore().setCustom(connettore.getCustom());
+						fruitore.getConnettore().setTipo(connettore.getTipo());
+						while(fruitore.getConnettore().sizePropertyList()>0)
+							fruitore.getConnettore().removeProperty(0);
+						if(connettore.sizePropertyList()>0)
+							fruitore.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
+					}
+					
+				}
+				
+			}
+		}
+		
+	}
 	
 	private static void setInformationMissing_StatoFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo) throws ProtocolException{
 		

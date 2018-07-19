@@ -1713,7 +1713,18 @@ public class XMLDataConverter {
 			}
 			
 			if(servizioApplicativo.getInvocazionePorta()!=null && servizioApplicativo.getInvocazionePorta().sizeCredenzialiList()>0) {
-				servizioApplicativo.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+				// Verifico che esista una credenziale buona
+				boolean found = false;
+				for (int i = 0; i < servizioApplicativo.getInvocazionePorta().sizeCredenzialiList(); i++) {
+					Credenziali c = servizioApplicativo.getInvocazionePorta().getCredenziali(i);
+					if(c!=null && c.getTipo()!=null && (c.getUser()!=null || c.getSubject()!=null)) {
+						found = true;
+						break;
+					}
+				}
+				if(found) {
+					servizioApplicativo.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+				}
 			}
 		}
 	}

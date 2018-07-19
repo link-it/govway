@@ -39,9 +39,13 @@ import java.io.Serializable;
  * &lt;complexType name="ServizioApplicativo">
  * 		&lt;sequence>
  * 			&lt;element name="replace-match" type="{http://www.openspcoop2.org/protocol/information_missing}replaceMatchType" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="footer" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/information_missing}Default" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}ServizioApplicativoReplaceType" use="required"/>
+ * 		&lt;attribute name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -54,7 +58,10 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServizioApplicativo", 
   propOrder = {
-  	"replaceMatch"
+  	"replaceMatch",
+  	"header",
+  	"footer",
+  	"_default"
   }
 )
 
@@ -70,6 +77,30 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   public void setReplaceMatch(ReplaceMatchType replaceMatch) {
     this.replaceMatch = replaceMatch;
+  }
+
+  public Description getHeader() {
+    return this.header;
+  }
+
+  public void setHeader(Description header) {
+    this.header = header;
+  }
+
+  public Description getFooter() {
+    return this.footer;
+  }
+
+  public void setFooter(Description footer) {
+    this.footer = footer;
+  }
+
+  public Default getDefault() {
+    return this._default;
+  }
+
+  public void setDefault(Default _default) {
+    this._default = _default;
   }
 
   public java.lang.String getDescrizione() {
@@ -100,12 +131,29 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.tipo = tipo;
   }
 
+  public java.lang.String getProtocollo() {
+    return this.protocollo;
+  }
+
+  public void setProtocollo(java.lang.String protocollo) {
+    this.protocollo = protocollo;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
 
   @XmlElement(name="replace-match",required=true,nillable=false)
   protected ReplaceMatchType replaceMatch;
+
+  @XmlElement(name="header",required=false,nillable=false)
+  protected Description header;
+
+  @XmlElement(name="footer",required=false,nillable=false)
+  protected Description footer;
+
+  @XmlElement(name="default",required=false,nillable=false)
+  protected Default _default;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=true)
@@ -116,5 +164,9 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   @XmlAttribute(name="tipo",required=true)
   protected ServizioApplicativoReplaceType tipo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="protocollo",required=false)
+  protected java.lang.String protocollo;
 
 }
