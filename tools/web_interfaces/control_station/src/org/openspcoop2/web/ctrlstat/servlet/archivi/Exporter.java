@@ -374,6 +374,8 @@ public final class Exporter extends Action {
 			
 			pd.setDati(dati);
 
+			pd.setLabelBottoneInvia(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
+			
 			if(errore){
 				pd.setMessage(motivoErrore);
 				

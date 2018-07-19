@@ -563,7 +563,7 @@ if (pd.getMode().equals("view")) {
     %><tr class="buttonrow">
 	    <td colspan="2" >
 	    	<div class="buttonrowform">
-	    		<input type=submit onClick='CheckDati();return false;' value="Salva" />
+	    		<input type=submit onClick='CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" />
 	    	</div>
 	    </td>
     </tr><%

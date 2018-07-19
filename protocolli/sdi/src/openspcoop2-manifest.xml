@@ -82,6 +82,9 @@
     		<mediaTypeCollection>
     			<mediaType messageType="soap11">text/xml</mediaType>
     		</mediaTypeCollection>
+    		<interfaces>
+    			<specification type="wsdl11" />
+    		</interfaces>
     	</soap>
     </binding>
 

@@ -109,7 +109,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String cascade,String configurazioneType,
 			String cascadePdd,String cascadeRuoli,String cascadeScope, String cascadeSoggetti,
 			String cascadeServiziApplicativi, String cascadePorteDelegate, String cascadePorteApplicative,
-			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni){
+			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni) throws Exception{
 		
 		DataElement dataElement = new DataElement();
 		dataElement.setLabel(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
@@ -132,6 +132,17 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
 		de.setSize(this.getSize());
 		de.setPostBack(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.TEXT);
+		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO);
+		if(protocolliSelectList.size()<=1){
+			de.setValue(this.getLabelProtocollo(protocollo));
+		}
+		else {
+			de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+		}
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -158,7 +169,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
-			if(this.archiviCore.isExportArchivi_standard()){
+			if(this.archiviCore.isExportArchivi_standard() || 
+					!org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE_TYPE.getType().equals(exportMode)){
 				// opzioni standard
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(configurazioneType);
@@ -1785,7 +1797,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				// Impostazione protocollo
 				String protocollo = importInformationMissingException.getMissingInfoSoggetto_protocollo();
 				if(protocollo==null){
-					//protocollo = protocolloEffettivo; // uso l'impostazione associata al tipo in package scelto.
+					protocollo = protocolloEffettivo; // uso l'impostazione associata al tipo in package scelto.
 					// NOTA: non devo impostare il protocollo. Serve solo per visualizzare l'info "Sbustamento Info Protocollo 'xxx'"
 					// Se viene passato null non viene visualizzata la stringa 'xxx'.
 					// Meglio cosi che fornire il tipo associato al package, che puo' non essere corretto nel casi di archivio openspcoop
@@ -1845,7 +1857,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					
 				}
 				
-				addDatiConnettore(dati, readedDatiConnettori, true, ConnettoreServletType.WIZARD_CONFIG);
+				addDatiConnettore(dati, readedDatiConnettori, false, ConnettoreServletType.WIZARD_CONFIG);
 			}
 			finally{
 				// ripristino originale
@@ -2023,7 +2035,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 				endpointtype = this.readEndPointType();
 				if(endpointtype==null){
-					endpointtype = TipiConnettore.DISABILITATO.toString();
+					endpointtype = TipiConnettore.HTTP.toString();
 				}
 				tipoconn = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 				autenticazioneHttp = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -2108,12 +2120,14 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 						
 			if(endpointtype==null){
-				endpointtype = TipiConnettore.DISABILITATO.toString();
+				endpointtype = TipiConnettore.HTTP.toString();
 			}
 			
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, connettoreServletType, this, false, endpointtype);
+			
+			boolean forceEnabled = true;
 			
 			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
@@ -2132,7 +2146,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					listExtendedConnettore, false);
+					listExtendedConnettore, forceEnabled);
 			
 		}finally{
 			// ripristino tipologia

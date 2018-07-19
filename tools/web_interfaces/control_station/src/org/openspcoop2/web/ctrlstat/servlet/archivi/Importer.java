@@ -159,6 +159,11 @@ public final class Importer extends Action {
 			modalitaDataElement.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORTER_MODALITA);
 			
 			
+			String labelBottone = ArchiviCostanti.LABEL_ARCHIVI_IMPORT;
+			if(deleter){
+				labelBottone = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;	
+			}
+			
 			// parametri vari
 			this.filePath = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH);
 			if(this.filePath==null || "".equals(this.filePath)){
@@ -339,6 +344,8 @@ public final class Importer extends Action {
 				
 				pd.setDati(dati);
 
+				pd.setLabelBottoneInvia(labelBottone);
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
@@ -562,6 +569,8 @@ public final class Importer extends Action {
 							protocolliForModes,readedDatiConnettori,
 							wizard,this.step,
 							deleter);
+					
+					pd.setLabelBottoneInvia(ArchiviCostanti.LABEL_ARCHIVI_AVANTI);
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
@@ -569,6 +578,8 @@ public final class Importer extends Action {
 							importModes, this.importMode, 
 							importTypes, this.importType,
 							deleter);
+					
+					pd.setLabelBottoneInvia(labelBottone);
 				}
 				
 				pd.setDati(dati);

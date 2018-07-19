@@ -70,6 +70,7 @@ public class PageData {
 	int pageSize, index, numEntries;
 	boolean mostraLinkHome = false;
 	String customListViewName = null;
+	String labelBottoneInvia = null;
 
 	public PageData() {
 		this.pageDescription = "";
@@ -99,6 +100,7 @@ public class PageData {
 		this.numEntries = 0;
 		this.mostraLinkHome = false;
 		this.customListViewName = null;
+		this.labelBottoneInvia = Costanti.LABEL_MONITOR_BUTTON_INVIA;
 	}
 
 	public void setPageDescription(String s) {
@@ -453,5 +455,11 @@ public class PageData {
 		this.customListViewName = customListViewName;
 	}
 	
-	
+	public String getLabelBottoneInvia() {
+		return this.labelBottoneInvia;
+	}
+
+	public void setLabelBottoneInvia(String labelBottoneInvia) {
+		this.labelBottoneInvia = labelBottoneInvia;
+	}
 }

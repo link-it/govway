@@ -466,8 +466,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Identificazione Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitata";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitata";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA = "abilitato";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA = "disabilitato";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI = "Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI = "Ruoli";
