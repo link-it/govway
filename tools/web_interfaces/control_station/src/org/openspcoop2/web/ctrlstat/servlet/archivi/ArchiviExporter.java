@@ -165,7 +165,7 @@ public class ArchiviExporter extends HttpServlet {
 			if(ServletUtils.isCheckBoxEnabled(cascade)){
 				cascadeConfig = exportModeObject.getCascade();
 				
-				if(archiviCore.isExportArchivi_standard()==false){
+				if(archiviCore.isExportArchive_servizi_standard()==false){
 					if(cascadePdd!=null & !"".equals(cascadePdd)){
 						cascadeConfig.setCascadePdd(ServletUtils.isCheckBoxEnabled(cascadePdd));
 					}
@@ -294,11 +294,12 @@ public class ArchiviExporter extends HttpServlet {
 			
 			
 			// Costruisco file name da esportare
+			String prefix = "GovWay";
 			String fileName = null;
 			switch (archiveType) {
 			case SOGGETTO:
 				if(identificativi.size()>1){
-					fileName = "Soggetti."+ext;
+					fileName = prefix+"Soggetti."+ext;
 				}else{
 					IDSoggetto idSoggetto = ((IDSoggetto)identificativi.get(0));
 					fileName = idSoggetto.getTipo()+idSoggetto.getNome()+"."+extSingleArchive;
@@ -306,7 +307,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
 				if(identificativi.size()>1){
-					fileName = "APIs."+ext;
+					fileName = prefix+"APIs."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -322,7 +323,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_COMPOSTO:
 				if(identificativi.size()>1){
-					fileName = "AccordiServizioComposto."+ext;
+					fileName = prefix+"AccordiServizioComposto."+ext;
 				}
 				else{
 					IDAccordo idAccordo = ((IDAccordo)identificativi.get(0));
@@ -338,7 +339,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 				if(identificativi.size()>1){
-					fileName = "Servizi."+ext;
+					fileName = prefix+"Servizi."+ext;
 				}
 				else{
 					IDServizio idServizio = ((IDServizio)identificativi.get(0));
@@ -352,7 +353,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			case ACCORDO_COOPERAZIONE:
 				if(identificativi.size()>1){
-					fileName = "AccordiCooperazione."+ext;
+					fileName = prefix+"AccordiCooperazione."+ext;
 				}
 				else{
 					IDAccordoCooperazione idAccordo = ((IDAccordoCooperazione)identificativi.get(0));
@@ -368,7 +369,7 @@ public class ArchiviExporter extends HttpServlet {
 				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
-				fileName = "ConfigurazioneOpenspcoop."+extSingleArchive;
+				fileName = prefix+"Config."+extSingleArchive;
 			}
 			
 			// Setto Proprietà Export File

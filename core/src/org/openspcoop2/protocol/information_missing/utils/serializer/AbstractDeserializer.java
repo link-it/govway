@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.information_missing.RequisitoProtocollo;
 import org.openspcoop2.protocol.information_missing.AccordoCooperazione;
 import org.openspcoop2.protocol.information_missing.Requisiti;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.Operazione;
 import org.openspcoop2.protocol.information_missing.Soggetto;
 import org.openspcoop2.protocol.information_missing.Input;
 import org.openspcoop2.protocol.information_missing.Proprieta;
@@ -872,6 +873,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Openspcoop2 readOpenspcoop2FromString(String in) throws DeserializerException {
 		return (Openspcoop2) this.xmlToObj(in.getBytes(), Openspcoop2.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: operazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(String fileName) throws DeserializerException {
+		return (Operazione) this.xmlToObj(fileName, Operazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(File file) throws DeserializerException {
+		return (Operazione) this.xmlToObj(file, Operazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(InputStream in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in, Operazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(byte[] in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in, Operazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazioneFromString(String in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in.getBytes(), Operazione.class);
 	}	
 	
 	

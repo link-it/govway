@@ -175,7 +175,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			de = new DataElement();
 			de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
 			de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP);
-			if(this.archiviCore.isExportArchivi_standard() || 
+			if(this.archiviCore.isExportArchive_configurazione_soloDumpCompleto() || 
 					!org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_ARCHIVE_MODE_TYPE.getType().equals(exportMode)){
 				// opzioni standard
 				de.setType(DataElementType.HIDDEN);
@@ -218,7 +218,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setValue(cascade);
 		dati.addElement(de);
 		
-		if(!this.archiviCore.isExportArchivi_standard() && 
+		if(!this.archiviCore.isExportArchive_servizi_standard() && 
 				ServletUtils.isCheckBoxEnabled(cascade) &&
 				cascadeEnabled){
 			

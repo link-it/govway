@@ -208,7 +208,7 @@ public class ExporterArchiveUtils {
 			}
 			break;
 		case CONFIGURAZIONE:
-			readControlloTrafficoConfigurazione(archive);
+			readControlloTrafficoConfigurazione(archive, true, false);
 			archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			break;
 		case ALL:
@@ -227,9 +227,14 @@ public class ExporterArchiveUtils {
 			}catch(DriverConfigurazioneNotFound notFound){}
 			
 			// configurazione solo se richiesta
+			//boolean loadActivePolicyFruizioneErogazione = true;
+			boolean loadActivePolicyFruizioneErogazione = false; // vengono gia' caricate da sopra con il cascade sui soggetti, che arriva sulle PD e PA
 			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
-				readControlloTrafficoConfigurazione(archive);
+				readControlloTrafficoConfigurazione(archive, true, loadActivePolicyFruizioneErogazione);
 				archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
+			}
+			else if(exportSourceArchiveType.equals(ArchiveType.ALL_WITHOUT_CONFIGURAZIONE)){
+				readControlloTrafficoConfigurazione(archive, false, loadActivePolicyFruizioneErogazione);
 			}
 			
 			// aggiungo porte di dominio 'zombie'
@@ -305,7 +310,7 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readControlloTrafficoConfigurazione(Archive archive) throws Exception {
+	private void readControlloTrafficoConfigurazione(Archive archive, boolean policyGlobali, boolean policyFruizioniErogazioni) throws Exception {
 		
 		archive.setControlloTraffico_configurazione(this.archiveEngine.getControlloTraffico_Configurazione());
 		
@@ -323,7 +328,38 @@ public class ExporterArchiveUtils {
 		
 		List<IdActivePolicy> listControlloTraffico_activePolicies = null;
 		try {
-			listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies();
+			if(policyGlobali && policyFruizioniErogazioni) {
+				listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies_all();
+			}
+			else if(policyGlobali) {
+				listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies_globali();
+			}
+			else if(policyFruizioniErogazioni) {
+				listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies_erogazioniFruizioni();
+			}
+		}catch(DriverConfigurazioneNotFound notFound) {}
+		if(listControlloTraffico_activePolicies!=null && listControlloTraffico_activePolicies.size()>0) {
+			for (IdActivePolicy idPolicy : listControlloTraffico_activePolicies) {
+				if(policyFruizioniErogazioni) {
+					
+				}
+				archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
+						this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
+						this.idCorrelazione));
+			}
+		}
+	}
+	
+	private void readControlloTrafficoPolicyPorta(Archive archive, boolean delegata, String nomePorta) throws Exception {
+		
+		List<IdActivePolicy> listControlloTraffico_activePolicies = null;
+		try {
+			if(delegata) {
+				listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies_fruizione(nomePorta);
+			}
+			else {
+				listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies_erogazione(nomePorta);
+			}
 		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listControlloTraffico_activePolicies!=null && listControlloTraffico_activePolicies.size()>0) {
 			for (IdActivePolicy idPolicy : listControlloTraffico_activePolicies) {
@@ -1275,6 +1311,10 @@ public class ExporterArchiveUtils {
 					ArchivePortaDelegata archivePd = new ArchivePortaDelegata(pd, this.idCorrelazione);
 					archive.getPorteDelegate().add(archivePd);
 					
+					// add rateLimiting
+					readControlloTrafficoPolicyPorta(archive, true, pd.getNome());
+					
+					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// soggetto proprietario
@@ -1391,6 +1431,10 @@ public class ExporterArchiveUtils {
 					}
 					ArchivePortaApplicativa archivePa = new ArchivePortaApplicativa(pa, this.idCorrelazione);
 					archive.getPorteApplicative().add(archivePa);
+					
+					// add rateLimiting
+					readControlloTrafficoPolicyPorta(archive, false, pa.getNome());
+					
 				
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					

@@ -879,7 +879,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* REPLACE NAME **********
 	
-	private static String replaceSoggettoProprietario(String original, String tipoSoggetto, String nomeSoggetto){
+	protected static String replaceSoggettoProprietario(String original, String tipoSoggetto, String nomeSoggetto){
 		
 		if(original==null){
 			return null;
@@ -900,7 +900,7 @@ public class ImporterInformationMissingSetter {
 		return returnValue;
 	}
 	
-	private static String replaceSoggettoErogatore(String original, String tipoSoggetto, String nomeSoggetto){
+	protected static String replaceSoggettoErogatore(String original, String tipoSoggetto, String nomeSoggetto){
 		
 		if(original==null){
 			return null;
@@ -1215,6 +1215,11 @@ public class ImporterInformationMissingSetter {
 			
 			ArchiveAccordoServizioParteSpecifica archiveAS = archive.getAccordiServizioParteSpecifica().get(i); 
 			AccordoServizioParteSpecifica as = archiveAS.getAccordoServizioParteSpecifica();
+			
+			if(as.getAccordoServizioParteComune()!=null) {
+				as.setAccordoServizioParteComune(replaceSoggettoProprietario(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+				as.setAccordoServizioParteComune(replaceSoggettoErogatore(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+			}
 			
 			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
 				for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {

@@ -157,7 +157,7 @@
 	<!-- Compilazione dei JAR del progetto OpenSPCoop 2 -->
 	<target name="build_openspcoop2_schemi_jar">
 		<delete>
-			<fileset dir="${dist}" includes="openspcoop2_schemi_*.jar"/>
+			<fileset dir="${dist}" includes="openspcoop2_schemi-xsd_*.jar"/>
 			<fileset dir="${dist}" includes="schemi/*"/>
 		</delete>
 		<antcall target="compile_openspcoop2_schemi">

@@ -53,6 +53,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.Operazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -108,7 +109,7 @@ public class ImporterInformationMissingUtils {
 	
 	
 	
-	public void validateAndFillInformationMissing(Openspcoop2 archiveInformationMissing, boolean delete) throws Exception{
+	public void validateAndFillInformationMissing(Openspcoop2 archiveInformationMissingWizard, boolean delete) throws Exception{
 		
 		ImportInformationMissingException infoException = null;	
 		String objectId = null;
@@ -117,521 +118,528 @@ public class ImporterInformationMissingUtils {
 		boolean throwException = false;
 		try{
 		
-			// -------- soggetto --------------
+			for (Operazione  archiveInformationMissing: archiveInformationMissingWizard.getOperazioneList()) {
 			
-			if(!throwException && archiveInformationMissing.sizeSoggettoList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeSoggettoList(); i++) {
-					org.openspcoop2.protocol.information_missing.Soggetto soggettoMissingInfo = 
-							archiveInformationMissing.getSoggetto(i);
+				if(throwException) {
+					break;
+				}
 			
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingSoggetto-"+i+"]]"; 
-					objectIdDescription = soggettoMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (soggettoMissingInfo.getTipo()) {
-					case RIFERIMENTO:
-						if(importInformationMissing!=null && importInformationMissing.getSoggetto()!=null){
-							if(!this.registryReader.existsSoggetto(importInformationMissing.getSoggetto())){
-								// verifico che non esista nell'archivio che sto importanto
-								boolean found = false;
-								if(this.archive.getSoggetti()!=null && this.archive.getSoggetti().size()>0){
-									for (int j = 0; j < this.archive.getSoggetti().size(); j++) {
-										ArchiveSoggetto archiveSoggetto = this.archive.getSoggetti().get(j);
-										if(archiveSoggetto.getIdSoggetto().equals(importInformationMissing.getSoggetto())){
-											found = true;
-											break;
+				// -------- soggetto --------------
+				
+				if(!throwException && archiveInformationMissing.sizeSoggettoList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeSoggettoList(); i++) {
+						org.openspcoop2.protocol.information_missing.Soggetto soggettoMissingInfo = 
+								archiveInformationMissing.getSoggetto(i);
+				
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingSoggetto-"+i+"]]"; 
+						objectIdDescription = soggettoMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (soggettoMissingInfo.getTipo()) {
+						case RIFERIMENTO:
+							if(importInformationMissing!=null && importInformationMissing.getSoggetto()!=null){
+								if(!this.registryReader.existsSoggetto(importInformationMissing.getSoggetto())){
+									// verifico che non esista nell'archivio che sto importanto
+									boolean found = false;
+									if(this.archive.getSoggetti()!=null && this.archive.getSoggetti().size()>0){
+										for (int j = 0; j < this.archive.getSoggetti().size(); j++) {
+											ArchiveSoggetto archiveSoggetto = this.archive.getSoggetti().get(j);
+											if(archiveSoggetto.getIdSoggetto().equals(importInformationMissing.getSoggetto())){
+												found = true;
+												break;
+											}
 										}
 									}
+									if(!found){
+										throw new ProtocolException("Il Soggetto "+importInformationMissing.getSoggetto().toString()+" non esiste (indicato in ImportInformationMissing parameter??)");
+									}
 								}
-								if(!found){
-									throw new ProtocolException("Il Soggetto "+importInformationMissing.getSoggetto().toString()+" non esiste (indicato in ImportInformationMissing parameter??)");
-								}
-							}
-							updateInfo = true;
-						}else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoSoggetto(true);
-							if(soggettoMissingInfo.getTipoPdd()!=null)
-								infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());
-							throwException = true;
-						}	
-						break;
-					case CONNETTORE:
-						if(delete==false) {
-							if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
 								updateInfo = true;
-							}
-							else{
+							}else{
 								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-								infoException.setMissingInfoInvocazioneServizio(true);
+								infoException.setMissingInfoSoggetto(true);
 								if(soggettoMissingInfo.getTipoPdd()!=null)
-									infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());	
+									infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());
 								throwException = true;
+							}	
+							break;
+						case CONNETTORE:
+							if(delete==false) {
+								if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
+									updateInfo = true;
+								}
+								else{
+									infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+									infoException.setMissingInfoInvocazioneServizio(true);
+									if(soggettoMissingInfo.getTipoPdd()!=null)
+										infoException.setMissingInfoSoggetto_tipoPdD(soggettoMissingInfo.getTipoPdd().getValue());	
+									throwException = true;
+								}
 							}
+							break;
 						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(soggettoMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(soggettoMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(soggettoMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(soggettoMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						IDSoggetto importInformationMissing_soggetto = null;
-						Connettore importInformationMissing_connettore = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_soggetto = importInformationMissing.getSoggetto();
-							importInformationMissing_connettore = importInformationMissing.getConnettore();
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(soggettoMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(soggettoMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(soggettoMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(soggettoMissingInfo.getDefault());
 						}
-						ImporterInformationMissingSetter.setInformationMissingSoggetto(this.archive, soggettoMissingInfo, 
-								importInformationMissing_soggetto, importInformationMissing_connettore);
-					}
-					else{
-						break;
-					}
-					
-				}
-			}
-			
-			// -------- input --------------
-			
-			if(!throwException && archiveInformationMissing.sizeInputList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeInputList(); i++) {
-					org.openspcoop2.protocol.information_missing.Input inputMissingInfo = 
-							archiveInformationMissing.getInput(i);
-					if(delete) {
-						boolean foundPropertyUseInDelete = false;
-						for (int j = 0; j < inputMissingInfo.sizeProprietaList(); j++) {
-							if(inputMissingInfo.getProprieta(j).isUseInDelete()) {
-								foundPropertyUseInDelete = true;
-								break;
-							}
-						}
-						if(!foundPropertyUseInDelete) {
-							continue;
-						}
-					}
-			
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingInput-"+i+"]]"; 
-					objectIdDescription = inputMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					if(importInformationMissing==null || importInformationMissing.getInputPlaceholder()==null){
-						infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-						infoException.setMissingInfoInput(true);
-						infoException.setMissingInfoInputObject(inputMissingInfo);
-						throwException = true;
-					}
 						
-					if(throwException) {
-						break;
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							IDSoggetto importInformationMissing_soggetto = null;
+							Connettore importInformationMissing_connettore = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_soggetto = importInformationMissing.getSoggetto();
+								importInformationMissing_connettore = importInformationMissing.getConnettore();
+							}
+							ImporterInformationMissingSetter.setInformationMissingSoggetto(this.archive, soggettoMissingInfo, 
+									importInformationMissing_soggetto, importInformationMissing_connettore);
+						}
+						else{
+							break;
+						}
+						
 					}
-					
 				}
-			}
-			
-			// -------- servizioApplicativo --------------
-					
-			if(!throwException && archiveInformationMissing.sizeServizioApplicativoList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeServizioApplicativoList(); i++) {
-					org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo = 
-							archiveInformationMissing.getServizioApplicativo(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingServizioApplicativo-"+i+"]]"; 
-					objectIdDescription = saMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (saMissingInfo.getTipo()) {
-					case RIFERIMENTO:
-						// nop; non gestito (Da realizzare per assegnare lo stesso servizio applicativo a piu' porte)
-						break;
-					case CONNETTORE:
-						if(delete==false) {
-							if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
-								updateInfo = true;
+				
+				// -------- input --------------
+				
+				if(!throwException && archiveInformationMissing.sizeInputList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeInputList(); i++) {
+						org.openspcoop2.protocol.information_missing.Input inputMissingInfo = 
+								archiveInformationMissing.getInput(i);
+						if(delete) {
+							boolean foundPropertyUseInDelete = false;
+							for (int j = 0; j < inputMissingInfo.sizeProprietaList(); j++) {
+								if(inputMissingInfo.getProprieta(j).isUseInDelete()) {
+									foundPropertyUseInDelete = true;
+									break;
+								}
 							}
-							else{
-								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-								infoException.setMissingInfoInvocazioneServizio(true);
-								throwException = true;
+							if(!foundPropertyUseInDelete) {
+								continue;
 							}
 						}
-						break;
-					case CREDENZIALI_ACCESSO_PDD:
-						if(delete==false) {
-							if(importInformationMissing!=null && importInformationMissing.getCredenziali()!=null){
-								updateInfo = true;
-							}
-							else{
-								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-								infoException.setMissingInfoCredenziali(true);
-								throwException = true;
-							}
+				
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingInput-"+i+"]]"; 
+						objectIdDescription = inputMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
 						}
-						break;
-					case ALLINEA_CREDENZIALI_PD:
-						if(delete==false) {
-							updateInfo = true;
-						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(saMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(saMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(saMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(saMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						InvocazioneServizio importInformationMissing_invocazioneServizio = null;
-						Credenziali importInformationMissing_credenziali = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_invocazioneServizio = importInformationMissing.getInvocazioneServizio();
-							importInformationMissing_credenziali = importInformationMissing.getCredenziali();
-						}
-						ImporterInformationMissingSetter.setInformationMissingServizioApplicativo(this.archive, saMissingInfo, 
-								importInformationMissing_invocazioneServizio,importInformationMissing_credenziali);
-					}
-					else{
-						break;
-					}
-				}			
-			}
-			
-			// -------- accordiCooperazione --------------
-			
-			if(!throwException && archiveInformationMissing.sizeAccordoCooperazioneList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeAccordoCooperazioneList(); i++) {
-					org.openspcoop2.protocol.information_missing.AccordoCooperazione acMissingInfo = 
-							archiveInformationMissing.getAccordoCooperazione(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingAccordoCooperazione-"+i+"]]"; 
-					objectIdDescription = acMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (acMissingInfo.getTipo()) {
-					case RIFERIMENTO:
-						if(importInformationMissing!=null && importInformationMissing.getIdAccordoCooperazione()!=null){
-							updateInfo = true;
-						}
-						else{
+						
+						// *** campi da verificare ***
+						if(importInformationMissing==null || importInformationMissing.getInputPlaceholder()==null){
 							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoAccordoCooperazione(true);
+							infoException.setMissingInfoInput(true);
+							infoException.setMissingInfoInputObject(inputMissingInfo);
 							throwException = true;
 						}
-						break;
-					case STATO_ARCHIVIO:
-						if(delete==false) {
-							updateInfo = true;
+							
+						if(throwException) {
+							break;
 						}
-						break;
+						
 					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(acMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(acMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(acMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(acMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						IDAccordoCooperazione importInformationMissing_idAccordoCooperazione = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_idAccordoCooperazione = importInformationMissing.getIdAccordoCooperazione();
+				}
+				
+				// -------- servizioApplicativo --------------
+						
+				if(!throwException && archiveInformationMissing.sizeServizioApplicativoList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeServizioApplicativoList(); i++) {
+						org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo = 
+								archiveInformationMissing.getServizioApplicativo(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingServizioApplicativo-"+i+"]]"; 
+						objectIdDescription = saMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
 						}
-						ImporterInformationMissingSetter.setInformationMissingAccordoCooperazione(this.archive, acMissingInfo, 
-								importInformationMissing_idAccordoCooperazione);
-					}
-					else{
-						break;
-					}
-				}			
-			}
-			
-			
-			// -------- accordiServizioParteComune --------------
-			
-			if(!throwException && archiveInformationMissing.sizeAccordoServizioParteComuneList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioParteComuneList(); i++) {
-					org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
-							archiveInformationMissing.getAccordoServizioParteComune(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingAccordoServizioParteComune-"+i+"]]"; 
-					objectIdDescription = asMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (asMissingInfo.getTipo()) {
-					case RIFERIMENTO:
-						if(importInformationMissing!=null && importInformationMissing.getIdAccordoServizioParteComune()!=null){
-							updateInfo = true;
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (saMissingInfo.getTipo()) {
+						case RIFERIMENTO:
+							// nop; non gestito (Da realizzare per assegnare lo stesso servizio applicativo a piu' porte)
+							break;
+						case CONNETTORE:
+							if(delete==false) {
+								if(importInformationMissing!=null && importInformationMissing.getInvocazioneServizio()!=null){
+									updateInfo = true;
+								}
+								else{
+									infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+									infoException.setMissingInfoInvocazioneServizio(true);
+									throwException = true;
+								}
+							}
+							break;
+						case CREDENZIALI_ACCESSO_PDD:
+							if(delete==false) {
+								if(importInformationMissing!=null && importInformationMissing.getCredenziali()!=null){
+									updateInfo = true;
+								}
+								else{
+									infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+									infoException.setMissingInfoCredenziali(true);
+									throwException = true;
+								}
+							}
+							break;
+						case ALLINEA_CREDENZIALI_PD:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(saMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(saMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(saMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(saMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							InvocazioneServizio importInformationMissing_invocazioneServizio = null;
+							Credenziali importInformationMissing_credenziali = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_invocazioneServizio = importInformationMissing.getInvocazioneServizio();
+								importInformationMissing_credenziali = importInformationMissing.getCredenziali();
+							}
+							ImporterInformationMissingSetter.setInformationMissingServizioApplicativo(this.archive, saMissingInfo, 
+									importInformationMissing_invocazioneServizio,importInformationMissing_credenziali);
 						}
 						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoAccordoServizioParteComune(true);
-							throwException = true;
+							break;
 						}
-						break;
-					case STATO_ARCHIVIO:
-						if(delete==false) {
-							updateInfo = true;
+					}			
+				}
+				
+				// -------- accordiCooperazione --------------
+				
+				if(!throwException && archiveInformationMissing.sizeAccordoCooperazioneList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeAccordoCooperazioneList(); i++) {
+						org.openspcoop2.protocol.information_missing.AccordoCooperazione acMissingInfo = 
+								archiveInformationMissing.getAccordoCooperazione(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingAccordoCooperazione-"+i+"]]"; 
+						objectIdDescription = acMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
 						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(asMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(asMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(asMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						IDAccordo importInformationMissing_idAccordo = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_idAccordo = importInformationMissing.getIdAccordoServizioParteComune();
-						}
-						ImporterInformationMissingSetter.setInformationMissingAccordoServizioParteComune(this.archive, asMissingInfo, 
-								importInformationMissing_idAccordo);
-					}
-					else{
-						break;
-					}
-				}			
-			}
-			
-			
-			// -------- accordoServizioParteSpecifica --------------
-			
-			if(!throwException && archiveInformationMissing.sizeAccordoServizioParteSpecificaList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioParteSpecificaList(); i++) {
-					org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo = 
-							archiveInformationMissing.getAccordoServizioParteSpecifica(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingAPS-"+i+"]]"; 
-					objectIdDescription = aspsMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (aspsMissingInfo.getTipo()) {
-					case CONNETTORE:
-						if(delete==false) {
-							if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (acMissingInfo.getTipo()) {
+						case RIFERIMENTO:
+							if(importInformationMissing!=null && importInformationMissing.getIdAccordoCooperazione()!=null){
 								updateInfo = true;
 							}
 							else{
 								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-								infoException.setMissingInfoConnettore(true);
+								infoException.setMissingInfoAccordoCooperazione(true);
 								throwException = true;
 							}
+							break;
+						case STATO_ARCHIVIO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
 						}
-						break;
-					case STATO_ARCHIVIO:
-						if(delete==false) {
-							updateInfo = true;
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(acMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(acMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(acMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(acMissingInfo.getDefault());
 						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(aspsMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(aspsMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(aspsMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(aspsMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						Connettore importInformationMissing_connettore = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_connettore = importInformationMissing.getConnettore();
-						}
-						ImporterInformationMissingSetter.setInformationMissingAccordoServizioParteSpecifica(this.archive, aspsMissingInfo, 
-								importInformationMissing_connettore);
-					}
-					else{
-						break;
-					}
-				}			
-			}
-
-			// -------- accordiServizioComposto --------------
-			
-			if(!throwException && archiveInformationMissing.sizeAccordoServizioCompostoList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioCompostoList(); i++) {
-					org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
-							archiveInformationMissing.getAccordoServizioComposto(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingAccordoServizioComposto-"+i+"]]"; 
-					objectIdDescription = asMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (asMissingInfo.getTipo()) {
-					case RIFERIMENTO:
-						if(importInformationMissing!=null && importInformationMissing.getIdAccordoServizioParteComune()!=null){
-							updateInfo = true;
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							IDAccordoCooperazione importInformationMissing_idAccordoCooperazione = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_idAccordoCooperazione = importInformationMissing.getIdAccordoCooperazione();
+							}
+							ImporterInformationMissingSetter.setInformationMissingAccordoCooperazione(this.archive, acMissingInfo, 
+									importInformationMissing_idAccordoCooperazione);
 						}
 						else{
-							infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-							infoException.setMissingInfoAccordoServizioParteComune(true);
-							throwException = true;
+							break;
 						}
-						break;
-					case STATO_ARCHIVIO:
-						if(delete==false) {
-							updateInfo = true;
+					}			
+				}
+				
+				
+				// -------- accordiServizioParteComune --------------
+				
+				if(!throwException && archiveInformationMissing.sizeAccordoServizioParteComuneList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioParteComuneList(); i++) {
+						org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
+								archiveInformationMissing.getAccordoServizioParteComune(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingAccordoServizioParteComune-"+i+"]]"; 
+						objectIdDescription = asMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
 						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(asMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(asMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(asMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						IDAccordo importInformationMissing_idAccordo = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_idAccordo = importInformationMissing.getIdAccordoServizioParteComune();
-						}
-						ImporterInformationMissingSetter.setInformationMissingAccordoServizioComposto(this.archive, asMissingInfo, 
-								importInformationMissing_idAccordo);
-					}
-					else{
-						break;
-					}
-				}			
-			}
-			
-			// -------- fruitori --------------
-			
-			if(!throwException && archiveInformationMissing.sizeFruitoreList()>0){
-				for (int i = 0; i < archiveInformationMissing.sizeFruitoreList(); i++) {
-					org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo = 
-							archiveInformationMissing.getFruitore(i);
-					
-					// *** object id ***
-					
-					importInformationMissing = null;
-					objectId = "[[InformationMissingFruitore-"+i+"]]"; 
-					objectIdDescription = fruitoreMissingInfo.getDescrizione();	
-					if(this.importInformationMissingCollection!=null){
-						importInformationMissing = this.importInformationMissingCollection.get(objectId);
-					}
-					
-					// *** campi da verificare ***
-					boolean updateInfo = false;
-					switch (fruitoreMissingInfo.getTipo()) {
-					case CONNETTORE:
-						if(delete==false) {
-							if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (asMissingInfo.getTipo()) {
+						case RIFERIMENTO:
+							if(importInformationMissing!=null && importInformationMissing.getIdAccordoServizioParteComune()!=null){
 								updateInfo = true;
 							}
 							else{
 								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
-								infoException.setMissingInfoConnettore(true);
+								infoException.setMissingInfoAccordoServizioParteComune(true);
 								throwException = true;
 							}
+							break;
+						case STATO_ARCHIVIO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
 						}
-						break;
-					case STATO_ARCHIVIO:
-						if(delete==false) {
-							updateInfo = true;
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(asMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(asMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(asMissingInfo.getDefault());
 						}
-						break;
-					}
-					if(infoException!=null) {
-						infoException.setMissingInfoProtocollo(fruitoreMissingInfo.getProtocollo());
-						infoException.setMissingInfoHeader(fruitoreMissingInfo.getHeader());
-						infoException.setMissingInfoFooter(fruitoreMissingInfo.getFooter());
-						infoException.setMissingInfoDefault(fruitoreMissingInfo.getDefault());
-					}
-					
-					if(!throwException && updateInfo){
-						// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
-						// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
-						// di information missing
-						Connettore importInformationMissing_connettore = null;
-						if(importInformationMissing!=null){
-							importInformationMissing_connettore = importInformationMissing.getConnettore();
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							IDAccordo importInformationMissing_idAccordo = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_idAccordo = importInformationMissing.getIdAccordoServizioParteComune();
+							}
+							ImporterInformationMissingSetter.setInformationMissingAccordoServizioParteComune(this.archive, asMissingInfo, 
+									importInformationMissing_idAccordo);
 						}
-						ImporterInformationMissingSetter.setInformationMissingFruitore(this.archive, fruitoreMissingInfo,
-								importInformationMissing_connettore);
-					}
-					else{
-						break;
-					}
-				}			
-			}
+						else{
+							break;
+						}
+					}			
+				}
+				
+				
+				// -------- accordoServizioParteSpecifica --------------
+				
+				if(!throwException && archiveInformationMissing.sizeAccordoServizioParteSpecificaList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioParteSpecificaList(); i++) {
+						org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo = 
+								archiveInformationMissing.getAccordoServizioParteSpecifica(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingAPS-"+i+"]]"; 
+						objectIdDescription = aspsMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (aspsMissingInfo.getTipo()) {
+						case CONNETTORE:
+							if(delete==false) {
+								if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+									updateInfo = true;
+								}
+								else{
+									infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+									infoException.setMissingInfoConnettore(true);
+									throwException = true;
+								}
+							}
+							break;
+						case STATO_ARCHIVIO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(aspsMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(aspsMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(aspsMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(aspsMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							Connettore importInformationMissing_connettore = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_connettore = importInformationMissing.getConnettore();
+							}
+							ImporterInformationMissingSetter.setInformationMissingAccordoServizioParteSpecifica(this.archive, aspsMissingInfo, 
+									importInformationMissing_connettore);
+						}
+						else{
+							break;
+						}
+					}			
+				}
+	
+				// -------- accordiServizioComposto --------------
+				
+				if(!throwException && archiveInformationMissing.sizeAccordoServizioCompostoList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioCompostoList(); i++) {
+						org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
+								archiveInformationMissing.getAccordoServizioComposto(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingAccordoServizioComposto-"+i+"]]"; 
+						objectIdDescription = asMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (asMissingInfo.getTipo()) {
+						case RIFERIMENTO:
+							if(importInformationMissing!=null && importInformationMissing.getIdAccordoServizioParteComune()!=null){
+								updateInfo = true;
+							}
+							else{
+								infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+								infoException.setMissingInfoAccordoServizioParteComune(true);
+								throwException = true;
+							}
+							break;
+						case STATO_ARCHIVIO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(asMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(asMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(asMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(asMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							IDAccordo importInformationMissing_idAccordo = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_idAccordo = importInformationMissing.getIdAccordoServizioParteComune();
+							}
+							ImporterInformationMissingSetter.setInformationMissingAccordoServizioComposto(this.archive, asMissingInfo, 
+									importInformationMissing_idAccordo);
+						}
+						else{
+							break;
+						}
+					}			
+				}
+				
+				// -------- fruitori --------------
+				
+				if(!throwException && archiveInformationMissing.sizeFruitoreList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizeFruitoreList(); i++) {
+						org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo = 
+								archiveInformationMissing.getFruitore(i);
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingFruitore-"+i+"]]"; 
+						objectIdDescription = fruitoreMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (fruitoreMissingInfo.getTipo()) {
+						case CONNETTORE:
+							if(delete==false) {
+								if(importInformationMissing!=null && importInformationMissing.getConnettore()!=null){
+									updateInfo = true;
+								}
+								else{
+									infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+									infoException.setMissingInfoConnettore(true);
+									throwException = true;
+								}
+							}
+							break;
+						case STATO_ARCHIVIO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(fruitoreMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(fruitoreMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(fruitoreMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(fruitoreMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							Connettore importInformationMissing_connettore = null;
+							if(importInformationMissing!=null){
+								importInformationMissing_connettore = importInformationMissing.getConnettore();
+							}
+							ImporterInformationMissingSetter.setInformationMissingFruitore(this.archive, fruitoreMissingInfo,
+									importInformationMissing_connettore);
+						}
+						else{
+							break;
+						}
+					}			
+				}
 			
+			}
+				
 			// se e' stata rilevata una mancanza sollevo eccezione
 			if(throwException){
 				throw infoException;
-			}		
-				
+			}
 						
 		}catch(ImportInformationMissingException e){
 			throw e;
@@ -1250,8 +1258,16 @@ public class ImporterInformationMissingUtils {
 			// *** Verifica riferimento Parte Comune ***
 			AccordoServizioParteComune aspc = null;
 			if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune().trim())){
+				String uriAPC = asps.getAccordoServizioParteComune();
 				try{
-					aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+					
+					// Il riferimento potrebbe contenere un nome dinamico rispetto all'erogatore
+					if(uriAPC!=null) {
+						uriAPC = ImporterInformationMissingSetter.replaceSoggettoProprietario(uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
+						uriAPC = ImporterInformationMissingSetter.replaceSoggettoErogatore(uriAPC, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
+					}
+					
+					aspc = this.registryReader.getAccordoServizioParteComune(this.idAccordoFactory.getIDAccordoFromUri(uriAPC));
 					if(aspc==null){
 						throw new Exception("getAccordoServizioParteComune return null"); 
 					}
@@ -1263,7 +1279,7 @@ public class ImporterInformationMissingUtils {
 						for (int i = 0; i < this.archive.getAccordiServizioParteComune().size(); i++) {
 							ArchiveAccordoServizioParteComune archiveAccordo = this.archive.getAccordiServizioParteComune().get(i);
 							IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(archiveAccordo.getAccordoServizioParteComune());
-							if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()))){
+							if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(uriAPC))){
 								found = true;
 								aspc = archiveAccordo.getAccordoServizioParteComune();
 								break;
@@ -1275,7 +1291,7 @@ public class ImporterInformationMissingUtils {
 							for (int i = 0; i < this.archive.getAccordiServizioComposto().size(); i++) {
 								ArchiveAccordoServizioParteComune archiveAccordo = this.archive.getAccordiServizioComposto().get(i);
 								IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(archiveAccordo.getAccordoServizioParteComune());
-								if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()))){
+								if(idAccordo.equals(this.idAccordoFactory.getIDAccordoFromUri(uriAPC))){
 									found = true;
 									aspc = archiveAccordo.getAccordoServizioParteComune();
 									break;
@@ -1284,7 +1300,7 @@ public class ImporterInformationMissingUtils {
 						}
 					}
 					if(!found){
-						throw new ProtocolException("Accordo di Servizio Parte Comune ["+asps.getAccordoServizioParteComune()+"], riferito dall'archivio, non esiste",notFound);
+						throw new ProtocolException("Accordo di Servizio Parte Comune ["+uriAPC+"], riferito dall'archivio, non esiste",notFound);
 					}
 				}
 			}

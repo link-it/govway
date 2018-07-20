@@ -229,10 +229,10 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE = "Porte Delegate";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE = "Porte Applicative";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE = "Accordi di Cooperazione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE = "Accordi di Servizio Parte Comune";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO = "Accordi di Servizio Composto";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA = "Accordi di Servizio Parte Specifica";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE = "Accordi Cooperazione";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE = "APIs";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO = "Accordi Servizio Composto";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA = "Servizi";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI = "Fruizioni";
 		
 	

@@ -43,6 +43,14 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="wizard" minOccurs="0" />
+				<xsd:element ref="operazione" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="operazione">
+		<xsd:complexType>
+			<xsd:sequence>
 				<xsd:element ref="soggetto" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="input" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>

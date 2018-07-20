@@ -78,6 +78,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Operazione }
+     */
+    public Operazione createOperazione() {
+        return new Operazione();
+    }
+
+    /**
      * Create an instance of {@link Default }
      */
     public Default createDefault() {

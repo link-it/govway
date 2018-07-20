@@ -1,6 +1,17 @@
-2017-07-16  Andrea Poli <apoli@link.it>
+2017-07-23  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0.rc1
+
+2017-07-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-395
+	Estese le funzionalità supportate dai wizard 'govlet':
+	- Aggiunta la possibilità di creare un header ed un footer per ogni pagina che richiede un input
+	- La dipendenza nell'ordine degli elementi è stata bypassata aggiungendo un livello 'operazione' all'xml. 
+	  L'ordine deve essere rispettato all'interno dell'elemento operazione ma possono essere definiti più elementi 
+	  che permettono quindi di avere un ordine complessivo arbitrario.
+	- Sono stati gestiti i valori di default adesso definibili anche per i connettori e per le credenziali
 
 2018-07-16  Andrea Poli <apoli@link.it>
 
