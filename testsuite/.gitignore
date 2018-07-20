@@ -4,5 +4,6 @@ dist
 doc
 bin
 local_env.xml
+.ant-targets-build.xml
 # Except this file
 !.gitignore

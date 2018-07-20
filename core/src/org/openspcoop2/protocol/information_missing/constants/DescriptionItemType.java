@@ -28,20 +28,24 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento FruitoreReplaceType xsd (tipo:string) 
+ * Enumeration dell'elemento DescriptionItemType xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "FruitoreReplaceType")
+@javax.xml.bind.annotation.XmlType(name = "DescriptionItemType")
 @javax.xml.bind.annotation.XmlEnum(String.class)
-public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneable {
+public enum DescriptionItemType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("CONNETTORE")
-	CONNETTORE ("CONNETTORE"),
-	@javax.xml.bind.annotation.XmlEnumValue("STATO_ARCHIVIO")
-	STATO_ARCHIVIO ("STATO_ARCHIVIO");
+	@javax.xml.bind.annotation.XmlEnumValue("title")
+	TITLE ("title"),
+	@javax.xml.bind.annotation.XmlEnumValue("subtitle")
+	SUBTITLE ("subtitle"),
+	@javax.xml.bind.annotation.XmlEnumValue("note")
+	NOTE ("note"),
+	@javax.xml.bind.annotation.XmlEnumValue("text")
+	TEXT ("text");
 	
 	
 	/** Value */
@@ -54,7 +58,7 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 
 
 	/** Official Constructor */
-	FruitoreReplaceType(String value)
+	DescriptionItemType(String value)
 	{
 		this.value = value;
 	}
@@ -65,7 +69,7 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(FruitoreReplaceType object){
+	public boolean equals(DescriptionItemType object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)
@@ -82,10 +86,10 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof FruitoreReplaceType) ){
+		if( !(object instanceof DescriptionItemType) ){
 			throw new RuntimeException("Wrong type: "+object.getClass().getName());
 		}
-		return this.equals(((FruitoreReplaceType)object));
+		return this.equals(((DescriptionItemType)object));
 	}
 	public String toString(boolean reportHTML){
 		return toString();
@@ -106,7 +110,7 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (FruitoreReplaceType tmp : values()) {
+		for (DescriptionItemType tmp : values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
@@ -115,7 +119,7 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	public static String[] toStringArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (FruitoreReplaceType tmp : values()) {
+		for (DescriptionItemType tmp : values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
@@ -124,7 +128,7 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 	public static String[] toEnumNameArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (FruitoreReplaceType tmp : values()) {
+		for (DescriptionItemType tmp : values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -135,16 +139,16 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 		return toEnumConstant(value)!=null;
 	}
 	
-	public static FruitoreReplaceType toEnumConstant(String value){
+	public static DescriptionItemType toEnumConstant(String value){
 		try{
 			return toEnumConstant(value,false);
 		}catch(NotFoundException notFound){
 			return null;
 		}
 	}
-	public static FruitoreReplaceType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
-		FruitoreReplaceType res = null;
-		for (FruitoreReplaceType tmp : values()) {
+	public static DescriptionItemType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		DescriptionItemType res = null;
+		for (DescriptionItemType tmp : values()) {
 			if(tmp.getValue().equals(value)){
 				res = tmp;
 				break;
@@ -164,8 +168,8 @@ public enum FruitoreReplaceType implements IEnumeration , Serializable , Cloneab
 		}
 	}
 	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
-		FruitoreReplaceType res = null;
-		for (FruitoreReplaceType tmp : values()) {
+		DescriptionItemType res = null;
+		for (DescriptionItemType tmp : values()) {
 			if(tmp.toString().equals(value)){
 				res = tmp;
 				break;

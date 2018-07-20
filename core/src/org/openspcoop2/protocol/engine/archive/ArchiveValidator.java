@@ -79,6 +79,10 @@ public class ArchiveValidator {
 		// ArchiveInformationMissing
 		if(archive.getInformationMissing()!=null){
 			importerInformationMissingUtils.validateAndFillInformationMissing(archive.getInformationMissing(),delete);
+			
+			// Templates Names
+//			ImporterInformationMissingSetter.replaceTemplatesNames(archive);
+			// NO!! Senno tutti i riferimenti con EMPTY saltano!!!! Va fatto per ultimo.
 		}
 			
 		// ServiziApplicativi

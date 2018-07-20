@@ -95,8 +95,8 @@
 		<!-- <copy todir="${stub_monitor_ws_client}">
 			<fileset dir="${dist_monitor_ws_client}" includes="*.jar" />
 		</copy> -->
-		<copy tofile="${stub_monitor_ws_client}/govway_monitorStub_cxf.jar">
-			<fileset dir="${dist_monitor_ws_client}" includes="govway_ws-monitor-client-all*.jar" />
+		<copy tofile="${stub_monitor_ws_client}/openspcoop2_monitorStub_cxf.jar">
+			<fileset dir="${dist_monitor_ws_client}" includes="openspcoop2_ws-monitor-client*.jar" />
 		</copy>
 	</target>
 	<target name="build_jar_stub" depends="build,copyStub" /> <!-- alias -->

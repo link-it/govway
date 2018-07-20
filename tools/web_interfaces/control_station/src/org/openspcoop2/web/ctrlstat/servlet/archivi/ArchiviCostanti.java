@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -110,6 +111,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_ARCHIVI_IMPORT = "Importa";
 	public final static String LABEL_ARCHIVI_EXPORT = "Esporta";
 	public final static String LABEL_ARCHIVI_ELIMINA = "Elimina";
+	public final static String LABEL_ARCHIVI_AVANTI = "Avanti";
 	public final static String LABEL_DOWNLOAD = "Download";
 	
 	public final static String LABEL_NOME_SOGGETTO = "Nome";
@@ -219,7 +221,7 @@ public class ArchiviCostanti {
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE = "Includi gli elementi riferiti";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE = "Configurazione 'Cascade'";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "Tipologia di salvataggio";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "Modalità";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "Porte di Dominio";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE = "Scope";
@@ -227,10 +229,10 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE = "Porte Delegate";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_APPLICATIVE = "Porte Applicative";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE = "Accordi di Cooperazione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE = "Accordi di Servizio Parte Comune";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO = "Accordi di Servizio Composto";
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA = "Accordi di Servizio Parte Specifica";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_COOPERAZIONE = "Accordi Cooperazione";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_COMUNE = "APIs";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_COMPOSTO = "Accordi Servizio Composto";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_ACCORDI_SERVIZIO_PARTE_SPECIFICA = "Servizi";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_FRUIZIONI = "Fruizioni";
 		
 	
@@ -284,7 +286,15 @@ public class ArchiviCostanti {
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_DELEGATA_XACML_POLICY_FILENAME = "xacmlPolicy.xml";
 		
 	public final static String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
-	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", "Dati applicativi", "Parametri di configurazione" };
+	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO , ConfigurazioneCostanti.LABEL_CONFIGURAZIONE };
+			//"Dati applicativi", "Parametri di configurazione" };
+	
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA = "interfaccia";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_STANDARD = "standard";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_MODALIA_INTERFACCIA_AVANZATA = "avanzata";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE = "connettore";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_HTTP = "http";
+	public final static String DEFAULT_PROPERTY_INFORMATION_MISSING_TIPO_CONNETTORE_QUALSIASI = "qualsiasi";
 	
 
 }

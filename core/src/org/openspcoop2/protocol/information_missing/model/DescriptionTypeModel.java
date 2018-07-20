@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.DescriptionType;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,50 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Openspcoop2 
+ * Model DescriptionType 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Openspcoop2Model extends AbstractModel<Openspcoop2> {
+public class DescriptionTypeModel extends AbstractModel<DescriptionType> {
 
-	public Openspcoop2Model(){
+	public DescriptionTypeModel(){
 	
 		super();
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new Field("wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new Field("operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.TIPO = new Field("tipo",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.VALORE = new Field("valore",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.LABEL = new Field("label",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.BOLD = new Field("bold",boolean.class,"DescriptionType",DescriptionType.class);
 	
 	}
 	
-	public Openspcoop2Model(IField father){
+	public DescriptionTypeModel(IField father){
 	
 		super(father);
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new ComplexField(father,"wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new ComplexField(father,"operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"DescriptionType",DescriptionType.class);
+		this.BOLD = new ComplexField(father,"bold",boolean.class,"DescriptionType",DescriptionType.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.WizardModel WIZARD = null;
+	public IField TIPO = null;
 	 
-	public org.openspcoop2.protocol.information_missing.model.OperazioneModel OPERAZIONE = null;
+	public IField VALORE = null;
+	 
+	public IField LABEL = null;
+	 
+	public IField BOLD = null;
 	 
 
 	@Override
-	public Class<Openspcoop2> getModeledClass(){
-		return Openspcoop2.class;
+	public Class<DescriptionType> getModeledClass(){
+		return DescriptionType.class;
 	}
 	
 	@Override

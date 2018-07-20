@@ -57,6 +57,7 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -358,7 +359,10 @@ public class SICAtoOpenSPCoopUtilities {
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
 //			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
 //			filtro.setProtocolProperties(protocolProperties);
-			List<IDAccordoCooperazione> list = registryReader.findIdAccordiCooperazione(filtro);
+			List<IDAccordoCooperazione> list = null;
+			try {
+				list = registryReader.findIdAccordiCooperazione(filtro);
+			}catch(RegistryNotFound notFound) {}
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
 			}
@@ -559,7 +563,10 @@ public class SICAtoOpenSPCoopUtilities {
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
 //			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
 //			filtro.setProtocolProperties(protocolProperties);
-			List<IDAccordo> list = registryReader.findIdAccordiServizioParteComune(filtro);
+			List<IDAccordo> list = null;
+			try {
+				list = registryReader.findIdAccordiServizioParteComune(filtro);
+			}catch(RegistryNotFound notFound) {}
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
 			}
@@ -610,7 +617,10 @@ public class SICAtoOpenSPCoopUtilities {
 //			org.openspcoop2.protocol.sdk.properties.ProtocolProperties protocolProperties = new org.openspcoop2.protocol.sdk.properties.ProtocolProperties();
 //			protocolProperties.addProperty(org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti.SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA, nome);
 //			filtro.setProtocolPropertiesServizi(protocolProperties);
-			List<IDServizio> list = registryReader.findIdAccordiServizioParteSpecifica(filtro);
+			List<IDServizio> list = null;
+			try {
+				list = registryReader.findIdAccordiServizioParteSpecifica(filtro);
+			}catch(RegistryNotFound notFound) {}
 			if(list==null || list.size()<=0){
 				throw new Exception("Non sono stati trovati accordi che contengono il nome '"+nome+"'");
 			}

@@ -237,6 +237,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 		}
 		
+		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+		
 		boolean configurazioneStandardNonApplicabile = false;
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
@@ -420,20 +422,27 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			// soggetto proprietario
 			de = new DataElement();
-			de.setType(DataElementType.TEXT);
+			if(multitenant) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			de.setValue(tipoENomeSoggetto);
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER);
-			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
-					);
-			dati.addElement(de);
+			if(multitenant) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER);
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
+						);
+				dati.addElement(de);
+			}
 
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
@@ -447,17 +456,25 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
 			// Aggiunta di un servizio applicativo passando dal menu' 
 			if(!useIdSogg){
-				de.setType(DataElementType.SELECT);
-				de.setPostBack(true);
 				
-				de.setValues(soggettiList);
-				de.setLabels(soggettiListLabel);
-				// selezion il provider (se)/che era stato precedentemente
-				// selezionato
-				// fix 2866
-				if ((provider != null) && !provider.equals("")) {
-					de.setSelected(provider);
+				if(multitenant) {
+					de.setType(DataElementType.SELECT);
+					de.setPostBack(true);
+				
+					de.setValues(soggettiList);
+					de.setLabels(soggettiListLabel);
+					// selezion il provider (se)/che era stato precedentemente
+					// selezionato
+					// fix 2866
+					if ((provider != null) && !provider.equals("")) {
+						de.setSelected(provider);
+					}
 				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(provider);
+				}
+								
 			} else {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(provider);
@@ -662,7 +679,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		de = new DataElement();
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO + " '" + nomeProtocollo + "'"); // non uso label perch' troppo grande
+		de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
 		if(avanzatoFruitore && config.isSupportoSbustamentoProtocollo()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_SBUSTAMENTO_PROTOCOLLO);
@@ -1313,6 +1330,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		try {
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
+			boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
@@ -1428,7 +1447,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<String>();
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-			if(!useIdSogg) {
+			if(!useIdSogg && multitenant) {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			}
 			if( showProtocolli ) {
@@ -1473,7 +1492,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setIdToRemove(sa.getId().toString());
 					e.addElement(de);
 
-					if(!useIdSogg) {
+					if(!useIdSogg && multitenant) {
 						de = new DataElement();
 						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
 								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sa.getIdSoggetto()+""),
@@ -1748,13 +1767,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
+		boolean sbustamentoSoapEnabled = !this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP));
+		boolean sbustamentoProtocolloEnabled = !this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo();
+		
 		//controllo aggiunta sezione trattamento messaggio appare se c'e' almeno un elemento sui 4 previsti che puo' essere visualizzato.
 		showTitleTrattamentoMessaggio = showTitleTrattamentoMessaggio && (
-				(!this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP))) ||
-				(!this.isModalitaStandard() && config.isSupportoSbustamentoProtocollo()) || 
-				!this.isModalitaStandard()				
+				sbustamentoSoapEnabled ||
+				sbustamentoProtocolloEnabled || 
+				this.isModalitaCompleta()			
 				);
-
+		
 		if(showTitleTrattamentoMessaggio){
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
@@ -1766,7 +1788,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-		if(!this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP))) {
+		if(sbustamentoSoapEnabled) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoSbustamentoSOAP);
 			if(sbustamento==null){
@@ -1788,12 +1810,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 		de = new DataElement();
 		if(nomeProtocollo!=null && !"".equals(nomeProtocollo)){
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " '" + nomeProtocollo + "'");
+			de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
 		}else{
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
 		}
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
-		if(!this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo()) {
+		if(sbustamentoProtocolloEnabled) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoSbustamentoInformazioniProtocollo);
 			if(sbustamentoInformazioniProtocolloRichiesta==null){

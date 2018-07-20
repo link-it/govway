@@ -45,6 +45,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -1224,9 +1225,49 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Controllo Traffico (AttivazionePolicy) ---
 	
-	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_globali() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(true);
+	}
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_erogazioniFruizioni() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(false);
+	}
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_all() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(null);
+	}
+	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies(Boolean globali) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try {
 			IPaginatedExpression pagExpr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			if(globali!=null) {
+				if(globali) {
+					pagExpr.isNull(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.NOME_PORTA);
+				}else {
+					pagExpr.isNotNull(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.NOME_PORTA);
+				}
+			}
+			List<IdActivePolicy> l = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono policy");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_fruizione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return _getAllIdControlloTraffico_activePolicies(RuoloPolicy.DELEGATA, nomePorta);
+	}
+	public List<IdActivePolicy> getAllIdControlloTraffico_activePolicies_erogazione(String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{	
+		return _getAllIdControlloTraffico_activePolicies(RuoloPolicy.APPLICATIVA, nomePorta);
+	}
+	private List<IdActivePolicy> _getAllIdControlloTraffico_activePolicies(RuoloPolicy ruoloPorta, String nomePorta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			pagExpr.equals(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.RUOLO_PORTA,ruoloPorta.getValue());
+			pagExpr.and();
+			pagExpr.equals(org.openspcoop2.core.controllo_traffico.AttivazionePolicy.model().FILTRO.NOME_PORTA,nomePorta);
 			List<IdActivePolicy> l = this.serviceManagerControlloTraffico.getAttivazionePolicyServiceSearch().findAllIds(pagExpr);
 			if(l==null || l.size()<=0) {
 				throw new NotFoundException("Non esistono policy");

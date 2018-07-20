@@ -47,6 +47,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -161,7 +162,32 @@ public final class Exporter extends Action {
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-				provenienza = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+				
+				String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				boolean gestioneFruitori = false;
+				if(tipologia!=null) {
+					if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+						gestioneFruitori = true;
+					}
+				}
+				
+				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+					if(gestioneFruitori) {
+						provenienza = new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST);
+					}
+					else {
+						provenienza = new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST);
+					}
+				}
+				else {
+					if(gestioneFruitori) {
+						provenienza = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+					}
+					else {
+						provenienza = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
+					}
+				}
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
 				for (Object id : identificativi) {
 					IDServizio idServizio = (IDServizio) id;
@@ -254,7 +280,7 @@ public final class Exporter extends Action {
 			// Controllo se ho terminato di impostare le proprieta' e devo procedere con l'esportazione.
 			boolean fineSceltaOpzioniEsportazione = !archiviHelper.isEditModeInProgress()  &&
 					(postBackElementName==null || "".equals(postBackElementName));
-			boolean configurationEnabled = ArchiveType.CONFIGURAZIONE.equals(archiveType) && !archiviCore.isExportArchivi_standard();
+			boolean configurationEnabled = ArchiveType.CONFIGURAZIONE.equals(archiveType) && !archiviCore.isExportArchive_configurazione_soloDumpCompleto();
 			boolean cascadeEnabled = !ArchiveType.CONFIGURAZIONE.equals(archiveType) && archiviCore.isCascadeEnabled(exportModes, exportMode);
 			boolean nonSonoPresentiScelteEsportazione = (exportModes.size()==1) && !cascadeEnabled && !configurationEnabled;
 			if( !errore && 
@@ -374,6 +400,8 @@ public final class Exporter extends Action {
 			
 			pd.setDati(dati);
 
+			pd.setLabelBottoneInvia(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
+			
 			if(errore){
 				pd.setMessage(motivoErrore);
 				

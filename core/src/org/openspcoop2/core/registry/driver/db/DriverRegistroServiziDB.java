@@ -9040,6 +9040,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filtroRicerca.getVersione()!=null){
 					this.log.debug("versioneServizio stmt.setString("+filtroRicerca.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicerca.getVersione());
+					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
 					StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);

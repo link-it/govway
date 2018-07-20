@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.Default;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,42 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Openspcoop2 
+ * Model Default 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Openspcoop2Model extends AbstractModel<Openspcoop2> {
+public class DefaultModel extends AbstractModel<Default> {
 
-	public Openspcoop2Model(){
+	public DefaultModel(){
 	
 		super();
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new Field("wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new Field("operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaDefaultModel(new Field("proprieta",org.openspcoop2.protocol.information_missing.ProprietaDefault.class,"Default",Default.class));
+		this.VALORE = new Field("valore",java.lang.String.class,"Default",Default.class);
 	
 	}
 	
-	public Openspcoop2Model(IField father){
+	public DefaultModel(IField father){
 	
 		super(father);
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new ComplexField(father,"wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new ComplexField(father,"operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaDefaultModel(new ComplexField(father,"proprieta",org.openspcoop2.protocol.information_missing.ProprietaDefault.class,"Default",Default.class));
+		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"Default",Default.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.WizardModel WIZARD = null;
+	public org.openspcoop2.protocol.information_missing.model.ProprietaDefaultModel PROPRIETA = null;
 	 
-	public org.openspcoop2.protocol.information_missing.model.OperazioneModel OPERAZIONE = null;
+	public IField VALORE = null;
 	 
 
 	@Override
-	public Class<Openspcoop2> getModeledClass(){
-		return Openspcoop2.class;
+	public Class<Default> getModeledClass(){
+		return Default.class;
 	}
 	
 	@Override

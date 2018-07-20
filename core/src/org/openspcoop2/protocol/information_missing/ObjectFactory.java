@@ -78,6 +78,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Operazione }
+     */
+    public Operazione createOperazione() {
+        return new Operazione();
+    }
+
+    /**
+     * Create an instance of {@link Default }
+     */
+    public Default createDefault() {
+        return new Default();
+    }
+
+    /**
+     * Create an instance of {@link Description }
+     */
+    public Description createDescription() {
+        return new Description();
+    }
+
+    /**
      * Create an instance of {@link Wizard }
      */
     public Wizard createWizard() {
@@ -99,6 +120,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ProprietaDefault }
+     */
+    public ProprietaDefault createProprietaDefault() {
+        return new ProprietaDefault();
+    }
+
+    /**
      * Create an instance of {@link Fruitore }
      */
     public Fruitore createFruitore() {
@@ -117,6 +145,13 @@ public class ObjectFactory {
      */
     public Requisiti createRequisiti() {
         return new Requisiti();
+    }
+
+    /**
+     * Create an instance of {@link DescriptionType }
+     */
+    public DescriptionType createDescriptionType() {
+        return new DescriptionType();
     }
 
     /**
@@ -152,6 +187,32 @@ public class ObjectFactory {
      */
     public Openspcoop2 createOpenspcoop2() {
         return new Openspcoop2();
+    }
+
+    private final static QName _Footer = new QName("http://www.openspcoop2.org/protocol/information_missing", "footer");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="footer")
+    public JAXBElement<Description> createFooter() {
+        return new JAXBElement<Description>(_Footer, Description.class, null, this.createDescription());
+    }
+    public JAXBElement<Description> createFooter(Description footer) {
+        return new JAXBElement<Description>(_Footer, Description.class, null, footer);
+    }
+
+    private final static QName _Header = new QName("http://www.openspcoop2.org/protocol/information_missing", "header");
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="header")
+    public JAXBElement<Description> createHeader() {
+        return new JAXBElement<Description>(_Header, Description.class, null, this.createDescription());
+    }
+    public JAXBElement<Description> createHeader(Description header) {
+        return new JAXBElement<Description>(_Header, Description.class, null, header);
     }
 
     private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");

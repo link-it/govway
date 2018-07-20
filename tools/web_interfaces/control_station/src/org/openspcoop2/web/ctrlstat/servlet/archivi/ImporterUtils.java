@@ -35,13 +35,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
@@ -61,8 +61,6 @@ import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -90,7 +88,7 @@ public class ImporterUtils {
 	}
 
 	public List<String> getIdSoggetti(List<String> protocolli,String importMode, 
-			String protocolloMissingInput,String tipoPdDMissingInput, Wizard wizard ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, ProtocolException, DriverControlStationException, DriverControlStationNotFound{
+			String protocolloMissingInput,String tipoPdDMissingInput, Wizard wizard, ArchiviHelper helper) throws Exception{
 		List<String> listIdSoggetti = new ArrayList<String>();
 		
 		List<String> protocolliDaScorrere = new ArrayList<String>();
@@ -167,7 +165,7 @@ public class ImporterUtils {
 		
 		String criteri = "";
 		if(protocolloMissingInput!=null){
-			criteri+=" protocollo:"+protocolloMissingInput;
+			criteri+=" "+Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI+":"+helper.getLabelProtocollo(protocolloMissingInput);
 		}
 		if(tipoPdDMissingInput!=null){
 			criteri+=" tipoPdDAssociata:"+tipoPdDMissingInput;
@@ -183,12 +181,19 @@ public class ImporterUtils {
 		return listIdSoggettiFiltrati;
 	}
 	
-	public List<String> getIdAccordiServizioParteComune(List<String> protocolli,String importMode) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, ProtocolException{
+	public List<String> getIdAccordiServizioParteComune(List<String> protocolli,String importMode, 
+			String protocolloMissingInput, ArchiviHelper helper) throws Exception{
 		List<String> listIdAccordiServizioParteComune = new ArrayList<String>();
-		listIdAccordiServizioParteComune.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocollo = protocolli.get(i);
+						
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
+				
+				if(protocolloMissingInput!=null){
+					if(protocolloMissingInput.equals(protocollo)==false) {
+						continue;
+					}
+				}
 				
 				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				IArchive archiveEngine = pf.createArchive();
@@ -212,17 +217,35 @@ public class ImporterUtils {
 			}
 		}
 		
-		java.util.Collections.sort(listIdAccordiServizioParteComune);
+		if(listIdAccordiServizioParteComune.size()<=0){
+			if(protocolloMissingInput==null){
+				throw new ProtocolException("Non risulta configurata alcuna API. Tale configurazione è richiesta per procedere con l'importazione");
+			}
+			else {
+				throw new ProtocolException("Non risulta configurata alcuna API ("+Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI+": "+helper.getLabelProtocollo(protocolloMissingInput)
+					+"). Tale configurazione è richiesta per procedere con l'importazione");
+			}
+		}
 		
+		if(listIdAccordiServizioParteComune.size()!=1)
+			listIdAccordiServizioParteComune.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
+		java.util.Collections.sort(listIdAccordiServizioParteComune);
 		return listIdAccordiServizioParteComune;
+		
 	}
 	
-	public List<String> getIdAccordiCooperazione(List<String> protocolli,String importMode) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, ProtocolException{
+	public List<String> getIdAccordiCooperazione(List<String> protocolli,String importMode, 
+			String protocolloMissingInput, ArchiviHelper helper) throws Exception{
 		List<String> listIdAccordiCooperazione = new ArrayList<String>();
-		listIdAccordiCooperazione.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocollo = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
+				
+				if(protocolloMissingInput!=null){
+					if(protocolloMissingInput.equals(protocollo)==false) {
+						continue;
+					}
+				}
 				
 				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				IArchive archiveEngine = pf.createArchive();
@@ -246,9 +269,21 @@ public class ImporterUtils {
 			}
 		}
 		
-		java.util.Collections.sort(listIdAccordiCooperazione);
+		if(listIdAccordiCooperazione.size()<=0){
+			if(protocolloMissingInput==null){
+				throw new ProtocolException("Non risulta configurato alcun Accordo di Cooperazione. Tale configurazione è richiesta per procedere con l'importazione");
+			}
+			else {
+				throw new ProtocolException("Non risulta configurato alcun Accordo di Cooperazione ("+Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI+": "+helper.getLabelProtocollo(protocolloMissingInput)
+					+"). Tale configurazione è richiesta per procedere con l'importazione");
+			}
+		}
 		
+		if(listIdAccordiCooperazione.size()!=1)
+			listIdAccordiCooperazione.add(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED);
+		java.util.Collections.sort(listIdAccordiCooperazione);
 		return listIdAccordiCooperazione;
+		
 	}
 
 	public Hashtable<String,String> getImportModesWithProtocol(List<String> protocolli) throws ProtocolException{

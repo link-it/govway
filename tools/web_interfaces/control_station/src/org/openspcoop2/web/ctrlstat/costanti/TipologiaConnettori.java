@@ -23,6 +23,8 @@
 
 package org.openspcoop2.web.ctrlstat.costanti;
 
+import java.io.Serializable;
+
 /**
  * TipologiaConnettori
  * 
@@ -33,7 +35,7 @@ package org.openspcoop2.web.ctrlstat.costanti;
  * @version $Rev$, $Date$
  * 
  */
-public enum TipologiaConnettori {
+public enum TipologiaConnettori implements Serializable {
 
 	// public static final int CREATE = 1;
 	// public static final int UPDATE = 2;

@@ -35,6 +35,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
@@ -54,6 +56,8 @@ import org.openspcoop2.protocol.information_missing.constants.Costanti;
 import org.openspcoop2.protocol.information_missing.constants.ReplaceKeywordType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 
 /**
  * ImporterInformationMissingSetter
@@ -162,9 +166,13 @@ public class ImporterInformationMissingSetter {
 		
 	}
 	
-	public static void setInformationMissingFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitore) throws ProtocolException{
+	public static void setInformationMissingFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitore,
+			Connettore connettore) throws ProtocolException{
 		
 		switch (fruitore.getTipo()) {
+		case CONNETTORE:
+			setInformationMissing_ConnettoreFruitore(archive, fruitore, connettore);
+			break;
 		case STATO_ARCHIVIO:
 			setInformationMissing_StatoFruitore(archive, fruitore);
 			break;
@@ -389,7 +397,8 @@ public class ImporterInformationMissingSetter {
 		
 		// Accordi di Servizio Parte Specifica 
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
-			AccordoServizioParteSpecifica as = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
+			ArchiveAccordoServizioParteSpecifica archiveAS = archive.getAccordiServizioParteSpecifica().get(i); 
+			AccordoServizioParteSpecifica as = archiveAS.getAccordoServizioParteSpecifica();
 			String tipoSoggettoReferente = as.getTipoSoggettoErogatore();
 			String nomeSoggettoReferente = as.getNomeSoggettoErogatore();
 			if(matchSoggetto(soggetto.getReplaceMatch(), 
@@ -759,12 +768,7 @@ public class ImporterInformationMissingSetter {
 					boolean matchTipoNome = matchServizio(aspsMissingInfo.getReplaceMatch(), 
 							asps.getTipo(), asps.getNome());
 						
-					String uriAccordo = null;
-					try{
-						uriAccordo = IDServizioFactory.getInstance().getUriFromAccordo(asps);
-					}catch(Exception e){
-						throw new ProtocolException(e.getMessage(),e);
-					}
+					String uriAccordo = asps.getAccordoServizioParteComune();
 					boolean matchAccordo = matchAccordo(aspsMissingInfo.getReplaceMatch(), 
 							uriAccordo);
 								
@@ -821,6 +825,36 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* FRUITORE **********
 	
+	private static void setInformationMissing_ConnettoreFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo, 
+			Connettore connettore) throws ProtocolException{
+		
+		// Accordi
+		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+			Fruitore fruitore = archive.getAccordiFruitori().get(i).getFruitore();
+			if(fruitore!=null){
+				
+				if(matchSoggetto(fruitoreMissingInfo.getReplaceMatch(), 
+						fruitore.getTipo(), fruitore.getNome())){
+					
+					if(fruitore.getConnettore()==null) {
+						fruitore.setConnettore(connettore);
+					}
+					else {
+						fruitore.getConnettore().setCustom(connettore.getCustom());
+						fruitore.getConnettore().setTipo(connettore.getTipo());
+						while(fruitore.getConnettore().sizePropertyList()>0)
+							fruitore.getConnettore().removeProperty(0);
+						if(connettore.sizePropertyList()>0)
+							fruitore.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
+					}
+					
+				}
+				
+			}
+		}
+		
+	}
+	
 	private static void setInformationMissing_StatoFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo) throws ProtocolException{
 		
 		// Fruitori
@@ -845,7 +879,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* REPLACE NAME **********
 	
-	private static String replaceSoggettoProprietario(String original, String tipoSoggetto, String nomeSoggetto){
+	protected static String replaceSoggettoProprietario(String original, String tipoSoggetto, String nomeSoggetto){
 		
 		if(original==null){
 			return null;
@@ -866,7 +900,7 @@ public class ImporterInformationMissingSetter {
 		return returnValue;
 	}
 	
-	private static String replaceSoggettoErogatore(String original, String tipoSoggetto, String nomeSoggetto){
+	protected static String replaceSoggettoErogatore(String original, String tipoSoggetto, String nomeSoggetto){
 		
 		if(original==null){
 			return null;
@@ -943,15 +977,25 @@ public class ImporterInformationMissingSetter {
 		// Soggetti
 		for (int i = 0; i < archive.getSoggetti().size(); i++) {
 			org.openspcoop2.core.registry.Soggetto soggetto = archive.getSoggetti().get(i).getSoggettoRegistro();
-			if(soggetto!=null && soggetto.getConnettore()!=null){
-				if(soggetto.getConnettore().sizePropertyList()>0){
-					for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
-						org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
-						p.setNome(replaceSoggettoProprietario(p.getNome(), 
-								soggetto.getTipo(),soggetto.getNome()));
-						p.setValore(replaceSoggettoProprietario(p.getValore(), 
-								soggetto.getTipo(),soggetto.getNome()));
+			if(soggetto!=null) {
+				if(soggetto.getConnettore()!=null){
+					if(soggetto.getConnettore().sizePropertyList()>0){
+						for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
+							org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
+							p.setNome(replaceSoggettoProprietario(p.getNome(), 
+									soggetto.getTipo(),soggetto.getNome()));
+							p.setValore(replaceSoggettoProprietario(p.getValore(), 
+									soggetto.getTipo(),soggetto.getNome()));
+						}
 					}
+				}
+				if(soggetto.getIdentificativoPorta()!=null) {
+					soggetto.setIdentificativoPorta(replaceSoggettoProprietario(soggetto.getIdentificativoPorta(), 
+									soggetto.getTipo(),soggetto.getNome()));
+				}
+				if(soggetto.getPortaDominio()!=null) {
+					soggetto.setPortaDominio(replaceSoggettoProprietario(soggetto.getPortaDominio(), 
+									soggetto.getTipo(),soggetto.getNome()));
 				}
 			}
 		}
@@ -1168,7 +1212,14 @@ public class ImporterInformationMissingSetter {
 		
 		// AccordoServizioParteSpecifica
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
-			AccordoServizioParteSpecifica as = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
+			
+			ArchiveAccordoServizioParteSpecifica archiveAS = archive.getAccordiServizioParteSpecifica().get(i); 
+			AccordoServizioParteSpecifica as = archiveAS.getAccordoServizioParteSpecifica();
+			
+			if(as.getAccordoServizioParteComune()!=null) {
+				as.setAccordoServizioParteComune(replaceSoggettoProprietario(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+				as.setAccordoServizioParteComune(replaceSoggettoErogatore(as.getAccordoServizioParteComune(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+			}
 			
 			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
 				for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
@@ -1224,17 +1275,43 @@ public class ImporterInformationMissingSetter {
 					}
 				}
 			}
+			
+			if(archiveAS.getMappingPorteApplicativeAssociate()!=null && !archiveAS.getMappingPorteApplicativeAssociate().isEmpty()) {
+				for (MappingErogazionePortaApplicativa mappingPA : archiveAS.getMappingPorteApplicativeAssociate()) {
+					if(mappingPA.getIdPortaApplicativa()!=null && mappingPA.getIdPortaApplicativa().getNome()!=null) {
+						mappingPA.getIdPortaApplicativa().setNome(replaceSoggettoProprietario(mappingPA.getIdPortaApplicativa().getNome(), 
+								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+						mappingPA.getIdPortaApplicativa().setNome(replaceSoggettoErogatore(mappingPA.getIdPortaApplicativa().getNome(), 
+								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+						mappingPA.getIdPortaApplicativa().setNome(replaceServizio(mappingPA.getIdPortaApplicativa().getNome(), 
+								as.getTipo(),as.getNome()));
+					}
+					if(mappingPA.getIdServizio()!=null) {
+						replaceTemplatesNames(mappingPA.getIdServizio(),
+								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore(),
+								as.getTipo(),as.getNome(),
+								true);
+					}
+				}
+			}
 		}
 		
 		// Fruitori
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
-			Fruitore fr = archive.getAccordiFruitori().get(i).getFruitore();
+			ArchiveFruitore archiveFr = archive.getAccordiFruitori().get(i);
+			Fruitore fr = archiveFr.getFruitore();
 			IDServizio idAccordo = archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
 			String tipoSoggettoErogatore = null;
 			String nomeSoggettoErogatore = null;
+			String tipoServizio = null;
+			String nomeServizio = null;
 			if(idAccordo!=null && idAccordo.getSoggettoErogatore()!=null){
 				tipoSoggettoErogatore = idAccordo.getSoggettoErogatore().getTipo();
 				nomeSoggettoErogatore = idAccordo.getSoggettoErogatore().getNome();
+			}
+			if(idAccordo!=null) {
+				tipoServizio = idAccordo.getTipo();
+				nomeServizio = idAccordo.getNome();
 			}
 			if(fr.getConnettore()!=null){
 				for (int j = 0; j < fr.getConnettore().sizePropertyList(); j++) {
@@ -1255,6 +1332,80 @@ public class ImporterInformationMissingSetter {
 					}	
 				}
 			}
+			
+			if(archiveFr.getMappingPorteDelegateAssociate()!=null && !archiveFr.getMappingPorteDelegateAssociate().isEmpty()) {
+				for (MappingFruizionePortaDelegata mappingPD : archiveFr.getMappingPorteDelegateAssociate()) {
+					if(mappingPD.getIdPortaDelegata()!=null && mappingPD.getIdPortaDelegata().getNome()!=null) {
+						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
+							mappingPD.getIdPortaDelegata().setNome(replaceSoggettoErogatore(mappingPD.getIdPortaDelegata().getNome(), 
+									tipoSoggettoErogatore,nomeSoggettoErogatore));
+						}
+						if(tipoServizio!=null && nomeServizio!=null){
+							mappingPD.getIdPortaDelegata().setNome(replaceServizio(mappingPD.getIdPortaDelegata().getNome(), 
+									tipoServizio,nomeServizio));
+						}
+						mappingPD.getIdPortaDelegata().setNome(replaceSoggettoProprietario(mappingPD.getIdPortaDelegata().getNome(), 
+								fr.getTipo(), fr.getNome()));
+						mappingPD.getIdPortaDelegata().setNome(replaceFruitore(mappingPD.getIdPortaDelegata().getNome(), 
+								fr.getTipo(), fr.getNome()));
+					}
+					if(mappingPD.getIdServizio()!=null) {
+						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null){
+							replaceTemplatesNames(mappingPD.getIdServizio(),
+									tipoSoggettoErogatore,nomeSoggettoErogatore,
+									tipoServizio,nomeServizio,
+									false);
+						}
+					}
+					if(mappingPD.getIdFruitore()!=null) {
+						if(mappingPD.getIdFruitore().getTipo()!=null) {
+							mappingPD.getIdFruitore().setTipo(replaceSoggettoProprietario(mappingPD.getIdFruitore().getTipo(), 
+									fr.getTipo(), fr.getNome()));
+							mappingPD.getIdFruitore().setTipo(replaceFruitore(mappingPD.getIdFruitore().getTipo(), 
+									fr.getTipo(), fr.getNome()));
+						}
+						if(mappingPD.getIdFruitore().getNome()!=null) {
+							mappingPD.getIdFruitore().setNome(replaceSoggettoProprietario(mappingPD.getIdFruitore().getNome(), 
+									fr.getTipo(), fr.getNome()));
+							mappingPD.getIdFruitore().setNome(replaceFruitore(mappingPD.getIdFruitore().getNome(), 
+									fr.getTipo(), fr.getNome()));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private static void replaceTemplatesNames(IDServizio idServizio, 
+			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
+			String tipoServizio, String nomeServizio,
+			boolean replaceProprietario) {
+		if(idServizio.getSoggettoErogatore()!=null) {
+			if(idServizio.getSoggettoErogatore().getTipo()!=null) {
+				if(replaceProprietario) {
+					idServizio.getSoggettoErogatore().setTipo(replaceSoggettoProprietario(idServizio.getSoggettoErogatore().getTipo(), 
+							tipoSoggettoErogatore,nomeSoggettoErogatore));
+				}
+				idServizio.getSoggettoErogatore().setTipo(replaceSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo(), 
+						tipoSoggettoErogatore,nomeSoggettoErogatore));
+			}
+			if(idServizio.getSoggettoErogatore().getNome()!=null) {
+				if(replaceProprietario) {
+					idServizio.getSoggettoErogatore().setNome(replaceSoggettoProprietario(idServizio.getSoggettoErogatore().getNome(), 
+							tipoSoggettoErogatore,nomeSoggettoErogatore));
+				}
+				idServizio.getSoggettoErogatore().setNome(replaceSoggettoErogatore(idServizio.getSoggettoErogatore().getNome(), 
+						tipoSoggettoErogatore,nomeSoggettoErogatore));
+			}
+		}
+		if(idServizio.getTipo()!=null) {
+			idServizio.setTipo(replaceServizio(idServizio.getTipo(), 
+					tipoServizio,nomeServizio));
+		}
+		if(idServizio.getNome()!=null) {
+			idServizio.setNome(replaceServizio(idServizio.getNome(), 
+					tipoServizio,nomeServizio));
 		}
 	}
 }

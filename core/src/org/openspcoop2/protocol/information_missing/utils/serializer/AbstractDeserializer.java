@@ -23,20 +23,25 @@ package org.openspcoop2.protocol.information_missing.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
+import org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchType;
+import org.openspcoop2.protocol.information_missing.Fruitore;
+import org.openspcoop2.protocol.information_missing.ProprietaDefault;
+import org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.information_missing.DescriptionType;
+import org.openspcoop2.protocol.information_missing.Default;
+import org.openspcoop2.protocol.information_missing.AccordoServizioParteComune;
 import org.openspcoop2.protocol.information_missing.ServizioApplicativo;
+import org.openspcoop2.protocol.information_missing.RequisitoProtocollo;
+import org.openspcoop2.protocol.information_missing.AccordoCooperazione;
+import org.openspcoop2.protocol.information_missing.Requisiti;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.Operazione;
 import org.openspcoop2.protocol.information_missing.Soggetto;
 import org.openspcoop2.protocol.information_missing.Input;
-import org.openspcoop2.protocol.information_missing.AccordoCooperazione;
-import org.openspcoop2.protocol.information_missing.AccordoServizioParteComune;
-import org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica;
-import org.openspcoop2.protocol.information_missing.Fruitore;
-import org.openspcoop2.protocol.information_missing.RequisitoProtocollo;
-import org.openspcoop2.protocol.information_missing.Requisiti;
 import org.openspcoop2.protocol.information_missing.Proprieta;
-import org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType;
 import org.openspcoop2.protocol.information_missing.Wizard;
+import org.openspcoop2.protocol.information_missing.Description;
 
 import java.io.InputStream;
 import java.io.File;
@@ -53,6 +58,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 
 
 
+	/*
+	 =================================================================================
+	 Object: ReplaceMatchFieldType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ReplaceMatchFieldType readReplaceMatchFieldType(String fileName) throws DeserializerException {
+		return (ReplaceMatchFieldType) this.xmlToObj(fileName, ReplaceMatchFieldType.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ReplaceMatchFieldType readReplaceMatchFieldType(File file) throws DeserializerException {
+		return (ReplaceMatchFieldType) this.xmlToObj(file, ReplaceMatchFieldType.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ReplaceMatchFieldType readReplaceMatchFieldType(InputStream in) throws DeserializerException {
+		return (ReplaceMatchFieldType) this.xmlToObj(in, ReplaceMatchFieldType.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ReplaceMatchFieldType readReplaceMatchFieldType(byte[] in) throws DeserializerException {
+		return (ReplaceMatchFieldType) this.xmlToObj(in, ReplaceMatchFieldType.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ReplaceMatchFieldType readReplaceMatchFieldTypeFromString(String in) throws DeserializerException {
+		return (ReplaceMatchFieldType) this.xmlToObj(in.getBytes(), ReplaceMatchFieldType.class);
+	}	
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: replaceMatchType
@@ -112,6 +180,384 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public ReplaceMatchType readReplaceMatchTypeFromString(String in) throws DeserializerException {
 		return (ReplaceMatchType) this.xmlToObj(in.getBytes(), ReplaceMatchType.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Fruitore
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Fruitore readFruitore(String fileName) throws DeserializerException {
+		return (Fruitore) this.xmlToObj(fileName, Fruitore.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Fruitore readFruitore(File file) throws DeserializerException {
+		return (Fruitore) this.xmlToObj(file, Fruitore.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Fruitore readFruitore(InputStream in) throws DeserializerException {
+		return (Fruitore) this.xmlToObj(in, Fruitore.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Fruitore readFruitore(byte[] in) throws DeserializerException {
+		return (Fruitore) this.xmlToObj(in, Fruitore.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Fruitore readFruitoreFromString(String in) throws DeserializerException {
+		return (Fruitore) this.xmlToObj(in.getBytes(), Fruitore.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: ProprietaDefault
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaDefault readProprietaDefault(String fileName) throws DeserializerException {
+		return (ProprietaDefault) this.xmlToObj(fileName, ProprietaDefault.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaDefault readProprietaDefault(File file) throws DeserializerException {
+		return (ProprietaDefault) this.xmlToObj(file, ProprietaDefault.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaDefault readProprietaDefault(InputStream in) throws DeserializerException {
+		return (ProprietaDefault) this.xmlToObj(in, ProprietaDefault.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaDefault readProprietaDefault(byte[] in) throws DeserializerException {
+		return (ProprietaDefault) this.xmlToObj(in, ProprietaDefault.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ProprietaDefault}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ProprietaDefault readProprietaDefaultFromString(String in) throws DeserializerException {
+		return (ProprietaDefault) this.xmlToObj(in.getBytes(), ProprietaDefault.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: AccordoServizioParteSpecifica
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(String fileName) throws DeserializerException {
+		return (AccordoServizioParteSpecifica) this.xmlToObj(fileName, AccordoServizioParteSpecifica.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(File file) throws DeserializerException {
+		return (AccordoServizioParteSpecifica) this.xmlToObj(file, AccordoServizioParteSpecifica.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(InputStream in) throws DeserializerException {
+		return (AccordoServizioParteSpecifica) this.xmlToObj(in, AccordoServizioParteSpecifica.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(byte[] in) throws DeserializerException {
+		return (AccordoServizioParteSpecifica) this.xmlToObj(in, AccordoServizioParteSpecifica.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteSpecifica readAccordoServizioParteSpecificaFromString(String in) throws DeserializerException {
+		return (AccordoServizioParteSpecifica) this.xmlToObj(in.getBytes(), AccordoServizioParteSpecifica.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: DescriptionType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DescriptionType readDescriptionType(String fileName) throws DeserializerException {
+		return (DescriptionType) this.xmlToObj(fileName, DescriptionType.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DescriptionType readDescriptionType(File file) throws DeserializerException {
+		return (DescriptionType) this.xmlToObj(file, DescriptionType.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DescriptionType readDescriptionType(InputStream in) throws DeserializerException {
+		return (DescriptionType) this.xmlToObj(in, DescriptionType.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DescriptionType readDescriptionType(byte[] in) throws DeserializerException {
+		return (DescriptionType) this.xmlToObj(in, DescriptionType.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.DescriptionType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DescriptionType readDescriptionTypeFromString(String in) throws DeserializerException {
+		return (DescriptionType) this.xmlToObj(in.getBytes(), DescriptionType.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Default
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Default readDefault(String fileName) throws DeserializerException {
+		return (Default) this.xmlToObj(fileName, Default.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Default readDefault(File file) throws DeserializerException {
+		return (Default) this.xmlToObj(file, Default.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Default readDefault(InputStream in) throws DeserializerException {
+		return (Default) this.xmlToObj(in, Default.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Default readDefault(byte[] in) throws DeserializerException {
+		return (Default) this.xmlToObj(in, Default.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Default}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Default readDefaultFromString(String in) throws DeserializerException {
+		return (Default) this.xmlToObj(in.getBytes(), Default.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: AccordoServizioParteComune
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteComune readAccordoServizioParteComune(String fileName) throws DeserializerException {
+		return (AccordoServizioParteComune) this.xmlToObj(fileName, AccordoServizioParteComune.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteComune readAccordoServizioParteComune(File file) throws DeserializerException {
+		return (AccordoServizioParteComune) this.xmlToObj(file, AccordoServizioParteComune.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteComune readAccordoServizioParteComune(InputStream in) throws DeserializerException {
+		return (AccordoServizioParteComune) this.xmlToObj(in, AccordoServizioParteComune.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteComune readAccordoServizioParteComune(byte[] in) throws DeserializerException {
+		return (AccordoServizioParteComune) this.xmlToObj(in, AccordoServizioParteComune.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoServizioParteComune readAccordoServizioParteComuneFromString(String in) throws DeserializerException {
+		return (AccordoServizioParteComune) this.xmlToObj(in.getBytes(), AccordoServizioParteComune.class);
 	}	
 	
 	
@@ -181,6 +627,195 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: RequisitoProtocollo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RequisitoProtocollo readRequisitoProtocollo(String fileName) throws DeserializerException {
+		return (RequisitoProtocollo) this.xmlToObj(fileName, RequisitoProtocollo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RequisitoProtocollo readRequisitoProtocollo(File file) throws DeserializerException {
+		return (RequisitoProtocollo) this.xmlToObj(file, RequisitoProtocollo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RequisitoProtocollo readRequisitoProtocollo(InputStream in) throws DeserializerException {
+		return (RequisitoProtocollo) this.xmlToObj(in, RequisitoProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RequisitoProtocollo readRequisitoProtocollo(byte[] in) throws DeserializerException {
+		return (RequisitoProtocollo) this.xmlToObj(in, RequisitoProtocollo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RequisitoProtocollo readRequisitoProtocolloFromString(String in) throws DeserializerException {
+		return (RequisitoProtocollo) this.xmlToObj(in.getBytes(), RequisitoProtocollo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: AccordoCooperazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoCooperazione readAccordoCooperazione(String fileName) throws DeserializerException {
+		return (AccordoCooperazione) this.xmlToObj(fileName, AccordoCooperazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoCooperazione readAccordoCooperazione(File file) throws DeserializerException {
+		return (AccordoCooperazione) this.xmlToObj(file, AccordoCooperazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoCooperazione readAccordoCooperazione(InputStream in) throws DeserializerException {
+		return (AccordoCooperazione) this.xmlToObj(in, AccordoCooperazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoCooperazione readAccordoCooperazione(byte[] in) throws DeserializerException {
+		return (AccordoCooperazione) this.xmlToObj(in, AccordoCooperazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccordoCooperazione readAccordoCooperazioneFromString(String in) throws DeserializerException {
+		return (AccordoCooperazione) this.xmlToObj(in.getBytes(), AccordoCooperazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Requisiti
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Requisiti readRequisiti(String fileName) throws DeserializerException {
+		return (Requisiti) this.xmlToObj(fileName, Requisiti.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Requisiti readRequisiti(File file) throws DeserializerException {
+		return (Requisiti) this.xmlToObj(file, Requisiti.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Requisiti readRequisiti(InputStream in) throws DeserializerException {
+		return (Requisiti) this.xmlToObj(in, Requisiti.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Requisiti readRequisiti(byte[] in) throws DeserializerException {
+		return (Requisiti) this.xmlToObj(in, Requisiti.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Requisiti readRequisitiFromString(String in) throws DeserializerException {
+		return (Requisiti) this.xmlToObj(in.getBytes(), Requisiti.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: openspcoop2
 	 =================================================================================
 	*/
@@ -238,6 +873,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Openspcoop2 readOpenspcoop2FromString(String in) throws DeserializerException {
 		return (Openspcoop2) this.xmlToObj(in.getBytes(), Openspcoop2.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: operazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(String fileName) throws DeserializerException {
+		return (Operazione) this.xmlToObj(fileName, Operazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(File file) throws DeserializerException {
+		return (Operazione) this.xmlToObj(file, Operazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(InputStream in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in, Operazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazione(byte[] in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in, Operazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Operazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Operazione readOperazioneFromString(String in) throws DeserializerException {
+		return (Operazione) this.xmlToObj(in.getBytes(), Operazione.class);
 	}	
 	
 	
@@ -370,384 +1068,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: AccordoCooperazione
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoCooperazione readAccordoCooperazione(String fileName) throws DeserializerException {
-		return (AccordoCooperazione) this.xmlToObj(fileName, AccordoCooperazione.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoCooperazione readAccordoCooperazione(File file) throws DeserializerException {
-		return (AccordoCooperazione) this.xmlToObj(file, AccordoCooperazione.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoCooperazione readAccordoCooperazione(InputStream in) throws DeserializerException {
-		return (AccordoCooperazione) this.xmlToObj(in, AccordoCooperazione.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoCooperazione readAccordoCooperazione(byte[] in) throws DeserializerException {
-		return (AccordoCooperazione) this.xmlToObj(in, AccordoCooperazione.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoCooperazione}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoCooperazione readAccordoCooperazioneFromString(String in) throws DeserializerException {
-		return (AccordoCooperazione) this.xmlToObj(in.getBytes(), AccordoCooperazione.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: AccordoServizioParteComune
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteComune readAccordoServizioParteComune(String fileName) throws DeserializerException {
-		return (AccordoServizioParteComune) this.xmlToObj(fileName, AccordoServizioParteComune.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteComune readAccordoServizioParteComune(File file) throws DeserializerException {
-		return (AccordoServizioParteComune) this.xmlToObj(file, AccordoServizioParteComune.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteComune readAccordoServizioParteComune(InputStream in) throws DeserializerException {
-		return (AccordoServizioParteComune) this.xmlToObj(in, AccordoServizioParteComune.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteComune readAccordoServizioParteComune(byte[] in) throws DeserializerException {
-		return (AccordoServizioParteComune) this.xmlToObj(in, AccordoServizioParteComune.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteComune readAccordoServizioParteComuneFromString(String in) throws DeserializerException {
-		return (AccordoServizioParteComune) this.xmlToObj(in.getBytes(), AccordoServizioParteComune.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: AccordoServizioParteSpecifica
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(String fileName) throws DeserializerException {
-		return (AccordoServizioParteSpecifica) this.xmlToObj(fileName, AccordoServizioParteSpecifica.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(File file) throws DeserializerException {
-		return (AccordoServizioParteSpecifica) this.xmlToObj(file, AccordoServizioParteSpecifica.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(InputStream in) throws DeserializerException {
-		return (AccordoServizioParteSpecifica) this.xmlToObj(in, AccordoServizioParteSpecifica.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteSpecifica readAccordoServizioParteSpecifica(byte[] in) throws DeserializerException {
-		return (AccordoServizioParteSpecifica) this.xmlToObj(in, AccordoServizioParteSpecifica.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public AccordoServizioParteSpecifica readAccordoServizioParteSpecificaFromString(String in) throws DeserializerException {
-		return (AccordoServizioParteSpecifica) this.xmlToObj(in.getBytes(), AccordoServizioParteSpecifica.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: Fruitore
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Fruitore readFruitore(String fileName) throws DeserializerException {
-		return (Fruitore) this.xmlToObj(fileName, Fruitore.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Fruitore readFruitore(File file) throws DeserializerException {
-		return (Fruitore) this.xmlToObj(file, Fruitore.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Fruitore readFruitore(InputStream in) throws DeserializerException {
-		return (Fruitore) this.xmlToObj(in, Fruitore.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Fruitore readFruitore(byte[] in) throws DeserializerException {
-		return (Fruitore) this.xmlToObj(in, Fruitore.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Fruitore}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Fruitore readFruitoreFromString(String in) throws DeserializerException {
-		return (Fruitore) this.xmlToObj(in.getBytes(), Fruitore.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: RequisitoProtocollo
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public RequisitoProtocollo readRequisitoProtocollo(String fileName) throws DeserializerException {
-		return (RequisitoProtocollo) this.xmlToObj(fileName, RequisitoProtocollo.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public RequisitoProtocollo readRequisitoProtocollo(File file) throws DeserializerException {
-		return (RequisitoProtocollo) this.xmlToObj(file, RequisitoProtocollo.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public RequisitoProtocollo readRequisitoProtocollo(InputStream in) throws DeserializerException {
-		return (RequisitoProtocollo) this.xmlToObj(in, RequisitoProtocollo.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public RequisitoProtocollo readRequisitoProtocollo(byte[] in) throws DeserializerException {
-		return (RequisitoProtocollo) this.xmlToObj(in, RequisitoProtocollo.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.RequisitoProtocollo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public RequisitoProtocollo readRequisitoProtocolloFromString(String in) throws DeserializerException {
-		return (RequisitoProtocollo) this.xmlToObj(in.getBytes(), RequisitoProtocollo.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: Requisiti
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Requisiti readRequisiti(String fileName) throws DeserializerException {
-		return (Requisiti) this.xmlToObj(fileName, Requisiti.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Requisiti readRequisiti(File file) throws DeserializerException {
-		return (Requisiti) this.xmlToObj(file, Requisiti.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Requisiti readRequisiti(InputStream in) throws DeserializerException {
-		return (Requisiti) this.xmlToObj(in, Requisiti.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Requisiti readRequisiti(byte[] in) throws DeserializerException {
-		return (Requisiti) this.xmlToObj(in, Requisiti.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Requisiti}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Requisiti readRequisitiFromString(String in) throws DeserializerException {
-		return (Requisiti) this.xmlToObj(in.getBytes(), Requisiti.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: Proprieta
 	 =================================================================================
 	*/
@@ -811,69 +1131,6 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: ReplaceMatchFieldType
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ReplaceMatchFieldType readReplaceMatchFieldType(String fileName) throws DeserializerException {
-		return (ReplaceMatchFieldType) this.xmlToObj(fileName, ReplaceMatchFieldType.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ReplaceMatchFieldType readReplaceMatchFieldType(File file) throws DeserializerException {
-		return (ReplaceMatchFieldType) this.xmlToObj(file, ReplaceMatchFieldType.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ReplaceMatchFieldType readReplaceMatchFieldType(InputStream in) throws DeserializerException {
-		return (ReplaceMatchFieldType) this.xmlToObj(in, ReplaceMatchFieldType.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ReplaceMatchFieldType readReplaceMatchFieldType(byte[] in) throws DeserializerException {
-		return (ReplaceMatchFieldType) this.xmlToObj(in, ReplaceMatchFieldType.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @return Object type {@link org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public ReplaceMatchFieldType readReplaceMatchFieldTypeFromString(String in) throws DeserializerException {
-		return (ReplaceMatchFieldType) this.xmlToObj(in.getBytes(), ReplaceMatchFieldType.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: Wizard
 	 =================================================================================
 	*/
@@ -931,6 +1188,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Wizard readWizardFromString(String in) throws DeserializerException {
 		return (Wizard) this.xmlToObj(in.getBytes(), Wizard.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Description
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Description readDescription(String fileName) throws DeserializerException {
+		return (Description) this.xmlToObj(fileName, Description.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Description readDescription(File file) throws DeserializerException {
+		return (Description) this.xmlToObj(file, Description.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Description readDescription(InputStream in) throws DeserializerException {
+		return (Description) this.xmlToObj(in, Description.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Description readDescription(byte[] in) throws DeserializerException {
+		return (Description) this.xmlToObj(in, Description.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @return Object type {@link org.openspcoop2.protocol.information_missing.Description}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Description readDescriptionFromString(String in) throws DeserializerException {
+		return (Description) this.xmlToObj(in.getBytes(), Description.class);
 	}	
 	
 	

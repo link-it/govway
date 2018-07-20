@@ -26,6 +26,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.protocol.information_missing.Input;
+import org.openspcoop2.protocol.information_missing.Description;
+import org.openspcoop2.protocol.information_missing.Default;
 
 /**
  *  ImportInformationMissingException
@@ -47,9 +49,10 @@ public class ImportInformationMissingException extends Exception implements Seri
 
 	private Object object;
 	private Class<?> classObject;
+
+	private String missingInfoProtocollo;
 	
 	private boolean missingInfoSoggetto;
-	private String missingInfoSoggetto_protocollo;
 	private String missingInfoSoggetto_tipoPdD;
 	
 	private boolean missingInfoVersione;
@@ -72,6 +75,10 @@ public class ImportInformationMissingException extends Exception implements Seri
 	
 	private boolean missingInfoInput;
 	private Input missingInfoInputObject;
+	
+	private Description missingInfoHeader;
+	private Description missingInfoFooter;
+	private Default missingInfoDefault;
 	
 	public ImportInformationMissingException(String objectId,String idObjectDescription){
 		this.idObject = objectId;
@@ -113,19 +120,18 @@ public class ImportInformationMissingException extends Exception implements Seri
 		this.classObject = classObject;
 	}
 	
+	public String getMissingInfoProtocollo() {
+		return this.missingInfoProtocollo;
+	}
+	public void setMissingInfoProtocollo(String missingInfoProtocollo) {
+		this.missingInfoProtocollo = missingInfoProtocollo;
+	}
+	
 	public boolean isMissingInfoSoggetto() {
 		return this.missingInfoSoggetto;
 	}
 	public void setMissingInfoSoggetto(boolean missingInfoSoggetto) {
 		this.missingInfoSoggetto = missingInfoSoggetto;
-	}
-	
-	public String getMissingInfoSoggetto_protocollo() {
-		return this.missingInfoSoggetto_protocollo;
-	}
-	public void setMissingInfoSoggetto_protocollo(
-			String missingInfoSoggetto_protocollo) {
-		this.missingInfoSoggetto_protocollo = missingInfoSoggetto_protocollo;
 	}
 	
 	public String getMissingInfoSoggetto_tipoPdD() {
@@ -211,5 +217,23 @@ public class ImportInformationMissingException extends Exception implements Seri
 	}
 	public void setMissingInfoInputObject(Input missingInfoInputObject) {
 		this.missingInfoInputObject = missingInfoInputObject;
+	}
+	public Description getMissingInfoHeader() {
+		return this.missingInfoHeader;
+	}
+	public void setMissingInfoHeader(Description missingInfoHeader) {
+		this.missingInfoHeader = missingInfoHeader;
+	}
+	public Description getMissingInfoFooter() {
+		return this.missingInfoFooter;
+	}
+	public void setMissingInfoFooter(Description missingInfoFooter) {
+		this.missingInfoFooter = missingInfoFooter;
+	}
+	public Default getMissingInfoDefault() {
+		return this.missingInfoDefault;
+	}
+	public void setMissingInfoDefault(Default missingInfoDefault) {
+		this.missingInfoDefault = missingInfoDefault;
 	}
 }

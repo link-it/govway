@@ -199,4 +199,13 @@ public class ServiziApplicativiCostanti {
 	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
 	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_SOGGETTO;
 	public final static int ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
+	
+	public static String getLabelSbustamentoProtocollo(String nomeProtocollo) {
+		if("spcoop".equals(nomeProtocollo)) {
+			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " SPCoop";
+		}
+		else {
+			return ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO  + " " +nomeProtocollo.toUpperCase();
+		}
+	}
 }

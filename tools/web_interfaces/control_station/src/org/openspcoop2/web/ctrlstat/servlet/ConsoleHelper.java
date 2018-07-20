@@ -5083,6 +5083,9 @@ public class ConsoleHelper {
 	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
 		return NamingUtils.getLabelAccordoServizioParteComune(as);
 	}
+	public String getLabelIdAccordo(IDAccordo idAccordo) throws Exception{
+		return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+	}
 	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
 		return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo);
 	}
@@ -5111,6 +5114,9 @@ public class ConsoleHelper {
 	
 	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws Exception{
 		return NamingUtils.getLabelAccordoCooperazione(ac);
+	}
+	public String getLabelIdAccordoCooperazione(IDAccordoCooperazione idAccordo) throws Exception{
+		return NamingUtils.getLabelAccordoCooperazione(idAccordo);
 	}
 	public String getLabelIdAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
 		return NamingUtils.getLabelAccordoCooperazione(protocollo, idAccordo);

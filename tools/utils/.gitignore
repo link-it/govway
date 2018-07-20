@@ -2,5 +2,6 @@
 build
 dist
 doc
+.ant-targets-build.xml
 # Except this file
 !.gitignore

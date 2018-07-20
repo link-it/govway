@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Openspcoop2;
+import org.openspcoop2.protocol.information_missing.Description;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,38 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Openspcoop2 
+ * Model Description 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Openspcoop2Model extends AbstractModel<Openspcoop2> {
+public class DescriptionModel extends AbstractModel<Description> {
 
-	public Openspcoop2Model(){
+	public DescriptionModel(){
 	
 		super();
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new Field("wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new Field("operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.ITEM = new org.openspcoop2.protocol.information_missing.model.DescriptionTypeModel(new Field("item",org.openspcoop2.protocol.information_missing.DescriptionType.class,"Description",Description.class));
 	
 	}
 	
-	public Openspcoop2Model(IField father){
+	public DescriptionModel(IField father){
 	
 		super(father);
 	
-		this.WIZARD = new org.openspcoop2.protocol.information_missing.model.WizardModel(new ComplexField(father,"wizard",org.openspcoop2.protocol.information_missing.Wizard.class,"openspcoop2",Openspcoop2.class));
-		this.OPERAZIONE = new org.openspcoop2.protocol.information_missing.model.OperazioneModel(new ComplexField(father,"operazione",org.openspcoop2.protocol.information_missing.Operazione.class,"openspcoop2",Openspcoop2.class));
+		this.ITEM = new org.openspcoop2.protocol.information_missing.model.DescriptionTypeModel(new ComplexField(father,"item",org.openspcoop2.protocol.information_missing.DescriptionType.class,"Description",Description.class));
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.WizardModel WIZARD = null;
-	 
-	public org.openspcoop2.protocol.information_missing.model.OperazioneModel OPERAZIONE = null;
+	public org.openspcoop2.protocol.information_missing.model.DescriptionTypeModel ITEM = null;
 	 
 
 	@Override
-	public Class<Openspcoop2> getModeledClass(){
-		return Openspcoop2.class;
+	public Class<Description> getModeledClass(){
+		return Description.class;
 	}
 	
 	@Override

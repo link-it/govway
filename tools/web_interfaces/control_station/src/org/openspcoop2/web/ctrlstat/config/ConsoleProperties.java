@@ -262,8 +262,12 @@ public class ConsoleProperties {
 		return this.readProperty(true, "importArchive.tipoPdD");
 	}
 	
-	public boolean isExportArchive_standard() throws UtilsException{
-		return this.readBooleanProperty(true, "exportArchive.standard");
+	public boolean isExportArchive_configurazione_soloDumpCompleto() throws UtilsException{
+		return this.readBooleanProperty(true, "exportArchive.configurazione.soloDumpCompleto");
+	}
+	
+	public boolean isExportArchive_servizi_standard() throws UtilsException{
+		return this.readBooleanProperty(true, "exportArchive.servizi.standard");
 	}
 	
 	public boolean isGestoreConsistenzaDatiEnabled() throws UtilsException{

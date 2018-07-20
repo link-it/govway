@@ -653,12 +653,16 @@ public class ControlStationCore {
 
 	/** Opzioni di importazione Archivi */
 	private String importArchivi_tipoPdD;
-	private boolean exportArchivi_standard;
+	private boolean exportArchive_configurazione_soloDumpCompleto;
+	private boolean exportArchive_servizi_standard;
 	public String getImportArchivi_tipoPdD() {
 		return this.importArchivi_tipoPdD;
 	}
-	public boolean isExportArchivi_standard() {
-		return this.exportArchivi_standard;
+	public boolean isExportArchive_configurazione_soloDumpCompleto() {
+		return this.exportArchive_configurazione_soloDumpCompleto;
+	}
+	public boolean isExportArchive_servizi_standard() {
+		return this.exportArchive_servizi_standard;
 	}
 
 	/** Altro */
@@ -1451,7 +1455,8 @@ public class ControlStationCore {
 
 		/** Opzioni di importazione/esportazione Archivi */
 		this.importArchivi_tipoPdD = core.importArchivi_tipoPdD;
-		this.exportArchivi_standard = core.exportArchivi_standard;
+		this.exportArchive_configurazione_soloDumpCompleto = core.exportArchive_configurazione_soloDumpCompleto;
+		this.exportArchive_servizi_standard = core.exportArchive_servizi_standard;
 		
 		/** Altro */
 		this.suffissoConnettoreAutomatico = core.suffissoConnettoreAutomatico;
@@ -1740,7 +1745,8 @@ public class ControlStationCore {
 			
 			// Opzioni di importazione/esportazione Archivi
 			this.importArchivi_tipoPdD = consoleProperties.getImportArchive_tipoPdD();
-			this.exportArchivi_standard = consoleProperties.isExportArchive_standard();
+			this.exportArchive_configurazione_soloDumpCompleto = consoleProperties.isExportArchive_configurazione_soloDumpCompleto();
+			this.exportArchive_servizi_standard = consoleProperties.isExportArchive_servizi_standard();
 			
 			// Gestione Visibilità utenti
 			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();
