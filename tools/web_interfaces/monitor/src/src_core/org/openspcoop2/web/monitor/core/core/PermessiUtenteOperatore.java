@@ -406,7 +406,7 @@ public class PermessiUtenteOperatore {
 					throws CoreException {
 
 		// Controllo sul soggetto indicato
-		if (StringUtils.isNotEmpty(nomeSoggettoLocale) ) {		
+		if (StringUtils.isNotEmpty(nomeSoggettoLocale) && StringUtils.isEmpty(nomeServizio) ) {		
 			// Se ho selezionato un soggetto locale controllo che il valore inserito sia effettivamente un soggetto gestito dall'utente, 
 			// altrimenti segnalo l'errore
 			// il controllo vale solo se l'utente non e' admin

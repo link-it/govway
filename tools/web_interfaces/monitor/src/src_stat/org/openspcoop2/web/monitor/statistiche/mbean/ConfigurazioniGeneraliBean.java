@@ -36,9 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
@@ -52,6 +49,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.dao.IConfigurazioniGeneraliService;
+import org.slf4j.Logger;
 
 /**
  * ConfigurazioniGeneraliBean
@@ -113,55 +111,74 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		super.setSelectedElement(selectedElement);
 	}
 
-	public List<Soggetto> soggettiErogatoreAutoComplete(Object val){
-		List<Soggetto> list = null;
-		Soggetto s = new Soggetto();
-		s.setNomeSoggetto(CostantiConfigurazioni.NON_SELEZIONATO);
-
-		if(val==null || StringUtils.isEmpty((String)val))
-			list = new ArrayList<Soggetto>();
-		else{
-			String tipoProtocollo = this.search.getProtocollo(); 
-			list = this.dynamicUtils.getSoggettiErogatoreAutoComplete(tipoProtocollo, null, (String) val, true);
+	@Override
+	public List<SelectItem> getSoggetti()  throws Exception{
+		if(this.search==null){
+			return new ArrayList<SelectItem>();
+		}
+		
+		PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
+		
+		if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
+			return _getSoggetti(false,true,null);
+		} else {
+			return _getSoggetti(true,false,null);
+		}
+	}
+	
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiErogatoreAutoComplete(Object val) throws Exception{
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaSoggetti = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<SelectItem> listaSoggettiTmp = new ArrayList<>();
+		if(val==null || StringUtils.isEmpty((String)val)) {
+		}else{
+			if(this.search!=null){
+				PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
+				if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
+					listaSoggettiTmp = _getSoggetti(false,true,(String)val);
+				} else {
+					listaSoggettiTmp = _getSoggetti(true,false,(String)val);
+				}
+			}
+		}
+		
+		listaSoggettiTmp.add(0, new SelectItem(CostantiConfigurazioni.NON_SELEZIONATO, CostantiConfigurazioni.NON_SELEZIONATO));
+		
+		for (SelectItem selectItem : listaSoggettiTmp) {
+			String label = selectItem.getLabel();
+			String value = (String) selectItem.getValue();
+			
+			org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
+			listaSoggetti.add(newItem);
 		}
 
-		list.add(0,s);
-		return list;
-
+		return listaSoggetti;
 	}
-
+	
 	@Override
 	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
 		return _getTipiNomiSoggettiAssociati(true);
 	}
 
 	@Override
-	protected List<SelectItem> _getServizi( boolean showAccordo,boolean showTipoServizio) {
+	protected List<SelectItem> _getServizi(String input) {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
 		if(!this.serviziSelectItemsWidthCheck){
 			this.servizi = new ArrayList<SelectItem>();
-			Soggetto erogatore = _getSoggettoErogatore( );
-
-			String tipoSoggetto =  null;
-			String nomeSoggetto = null;
-
-			if(erogatore != null){
-				tipoSoggetto = erogatore.getTipoSoggetto();
-				nomeSoggetto = erogatore.getNomeSoggetto();
-			}
-
-			String uriAccordo =null;
+			
+			String tipoSoggetto = this.search.getTipoSoggettoLocale();
+			String nomeSoggetto = this.search.getSoggettoLocale();
+			
 			String tipoProtocollo = this.search.getProtocollo();
 
 			PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 
 			if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo,uriAccordo, null, null,this.showErogatoreOnServizioLabel,false);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, false);
 			}else {
 				// bisogna filtrare per soggetti operativi
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo,uriAccordo, tipoSoggetto, nomeSoggetto,this.showErogatoreOnServizioLabel,true);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, true);
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.servizi);
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);
@@ -301,5 +318,9 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione delle configurazioni selezionate.");
 		}
 		return null;
+	}
+
+	public boolean isShowFiltroSoggetti() {
+		return Utility.getLoggedUtente().isPermitMultiTenant();
 	}
 }

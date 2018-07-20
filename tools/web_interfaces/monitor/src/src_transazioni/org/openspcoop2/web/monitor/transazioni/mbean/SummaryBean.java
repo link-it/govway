@@ -115,6 +115,7 @@ public class SummaryBean implements Serializable{
 	private String periodoDefault = CostantiReport.PERIODO_NOT_SET;
 	private int offset;
 	private String soggettoLocale;
+	private String labelSoggettoLocale;
 
 	private String intervalloRefresh = null;
 
@@ -270,6 +271,30 @@ public class SummaryBean implements Serializable{
 	private Date endDateForLabel;
 
 	public String getPrintPeriodo(){
+		Calendar max = Calendar.getInstance();
+		this.endDateForLabel=max.getTime();
+		
+		Calendar min = (Calendar) max.clone();
+		if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
+			//calcolo 12 mesi dal mese attuale
+			min.add(Calendar.MONTH, -11);
+			min.set(Calendar.DAY_OF_MONTH, min.getActualMinimum(Calendar.DAY_OF_MONTH));
+			min.set(Calendar.HOUR_OF_DAY,min.getActualMinimum(Calendar.HOUR_OF_DAY));
+			min.set(Calendar.MINUTE,min.getActualMinimum(Calendar.MINUTE));
+			min.clear(Calendar.SECOND);
+			min.clear(Calendar.MILLISECOND);
+		}
+		else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
+			min.add(Calendar.DATE, -30);
+		}
+		else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
+			min.add(Calendar.DATE, -6);
+		}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
+			min.add(Calendar.HOUR_OF_DAY, 1);
+			min.add(Calendar.HOUR_OF_DAY, -24);
+		}
+		
+		this.startDateForLabel = min.getTime();
 		return AbstractDateSearchForm.printPeriodo(this.startDateForLabel, this.endDateForLabel);
 	}
 	
@@ -940,6 +965,34 @@ public class SummaryBean implements Serializable{
 			this.soggettoLocale = null;
 		}
 	}
+	
+	public String getLabelSoggettoLocale() {
+		return this.labelSoggettoLocale;
+	}
+
+	public void setLabelSoggettoLocale(String labelSoggettoLocale) {
+		this.labelSoggettoLocale = labelSoggettoLocale;
+		
+		if (StringUtils.isEmpty(this.labelSoggettoLocale) || "--".equals(this.labelSoggettoLocale)) {
+			this.labelSoggettoLocale = null;
+		}
+	}
+	
+	public String getSoggettoLocaleTooltip() {
+		if(this.soggettoLocale!=null && !StringUtils.isEmpty(this.soggettoLocale) && !"--".equals(this.soggettoLocale)){
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDServizio idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
+				String	nomeServizio = idServizio.getNome(); // possono essere null
+				String label = nomeServizio ==  null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idServizio.getSoggettoErogatore()) : NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio); 
+				
+				return label;
+			} catch (Exception e) {
+				SummaryBean.log.error(e.getMessage(), e);
+			}
+		}
+		return this.soggettoLocale;
+	}
 
 	public List<Soggetto> soggettiAutoComplete(Object val){
 
@@ -963,7 +1016,8 @@ public class SummaryBean implements Serializable{
 	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
 		return _getTipiNomiSoggettiAssociati(false);
 	}
-
+	
+	@SuppressWarnings("deprecation")
 	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
 		if(this.soggettiAssociati == null)
 			this.soggettiAssociati = new ArrayList<SelectItem>();
@@ -973,38 +1027,91 @@ public class SummaryBean implements Serializable{
 
 			UserDetailsBean loggedUser = Utility.getLoggedUser();
 			if(loggedUser!=null){
-				List<IDSoggetto> lst = new ArrayList<IDSoggetto>();
 				String tipoProtocollo = this.getProtocollo();
+				Map<String,String> mapInternal = new HashMap<String,String>();
 				
-				if(tipoProtocollo == null) {
-					lst = loggedUser.getUtenteSoggettoList();
-				} else {
+				List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
+				List<IDServizio> tipiNomiServiziAssociati = loggedUser.getUtenteServizioList();
+				if(tipoProtocollo != null) {
 					// se ho selezionato un protocollo devo filtrare per protocollo
-					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
-					List<String> lstTmp = new ArrayList<String>();
-					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
-
+					
+					List<IDSoggetto> lstSoggTmp = new ArrayList<IDSoggetto>();
+					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0) {
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
 							if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
-								String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
 								boolean add = true;
 								if(soloOperativi) {
 									String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
 									add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 								}
-								if(lstTmp.contains(tipoNome)==false && add){
-									lstTmp.add(tipoNome);
-									lst.add(utenteSoggetto);
+
+								if(add) {
+									lstSoggTmp.add(utenteSoggetto);
 								}
 							}
 						}
+					}
+					
+					tipiNomiSoggettiAssociati.clear();
+					tipiNomiSoggettiAssociati.addAll(lstSoggTmp);
+					
+					List<IDServizio> lstServTmp = new ArrayList<IDServizio>();
+					if(tipiNomiServiziAssociati !=null && tipiNomiServiziAssociati.size() > 0) {
+						for (IDServizio utenteServizio : tipiNomiServiziAssociati) {
+							if(this.dynamicUtils.isTipoServizioCompatibileConProtocollo(utenteServizio.getTipo(), tipoProtocollo)){
+								lstServTmp.add(utenteServizio);
+							}
+						}
+					}
+					
+					tipiNomiServiziAssociati.clear();
+					tipiNomiServiziAssociati.addAll(lstServTmp);
+				}
+				
+				if(tipiNomiSoggettiAssociati!=null && tipiNomiSoggettiAssociati.size()>0){
+					for (IDSoggetto idSoggetto  : tipiNomiSoggettiAssociati) {
+						IDServizio idServizio = new IDServizio();
+						idServizio.setSoggettoErogatore(idSoggetto);
+						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
+					}
+				}
+				
+				if(tipiNomiServiziAssociati!=null && tipiNomiServiziAssociati.size()>0){
+					for (IDServizio idServizio : tipiNomiServiziAssociati) {
+						String label = tipoProtocollo != null ?  NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
+					}
+				}
+				
+				if(mapInternal.size()>0){
+					//convert map to a List
+					List<Entry<String, String>> tmpList = new LinkedList<Map.Entry<String, String>>(mapInternal.entrySet());
+
+					//sorting the list with a comparator
+					Collections.sort(tmpList, new Comparator<Entry<String, String>>() {
+						@Override
+						public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+							return (o1.getValue()).compareTo(o2.getValue());
+						}
+					});
+
+					//convert sortedMap back to Map
+					Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+					for (Entry<String, String> entry : tmpList) {
+						sortedMap.put(entry.getKey(), entry.getValue());
+					}
+					
+					for (String key : sortedMap.keySet()) {
+						this.soggettiAssociati.add(new SelectItem(key, sortedMap.get(key)));
+					}
 				}
 
-				for (IDSoggetto idSoggetto : lst) {
-					String value = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
-					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-					this.soggettiAssociati.add(new SelectItem(value,label));
-				}
+//				for (IDSoggetto idSoggetto : lst) {
+//					String value = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
+//					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+//					this.soggettiAssociati.add(new SelectItem(value,label));
+//				}
 				Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggettiAssociati);
 				this.soggettiAssociatiSelectItemsWidth = Math.max(this.soggettiAssociatiSelectItemsWidth,  lunghezzaSelectList);
 			}
@@ -1013,8 +1120,29 @@ public class SummaryBean implements Serializable{
 		return this.soggettiAssociati;
 	}
 	
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiServiziAutoComplete(Object val) throws Exception {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+		List<SelectItem> listaServiziTmp = new ArrayList<>();
+		if(val==null || StringUtils.isEmpty((String)val)) {
+		}else{
+			listaServiziTmp = this._soggettiServiziAutoComplete((String)val);
+		}
+		
+//		listaServiziTmp.add(0, new SelectItem("--", "--"));
+		
+		for (SelectItem selectItem : listaServiziTmp) {
+			String label = selectItem.getLabel();
+			String value = (String) selectItem.getValue();
+			
+			org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
+			listaServizi.add(newItem);
+		}
+
+		return listaServizi;
+	}
+	
 	@SuppressWarnings("deprecation")
-	public List<SelectItem> soggettiServiziAutoComplete(Object val) throws Exception {
+	public List<SelectItem> _soggettiServiziAutoComplete(Object val) throws Exception {
 		this.soggettiSelectItemsWidth = 0;
 		List<SelectItem> list = new ArrayList<SelectItem>();
 		list.add(new SelectItem("--","--"));
@@ -1318,5 +1446,8 @@ public class SummaryBean implements Serializable{
 		return setFilter;
 	}
 	
-	public void protocolloSelected(ActionEvent ae) {}
+	public void protocolloSelected(ActionEvent ae) {
+		this.soggettoLocale = null;
+		this.labelSoggettoLocale = null;
+	}
 }

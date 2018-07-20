@@ -66,6 +66,13 @@ xmlns="http://www.w3.org/1999/xhtml"
 									<ui:param name="sf_tipologiaRicerca" value="#{searchFormTransazioni.tipologiaRicerca}" />
 									<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
 									<ui:param name="sf_mbean" value="#{transazioniBean}" />
+									
+									<ui:param name="sf_labelSoggettoLocale" value="#{searchFormTransazioni.labelTipoNomeSoggettoLocale}" />
+									<ui:param name="sf_labelNomeMittente" value="#{searchFormTransazioni.labelTipoNomeMittente}" />
+									<ui:param name="sf_labelNomeDestinatario" value="#{searchFormTransazioni.labelTipoNomeDestinatario}" />
+									<ui:param name="sf_labelTrafficoPerSoggetto" value="#{searchFormTransazioni.labelTipoNomeTrafficoPerSoggetto}" />
+									<ui:param name="sf_labelServizio" value="#{searchFormTransazioni.labelNomeServizio}" />
+									<ui:param name="sf_labelNomeAzione" value="#{searchFormTransazioni.labelNomeAzione}" />
 								</ui:include>
 								
 								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	

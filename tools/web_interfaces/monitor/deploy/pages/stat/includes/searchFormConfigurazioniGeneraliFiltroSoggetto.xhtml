@@ -6,75 +6,58 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it"
     xmlns:c="http://java.sun.com/jstl/core">
-    
-    <c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
-    	<c:if test="#{applicationBean.user}">
-			<c:if test="#{!applicationBean.amministratore}">
-					<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
-						<rich:comboBox width="416" id="sogAssociatoSuggestion" 
-								value="#{sf_bean.tipoNomeSoggettoLocale}" 
-								suggestionValues="#{sf_mbean.tipiNomiSoggettiAssociati}"
-								enableManualInput="false">
-							<f:selectItem itemValue="--"/>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
-						</rich:comboBox>
-					</link:prop>
-				</c:if>
-		</c:if>
-		<c:if test="#{applicationBean.amministratore}">
 
-			<link:prop label="Soggetto" rendered="#{true}">
-				<h:inputText id="sogErogCombo"
-					value="#{sf_bean.tipoNomeSoggettoLocale}" styleClass="inputLinkLong" />
-				<rich:suggestionbox id="sogDErogSuggestion" width="416"
-					for="sogErogCombo"
-					suggestionAction="#{sf_mbean.soggettiErogatoreAutoComplete}"
-					var="soggetto" ajaxSingle="true" nothingLabel="--"
-					param="sogErogCombo">
-					<h:column>
-						<h:outputText value="#{soggetto.nomeSoggetto}"
-							rendered="#{soggetto.nomeSoggetto=='--'}" />
-						<h:outputText
-							value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}"
-							rendered="#{soggetto.nomeSoggetto!='--'}" />
-					</h:column>
-					<a4j:support status="mainStatus" event="onselect"
-						actionListener="#{sf_bean.destinatarioSelected}"
-						reRender="searchPnl,servizioComboCtr" />
-				</rich:suggestionbox>
-
-			</link:prop>
-		</c:if>
-    </c:if>
-    
-   	<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
-   		<c:if test="#{applicationBean.user}">
-			<c:if test="#{!applicationBean.amministratore}">
-					<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
-						<rich:comboBox width="416" id="sogAssociatoSuggestion" value="#{sf_bean.tipoNomeSoggettoLocale}" defaultLabel="Selezione Soggetto" 
-								directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="false" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
-							<f:selectItem itemValue="--"/>
-							<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
-						</rich:comboBox>
-						<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogAssociatoSuggestion" 
-							showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocale}"/>
-					</link:prop>
-				</c:if>
-		</c:if>
-		<c:if test="#{applicationBean.amministratore}">
-			<link:prop label="Soggetto" rendered="#{true}">
-				<rich:comboBox id="sogErogCombo" value="#{sf_bean.tipoNomeSoggettoLocale}" converter="selectItemConverter"
-					defaultLabel="Selezione Soggetto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="416"   enableManualInput="false">
-					<f:selectItem itemValue="--" itemLabel="--"/>
-					<f:selectItems value="#{sf_mbean.soggetti}"  />
-					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}"	reRender="searchPnl,servizioComboCtr" />
-				</rich:comboBox>
-				<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogErogCombo" showDelay="200" 
-					styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocale}"/>
-			</link:prop>
-		</c:if>
+   	<c:if test="#{applicationBean.user}">
+		<c:if test="#{!applicationBean.amministratore}">
+				<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+					<rich:comboBox width="416" id="sogAssociatoSuggestion" value="#{sf_bean.tipoNomeSoggettoLocale}" defaultLabel="Selezione Soggetto" 
+							directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="false" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
+					</rich:comboBox>
+				</link:prop>
+				<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogAssociatoSuggestion" showDelay="200" 
+					styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+			</c:if>
+	</c:if>
+	<c:if test="#{sf_mbean.showFiltroSoggetti}">
+	    <c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
+			<c:if test="#{applicationBean.amministratore}">
+				<link:prop label="Soggetto" rendered="#{true}">
+					<h:inputText id="sogErogCombo" value="#{sf_bean.labelTipoNomeSoggettoLocale}" styleClass="inputLinkLong" />
+					<rich:suggestionbox id="sogErogSuggestion" width="416"
+						for="sogErogCombo" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						suggestionAction="#{sf_mbean.soggettiErogatoreAutoComplete}"  var="selectItem" fetchValue="#{selectItem.label}"
+						  ajaxSingle="true" nothingLabel="--"
+						param="sogErogCombo">
+						<h:column>
+							<h:outputText value="#{selectItem.label}" rendered="true" />
+						</h:column>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr" >
+							<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_bean.tipoNomeSoggettoLocale}" />  
+						</a4j:support>
+					</rich:suggestionbox>
+				</link:prop>
+				<h:inputHidden id="sogErogComboHidden" value="#{sf_bean.tipoNomeSoggettoLocale}" />
+				<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogErogCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocaleTooltip}"/>
+			</c:if>
+	    </c:if>
+	    
+	   	<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
+			<c:if test="#{applicationBean.amministratore}">
+				<link:prop label="Soggetto" rendered="#{true}">
+					<rich:comboBox id="sogErogCombo" value="#{sf_bean.tipoNomeSoggettoLocale}" converter="selectItemConverter"
+						defaultLabel="Selezione Soggetto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						width="416"   enableManualInput="false">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_mbean.soggetti}"  />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}"	reRender="searchPnl,servizioComboCtr" />
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_bean.tipoNomeSoggettoLocale}" direction="top-right" for="sogErogCombo" showDelay="200" 
+						styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeSoggettoLocale}"/>
+				</link:prop>
+			</c:if>
+	   	</c:if>
    	</c:if>
-   	
 </ui:composition>

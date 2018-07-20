@@ -107,6 +107,24 @@ public class NamingUtils {
 		return bf.toString();
 	}
 	
+	public static IDSoggetto getSoggettoFromLabel(String protocollo, String labelSoggetto) throws Exception{
+		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+		IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
+		String tipoSoggettoDefault = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
+		String tipo = null;
+		String nome = null;
+		if(labelSoggetto.contains("/")) {
+			String [] tmp = labelSoggetto.split("/");
+			tipo = tmp[0];
+			tipo = tmp[1];
+		}
+		else {
+			tipo = tipoSoggettoDefault;
+			nome = labelSoggetto;
+		}
+		return new IDSoggetto(tipo, nome);
+	}
+	
 	
 	// API
 	

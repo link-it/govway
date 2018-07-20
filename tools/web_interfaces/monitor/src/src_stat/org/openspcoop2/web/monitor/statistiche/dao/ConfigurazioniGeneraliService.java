@@ -471,7 +471,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
 				versioneServizio = idServizio.getVersione();
-				count =   this.dynamicService.countAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio);
+				count =   this.dynamicService.countAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio,null);
 			}
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle azioni: " + e.getMessage(),e);
@@ -518,7 +518,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count = this.dynamicService.countPorteApplicative(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,null, this.search.getPermessiUtenteOperatore());
+			count = this.dynamicService.
+					countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false, this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli accordi servizio parte specifica: " + e.getMessage(),e);
 		}
@@ -562,7 +563,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count =   this.dynamicService.countPorteDelegate(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,null, this.search.getPermessiUtenteOperatore());
+			count =   this.dynamicService.countServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false,  this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle fruizioni servizio: " + e.getMessage(),e);
 		}

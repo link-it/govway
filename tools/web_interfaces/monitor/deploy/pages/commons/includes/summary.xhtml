@@ -41,7 +41,7 @@
 								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
 									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.protocolli}"/>
-									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt"/>
 								</rich:comboBox>
 							</link:prop>
 							
@@ -70,16 +70,21 @@
 							<c:if test="#{applicationBean.amministratore}">
 								<link:prop label="Soggetto Locale / Servizio">
 									<a4j:region renderRegionOnly="true">
-										<h:inputText id="sogLocaleCombo" value="#{summaryBean.soggettoLocale}" styleClass="inputLinkLong" />
+										<h:inputText id="sogLocaleCombo" value="#{summaryBean.labelSoggettoLocale}" styleClass="inputLinkLong" />
 										<rich:suggestionbox id="sogLocaleComboSuggestion" width="416"
 											for="sogLocaleCombo" listWidth="#{summaryBean.soggettiSelectItemsWidth}"
-											suggestionAction="#{summaryBean.soggettiServiziAutoComplete}" var="selectItem" fetchValue="#{selectItem.value}"
+											suggestionAction="#{summaryBean.soggettiServiziAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"
 											ajaxSingle="true" nothingLabel="--" param="sogLocaleCombo">
 											<h:column>
 												<h:outputText value="#{selectItem.label}" rendered="true" />
 											</h:column>
-											<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+											<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" >
+												<f:setPropertyActionListener value="#{selectItem.value}" target="#{summaryBean.soggettoLocale}" /> 
+											</a4j:support>
 										</rich:suggestionbox>
+										<h:inputHidden id="sogLocaleInputHidden" value="#{summaryBean.soggettoLocale}" />
+										<rich:toolTip rendered="#{not empty summaryBean.soggettoLocale}" direction="top-right" for="sogLocaleCombo"
+											 showDelay="200" styleClass="tooltip" layout="block" value="#{summaryBean.labelSoggettoLocale}"/>
 									</a4j:region>
 								</link:prop>
 							</c:if>

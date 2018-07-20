@@ -29,12 +29,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
 import org.openspcoop2.core.commons.search.IdPortaDominio;
-import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
@@ -59,9 +59,11 @@ import org.openspcoop2.core.commons.search.utils.ProjectInfo;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -266,11 +268,40 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 	@Override
 	public List<Soggetto> soggettiAutoComplete(String tipoProtocollo,String input,boolean searchTipo) {
+		return this.findElencoSoggetti(tipoProtocollo, null, input, searchTipo);
+	}
+	
+	@Override
+	public List<Soggetto> findElencoSoggetti(String tipoProtocollo,String idPorta) {
+		return this.findElencoSoggetti(tipoProtocollo, idPorta, null, false);
+	}
 
-		IExpression expr;
+	@Override
+	public int countElencoSoggetti(String tipoProtocollo,String idPorta) {
+		return countElencoSoggetti(tipoProtocollo, idPorta, null, false);
+	}
+	
+	@Override
+	public List<Soggetto> findElencoSoggetti(String tipoProtocollo, String idPorta, String input) {
+		return this.findElencoSoggetti(tipoProtocollo, idPorta, input, false);
+	}
+	
+	@Override
+	public int countElencoSoggetti(String tipoProtocollo, String idPorta, String input) {
+		return countElencoSoggetti(tipoProtocollo, idPorta, input, false);
+	}
+
+	@Override
+	public List<Soggetto> findElencoSoggetti(String tipoProtocollo,String idPorta, String input,boolean searchTipo) {
 		try {
-			expr = this.soggettoDAO.newExpression();
+			IExpression expr = this.soggettoDAO.newExpression();
 
+			boolean addAnd = false;
+			if(idPorta != null){
+				expr.equals(Soggetto.model().IDENTIFICATIVO_PORTA,idPorta);
+				addAnd = true;
+			}
+			
 			if(!StringUtils.isEmpty(input)){
 				int idx= input.indexOf("/");
 				if(idx != -1){
@@ -288,15 +319,19 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					expr.ilike(Soggetto.model().NOME_SOGGETTO, input.toLowerCase() , LikeMode.ANYWHERE);
 				}
 			}
+
 			if(tipoProtocollo!= null){
-				expr.and();
+				if(addAnd)
+					expr.and();
+
 				expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.soggettoDAO, Soggetto.model().TIPO_SOGGETTO, tipoProtocollo));
 			}
 
 			expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
 
 			IPaginatedExpression pagExpr = this.soggettoDAO
-					.toPaginatedExpression(expr);
+					.toPaginatedExpression(expr); 
+			
 			pagExpr.offset(this.defaultStart).limit(this.defaultLimit);
 
 			return this.soggettoDAO.findAll(pagExpr);
@@ -314,95 +349,33 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 		return new ArrayList<Soggetto>();
 	}
-
-	//	@Override
-	//	public List<Soggetto> findElencoSoggetti() {
-	//		try {
-	//			IExpression expr = this.soggettoDAO.newExpression();
-	//
-	//			expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
-	//
-	//			IPaginatedExpression pagExpr = this.soggettoDAO
-	//					.toPaginatedExpression(expr);
-	//
-	//			return this.soggettoDAO.findAll(pagExpr);
-	//		} catch (ServiceException e) {
-	//			log.error(e.getMessage(), e);
-	//		} catch (NotImplementedException e) {
-	//			log.error(e.getMessage(), e);
-	//		} catch (ExpressionNotImplementedException e) {
-	//			log.error(e.getMessage(), e);
-	//		} catch (ExpressionException e) {
-	//			log.error(e.getMessage(), e);
-	//		}
-	//
-	//		return new ArrayList<Soggetto>();
-	//	}
-	//
-	//	@Override
-	//	public int countElencoSoggetti() {
-	//		try {
-	//			IExpression expr = this.soggettoDAO.newExpression();
-	//			NonNegativeNumber nnn = this.soggettoDAO.count(expr);
-	//
-	//			if(nnn != null)
-	//				return (int) nnn.longValue();
-	//		} catch (ServiceException e) {
-	//			log.error(e.getMessage(), e);
-	//		} catch (NotImplementedException e) {
-	//			log.error(e.getMessage(), e);
-	//		} 
-	//
-	//		return 0;
-	//	}
-
+	
 	@Override
-	public List<Soggetto> findElencoSoggetti(String tipoProtocollo,String idPorta) {
-		try {
-			IExpression expr = this.soggettoDAO.newExpression();
-
-			boolean addAnd = false;
-			if(idPorta != null){
-				expr.equals(Soggetto.model().IDENTIFICATIVO_PORTA,idPorta);
-				addAnd = true;
-			}
-
-			if(tipoProtocollo!= null){
-				if(addAnd)
-					expr.and();
-
-				expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.soggettoDAO, Soggetto.model().TIPO_SOGGETTO, tipoProtocollo));
-			}
-
-			expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
-
-			IPaginatedExpression pagExpr = this.soggettoDAO
-					.toPaginatedExpression(expr);
-
-			return this.soggettoDAO.findAll(pagExpr);
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<Soggetto>();
-	}
-
-	@Override
-	public int countElencoSoggetti(String tipoProtocollo,String idPorta) {
+	public int countElencoSoggetti(String tipoProtocollo,String idPorta, String input,boolean searchTipo) {
 		try {
 			IExpression expr = this.soggettoDAO.newExpression();
 			boolean addAnd = false;
 			if(idPorta != null){
 				expr.equals(Soggetto.model().IDENTIFICATIVO_PORTA,idPorta);
 				addAnd = true;
+			}
+			
+			if(!StringUtils.isEmpty(input)){
+				int idx= input.indexOf("/");
+				if(idx != -1){
+					input = input.substring(idx + 1, input.length());
+				}
+
+				if(searchTipo){
+					IExpression exprOrTipo = this.soggettoDAO.newExpression();
+					exprOrTipo.ilike(Soggetto.model().TIPO_SOGGETTO, input.toLowerCase() , LikeMode.ANYWHERE);
+					IExpression exprOrNome = this.soggettoDAO.newExpression();
+					exprOrNome.ilike(Soggetto.model().NOME_SOGGETTO, input.toLowerCase() , LikeMode.ANYWHERE);
+					expr.or(exprOrTipo,exprOrNome);
+				}
+				else{
+					expr.ilike(Soggetto.model().NOME_SOGGETTO, input.toLowerCase() , LikeMode.ANYWHERE);
+				}
 			}
 
 			if(tipoProtocollo!= null){
@@ -951,11 +924,11 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 
 	@Override
-	public Map<String, String> findAzioniFromServizio(String tipoProtocollo ,String tipoServizio ,	String nomeServizio,String tipoErogatore ,	String nomeErogatore ,Integer versioneServizio) {
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo ,String tipoServizio ,	String nomeServizio,String tipoErogatore ,	String nomeErogatore ,Integer versioneServizio, String val) {
 		log.debug("Get Lista Azioni from Accordo Servizio [nome Servizio: " + nomeServizio + "]");
 
 		try {
-			Map<String, String> azioniConLabel = RegistroCore.getAzioniConLabel((JDBCServiceManager) this.utilsServiceManager, tipoProtocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			Map<String, String> azioniConLabel = RegistroCore.getAzioniConLabel((JDBCServiceManager) this.utilsServiceManager, tipoProtocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio,val);
 			
 			return azioniConLabel;
  
@@ -969,9 +942,9 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,
-			String nomeServizio,String tipoErogatore ,	String nomeErogatore,Integer versioneServizio) {
+			String nomeServizio,String tipoErogatore ,	String nomeErogatore,Integer versioneServizio, String val) {
 		// Implementazione inefficiente
-		return this.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio).size();
+		return this.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val).size();
 	}
 
 	@Override
@@ -1417,8 +1390,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 	
 	@Override
-	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo, String uriAccordoServizio,
-			String tipoSoggetto, String nomeSoggetto, String val) {
+	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo, String uriAccordoServizio,	String tipoSoggetto, String nomeSoggetto, String val) {
 		return getServizi(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, val, false);
 	}
 	
@@ -1907,905 +1879,14 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		return new ArrayList<Soggetto>();
 	}
 
-	@Override
-	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatoreAutoComplete(String tipoProtocollo,String tipoServizio ,String nomeServizio,
-			String uriAccordoServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String input) {
-
-		IExpression expr;
-		try {
-
-			int idx= input.indexOf("/");
-			if(idx != -1){
-				input = input.substring(idx + 1, input.length());
-			}
-
-			// ho scelto un accordo di servizio
-			if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty() ) {
-				expr = this.aspsDAO.newExpression();
-
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
-
-				boolean addAnd = false;
-
-				if(idAccordo.getNome() != null){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-					addAnd = true;
-				}
-
-				if( idAccordo.getVersione() != null){
-					if(addAnd)
-						expr.and();
-
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-					addAnd = true;
-				}
-
-				if(idAccordo.getSoggettoReferente() != null){
-					if(addAnd)
-						expr.and();
-
-					if(idAccordo.getSoggettoReferente().getTipo() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-
-					if(idAccordo.getSoggettoReferente().getNome() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome()).and();
-				}
-
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-
-				}
-				if(StringUtils.isNotEmpty(nomeServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-				if(StringUtils.isNotEmpty(tipoServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-				if(versioneServizio != null)
-					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-				IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-				List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-				if(lstAsps != null){
-
-					List<Soggetto> lstSog = new ArrayList<Soggetto>();
-					Set<Soggetto> setSog = new HashSet<Soggetto>();
-					List<String> soggettiGiaInseriti = new ArrayList<String>();
-					for(AccordoServizioParteSpecifica asps : lstAsps){
-
-						expr = this.fruitoreSearchDAO.newExpression();
-
-
-						addAnd = false;
-
-						if(asps.getNome() != null){
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-							addAnd = true;
-						}
-
-						if( asps.getTipo()!= null){
-							if(addAnd)
-								expr.and();
-
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-							addAnd = true;
-						}
-
-						if(asps.getIdErogatore()!= null){
-							if(addAnd)
-								expr.and();
-
-							if(asps.getIdErogatore().getTipo() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-							if(asps.getIdErogatore().getNome() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-						}
-						expr.ilike(Fruitore.model().ID_FRUITORE.NOME, input.toLowerCase(), LikeMode.ANYWHERE);
-						expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-
-						pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-						pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-						List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-						if(lstFruitori != null){
-							for (Fruitore fruitore : lstFruitori) {
-								Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-
-								if(s != null){
-									String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-									if(soggettiGiaInseriti.contains(key)==false){
-										setSog.add(s);
-										soggettiGiaInseriti.add(key);
-									}
-								}
-							}
-
-							if(setSog.size() > 0)
-								lstSog.addAll(setSog);
-
-
-						}				
-
-					}
-					return lstSog;
-				}
-
-			} else {
-				// accordo non specificato
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr = this.aspsDAO.newExpression();
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-
-					if(StringUtils.isNotEmpty(nomeServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-					if(StringUtils.isNotEmpty(tipoServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-					if(versioneServizio != null)
-						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-					IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-					if(lstAsps != null){
-
-						List<Soggetto> lstSog = new ArrayList<Soggetto>();
-						Set<Soggetto> setSog = new HashSet<Soggetto>();
-						List<String> soggettiGiaInseriti = new ArrayList<String>();
-						for(AccordoServizioParteSpecifica asps : lstAsps){
-
-							expr = this.fruitoreSearchDAO.newExpression();
-
-
-							boolean addAnd = false;
-
-							if(asps.getNome() != null){
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-								addAnd = true;
-							}
-
-							if( asps.getTipo()!= null){
-								if(addAnd)
-									expr.and();
-
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-								addAnd = true;
-							}
-
-							if(asps.getIdErogatore()!= null){
-								if(addAnd)
-									expr.and();
-
-								if(asps.getIdErogatore().getTipo() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-								if(asps.getIdErogatore().getNome() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-							}
-
-							expr.ilike(Fruitore.model().ID_FRUITORE.NOME, input.toLowerCase(), LikeMode.ANYWHERE);
-							expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-
-							pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-							pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-							List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-							if(lstFruitori != null){
-								for (Fruitore fruitore : lstFruitori) {
-									Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-
-									if(s != null){
-										String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-										if(soggettiGiaInseriti.contains(key)==false){
-											setSog.add(s);
-											soggettiGiaInseriti.add(key);
-										}
-									}
-								}
-
-								if(setSog.size() > 0)
-									lstSog.addAll(setSog);
-
-
-							}				
-
-						}
-						return lstSog;
-					}
-
-
-				} else {
-
-					// ne accordo ne erogatore specificati, faccio la find all
-					
-					expr = this.soggettoDAO.newExpression();
-
-					expr.ilike(Soggetto.model().NOME_SOGGETTO,	input.toLowerCase(), LikeMode.ANYWHERE);
-
-					expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
-
-					IPaginatedExpression pagExpr = this.soggettoDAO
-							.toPaginatedExpression(expr);
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					return this.soggettoDAO.findAll(pagExpr);
-				}
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (DriverRegistroServiziException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.error(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<Soggetto>();
-	}
-
-	@Override
-	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String tipoServizio ,String nomeServizio, String uriAccordoServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio) {
-
-		IExpression expr;
-		try {
-			// ho scelto un accordo di servizio
-			if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty() ) {
-				expr = this.aspsDAO.newExpression();
-
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
-
-				boolean addAnd = false;
-
-				if(idAccordo.getNome() != null){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-					addAnd = true;
-				}
-
-				if( idAccordo.getVersione() != null){
-					if(addAnd)
-						expr.and();
-
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-					addAnd = true;
-				}
-
-				if(idAccordo.getSoggettoReferente() != null){
-					if(addAnd)
-						expr.and();
-
-					if(idAccordo.getSoggettoReferente().getTipo() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-
-					if(idAccordo.getSoggettoReferente().getNome() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome()).and();
-				}
-
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-
-				}
-				if(StringUtils.isNotEmpty(nomeServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-				if(StringUtils.isNotEmpty(tipoServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-				if(versioneServizio != null)
-					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-				IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-				List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-				if(lstAsps != null){
-
-					List<Soggetto> lstSog = new ArrayList<Soggetto>();
-					Set<Soggetto> setSog = new HashSet<Soggetto>();
-					List<String> soggettiGiaInseriti = new ArrayList<String>();
-					for(AccordoServizioParteSpecifica asps : lstAsps){
-
-						expr = this.fruitoreSearchDAO.newExpression();
-
-
-						addAnd = false;
-
-						if(asps.getNome() != null){
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-							addAnd = true;
-						}
-
-						if( asps.getTipo()!= null){
-							if(addAnd)
-								expr.and();
-
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-							addAnd = true;
-						}
-
-						if(asps.getIdErogatore()!= null){
-							if(addAnd)
-								expr.and();
-
-							if(asps.getIdErogatore().getTipo() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-							if(asps.getIdErogatore().getNome() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-						}
-
-						expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-
-						pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-						pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-						List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-						if(lstFruitori != null){
-							for (Fruitore fruitore : lstFruitori) {
-								Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-
-								if(s != null){
-									String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-									if(soggettiGiaInseriti.contains(key)==false){
-										setSog.add(s);
-										soggettiGiaInseriti.add(key);
-									}
-								}
-							}
-
-							if(setSog.size() > 0)
-								lstSog.addAll(setSog);
-
-
-						}				
-
-					}
-					return lstSog;
-				}
-
-			} else {
-				// accordo non specificato
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr = this.aspsDAO.newExpression();
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-
-					if(StringUtils.isNotEmpty(nomeServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-					if(StringUtils.isNotEmpty(tipoServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-					if(versioneServizio != null)
-						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-					IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-					if(lstAsps != null){
-
-						List<Soggetto> lstSog = new ArrayList<Soggetto>();
-						Set<Soggetto> setSog = new HashSet<Soggetto>();
-						List<String> soggettiGiaInseriti = new ArrayList<String>();
-						for(AccordoServizioParteSpecifica asps : lstAsps){
-
-							expr = this.fruitoreSearchDAO.newExpression();
-
-
-							boolean addAnd = false;
-
-							if(asps.getNome() != null){
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-								addAnd = true;
-							}
-
-							if( asps.getTipo()!= null){
-								if(addAnd)
-									expr.and();
-
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-								addAnd = true;
-							}
-
-							if(asps.getIdErogatore()!= null){
-								if(addAnd)
-									expr.and();
-
-								if(asps.getIdErogatore().getTipo() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-								if(asps.getIdErogatore().getNome() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-							}
-
-							expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-
-							pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-							pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-							List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-							if(lstFruitori != null){
-								for (Fruitore fruitore : lstFruitori) {
-									Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-
-									if(s != null){
-										String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-										if(soggettiGiaInseriti.contains(key)==false){
-											setSog.add(s);
-											soggettiGiaInseriti.add(key);
-										}
-									}
-								}
-
-								if(setSog.size() > 0)
-									lstSog.addAll(setSog);
-
-
-							}				
-
-						}
-						return lstSog;
-					}
-
-
-				} else {
-
-					// ne accordo ne erogatore specificati, faccio la find all
-					expr = this.soggettoDAO.newExpression();
-
-					expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
-
-					IPaginatedExpression pagExpr = this.soggettoDAO
-							.toPaginatedExpression(expr);
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					return this.soggettoDAO.findAll(pagExpr);
-				}
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (DriverRegistroServiziException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.error(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-		return new ArrayList<Soggetto>();
-	}
-
-	@Override
-	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, 
-			String tipoErogatore, String nomeErogatore, Integer versioneServizio, String tipoFruitore, String nomeFruitore) {
-
-		IExpression expr;
-		try {
-			// ho scelto un accordo di servizio
-			if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty() ) {
-				expr = this.aspsDAO.newExpression();
-
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
-
-				boolean addAnd = false;
-
-				if(idAccordo.getNome() != null){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-					addAnd = true;
-				}
-
-				if( idAccordo.getVersione() != null){
-					if(addAnd)
-						expr.and();
-
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-					addAnd = true;
-				}
-
-				if(idAccordo.getSoggettoReferente() != null){
-					if(addAnd)
-						expr.and();
-
-					if(idAccordo.getSoggettoReferente().getTipo() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-
-					if(idAccordo.getSoggettoReferente().getNome() != null)
-						expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome()).and();
-				}
-
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-
-				}
-
-				if(StringUtils.isNotEmpty(nomeServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-				if(StringUtils.isNotEmpty(tipoServizio ))
-					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-				if(versioneServizio != null)
-					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-				IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-				List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-				if(lstAsps != null){
-					List<String> soggettiGiaInseriti = new ArrayList<String>();
-					for(AccordoServizioParteSpecifica asps : lstAsps){
-
-						expr = this.fruitoreSearchDAO.newExpression();
-
-
-						addAnd = false;
-
-						if(asps.getNome() != null){
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-							addAnd = true;
-						}
-
-						if( asps.getTipo()!= null){
-							if(addAnd)
-								expr.and();
-
-							expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-							addAnd = true;
-						}
-
-						if(asps.getIdErogatore()!= null){
-							if(addAnd)
-								expr.and();
-
-							if(asps.getIdErogatore().getTipo() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-							if(asps.getIdErogatore().getNome() != null)
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-						}
-
-						expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-						if(StringUtils.isNotEmpty(tipoFruitore) && StringUtils.isNotEmpty(nomeFruitore)){
-							expr.equals(Fruitore.model().ID_FRUITORE.NOME, nomeFruitore).and().equals(Fruitore.model().ID_FRUITORE.TIPO,tipoFruitore);
-						}
-
-						pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-						pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-						List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-						if(lstFruitori != null){
-							for (Fruitore fruitore : lstFruitori) {
-								IdSoggetto idFruitore = fruitore.getIdFruitore();
-								String key = idFruitore.getTipo() + "/" + idFruitore.getNome();
-								//								if(soggettiGiaInseriti.contains(key)==false){
-								soggettiGiaInseriti.add(key);
-								//								}
-							}
-						}				
-					}
-					return soggettiGiaInseriti.size();
-				}
-
-			} else {
-				// accordo non specificato
-				// Se ho specificato il soggetto erogatore
-				if(StringUtils.isNotEmpty(tipoErogatore) && StringUtils.isNotEmpty(nomeErogatore)){
-					expr = this.aspsDAO.newExpression();
-					expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and().equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO,tipoErogatore);
-					if(StringUtils.isNotEmpty(nomeServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-					if(StringUtils.isNotEmpty(tipoServizio ))
-						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-					if(versioneServizio != null)
-						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
-
-					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
-
-					IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
-
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
-
-					if(lstAsps != null){
-						List<String> soggettiGiaInseriti = new ArrayList<String>();
-						for(AccordoServizioParteSpecifica asps : lstAsps){
-
-							expr = this.fruitoreSearchDAO.newExpression();
-
-
-							boolean addAnd = false;
-
-							if(asps.getNome() != null){
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME,asps.getNome());
-								addAnd = true;
-							}
-
-							if( asps.getTipo()!= null){
-								if(addAnd)
-									expr.and();
-
-								expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO,  asps.getTipo());
-								addAnd = true;
-							}
-
-							if(asps.getIdErogatore()!= null){
-								if(addAnd)
-									expr.and();
-
-								if(asps.getIdErogatore().getTipo() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO,asps.getIdErogatore().getTipo()).and();
-
-								if(asps.getIdErogatore().getNome() != null)
-									expr.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.NOME,asps.getIdErogatore().getNome()).and();
-							}
-
-							expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-							if(StringUtils.isNotEmpty(tipoFruitore) && StringUtils.isNotEmpty(nomeFruitore)){
-								expr.equals(Fruitore.model().ID_FRUITORE.NOME, nomeFruitore).and().equals(Fruitore.model().ID_FRUITORE.TIPO,tipoFruitore);
-							}
-
-							pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-							pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-							List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-							if(lstFruitori != null){
-								for (Fruitore fruitore : lstFruitori) {
-									IdSoggetto idFruitore = fruitore.getIdFruitore();
-
-									String key = idFruitore.getTipo() + "/" + idFruitore.getNome();
-									//									if(soggettiGiaInseriti.contains(key)==false){
-									soggettiGiaInseriti.add(key);
-									//									}
-
-								}
-							}				
-
-						}
-						return soggettiGiaInseriti.size();
-					}
-
-
-				} else {
-
-					// ne accordo ne erogatore specificati, faccio la find all
-
-					expr = this.fruitoreSearchDAO.newExpression();
-					expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-					if(StringUtils.isNotEmpty(tipoFruitore) && StringUtils.isNotEmpty(nomeFruitore)){
-						expr.equals(Fruitore.model().ID_FRUITORE.NOME, nomeFruitore).and().equals(Fruitore.model().ID_FRUITORE.TIPO,tipoFruitore);
-					}
-
-					if(tipoProtocollo!= null){
-						expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.fruitoreSearchDAO, Fruitore.model().ID_FRUITORE.TIPO, tipoProtocollo));
-					}
-
-					IPaginatedExpression pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-					List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-					if(lstFruitori != null){
-						List<String> soggettiGiaInseriti = new ArrayList<String>();
-
-						for (Fruitore fruitore : lstFruitori) {
-
-							IdSoggetto idFruitore = fruitore.getIdFruitore();
-
-							String key = idFruitore.getTipo() + "/" + idFruitore.getNome();
-							//if(soggettiGiaInseriti.contains(key)==false){
-							soggettiGiaInseriti.add(key);
-							//							}
-						}
-
-						return soggettiGiaInseriti.size();
-					}
-
-				}
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (DriverRegistroServiziException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		} 
-
-		return 0;
-	}
-
-	@Override
-	public int countFruizioniSoggetto(String tipoProtocollo,String tipoSoggetto, String nomeSoggetto){
-
-		IExpression expr;
-		try {
-			expr = this.fruitoreSearchDAO.newExpression();
-
-			if(StringUtils.isNotEmpty(tipoSoggetto) && StringUtils.isNotEmpty(nomeSoggetto)){
-				expr.equals(Fruitore.model().ID_FRUITORE.NOME, nomeSoggetto).and().equals(Fruitore.model().ID_FRUITORE.TIPO,tipoSoggetto);
-			}
-
-			if(tipoProtocollo!= null){
-				expr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.fruitoreSearchDAO, Fruitore.model().ID_FRUITORE.TIPO, tipoProtocollo));
-			}
-			expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-
-			IPaginatedExpression pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-
-			pagExpr.offset(0).limit(LIMIT_SEARCH);
-
-			List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-
-			if(lstFruitori != null){
-				List<String> soggettiGiaInseriti = new ArrayList<String>();
-
-				for (Fruitore fruitore : lstFruitori) {
-
-					IdSoggetto idFruitore = fruitore.getIdFruitore();
-
-					String key = idFruitore.getTipo() + "/" + idFruitore.getNome();
-					//if(soggettiGiaInseriti.contains(key)==false){
-					soggettiGiaInseriti.add(key);
-					//							}
-				}
-
-				return soggettiGiaInseriti.size();
-			}
-
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}  
-		return 0;
-	}
-
-	@Override
-	public List<PortaApplicativa> findPorteApplicative(String tipoProtocollo,String uriAccordoServizio,
-			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+	public List<PortaApplicativa> findPorteApplicative(String tipoProtocollo, String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Porta Applicativa [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
 
 		try {
-			IExpression paExpr = this.portaApplicativaDAO.newExpression();
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, null,null);
 			
-			if(permessiUtenteOperatore!=null){
-				IExpression permessi = 	permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaApplicativaDAO, 
-						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO, PortaApplicativa.model().VERSIONE_SERVIZIO,
-						false);
-				paExpr.and(permessi);
-			}
-
-			// Se non ho selezionato il servizio
-			if(StringUtils.isEmpty(nomeServizio )) {
-				// Accordo servizio selezionato
-				if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty()){
-					List<AccordoServizioParteSpecifica> servizi = this.getServizi(tipoProtocollo, uriAccordoServizio, tipoErogatore, nomeErogatore);
-
-					if(servizi != null && servizi.size() > 0){
-						List<IExpression> lstExpr = new ArrayList<IExpression>();
-						for (AccordoServizioParteSpecifica servizio : servizi) {
-							IExpression servizioExpr = this.portaApplicativaDAO.newExpression();
-							IdSoggetto idErogatore = servizio.getIdErogatore();
-							String nome = servizio.getNome();
-							String tipo = servizio.getTipo();
-							Integer versione = servizio.getVersione();
-							servizioExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nome).and()
-							.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipo).and()
-							.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versione).and()
-							.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, idErogatore.getNome())
-							.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, idErogatore.getTipo());
-							if(StringUtils.isNotEmpty(nomeErogatore ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
-							if(StringUtils.isNotEmpty(tipoErogatore ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoErogatore).and();
-							if(StringUtils.isNotEmpty(tipoSoggetto ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-							if(StringUtils.isNotEmpty(nomeSoggetto ))
-								servizioExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
-							if(tipoProtocollo!= null){
-								servizioExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaApplicativaDAO, PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-							}
-							lstExpr.add(servizioExpr);
-						}
-
-						if(lstExpr.size() > 0)
-							paExpr.or(lstExpr.toArray(new IExpression[lstExpr.size()])); 
-					}
-					IPaginatedExpression pagPdExpr = this.portaApplicativaDAO.toPaginatedExpression(paExpr );
-					listaPorte = this.portaApplicativaDAO.findAll(pagPdExpr);
-					return listaPorte;
-				}
-			} 
-			// Se ho selezionato un servizio, oppure se non ho selezionato niente 
-
-			if(StringUtils.isNotEmpty(nomeServizio ))
-				paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
-			if(StringUtils.isNotEmpty(tipoServizio ))
-				paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
-			if(versioneServizio != null)
-				paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
-			if(StringUtils.isNotEmpty(nomeErogatore ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
-			if(StringUtils.isNotEmpty(tipoErogatore ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoErogatore).and();
-			if(StringUtils.isNotEmpty(tipoSoggetto ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-			if(StringUtils.isNotEmpty(nomeSoggetto ))
-				paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
-			if(StringUtils.isNotEmpty(nomeAzione )){
-				IExpression azioneExpr =  this.portaApplicativaDAO.newExpression();
-				azioneExpr.equals(PortaApplicativa.model().NOME_AZIONE, nomeAzione).or().isNull(PortaApplicativa.model().NOME_AZIONE); 
-				paExpr.and(azioneExpr);
-			}
-
-			if(tipoProtocollo!= null){
-				paExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaApplicativaDAO, PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-			}
 			IPaginatedExpression pagPdExpr = this.portaApplicativaDAO.toPaginatedExpression(paExpr );
 			listaPorte = this.portaApplicativaDAO.findAll(pagPdExpr);
 
@@ -2826,192 +1907,14 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		return listaPorte;
 	}
 
-	@Override
-	public int countPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-		log.debug("countPorteApplicative [Soggetto Erogatore : " + nomeErogatore	+ "]");
-		try {
-			IExpression paExpr = this.portaApplicativaDAO.newExpression();
-			
-			if(permessiUtenteOperatore!=null){
-				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaApplicativaDAO, 
-						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO, PortaApplicativa.model().VERSIONE_SERVIZIO,
-						false);
-				paExpr.and(permessi);
-			}
-
-			// Se non ho selezionato il servizio
-			if(StringUtils.isEmpty(nomeServizio )) {
-				// Accordo servizio selezionato
-				if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty()){
-					int count = 0;
-					List<AccordoServizioParteSpecifica> servizi = this.getServizi(tipoProtocollo, uriAccordoServizio, tipoErogatore, nomeErogatore);
-
-					if(servizi != null && servizi.size() > 0){
-
-						for (AccordoServizioParteSpecifica servizio : servizi) {
-							IExpression servizioExpr = this.portaApplicativaDAO.newExpression();
-							IdSoggetto idErogatore = servizio.getIdErogatore();
-							String nome = servizio.getNome();
-							String tipo = servizio.getTipo();
-							Integer versione = servizio.getVersione();
-							servizioExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nome).and()
-							.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipo).and()
-							.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versione).and()
-							.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, idErogatore.getNome())
-							.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, idErogatore.getTipo());
-							if(StringUtils.isNotEmpty(nomeErogatore ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
-							if(StringUtils.isNotEmpty(tipoErogatore ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoErogatore).and();
-							if(StringUtils.isNotEmpty(tipoSoggetto ))
-								servizioExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,		 tipoSoggetto);
-							if(StringUtils.isNotEmpty(nomeSoggetto ))
-								servizioExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
-							if(tipoProtocollo!= null){
-								servizioExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaApplicativaDAO, PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-							}
-							NonNegativeNumber nn = this.portaApplicativaDAO.count(servizioExpr);
-							if(nn!= null)
-								count+= nn.longValue();
-						}
-					}
-					return count;
-				}
-			} 
-			// Se ho selezionato un servizio, oppure se non ho selezionato niente 
-
-			if(StringUtils.isNotEmpty(nomeServizio ))
-				paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
-			if(StringUtils.isNotEmpty(tipoServizio ))
-				paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
-			if(versioneServizio != null)
-				paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
-			if(StringUtils.isNotEmpty(nomeErogatore ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
-			if(StringUtils.isNotEmpty(tipoErogatore ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoErogatore).and();
-			if(StringUtils.isNotEmpty(tipoSoggetto ))
-				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-			if(StringUtils.isNotEmpty(nomeSoggetto ))
-				paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
-			if(StringUtils.isNotEmpty(nomeAzione )){
-				IExpression azioneExpr =  this.portaApplicativaDAO.newExpression();
-				azioneExpr.equals(PortaApplicativa.model().NOME_AZIONE, nomeAzione).or().isNull(PortaApplicativa.model().NOME_AZIONE); 
-				paExpr.and(azioneExpr);
-			}
-
-			if(tipoProtocollo!= null){
-				paExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaApplicativaDAO, PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-			}
-
-			NonNegativeNumber nnn= this.portaApplicativaDAO.count(paExpr);
-
-			if(nnn!= null)
-				return (int) nnn.longValue();
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		}catch (Exception e) {
-			log.error(e.getMessage(), e);
-		} 
-		return 0;
-	}
-
-	@Override
-	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Porta Delegate [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
 
 		try {
-			IExpression pdExpr = this.portaDelegataDAO.newExpression();
+			IExpression pdExpr = this.getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, null, permessiUtenteOperatore);
 			
-			if(permessiUtenteOperatore!=null){
-				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaDelegataDAO, 
-						PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
-						PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
-						PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
-						false);
-				pdExpr.and(permessi);
-			}
-
-			// Se non ho selezionato il servizio
-			if(StringUtils.isEmpty(nomeServizio )) {
-				// Accordo servizio selezionato
-				if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty()){
-					List<AccordoServizioParteSpecifica> servizi = this.getServizi(tipoProtocollo, uriAccordoServizio, tipoErogatore, nomeErogatore);
-
-					if(servizi != null && servizi.size() > 0){
-						List<IExpression> lstExpr = new ArrayList<IExpression>();
-						for (AccordoServizioParteSpecifica servizio : servizi) {
-							IExpression servizioExpr = this.portaDelegataDAO.newExpression();
-							IdSoggetto idErogatore = servizio.getIdErogatore();
-							String nome = servizio.getNome();
-							String tipo = servizio.getTipo();
-							Integer versione = servizio.getVersione();
-							servizioExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nome).and()
-							.equals(PortaDelegata.model().TIPO_SERVIZIO, tipo).and()
-							.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versione).and()
-							.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, idErogatore.getNome())
-							.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, idErogatore.getTipo());
-							if(StringUtils.isNotEmpty(nomeErogatore ))
-								servizioExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
-							if(StringUtils.isNotEmpty(tipoErogatore ))
-								servizioExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
-							if(StringUtils.isNotEmpty(tipoSoggetto ))
-								servizioExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-							if(StringUtils.isNotEmpty(nomeSoggetto ))
-								servizioExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
-							if(tipoProtocollo!= null){
-								servizioExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaDelegataDAO, PortaDelegata.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-							}
-
-							lstExpr.add(servizioExpr);
-						}
-
-						if(lstExpr.size() > 0)
-							pdExpr.or(lstExpr.toArray(new IExpression[lstExpr.size()])); 
-					}
-					IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
-					listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
-					return listaPorte;
-				}
-			} 
-			// Se ho selezionato un servizio, oppure se non ho selezionato niente 
-
-			if(StringUtils.isNotEmpty(nomeServizio ))
-				pdExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nomeServizio).and();
-			if(StringUtils.isNotEmpty(tipoServizio ))
-				pdExpr.equals(PortaDelegata.model().TIPO_SERVIZIO, tipoServizio).and();
-			if(versioneServizio != null)
-				pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
-			if(StringUtils.isNotEmpty(nomeErogatore ))
-				pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
-			if(StringUtils.isNotEmpty(tipoErogatore ))
-				pdExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
-			if(StringUtils.isNotEmpty(tipoSoggetto ))
-				pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-			if(StringUtils.isNotEmpty(nomeSoggetto ))
-				pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
-			if(StringUtils.isNotEmpty(nomeAzione )){
-				IExpression azioneExpr =  this.portaDelegataDAO.newExpression();
-				azioneExpr.equals(PortaDelegata.model().NOME_AZIONE, nomeAzione).or().isNull(PortaDelegata.model().NOME_AZIONE); 
-				pdExpr.and(azioneExpr);
-			}
-
-			if(tipoProtocollo!= null){
-				pdExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaDelegataDAO, PortaDelegata.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-			}
-
 			IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 
@@ -3032,91 +1935,38 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 
 	@Override
-	public int countPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio,
-			String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
-		log.debug("countPorteDelegate [Soggetto Erogatore : " + nomeErogatore	+ "]");
+	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
+			String val, boolean searchTipo) {
+		log.debug("getServiziErogazione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
 		try {
-			IExpression pdExpr = this.portaDelegataDAO.newExpression();
+			IExpression pAExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,null);
+				 
+			List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
+			IPaginatedExpression pagPaExpr = this.portaApplicativaDAO.toPaginatedExpression(pAExpr );
 			
-			if(permessiUtenteOperatore != null){
-				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaDelegataDAO, 
-					PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
-					PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
-					PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
-					false);
-				pdExpr.and(permessi);
-			}
-
-			// Se non ho selezionato il servizio
-			if(StringUtils.isEmpty(nomeServizio )) {
-				// Accordo servizio selezionato
-				if(uriAccordoServizio != null   && !uriAccordoServizio.isEmpty()){
-					int count = 0;
-					List<AccordoServizioParteSpecifica> servizi = this.getServizi(tipoProtocollo, uriAccordoServizio, tipoErogatore, nomeErogatore);
-
-					if(servizi != null && servizi.size() > 0){
-
-						for (AccordoServizioParteSpecifica servizio : servizi) {
-							IExpression servizioExpr = this.portaDelegataDAO.newExpression();
-							IdSoggetto idErogatore = servizio.getIdErogatore();
-							String nome = servizio.getNome();
-							String tipo = servizio.getTipo();
-							Integer versione = servizio.getVersione();
-							servizioExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nome).and()
-							.equals(PortaDelegata.model().TIPO_SERVIZIO, tipo).and()
-							.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versione).and()
-							.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, idErogatore.getNome())
-							.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, idErogatore.getTipo());
-							if(StringUtils.isNotEmpty(nomeErogatore ))
-								servizioExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
-							if(StringUtils.isNotEmpty(tipoErogatore ))
-								servizioExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
-							if(StringUtils.isNotEmpty(tipoSoggetto ))
-								servizioExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-							if(StringUtils.isNotEmpty(nomeSoggetto ))
-								servizioExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
-							if(tipoProtocollo!= null){
-								servizioExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaDelegataDAO, PortaDelegata.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-							}
-							NonNegativeNumber nn = this.portaDelegataDAO.count(servizioExpr);
-							if(nn!= null)
-								count+= nn.longValue();
-						}
-					}
-					return count;
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.TIPO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
+			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+			
+			pagPaExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
+			
+			List<String> lstTmp = new ArrayList<String>();
+			for (PortaApplicativa portaApplicativa : listaPorte) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(),
+							portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome(), portaApplicativa.getVersioneServizio());
+				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+				
+				// elimino duplicati
+				if(!lstTmp.contains(uriFromIDServizio)) {
+					lstTmp.add(uriFromIDServizio);
+					lista.add(idServizio);
 				}
-			} 
-			// Se ho selezionato un servizio, oppure se non ho selezionato niente 
-
-			if(StringUtils.isNotEmpty(nomeServizio ))
-				pdExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nomeServizio).and();
-			if(StringUtils.isNotEmpty(tipoServizio ))
-				pdExpr.equals(PortaDelegata.model().TIPO_SERVIZIO, tipoServizio).and();
-			if(versioneServizio != null)
-				pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
-			if(StringUtils.isNotEmpty(nomeErogatore ))
-				pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
-			if(StringUtils.isNotEmpty(tipoErogatore ))
-				pdExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
-			if(StringUtils.isNotEmpty(tipoSoggetto ))
-				pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
-			if(StringUtils.isNotEmpty(nomeSoggetto ))
-				pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
-			if(StringUtils.isNotEmpty(nomeAzione )){
-				IExpression azioneExpr =  this.portaDelegataDAO.newExpression();
-				azioneExpr.equals(PortaDelegata.model().NOME_AZIONE, nomeAzione).or().isNull(PortaDelegata.model().NOME_AZIONE); 
-				pdExpr.and(azioneExpr);
 			}
-
-
-			if(tipoProtocollo!= null){
-				pdExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaDelegataDAO, PortaDelegata.model().ID_SOGGETTO.TIPO, tipoProtocollo));
-			}
-
-			NonNegativeNumber nnn= this.portaDelegataDAO.count(pdExpr);
-
-			if(nnn!= null)
-				return (int) nnn.longValue();
 		} catch (ServiceException e) {
 			log.error(e.getMessage(), e);
 		} catch (NotImplementedException e) {
@@ -3125,11 +1975,254 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			log.error(e.getMessage(), e);
 		} catch (ExpressionException e) {
 			log.error(e.getMessage(), e);
-		}catch (Exception e) {
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return lista;
+	}
+	
+	@Override
+	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,
+			boolean searchTipo) {
+		try {
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, null, null, val,null);
+
+			NonNegativeNumber nnn = this.portaApplicativaDAO.count(paExpr);
+			
+			if(nnn != null)
+				return (int) nnn.longValue(); 
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return 0;
+	}
+	
+	@Override
+	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
+			String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore,
+			Integer versioneServizio, String nomeAzione, String val, boolean searchTipo,
+			PermessiUtenteOperatore permessiUtenteOperatore) {
+		try {
+			IExpression paExpr = getExpressionPA(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio,	tipoErogatore, nomeErogatore, versioneServizio, nomeAzione, val, permessiUtenteOperatore);
+
+			NonNegativeNumber nnn = this.portaApplicativaDAO.count(paExpr);
+			
+			if(nnn != null)
+				return (int) nnn.longValue(); 
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} 
 		return 0;
 	}
 
+
+	private IExpression getExpressionPA(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio,
+			String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio,
+			String nomeAzione, String val, PermessiUtenteOperatore permessiUtenteOperatore) throws ServiceException,
+			NotImplementedException, CoreException, ExpressionNotImplementedException, ExpressionException, Exception {
+		IExpression paExpr = this.portaApplicativaDAO.newExpression();
+		
+		if(permessiUtenteOperatore!=null){
+			IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaApplicativaDAO, 
+					PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
+					PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
+					PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO, PortaApplicativa.model().VERSIONE_SERVIZIO,
+					false);
+			paExpr.and(permessi);
+		}
+
+		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
+		if(StringUtils.isNotEmpty(nomeServizio ))
+			paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
+		if(StringUtils.isNotEmpty(tipoServizio ))
+			paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
+		if(versioneServizio != null)
+			paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
+		if(StringUtils.isNotEmpty(nomeErogatore ))
+			paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
+		if(StringUtils.isNotEmpty(tipoErogatore ))
+			paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoErogatore).and();
+		if(StringUtils.isNotEmpty(tipoSoggetto ))
+			paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
+		if(StringUtils.isNotEmpty(nomeSoggetto ))
+			paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
+		if(StringUtils.isNotEmpty(nomeAzione )){
+			IExpression azioneExpr =  this.portaApplicativaDAO.newExpression();
+			azioneExpr.equals(PortaApplicativa.model().NOME_AZIONE, nomeAzione).or().isNull(PortaApplicativa.model().NOME_AZIONE); 
+			paExpr.and(azioneExpr);
+		}
+
+		if(tipoProtocollo!= null){
+			paExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaApplicativaDAO, PortaApplicativa.model().ID_SOGGETTO.TIPO, tipoProtocollo));
+		}
+
+		if(StringUtils.isNotEmpty(val)) {
+			paExpr.ilike(PortaApplicativa.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
+		}
+		
+		paExpr.notEquals(PortaApplicativa.model().MODE_AZIONE, org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione.DELEGATED_BY);
+		return paExpr;
+	}
 	
+	@Override
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val, boolean searchTipo) {
+		log.debug("getServiziFruizione [Soggetto Proprietario : " + tipoSoggetto + "/"+ nomeSoggetto	 + "]");
+		List<IDServizio> lista = new ArrayList<IDServizio>();
+
+		try {
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, val, null);
+			
+			List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
+			IPaginatedExpression pagPdExpr = this.portaDelegataDAO.toPaginatedExpression(pdExpr );
+			
+			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().TIPO_SERVIZIO, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
+			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
+			
+			pagPdExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
+			
+			List<String> lstTmp = new ArrayList<String>();
+			for (PortaDelegata portaDelegata : listaPorte) {
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getTipoSoggettoErogatore(), portaDelegata.getNomeSoggettoErogatore(), portaDelegata.getVersioneServizio());
+				String uriFromIDServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+				
+				// elimino duplicati
+				if(!lstTmp.contains(uriFromIDServizio)) {
+					lstTmp.add(uriFromIDServizio);
+					lista.add(idServizio);
+				}
+			}
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return lista;
+	}
+	
+	@Override
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,
+			boolean searchTipo) {
+		try {
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, null, null, null, null, val, null);
+			
+			NonNegativeNumber nnn = this.portaDelegataDAO.count(pdExpr);
+
+			if(nnn != null)
+				return (int) nnn.longValue(); 
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return 0;
+	}
+	
+	@Override
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto,
+			String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore,
+			Integer versioneServizio, String nomeAzione, String val, boolean searchTipo,
+			PermessiUtenteOperatore permessiUtenteOperatore) {
+		try {
+			IExpression pdExpr = getExpressionPD(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoErogatore, nomeErogatore,	versioneServizio, nomeAzione, val, permessiUtenteOperatore);
+			
+			NonNegativeNumber nnn = this.portaDelegataDAO.count(pdExpr);
+
+			if(nnn != null)
+				return (int) nnn.longValue(); 
+		} catch (ServiceException e) {
+			log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionNotImplementedException e) {
+			log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+		return 0;
+	}
+
+
+	private IExpression getExpressionPD(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoErogatore,
+			String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,
+			PermessiUtenteOperatore permessiUtenteOperatore) throws ServiceException, NotImplementedException,
+			CoreException, ExpressionNotImplementedException, ExpressionException, Exception {
+		IExpression pdExpr = this.portaDelegataDAO.newExpression();
+
+		if(permessiUtenteOperatore != null){
+			IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaDelegataDAO, 
+				PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
+				PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
+				PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
+				false);
+			pdExpr.and(permessi);
+		}
+		
+		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
+		if(StringUtils.isNotEmpty(tipoSoggetto ))
+			pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO, tipoSoggetto);
+		if(StringUtils.isNotEmpty(nomeSoggetto ))
+			pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
+		if(versioneServizio != null)
+			pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
+		if(StringUtils.isNotEmpty(nomeErogatore ))
+			pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
+		if(StringUtils.isNotEmpty(tipoErogatore ))
+			pdExpr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, tipoErogatore).and();
+		if(StringUtils.isNotEmpty(tipoSoggetto ))
+			pdExpr.equals(PortaDelegata.model().ID_SOGGETTO.TIPO,		tipoSoggetto);
+		if(StringUtils.isNotEmpty(nomeSoggetto ))
+			pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
+		if(StringUtils.isNotEmpty(nomeAzione )){
+			IExpression azioneExpr =  this.portaDelegataDAO.newExpression();
+			azioneExpr.equals(PortaDelegata.model().NOME_AZIONE, nomeAzione).or().isNull(PortaDelegata.model().NOME_AZIONE); 
+			pdExpr.and(azioneExpr);
+		}
+		
+		if(tipoProtocollo!= null){
+			pdExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.portaDelegataDAO, PortaDelegata.model().ID_SOGGETTO.TIPO, tipoProtocollo));
+		}
+
+		if(StringUtils.isNotEmpty(val)) {
+			pdExpr.ilike(PortaDelegata.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
+		}
+		
+		pdExpr.notEquals(PortaDelegata.model().MODE_AZIONE, org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione.DELEGATED_BY);
+		return pdExpr;
+	}
 }

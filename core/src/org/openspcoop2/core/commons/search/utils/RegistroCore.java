@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
@@ -63,6 +64,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -305,7 +307,7 @@ public class RegistroCore {
 	public static List<String> getAzioni(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore,	String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
 		List<String> list = new ArrayList<String>();
-		list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio).keySet());
+		list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,null).keySet());
 		 
 		if(list!=null && list.size()>0){
 			Collections.sort(list);
@@ -314,13 +316,13 @@ public class RegistroCore {
 		return list;
 	}
 	
-	public static Map<String,String> getAzioniConLabel(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
+	public static Map<String,String> getAzioniConLabel(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
 		List<String> protocolli = null;
 		if(protocollo!=null) {
 			protocolli = new ArrayList<>();
 			protocolli.add(protocollo);
 		}
-		Map<String,String> mapAzioni = _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio);
+		Map<String,String> mapAzioni = _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio,input);
 		
 		//convert map to a List
 		List<Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(mapAzioni.entrySet());
@@ -342,7 +344,7 @@ public class RegistroCore {
 		return sortedMap;
 	}
 	
-	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
+	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
 		
 		List<String> list = new ArrayList<String>();
 		Map<String,String> mapAzioni = new HashMap<String,String>();
@@ -454,6 +456,14 @@ public class RegistroCore {
 						pagResources.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, 
 								idPortType.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
 					}
+					
+					if(StringUtils.isNotEmpty(input)){
+						IExpression exprOrMethod = aspcResourceServiceSearch.newExpression();
+						exprOrMethod.ilike(Resource.model().HTTP_METHOD, input , LikeMode.ANYWHERE);
+						IExpression exprOrPath = aspcResourceServiceSearch.newExpression();
+						exprOrPath.ilike(Resource.model().PATH, input , LikeMode.ANYWHERE);
+						pagResources.or(exprOrMethod,exprOrPath);
+					}
 					List<Map<String, Object>> resultAzioni = null;
 					try{
 						resultAzioni = aspcResourceServiceSearch.select(pagResources, true, Resource.model().NOME, Resource.model().HTTP_METHOD, Resource.model().PATH);
@@ -489,6 +499,9 @@ public class RegistroCore {
 							pagAzioni.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, 
 									idPortType.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
 						}
+						if(StringUtils.isNotEmpty(input)){
+							pagAzioni.ilike(Operation.model().NOME,input,LikeMode.ANYWHERE);		
+						}
 						List<Object> resultAzioni = null;
 						try{
 							resultAzioni = portTypeAzioneServiceSearch.select(pagAzioni, true, Operation.model().NOME);
@@ -517,6 +530,9 @@ public class RegistroCore {
 									idPortType.getIdAccordoServizioParteComune().getIdSoggetto().getTipo());
 							pagAzioni.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, 
 									idPortType.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
+						}
+						if(StringUtils.isNotEmpty(input)){
+							pagAzioni.ilike(AccordoServizioParteComuneAzione.model().NOME,input,LikeMode.ANYWHERE);		
 						}
 						List<Object> resultAzioni = null;
 						try{

@@ -31,21 +31,21 @@ package org.openspcoop2.web.monitor.core.constants;
  */
 public class Costanti {
 
-	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
+	public static final String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
 	
-	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
-	public final static String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";
+	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
+	public static final String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";
 	
-	public final static String ICONS_BASE = "/images/tema_link/" ;
+	public static final String ICONS_BASE = "/images/tema_link/" ;
 	
-	public final static String ICONA_MENU_UTENTE_CHECKED = ICONS_BASE +"checkbox_checked_white.png";
-	public final static String ICONA_MENU_UTENTE_UNCHECKED = ICONS_BASE + "checkbox_unchecked_white.png";
+	public static final String ICONA_MENU_UTENTE_CHECKED = ICONS_BASE +"checkbox_checked_white.png";
+	public static final String ICONA_MENU_UTENTE_UNCHECKED = ICONS_BASE + "checkbox_unchecked_white.png";
 	
-	public static final String dataSource = "dataSource";
+	public static final String DATASOURCE = "dataSource";
 	
-	public static final String tipoDatabase ="tipoDatabase";
+	public static final String TIPODATABASE ="tipoDatabase";
 	
-	public static final String showSql ="showSql";
+	public static final String SHOWSQL ="showSql";
 	
 	public static final String NON_SELEZIONATO = "--";
 	

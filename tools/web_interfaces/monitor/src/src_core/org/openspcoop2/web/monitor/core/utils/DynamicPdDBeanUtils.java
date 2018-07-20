@@ -21,14 +21,13 @@
  */
 package org.openspcoop2.web.monitor.core.utils;
 
-//import java.awt.Canvas;
 import java.awt.Font;
-//import java.awt.FontMetrics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
@@ -52,7 +50,6 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
@@ -83,7 +80,6 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	public static Integer defaultSelectItemsWidth = 412;
 
-	//	private transient FontMetrics fm = null;
 	private transient AffineTransform affineTransform = null;
 	private transient FontRenderContext fontRenderContext = null;
 
@@ -313,6 +309,16 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return this.dynamicUtilsService.checkTipoPdd(nome, tipoPdD);
 	}
 
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,IDServizio idServizio, String val){
+		String nomeServizio = idServizio.getNome();
+		String tipoServizio = idServizio.getTipo();
+		String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+		String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+		Integer versioneServizio = idServizio.getVersione();
+		
+		return findAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, val);
+	}
+	
 	/***
 	 * 
 	 * Restituisce l'elenco delle Azioni dell'Accordo di servizio passato come parametro
@@ -328,13 +334,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param versioneServizio
 	 * @return Azioni dell'Accordo di servizio
 	 */
-	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio){
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio, String val){
 		Map<String, String>  map = new HashMap<String, String>();
 
 		//		if(idAccordo != null && nomeServizio != null){
 		this.log.debug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");
 		try{
-			map = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio);
+			map = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val);
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante la ricerca  Azioni per il servizio"+nomeServizio+ "]",e);
 		}
@@ -353,11 +359,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param versioneServizio
 	 * @return Lista delle SelectItems per le Azioni trovate
 	 */
-	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo, String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,Integer versioneServizio){
+	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo, String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,Integer versioneServizio, String val){
 		List<SelectItem> azioni = new ArrayList<SelectItem>();
 
 		try{
-			Map<String, String>  map = this.findAzioniFromServizio(tipoProtocollo,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio);
+			Map<String, String>  map = this.findAzioniFromServizio(tipoProtocollo,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val);
 			for (String azione : map.keySet()) {
 				SelectItem item = new SelectItem(azione,map.get(azione));
 				azioni.add(item);
@@ -511,19 +517,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 
-	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, boolean showErogatore){
-		return getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, showErogatore, false);
+	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto, String nomeSoggetto, String input){
+		return getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, input, false);
 	}
 
 
-	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, boolean showErogatore, boolean soloOperativi){
+	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
-			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,uriAccordoServizio, tipoSoggetto, nomeSoggetto);
+			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,uriAccordoServizio, tipoSoggetto, nomeSoggetto, input);
 
 			if(servizi2 != null && servizi2.size() > 0){
 				for (AccordoServizioParteSpecifica res : servizi2) {
@@ -694,46 +700,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio){
 		return this.dynamicUtilsService.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio);
 	}
-
 	
-	/***
-	 * 
-	 * Restituisce l'elenco delle porte delegate associate al soggetto fruitore passato come parametro
-	 * 
-	 */
-	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore, Integer versioneServizio, String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
-		List<PortaDelegata>  list = new ArrayList<PortaDelegata>();
-
-		//		if(idAccordo != null && nomeServizio != null){
-		this.log.debug("findPorteDelegate [Accordo: " + (idAccordo != null ? idAccordo : "Non specificato") + "], [nome Servizio: " + nomeServizio + "], [nome Erogarore: " + nomeErogatore + "], [nome Fruitore: " + nomeFruitore + "]");
-		try{
-			list = this.dynamicUtilsService.findPorteDelegate(tipoProtocollo, idAccordo, tipoFruitore, nomeFruitore, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
-		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca  findPorteDelegate [" + (idAccordo != null ? idAccordo  : "Non specificato") + "], [nome Servizio: " + nomeServizio + "], [nome Erogarore: " + nomeErogatore + "], [nome Fruitore: " + nomeFruitore + "]",e);
-			//			}
-		}
-		return list;
-	}
-
-	public List<SelectItem> getListaSelectItemsPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore, Integer versioneServizio,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
-
-		List<SelectItem> servizi = new ArrayList<SelectItem>();
-
-		try{
-			List<PortaDelegata> listaPD = this.findPorteDelegate(tipoProtocollo, idAccordo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione, tipoFruitore, nomeFruitore,permessiUtenteOperatore);
-			if(listaPD != null && listaPD.size() > 0){
-				for (PortaDelegata pd : listaPD) {
-					String label = pd.getNome();
-					servizi.add(new SelectItem(label));
-				}
-			}
-		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca  findPorteDelegate [" + (idAccordo != null ? idAccordo  : "Non specificato") + "], [nome Servizio: " + nomeServizio + "], [nome Erogarore: " + nomeErogatore + "], [nome Fruitore: " + nomeFruitore + "]",e);
-		}
-		return servizi;
-	}
-
-
 	public List<Soggetto> getListaSoggetti(String tipoProtocollo,TipoPdD tipoPdD){
 		return this.dynamicUtilsService.findElencoSoggettiFromTipoPdD(tipoProtocollo, tipoPdD);
 	}
@@ -756,4 +723,207 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return new ArrayList<Soggetto>();
 	}
 
+	
+	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String input){
+		return getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+	}
+
+
+	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+		List<SelectItem> servizi = new ArrayList<SelectItem>();
+
+		try{
+
+			UserDetailsBean user = Utility.getLoggedUser();
+
+			List<IDServizio> servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+
+			List<String> lstLabelOrdinate = new ArrayList<>();
+			Map<String, String> mapElementi = new HashMap<>();
+			if(servizi2 != null && servizi2.size() > 0){
+				for (IDServizio res : servizi2) {
+					boolean add= true;
+					String value= null;
+					// servizi.add(new
+					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
+					StringBuilder uri = new StringBuilder();
+
+					String nomeAsps = res.getNome();
+
+					String tipoAsps = res.getTipo();
+
+					if(tipoAsps != null)
+						uri.append(tipoAsps).append("/");
+
+					uri.append(nomeAsps).append(":").append(res.getVersione());
+					
+
+//					if(showErogatore ){
+					uri.append(" (").append(res.getSoggettoErogatore().getTipo()).append("/").append(res.getSoggettoErogatore().getNome()).append(")"); 
+//					}
+					
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome(), res.getVersione());
+					String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+							: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+					
+					value = uri.toString();
+					//compongo la label e la imposto
+					if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
+						String nomePddFromSoggetto = this.getServerFromSoggetto(res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome());
+						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+					}
+
+					if(add && !user.isAdmin()){
+
+						// controllo sul soggetto
+						boolean existsPermessoSoggetto = false;
+						if(user.getSizeSoggetti()>0){
+							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
+									existsPermessoSoggetto = true;
+									break;
+								}
+							}
+						}
+
+						boolean existsPermessoServizio = false;
+						if(!existsPermessoSoggetto){
+							if(user.getSizeSoggetti()>0){
+								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+											res.getNome().equals(utenteSoggetto.getNome())){
+										existsPermessoServizio = true;
+										break;
+									}
+								}
+							}
+						}
+
+						add = (existsPermessoSoggetto || existsPermessoServizio);
+					}
+
+					if(add) {
+						lstLabelOrdinate.add(label);
+						mapElementi.put(label, value);
+					}
+				}
+			}
+
+			if(lstLabelOrdinate.size() > 0) {
+				Collections.sort(lstLabelOrdinate);
+				
+				for (String string : lstLabelOrdinate) {
+					servizi.add(new SelectItem(mapElementi.get(string), string));  
+				}
+			}
+		}catch(Exception e){
+			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
+		}
+		return servizi;
+	}
+	
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String input){
+		return getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+	}
+
+
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+		List<SelectItem> servizi = new ArrayList<SelectItem>();
+
+		try{
+
+			UserDetailsBean user = Utility.getLoggedUser();
+
+			List<IDServizio> servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+
+			List<String> lstLabelOrdinate = new ArrayList<>();
+			Map<String, String> mapElementi = new HashMap<>();
+			if(servizi2 != null && servizi2.size() > 0){
+				for (IDServizio res : servizi2) {
+					boolean add= true;
+					String value= null;
+					// servizi.add(new
+					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
+					StringBuilder uri = new StringBuilder();
+
+					String nomeAsps = res.getNome();
+
+					String tipoAsps = res.getTipo();
+
+					if(tipoAsps != null)
+						uri.append(tipoAsps).append("/");
+
+					uri.append(nomeAsps).append(":").append(res.getVersione());
+					
+
+//					if(showErogatore ){
+					uri.append(" (").append(res.getSoggettoErogatore().getTipo()).append("/").append(res.getSoggettoErogatore().getNome()).append(")"); 
+//					}
+					
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome(), res.getVersione());
+					String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+							: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+					
+					value = uri.toString();
+					//compongo la label e la imposto
+					if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
+						String nomePddFromSoggetto = this.getServerFromSoggetto(res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome());
+						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+					}
+
+					if(add && !user.isAdmin()){
+
+						// controllo sul soggetto
+						boolean existsPermessoSoggetto = false;
+						if(user.getSizeSoggetti()>0){
+							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+								if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+										res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getNome())){
+									existsPermessoSoggetto = true;
+									break;
+								}
+							}
+						}
+
+						boolean existsPermessoServizio = false;
+						if(!existsPermessoSoggetto){
+							if(user.getSizeSoggetti()>0){
+								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+											res.getNome().equals(utenteSoggetto.getNome())){
+										existsPermessoServizio = true;
+										break;
+									}
+								}
+							}
+						}
+
+						add = (existsPermessoSoggetto || existsPermessoServizio);
+					}
+
+					if(add) {
+						lstLabelOrdinate.add(label);
+						mapElementi.put(label, value);
+					}
+				}
+			}
+
+			if(lstLabelOrdinate.size() > 0) {
+				Collections.sort(lstLabelOrdinate);
+				
+				for (String string : lstLabelOrdinate) {
+					servizi.add(new SelectItem(mapElementi.get(string), string));  
+				}
+			}
+
+		}catch(Exception e){
+			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
+		}
+		return servizi;
+	}
 }

@@ -8,7 +8,26 @@
     xmlns:c="http://java.sun.com/jstl/core">
     
     <c:if test="#{not sf_bean.visualizzaFiltroAzioniSelectList}">
-    
+    	<link:prop label="#{sf_bean.labelAzione}">
+     	 	<h:inputText id="azCombo" value="#{sf_labelNomeAzione}" styleClass="inputLinkLong"/>
+			<rich:suggestionbox
+						id="azComboSuggestion" 
+						width="416" 
+						for="azCombo" 
+						suggestionAction="#{sf_mbean.azioniAutoComplete}"
+						ajaxSingle="true" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
+						nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
+						param="azCombo">
+				<h:column>
+					<h:outputText value="#{selectItem.label}" rendered="true" />
+				</h:column>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()">
+					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_nomeAzione}" />  
+				</a4j:support>
+			</rich:suggestionbox>
+			<h:inputHidden id="azComboHidden" value="#{sf_nomeAzione}" />
+     		<rich:toolTip rendered="#{not empty sf_nomeAzione}" direction="top-right" for="azCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.nomeAzioneTooltip}"/>
+		</link:prop> 
     </c:if>
     
    	<c:if test="#{sf_bean.visualizzaFiltroAzioniSelectList}">
@@ -20,6 +39,7 @@
 				<f:selectItems value="#{sf_azioni}"/>
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
 			</rich:comboBox>
+			<rich:toolTip rendered="#{not empty sf_nomeAzione}" direction="top-right" for="azCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.nomeAzioneTooltip}"/>
 		</link:prop>
 	</c:if>	
    	

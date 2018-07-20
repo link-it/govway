@@ -116,6 +116,10 @@
 					<ui:param name="sf_tipoReport" value="#{sf_tipoReport}" />
 					<ui:param name="sf_bean" value="#{sf_bean}"  />
 					<ui:param name="sf_showSoggetti" value="#{sf_showSoggetti}" />
+					<ui:param name="sf_labelSoggettoLocale" value="#{sf_labelSoggettoLocale}" />
+					<ui:param name="sf_labelNomeMittente" value="#{sf_labelNomeMittente}" />
+					<ui:param name="sf_labelNomeDestinatario" value="#{sf_labelNomeDestinatario}" />
+					<ui:param name="sf_labelTrafficoPerSoggetto" value="#{sf_labelTrafficoPerSoggetto}" />
 			 	</ui:include>
 				
 				<c:if test="#{sf_showServizi}">
@@ -132,6 +136,7 @@
 						<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
 						<ui:param name="sf_bean" value="#{sf_bean}" />
 						<ui:param name="sf_mbean" value="#{sf_mbean}" />
+						<ui:param name="sf_labelServizio" value="#{sf_labelServizio}" />
 				 	</ui:include>
 					
 		
@@ -149,6 +154,7 @@
 							<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
 							<ui:param name="sf_bean" value="#{sf_bean}" />
 							<ui:param name="sf_mbean" value="#{sf_mbean}" />
+							<ui:param name="sf_labelNomeAzione" value="#{sf_labelNomeAzione}" />
 					 	</ui:include>
 					</c:if>
 				</c:if>

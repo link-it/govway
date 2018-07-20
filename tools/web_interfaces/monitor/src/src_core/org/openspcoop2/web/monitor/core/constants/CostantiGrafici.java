@@ -48,7 +48,7 @@ public class CostantiGrafici {
 	public static final String WHITE_SPACE = " ";
 	
 	
-	public final static String DATI_NON_PRESENTI = "Non esistono transazioni per il periodo selezionato";
+	public static final String DATI_NON_PRESENTI = "Non esistono transazioni per il periodo selezionato";
 	public static final String ALTRI_LABEL = "Altri";
 	public static final String NUMERO_ESITI_LABEL = "Numero Esiti";
 	public static final String ESITO_TRANSAZIONI_LABEL = "Esito Transazioni";

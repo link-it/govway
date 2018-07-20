@@ -8,7 +8,26 @@
     xmlns:c="http://java.sun.com/jstl/core">
     
     <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
-    
+    	<link:prop label="Servizio">
+     	 	<h:inputText id="servizioCombo" value="#{sf_labelServizio}" styleClass="inputLinkLong"/>
+			<rich:suggestionbox
+						id="servizioComboSuggestion" 
+						width="416" 
+						for="servizioCombo" 
+						suggestionAction="#{sf_mbean.serviziAutoComplete}"
+						ajaxSingle="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
+						nothingLabel="--" var="selectItem" fetchValue="#{selectItem.label}"
+						param="servizioCombo">
+				<h:column>
+					<h:outputText value="#{selectItem.label}" rendered="true" />
+				</h:column>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl">
+					<f:setPropertyActionListener value="#{selectItem.value}" target="#{sf_servizio}" />  
+				</a4j:support>
+			</rich:suggestionbox>
+			<h:inputHidden id="servizioComboHidden" value="#{sf_servizio}" />
+     		<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.nomeServizioTooltip}"/>
+		</link:prop>
     </c:if>
     
    	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
@@ -20,7 +39,7 @@
 				<f:selectItems value="#{sf_servizi}" />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl"/>
 			</rich:comboBox>
-			<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo2" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizio}"/>
+			<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo2" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.nomeServizioTooltip}"/>
 		</link:prop>
 	</c:if>	
    	

@@ -37,8 +37,8 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
@@ -106,6 +106,15 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private String tipoNomeDestinatario;
 	private String tipoNomeTrafficoPerSoggetto;
 	private String tipoNomeSoggettoLocale;
+	
+	// supporto ricerche con autocompletamento
+	private String labelTipoNomeMittente;
+	private String labelTipoNomeDestinatario;
+	private String labelTipoNomeTrafficoPerSoggetto;
+	private String labelTipoNomeSoggettoLocale;
+	private String labelNomeServizio;
+	private String labelNomeAzione;	
+	
 
 	// ricerche
 	private String nomeRicercaPersonalizzata;
@@ -301,6 +310,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.tipoNomeMittente = null;
 			this.tipoNomeSoggettoLocale = null;
 			this.tipoNomeTrafficoPerSoggetto = null;
+			
+			this.labelTipoNomeMittente = null;
+			this.labelTipoNomeDestinatario = null;
+			this.labelTipoNomeTrafficoPerSoggetto = null;
+			this.labelTipoNomeSoggettoLocale = null;
+			this.labelNomeServizio = null;
+			this.labelNomeAzione = null;
 
 			this.idCorrelazioneApplicativa = null;
 			this.idEgov = null;
@@ -381,6 +397,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.nomeAzione = null;
 		this.ricerchePersonalizzate = null;
 		this.statistichePersonalizzate = null;
+		this.labelNomeServizio = null;
+		this.labelNomeAzione = null;
 	}
 
 	public void servizioSelected(ActionEvent ae) {
@@ -389,6 +407,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.nomeRicercaPersonalizzata = null;
 		this.nomeStatisticaPersonalizzata = null;
 		this.labelAzione = null;
+		this.labelNomeAzione = null;
 	}
 
 	public void azioneSelected(ActionEvent ae) {
@@ -425,6 +444,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.tipoNomeMittente = null;
 		this.tipoNomeSoggettoLocale = null;
 		this.tipoNomeTrafficoPerSoggetto = null;
+		
+		this.labelTipoNomeMittente = null;
+		this.labelTipoNomeDestinatario = null;
+		this.labelTipoNomeTrafficoPerSoggetto = null;
+		this.labelTipoNomeSoggettoLocale = null;
+		this.labelNomeServizio = null;
+		this.labelNomeAzione = null;
 		
 		this.servizioApplicativo=null;
 
@@ -483,6 +509,24 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 		if (StringUtils.isEmpty(nomeAzione) || "--".equals(nomeAzione))
 			this.nomeAzione = null;
+	}
+	
+	public String getNomeAzioneTooltip() {
+		if(this.nomeServizio!=null && this.nomeAzione != null){
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				
+				Map<String, String> findAzioniFromServizio = DynamicPdDBeanUtils.getInstance(log).findAzioniFromServizio(tipoProtocollo, idServizio, null);
+				
+				if(findAzioniFromServizio.containsKey(this.nomeAzione)) {
+					return findAzioniFromServizio.get(this.nomeAzione);
+				}
+			}catch(Exception e) {
+				return this.nomeAzione;
+			}
+		}
+		return this.nomeAzione;
 	}
 
 	public String estraiNomeServizioDalServizio() {
@@ -605,7 +649,34 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return null;
 	}
 
-
+	public String getNomeServizioTooltip() {
+		if(StringUtils.isNotEmpty(this.getNomeServizio())) {
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				
+				String nomeSoggetto = null;
+				if ("ingresso".equals(this.getTipologiaRicerca())) {
+					if (StringUtils.isNotBlank(this.getSoggettoLocale())) {
+						nomeSoggetto = this.getSoggettoLocale();
+					}
+				} else if ("uscita".equals(this.getTipologiaRicerca())) {
+					// uscita
+					if (StringUtils.isNotBlank(this.getNomeDestinatario())) {
+						nomeSoggetto = this.getNomeDestinatario();
+					}
+				}
+				String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+						: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
+				
+				return label;
+			} catch (Exception e) {
+				BaseSearchForm.log.error(e.getMessage(), e);
+			}
+		}
+		
+		return null;
+	}
 
 	public String getNomeServizio() {
 		return this.nomeServizio;
@@ -1271,8 +1342,78 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public String getTipoNomeTrafficoPerSoggetto() {
 		return this.tipoNomeTrafficoPerSoggetto;
 	}
-
+	
 	public String getTipoNomeSoggettoLocale() {
+		return this.tipoNomeSoggettoLocale;
+	}
+	
+	public String getTipoNomeMittenteTooltip() {
+		if(StringUtils.isNotEmpty(this.tipoNomeMittente)) {
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDSoggetto idSoggetto = new IDSoggetto();
+				idSoggetto.setTipo(this.getTipoMittente());
+				idSoggetto.setNome(this.getNomeMittente());
+				String label = NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto );
+				
+				return label;
+			} catch (Exception e) {
+				BaseSearchForm.log.error(e.getMessage(), e);
+			}
+		}
+		
+		return this.tipoNomeMittente;
+	}
+
+	public String getTipoNomeDestinatarioTooltip() {
+		if(StringUtils.isNotEmpty(this.tipoNomeDestinatario)) {
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDSoggetto idSoggetto = new IDSoggetto();
+				idSoggetto.setTipo(this.getTipoDestinatario());
+				idSoggetto.setNome(this.getNomeDestinatario());
+				String label = NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto );
+				
+				return label;
+			} catch (Exception e) {
+				BaseSearchForm.log.error(e.getMessage(), e);
+			}
+		}
+		
+		return this.tipoNomeDestinatario;
+	}
+
+	public String getTipoNomeTrafficoPerSoggettoTooltip() {
+		if(StringUtils.isNotEmpty(this.tipoNomeTrafficoPerSoggetto)) {
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDSoggetto idSoggetto = new IDSoggetto();
+				idSoggetto.setTipo(this.getTipoTrafficoPerSoggetto());
+				idSoggetto.setNome(this.getTrafficoPerSoggetto());
+				String label = NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto );
+				
+				return label;
+			} catch (Exception e) {
+				BaseSearchForm.log.error(e.getMessage(), e);
+			}
+		}
+		return this.tipoNomeTrafficoPerSoggetto;
+	}
+
+	public String getTipoNomeSoggettoLocaleTooltip() {
+		if(StringUtils.isNotEmpty(this.tipoNomeSoggettoLocale)) {
+			try {
+				String tipoProtocollo = this.getProtocollo();
+				IDSoggetto idSoggetto = new IDSoggetto();
+				idSoggetto.setTipo(this.getTipoSoggettoLocale());
+				idSoggetto.setNome(this.getSoggettoLocale());
+				String label = NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto );
+				
+				return label;
+			} catch (Exception e) {
+				BaseSearchForm.log.error(e.getMessage(), e);
+			}
+		}
 		return this.tipoNomeSoggettoLocale;
 	}
 
@@ -1469,6 +1610,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				if(nomeErogatore != null){
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoErogatore, tipoProt)){ 
 						this.setTipoNomeDestinatario(null);
+						this.setLabelTipoNomeDestinatario(null);
 						this.destinatarioSelected(ae);
 					}
 				}
@@ -1480,6 +1622,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				if(nomeSoggettoLocale != null){
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoSoggettoLocale, tipoProt)){ 
 						this.setTipoNomeSoggettoLocale(null);
+						this.setLabelTipoNomeSoggettoLocale(null);
 						this.soggettoLocaleSelected(ae);
 					}
 				}
@@ -1491,6 +1634,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				if(nomeTrafficoPerSoggetto != null){
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoTrafficoPerSoggetto, tipoProt)){ 
 						this.setTipoNomeTrafficoPerSoggetto(null);
+						this.setLabelTipoNomeTrafficoPerSoggetto(null); 
 						this.destinatarioSelected(ae);
 					}
 				}
@@ -1502,6 +1646,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				if(nomeFruitore!= null)
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoSoggettoCompatibileConProtocollo(tipoFruitore, tipoProt)){
 						this.setTipoNomeMittente(null);
+						this.setLabelTipoNomeMittente(null);
 						this.destinatarioSelected(ae);
 					}
 
@@ -1516,6 +1661,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				if(tipoServizio != null)
 					if(!DynamicPdDBeanUtils.getInstance(BaseSearchForm.log).isTipoServizioCompatibileConProtocollo(tipoServizio, tipoProt)){
 						this.setNomeServizio(null); 
+						this.setLabelNomeServizio(null);
 						this.servizioSelected(ae);
 					}
 
@@ -1721,4 +1867,77 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.mittenteCaseSensitiveType = CaseSensitiveMatch.valueOf(mittenteCaseSensitiveType);
 		}
 	}
+	
+	public String getLabelTipoNomeMittente() {
+		return this.labelTipoNomeMittente;
+	}
+
+	public void setLabelTipoNomeMittente(String labelTipoNomeMittente) {
+		this.labelTipoNomeMittente = labelTipoNomeMittente;
+		
+		if (StringUtils.isEmpty(this.labelTipoNomeMittente) || "--".equals(this.labelTipoNomeMittente)) {
+			this.labelTipoNomeMittente = null;
+		}
+	}
+
+	public String getLabelTipoNomeDestinatario() {
+		return this.labelTipoNomeDestinatario;
+	}
+
+	public void setLabelTipoNomeDestinatario(String labelTipoNomeDestinatario) {
+		this.labelTipoNomeDestinatario = labelTipoNomeDestinatario;
+		
+		if (StringUtils.isEmpty(this.labelTipoNomeDestinatario) || "--".equals(this.labelTipoNomeDestinatario)) {
+			this.labelTipoNomeDestinatario = null;
+		}
+	}
+
+	public String getLabelTipoNomeTrafficoPerSoggetto() {
+		return this.labelTipoNomeTrafficoPerSoggetto;
+	}
+
+	public void setLabelTipoNomeTrafficoPerSoggetto(String labelTipoNomeTrafficoPerSoggetto) {
+		this.labelTipoNomeTrafficoPerSoggetto = labelTipoNomeTrafficoPerSoggetto;
+		
+		if (StringUtils.isEmpty(this.labelTipoNomeTrafficoPerSoggetto) || "--".equals(this.labelTipoNomeTrafficoPerSoggetto)) {
+			this.labelTipoNomeTrafficoPerSoggetto = null;
+		}
+	}
+
+	public String getLabelTipoNomeSoggettoLocale() {
+		return this.labelTipoNomeSoggettoLocale;
+	}
+
+	public void setLabelTipoNomeSoggettoLocale(String labelTipoNomeSoggettoLocale) {
+		this.labelTipoNomeSoggettoLocale = labelTipoNomeSoggettoLocale;
+		
+		if (StringUtils.isEmpty(this.labelTipoNomeSoggettoLocale) || "--".equals(this.labelTipoNomeSoggettoLocale)) {
+			this.labelTipoNomeSoggettoLocale = null;
+		}
+	}
+
+	public String getLabelNomeServizio() {
+		return this.labelNomeServizio;
+	}
+
+	public void setLabelNomeServizio(String labelNomeServizio) {
+		this.labelNomeServizio = labelNomeServizio;
+		
+		if (StringUtils.isEmpty(this.labelNomeServizio) || "--".equals(this.labelNomeServizio)) {
+			this.labelNomeServizio = null;
+		}
+	}
+
+	public String getLabelNomeAzione() {
+		return this.labelNomeAzione;
+	}
+
+	public void setLabelNomeAzione(String labelNomeAzione) {
+		this.labelNomeAzione = labelNomeAzione;
+		
+		if (StringUtils.isEmpty(this.labelNomeAzione) || "--".equals(this.labelNomeAzione)) {
+			this.labelNomeAzione = null;
+		}
+	}
+	
 }

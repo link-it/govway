@@ -1291,6 +1291,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			if(accessoDaListaAPS) {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
+					asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 					erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
