@@ -471,6 +471,30 @@ public class SDIImbustamento {
 				throw new Exception("NomeFileFattura non fornito");
 			}
 			
+			// identificativoSdi
+			Integer identificativoSdi = null;
+			String tmpIdentificativoSdi = null;
+			if(msg.getTransportRequestContext()!=null){
+				tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI);
+				if(tmpIdentificativoSdi==null){
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1);
+				}
+				if(tmpIdentificativoSdi==null){
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2);
+				}
+			}
+			boolean accessoNotificaDaInviare = this.sdiProperties.isEnableAccessoNotificaDaInviare();
+			if(tmpIdentificativoSdi==null && !accessoNotificaDaInviare){
+				throw new Exception("IdentificativoSdi non fornito");
+			}
+			if(tmpIdentificativoSdi!=null) {
+				try {
+					identificativoSdi = Integer.valueOf(tmpIdentificativoSdi);
+				}catch(Exception e) {
+					throw new Exception("IdentificativoSdi fornito non possiede un valore valido: "+e.getMessage());
+				}
+			}
+			
 			// childElement
 			List<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
 			if(childs==null || childs.size()<=0){
@@ -515,46 +539,52 @@ public class SDIImbustamento {
 			
 			// Leggo NotificaEsitoCommittente
 			it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoCommittenteType notificaEsitoCommittente = null;
-			try{
-				// fatto prima in validazion: notificaEsitoCommittenteBytes = this.xmlUtils.toByteArray(notificaEsitoCommittenteSOAPElement);
-				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-				notificaEsitoCommittente = deserializer.readNotificaEsitoCommittenteType(notificaEsitoCommittenteBytes);
-			}catch(Exception e){
-				throw new Exception("Notifica di Esito Committente non valida: "+e.getMessage(),e);
-			}
-			
-			
-			
-			// Aggiunto info alla busta
-			
-			// Esito.IdentificativoSdI
-			if(notificaEsitoCommittente.getIdentificativoSdI()!=null){
-				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, notificaEsitoCommittente.getIdentificativoSdI().toString());
-			}			
-			// Esito.RiferimentoFattura
-			if(notificaEsitoCommittente.getRiferimentoFattura()!=null){
-				if(notificaEsitoCommittente.getRiferimentoFattura().getAnnoFattura()!=null){
-					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_ANNO, notificaEsitoCommittente.getRiferimentoFattura().getAnnoFattura().toString());
+			if(accessoNotificaDaInviare) {
+				try{
+					// fatto prima in validazion: notificaEsitoCommittenteBytes = this.xmlUtils.toByteArray(notificaEsitoCommittenteSOAPElement);
+					it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+					notificaEsitoCommittente = deserializer.readNotificaEsitoCommittenteType(notificaEsitoCommittenteBytes);
+				}catch(Exception e){
+					throw new Exception("Notifica di Esito Committente non valida: "+e.getMessage(),e);
 				}
-				if(notificaEsitoCommittente.getRiferimentoFattura().getNumeroFattura()!=null){
-					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_NUMERO, notificaEsitoCommittente.getRiferimentoFattura().getNumeroFattura());
+			
+			
+				// Aggiunto info alla busta
+				
+				// Esito.IdentificativoSdI
+				if(notificaEsitoCommittente.getIdentificativoSdI()!=null){
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, notificaEsitoCommittente.getIdentificativoSdI().toString());
+					identificativoSdi = notificaEsitoCommittente.getIdentificativoSdI();
+				}			
+				// Esito.RiferimentoFattura
+				if(notificaEsitoCommittente.getRiferimentoFattura()!=null){
+					if(notificaEsitoCommittente.getRiferimentoFattura().getAnnoFattura()!=null){
+						busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_ANNO, notificaEsitoCommittente.getRiferimentoFattura().getAnnoFattura().toString());
+					}
+					if(notificaEsitoCommittente.getRiferimentoFattura().getNumeroFattura()!=null){
+						busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_NUMERO, notificaEsitoCommittente.getRiferimentoFattura().getNumeroFattura());
+					}
+					if(notificaEsitoCommittente.getRiferimentoFattura().getPosizioneFattura()!=null){
+						busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_POSIZIONE, notificaEsitoCommittente.getRiferimentoFattura().getPosizioneFattura().toString());
+					}
+				}			
+				// Esito.Esito
+				if(notificaEsitoCommittente.getEsito()!=null){
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ESITO, notificaEsitoCommittente.getEsito().name());
+				}				
+				// Esito.Descrizione
+				if(notificaEsitoCommittente.getDescrizione()!=null){
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESCRIZIONE, notificaEsitoCommittente.getDescrizione());
+				}	
+				// Esito.MessageId
+				if(notificaEsitoCommittente.getMessageIdCommittente()!=null){
+					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID_COMMITTENTE, notificaEsitoCommittente.getMessageIdCommittente());
 				}
-				if(notificaEsitoCommittente.getRiferimentoFattura().getPosizioneFattura()!=null){
-					busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_FATTURA_POSIZIONE, notificaEsitoCommittente.getRiferimentoFattura().getPosizioneFattura().toString());
+				
+				if(identificativoSdi==null){
+					throw new Exception("IdentificativoSdi non fornito nella notifica da inviare");
 				}
-			}			
-			// Esito.Esito
-			if(notificaEsitoCommittente.getEsito()!=null){
-				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ESITO, notificaEsitoCommittente.getEsito().name());
-			}				
-			// Esito.Descrizione
-			if(notificaEsitoCommittente.getDescrizione()!=null){
-				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESCRIZIONE, notificaEsitoCommittente.getDescrizione());
-			}	
-			// Esito.MessageId
-			if(notificaEsitoCommittente.getMessageIdCommittente()!=null){
-				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID_COMMITTENTE, notificaEsitoCommittente.getMessageIdCommittente());
 			}
 					
 			
@@ -566,7 +596,7 @@ public class SDIImbustamento {
 				fileSent = SDICompatibilitaNamespaceErrati.produciXmlNamespaceSenzaGov(protocolFactory.getLogger(), fileSent);
 			}
 			fileSdi.setFile(fileSent);
-			fileSdi.setIdentificativoSdI(notificaEsitoCommittente.getIdentificativoSdI());
+			fileSdi.setIdentificativoSdI(identificativoSdi);
 			fileSdi.setNomeFile(SDIUtils.getNomeFileMessaggi(protocolFactory, state, nomeFileFattura, TipiMessaggi.EC));
 			
 			// detach body

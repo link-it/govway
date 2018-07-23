@@ -100,9 +100,9 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				inMessage.getURLProtocolContext().setFunctionParameters(params);
 				attiva = true;
 			}
-			else if( inMessage.getURLProtocolContext().getFunctionParameters().endsWith(sdiFatturazionePassiva)
+			else if( inMessage.getURLProtocolContext().getFunctionParameters().contains(sdiFatturazionePassiva)
 					||
-					inMessage.getURLProtocolContext().getFunctionParameters().endsWith(sdiFatturazionePassivaConTipo)){
+					inMessage.getURLProtocolContext().getFunctionParameters().contains(sdiFatturazionePassivaConTipo)){
 				String requestUri = inMessage.getURLProtocolContext().getRequestURI();
 				String params =  inMessage.getURLProtocolContext().getFunctionParameters();
 				if(requestUri.endsWith("/")==false) {
@@ -111,7 +111,7 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				if(params.endsWith("/")==false) {
 					params = params + "/";
 				}
-				requestUri = requestUri + SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE;
+				requestUri = requestUri + SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO;
 				params = params + SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO;
 				inMessage.getURLProtocolContext().setRequestURI(requestUri);
 				inMessage.getURLProtocolContext().setFunctionParameters(params);

@@ -140,6 +140,7 @@ public class SDIProperties {
 			
 			this.isEnableValidazioneXsdFatturaDaInviare();
 			this.isEnableValidazioneXsdNotificaDaInviare();
+			this.isEnableAccessoNotificaDaInviare();
 			
 			this.isEnableAccessoMetadati();
 			this.isEnableAccessoFattura();
@@ -412,6 +413,32 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.isEnableValidazioneXsdNotificaDaInviare;
+	}
+	
+	private static Boolean isEnableAccessoNotificaDaInviare = null;
+	public Boolean isEnableAccessoNotificaDaInviare() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoNotificaDaInviare==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.access.notificaDaInviare";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoNotificaDaInviare = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoNotificaDaInviare;
 	}
 	
 	/**

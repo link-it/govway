@@ -630,7 +630,8 @@ public class ZIPWriteUtils {
 								// Non serializzo l'ìd del servizio e  l'id del fruiotre, poiche' sono gia' dentro la fruizione del servizio 
 								String id = mappingPortaDelegataAssociata.getNome() + " " + 
 										mappingPortaDelegataAssociata.getIdPortaDelegata().getNome() + " " + 
-										mappingPortaDelegataAssociata.isDefault();
+										mappingPortaDelegataAssociata.isDefault()+ " " + 
+										mappingPortaDelegataAssociata.getDescrizione();
 								zipOut.write(id.getBytes());	
 							}
 						}
@@ -1423,7 +1424,8 @@ public class ZIPWriteUtils {
 					// Non serializzo l'ìd del servizio, poiche' sono gia' dentro il servizio
 					String id = mappingPortaApplicativaAssociata.getNome() + " " + 
 							mappingPortaApplicativaAssociata.getIdPortaApplicativa().getNome() + " " + 
-							mappingPortaApplicativaAssociata.isDefault();
+							mappingPortaApplicativaAssociata.isDefault() + " " + 
+							mappingPortaApplicativaAssociata.getDescrizione();
 					zipOut.write(id.getBytes());	
 				}
 			}

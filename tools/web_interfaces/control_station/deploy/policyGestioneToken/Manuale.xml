@@ -1010,9 +1010,9 @@
 	
 			<item type="select" name="tokenForwardInfoRaccolteMode" label="Modalità" default="op2header" reloadOnChange="true">
 				<values>
-					<value value="op2header" label="OpenSPCoop Headers"/>
-					<value value="op2json" label="OpenSPCoop JSON"/>
-					<value value="op2jws" label="OpenSPCoop JWS"/>
+					<value value="op2header" label="GovWay Headers"/>
+					<value value="op2json" label="GovWay JSON"/>
+					<value value="op2jws" label="GovWay JWS"/>
 					<value value="jws" label="JWS"/>
 					<value value="jwe" label="JWE"/>
 					<value value="json" label="JSON"/>

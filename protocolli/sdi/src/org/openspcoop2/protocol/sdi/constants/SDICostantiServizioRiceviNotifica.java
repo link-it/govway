@@ -57,5 +57,9 @@ public class SDICostantiServizioRiceviNotifica {
 	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";	
 	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
 	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
+	
+	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI  = "IdentificativoSdI";	
+	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1  = "SDI-IdentificativoSdI";
+	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2  = "GovWay-SDI-IdentificativoSdI";
 
 }

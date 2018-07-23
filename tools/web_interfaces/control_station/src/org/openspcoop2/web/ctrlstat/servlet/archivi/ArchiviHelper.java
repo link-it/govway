@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
@@ -971,7 +972,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		invServizio.setSbustamentoInformazioniProtocollo(StatoFunzionalita.toEnumConstant(sbustamentoInformazioniProtocolloRichiesta));
 		invServizio.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
 
-		invServizio.setCredenziali(this.readCredenzialiConnettore());
+		org.openspcoop2.core.config.InvocazioneCredenziali invCr = this.readCredenzialiConnettore();
+		invServizio.setCredenziali(invCr);
+		if(invCr!=null) {
+			invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+		}
 		
 		TipologiaConnettori tipologiaConnettoriOriginale = null;
 		try{

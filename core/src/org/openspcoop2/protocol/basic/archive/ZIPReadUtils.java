@@ -24,11 +24,14 @@
 
 package org.openspcoop2.protocol.basic.archive;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -657,7 +660,7 @@ public class ZIPReadUtils  {
 													IdentificativoAccordo idAccordo = null;
 													String keyAccordo = getKeyAccordo(tipoSoggetto, nomeSoggetto, nomeVersioneAccordo, nomeFile);
 													if( nomeFileSenzaAccordo.equals(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME) ){
-														String identificativo = new String(xml);
+														String identificativo = this.readLineId(xml);
 														if(identificativo.contains(" ")){
 															nomeAccordo = identificativo.split(" ")[0];
 															versioneAccordo = identificativo.split(" ")[1];
@@ -769,7 +772,7 @@ public class ZIPReadUtils  {
 													IdentificativoAccordo idAccordo = null;
 													String keyAccordo = getKeyAccordo(tipoSoggetto, nomeSoggetto, nomeVersioneAccordo, nomeFile);
 													if( nomeFileSenzaAccordo.equals(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME) ){
-														String identificativo = new String(xml);
+														String identificativo = this.readLineId(xml);
 														if(!identificativo.contains(" ")){
 															throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
 																	"] non è corretto, deve essere presente una struttura '<tipo> <nome> <versione>' che descrive l'identificativo dell'accordo: ' ' non trovato");
@@ -1966,7 +1969,7 @@ public class ZIPReadUtils  {
 				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire il mapping con la PA senza fornire la definizione xml dell'accordo di servizio parte specifica");
 			}
 			
-			String idLine = new String(xml);
+			String idLine = this.readLineId(xml);
 			if(idLine==null || "".equals(idLine)){
 				throw new Exception("id non contiene valori");
 			}
@@ -1974,8 +1977,8 @@ public class ZIPReadUtils  {
 				idLine = idLine.substring(0, idLine.length()-1);
 			}
 			String [] tmp = idLine.split(" ");
-			if(tmp.length!=3) {
-				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault)");
+			if(tmp.length<3) {
+				throw new Exception("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
 			}
 			String nomeRegola = tmp[0];
 			String nomePorta = tmp[1];
@@ -1985,6 +1988,11 @@ public class ZIPReadUtils  {
 			}catch(Exception e) {
 				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
 			}
+			String descrizione = null;
+			if(tmp.length>3) {
+				String primeTreInfo = nomeRegola +" "+nomePorta+" "+isDefault+" ";
+				descrizione = idLine.substring(primeTreInfo.length());
+			}
 			
 			MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
 			mapping.setNome(nomeRegola);
@@ -1993,6 +2001,7 @@ public class ZIPReadUtils  {
 			idPA.setNome(nomePorta);
 			mapping.setIdPortaApplicativa(idPA);
 			mapping.setDefault(isDefault);
+			mapping.setDescrizione(descrizione);
 			
 			if(archiveASPS.getMappingPorteApplicativeAssociate()==null) {
 				archiveASPS.setMappingPorteApplicativeAssociate(new ArrayList<>());
@@ -2191,7 +2200,7 @@ public class ZIPReadUtils  {
 		Integer versioneKey = (versioneServizioInt!=null ? versioneServizioInt : -1 );
 		
 		try{
-			String idLine = new String(xml);
+			String idLine = this.readLineId(xml);
 			if(idLine==null || "".equals(idLine)){
 				throw new Exception("id non contiene valori");
 			}
@@ -2199,8 +2208,8 @@ public class ZIPReadUtils  {
 				idLine = idLine.substring(0, idLine.length()-1);
 			}
 			String [] tmp = idLine.split(" ");
-			if(tmp.length!=3) {
-				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault)");
+			if(tmp.length<3) {
+				throw new Exception("Attesi almeno tre valori separati da spazio (nomeRegola nomePorta isDefault [descrizione])");
 			}
 			String nomeRegola = tmp[0];
 			String nomePorta = tmp[1];
@@ -2209,6 +2218,11 @@ public class ZIPReadUtils  {
 				isDefault = Boolean.parseBoolean(tmp[2]);
 			}catch(Exception e) {
 				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
+			}
+			String descrizione = null;
+			if(tmp.length>3) {
+				String primeTreInfo = nomeRegola +" "+nomePorta+" "+isDefault+" ";
+				descrizione = idLine.substring(primeTreInfo.length());
 			}
 			
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
@@ -2225,6 +2239,7 @@ public class ZIPReadUtils  {
 			idPD.setNome(nomePorta);
 			mapping.setIdPortaDelegata(idPD);
 			mapping.setDefault(isDefault);
+			mapping.setDescrizione(descrizione);
 			
 			if(archiveFruitore.getMappingPorteDelegateAssociate()==null) {
 				archiveFruitore.setMappingPorteDelegateAssociate(new ArrayList<>());
@@ -2533,6 +2548,16 @@ public class ZIPReadUtils  {
 	
 	protected String toStringXmlElementForErrorMessage(byte[]xml){
 		return xml!=null ? "Xml: ["+new String(xml)+"] \n" : "Xml Undefined. \n";
+	}
+	
+	private String readLineId(byte[] xml) throws IOException {
+		// Elimino eventuali \n
+		StringReader sr = new StringReader(new String(xml));
+		BufferedReader br = new BufferedReader(sr);
+		String identificativo = br.readLine();
+		br.close();
+		sr.close();
+		return identificativo;
 	}
 }
 
