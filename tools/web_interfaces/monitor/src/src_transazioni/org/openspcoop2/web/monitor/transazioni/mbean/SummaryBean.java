@@ -1025,6 +1025,8 @@ public class SummaryBean implements Serializable{
 		if(!this.soggettiAssociatiSelectItemsWidthCheck){
 			this.soggettiAssociati = new ArrayList<SelectItem>();
 
+			List<IDSoggetto> lstSoggTmp = new ArrayList<IDSoggetto>();
+			List<IDServizio> lstServTmp = new ArrayList<IDServizio>();
 			UserDetailsBean loggedUser = Utility.getLoggedUser();
 			if(loggedUser!=null){
 				String tipoProtocollo = this.getProtocollo();
@@ -1034,8 +1036,6 @@ public class SummaryBean implements Serializable{
 				List<IDServizio> tipiNomiServiziAssociati = loggedUser.getUtenteServizioList();
 				if(tipoProtocollo != null) {
 					// se ho selezionato un protocollo devo filtrare per protocollo
-					
-					List<IDSoggetto> lstSoggTmp = new ArrayList<IDSoggetto>();
 					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0) {
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
 							if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
@@ -1052,10 +1052,6 @@ public class SummaryBean implements Serializable{
 						}
 					}
 					
-					tipiNomiSoggettiAssociati.clear();
-					tipiNomiSoggettiAssociati.addAll(lstSoggTmp);
-					
-					List<IDServizio> lstServTmp = new ArrayList<IDServizio>();
 					if(tipiNomiServiziAssociati !=null && tipiNomiServiziAssociati.size() > 0) {
 						for (IDServizio utenteServizio : tipiNomiServiziAssociati) {
 							if(this.dynamicUtils.isTipoServizioCompatibileConProtocollo(utenteServizio.getTipo(), tipoProtocollo)){
@@ -1063,13 +1059,10 @@ public class SummaryBean implements Serializable{
 							}
 						}
 					}
-					
-					tipiNomiServiziAssociati.clear();
-					tipiNomiServiziAssociati.addAll(lstServTmp);
 				}
 				
-				if(tipiNomiSoggettiAssociati!=null && tipiNomiSoggettiAssociati.size()>0){
-					for (IDSoggetto idSoggetto  : tipiNomiSoggettiAssociati) {
+				if(lstSoggTmp!=null && lstSoggTmp.size()>0){
+					for (IDSoggetto idSoggetto  : lstSoggTmp) {
 						IDServizio idServizio = new IDServizio();
 						idServizio.setSoggettoErogatore(idSoggetto);
 						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
@@ -1077,8 +1070,8 @@ public class SummaryBean implements Serializable{
 					}
 				}
 				
-				if(tipiNomiServiziAssociati!=null && tipiNomiServiziAssociati.size()>0){
-					for (IDServizio idServizio : tipiNomiServiziAssociati) {
+				if(lstServTmp!=null && lstServTmp.size()>0){
+					for (IDServizio idServizio : lstServTmp) {
 						String label = tipoProtocollo != null ?  NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
 						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 					}
