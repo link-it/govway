@@ -24,7 +24,7 @@
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes forceInterfaceMode="false">
-	    		 			<mode name="protocol" />
+	    		 			<mode name="interface" />
 	    		 		</identificationModes>
 						<specificResource>
 							<name>
@@ -94,7 +94,7 @@
 
     <registry>
 
-        <organization authentication="false">
+        <organization authentication="true">
             <types>
             	<type name="sdi"/>
             </types>

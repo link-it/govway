@@ -23,9 +23,12 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -44,6 +47,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -525,5 +529,81 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	if(this.dump!=null) {
 			this.dump.dumpBinarioRispostaIngresso(raw, this.infoConnettoreUscita, trasportoRisposta);
     	}
+    }
+    
+    private Map<String, Object> dynamicMap = null;
+    protected synchronized Map<String, Object> buildDynamicMap(ConnettoreMsg connettoreMsg){
+    	if(this.dynamicMap==null) {
+    		this.dynamicMap = new Hashtable<String, Object>();
+    	}
+    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT)==false) {
+    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
+    	}
+    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT)==false && connettoreMsg!=null && connettoreMsg.getBusta()!=null) {
+    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, connettoreMsg.getBusta());
+    	}
+    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT)==false && this.getPddContext()!=null && this.getPddContext().getContext()!=null) {
+    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, this.getPddContext().getContext());
+    	}
+		return this.dynamicMap;
+    }
+    
+    protected String getDynamicProperty(String tipoConnettore,boolean required,String name,Map<String,Object> dynamicMap) throws ConnettoreException{
+		String tmp = this.properties.get(name);
+		if(tmp!=null){
+			tmp = tmp.trim();
+		}
+		if(tmp==null || "".equals(tmp)){
+			if(required){
+				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
+			}
+			return null;
+		}
+		return this.convertDynamicPropertyValue(name, tmp, dynamicMap);
+    }
+    
+    protected String convertDynamicPropertyValue(String name,String tmp,Map<String,Object> dynamicMap) throws ConnettoreException{
+		if(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
+			String idTransazione = (String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			while(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
+				tmp = tmp.replace(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID, idTransazione);
+			}
+		}
+		try{
+			tmp = DynamicStringReplace.replace(tmp, dynamicMap);
+		}catch(Exception e){
+			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
+		}
+		return tmp;
+    }
+    
+    protected boolean isBooleanProperty(String tipoConnettore,boolean defaultValue,String name){
+  		String tmp = this.properties.get(name);
+  		if(tmp!=null){
+  			tmp = tmp.trim();
+  		}
+  		if(tmp==null || "".equals(tmp)){
+  			return defaultValue;
+  		}
+  		return "true".equalsIgnoreCase(tmp) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(tmp);
+    }
+    
+    protected Integer getIntegerProperty(String tipoConnettore,boolean required,String name) throws ConnettoreException{
+		String tmp = this.properties.get(name);
+		if(tmp!=null){
+			tmp = tmp.trim();
+		}
+		if(tmp==null || "".equals(tmp)){
+			if(required){
+				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
+			}
+			return null;
+		}
+		try{
+			return Integer.parseInt(tmp);
+		}catch(Exception e){
+			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
+		}
+
     }
 }

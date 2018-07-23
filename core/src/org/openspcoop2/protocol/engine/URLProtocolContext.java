@@ -50,8 +50,11 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	private static final long serialVersionUID = 1L;
 	
 	public static final String PA_FUNCTION = "PA";
+	public static final String PA_FUNCTION_GOVWAY = "in";
 	public static final String PD_FUNCTION = "PD";
+	public static final String PD_FUNCTION_GOVWAY = "out";
 	public static final String PDtoSOAP_FUNCTION = "PDtoSOAP";
+	public static final String PDtoSOAP_FUNCTION_GOVWAY = "out/xml2soap";
 	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
 	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
 	public static final String IntegrationManager_SERVICE_PD = "PD";

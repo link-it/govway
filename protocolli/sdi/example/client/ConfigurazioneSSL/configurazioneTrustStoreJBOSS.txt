@@ -1,0 +1,7 @@
+Impostare i seguenti parametri della JVM in:
+jboss 4.x, 5.x e 6.x:  JBOSS_DIR/bin/run.conf
+jboss 7.x: JBOSS_DIR/bin/standalone.conf
+wildfly: WILDFLY_DIR/bin/standalone.conf
+tomcat: TOMCAT_DIR/bin/setenv.sh
+
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=/tmp/SDIExample.jks -Djavax.net.ssl.trustStorePassword=123456"

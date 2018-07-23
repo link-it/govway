@@ -372,6 +372,7 @@ public class SPCoopArchiveImport {
 					portaApplicativa.setIdSoggetto(soggetto.getId());
 					portaApplicativa.setStato(StatoFunzionalita.DISABILITATO);
 					// Per non creare un buco di sicurezza per default, abilito l'autorizzazione dei soggetti
+					portaApplicativa.setAutenticazione(TipoAutenticazione.DISABILITATO.getValue());
 					portaApplicativa.setAutorizzazione(TipoAutorizzazione.AUTHENTICATED.getValue());
 					
 					// Viene creata in automatico

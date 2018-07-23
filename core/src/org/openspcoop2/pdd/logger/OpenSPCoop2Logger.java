@@ -910,9 +910,9 @@ public class OpenSPCoop2Logger {
 //				}catch(Exception e) {}
 //			}
 			if(delegata) {
-				showMsg.append(" PD:"+labelPorta);
+				showMsg.append(" OUT:"+labelPorta);
 			}else {
-				showMsg.append(" PA:"+labelPorta);
+				showMsg.append(" IN:"+labelPorta);
 			}
 		}
 		if(servizioApplicativo!=null){

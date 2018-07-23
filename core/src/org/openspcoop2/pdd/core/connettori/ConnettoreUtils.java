@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -61,7 +62,9 @@ public class ConnettoreUtils {
 			return location;
 	}
 	
-	public static String getAndReplaceLocationWithBustaValues(ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) throws ConnettoreException{
+	public static String getAndReplaceLocationWithBustaValues(IConnettore connector, ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) throws ConnettoreException{
+		
+		boolean dynamicLocation = false;
 		
 		String location = null;
 		if(TipiConnettore.NULL.getNome().equals(connettoreMsg.getTipoConnettore())){
@@ -74,56 +77,74 @@ public class ConnettoreUtils {
 			location = ConnettoreStresstest.LOCATION;
 		}
 		else if(TipiConnettore.FILE.getNome().equals(connettoreMsg.getTipoConnettore())){
-			ConnettoreFILE c = new ConnettoreFILE();
 			try{
-				c.init(pddContext, protocolFactory);
-				location = c.buildLocation(connettoreMsg);
+				location = ((ConnettoreFILE)connector).buildLocation(connettoreMsg);
+				//dynamicLocation = true; la dinamicita viene gia gestita nel metodo buildLocation
 			}catch(Exception e){
 				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				location = "N.D.";
 			}
 		}
 		else if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			ConnettoreRicezioneBusteDirectVM c = new ConnettoreRicezioneBusteDirectVM();
 			try{
-				c.validate(connettoreMsg);
-				c.buildLocation(connettoreMsg.getConnectorProperties(),false);
+				((ConnettoreRicezioneBusteDirectVM)connector).validate(connettoreMsg);
+				((ConnettoreRicezioneBusteDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+				location = connector.getLocation();
+				dynamicLocation = true;
 			}catch(Exception e){
 				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				location = "N.D.";
 			}
-			location = c.getLocation();
 		}
 		else if(ConnettoreRicezioneContenutiApplicativiDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			ConnettoreRicezioneContenutiApplicativiDirectVM c = new ConnettoreRicezioneContenutiApplicativiDirectVM();
 			try{
-				c.validate(connettoreMsg);
-				c.buildLocation(connettoreMsg.getConnectorProperties(),false);
+				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).validate(connettoreMsg);
+				((ConnettoreRicezioneContenutiApplicativiDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+				location = connector.getLocation();
+				dynamicLocation = true;
 			}catch(Exception e){
 				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				location = "N.D.";
 			}
-			location = c.getLocation();
 		}
 		else if(ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
-			ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM c = new ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM();
 			try{
-				c.validate(connettoreMsg);
-				c.buildLocation(connettoreMsg.getConnectorProperties(),false);
+				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).validate(connettoreMsg);
+				((ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM)connector).buildLocation(connettoreMsg.getConnectorProperties(),false);
+				location = connector.getLocation();
+				dynamicLocation = true;
 			}catch(Exception e){
 				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+				location = "N.D.";
 			}
-			location = c.getLocation();
 		}
 		else{
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_LOCATION)!=null){
 				location = connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_LOCATION);
+				dynamicLocation = true; // http, jms, ...
 			}
 		}
 		
 		if(location !=null && (location.equals("")==false) ){
+			
+			// Keyword old
 			location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_TIPO_SERVIZIO,busta.getTipoServizio());
 			location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_NOME_SERVIZIO,busta.getServizio());
 			if(busta.getAzione()!=null){
 				location = location.replace(CostantiConnettori.CONNETTORE_JMS_LOCATION_REPLACE_TOKEN_AZIONE,busta.getAzione());
 			}
+			
+			// Dynamic
+			// Costruisco Mappa per dynamic name
+			if(dynamicLocation) {
+				try {
+					Map<String, Object> dynamicMap = ((ConnettoreBase)connector).buildDynamicMap(connettoreMsg);
+					location = ((ConnettoreBase)connector).convertDynamicPropertyValue(CostantiConnettori.CONNETTORE_LOCATION, location, dynamicMap);
+				}catch(Exception e){
+					log.error("Errore durante la costruzione della location (dynamic): "+e.getMessage(),e);
+				}
+			}
+			
 			connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION,location);
 		}
 		

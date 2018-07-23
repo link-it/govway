@@ -1290,8 +1290,10 @@ public class InoltroBuste extends GenericLib{
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
 						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessage, tras, readQualifiedAttribute);
-						headerBustaRichiesta = protocolMessage.getBustaRawContent();
-						requestMessage = protocolMessage.getMessage(); // updated
+						if(protocolMessage!=null) {
+							headerBustaRichiesta = protocolMessage.getBustaRawContent();
+							requestMessage = protocolMessage.getMessage(); // updated
+						}
 						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 					}
 					else{
@@ -1302,8 +1304,10 @@ public class InoltroBuste extends GenericLib{
 					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
 					ProtocolMessage protocolMessage = imbustatore.imbustamento(requestMessage,bustaRichiesta,integrazione,gestioneManifest,
 							RuoloMessaggio.RICHIESTA,scartaBody,proprietaManifestAttachments);
-					headerBustaRichiesta = protocolMessage.getBustaRawContent();
-					requestMessage = protocolMessage.getMessage(); // updated
+					if(protocolMessage!=null) {
+						headerBustaRichiesta = protocolMessage.getBustaRawContent();
+						requestMessage = protocolMessage.getMessage(); // updated
+					}
 					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 				}
 				msgDiag.highDebug("Imbustamento (invokeSdk) terminato");
@@ -1746,7 +1750,7 @@ public class InoltroBuste extends GenericLib{
 			}
 
 			// Location
-			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
+			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
@@ -1938,7 +1942,7 @@ public class InoltroBuste extends GenericLib{
 			
 			/* --------------- REFRESH LOCATION ----------------- */
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
-			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
+			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
@@ -2552,6 +2556,12 @@ public class InoltroBuste extends GenericLib{
 			boolean presenzaRispostaProtocollo = false;
 			SecurityInfo securityInfoResponse = null;
 			BustaRawContent<?> headerBustaRisposta = null;
+
+			boolean sbustamentoInformazioniProtocolloRispostaDopoCorrelazione = false;
+			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = null;
+			Busta bustaRisposta = null;
+			boolean sbustamentoManifestRisposta = false;
+			
 			if(responseMessage != null ){
 				msgDiag.mediumDebug("Analisi della risposta (validazione sintattica)...");
 
@@ -2891,7 +2901,7 @@ public class InoltroBuste extends GenericLib{
 					
 					// Estrazione header busta
 					msgDiag.mediumDebug("Sbustamento della risposta...");
-					Busta bustaRisposta = validatore.getBusta();
+					bustaRisposta = validatore.getBusta();
 					try{
 						boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 						
@@ -2901,11 +2911,11 @@ public class InoltroBuste extends GenericLib{
 							
 							List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
 							
-							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
+							sbustatore = 
 									new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory, openspcoopstate.getStatoRisposta());
 							
 							// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
-							boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
+							sbustamentoManifestRisposta = gestioneManifestRisposta;
 							for(int k = 0; k < erroriValidazione.size() ; k++){
 								Eccezione er = erroriValidazione.get(k);
 								if(CodiceErroreCooperazione.isEccezioneAllegati(er.getCodiceEccezione())){
@@ -2917,24 +2927,28 @@ public class InoltroBuste extends GenericLib{
 							ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
 									RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
 									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA, requestInfo);
-							headerProtocolloRisposta = protocolMessage.getBustaRawContent();
-							responseMessage = protocolMessage.getMessage(); // updated
+							if(protocolMessage!=null) {
+								headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+								responseMessage = protocolMessage.getMessage(); // updated
+							}
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 									+"] ["+responseMessage.getClass().getName()+"]");		
 							
-							
+		
+							// Spostato dopo correlazione applicativa
 							if(sbustamentoInformazioniProtocolloRisposta){
 								// effettuo lo stesso sbustamento invocandolo con la nuova fase
 								// Questa invocazione andrebbe implementata su ricezionecontenutiApplicativi teoricamente
-								msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
-										+"] ["+responseMessage.getClass().getName()+"]");
-								protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
-										RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
-										FaseSbustamento.PRE_CONSEGNA_RISPOSTA, requestInfo);
-								headerProtocolloRisposta = protocolMessage.getBustaRawContent();
-								responseMessage = protocolMessage.getMessage(); // updated
-								msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
-										+"] ["+responseMessage.getClass().getName()+"]");	
+								sbustamentoInformazioniProtocolloRispostaDopoCorrelazione = true;
+//								msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+//										+"] ["+responseMessage.getClass().getName()+"]");
+//								protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
+//										RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
+//										FaseSbustamento.PRE_CONSEGNA_RISPOSTA, requestInfo);
+//								headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+//								responseMessage = protocolMessage.getMessage(); // updated
+//								msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+//										+"] ["+responseMessage.getClass().getName()+"]");	
 							}
 							
 						}else{
@@ -3266,7 +3280,7 @@ public class InoltroBuste extends GenericLib{
 					gestoreCorrelazione = 
 							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
 									this.log,soggettoFruitore,idServizio, servizioApplicativoFruitore,protocolFactory);
-					
+
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					
 					idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
@@ -3329,6 +3343,96 @@ public class InoltroBuste extends GenericLib{
 
 
 
+			
+			
+			
+			// Sbustamento Protocollo Dopo Correlazione Applicativa
+			
+			if( sbustamentoInformazioniProtocolloRispostaDopoCorrelazione ){		
+				
+				// Qua dentro ci entro sia se sono router, che se è ancora rilevata la presenza di un protocollo dopo la validazione semantica
+				
+				// Estrazione header busta
+				msgDiag.mediumDebug("Sbustamento della risposta (PostCorrelazione PreConsegna)...");
+				try{
+									
+					if(sbustamentoInformazioniProtocolloRisposta){
+						// effettuo lo stesso sbustamento invocandolo con la nuova fase
+						// Questa invocazione andrebbe implementata su ricezionecontenutiApplicativi teoricamente
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+								+"] ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
+								RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
+								FaseSbustamento.PRE_CONSEGNA_RISPOSTA, requestInfo);
+						if(protocolMessage!=null) {
+							headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+								+"] ["+responseMessage.getClass().getName()+"]");	
+					}
+						
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"sbustatore.sbustamento("+bustaRisposta.getID()+")");
+					
+					EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante lo sbustamento della risposta: "+e.getMessage());
+					tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
+							Tracciamento.createLocationString(true, location),
+							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta); // non ancora registrata
+					
+					if(functionAsRouter){
+						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),
+								bustaRichiesta,
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO),
+								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
+								(responseMessage!=null ? responseMessage.getParseException() : null));
+						esito.setEsitoInvocazione(true);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+								"Sbustamento non riuscito");
+					}else{
+												
+						ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO);
+						if(sendRispostaApplicativa){
+							OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									erroreIntegrazione,e,
+										(responseMessage!=null ? responseMessage.getParseException() : null));
+							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+							esito.setEsitoInvocazione(true);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
+						}else{
+							// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+							// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+							if(gestioneBusteNonRiscontrateAttive==false){
+								ejbUtils.rollbackMessage("Sbustamento non riuscito", esito);
+								esito.setStatoInvocazioneErroreNonGestito(e);
+								esito.setEsitoInvocazione(false);
+							}else{
+								ejbUtils.updateErroreProcessamentoMessage("Sbustamento non riuscito", esito);
+								esito.setEsitoInvocazione(true);
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
+							}
+						}
+						
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+
+				}
+			}
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 
 			Utilities.printFreeMemory("InoltroBuste - Gestione Risposta... ");
@@ -3347,7 +3451,6 @@ public class InoltroBuste extends GenericLib{
 			java.util.List<Eccezione> erroriValidazione = null;
 			java.util.List<Eccezione> erroriProcessamento = null;
 			SbustamentoRisposteMessage sbustamentoRisposteMSG = null;
-			Busta bustaRisposta = null;
 			DettaglioEccezione dettaglioEccezione = null;
 
 			if(presenzaRispostaProtocollo){

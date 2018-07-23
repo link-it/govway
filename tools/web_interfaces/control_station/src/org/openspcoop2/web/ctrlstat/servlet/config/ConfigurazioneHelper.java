@@ -10985,7 +10985,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						else {
 							de.setRequired(true);
-							de.setType(DataElementType.TEXT_EDIT);
+							if(TipoFiltroApplicativo.URLBASED.equals(tipoFiltro) ||
+									TipoFiltroApplicativo.CONTENT_BASED.equals(tipoFiltro)) {
+								de.setType(DataElementType.TEXT_AREA);
+							}
+							else {
+								de.setType(DataElementType.TEXT_EDIT);
+							}
 						}
 					}
 					dati.addElement(de);

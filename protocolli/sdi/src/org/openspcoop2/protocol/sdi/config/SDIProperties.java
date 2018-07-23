@@ -138,6 +138,17 @@ public class SDIProperties {
 			
 			this.isEnableValidazioneNomeFile();
 			
+			this.isEnableValidazioneXsdFatturaDaInviare();
+			this.isEnableValidazioneXsdNotificaDaInviare();
+			
+			this.isEnableAccessoMetadati();
+			this.isEnableAccessoFattura();
+			this.isEnableAccessoMessaggi();
+			
+			this.isEnableAccessoMetadatiWarningMode();
+			this.isEnableAccessoFatturaWarningMode();
+			this.isEnableAccessoMessaggiWarningMode();
+			
 			this.isEnableValidazioneXsdMetadati();
 			this.isEnableValidazioneXsdFattura();
 			this.isEnableValidazioneXsdMessaggi();
@@ -340,23 +351,23 @@ public class SDIProperties {
 	}
 
 	/**
-	 * Indicazione se effettuare la validazione dei campi interni ai metadati
+	 * Indicazione se effettuare la validazione xsd della fattura da inviare
 	 *   
-	 * @return Indicazione se effettuare la validazione dei campi interni ai metadati
+	 * @return Indicazione se effettuare la validazione xsd della fattura da inviare
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniMetadati = null;
-	public Boolean isEnableValidazioneCampiInterniMetadati() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniMetadati==null){
+	private static Boolean isEnableValidazioneXsdFatturaDaInviare = null;
+	public Boolean isEnableValidazioneXsdFatturaDaInviare() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneXsdFatturaDaInviare==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMetadati.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.fatturaDaInviare";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniMetadati = Boolean.parseBoolean(value);
+					SDIProperties.isEnableValidazioneXsdFatturaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -368,27 +379,27 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniMetadati;
+		return SDIProperties.isEnableValidazioneXsdFatturaDaInviare;
 	}
 	
 	/**
-	 * Indicazione se effettuare la validazione dei campi interni alla fattura
+	 * Indicazione se effettuare la validazione xsd della notifica da inviare
 	 *   
-	 * @return Indicazione se effettuare la validazione dei campi interni alla fattura
+	 * @return Indicazione se effettuare la validazione xsd della notifica da inviare
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniFattura = null;
-	public Boolean isEnableValidazioneCampiInterniFattura() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniFattura==null){
+	private static Boolean isEnableValidazioneXsdNotificaDaInviare = null;
+	public Boolean isEnableValidazioneXsdNotificaDaInviare() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneXsdNotificaDaInviare==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiFattura.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.xsd.notificaDaInviare";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniFattura = Boolean.parseBoolean(value);
+					SDIProperties.isEnableValidazioneXsdNotificaDaInviare = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -400,27 +411,27 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniFattura;
+		return SDIProperties.isEnableValidazioneXsdNotificaDaInviare;
 	}
 	
 	/**
-	 * Indicazione se effettuare la validazione dei campi interni ai messaggi
+	 * Indicazione se effettuare l'accesso ai metadati
 	 *   
-	 * @return Indicazione se effettuare la validazione dei campi interni ai messaggi
+	 * @return Indicazione se effettuare l'accesso ai metadati
 	 * 
 	 */
-	private static Boolean isEnableValidazioneCampiInterniMessaggi = null;
-	public Boolean isEnableValidazioneCampiInterniMessaggi() throws ProtocolException{
-		if(SDIProperties.isEnableValidazioneCampiInterniMessaggi==null){
+	private static Boolean isEnableAccessoMetadati = null;
+	public Boolean isEnableAccessoMetadati() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoMetadati==null){
 			
-			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMessaggi.enable";
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable";
 			
 			try{  
 				String value = this.reader.getValue_convertEnvProperties(propertyName); 
 
 				if (value != null){
 					value = value.trim();
-					SDIProperties.isEnableValidazioneCampiInterniMessaggi = Boolean.parseBoolean(value);
+					SDIProperties.isEnableAccessoMetadati = Boolean.parseBoolean(value);
 				}else{
 					throw new Exception("Non definita");
 				}
@@ -432,9 +443,168 @@ public class SDIProperties {
 			}
 		}
 
-		return SDIProperties.isEnableValidazioneCampiInterniMessaggi;
+		return SDIProperties.isEnableAccessoMetadati;
 	}
 	
+	/**
+	 * Indicazione se effettuare l'accesso alla fattura
+	 *   
+	 * @return Indicazione se effettuare l'accesso alla fattura
+	 * 
+	 */
+	private static Boolean isEnableAccessoFattura = null;
+	public Boolean isEnableAccessoFattura() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoFattura;
+	}
+	
+	/**
+	 * Indicazione se effettuare l'accesso ai messaggi
+	 *   
+	 * @return Indicazione se effettuare l'accesso ai messaggi
+	 * 
+	 */
+	private static Boolean isEnableAccessoMessaggi = null;
+	public Boolean isEnableAccessoMessaggi() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoMessaggi==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoMessaggi = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoMessaggi;
+	}
+	
+	/**
+	 * Indicazione se effettuare l'accesso ai metadati in warning mode
+	 *   
+	 * @return Indicazione se effettuare l'accesso ai metadati in warning mode
+	 * 
+	 */
+	private static Boolean isEnableAccessoMetadatiWarningMode = null;
+	public Boolean isEnableAccessoMetadatiWarningMode() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoMetadatiWarningMode==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMetadati.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoMetadatiWarningMode = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoMetadatiWarningMode;
+	}
+	
+	/**
+	 * Indicazione se effettuare l'accesso alla fattura in warning mode
+	 *   
+	 * @return Indicazione se effettuare l'accesso alla fattura in warning mode
+	 * 
+	 */
+	private static Boolean isEnableAccessoFatturaWarningMode = null;
+	public Boolean isEnableAccessoFatturaWarningMode() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoFatturaWarningMode==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiFattura.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoFatturaWarningMode = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoFatturaWarningMode;
+	}
+	
+	/**
+	 * Indicazione se effettuare l'accesso ai messaggi in warning mode
+	 *   
+	 * @return Indicazione se effettuare l'accesso ai messaggi in warning mode
+	 * 
+	 */
+	private static Boolean isEnableAccessoMessaggiWarningMode = null;
+	public Boolean isEnableAccessoMessaggiWarningMode() throws ProtocolException{
+		if(SDIProperties.isEnableAccessoMessaggiWarningMode==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.accesso.campiMessaggi.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableAccessoMessaggiWarningMode = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableAccessoMessaggiWarningMode;
+	}
 	
 	/**
 	 * Indicazione se effettuare la validazione xsd dei metadati
@@ -532,6 +702,103 @@ public class SDIProperties {
 		return SDIProperties.isEnableValidazioneXsdMessaggi;
 	}
 	
+	/**
+	 * Indicazione se effettuare la validazione dei campi interni ai metadati
+	 *   
+	 * @return Indicazione se effettuare la validazione dei campi interni ai metadati
+	 * 
+	 */
+	private static Boolean isEnableValidazioneCampiInterniMetadati = null;
+	public Boolean isEnableValidazioneCampiInterniMetadati() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneCampiInterniMetadati==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMetadati.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneCampiInterniMetadati = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneCampiInterniMetadati;
+	}
+	
+	/**
+	 * Indicazione se effettuare la validazione dei campi interni alla fattura
+	 *   
+	 * @return Indicazione se effettuare la validazione dei campi interni alla fattura
+	 * 
+	 */
+	private static Boolean isEnableValidazioneCampiInterniFattura = null;
+	public Boolean isEnableValidazioneCampiInterniFattura() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneCampiInterniFattura==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiFattura.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneCampiInterniFattura = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneCampiInterniFattura;
+	}
+	
+	/**
+	 * Indicazione se effettuare la validazione dei campi interni ai messaggi
+	 *   
+	 * @return Indicazione se effettuare la validazione dei campi interni ai messaggi
+	 * 
+	 */
+	private static Boolean isEnableValidazioneCampiInterniMessaggi = null;
+	public Boolean isEnableValidazioneCampiInterniMessaggi() throws ProtocolException{
+		if(SDIProperties.isEnableValidazioneCampiInterniMessaggi==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.validazione.campiMessaggi.enable";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnableValidazioneCampiInterniMessaggi = Boolean.parseBoolean(value);
+				}else{
+					throw new Exception("Non definita");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnableValidazioneCampiInterniMessaggi;
+	}
+	
+		
 	
 	
 	/**

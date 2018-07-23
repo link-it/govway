@@ -181,7 +181,9 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			
 		}
 
-		protocolMessage.setBustaRawContent(new SDIBustaRawContent(element));
+		if(element!=null) {
+			protocolMessage.setBustaRawContent(new SDIBustaRawContent(element));
+		}
 		return protocolMessage;
 		
 	}
@@ -280,7 +282,9 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 					
 				}
 				
-				protocolMessage.setBustaRawContent(new SDIBustaRawContent(se));
+				if(se!=null) {
+					protocolMessage.setBustaRawContent(new SDIBustaRawContent(se));
+				}
 				protocolMessage.setMessage(msg);
 			}
 			

@@ -74,4 +74,8 @@ public class Costanti {
 	public static final String SAML_11_NAMESPACE = "urn:oasis:names:tc:SAML:1.0:assertion";
 	public static final String SAML_11_ASSERTION_ID = "AssertionID";
 	public static final String XPATH_SAML_11_ASSERTION = "//{"+SAML_11_NAMESPACE+"}:Assertion";
+	
+	/** FAULT DEFAULT */
+	public static final String DEFAULT_SOAP_FAULT_STRING = "InternalError";
+	public static final String DEFAULT_SOAP_FAULT_ACTOR = "http://govway.org/fault";
 }

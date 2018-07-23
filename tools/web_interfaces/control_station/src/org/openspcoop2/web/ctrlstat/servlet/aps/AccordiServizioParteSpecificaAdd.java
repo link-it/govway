@@ -773,6 +773,24 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}else{
 				list = soggettiCore.soggettiRegistroList(userLogin, searchSoggetti);
 			}
+			
+			if(list.size()<=0) {
+				
+				pd.setMessage("Non risultano registrati soggetti", Costanti.MESSAGE_TYPE_INFO);
+				
+				pd.disableEditMode();
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+
+				pd.setDati(dati);
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
+						ForwardParams.ADD());
+			}
 
 			if (list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();

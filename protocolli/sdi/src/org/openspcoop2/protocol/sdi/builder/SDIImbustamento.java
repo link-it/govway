@@ -282,7 +282,7 @@ public class SDIImbustamento {
 			
 			
 			// effettuo validazione del messaggio ricevuto
-			if(this.sdiProperties.isEnableValidazioneXsdFattura()){
+			if(this.sdiProperties.isEnableValidazioneXsdFatturaDaInviare()){
 				AbstractValidatoreXSD validatore = null;
 				try{			
 					if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
@@ -504,7 +504,7 @@ public class SDIImbustamento {
 				}
 				
 				// validazione
-				if(this.sdiProperties.isEnableValidazioneXsdMessaggi()){
+				if(this.sdiProperties.isEnableValidazioneXsdNotificaDaInviare()){
 					AbstractValidatoreXSD validatore = it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
 					validatore.valida(new ByteArrayInputStream(notificaEsitoCommittenteBytes));
 				}

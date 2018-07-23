@@ -110,8 +110,12 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			IDSoggetto idSoggettoFruitore = null;
 			IDServizio idServizio = null;
 			if(idPD.getIdentificativiFruizione()!=null){
-				idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
-				idServizio = idPD.getIdentificativiFruizione().getIdServizio();
+				if(idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null) {
+					idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore().clone(); // effettuo clone altrimenti nella cache vengono memorizzate le informazioni impostate dopo!
+				}
+				if( idPD.getIdentificativiFruizione().getIdServizio()!=null) {
+					idServizio = idPD.getIdentificativiFruizione().getIdServizio().clone(); // effettuo clone altrimenti nella cache viene memorizzata l'azione impostata dopo!
+				}
 			}
 			
 			if(generatoreErrore!=null && idSoggettoFruitore!=null){

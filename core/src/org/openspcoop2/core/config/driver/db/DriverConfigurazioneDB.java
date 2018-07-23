@@ -12822,8 +12822,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRichiestaIdentificazione(modeCA));
-					if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
-						cae.setPattern(rsCorrApp.getString("pattern"));
+					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					corr.addElemento(cae);
 				}
@@ -12861,8 +12861,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRispostaIdentificazione(modeCA));
-					if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
-						cae.setPattern(rsCorrApp.getString("pattern"));
+					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					corrApplRisposta.addElemento(cae);
 				}
@@ -13687,8 +13687,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRichiestaIdentificazione(modeCA));
-					if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
-						cae.setPattern(rsCorrApp.getString("pattern"));
+					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					cae.setRiusoIdentificativo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rsCorrApp.getString("riuso_id")));
 					corr.addElemento(cae);
@@ -13727,8 +13727,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					cae.setNome(rsCorrApp.getString("nome_elemento"));
 					String modeCA = rsCorrApp.getString("mode_correlazione");
 					cae.setIdentificazione(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaRispostaIdentificazione(modeCA));
-					if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
-						cae.setPattern(rsCorrApp.getString("pattern"));
+					//if (modeCA.equals("urlBased") || modeCA.equals("contentBased"))
+					cae.setPattern(rsCorrApp.getString("pattern"));
 					cae.setIdentificazioneFallita(DriverConfigurazioneDB_LIB.getEnumCorrelazioneApplicativaGestioneIdentificazioneFallita(rsCorrApp.getString("identificazione_fallita")));
 					corrApplRisposta.addElemento(cae);
 				}
@@ -13785,7 +13785,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				PortaDelegataLocalForward pdLocalForward = new PortaDelegataLocalForward();
 				pdLocalForward.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoLocalForward));
 				pdLocalForward.setPortaApplicativa(rs.getString("local_forward_pa"));
-				pd.setLocalForward(pdLocalForward);
+				if(pdLocalForward.getStato()!=null) {
+					pd.setLocalForward(pdLocalForward);
+				}
+				else {
+					pd.setLocalForward(null);
+				}
 				
 				// Ricerca Porta Azione Delegata
 				if(rs.getString("ricerca_porta_azione_delegata")!=null){

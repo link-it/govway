@@ -626,7 +626,7 @@ public class AccordoServizioWrapperUtilities {
 				throw new DriverRegistroServiziException("Messaggio non fornito");
 			}
 		
-			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
+			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())){
 				
 				WSDLValidator wsdlValidator = new WSDLValidator(messageParam, this.xmlUtils, this.accordoServizioWrapper, this.logger, false);
 				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {

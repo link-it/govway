@@ -305,6 +305,14 @@ public class SDIValidatoreServizioRiceviNotifica {
 	private void _validazioneEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 			esito = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), esito);
@@ -319,8 +327,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido rispetto allo schema XSD: "+
+										e.getMessage(),e,forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -333,8 +342,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE+"] contiene un file Notifica di Esito Committente non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
 		// Esito.IdentificativoSdI
@@ -631,6 +641,14 @@ public class SDIValidatoreServizioRiceviNotifica {
 	private void _validazioneScartoEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 			esito = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), esito);
@@ -645,8 +663,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -662,8 +681,9 @@ public class SDIValidatoreServizioRiceviNotifica {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO+"] contiene un file Notifica di Scarto Esito Committente non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
 		// Esito.IdentificativoSdI

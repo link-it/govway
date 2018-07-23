@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
+import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 
 /**
  * PreInRequestHandler
@@ -66,76 +67,119 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				return;
 			}
 			
-			if(!URLProtocolContext.PDtoSOAP_FUNCTION.equals(inMessage.getURLProtocolContext().getFunction())){
+			if(!URLProtocolContext.PDtoSOAP_FUNCTION.equals(inMessage.getURLProtocolContext().getFunction()) &&
+					!URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY.equals(inMessage.getURLProtocolContext().getFunction())){
 				return;
 			}
 			if(!SDICostanti.SDI_PROTOCOL_NAME.equals(inMessage.getURLProtocolContext().getProtocolName())){
 				return;
 			}
-			if(!inMessage.getURLProtocolContext().getFunctionParameters().
-					contains(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE+"/"+SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE)){
+			
+			// Appendo l'azione dopo la versione
+			String sdiFatturazioneAttiva = "/"+SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE+"/";
+			String sdiFatturazioneAttivaConTipo = "/sdi_"+SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE+"/";
+			boolean attiva = false;
+			String sdiFatturazionePassiva = "/"+SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA+"/";
+			String sdiFatturazionePassivaConTipo = "/sdi_"+SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA+"/";
+			@SuppressWarnings("unused")
+			boolean passiva = false;
+			if( inMessage.getURLProtocolContext().getFunctionParameters().contains(sdiFatturazioneAttiva) 
+					||
+				inMessage.getURLProtocolContext().getFunctionParameters().contains(sdiFatturazioneAttivaConTipo)){
+				String requestUri = inMessage.getURLProtocolContext().getRequestURI();
+				String params =  inMessage.getURLProtocolContext().getFunctionParameters();
+				if(requestUri.endsWith("/")==false) {
+					requestUri = requestUri + "/";
+				}
+				if(params.endsWith("/")==false) {
+					params = params + "/";
+				}
+				requestUri = requestUri + SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE;
+				params = params + SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE;
+				inMessage.getURLProtocolContext().setRequestURI(requestUri);
+				inMessage.getURLProtocolContext().setFunctionParameters(params);
+				attiva = true;
+			}
+			else if( inMessage.getURLProtocolContext().getFunctionParameters().endsWith(sdiFatturazionePassiva)
+					||
+					inMessage.getURLProtocolContext().getFunctionParameters().endsWith(sdiFatturazionePassivaConTipo)){
+				String requestUri = inMessage.getURLProtocolContext().getRequestURI();
+				String params =  inMessage.getURLProtocolContext().getFunctionParameters();
+				if(requestUri.endsWith("/")==false) {
+					requestUri = requestUri + "/";
+				}
+				if(params.endsWith("/")==false) {
+					params = params + "/";
+				}
+				requestUri = requestUri + SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE;
+				params = params + SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO;
+				inMessage.getURLProtocolContext().setRequestURI(requestUri);
+				inMessage.getURLProtocolContext().setFunctionParameters(params);
+				passiva = true;
+			}
+			else {
 				return;
 			}
 			
-			String valoreUrl = null;
-			if(inMessage.getURLProtocolContext().getParametersFormBased()!=null &&
-					inMessage.getURLProtocolContext().getParametersFormBased().size()>0){
-				valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
-				if(valoreUrl==null){
-					valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toLowerCase());
+			if(attiva) {
+				String valoreUrl = null;
+				if(inMessage.getURLProtocolContext().getParametersFormBased()!=null &&
+						inMessage.getURLProtocolContext().getParametersFormBased().size()>0){
+					valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE);
+					if(valoreUrl==null){
+						valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toLowerCase());
+					}
+					if(valoreUrl==null){
+						valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toUpperCase());
+					}
 				}
-				if(valoreUrl==null){
-					valoreUrl = inMessage.getURLProtocolContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toUpperCase());
+				
+				String valoreHeader = null;
+				if(inMessage.getURLProtocolContext().getParametersTrasporto()!=null &&
+						inMessage.getURLProtocolContext().getParametersTrasporto().size()>0){
+					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
+					if(valoreHeader==null){
+						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
+					}
+					if(valoreHeader==null){
+						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
+					}
+					if(valoreHeader==null){
+						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
+					}
+					if(valoreHeader==null){
+						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
+					}
+					if(valoreHeader==null){
+						valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
+					}
+				}
+				
+				if(valoreUrl==null && valoreHeader==null){
+					return;
+				}
+				String valore = null;
+				if(valoreUrl!=null){
+					valore = valoreUrl;
+				}
+				else{
+					valore = valoreHeader;
+				}
+				
+				boolean imbustamentoSOAP = false;
+				if(SDICostanti.SDI_TIPO_FATTURA_ZIP.equalsIgnoreCase(valore)){
+					imbustamentoSOAP = true;
+				}
+				else if(SDICostanti.SDI_TIPO_FATTURA_P7M.equalsIgnoreCase(valore)){
+					imbustamentoSOAP = true;
+				}
+				
+				if(imbustamentoSOAP){
+					OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
+					context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased(), "true");
+					context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased(),"application/octet-stream");
 				}
 			}
-			
-			String valoreHeader = null;
-			if(inMessage.getURLProtocolContext().getParametersTrasporto()!=null &&
-					inMessage.getURLProtocolContext().getParametersTrasporto().size()>0){
-				valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
-				if(valoreHeader==null){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
-				}
-				if(valoreHeader==null){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
-				}
-				if(valoreHeader==null){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
-				}
-				if(valoreHeader==null){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
-				}
-				if(valoreHeader==null){
-					valoreHeader = inMessage.getURLProtocolContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
-				}
-			}
-			
-			if(valoreUrl==null && valoreHeader==null){
-				return;
-			}
-			String valore = null;
-			if(valoreUrl!=null){
-				valore = valoreUrl;
-			}
-			else{
-				valore = valoreHeader;
-			}
-			
-			boolean imbustamentoSOAP = false;
-			if(SDICostanti.SDI_TIPO_FATTURA_ZIP.equalsIgnoreCase(valore)){
-				imbustamentoSOAP = true;
-			}
-			else if(SDICostanti.SDI_TIPO_FATTURA_P7M.equalsIgnoreCase(valore)){
-				imbustamentoSOAP = true;
-			}
-			
-			if(imbustamentoSOAP){
-				OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
-				context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased(), "true");
-				context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased(),"application/octet-stream");
-			}
-			
-			
 			
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("PreInRequestHandler error: "+e.getMessage(),e);

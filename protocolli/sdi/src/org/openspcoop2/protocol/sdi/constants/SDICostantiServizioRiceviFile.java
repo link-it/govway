@@ -32,7 +32,7 @@ import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioRiceviFile {
 
-    public final static String SDI_SERVIZIO_RICEVI_FILE = "RiceviFile";
+    public final static String SDI_SERVIZIO_RICEVI_FILE = "SdIRiceviFile";
     public final static String SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE = "RiceviFile";
 	
 	public final static String SDI_SERVIZIO_RICEVI_FILE_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
@@ -54,19 +54,19 @@ public class SDICostantiServizioRiceviFile {
 	
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA  = "Versione";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1  = "SDI-Versione";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2  = "X-SDI-Versione";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2  = "GovWay-SDI-Versione";
 	
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE  = "TipoFile";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1  = "SDI-TipoFile";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2  = "X-SDI-TipoFile";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2  = "GovWay-SDI-TipoFile";
 	
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE  = "IdPaese";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1  = "SDI-IdPaese";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2  = "X-SDI-IdPaese";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2  = "GovWay-SDI-IdPaese";
 	
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE  = "IdCodice";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1  = "SDI-IdCodice";
-	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2  = "X-SDI-IdCodice";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2  = "GovWay-SDI-IdCodice";
 
 	
 }

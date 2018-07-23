@@ -4297,13 +4297,15 @@ public class RicezioneBuste {
 			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,bustaRichiesta,
 					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
 					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA, requestInfo);
-			if(protocolMessage.isUseBustaRawContentReadByValidation()) {
-				headerProtocolloRichiesta = soapHeaderElement;
+			if(protocolMessage!=null) {
+				if(protocolMessage.isUseBustaRawContentReadByValidation()) {
+					headerProtocolloRichiesta = soapHeaderElement;
+				}
+				else {
+					headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
+				}
+				requestMessage = protocolMessage.getMessage(); // updated
 			}
-			else {
-				headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
-			}
-			requestMessage = protocolMessage.getMessage(); // updated
 			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 					+"] ["+requestMessage.getClass().getName()+"]");
 		}
@@ -4330,7 +4332,7 @@ public class RicezioneBuste {
 					new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, soggettoFruitore,
 							idServizio,servizioApplicativoFruitore,protocolFactory);
 				
-				gestoreCorrelazioneApplicativa.verificaCorrelazione(pa.getCorrelazioneApplicativa(), null, requestMessage, 
+				gestoreCorrelazioneApplicativa.verificaCorrelazione(pa.getCorrelazioneApplicativa(), urlProtocolContext, requestMessage, 
 						headerIntegrazioneRichiesta, false);
 				
 				if(gestoreCorrelazioneApplicativa.getIdCorrelazione()!=null)
@@ -6630,8 +6632,10 @@ public class RicezioneBuste {
 						if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
 							msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
 							ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
-							headerBustaRisposta = protocolMessage.getBustaRawContent();
-							responseMessage = protocolMessage.getMessage(); // updated
+							if(protocolMessage!=null) {
+								headerBustaRisposta = protocolMessage.getBustaRawContent();
+								responseMessage = protocolMessage.getMessage(); // updated
+							}
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 						}
 						else{
@@ -6642,8 +6646,10 @@ public class RicezioneBuste {
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,bustaRisposta,infoIntegrazione,
 								gestioneManifestRisposta,RuoloMessaggio.RISPOSTA,scartaBody,proprietaManifestAttachments);
-						headerBustaRisposta = protocolMessage.getBustaRawContent();
-						responseMessage = protocolMessage.getMessage(); // updated
+						if(protocolMessage!=null) {
+							headerBustaRisposta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
 						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
@@ -8305,7 +8311,9 @@ public class RicezioneBuste {
 			}
 			ProtocolMessage protocolMessage = imbustatore.imbustamento(msg,bustaHTTPReply,integrazione,
 					false,RuoloMessaggio.RISPOSTA,false,null);
-			msg = protocolMessage.getMessage(); // updated
+			if(protocolMessage!=null) {
+				msg = protocolMessage.getMessage(); // updated
+			}
 			
 			
 			//			Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento

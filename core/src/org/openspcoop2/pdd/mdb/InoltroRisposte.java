@@ -602,8 +602,10 @@ public class InoltroRisposte extends GenericLib{
 						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
-						headerBusta = protocolMessage.getBustaRawContent();
-						responseMessage = protocolMessage.getMessage(); // updated
+						if(protocolMessage!=null) {
+							headerBusta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
 						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 					else{
@@ -612,8 +614,10 @@ public class InoltroRisposte extends GenericLib{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = imbustatore.imbustamento(responseMessage,busta,integrazione,
 								gestioneManifest,ruoloMessaggio,scartaBody,proprietaManifestAttachments);
-						headerBusta = protocolMessage.getBustaRawContent();
-						responseMessage = protocolMessage.getMessage(); // updated
+						if(protocolMessage!=null) {
+							headerBusta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+						}
 						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
@@ -962,7 +966,7 @@ public class InoltroRisposte extends GenericLib{
 			}
 			
 			// Location
-			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, busta, pddContext, protocolFactory, this.log);
+			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, busta, pddContext, protocolFactory, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
@@ -1232,8 +1236,10 @@ public class InoltroRisposte extends GenericLib{
 					ProtocolMessage protocolMessage = sbustatore.sbustamento(responseHttpReply,busta,
 							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments,
 							FaseSbustamento.POST_CONSEGNA_RISPOSTA_NEW_CONNECTION, requestInfo);
-					headerProtocolloRispostaConnectionReply = protocolMessage.getBustaRawContent();
-					responseHttpReply = protocolMessage.getMessage(); // updated
+					if(protocolMessage!=null) {
+						headerProtocolloRispostaConnectionReply = protocolMessage.getBustaRawContent();
+						responseHttpReply = protocolMessage.getMessage(); // updated
+					}
 				}catch(Exception e){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Sbustamento busta nella connection Reply non riuscita: "+e.getMessage());
 					tracciamento.registraRisposta(responseHttpReply,null,

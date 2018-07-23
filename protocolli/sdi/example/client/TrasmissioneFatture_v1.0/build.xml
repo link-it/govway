@@ -27,16 +27,16 @@
 			<include name="**/httpcore/*"/>
 			<include name="**/commons/*"/>
 			<include name="**/shared/*"/>
-            <include name="**/spring/*"/>
+			<include name="**/spring/*"/>
 			<include name="**/jax/*"/>
 			<include name="**/log/*"/>
 		</fileset>
-        <fileset dir="${openspcoop2_core_dist}" >
-                <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${openspcoop2_sdi_dist}" >
-                <include name="*.jar"/>
-        </fileset>
+		<fileset dir="${openspcoop2_core_dist}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_sdi_dist}" >
+			<include name="*.jar"/>
+		</fileset>
 	</path>
 	<path id="classpath_dist" >
 		<fileset dir="${dist_sdi_trasmissioneFatture_v10}" >
@@ -83,6 +83,10 @@
                 <pathelement location="." />
             </classpath>
 	    <jvmarg value="-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true" />
+	    <!-- <jvmarg value="-Djavax.net.ssl.trustStore=/tmp/SDIExample.jks"/>
+	    <jvmarg value="-Djavax.net.ssl.trustStorePassword=123456" />
+	    <jvmarg value="-Djavax.net.ssl.keyStore=/tmp/SDIExample.jks"/>
+            <jvmarg value="-Djavax.net.ssl.keyStorePassword=123456" /> -->
         </java>
 	</target>
 	

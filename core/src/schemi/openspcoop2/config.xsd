@@ -1650,6 +1650,7 @@
 	<xsd:simpleType name="CorrelazioneApplicativaRichiestaIdentificazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="urlBased"/>
+			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="disabilitato"/>
@@ -1657,6 +1658,7 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="CorrelazioneApplicativaRispostaIdentificazione">
 		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="disabilitato"/>

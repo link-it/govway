@@ -403,7 +403,27 @@ public class GestoreCorrelazioneApplicativa {
 								correlazioneNonRiuscitaDaAccettare = true;
 							}
 						}
-					}else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
+					}
+					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED.equals(elemento.getIdentificazione())){
+						try{
+							if(message==null ||
+									message.getTransportRequestContext()==null || 
+									message.getTransportRequestContext().getParametersTrasporto()==null ||
+									message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
+								throw new Exception ("Header trasporto non disponibile");
+							}
+							idCorrelazioneApplicativa = message.getTransportRequestContext().getParameterTrasporto(elemento.getPattern());
+						}catch(Exception e){
+							if(bloccaIdentificazioneNonRiuscita){
+								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+										getErrore416_CorrelazioneApplicativaRichiesta("identificativo di correlazione applicativa non identificato nell'elemento ["+nomeElemento+"] con modalita' di acquisizione headerBased (Header:"+elemento.getPattern()+"): "+e.getMessage());
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
+							}else{
+								correlazioneNonRiuscitaDaAccettare = true;
+							}
+						}
+					}
+					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
 						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
 						if(idCorrelazioneApplicativa==null){
 							if(bloccaIdentificazioneNonRiuscita){
@@ -784,7 +804,27 @@ public class GestoreCorrelazioneApplicativa {
 						}
 					}
 
-					if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
+					if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED.equals(elemento.getIdentificazione())){
+						try{
+							if(message==null ||
+									message.getTransportResponseContext()==null || 
+									message.getTransportResponseContext().getParametersTrasporto()==null ||
+									message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
+								throw new Exception ("Header trasporto non disponibile");
+							}
+							idCorrelazioneApplicativa = message.getTransportResponseContext().getParameterTrasporto(elemento.getPattern());
+						}catch(Exception e){
+							if(bloccaIdentificazioneNonRiuscita){
+								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+										getErrore434_CorrelazioneApplicativaRisposta("identificativo di correlazione applicativa per l'elemento ["+nomeElemento+"] " +
+												"con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione");
+								throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+							}else{
+								correlazioneNonRiuscitaDaAccettare = true;
+							}
+						}
+					}
+					else if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED.equals(elemento.getIdentificazione()) ){
 						idCorrelazioneApplicativa = headerIntegrazione.getIdApplicativo();
 						if(idCorrelazioneApplicativa==null){
 							if(bloccaIdentificazioneNonRiuscita){

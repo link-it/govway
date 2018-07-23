@@ -33,6 +33,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
@@ -416,6 +417,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			backwardCompatibilityActor = (String) backwardCompatibilityActorObject;
 		}
 		
+		boolean faultInternalError = actor!=null && org.openspcoop2.message.constants.Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(actor);
+		if(faultInternalError) {
+			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+		}
+		
 		boolean faultActorOpenSPCoopV2 = (erroreApplicativo!=null &&
 				erroreApplicativo.getFaultActor()!=null &&
 				erroreApplicativo.getFaultActor().equals(actor));
@@ -630,6 +636,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					
 				}
 				
+				// se arrivo qua provo a vedere se siamo nel caso di un internal Error
+				else if(OpenSPCoop2MessageFactory.isFaultXmlMessage(childNode)) {
+					try{
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}catch(Exception e){
+						this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+					}
+				}
+				
 			}
 		}
 
@@ -675,6 +690,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}
 			}
 			
+		}catch(Exception e){
+			this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+		}
+		
+		// se arrivo qua provo a vedere se siamo nel caso di un internal Error
+		try{
+			if(OpenSPCoop2MessageFactory.isFaultJsonMessage(jsonBody, this.log)) {
+				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+			}
 		}catch(Exception e){
 			this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
 		}

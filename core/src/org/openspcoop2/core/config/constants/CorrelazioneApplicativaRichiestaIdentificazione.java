@@ -40,6 +40,8 @@ public enum CorrelazioneApplicativaRichiestaIdentificazione implements IEnumerat
 
 	@javax.xml.bind.annotation.XmlEnumValue("urlBased")
 	URL_BASED ("urlBased"),
+	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
+	HEADER_BASED ("headerBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("contentBased")
 	CONTENT_BASED ("contentBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("inputBased")

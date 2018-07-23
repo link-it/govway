@@ -45,12 +45,14 @@ import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -868,6 +870,14 @@ public abstract class OpenSPCoop2MessageFactory {
 	/*
 	 * Messaggi di Errore
 	 */
+		
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType) {
+		return this.createFaultMessage(messageType, Costanti.DEFAULT_SOAP_FAULT_STRING,null);
+	}
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, Costanti.DEFAULT_SOAP_FAULT_STRING,notifierInputStreamParams);
+	}
+	
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType, Throwable t) {
 		return this.createFaultMessage(messageType, t,null);
 	}
@@ -888,7 +898,7 @@ public abstract class OpenSPCoop2MessageFactory {
 						+"<SOAP-ENV:Fault>"
 						+"<faultcode>SOAP-ENV:Server</faultcode>"
 						+"<faultstring>" + errore + "</faultstring>"
-						+"<faultactor>"+org.openspcoop2.utils.Costanti.OPENSPCOOP2+"</faultactor>"
+						+"<faultactor>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</faultactor>"
 						+"</SOAP-ENV:Fault>"
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 			}
@@ -898,21 +908,21 @@ public abstract class OpenSPCoop2MessageFactory {
 						+"<SOAP-ENV:Fault>"
 						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Server</SOAP-ENV:Value></SOAP-ENV:Code>"
 						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>"
-						+"<SOAP-ENV:Role>"+org.openspcoop2.utils.Costanti.OPENSPCOOP2+"</SOAP-ENV:Role>"
+						+"<SOAP-ENV:Role>"+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"</SOAP-ENV:Role>"
 						+"</SOAP-ENV:Fault>"
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 			}
 			else if(MessageType.XML.equals(messageType)){
-				fault = "<op2:Fault xmlns:SOAP-ENV=\"http://www.openspcoop2.org/fault\">"
+				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
 						+"<op2:Message>"+errore+"</op2:Message>"
 						+"</op2:Fault>";
 			}
 			else if(MessageType.JSON.equals(messageType)){
-				fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \"http://www.openspcoop2.org/fault\" } }";
+				fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
 			}
 			else{
 				// default uso xml
-				fault = "<op2:Fault xmlns:SOAP-ENV=\"http://www.openspcoop2.org/fault\">"
+				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
 						+"<op2:Message>"+errore+"</op2:Message>"
 						+"</op2:Fault>";
 				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);
@@ -936,5 +946,33 @@ public abstract class OpenSPCoop2MessageFactory {
 		return null;
 	}
 	
+	public static boolean isFaultXmlMessage(Node nodeXml){
+		try{
+			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO+"]vs["+nodeXml.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+nodeXml.getNamespaceURI()+"]");
+			if("Fault".equals(nodeXml.getLocalName()) && 
+					Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(nodeXml.getNamespaceURI() ) 
+				){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}catch(Exception e){
+			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			return false;
+		}
+	}
+	public static boolean isFaultJsonMessage(String jsonBody, Logger log){
+		try{
+			String namespace = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.fault.namespace", log);
+			if(namespace!=null && Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(namespace)) {
+				return true;
+			}
+			return  false;
+		}catch(Exception e){
+			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			return false;
+		}
+	}
 
 }

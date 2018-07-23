@@ -765,6 +765,10 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_sdi.sql"/>
 				</concat>
+				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('sdi','http://localhost:8080/govway/sdi/out/xml2soap/','http://localhost:8080/govway/sdi/in/');
+]]>
+				</concat>
 				<delete file="${tmp_sql}/init_soggetto_sdi.sql" failonerror="false"/>
 			</then>
 		</if>

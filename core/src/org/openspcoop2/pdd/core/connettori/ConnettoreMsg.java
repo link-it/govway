@@ -296,8 +296,10 @@ public class ConnettoreMsg  {
 					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.request,this.busta,
 							this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
 							FaseSbustamento.PRE_CONSEGNA_RICHIESTA, requestInfo);
-					this.soapProtocolInfo = protocolMessage.getBustaRawContent();
-					this.request = protocolMessage.getMessage(); // updated
+					if(protocolMessage!=null) {
+						this.soapProtocolInfo = protocolMessage.getBustaRawContent();
+						this.request = protocolMessage.getMessage(); // updated
+					}
 					this.sbustamentoProtocolInfoEffettuato = true;
 			}
 		}

@@ -140,7 +140,9 @@ public class RicezioneBusteServiceUtils {
 		
 		IDServizio idServizio = null;
 		if(idPA.getIdentificativiErogazione()!=null){
-			idServizio = idPA.getIdentificativiErogazione().getIdServizio();
+			if(idPA.getIdentificativiErogazione().getIdServizio()!=null) {
+				idServizio = idPA.getIdentificativiErogazione().getIdServizio().clone(); // effettuo clone altrimenti nella cache viene memorizzata l'azione impostata dopo!
+			}
 		}
 		
 		if(idServizio==null){

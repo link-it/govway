@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -90,4 +92,26 @@ public class SDIValidazioneUtils {
 		return Eccezione.getEccezioneProcessamento(codiceErrore, descrizioneErrore, this.protocolFactory);
 	}
 	
+	
+	
+	public void addHeaderIdentificativoSdiMessaggio(OpenSPCoop2Message msg, String idSdi, String idSdiRiferimentoArchivio) {
+		
+		if(msg==null) {
+			return;
+		}
+		if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getParametersTrasporto()==null) {
+			return;
+		}
+		
+		if(idSdi==null) {
+			return;
+		}
+		if(idSdiRiferimentoArchivio!=null) {
+			msg.getTransportRequestContext().getParametersTrasporto().put(SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi + " "+idSdiRiferimentoArchivio);
+		}
+		else {
+			msg.getTransportRequestContext().getParametersTrasporto().put(SDICostanti.SDI_HEADER_ID_CORRELAZIONE,idSdi);
+		}
+
+	}
 }

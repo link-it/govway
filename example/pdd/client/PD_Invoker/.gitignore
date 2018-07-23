@@ -1,0 +1,9 @@
+# Ignore everything in this directory
+build
+dist
+bin
+Client.properties
+sdiFiles
+.ant-targets-build.xml
+# Except this file
+!.gitignore

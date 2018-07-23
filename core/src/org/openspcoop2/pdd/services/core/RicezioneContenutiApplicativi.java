@@ -3477,7 +3477,9 @@ public class RicezioneContenutiApplicativi {
 					proprietaManifest.setGestioneManifest(false);
 					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
 							FaseSbustamento.PRE_INVIO_RICHIESTA_PER_RIFERIMENTO, requestInfo.getIntegrationServiceBinding(), requestInfo.getBindingConfig());
-					requestMessage = protocolMessage.getMessage(); // updated
+					if(protocolMessage!=null) {
+						requestMessage = protocolMessage.getMessage(); // updated
+					}
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"invocazionePortaDelegataPerRiferimento.sbustamentoProtocolHeader()");

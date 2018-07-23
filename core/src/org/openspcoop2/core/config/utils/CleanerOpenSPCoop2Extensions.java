@@ -140,6 +140,13 @@ public class CleanerOpenSPCoop2Extensions {
 		if(portaDelegata.getCorrelazioneApplicativaRisposta()!=null && portaDelegata.getCorrelazioneApplicativaRisposta().sizeElementoList()<=0) {
 			portaDelegata.setCorrelazioneApplicativaRisposta(null); // altrimeni da errore di validazione in fase di import
 		}
+		
+		// Fix altrimenti viene serializzato un xml vuoto di local forward, e quando viene re-importato il default e' abilitato
+		if(portaDelegata.getLocalForward()!=null) {
+			if(portaDelegata.getLocalForward().getStato()==null) {
+				portaDelegata.setLocalForward(null);
+			}
+		}
 	}
 
 	public void clean(PortaApplicativa portaApplicativa){

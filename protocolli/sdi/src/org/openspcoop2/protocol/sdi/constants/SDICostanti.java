@@ -143,6 +143,8 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_PAESE = "TerzoIntermediarioOSoggettoEmittente-IdPaese";
     public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_ID_CODICE = "TerzoIntermediarioOSoggettoEmittente-IdCodice";
     public final static String SDI_BUSTA_EXT_TERZO_INTERMEDIARIO_O_SOGGETTO_EMITTENTE_CODICE_FISCALE = "TerzoIntermediarioOSoggettoEmittente-CodiceFiscale";
+    
+    public final static String SDI_HEADER_ID_CORRELAZIONE = "GovWay-SDI-IdCorrelazione";
 }
 
 

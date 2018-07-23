@@ -278,6 +278,28 @@
 					</link:fieldset>
 					
 					
+					
+					<rich:spacer id="spacerInformazioniAggiuntiveProtocollo" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.properties}"/>
+				
+					<link:fieldset legend="Informazioni #{dettagliBean.dettaglio.protocolloLabel}"
+							rendered="#{not empty dettagliBean.traccia.bustaBean.properties}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelInformazioniAggiuntiveProtocollo2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+							
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.propertiesAsList}" var="property" >
+								
+								<h:outputLabel styleClass="outputFieldLabel" value="#{property.key}" />
+								
+								<h:outputText value="#{property.value}" />
+																								
+							</c:forEach>
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+					
+					
+					
 					<rich:spacer id="spacerRiscontri" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.listaRiscontriBean}"/>
 				
 					<link:fieldset legend="Lista Riscontri"
@@ -543,27 +565,7 @@
 					
 					</link:fieldset>
 	
-	
-					<rich:spacer id="spacerInformazioniAggiuntiveProtocollo" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.properties}"/>
 				
-					<link:fieldset legend="Informazioni Protocollo '#{dettagliBean.traccia.protocollo}'"
-							rendered="#{not empty dettagliBean.traccia.bustaBean.properties}" collapsible="false" closed="false">
-					
-						 <h:panelGrid id="panelInformazioniAggiuntiveProtocollo2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
-							
-							<c:forEach items="#{dettagliBean.traccia.bustaBean.propertiesAsList}" var="property" >
-								
-								<h:outputLabel styleClass="outputFieldLabel" value="#{property.key}" />
-								
-								<h:outputText value="#{property.value}" />
-																								
-							</c:forEach>
-						
-						</h:panelGrid>
-					
-					</link:fieldset>
-					
-					
 					<rich:spacer id="spacerInformazioniAvanzate" height="20px" rendered="#{true}"/>
 				
 					<link:fieldset legend="Informazioni Avanzate"
@@ -685,7 +687,7 @@
 					
 					<rich:spacer id="spacerContenutoHeaderXML" height="20px" rendered="#{not empty dettagliBean.traccia.bustaAsString}"/>
 				
-					<link:fieldset legend="XML Protocollo '#{dettagliBean.traccia.protocollo}'"
+					<link:fieldset legend="Profilo Interoperabilità #{dettagliBean.dettaglio.protocolloLabel}"
 							rendered="#{not empty dettagliBean.traccia.bustaAsString}" collapsible="false" closed="false">
 							
 						<div style="height: 350px; overflow-y: scroll;">

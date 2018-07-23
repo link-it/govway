@@ -5,12 +5,15 @@ mtom=true
 #username=
 #password=
 
+# !!! NOTA !!!
+# Deve essere effettuata la configurazione SSL di test presente nella directory 'ConfigurazioneSSL'
+
 # PdD
 # -- SDICOOP --
-pdd=http://localhost:8080/govway/sdi/in
-pa=SDIENTE/SDITrasmissioneFatture/
+pdd=https://localhost:8444/govway/sdi/in/
+pa=ENTE/TrasmissioneFatture/1
 # -- SPCOOP --
-#pdd=http://localhost:8080/govway/spcoop/in
+#pdd=https://localhost:8444/govway/spcoop/in
 #pa=
 
 # Tipo Operazione
@@ -23,12 +26,13 @@ pa=SDIENTE/SDITrasmissioneFatture/
 tipoOperazione=RicevutaConsegna
 
 # Buste
-busta.RicevutaConsegna=spcoopFiles/RicevutaConsegna.xml
-busta.NotificaMancataConsegna=spcoopFiles/NotificaMancataConsegna.xml
-busta.NotificaScarto=spcoopFiles/NotificaScarto.xml
-busta.NotificaEsito=spcoopFiles/NotificaEsito.xml
-busta.NotificaDecorrenzaTermini=spcoopFiles/NotificaDecorrenzaTermini.xml
-busta.AttestazioneTrasmissioneFattura=spcoopFiles/AttestazioneTrasmissioneFattura.xml
+# Scommentare le seguenti opzioni se si usa il canale SPCoop
+#busta.RicevutaConsegna=spcoopFiles/RicevutaConsegna.xml
+#busta.NotificaMancataConsegna=spcoopFiles/NotificaMancataConsegna.xml
+#busta.NotificaScarto=spcoopFiles/NotificaScarto.xml
+#busta.NotificaEsito=spcoopFiles/NotificaEsito.xml
+#busta.NotificaDecorrenzaTermini=spcoopFiles/NotificaDecorrenzaTermini.xml
+#busta.AttestazioneTrasmissioneFattura=spcoopFiles/AttestazioneTrasmissioneFattura.xml
 
 # -- RicevutaConsegna
 RicevutaConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_RC_001.xml

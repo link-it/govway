@@ -1010,7 +1010,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					proprietaManifest.setGestioneManifest(false);
 					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(consegnaMessage, 
 							busta, ruoloMessaggio, proprietaManifest, fase, null, null); // TODO: salvare nel messaggio su I.M. il service binding associato ??? Oppure fare prima lo sbustamento ??
-					consegnaMessage = protocolMessage.getMessage(); // updated
+					if(protocolMessage!=null) {
+						consegnaMessage = protocolMessage.getMessage(); // updated
+					}
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

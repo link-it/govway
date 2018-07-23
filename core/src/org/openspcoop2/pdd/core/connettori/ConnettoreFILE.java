@@ -36,14 +36,12 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
-import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -94,10 +92,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 		this.properties = request.getConnectorProperties();
 		
 		// Costruisco Mappa per dynamic name
-		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
-		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, request.getBusta());
-		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, this.getPddContext().getContext());
+		// NOTA: Lasciare la costruzione qua, poiche' altrimenti la classe File lancia eccezioni se trova i threshold
+		Map<String, Object> dynamicMap = this.buildDynamicMap(request);
 		
 		// OutputFile
 		String tmp = this.getDynamicProperty(request.getTipoConnettore(), true, CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, dynamicMap);
@@ -712,62 +708,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			}
 		}
     }
-    
-    private String getDynamicProperty(String tipoConnettore,boolean required,String name,Map<String,Object> dynamicMap) throws ConnettoreException{
-		String tmp = this.properties.get(name);
-		if(tmp!=null){
-			tmp = tmp.trim();
-		}
-		if(tmp==null || "".equals(tmp)){
-			if(required){
-				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
-			}
-			return null;
-		}
-		if(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
-			String idTransazione = (String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-			while(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
-				tmp = tmp.replace(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID, idTransazione);
-			}
-		}
-		try{
-			tmp = DynamicStringReplace.replace(tmp, dynamicMap);
-		}catch(Exception e){
-			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
-		}
-		return tmp;
-    }
-    
-    private boolean isBooleanProperty(String tipoConnettore,boolean defaultValue,String name){
-  		String tmp = this.properties.get(name);
-  		if(tmp!=null){
-  			tmp = tmp.trim();
-  		}
-  		if(tmp==null || "".equals(tmp)){
-  			return defaultValue;
-  		}
-  		return "true".equalsIgnoreCase(tmp) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(tmp);
-    }
-    
-    private Integer getIntegerProperty(String tipoConnettore,boolean required,String name) throws ConnettoreException{
-		String tmp = this.properties.get(name);
-		if(tmp!=null){
-			tmp = tmp.trim();
-		}
-		if(tmp==null || "".equals(tmp)){
-			if(required){
-				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
-			}
-			return null;
-		}
-		try{
-			return Integer.parseInt(tmp);
-		}catch(Exception e){
-			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
-		}
-
-    }
-    
+        
 }
 
 

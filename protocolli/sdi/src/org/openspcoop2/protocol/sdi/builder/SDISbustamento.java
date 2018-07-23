@@ -39,6 +39,7 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
@@ -365,7 +366,7 @@ public class SDISbustamento {
 				
 			}else{
 				
-				if(TipiMessaggi.AT.equals(tipoMessaggio)){
+				if(TipiMessaggi.AT.equals(tipoMessaggio) && SDIProperties.getInstance(this.bustaBuilder.getLog()).isEnableAccessoMessaggi()){
 					
 					Object oZip = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_AT_ARCHIVIO_ZIP);
 					if(oZip!=null){
@@ -401,6 +402,11 @@ public class SDISbustamento {
 								xmlNotifica = org.apache.soap.encoding.soapenc.Base64.decode(child.getTextContent());
 							}
 						}
+					}
+					
+					if(TipiMessaggi.AT.equals(tipoMessaggio)) {
+						// xmlNotifica contiene uno zip file poiche' non l'ho trattato
+						zip = xmlNotifica;
 					}
 				}
 			}

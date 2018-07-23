@@ -38,6 +38,8 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum CorrelazioneApplicativaRispostaIdentificazione implements IEnumeration , Serializable , Cloneable {
 
+	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
+	HEADER_BASED ("headerBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("contentBased")
 	CONTENT_BASED ("contentBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("inputBased")

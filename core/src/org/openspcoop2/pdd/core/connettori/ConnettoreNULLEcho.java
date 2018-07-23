@@ -216,8 +216,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				ProtocolMessage protocolMessage = sbustatore.sbustamento(this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
 						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
 						FaseSbustamento.PRE_CONSEGNA_RICHIESTA,this.requestInfo);
-				headerProtocolloRisposta = protocolMessage.getBustaRawContent();
-				this.responseMsg = protocolMessage.getMessage(); // updated
+				if(protocolMessage!=null) {
+					headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+					this.responseMsg = protocolMessage.getMessage(); // updated
+				}
 				
 				// Creo busta di risposta solo se la busta di richiesta non conteneva una busta Errore
 				if(!isBustaSPCoopErrore){
@@ -381,7 +383,9 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					integrazione.setStateless(true);
 					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamento(this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
-					this.responseMsg = protocolMessageRisposta.getMessage(); // updated
+					if(protocolMessageRisposta!=null) {
+						this.responseMsg = protocolMessageRisposta.getMessage(); // updated
+					}
 
 				}
 				else{

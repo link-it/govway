@@ -500,6 +500,14 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	private void _validazioneRC(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
 		String tipoXml = "Ricevuta di Consegna";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -515,8 +523,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -532,13 +541,18 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
+		
+		String idSdi = null;
+		String idSdiRifArchivio = null;
 		
 		// IdentificativoSdI
 		if(xmlObject.getIdentificativoSdI()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			idSdi = xmlObject.getIdentificativoSdI()+"";
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 		}
 		
 		// NomeFile
@@ -569,7 +583,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// RiferimentoArchivio
 		if(xmlObject.getRiferimentoArchivio()!=null){
 			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"");
+				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
 			}
 			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
 				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
@@ -586,12 +601,23 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
 		}
 		
+		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
+		
 	}
 	
 	
 	private void _validazioneMC(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
+		
 		String tipoXml = "Notifica di Mancata Consegna";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -608,8 +634,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -625,13 +652,18 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
+		String idSdi = null;
+		String idSdiRifArchivio = null;
+				
 		// IdentificativoSdI
 		if(xmlObject.getIdentificativoSdI()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			idSdi = xmlObject.getIdentificativoSdI()+"";
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 		}
 				
 		// NomeFile
@@ -647,7 +679,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// RiferimentoArchivio
 		if(xmlObject.getRiferimentoArchivio()!=null){
 			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"");
+				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
 			}
 			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
 				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
@@ -669,6 +702,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
 		}
 		
+		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 
 	
@@ -676,6 +710,15 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	private void _validazioneNS(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
+		
 		String tipoXml = "Notifica di Scarto";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -692,8 +735,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -709,13 +753,18 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
+		String idSdi = null;
+		String idSdiRifArchivio = null;
+				
 		// IdentificativoSdI
 		if(xmlObject.getIdentificativoSdI()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			idSdi = xmlObject.getIdentificativoSdI()+"";
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 		}
 				
 		// NomeFile
@@ -731,7 +780,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// RiferimentoArchivio
 		if(xmlObject.getRiferimentoArchivio()!=null){
 			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"");
+				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
 			}
 			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
 				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
@@ -759,12 +809,22 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
 		}
 		
+		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 	
 	
 	private void _validazioneNE(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
+		
 		String tipoXml = "Notifica di Esito (Cedente)";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -781,8 +841,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -798,13 +859,18 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
+		String idSdi = null;
+		String idSdiRifArchivio = null;
+				
 		// IdentificativoSdI
 		if(xmlObject.getIdentificativoSdI()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			idSdi = xmlObject.getIdentificativoSdI()+"";
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 		}
 				
 		// NomeFile
@@ -828,12 +894,22 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		if(xmlObject.getNote()!=null){
 			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
 		}
-		
+	
+		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 	
 	private void _validazioneDT(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
+		
 		String tipoXml = "Notifica di Decorrenza Termini";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -851,8 +927,9 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -868,13 +945,18 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
+		String idSdi = null;
+		String idSdiRifArchivio = null;
+				
 		// IdentificativoSdI
 		if(xmlObject.getIdentificativoSdI()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			idSdi = xmlObject.getIdentificativoSdI()+"";
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 		}
 		
 		// RiferimentoFattura
@@ -910,6 +992,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
 		}
 		
+		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 	
 	
@@ -917,6 +1000,15 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	private void _validazioneAT(byte[] zip, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
+		
 		String tipoXml = "Attestazione di avvenuta trasmissione con impossibilità di recapito";
 		boolean consegnaAttestato = sdiProperties.isNotificaATConsegnaSoloAttestato();
 		
@@ -930,13 +1022,13 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml
-							+" non valido; è avvenuto un erorre durante il salvataggio dell'archivio zip: "+e.getMessage(),e));
+							+" non valido; è avvenuto un erorre durante il salvataggio dell'archivio zip: "+e.getMessage(),e,forceEccezioneLivelloInfo));
 			try{
 				if(tmpZipFile!=null){
 					tmpZipFile.delete();
 				}
 			}catch(Exception eClose){}
-			return;
+			return; // esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
 		
@@ -980,7 +1072,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 							+" non valido; è avvenuto un erorre durante la lettura dell'archivio zip: "+e.getMessage(),e,
 							!consegnaAttestato));
 			if(consegnaAttestato){
-				return;
+				return; 
 			}
 		}finally{
 			try{
@@ -1040,9 +1132,13 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 				}
 			}
 			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+						
 			// IdentificativoSdI
 			if(xmlObject.getIdentificativoSdI()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+				idSdi = xmlObject.getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
 			}
 			
 			// NomeFile
@@ -1058,7 +1154,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			// RiferimentoArchivio
 			if(xmlObject.getRiferimentoArchivio()!=null){
 				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"");
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
 				}
 				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
 					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
@@ -1089,6 +1186,8 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			if(xmlObject.getHashFileOriginale()!=null){
 				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HashFileOriginale, xmlObject.getHashFileOriginale());
 			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 		}
 		
 		

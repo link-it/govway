@@ -167,9 +167,11 @@ public abstract class AbstractIdentificazionePorta {
 				}
 				// Provo ad effettuare ultima ricerca
 				//this.log.info("ULTIMA... Cerco con nome porta delegata ["+porta+"]");
-				try{
-					this.identificativoPorta = getIDPorta(porta);
-				}catch(RegistryNotFound dNotFound){}
+				if(this.identificativoPorta==null){
+					try{
+						this.identificativoPorta = getIDPorta(porta);
+					}catch(RegistryNotFound dNotFound){}
+				}
 				if(this.identificativoPorta!=null){
 					//this.log.info("ULTIMA....TROVATA porta delegata ["+porta+"]");
 				}

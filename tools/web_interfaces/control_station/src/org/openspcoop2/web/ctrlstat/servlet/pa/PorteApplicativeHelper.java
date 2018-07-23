@@ -1301,7 +1301,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 							de.setRequired(false);
 						}
 						else {
-							de.setType(DataElementType.TEXT_EDIT);
+							if(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED.equals(modeaz) ||
+									PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED.equals(modeaz) ) {
+								de.setType(DataElementType.TEXT_AREA);
+							}
+							else {
+								de.setType(DataElementType.TEXT_EDIT);
+							}
 						}
 					}else
 						de.setType(DataElementType.HIDDEN);
@@ -1420,6 +1426,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				deLabel.setType(DataElementType.TEXT);
 				if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) 
 						|| modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
+					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 					deLabel.setValue(patternAzione);
 				} 
@@ -3147,6 +3154,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		//String[] tipoMode = { "urlBased", "contentBased", "inputBased","disabilitato" };
 		String[] tipoMode = { 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED,
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
@@ -3162,18 +3170,24 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
-				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)
+				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
+				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED) 
 				) {
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+				de.setType(DataElementType.TEXT_AREA);
+			}
 			if (pattern == null) {
 				de.setValue("");
 			} else {
 				de.setValue(pattern);
 			}
-			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
-			de.setSize(80);
 			de.setRequired(true);
 			dati.addElement(de);
 		}
@@ -3230,6 +3244,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		String[] tipoMode = {
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
@@ -3245,17 +3260,23 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
+				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
 				mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+			if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME);
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+				de.setType(DataElementType.TEXT_AREA);
+			}
 			if (pattern == null) {
 				de.setValue("");
 			} else {
 				de.setValue(pattern);
 			}
-			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
-			de.setSize(80);
 			de.setRequired(true);
 			dati.addElement(de);
 		}

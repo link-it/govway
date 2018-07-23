@@ -167,7 +167,7 @@ public class EsitoUtils {
 		
 		// Pdd
 		if(archive.getPdd().size()>0){
-			bfEsito.append("PorteDominio (").append(archive.getPdd().size()).append(")\n");
+			bfEsito.append("Gateway (").append(archive.getPdd().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getPdd().size(); i++) {
 			try{
@@ -247,7 +247,7 @@ public class EsitoUtils {
 		
 		// Servizi Applicativi
 		if(archive.getServiziApplicativi().size()>0){
-			bfEsito.append("ServiziApplicativi (").append(archive.getServiziApplicativi().size()).append(")\n");
+			bfEsito.append("Applicativi Fruitori/Erogatori (").append(archive.getServiziApplicativi().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
 			try{
@@ -289,7 +289,7 @@ public class EsitoUtils {
 		
 		// Accordi di Servizio Parte Comune
 		if(archive.getAccordiServizioParteComune().size()>0){
-			bfEsito.append("Accordi di Servizio Parte Comune (").append(archive.getAccordiServizioParteComune().size()).append(")\n");
+			bfEsito.append("API (").append(archive.getAccordiServizioParteComune().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
 			try{
@@ -310,7 +310,7 @@ public class EsitoUtils {
 		
 		// Accordi di Servizio Parte Specifica (implementano accordi di servizio parte comune)
 		if(archive.getAccordiServizioParteSpecifica().size()>0){
-			bfEsito.append("Accordi di Servizio Parte Specifica (").append(archive.getAccordiServizioParteSpecifica().size()).append(")\n");
+			bfEsito.append("Servizi (").append(archive.getAccordiServizioParteSpecifica().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 			try{
@@ -352,7 +352,7 @@ public class EsitoUtils {
 		
 		// Accordi di Servizio Parte Specifica (implementano accordi di servizio composto)
 		if(archive.getAccordiServizioParteSpecificaServiziComposti().size()>0){
-			bfEsito.append("Accordi di Servizio Parte Specifica (").
+			bfEsito.append("Servizi (").
 				append(archive.getAccordiServizioParteSpecificaServiziComposti().size()).append(") [accordi di servizio composto]\n");
 		}
 		for (int i = 0; i < archive.getAccordiServizioParteSpecificaServiziComposti().size(); i++) {
@@ -396,7 +396,7 @@ public class EsitoUtils {
 		
 		// PorteDelegate
 		if(archive.getPorteDelegate().size()>0){
-			bfEsito.append("PorteDelegate (").append(archive.getPorteDelegate().size()).append(")\n");
+			bfEsito.append("Porte Outbound (").append(archive.getPorteDelegate().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
 			try{
@@ -417,7 +417,7 @@ public class EsitoUtils {
 		
 		// PorteApplicative
 		if(archive.getPorteApplicative().size()>0){
-			bfEsito.append("PorteApplicative (").append(archive.getPorteApplicative().size()).append(")\n");
+			bfEsito.append("Porte Inbound (").append(archive.getPorteApplicative().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
 			try{
@@ -438,7 +438,7 @@ public class EsitoUtils {
 		
 		// Controllo Traffico (Configurazione)
 		if(archive.getControlloTraffico_configurazione()!=null){
-			bfEsito.append("Controllo del Traffico (Configurazione)\n");
+			bfEsito.append("Controllo del Traffico - Configurazione\n");
 			try{
 				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> configurazione = 
 						archive.getControlloTraffico_configurazione();
@@ -453,7 +453,7 @@ public class EsitoUtils {
 		
 		// Controllo Traffico (ConfigurazionePolicies)
 		if(archive.getControlloTraffico_configurationPolicies().size()>0){
-			bfEsito.append("Controllo del Traffico (Registro Policy) (").append(archive.getControlloTraffico_configurationPolicies().size()).append(")\n");
+			bfEsito.append("Controllo del Traffico - Registro Policy (").append(archive.getControlloTraffico_configurationPolicies().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
 			try{
@@ -472,7 +472,7 @@ public class EsitoUtils {
 		
 		// Controllo Traffico (AttivazionePolicies)
 		if(archive.getControlloTraffico_activePolicies().size()>0){
-			bfEsito.append("Controllo del Traffico (Policy) (").append(archive.getControlloTraffico_activePolicies().size()).append(")\n");
+			bfEsito.append("Controllo del Traffico - Policy (").append(archive.getControlloTraffico_activePolicies().size()).append(")\n");
 		}
 		for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 			try{

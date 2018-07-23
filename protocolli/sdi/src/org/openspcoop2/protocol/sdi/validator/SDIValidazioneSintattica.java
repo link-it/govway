@@ -95,11 +95,23 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 	public SDIBustaRawContent getBustaRawContent_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
 		try{
-			return new SDIBustaRawContent(SDIUtils.readHeader(msg.castAsSoap()));
+			if(msg!=null) {
+				SOAPElement se = SDIUtils.readHeader(msg.castAsSoap());
+				if(se!=null) {
+					return new SDIBustaRawContent(se);
+				}
+			}
+			return null;
 		}catch(Exception e){
 			this.log.debug("getHeaderProtocollo_senzaControlli error: "+e.getMessage(),e);
 			return null;
 		}
+	}
+	
+	
+	@Override
+	public Busta getBusta_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
+		return null;
 	}
 	
 

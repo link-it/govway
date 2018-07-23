@@ -532,7 +532,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							de.setRequired(false);
 						}
 						else {
-							de.setType(DataElementType.TEXT_EDIT);
+							if(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED.equals(modeaz) ||
+									PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED.equals(modeaz) ) {
+								de.setType(DataElementType.TEXT_AREA);
+							}
+							else {
+								de.setType(DataElementType.TEXT_EDIT);
+							}
 						}
 					}else
 						de.setType(DataElementType.HIDDEN);
@@ -650,6 +656,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				deLabel.setType(DataElementType.TEXT);
 				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
 						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
 					deLabel.setValue(patternAzione);
 				} 
@@ -1189,6 +1196,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		String[] tipoMode = { 
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED, 
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED, 
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_INPUT_BASED ,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO 
@@ -1205,17 +1213,23 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
+				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
 				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+				de.setType(DataElementType.TEXT_AREA);
+			}
 			if (pattern == null) {
 				de.setValue("");
 			} else {
 				de.setValue(pattern);
 			}
-			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
-			de.setSize(80);
 			de.setRequired(true);
 			dati.addElement(de);
 		}
@@ -1291,7 +1305,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		String[] tipoMode = { 
-				//				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED, 
+				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED, 
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_INPUT_BASED ,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO 
@@ -1308,17 +1322,23 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
+				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED) ||
 				mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+			if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_HEADER_BASED)) {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
+				de.setType(DataElementType.TEXT_EDIT);
+			}
+			else {
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+				de.setType(DataElementType.TEXT_AREA);
+			}
 			if (pattern == null) {
 				de.setValue("");
 			} else {
 				de.setValue(pattern);
 			}
-			de.setType(DataElementType.TEXT_EDIT);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
-			de.setSize(80);
 			de.setRequired(true);
 			dati.addElement(de);
 		}

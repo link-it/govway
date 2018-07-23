@@ -532,7 +532,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 		} catch(Exception e) {
 			this.log.error("Build msgErrore non riuscito: " + e.getMessage(),e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType,"ErroreProcessamento"); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
+			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
 		}
 
 
@@ -740,7 +740,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			// imbustamento
 			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta, integrazione, null);
-			responseMessage = protocolMessage.getMessage(); // updated
+			if(protocolMessage!=null) {
+				responseMessage = protocolMessage.getMessage(); // updated
+			}
 
 
 			// Message-Security
@@ -760,7 +762,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 		}catch(Exception e) {
 			this.log.error("Build msgErroreProcessamento non riuscito: "+e.getMessage(),e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, "ErroreProcessamento");
+			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType);
 		}
 
 	}
@@ -892,7 +894,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			// Add header
 
 			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(responseMessage, busta,integrazione, null);
-			responseMessage = protocolMessage.getMessage(); // updated
+			if(protocolMessage!=null) {
+				responseMessage = protocolMessage.getMessage(); // updated
+			}
 
 			// Message-Security
 			if(messageSecurityPropertiesResponse != null){
@@ -911,7 +915,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 		}catch(Exception e) {
 			this.log.error("Build msgErroreProtocollo_Validazione non riuscito: "+e.getMessage(), e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, "ErroreProcessamento");
+			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType);
 		}
 	}
 

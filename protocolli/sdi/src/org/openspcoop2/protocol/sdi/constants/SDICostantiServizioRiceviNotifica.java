@@ -32,7 +32,7 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.ProjectInfo;
  */
 public class SDICostantiServizioRiceviNotifica {
 
-	public final static String SDI_SERVIZIO_RICEVI_NOTIFICA = "RiceviNotifica";
+	public final static String SDI_SERVIZIO_RICEVI_NOTIFICA = "SdIRiceviNotifica";
     public final static String SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO = "NotificaEsito";
 	 
 	public final static String SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE = ProjectInfo.getInstance().getProjectNamespace();
@@ -54,9 +54,8 @@ public class SDICostantiServizioRiceviNotifica {
     public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_NOME_FILE = "NomeFile";
     public final static String NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE = "File";
 	
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";
-	
+	public final static String NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE  = "NomeFile";	
 	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1  = "SDI-NomeFile";
-	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "X-SDI-NomeFile";
+	public final static String NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2  = "GovWay-SDI-NomeFile";
 
 }

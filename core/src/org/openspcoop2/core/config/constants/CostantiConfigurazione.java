@@ -81,6 +81,8 @@ public class CostantiConfigurazione {
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_INPUT_BASED = CorrelazioneApplicativaRichiestaIdentificazione.INPUT_BASED;
     /** tipo di porta delegata: integration-based */
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED = CorrelazioneApplicativaRichiestaIdentificazione.URL_BASED;
+    /** tipo di porta delegata: integration-based */
+    public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED = CorrelazioneApplicativaRichiestaIdentificazione.HEADER_BASED;
 
     /** tipo di porta delegata: static */
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_DISABILITATO = CorrelazioneApplicativaRispostaIdentificazione.DISABILITATO;
@@ -88,7 +90,9 @@ public class CostantiConfigurazione {
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_CONTENT_BASED = CorrelazioneApplicativaRispostaIdentificazione.CONTENT_BASED;
     /** tipo di porta delegata: content-based */
     public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED = CorrelazioneApplicativaRispostaIdentificazione.INPUT_BASED;
-    
+    /** tipo di porta delegata: content-based */
+    public final static CorrelazioneApplicativaRispostaIdentificazione CORRELAZIONE_APPLICATIVA_RISPOSTA_HEADER_BASED = CorrelazioneApplicativaRispostaIdentificazione.HEADER_BASED;
+   
     /** tipo di porta autenticazione: none */
     public final static InvocazioneServizioTipoAutenticazione INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE = InvocazioneServizioTipoAutenticazione.NONE;
     /** tipo di porta autenticazione: basic */

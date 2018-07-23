@@ -1020,8 +1020,6 @@ public class ConsoleHelper {
 					if(this.core.isRegistroServiziLocale()){
 						// ruoli
 						totEntries +=1;
-						// policy token
-						totEntries +=1;
 						// scope
 						totEntries +=1;
 					}
@@ -1173,11 +1171,7 @@ public class ConsoleHelper {
 						entries[index][0] = RuoliCostanti.LABEL_RUOLI;
 						entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
 						index++;
-						
-						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
-						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
-						index++;
-						
+												
 						entries[index][0] = ScopeCostanti.LABEL_SCOPES;
 						entries[index][1] = ScopeCostanti.SERVLET_NAME_SCOPE_LIST;
 						index++;
@@ -1319,7 +1313,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 4; // configurazione, tracciamento, controllo del traffico e audit
+					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, policy e audit
 
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
@@ -1361,6 +1355,9 @@ public class ConsoleHelper {
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					index++;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
+					index++;			
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
 						for (int j = 0; j < entriesUtenti.length; j++) {
@@ -2552,22 +2549,30 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) 
-					&& pattern.equals(""))) {
-				String tmpElenco = "";
-				if ((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
-					if (tmpElenco.equals("")) {
-						tmpElenco = CostantiControlStation.LABEL_PATTERN;
-					} else {
-						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
-					}
+			if ( 
+					(
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)
+					) 
+					&& 
+					pattern.equals("")
+				) {
+				String label = "";
+				if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)) {
+					label = CostantiControlStation.LABEL_PARAMETRO_NOME;
 				}
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				else {
+					label = CostantiControlStation.LABEL_PATTERN;
+				}
+				
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, label));
 				return false;
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
 					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
@@ -2652,21 +2657,33 @@ public class ConsoleHelper {
 
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
-			if (((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals(""))) {
-				String tmpElenco = "";
-				if ((mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)) && pattern.equals("")) {
-					if (tmpElenco.equals("")) {
-						tmpElenco = CostantiControlStation.LABEL_PATTERN;
-					} else {
-						tmpElenco = tmpElenco + ", " + CostantiControlStation.LABEL_PATTERN;
-					}
+			if ( 
+					(
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED) || 
+							mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED)
+					) 
+					&& 
+					pattern.equals("")
+				) {
+				String label = "";
+				if(mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)) {
+					label = CostantiControlStation.LABEL_PARAMETRO_NOME;
 				}
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, tmpElenco));
+				else {
+					label = CostantiControlStation.LABEL_PATTERN;
+				}
+				
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, label));
 				return false;
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) && !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
+			if (!mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_URL_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED)
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_INPUT_BASED) 
+					&& !mode.equals(CostantiControlStation.VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_MODALITA_IDENTIFICAZIONE_CON_TIPI_POSSIBILI);
 				return false;
 			}

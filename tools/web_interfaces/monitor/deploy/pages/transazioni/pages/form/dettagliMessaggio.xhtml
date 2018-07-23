@@ -653,7 +653,7 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelStato" value="Stato" rendered="#{not empty dettagliBean.dettaglio.stato}" />
 							<h:outputText id="outStato" value="#{dettagliBean.dettaglio.stato}" rendered="#{not empty dettagliBean.dettaglio.stato}" />
 							
-							<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Porta Delegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Porta Applicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
+							<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Porta Outbound' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Porta Inbound' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
 									rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
 							<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
 							

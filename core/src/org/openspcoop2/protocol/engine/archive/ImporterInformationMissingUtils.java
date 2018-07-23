@@ -118,8 +118,12 @@ public class ImporterInformationMissingUtils {
 		boolean throwException = false;
 		try{
 		
+			int indexInputPage = 0; 
+			
 			for (Operazione  archiveInformationMissing: archiveInformationMissingWizard.getOperazioneList()) {
 			
+				indexInputPage ++;
+				
 				if(throwException) {
 					break;
 				}
@@ -134,7 +138,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingSoggetto-"+i+"]]"; 
+						objectId = "[[InformationMissingSoggetto-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = soggettoMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -234,7 +238,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingInput-"+i+"]]"; 
+						objectId = "[[InformationMissingInput-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = inputMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -265,7 +269,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingServizioApplicativo-"+i+"]]"; 
+						objectId = "[[InformationMissingServizioApplicativo-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = saMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -343,7 +347,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingAccordoCooperazione-"+i+"]]"; 
+						objectId = "[[InformationMissingAccordoCooperazione-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = acMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -403,7 +407,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingAccordoServizioParteComune-"+i+"]]"; 
+						objectId = "[[InformationMissingAccordoServizioParteComune-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = asMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -463,7 +467,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingAPS-"+i+"]]"; 
+						objectId = "[[InformationMissingAPS-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = aspsMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -524,7 +528,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingAccordoServizioComposto-"+i+"]]"; 
+						objectId = "[[InformationMissingAccordoServizioComposto-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = asMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -583,7 +587,7 @@ public class ImporterInformationMissingUtils {
 						// *** object id ***
 						
 						importInformationMissing = null;
-						objectId = "[[InformationMissingFruitore-"+i+"]]"; 
+						objectId = "[[InformationMissingFruitore-"+indexInputPage+"-"+i+"]]"; 
 						objectIdDescription = fruitoreMissingInfo.getDescrizione();	
 						if(this.importInformationMissingCollection!=null){
 							importInformationMissing = this.importInformationMissingCollection.get(objectId);

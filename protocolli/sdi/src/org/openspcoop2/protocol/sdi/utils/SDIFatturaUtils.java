@@ -49,6 +49,16 @@ public class SDIFatturaUtils {
 			Busta busta,OpenSPCoop2Message msg,boolean addMsgInContextIfEnabled,
 			boolean validaDatiTrasmissione, boolean forceDisableValidazioneXSD) throws Exception{
 			
+		boolean forceEccezioneLivelloInfo = false;
+		if(validaDatiTrasmissione) {
+			if(sdiProperties.isEnableAccessoFattura() == false) {
+				return;
+			}
+			else if(sdiProperties.isEnableAccessoFatturaWarningMode()) {
+				forceEccezioneLivelloInfo = true;
+			}
+		}
+		
 		// Valori letti nel file Metadati o come parametro nel caso di fattura da inviare
 		String versioneFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA);
 				
@@ -71,8 +81,8 @@ public class SDIFatturaUtils {
 			}catch(Exception e){
 				String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+versioneFattura+") non valido rispetto allo schema XSD: "+e.getMessage();
 				eccezioniValidazione.add(
-						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
-				return;	
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e,forceEccezioneLivelloInfo));
+				return;	 // esco anche in caso di forceEccezioneLivelloInfo poiche' la fattura non e' ben formata e non ha senso andare avanti
 			}
 		}
 		
@@ -364,8 +374,8 @@ public class SDIFatturaUtils {
 		}catch(Exception e){
 			String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+versioneFattura+") non valido: "+e.getMessage();
 			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
-			return;	
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e,forceEccezioneLivelloInfo));
+			return;	 // esco anche in caso di forceEccezioneLivelloInfo poiche' la fattura non e' ben formata e non ha senso andare avanti
 		}
 		
 		// Attributo Versione

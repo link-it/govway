@@ -516,6 +516,14 @@ public class SDIValidatoreServizioRicezioneFatture {
 	private boolean _validazioneMetadati(byte[] metadati, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMetadati() == false) {
+			return true;
+		}
+		else if(sdiProperties.isEnableAccessoMetadatiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
 		// validazione XSD file Metadati
 		if(sdiProperties.isEnableValidazioneXsdMetadati()){
 			try{
@@ -525,8 +533,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return false;	
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -543,8 +552,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+e.getMessage(),e));
-			return false;	
+							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
 		}
 		
 		// Metadati.IdentificativoSdI
@@ -831,6 +841,14 @@ public class SDIValidatoreServizioRicezioneFatture {
 	private void _validazioneDT(byte[] xmlDoc, SDIProperties sdiProperties, 
 			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
+		boolean forceEccezioneLivelloInfo = false;
+		if(sdiProperties.isEnableAccessoMessaggi() == false) {
+			return;
+		}
+		else if(sdiProperties.isEnableAccessoMessaggiWarningMode()) {
+			forceEccezioneLivelloInfo = true;
+		}
+		
 		String tipoXml = "Notifica di Decorrenza Termini";
 		byte[] xml = xmlDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -846,8 +864,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+e.getMessage(),e));
-				return;	
+								"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido rispetto allo schema XSD: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
 		}
 		
@@ -863,8 +882,9 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}catch(Exception e){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e));
-			return;	
+							"Elemento ["+SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+									e.getMessage(),e, forceEccezioneLivelloInfo));
+			return;	 // esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 		}
 		
 		// IdentificativoSdI
