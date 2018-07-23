@@ -580,7 +580,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 						boolean existsPermessoServizio = false;
 						if(!existsPermessoSoggetto){
-							if(user.getSizeSoggetti()>0){
+							if(user.getSizeServizio()>0){
 								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
 									if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
 											res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
@@ -789,7 +789,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 						boolean existsPermessoServizio = false;
 						if(!existsPermessoSoggetto){
-							if(user.getSizeSoggetti()>0){
+							if(user.getSizeServizio()>0){
 								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
 									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
 											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
@@ -890,7 +890,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 						boolean existsPermessoServizio = false;
 						if(!existsPermessoSoggetto){
-							if(user.getSizeSoggetti()>0){
+							if(user.getSizeServizio()>0){
 								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
 									if(res.getSoggettoErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
 											res.getSoggettoErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
