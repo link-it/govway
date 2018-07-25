@@ -24,6 +24,8 @@
 
 package org.openspcoop2.utils.regexp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -327,10 +329,10 @@ public class RegularExpressionEngine {
 	 * @return Array di Stringhe che matchano il pattern passato
 	 * 
 	 */
-	public static String[] getAllStringMatchPattern(String contenuto, String pattern) throws RegExpException,RegExpNotFoundException{
+	public static List<String> getAllStringMatchPattern(String contenuto, String pattern) throws RegExpException,RegExpNotFoundException{
 		return RegularExpressionEngine.getAllStringMatchPattern(contenuto,pattern,(RegularExpressionPatternCompileMode[])null);
 	}
-	public static String[] getAllStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotFoundException{
+	public static List<String> getAllStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotFoundException{
 
 		
 		// Check parametri
@@ -355,7 +357,16 @@ public class RegularExpressionEngine {
 				//log.info("URLBased, nessun match trovato");
 				throw new RegExpNotFoundException("nessun match trovato");
 			}	
-			return result;
+			
+			if(result!=null && result.length>0) {
+				List<String> l = new ArrayList<>();
+				for (int i = 0; i < result.length; i++) {
+					l.add(result[i]);
+				}
+				return l;
+			}
+			
+			throw new RegExpNotFoundException("nessun match trovato");
 		}catch(RegExpNotFoundException ex){
 			throw ex;
 		}catch(Exception e){

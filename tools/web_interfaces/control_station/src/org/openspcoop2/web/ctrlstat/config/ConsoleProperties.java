@@ -798,6 +798,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.mtom.visualizzazioneCompleta");
 	}
 	
+	public Integer getPortaCorrelazioneApplicativaMaxLength() throws UtilsException{
+		return this.readIntegerProperty(true, "menu.porte.correlazioneApplicativa.maxLength");
+	}
+	
 	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
 		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
 		String tmp = this.readProperty(false, p);

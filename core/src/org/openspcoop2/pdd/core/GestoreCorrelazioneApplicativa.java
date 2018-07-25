@@ -46,7 +46,7 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -64,7 +64,6 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
@@ -116,6 +115,8 @@ public class GestoreCorrelazioneApplicativa {
 	private boolean riusoIdentificativo = false;
 	/** ProtocolFactory */
 	private IProtocolFactory<?> protocolFactory = null;
+	
+	private int maxLengthCorrelazioneApplicativa = 255;
 
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
@@ -138,6 +139,7 @@ public class GestoreCorrelazioneApplicativa {
 		this.idServizio = idServizio;
 		this.servizioApplicativo = servizioApplicativo;
 		this.protocolFactory = protocolFactory;
+		this.maxLengthCorrelazioneApplicativa = OpenSPCoop2Properties.getInstance().getMaxLengthCorrelazioneApplicativa();
 	}
 	/**
 	 * Costruttore. 
@@ -224,11 +226,14 @@ public class GestoreCorrelazioneApplicativa {
 				}
 				else{
 					if(MessageType.XML.equals(message.getMessageType())){
-						if(element==null){
-							throw new Exception("Contenuto non presente nel messaggio");
+						// Nei GET il messaggio e' vuoto
+//						if(element==null){
+//							throw new Exception("Contenuto non presente nel messaggio");
+//						}
+						if(element!=null){
+							nList = new ArrayList<Node>();
+							nList.add(element);
 						}
-						nList = new ArrayList<Node>();
-						nList.add(element);
 					}
 					else{
 						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
@@ -274,7 +279,7 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		if(checkElementoInTransito){
+		if(checkElementoInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				Node nodeInEsame =  nList.get(elem);
 				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
@@ -289,7 +294,7 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo nomi
 		List<String> nomiPresentiBody = new ArrayList<String>();
-		if(checkElementoInTransito){
+		if(checkElementoInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
 				Node nodeInEsame =  nList.get(elem);
@@ -343,30 +348,48 @@ public class GestoreCorrelazioneApplicativa {
 					if( (elem==posizioneUltimoNodo) == false)
 						continue;
 					
-				}else if( elementName.equals(elemento.getNome()) ){
+				}
+				else if(this.idServizio!=null && this.idServizio.getAzione()!=null &&
+						this.idServizio.getAzione().equals(elemento.getNome())) {
+					// Ricerco per match sull'azione
 					matchNodePerCorrelazioneApplicativa = true;
 					nomeElemento = elemento.getNome();
-				}else{
+				}
+				else if( elementName.equals(elemento.getNome()) ){
+					// Ricerco per match sul localName dell'elemento (se XML)
+					matchNodePerCorrelazioneApplicativa = true;
+					nomeElemento = elemento.getNome();
+				}
+				else{
 					// Ricerco elemento con una espressione
 					try{
-						// element per verificare se il nodo in transito e quello interessato non dovrebbe essere null
-						// i controlli precedenti dovrebbero garantire di sollevare eccezioni prima
-						if(element==null){
-							throw new Exception("Elemento non disponibile su cui effettuare il match");
+						if(element==null && elementJson==null){
+							throw new Exception("Contenuto non disponibile su cui effettuare un match");
 						}
-						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-						nomeElemento = xPathEngine.getStringMatchPattern(element,dnc,elemento.getNome());
-						if(nomeElemento!=null){
+						if(element!=null) {
+							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
+						}
+						else {
+							nomeElemento = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+						}
+						if(nomeElemento!=null) {
 							matchNodePerCorrelazioneApplicativa = true;
 						}
 					}catch(Exception e){
-						this.log.info("Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+						this.log.info("Calcolo (contentBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
 					}
-					// Ricerco elemento con una espressione che potrebbe essere riferita localmente al nodo in esame
-					/*try{
-						DynamicNamespaceContext dncNode = DynamicNamespaceContext.getNamespaceContext(nodeInEsame);
-						nomeElemento = RegularExpressionEngine.getStringMatchPatternContentBased(nodeInEsame,dncNode,elemento.getNome());
-					}catch(Exception e){}*/
+					// Ricerco tramuite espressione regolare sulla url
+					if(!matchNodePerCorrelazioneApplicativa) {
+						try{
+							nomeElemento = RegularExpressionEngine.getStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
+									elemento.getNome());
+							if(nomeElemento!=null) {
+								matchNodePerCorrelazioneApplicativa = true;
+							}
+						}catch(Exception e){
+							this.log.info("Calcolo (urlBased) non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
+						}
+					}
 				}
 
 
@@ -392,8 +415,18 @@ public class GestoreCorrelazioneApplicativa {
 
 					if( CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_URL_BASED.equals(elemento.getIdentificazione())){
 						try{
-							idCorrelazioneApplicativa = RegularExpressionEngine.getStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
+							List<String> l = RegularExpressionEngine.getAllStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
 									elemento.getPattern());
+							if(l!=null && l.size()>0) {
+								StringBuffer bf = new StringBuffer();
+								for (String id : l) {
+									if(bf.length()>0) {
+										bf.append(" ");
+									}
+									bf.append(id);
+								}
+								idCorrelazioneApplicativa =  bf.toString();
+							}
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -453,20 +486,7 @@ public class GestoreCorrelazioneApplicativa {
 							else {
 								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
-							
-							if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>255) {
-								if(bloccaIdentificazioneNonRiuscita) {
-									this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
-											getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-									throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-								}
-								else {
-									this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-									correlazioneNonRiuscitaDaAccettare = true;
-									idCorrelazioneApplicativa = null;
-								}
-							}
-							
+														
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -478,12 +498,27 @@ public class GestoreCorrelazioneApplicativa {
 							}
 						}
 					}
+					
+					
+					if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>this.maxLengthCorrelazioneApplicativa) {
+						if(bloccaIdentificazioneNonRiuscita) {
+							this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
+									getErrore416_CorrelazioneApplicativaRichiesta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+							throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+						}
+						else {
+							this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+							correlazioneNonRiuscitaDaAccettare = true;
+							idCorrelazioneApplicativa = null;
+						}
+					}
+					
 					findCorrelazione = true;
 					break;
 				}
 			}
 		}
-
+		
 		if(idCorrelazioneApplicativa == null){
 			if(correlazioneNonRiuscitaDaAccettare==false){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -492,7 +527,7 @@ public class GestoreCorrelazioneApplicativa {
 			}else{
 				return false;
 			}
-		}else{
+		}else{			
 			this.idCorrelazione = idCorrelazioneApplicativa;
 		}
 
@@ -640,11 +675,14 @@ public class GestoreCorrelazioneApplicativa {
 				}
 				else{
 					if(MessageType.XML.equals(message.getMessageType())){
-						if(element==null){
-							throw new Exception("Contenuto non presente nel messaggio");
+						// il body http puo' essere vuoto
+//						if(element==null){
+//							throw new Exception("Contenuto non presente nel messaggio");
+//						}
+						if(element!=null) {
+							nList = new ArrayList<Node>();
+							nList.add(element);
 						}
-						nList = new ArrayList<Node>();
-						nList.add(element);
 					}
 					else{
 						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
@@ -688,7 +726,7 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		if(checkElementiInTransito){
+		if(checkElementiInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				Node nodeInEsame =  nList.get(elem);
 				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
@@ -703,7 +741,7 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo nomi
 		List<String> nomiPresentiBody = new ArrayList<String>();
-		if(checkElementiInTransito){
+		if(checkElementiInTransito && nList!=null){
 			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
 				Node nodeInEsame =  nList.get(elem);
@@ -758,30 +796,38 @@ public class GestoreCorrelazioneApplicativa {
 					if( (elem==posizioneUltimoNodo) == false)
 						continue;
 					
-				}else if( elementName.equals(elemento.getNome()) ){
+				}
+				else if(this.idServizio!=null && this.idServizio.getAzione()!=null &&
+						this.idServizio.getAzione().equals(elemento.getNome())) {
+					// Ricerco per match sull'azione
 					matchNodePerCorrelazioneApplicativa = true;
 					nomeElemento = elemento.getNome();
-				}else{
+				}
+				else if( elementName.equals(elemento.getNome()) ){
+					// Ricerco per match sul localName dell'elemento (se XML)
+					matchNodePerCorrelazioneApplicativa = true;
+					nomeElemento = elemento.getNome();
+				}
+				else{
 					// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
 					try{
-						// element per verificare se il nodo in transito e quello interessato non dovrebbe essere null
-						// i controlli precedenti dovrebbero garantire di sollevare eccezioni prima
-						if(element==null){
-							throw new Exception("Elemento non disponibile su cui effettuare il match");
+						if(element==null && elementJson==null){
+							throw new Exception("Contenuto non disponibile su cui effettuare un match");
 						}
-						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-						nomeElemento = xPathEngine.getStringMatchPattern(element,dnc,elemento.getNome());
-						if(nomeElemento!=null){
+						if(element!=null) {
+							nomeElemento = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, elemento.getNome(), this.log);
+						}
+						else {
+							nomeElemento = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getNome(), this.log);
+						}
+						if(nomeElemento!=null) {
 							matchNodePerCorrelazioneApplicativa = true;
 						}
 					}catch(Exception e){
 						this.log.info("Calcolo non riuscito ["+elementName+"] ["+elemento.getNome()+"]: "+e.getMessage());
 					}
-					// Ricerco elemento con una espressione che potrebbe essere riferita localmente al nodo in esame
-					/*try{
-						DynamicNamespaceContext dncNode = DynamicNamespaceContext.getNamespaceContext(nodeInEsame);
-						nomeElemento = RegularExpressionEngine.getStringMatchPatternContentBased(nodeInEsame,dncNode,elemento.getNome());
-					}catch(Exception e){}*/
+					// Ricerco tramuite espressione regolare sulla url
+					// Non possibile sulla risposta
 				}
 
 
@@ -854,20 +900,7 @@ public class GestoreCorrelazioneApplicativa {
 							else {
 								idCorrelazioneApplicativa = JsonPathExpressionEngine.extractAndConvertResultAsString(elementJson, elemento.getPattern(), this.log);
 							}
-							
-							if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>255) {
-								if(bloccaIdentificazioneNonRiuscita) {
-									this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
-											getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-									throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
-								}
-								else {
-									this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
-									correlazioneNonRiuscitaDaAccettare = true;
-									idCorrelazioneApplicativa = null;
-								}
-							}
-							
+														
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -878,6 +911,20 @@ public class GestoreCorrelazioneApplicativa {
 							}
 						}
 					}
+					
+					if(idCorrelazioneApplicativa!=null && idCorrelazioneApplicativa.length()>this.maxLengthCorrelazioneApplicativa) {
+						if(bloccaIdentificazioneNonRiuscita) {
+							this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
+									getErrore434_CorrelazioneApplicativaRisposta("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+							throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
+						}
+						else {
+							this.log.error("Identificativo di correlazione applicativa identificato possiede una lunghezza ("+idCorrelazioneApplicativa.length()+") superiore ai 255 caratteri consentiti");
+							correlazioneNonRiuscitaDaAccettare = true;
+							idCorrelazioneApplicativa = null;
+						}
+					}
+					
 					findCorrelazione = true;
 					break;
 				}

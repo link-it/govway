@@ -6643,7 +6643,7 @@ public class ConsoleHelper {
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE);
 		de.setBold(true);
-		de.setValue(CostantiControlStation.LABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE_MESSAGGIO);
+		de.setValue(CostantiControlStation.getLABEL_PORTE_CORRELAZIONE_APPLICATIVA_ATTENZIONE_MESSAGGIO(this.core.getPortaCorrelazioneApplicativaMaxLength()));
 		de.setType(DataElementType.NOTE);
 		return de;
 	}

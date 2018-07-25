@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -79,7 +80,7 @@ public class Client {
 			httpMethod = "POST";
 		}
 		String soapActon = Client.getProperty(reader, "openspcoop2.soapAction", true);
-		String contentType = Client.getProperty(reader, "openspcoop2.contentType", true);
+		String contentType = Client.getProperty(reader, "openspcoop2.contentType", false);
 		String urlPD = Client.getProperty(reader, "openspcoop2.portaDiDominio", true);
 
 		
@@ -175,7 +176,9 @@ public class Client {
 		// Set the appropriate HTTP parameters.
 		httpConn.setRequestProperty( "Content-Length",
 				String.valueOf( b.length ) );
-		httpConn.setRequestProperty("Content-Type",contentType);
+		if(contentType!=null) {
+			httpConn.setRequestProperty("Content-Type",contentType);
+		}
 		httpConn.setRequestProperty("SOAPAction",soapActon);
 		if(riferimentoMessaggio!=null){
 			riferimentoMessaggio = riferimentoMessaggio.trim();
@@ -207,15 +210,16 @@ public class Client {
 		}
 		if(user != null && passw != null)
 			httpConn.setRequestProperty("Authorization",authentication);
-		HttpUtilities.setStream(httpConn, HttpRequestMethod.valueOf(httpMethod), contentType);
-//		httpConn.setRequestMethod( httpMethod );
-//		httpConn.setDoOutput(true);
-//		httpConn.setDoInput(true);
+		HttpRequestMethod httpRequestMethod = HttpRequestMethod.valueOf(httpMethod);
+		HttpUtilities.setStream(httpConn, httpRequestMethod, contentType);
+		HttpBodyParameters httpBody = new  HttpBodyParameters(httpRequestMethod, contentType);
 
-		// Everything's set up; send the XML that was read in to b.
-		OutputStream out = httpConn.getOutputStream();
-		out.write( b );    
-		out.close();
+		if(httpBody.isDoOutput()){
+			// Everything's set up; send the XML that was read in to b.
+			OutputStream out = httpConn.getOutputStream();
+			out.write( b );    
+			out.close();
+		}
 
 		System.out.println("\nMessaggio SOAP inviato!\n");
 

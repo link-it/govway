@@ -24,6 +24,8 @@ package org.openspcoop2.protocol.engine.archive;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
+import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
@@ -1202,6 +1204,104 @@ public class ImporterInformationMissingSetter {
 							pd.getAzione().getNome()));
 				}
 			}
+			
+			if(pd.getCorrelazioneApplicativa()!=null && pd.getCorrelazioneApplicativa().sizeElementoList()>0) {
+				for (CorrelazioneApplicativaElemento elemento : pd.getCorrelazioneApplicativa().getElementoList()) {
+					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
+						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+						if(pd.getSoggettoErogatore()!=null && 
+								pd.getSoggettoErogatore().getNome()!=null && 
+								!"".equals(pd.getSoggettoErogatore().getNome()) ){
+							elemento.setNome(replaceSoggettoErogatore(elemento.getNome(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+						}
+						if(pd.getServizio()!=null && 
+								pd.getServizio().getNome()!=null && 
+								!"".equals(pd.getServizio().getNome()) ){
+							elemento.setNome(replaceServizio(elemento.getNome(), 
+									pd.getServizio().getTipo(), pd.getServizio().getNome()));
+						}
+						if(pd.getAzione()!=null && 
+								pd.getAzione().getNome()!=null &&
+								!"".equals(pd.getAzione().getNome()) ){
+							elemento.setNome(replaceAzione(elemento.getNome(), 
+									pd.getAzione().getNome()));
+						}
+					}
+					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
+						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+						if(pd.getSoggettoErogatore()!=null && 
+								pd.getSoggettoErogatore().getNome()!=null && 
+								!"".equals(pd.getSoggettoErogatore().getNome()) ){
+							elemento.setPattern(replaceSoggettoErogatore(elemento.getPattern(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+						}
+						if(pd.getServizio()!=null && 
+								pd.getServizio().getNome()!=null && 
+								!"".equals(pd.getServizio().getNome()) ){
+							elemento.setPattern(replaceServizio(elemento.getPattern(), 
+									pd.getServizio().getTipo(), pd.getServizio().getNome()));
+						}
+						if(pd.getAzione()!=null && 
+								pd.getAzione().getNome()!=null &&
+								!"".equals(pd.getAzione().getNome()) ){
+							elemento.setPattern(replaceAzione(elemento.getPattern(), 
+									pd.getAzione().getNome()));
+						}
+					}
+				}
+			}
+			if(pd.getCorrelazioneApplicativaRisposta()!=null && pd.getCorrelazioneApplicativaRisposta().sizeElementoList()>0) {
+				for (CorrelazioneApplicativaRispostaElemento elemento : pd.getCorrelazioneApplicativaRisposta().getElementoList()) {
+					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
+						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+						if(pd.getSoggettoErogatore()!=null && 
+								pd.getSoggettoErogatore().getNome()!=null && 
+								!"".equals(pd.getSoggettoErogatore().getNome()) ){
+							elemento.setNome(replaceSoggettoErogatore(elemento.getNome(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+						}
+						if(pd.getServizio()!=null && 
+								pd.getServizio().getNome()!=null && 
+								!"".equals(pd.getServizio().getNome()) ){
+							elemento.setNome(replaceServizio(elemento.getNome(), 
+									pd.getServizio().getTipo(), pd.getServizio().getNome()));
+						}
+						if(pd.getAzione()!=null && 
+								pd.getAzione().getNome()!=null &&
+								!"".equals(pd.getAzione().getNome()) ){
+							elemento.setNome(replaceAzione(elemento.getNome(), 
+									pd.getAzione().getNome()));
+						}
+					}
+					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
+						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+								pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+						if(pd.getSoggettoErogatore()!=null && 
+								pd.getSoggettoErogatore().getNome()!=null && 
+								!"".equals(pd.getSoggettoErogatore().getNome()) ){
+							elemento.setPattern(replaceSoggettoErogatore(elemento.getPattern(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+						}
+						if(pd.getServizio()!=null && 
+								pd.getServizio().getNome()!=null && 
+								!"".equals(pd.getServizio().getNome()) ){
+							elemento.setPattern(replaceServizio(elemento.getPattern(), 
+									pd.getServizio().getTipo(), pd.getServizio().getNome()));
+						}
+						if(pd.getAzione()!=null && 
+								pd.getAzione().getNome()!=null &&
+								!"".equals(pd.getAzione().getNome()) ){
+							elemento.setPattern(replaceAzione(elemento.getPattern(), 
+									pd.getAzione().getNome()));
+						}
+					}
+				}
+			}
+			
 		}
 		
 		// PorteApplicative
@@ -1262,6 +1362,79 @@ public class ImporterInformationMissingSetter {
 						!"".equals(pa.getAzione().getNome()) ){
 					pa.getServizioApplicativo(j).setNome(replaceAzione(pa.getServizioApplicativo(j).getNome(), 
 							pa.getAzione().getNome()));
+				}
+			}
+			
+			if(pa.getCorrelazioneApplicativa()!=null && pa.getCorrelazioneApplicativa().sizeElementoList()>0) {
+				for (CorrelazioneApplicativaElemento elemento : pa.getCorrelazioneApplicativa().getElementoList()) {
+					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
+						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+						if(pa.getServizio()!=null && 
+								pa.getServizio().getNome()!=null && 
+								!"".equals(pa.getServizio().getNome()) ){
+							elemento.setNome(replaceServizio(elemento.getNome(), 
+									pa.getServizio().getTipo(), pa.getServizio().getNome()));
+						}
+						if(pa.getAzione()!=null && 
+								pa.getAzione().getNome()!=null &&
+								!"".equals(pa.getAzione().getNome()) ){
+							elemento.setNome(replaceAzione(elemento.getNome(), 
+									pa.getAzione().getNome()));
+						}
+					}
+					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
+						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+						if(pa.getServizio()!=null && 
+								pa.getServizio().getNome()!=null && 
+								!"".equals(pa.getServizio().getNome()) ){
+							elemento.setPattern(replaceServizio(elemento.getPattern(), 
+									pa.getServizio().getTipo(), pa.getServizio().getNome()));
+						}
+						if(pa.getAzione()!=null && 
+								pa.getAzione().getNome()!=null &&
+								!"".equals(pa.getAzione().getNome()) ){
+							elemento.setPattern(replaceAzione(elemento.getPattern(), 
+									pa.getAzione().getNome()));
+						}
+					}
+				}
+			}
+			if(pa.getCorrelazioneApplicativaRisposta()!=null && pa.getCorrelazioneApplicativaRisposta().sizeElementoList()>0) {
+				for (CorrelazioneApplicativaRispostaElemento elemento : pa.getCorrelazioneApplicativaRisposta().getElementoList()) {
+					if(elemento.getNome()!=null && !"".equals(elemento.getNome())){
+						elemento.setNome(replaceSoggettoProprietario(elemento.getNome(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+						if(pa.getServizio()!=null && 
+								pa.getServizio().getNome()!=null && 
+								!"".equals(pa.getServizio().getNome()) ){
+							elemento.setNome(replaceServizio(elemento.getNome(), 
+									pa.getServizio().getTipo(), pa.getServizio().getNome()));
+						}
+						if(pa.getAzione()!=null && 
+								pa.getAzione().getNome()!=null &&
+								!"".equals(pa.getAzione().getNome()) ){
+							elemento.setNome(replaceAzione(elemento.getNome(), 
+									pa.getAzione().getNome()));
+						}
+					}
+					if(elemento.getPattern()!=null && !"".equals(elemento.getPattern())){
+						elemento.setPattern(replaceSoggettoProprietario(elemento.getPattern(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+						if(pa.getServizio()!=null && 
+								pa.getServizio().getNome()!=null && 
+								!"".equals(pa.getServizio().getNome()) ){
+							elemento.setPattern(replaceServizio(elemento.getPattern(), 
+									pa.getServizio().getTipo(), pa.getServizio().getNome()));
+						}
+						if(pa.getAzione()!=null && 
+								pa.getAzione().getNome()!=null &&
+								!"".equals(pa.getAzione().getNome()) ){
+							elemento.setPattern(replaceAzione(elemento.getPattern(), 
+									pa.getAzione().getNome()));
+						}
+					}
 				}
 			}
 		}

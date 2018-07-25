@@ -388,6 +388,7 @@ public class OpenSPCoop2Properties {
 				}
 				return false;
 			}
+			this.getMaxLengthCorrelazioneApplicativa();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione();
 			this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione_EscludiConScadenzaImpostata();
 			
@@ -5016,6 +5017,30 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return OpenSPCoop2Properties.repositoryIntervalloScadenzaCorrelazioneApplicativa;
+	}
+	
+	private static Integer maxLengthCorrelazioneApplicativa = null;
+	public int getMaxLengthCorrelazioneApplicativa() {	
+		if(OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa == null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
+				if(name==null){
+					//throw new Exception("non definita");
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
+					OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa = 255;
+				}
+				else{
+					name = name.trim();
+					OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa = java.lang.Integer.parseInt(name);
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength': "+e.getMessage());
+				OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa = 255;
+			}    
+		}
+		
+		return OpenSPCoop2Properties.maxLengthCorrelazioneApplicativa;
 	}
 
 	
