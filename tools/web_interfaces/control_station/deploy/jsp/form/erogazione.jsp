@@ -66,12 +66,15 @@
 	
 	Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
 	Vector<DataElement> vectorLink = new Vector<DataElement>();
+	Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
 
 	for (int j = 0; j < dati.size(); j++) {
 	    DataElement de = (DataElement) dati.elementAt(j);
 	    
 	    if (de.getType().equals("link")) {
 	    	vectorLink.add(de);
+	    } else if (de.getType().equals("checkbox")) {
+	    	vectorCheckBox.add(de);
 	    } else {
 	    	vectorRiepilogo.add(de);
 	    }
@@ -199,9 +202,22 @@
 								</tr>
 								
 								<tr>
-									<td colspan="2" class="tdTextRiepilogo">
+									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px;">
 										<div class="riepilogo-links">
-											<%						
+											
+											<%	
+											for (int j = 0; j < vectorCheckBox.size(); j++) {
+											    DataElement de = (DataElement) vectorCheckBox.elementAt(j);
+											    String image = de.getValue();
+								  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+											  	%>
+										  			<span class="riepilogo-links-pipe" id="iconConfigurazione_<%=j %>">
+														<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
+													</span>
+										  		<%
+											  	
+											} // for
+											
 											for (int i = 0; i < vectorLink.size(); i++) {
 												DataElement de = (DataElement) vectorLink.elementAt(i);
 											  

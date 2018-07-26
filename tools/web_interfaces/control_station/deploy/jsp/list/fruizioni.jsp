@@ -52,17 +52,33 @@ Vector<?> riga = (Vector<?>) v.elementAt(numeroEntry);
 
 Vector<DataElement> vectorRiepilogo = new Vector<DataElement>();
 Vector<DataElement> vectorImmagini = new Vector<DataElement>();
+Vector<DataElement> vectorCheckBox = new Vector<DataElement>();
 
 for (int j = 0; j < riga.size(); j++) {
     DataElement de = (DataElement) riga.elementAt(j);
     
     if (de.getType().equals("image")) {
     	vectorImmagini.add(de);
-    } else {
+   	} else  if (de.getType().equals("checkbox")) {
+   		vectorCheckBox.add(de);
+    } else{
     	vectorRiepilogo.add(de);
     }
 }
 %>
+<% if(vectorCheckBox.size() > 0){
+		DataElement de = (DataElement) vectorCheckBox.elementAt(0);
+		String image = de.getValue();
+		String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
+	%>
+	<td class="tdText" style="<%= de.getWidth() %>">
+		<div id="stato_<%=numeroEntryS %>">
+ 			<span class="statoFruizioneIcon" id="iconConfigurazione_<%=numeroEntryS %>">
+				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
+			</span>
+		</div>
+	</td>
+<% } %>
 <td>
 	<div id="entry_<%=numeroEntryS %>" class="entryFruizione">
 			<% 

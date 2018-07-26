@@ -62,6 +62,7 @@ import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -220,6 +221,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			List<String> labelLst = new ArrayList<>();
+			labelLst.add(""); // colonna stato
 			labelLst.add(ErogazioniCostanti.LABEL_ASPS_LISTA_EROGAZIONI_COLONNA_SERVIZIO);
 			
 			if(visualizzaGruppi)
@@ -327,6 +329,61 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.setValue(MessageFormat.format(ErogazioniCostanti.MESSAGE_METADATI_SERVIZIO_EROGAZIONI, labelServiceBinding, labelAPI));
 				}
 				de.setType(DataElementType.SUBTITLE);
+				e.addElement(de);
+				
+				
+				int numeroAbilitate = 0;
+				int numeroConfigurazioni = 0;
+				// stato gruppi
+				if(showConfigurazionePA) {
+					List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+					List<PortaApplicativa> listaPorteApplicativeAssociate = new ArrayList<>();
+
+					for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+						listaPorteApplicativeAssociate.add(this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa()));
+					}
+					
+					numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
+					
+					for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
+						boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+						if(statoPA)
+							numeroAbilitate ++;
+					}
+				}
+				
+				if(showConfigurazionePD) {
+					IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+					List<MappingFruizionePortaDelegata> listaMappingFruzionePortaDelegata = this.apsCore.serviziFruitoriMappingList(fruitore.getId(), idSoggettoFruitore, idServizio, null);	
+					List<PortaDelegata> listaPorteDelegateAssociate = new ArrayList<>();
+
+					for(MappingFruizionePortaDelegata mappingFruizione : listaMappingFruzionePortaDelegata) {
+						listaPorteDelegateAssociate.add(this.porteDelegateCore.getPortaDelegata(mappingFruizione.getIdPortaDelegata()));
+					}
+					
+					numeroConfigurazioni = listaMappingFruzionePortaDelegata.size();
+					
+					for (PortaDelegata pdAssociata : listaPorteDelegateAssociate) {
+						boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+						if(statoPD)
+							numeroAbilitate ++;
+					}
+				}
+				
+				de = new DataElement();
+				de.setName(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_STATO_CONFIGURAZIONI);
+				de.setType(DataElementType.CHECKBOX);
+				if(numeroAbilitate == 0) {
+					de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE);
+					de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP);
+				} else if(numeroAbilitate == numeroConfigurazioni) {
+					de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE);
+					de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP);
+				} else  {
+					de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE);
+					de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP);
+				}
+				de.setWidthPx(16); 
 				e.addElement(de);
 
 				if(visualizzaGruppi) {
@@ -919,71 +976,90 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setValue(urlInvocazione);
 			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,paIdSogg, paNomePorta, paIdPorta,paIdAsps,paConfigurazioneDati);
 			dati.addElement(de);
-
-			// Connettore
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-			de.setType(DataElementType.TEXT);
-			ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaServizioApplicativo.getId());
-			InvocazioneServizio is = sa.getInvocazioneServizio();
-			Connettore connis = is.getConnettore();
-			List<Property> cp = connis.getPropertyList();
-			String urlConnettore = "";
-
-			//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
-			//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
-			//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
-			//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
-//			TipiConnettore.NULL 
-//			TipiConnettore.CUSTOM -> connettore custom
-			String tipo = connis.getTipo();
 			
-			String tipoLabel = "[" + connis.getTipo() + "] ";
-			if ((connis.getCustom()!=null && connis.getCustom()) && 
-					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-					!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
-				tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
-			}  
-
-			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
-			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
-				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
-			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-				urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
-			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-				urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
-			} else {  
-				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
-				if(tipo.equals(TipiConnettore.FILE.getNome()))
-					propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+			boolean visualizzaConnettore = true;
 			
-				for (int i = 0; i < connis.sizePropertyList(); i++) {
-					Property singlecp = cp.get(i);
-					if (singlecp.getNome().equals(propertyName)) {
-						if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
-							urlConnettore = tipoLabel + singlecp.getValore();
-						}
-						else {
-							urlConnettore = singlecp.getValore();
-						}
-						
+			for (int i = 0; i < listaPorteApplicativeAssociate.size(); i++) {
+				PortaApplicativa paAssociata = listaPorteApplicativeAssociate.get(i);
+				MappingErogazionePortaApplicativa mapping = listaMappingErogazionePortaApplicativa.get(i);
+				
+				if(!mapping.isDefault()) {
+					PortaApplicativaServizioApplicativo portaApplicativaAssociataServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
+					boolean connettoreConfigurazioneRidefinito = portaApplicativaAssociataServizioApplicativo.getNome().equals(paAssociata.getNome());
+					if(connettoreConfigurazioneRidefinito) {
+						visualizzaConnettore = false;
 						break;
 					}
 				}
 			}
-			
-			if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
-				urlConnettore = urlConnettore + " [MessageBox]";
+
+			// Connettore
+			if(visualizzaConnettore) {
+				
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+				de.setType(DataElementType.TEXT);
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaServizioApplicativo.getId());
+				InvocazioneServizio is = sa.getInvocazioneServizio();
+				Connettore connis = is.getConnettore();
+				List<Property> cp = connis.getPropertyList();
+				String urlConnettore = "";
+	
+				//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+				//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+				//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+				//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+	//			TipiConnettore.NULL 
+	//			TipiConnettore.CUSTOM -> connettore custom
+				String tipo = connis.getTipo();
+				
+				String tipoLabel = "[" + connis.getTipo() + "] ";
+				if ((connis.getCustom()!=null && connis.getCustom()) && 
+						!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+						!connis.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+					tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+				}  
+	
+				if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+					urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+				} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+					urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+					urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
+				} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+					urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
+				} else {  
+					String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+					if(tipo.equals(TipiConnettore.FILE.getNome()))
+						propertyName = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+				
+					for (int i = 0; i < connis.sizePropertyList(); i++) {
+						Property singlecp = cp.get(i);
+						if (singlecp.getNome().equals(propertyName)) {
+							if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+								urlConnettore = tipoLabel + singlecp.getValore();
+							}
+							else {
+								urlConnettore = singlecp.getValore();
+							}
+							
+							break;
+						}
+					}
+				}
+				
+				if(is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage())) {
+					urlConnettore = urlConnettore + " [MessageBox]";
+				}
+				
+				de.setValue(urlConnettore);
+				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, paIdProvider, paIdPortaPerSA, paIdAsps,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""),
+						paConnettoreDaListaAPS);
+				dati.addElement(de);
 			}
-			
-			de.setValue(urlConnettore);
-			de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, paIdProvider, paIdPortaPerSA, paIdAsps,
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""),
-					paConnettoreDaListaAPS);
-			dati.addElement(de);
 		}
 		
 		if(gestioneFruitori) {
@@ -1037,75 +1113,110 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			dati.addElement(de);
 			
 			
+			boolean visualizzaConnettore = true;
+			
+			for (int i = 0; i < listaPorteDelegateAssociate.size(); i++) {
+				PortaDelegata pdAssociata = listaPorteDelegateAssociate.get(i);
+				MappingFruizionePortaDelegata mapping = listaMappingFruzionePortaDelegata.get(i);
+
+				List<String> listaAzioni = null;
+				if(!mapping.isDefault()) {
+					listaAzioni = pdAssociata.getAzione().getAzioneDelegataList();
+				}
+				
+				String azioneConnettore =  null;
+				if(listaAzioni!=null && listaAzioni.size()>0) {
+					azioneConnettore = listaAzioni.get(0);
+				}
+				
+				boolean connettoreConfigurazioneRidefinito = false;
+				if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+					for (ConfigurazioneServizioAzione check : fruitore.getConfigurazioneAzioneList()) {
+						if(check.getAzioneList().contains(azioneConnettore)) {
+							connettoreConfigurazioneRidefinito = true;
+							break;
+						}
+					}
+				}
+				
+				
+				if(connettoreConfigurazioneRidefinito) {
+					visualizzaConnettore = false;
+					break;
+				}
+			}
+
 			// Connettore
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
-			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
-			de.setType(DataElementType.TEXT);
-			org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
-			Map<String, String> props = connettore.getProperties();
-			String urlConnettore = "";
-
-			//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
-			//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
-			//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
-			//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
-//			TipiConnettore.NULL 
-//			TipiConnettore.CUSTOM -> connettore custom
-			
-			String tipo = connettore.getTipo();
-			String tipoLabel = "[" + connettore.getTipo() + "] ";
-			if ((connettore.getCustom()!=null && connettore.getCustom()) && 
-					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-					!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
-				tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
-			}  
-
-			if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
-				urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
-			} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
-				urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
-			} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
-				urlConnettore =  tipoLabel + ConnettoreNULL.LOCATION;
-			} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
-				urlConnettore = tipoLabel +  ConnettoreNULLEcho.LOCATION;
-			} else {  
-				String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
-				if(tipo.equals(TipiConnettore.FILE.getNome()))
-					propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
-			
-				if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
-					urlConnettore = tipoLabel + props.get(propertyName);
+			if(visualizzaConnettore) {
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
+				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+				de.setType(DataElementType.TEXT);
+				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
+				Map<String, String> props = connettore.getProperties();
+				String urlConnettore = "";
+	
+				//TipiConnettore.HTTP.getNome() e anche TipiConnettore.HTTPS.getNome() -> location
+				//TipiConnettore.DISABILITATO.getNome() ci scrivi "disabilitato"
+				//TipiConnettore.FILE.getNome() CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE
+				//TipiConnettore.JMS.compareTo() CostantiConnettori.CONNETTORE_LOCATION
+	//			TipiConnettore.NULL 
+	//			TipiConnettore.CUSTOM -> connettore custom
+				
+				String tipo = connettore.getTipo();
+				String tipoLabel = "[" + connettore.getTipo() + "] ";
+				if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+					tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
+				}  
+	
+				if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
+					urlConnettore = tipoLabel + ConnettoriCostanti.LABEL_CONNETTORE_CUSTOM;
+				} else	if(tipo.equals(TipiConnettore.DISABILITATO.getNome())) {
+					urlConnettore = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+				} else if(tipo.equals(TipiConnettore.NULL.getNome())) {
+					urlConnettore =  tipoLabel + ConnettoreNULL.LOCATION;
+				} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
+					urlConnettore = tipoLabel +  ConnettoreNULLEcho.LOCATION;
+				} else {  
+					String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
+					if(tipo.equals(TipiConnettore.FILE.getNome()))
+						propertyName =CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+				
+					if(!tipo.equals(TipiConnettore.HTTP.getNome()) && !tipo.equals(TipiConnettore.HTTPS.getNome())) {
+						urlConnettore = tipoLabel + props.get(propertyName);
+					}
+					else {
+						urlConnettore = props.get(propertyName);
+					}
+				}
+				
+				// Controllo se richiedere il connettore
+				boolean connettoreStatic = false;
+				if(gestioneFruitori) {
+					connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
+				}
+				
+				if(!connettoreStatic) {
+					List<Parameter> listParameter = new ArrayList<>();
+					listParameter.add(pId);
+					listParameter.add(pIdFruitore);
+					listParameter.add(pIdSoggettoErogatore);
+					listParameter.add(pIdProviderFruitore);
+					listParameter.add(pConnettoreDaListaAPS);
+					de.setUrl(
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
+							listParameter.toArray(new Parameter[1])
+							);
+					de.setValue(urlConnettore);
 				}
 				else {
-					urlConnettore = props.get(propertyName);
+					de.setValue("-");
 				}
+				
+				dati.addElement(de);
 			}
-			
-			// Controllo se richiedere il connettore
-			boolean connettoreStatic = false;
-			if(gestioneFruitori) {
-				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
-			}
-			
-			if(!connettoreStatic) {
-				List<Parameter> listParameter = new ArrayList<>();
-				listParameter.add(pId);
-				listParameter.add(pIdFruitore);
-				listParameter.add(pIdSoggettoErogatore);
-				listParameter.add(pIdProviderFruitore);
-				listParameter.add(pConnettoreDaListaAPS);
-				de.setUrl(
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE,
-						listParameter.toArray(new Parameter[1])
-						);
-				de.setValue(urlConnettore);
-			}
-			else {
-				de.setValue("-");
-			}
-			
-			dati.addElement(de);
 		}
 		
 
@@ -1114,6 +1225,44 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		
 		Parameter pConfigurazioneTrue =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"true");
 		Parameter pConfigurazioneFalse =new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_CONFIGURAZIONI,"false");
+		
+		int numeroAbilitate = 0;
+		int numeroConfigurazioni = 0;
+
+		if(gestioneErogatori) {
+			numeroConfigurazioni = listaMappingErogazionePortaApplicativa.size();
+			
+			for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
+				boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+				if(statoPA)
+					numeroAbilitate ++;
+			}
+		}
+		
+		if(gestioneFruitori) {
+			numeroConfigurazioni = listaMappingFruzionePortaDelegata.size();
+			
+			for (PortaDelegata pdAssociata : listaPorteDelegateAssociate) {
+				boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+				if(statoPD)
+					numeroAbilitate ++;
+			}
+		}
+		
+		de = new DataElement();
+		de.setName(ErogazioniCostanti.ASPS_EROGAZIONI_PARAMETRO_STATO_CONFIGURAZIONI);
+		de.setType(DataElementType.CHECKBOX);
+		if(numeroAbilitate == 0) {
+			de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE);
+			de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP);
+		} else if(numeroAbilitate == numeroConfigurazioni) {
+			de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE);
+			de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP);
+		} else  {
+			de.setValue(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE);
+			de.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP);
+		}
+		dati.addElement(de);
 		
 		// configurazioni
 		de = new DataElement();

@@ -69,6 +69,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE = "nConfAttive";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_DISPONIBILI = "nConfDisponibili";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUOVA_CONFIGURAZIONE = "nuovaConf";
+	public final static String ASPS_EROGAZIONI_PARAMETRO_STATO_CONFIGURAZIONI = "statoConf";
 	
 	public final static String ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI = "vistaErogazioni";
 	
@@ -91,5 +92,13 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE = "&#xE3C9;";
 	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
 	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
+	
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE = "check_green.png";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE = "check_yellow.png";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE = "disabled_red.png";
+	
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "Abilitato";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi sono disabilitati";
+	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "Disabilitato";
 }
 

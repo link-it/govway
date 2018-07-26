@@ -276,7 +276,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				}
 				else {
 					forceEnabled = true;
-					if(endpointtype==null || TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
+					if(endpointtype==null) {
+						if( connra==null || connra.getTipo()==null || TipiConnettore.DISABILITATO.getNome().equals(connra.getTipo()) ) {
+							endpointtype = TipiConnettore.HTTP.getNome();
+						}
+					}
+					else if(TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
 						endpointtype = TipiConnettore.HTTP.getNome();
 					}
 				}

@@ -289,7 +289,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				}
 				else {
 					forceEnabled = true;
-					if(endpointtype==null || TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
+					if(endpointtype==null) {
+						if( connis==null || connis.getTipo()==null || TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) ) {
+							endpointtype = TipiConnettore.HTTP.getNome();
+						}
+					}
+					else if(TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
 						endpointtype = TipiConnettore.HTTP.getNome();
 					}
 				}
