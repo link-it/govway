@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -406,7 +407,9 @@ public class ImporterUtils {
 		return null;
 	}
 
-	public ImportInformationMissingCollection updateInformationMissingCheckData(String importInformationMissing_soggettoInput,String importInformationMissing_versioneInput,
+	public ImportInformationMissingCollection updateInformationMissingCheckData(
+			HashMap<String, String> mapRequisitiInput, HashMap<String, String> mapRequisitiInputStepIncrement, 
+			String importInformationMissing_soggettoInput,String importInformationMissing_versioneInput,
 			List<PortType> importInformationMissing_portTypes, String importInformationMissing_portTypeImplementedInput,
 			String importInformationMissing_accordoServizioParteComuneInput,String importInformationMissing_accordoCooperazioneInput,
 			InvocazioneServizio importInformationMissing_invocazioneServizio, Connettore importInformationMissing_connettore,
@@ -422,7 +425,6 @@ public class ImporterUtils {
 			String[]splitSoggetto = importInformationMissing_soggettoInput.split("/");
 			idSoggetto = new IDSoggetto(splitSoggetto[0].trim(), splitSoggetto[1].trim());
 		}
-
 
 		// importInformationMissing: versione
 		Integer versione = null;
@@ -458,6 +460,12 @@ public class ImporterUtils {
 			}
 			if(importInformationMissing==null){
 				importInformationMissing = new ImportInformationMissing();
+			}
+			if(mapRequisitiInput!=null) {
+				importInformationMissing.setRequisitiInput(mapRequisitiInput);
+			}
+			if(mapRequisitiInputStepIncrement!=null) {
+				importInformationMissing.setRequisitiInputStepIncrement(mapRequisitiInputStepIncrement);
 			}
 			if(idSoggetto!=null){
 				importInformationMissing.setSoggetto(idSoggetto);

@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Requisiti;
+import org.openspcoop2.protocol.information_missing.RequisitoInput;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,42 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Requisiti 
+ * Model RequisitoInput 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RequisitiModel extends AbstractModel<Requisiti> {
+public class RequisitoInputModel extends AbstractModel<RequisitoInput> {
 
-	public RequisitiModel(){
+	public RequisitoInputModel(){
 	
 		super();
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new Field("protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new Field("input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaRequisitoInputModel(new Field("proprieta",org.openspcoop2.protocol.information_missing.ProprietaRequisitoInput.class,"RequisitoInput",RequisitoInput.class));
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"RequisitoInput",RequisitoInput.class);
 	
 	}
 	
-	public RequisitiModel(IField father){
+	public RequisitoInputModel(IField father){
 	
 		super(father);
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new ComplexField(father,"protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new ComplexField(father,"input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaRequisitoInputModel(new ComplexField(father,"proprieta",org.openspcoop2.protocol.information_missing.ProprietaRequisitoInput.class,"RequisitoInput",RequisitoInput.class));
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"RequisitoInput",RequisitoInput.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel PROTOCOLLO = null;
+	public org.openspcoop2.protocol.information_missing.model.ProprietaRequisitoInputModel PROPRIETA = null;
 	 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoInputModel INPUT = null;
+	public IField DESCRIZIONE = null;
 	 
 
 	@Override
-	public Class<Requisiti> getModeledClass(){
-		return Requisiti.class;
+	public Class<RequisitoInput> getModeledClass(){
+		return RequisitoInput.class;
 	}
 	
 	@Override

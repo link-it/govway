@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Requisiti;
+import org.openspcoop2.protocol.information_missing.ConditionsType;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,46 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Requisiti 
+ * Model ConditionsType 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RequisitiModel extends AbstractModel<Requisiti> {
+public class ConditionsTypeModel extends AbstractModel<ConditionsType> {
 
-	public RequisitiModel(){
+	public ConditionsTypeModel(){
 	
 		super();
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new Field("protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new Field("input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ConditionTypeModel(new Field("proprieta",org.openspcoop2.protocol.information_missing.ConditionType.class,"ConditionsType",ConditionsType.class));
+		this.AND = new Field("and",boolean.class,"ConditionsType",ConditionsType.class);
+		this.NOT = new Field("not",boolean.class,"ConditionsType",ConditionsType.class);
 	
 	}
 	
-	public RequisitiModel(IField father){
+	public ConditionsTypeModel(IField father){
 	
 		super(father);
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new ComplexField(father,"protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new ComplexField(father,"input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ConditionTypeModel(new ComplexField(father,"proprieta",org.openspcoop2.protocol.information_missing.ConditionType.class,"ConditionsType",ConditionsType.class));
+		this.AND = new ComplexField(father,"and",boolean.class,"ConditionsType",ConditionsType.class);
+		this.NOT = new ComplexField(father,"not",boolean.class,"ConditionsType",ConditionsType.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel PROTOCOLLO = null;
+	public org.openspcoop2.protocol.information_missing.model.ConditionTypeModel PROPRIETA = null;
 	 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoInputModel INPUT = null;
+	public IField AND = null;
+	 
+	public IField NOT = null;
 	 
 
 	@Override
-	public Class<Requisiti> getModeledClass(){
-		return Requisiti.class;
+	public Class<ConditionsType> getModeledClass(){
+		return ConditionsType.class;
 	}
 	
 	@Override

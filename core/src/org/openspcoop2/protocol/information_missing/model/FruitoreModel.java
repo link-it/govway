@@ -42,7 +42,8 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	
 		super();
 	
-		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"fruitore",Fruitore.class));
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"fruitore",Fruitore.class));
+		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceFruitoreMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceFruitoreMatchType.class,"fruitore",Fruitore.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"fruitore",Fruitore.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"fruitore",Fruitore.class));
 		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new Field("default",org.openspcoop2.protocol.information_missing.Default.class,"fruitore",Fruitore.class));
@@ -57,7 +58,8 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	
 		super(father);
 	
-		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"fruitore",Fruitore.class));
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"fruitore",Fruitore.class));
+		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceFruitoreMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceFruitoreMatchType.class,"fruitore",Fruitore.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"fruitore",Fruitore.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"fruitore",Fruitore.class));
 		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new ComplexField(father,"default",org.openspcoop2.protocol.information_missing.Default.class,"fruitore",Fruitore.class));
@@ -70,7 +72,9 @@ public class FruitoreModel extends AbstractModel<Fruitore> {
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel REPLACE_MATCH = null;
+	public org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel CONDITIONS = null;
+	 
+	public org.openspcoop2.protocol.information_missing.model.ReplaceFruitoreMatchTypeModel REPLACE_MATCH = null;
 	 
 	public org.openspcoop2.protocol.information_missing.model.DescriptionModel HEADER = null;
 	 

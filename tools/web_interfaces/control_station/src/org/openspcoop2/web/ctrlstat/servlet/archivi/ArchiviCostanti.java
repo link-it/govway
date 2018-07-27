@@ -170,6 +170,10 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_PORT_TYPE_IMPLEMENTED_INPUT = "portTypeImplemented";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT = "accordoServizioParteComune";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT = "accordoCooperazione";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN = "RequisitoProprietaInputHidden_";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_NAME_HIDDEN = "RequisitoProprietaInputNameHidden_";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_STEP_INCREMENT_HIDDEN = "RequisitoProprietaInputStepIncrementHidden_";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_VALUE = "RequisitoProprietaInputValue_";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN = "ProprietaInputHidden_";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_VALUE = "ProprietaInputValue_";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO = "tipoExport";

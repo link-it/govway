@@ -1,6 +1,14 @@
-2017-07-23  Andrea Poli <apoli@link.it>
+2017-07-27  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0.rc1
+
+2018-07-26  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-740
+	Nelle schermate che visualizzano la lista e il riepilogo di una erogazione o fruizione 
+	è stata aggiunta l'informazione sullo stato (abilitato/disabilitato).
+	Inoltre tra le informazioni di riepilogo viene nascosta l'informazione sul connettore se almeno un gruppo l'ha ridefinito.
 
 2017-07-20  Andrea Poli <apoli@link.it>
 

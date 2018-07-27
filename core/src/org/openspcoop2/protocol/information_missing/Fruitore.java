@@ -39,7 +39,8 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="Fruitore">
  * 		&lt;sequence>
- * 			&lt;element name="replace-match" type="{http://www.openspcoop2.org/protocol/information_missing}replaceMatchType" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="replace-match" type="{http://www.openspcoop2.org/protocol/information_missing}replaceFruitoreMatchType" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="footer" type="{http://www.openspcoop2.org/protocol/information_missing}Description" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/information_missing}Default" minOccurs="0" maxOccurs="1"/>
@@ -60,6 +61,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Fruitore", 
   propOrder = {
+  	"conditions",
   	"replaceMatch",
   	"header",
   	"footer",
@@ -73,11 +75,19 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
   public Fruitore() {
   }
 
-  public ReplaceMatchType getReplaceMatch() {
+  public ConditionsType getConditions() {
+    return this.conditions;
+  }
+
+  public void setConditions(ConditionsType conditions) {
+    this.conditions = conditions;
+  }
+
+  public ReplaceFruitoreMatchType getReplaceMatch() {
     return this.replaceMatch;
   }
 
-  public void setReplaceMatch(ReplaceMatchType replaceMatch) {
+  public void setReplaceMatch(ReplaceFruitoreMatchType replaceMatch) {
     this.replaceMatch = replaceMatch;
   }
 
@@ -165,8 +175,11 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
 
+  @XmlElement(name="conditions",required=false,nillable=false)
+  protected ConditionsType conditions;
+
   @XmlElement(name="replace-match",required=true,nillable=false)
-  protected ReplaceMatchType replaceMatch;
+  protected ReplaceFruitoreMatchType replaceMatch;
 
   @XmlElement(name="header",required=false,nillable=false)
   protected Description header;

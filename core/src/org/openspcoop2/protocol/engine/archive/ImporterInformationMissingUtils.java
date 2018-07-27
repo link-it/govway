@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -52,8 +53,12 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.information_missing.ConditionType;
+import org.openspcoop2.protocol.information_missing.ConditionsType;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
 import org.openspcoop2.protocol.information_missing.Operazione;
+import org.openspcoop2.protocol.information_missing.ProprietaRequisitoInput;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -118,6 +123,57 @@ public class ImporterInformationMissingUtils {
 		boolean throwException = false;
 		try{
 		
+			// -------- requisiti --------------
+			if(!throwException && archiveInformationMissingWizard.getWizard()!=null && 
+					archiveInformationMissingWizard.getWizard().getRequisiti()!=null &&
+							archiveInformationMissingWizard.getWizard().getRequisiti().getInput()!=null &&
+							archiveInformationMissingWizard.getWizard().getRequisiti().getInput().sizeProprietaList()>0) {
+				
+				boolean existsRequisitiInput = false;
+				for (ProprietaRequisitoInput pInput : archiveInformationMissingWizard.getWizard().getRequisiti().getInput().getProprietaList()) {
+					if(!delete || pInput.isUseInDelete()) {
+						existsRequisitiInput = true;
+						break;
+					}
+				}
+				
+				if(existsRequisitiInput) {
+				
+					// *** object id ***
+					
+					importInformationMissing = null;
+					objectId = Costanti.REQUISITI_INPUT_RACCOLTI; 
+					objectIdDescription = archiveInformationMissingWizard.getWizard().getRequisiti().getInput().getDescrizione();	
+					if(this.importInformationMissingCollection!=null){
+						importInformationMissing = this.importInformationMissingCollection.get(objectId);
+					}
+					
+					// *** campi da verificare ***
+					if(importInformationMissing==null || importInformationMissing.getRequisitiInput()==null || importInformationMissing.getRequisitiInput().isEmpty()){
+						infoException = new ImportInformationMissingException(objectId,objectIdDescription);
+						infoException.setMissingRequisitiInfoInput(true);
+						infoException.setMissingRequisitiInfoInputObject(archiveInformationMissingWizard.getWizard().getRequisiti().getInput());
+						throwException = true;
+					}
+						
+					if(throwException) {
+						throw infoException;
+					}
+				
+				}
+				
+			}
+			
+			HashMap<String, String> requisitiInput = null;
+			if(this.importInformationMissingCollection!=null && this.importInformationMissingCollection.exists(org.openspcoop2.protocol.engine.constants.Costanti.REQUISITI_INPUT_RACCOLTI)) {
+				ImportInformationMissing miss = this.importInformationMissingCollection.get(org.openspcoop2.protocol.engine.constants.Costanti.REQUISITI_INPUT_RACCOLTI);
+				if(miss!=null) {
+					requisitiInput = miss.getRequisitiInput();
+				}
+			}
+			
+			
+			
 			int indexInputPage = 0; 
 			
 			for (Operazione  archiveInformationMissing: archiveInformationMissingWizard.getOperazioneList()) {
@@ -135,6 +191,13 @@ public class ImporterInformationMissingUtils {
 						org.openspcoop2.protocol.information_missing.Soggetto soggettoMissingInfo = 
 								archiveInformationMissing.getSoggetto(i);
 				
+						if(soggettoMissingInfo.getConditions()!=null) {
+							if(checkConditions(soggettoMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -235,6 +298,12 @@ public class ImporterInformationMissingUtils {
 							}
 						}
 				
+						if(inputMissingInfo.getConditions()!=null) {
+							if(checkConditions(inputMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -265,6 +334,12 @@ public class ImporterInformationMissingUtils {
 					for (int i = 0; i < archiveInformationMissing.sizeServizioApplicativoList(); i++) {
 						org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo = 
 								archiveInformationMissing.getServizioApplicativo(i);
+						
+						if(saMissingInfo.getConditions()!=null) {
+							if(checkConditions(saMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
 						
 						// *** object id ***
 						
@@ -344,6 +419,12 @@ public class ImporterInformationMissingUtils {
 						org.openspcoop2.protocol.information_missing.AccordoCooperazione acMissingInfo = 
 								archiveInformationMissing.getAccordoCooperazione(i);
 						
+						if(acMissingInfo.getConditions()!=null) {
+							if(checkConditions(acMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -404,6 +485,12 @@ public class ImporterInformationMissingUtils {
 						org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
 								archiveInformationMissing.getAccordoServizioParteComune(i);
 						
+						if(asMissingInfo.getConditions()!=null) {
+							if(checkConditions(asMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -463,6 +550,12 @@ public class ImporterInformationMissingUtils {
 					for (int i = 0; i < archiveInformationMissing.sizeAccordoServizioParteSpecificaList(); i++) {
 						org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo = 
 								archiveInformationMissing.getAccordoServizioParteSpecifica(i);
+						
+						if(aspsMissingInfo.getConditions()!=null) {
+							if(checkConditions(aspsMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
 						
 						// *** object id ***
 						
@@ -525,6 +618,12 @@ public class ImporterInformationMissingUtils {
 						org.openspcoop2.protocol.information_missing.AccordoServizioParteComune asMissingInfo = 
 								archiveInformationMissing.getAccordoServizioComposto(i);
 						
+						if(asMissingInfo.getConditions()!=null) {
+							if(checkConditions(asMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -584,6 +683,12 @@ public class ImporterInformationMissingUtils {
 						org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo = 
 								archiveInformationMissing.getFruitore(i);
 						
+						if(fruitoreMissingInfo.getConditions()!=null) {
+							if(checkConditions(fruitoreMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
 						// *** object id ***
 						
 						importInformationMissing = null;
@@ -637,6 +742,106 @@ public class ImporterInformationMissingUtils {
 						}
 					}			
 				}
+				
+				// -------- porte delegate --------------
+				
+				if(!throwException && archiveInformationMissing.sizePortaDelegataList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizePortaDelegataList(); i++) {
+						org.openspcoop2.protocol.information_missing.PortaDelegata portaMissingInfo = 
+								archiveInformationMissing.getPortaDelegata(i);
+						
+						if(portaMissingInfo.getConditions()!=null) {
+							if(checkConditions(portaMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingPortaDelegata-"+indexInputPage+"-"+i+"]]"; 
+						objectIdDescription = portaMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (portaMissingInfo.getTipo()) {
+						case STATO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(portaMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(portaMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(portaMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(portaMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							ImporterInformationMissingSetter.setInformationMissingPortaDelegata(this.archive, portaMissingInfo);
+						}
+						else{
+							break;
+						}
+					}			
+				}
+				
+				// -------- porte applicative --------------
+				
+				if(!throwException && archiveInformationMissing.sizePortaApplicativaList()>0){
+					for (int i = 0; i < archiveInformationMissing.sizePortaApplicativaList(); i++) {
+						org.openspcoop2.protocol.information_missing.PortaApplicativa portaMissingInfo = 
+								archiveInformationMissing.getPortaApplicativa(i);
+						
+						if(portaMissingInfo.getConditions()!=null) {
+							if(checkConditions(portaMissingInfo.getConditions(),requisitiInput)==false) {
+								continue;
+							}
+						}
+						
+						// *** object id ***
+						
+						importInformationMissing = null;
+						objectId = "[[InformationMissingPortaApplicativa-"+indexInputPage+"-"+i+"]]"; 
+						objectIdDescription = portaMissingInfo.getDescrizione();	
+						if(this.importInformationMissingCollection!=null){
+							importInformationMissing = this.importInformationMissingCollection.get(objectId);
+						}
+						
+						// *** campi da verificare ***
+						boolean updateInfo = false;
+						switch (portaMissingInfo.getTipo()) {
+						case STATO:
+							if(delete==false) {
+								updateInfo = true;
+							}
+							break;
+						}
+						if(infoException!=null) {
+							infoException.setMissingInfoProtocollo(portaMissingInfo.getProtocollo());
+							infoException.setMissingInfoHeader(portaMissingInfo.getHeader());
+							infoException.setMissingInfoFooter(portaMissingInfo.getFooter());
+							infoException.setMissingInfoDefault(portaMissingInfo.getDefault());
+						}
+						
+						if(!throwException && updateInfo){
+							// Se non sono state lanciate eccezioni a questo punto posso usare le informazioni salvate di information missing per riempire
+							// le informazioni mancanti negli altri archivi, altrimenti poi i metodi sottostanti lanceranno le relative informazioni
+							// di information missing
+							ImporterInformationMissingSetter.setInformationMissingPortaApplicativa(this.archive, portaMissingInfo);
+						}
+						else{
+							break;
+						}
+					}			
+				}
 			
 			}
 				
@@ -649,6 +854,73 @@ public class ImporterInformationMissingUtils {
 			throw e;
 		}catch(Exception e){
 			throw new Exception(objectIdDescription+" validazione fallita: "+e.getMessage(),e);
+		}
+	}
+	
+	public static boolean checkConditions(ConditionsType conditions, HashMap<String, String> map) {
+		boolean result = _checkConditions(conditions, map);
+		if(conditions!=null && conditions.isNot()) {
+			return !result;
+		}
+		else {
+			return result;
+		}
+	}
+	private static boolean _checkConditions(ConditionsType conditions, HashMap<String, String> map) {
+		boolean and = conditions.isAnd();
+		if(conditions!=null && conditions.sizeProprietaList()>0) {
+			for (ConditionType cType : conditions.getProprietaList()) {
+				if(map==null || map.isEmpty() || map.containsKey(cType.getNome())==false) {
+					if(cType.isNot()==false && and) {
+						return false;
+					}
+				}
+				String value = null;
+				if(map!=null){
+					value = map.get(cType.getNome());
+				}
+				
+				if(value==null) {
+					if(and) {
+						return false;
+					}
+					else {
+						continue; // vedo il prossimo, al massimo in fondo torno false se non sono and
+					}
+				}
+				
+				if(cType.isNot()) {
+					if(cType.getValore().equals(value)) {
+						if(and) {
+							return false;
+						}
+					}
+					else {
+						if(and==false) {
+							return true;
+						}
+					}
+				}
+				else {
+					if(cType.getValore().equals(value)==false) {
+						if(and) {
+							return false;
+						}
+					}
+					else {
+						if(and==false) {
+							return true;
+						}
+					}
+				}
+				
+			}
+		}
+		if(and) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	

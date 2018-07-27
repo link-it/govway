@@ -25,6 +25,8 @@
 				<xsd:element ref="accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="accordo-servizio-composto" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="fruitore" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="porta-delegata" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="porta-applicativa" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -33,6 +35,17 @@
 		<xsd:sequence>
 			<xsd:element name="nome" type="ReplaceMatchFieldType" minOccurs="0" />
 			<xsd:element name="tipo" type="ReplaceMatchFieldType" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="replaceFruitoreMatchType">
+		<xsd:sequence>
+			<xsd:element name="nome" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="tipo" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="nome-servizio" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="tipo-servizio" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="nome-erogatore" type="ReplaceMatchFieldType" minOccurs="0" />
+			<xsd:element name="tipo-erogatore" type="ReplaceMatchFieldType" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -52,12 +65,27 @@
 		<xsd:attribute name="tipo" type="ReplaceKeywordType" use="required"/>
 	</xsd:complexType>
 	
+	<xsd:complexType name="ConditionsType">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="ConditionType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" use="optional" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ConditionType">
+		<xsd:attribute name="not" type="xsd:boolean" use="optional" default="false"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
 	<!-- Soggetto -->
 	
 	<xsd:element name="soggetto" type="Soggetto" />
 	
 	<xsd:complexType name="Soggetto">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
@@ -90,6 +118,7 @@
 	
 	<xsd:complexType name="ServizioApplicativo">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
@@ -116,6 +145,7 @@
 	
 	<xsd:complexType name="AccordoCooperazione">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
@@ -142,6 +172,7 @@
 	
 	<xsd:complexType name="AccordoServizioParteComune">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
@@ -167,6 +198,7 @@
 	
 	<xsd:complexType name="AccordoServizioParteSpecifica">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="replace-match" type="replaceMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
@@ -192,7 +224,8 @@
 	
 	<xsd:complexType name="Fruitore">
 		<xsd:sequence>
-			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
+			<xsd:element name="replace-match" type="replaceFruitoreMatchType"/>
 			<xsd:element ref="header" minOccurs="0"/>
 			<xsd:element ref="footer" minOccurs="0"/>
 			<xsd:element ref="default" minOccurs="0"/>
@@ -223,12 +256,81 @@
 	</xsd:simpleType>
 	
 	
+	
+	<!-- Porta Delegata -->
+	
+	<xsd:element name="porta-delegata" type="PortaDelegata" />
+	
+	<xsd:complexType name="PortaDelegata">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="PortaDelegataReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="portaStatoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="PortaDelegataReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="STATO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	
+	
+	<!-- Porta Applicativa -->
+	
+	<xsd:element name="porta-applicativa" type="PortaApplicativa" />
+	
+	<xsd:complexType name="PortaApplicativa">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
+			<xsd:element name="replace-match" type="replaceMatchType"/>
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+			<xsd:element ref="default" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="PortaApplicativaReplaceType" use="required"/>
+		<xsd:attribute name="stato" type="portaStatoType" use="optional"/>
+		<xsd:attribute name="protocollo" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="PortaApplicativaReplaceType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="STATO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	
+	<!-- Porta comuni -->
+	
+	<xsd:simpleType name="portaStatoType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="abilitato"/>
+			<xsd:enumeration value="disabilitato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+	
+	
 	<!-- Input -->
 	
 	<xsd:element name="input" type="Input" />
 	
 	<xsd:complexType name="Input">
 		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/>
 			<xsd:element name="proprieta" type="Proprieta" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
@@ -307,10 +409,39 @@
 	<xsd:complexType name="Requisiti">
 		<xsd:sequence>
 			<xsd:element name="protocollo" type="RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="input" type="RequisitoInput" minOccurs="0" maxOccurs="1"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="RequisitoProtocollo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	<xsd:complexType name="RequisitoInput">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="ProprietaRequisitoInput" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="descrizione" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="ProprietaRequisitoInput">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="ConditionsType" minOccurs="0"/> <!-- Le condizioni possono essere fissate solamente sulle precedenti -->
+			<xsd:element ref="header" minOccurs="0"/>
+			<xsd:element ref="footer" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="tipo" type="ProprietaRequisitoInputType" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+		<xsd:attribute name="default" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use-in-delete" type="xsd:boolean" use="optional" default="true"/>
+		<xsd:attribute name="step-increment-condition" type="xsd:string" use="optional" />
+		<xsd:attribute name="step-increment" type="xsd:int" use="optional" default="1"/>
+		<xsd:attribute name="reload-on-change" type="xsd:boolean" use="optional" default="false"/>
+	</xsd:complexType>
+	<xsd:simpleType name="ProprietaRequisitoInputType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="hidden"/>
+			<xsd:enumeration value="checkbox"/>
+			<xsd:enumeration value="textedit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 </xsd:schema>

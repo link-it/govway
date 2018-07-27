@@ -18879,6 +18879,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObject.addSelectField("port_type");
 				if(gestioneFruitori) {
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI+".id","idFruizione");
 					sqlQueryObject.addSelectAliasField(aliasSoggettiFruitori+".id","idSoggettoFruitore");
@@ -18967,6 +18968,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObject.addSelectField("port_type");
 				if(gestioneFruitori) {
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI+".id","idFruizione");
 					sqlQueryObject.addSelectAliasField(aliasSoggettiFruitori+".id","idSoggettoFruitore");
@@ -19049,6 +19051,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				serv.setNome(risultato.getString("nome_servizio"));
 				serv.setTipo(risultato.getString("tipo_servizio"));
 				serv.setVersione(risultato.getInt("versione_servizio"));
+				serv.setPortType(risultato.getString("port_type"));
 				serv.setIdSoggetto(risultato.getLong("idSoggettoErogatore"));
 				serv.setIdAccordo(risultato.getLong("id_accordo"));
 				String servizio_correlato = risultato.getString("servizio_correlato");

@@ -2422,15 +2422,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setType(DataElementType.CHECKBOX);
 					boolean statoPA = paAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+					String statoPAallRedefined = null;
 					String statoMapping = statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP;
 					boolean url = true;
 					if(mapping.isDefault() && allActionRedefined) {
 						statoPA = false;
+						statoPAallRedefined = "off";
 						statoMapping = this.getLabelAllAzioniRidefiniteTooltip(serviceBindingMessage);
 						url = false;
 					}
 					de.setToolTip(statoMapping);
-					de.setSelected(statoPA);
+					if(statoPAallRedefined!=null) {
+						de.setSelected(statoPAallRedefined);
+					}
+					else {
+						de.setSelected(statoPA);
+					}
 					if(url) {
 						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps, pAbilita);
@@ -2445,10 +2452,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(gestioneGruppi) {
 				this.pd.setAddButton(true);
 				this.pd.setRemoveButton(true);
+				this.pd.setSelect(true);
 			}
 			else {
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
+				this.pd.setSelect(false);
 			}
 
 		} catch (Exception e) {
@@ -2764,7 +2773,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 	
-	private boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		// verifico se tutte le azioni sono definite in regole specifiche
 		boolean all = true;
 		if(azioni!=null && azioni.size()>0) {
@@ -2845,7 +2854,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 	
-	private boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	protected boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		// verifico se tutte le azioni sono definite in regole specifiche
 		boolean all = true;
 		if(azioni!=null && azioni.size()>0) {
@@ -3595,15 +3604,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setType(DataElementType.CHECKBOX);
 					boolean statoPD = pdAssociata.getStato().equals(StatoFunzionalita.ABILITATO);
+					String statoPDallRedefined = null;
 					String statoMapping = statoPD ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP;
 					boolean url = true;
 					if(mapping.isDefault() && allActionRedefined) {
 						statoPD = false;
+						statoPDallRedefined = "off";
 						statoMapping = this.getLabelAllAzioniRidefiniteTooltip(serviceBindingMessage);
 						url = false;
 					}
 					de.setToolTip(statoMapping);
-					de.setSelected(statoPD);
+					if(statoPDallRedefined!=null) {
+						de.setSelected(statoPDallRedefined);
+					}
+					else {
+						de.setSelected(statoPD);
+					}
 					if(url) {
 						Parameter pAbilita = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ABILITA,  (statoPD ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ABILITAZIONE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pAbilita);
@@ -3619,10 +3635,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(gestioneGruppi) {
 				this.pd.setAddButton(true);
 				this.pd.setRemoveButton(true);
+				this.pd.setSelect(true);
 			}
 			else {
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
+				this.pd.setSelect(false);
 			}
 
 		} catch (Exception e) {

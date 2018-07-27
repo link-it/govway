@@ -32,17 +32,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class for Input complex type.
+/** <p>Java class for ConditionsType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Input">
+ * &lt;complexType name="ConditionsType">
  * 		&lt;sequence>
- * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}Proprieta" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionType" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -53,44 +53,35 @@ import java.util.List;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Input", 
+@XmlType(name = "ConditionsType", 
   propOrder = {
-  	"conditions",
   	"proprieta"
   }
 )
 
-@XmlRootElement(name = "Input")
+@XmlRootElement(name = "ConditionsType")
 
-public class Input extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public Input() {
+public class ConditionsType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public ConditionsType() {
   }
 
-  public ConditionsType getConditions() {
-    return this.conditions;
-  }
-
-  public void setConditions(ConditionsType conditions) {
-    this.conditions = conditions;
-  }
-
-  public void addProprieta(Proprieta proprieta) {
+  public void addProprieta(ConditionType proprieta) {
     this.proprieta.add(proprieta);
   }
 
-  public Proprieta getProprieta(int index) {
+  public ConditionType getProprieta(int index) {
     return this.proprieta.get( index );
   }
 
-  public Proprieta removeProprieta(int index) {
+  public ConditionType removeProprieta(int index) {
     return this.proprieta.remove( index );
   }
 
-  public List<Proprieta> getProprietaList() {
+  public List<ConditionType> getProprietaList() {
     return this.proprieta;
   }
 
-  public void setProprietaList(List<Proprieta> proprieta) {
+  public void setProprietaList(List<ConditionType> proprieta) {
     this.proprieta=proprieta;
   }
 
@@ -98,39 +89,52 @@ public class Input extends org.openspcoop2.utils.beans.BaseBean implements Seria
     return this.proprieta.size();
   }
 
-  public java.lang.String getDescrizione() {
-    return this.descrizione;
+  public boolean isAnd() {
+    return this.and;
   }
 
-  public void setDescrizione(java.lang.String descrizione) {
-    this.descrizione = descrizione;
+  public boolean getAnd() {
+    return this.and;
+  }
+
+  public void setAnd(boolean and) {
+    this.and = and;
+  }
+
+  public boolean isNot() {
+    return this.not;
+  }
+
+  public boolean getNot() {
+    return this.not;
+  }
+
+  public void setNot(boolean not) {
+    this.not = not;
   }
 
   private static final long serialVersionUID = 1L;
 
 
 
-  @XmlElement(name="conditions",required=false,nillable=false)
-  protected ConditionsType conditions;
-
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+  protected List<ConditionType> proprieta = new ArrayList<ConditionType>();
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List<ConditionType>
   */
   @Deprecated
-  public List<Proprieta> getProprieta() {
+  public List<ConditionType> getProprieta() {
   	return this.proprieta;
   }
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List<ConditionType>
   */
   @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
+  public void setProprieta(List<ConditionType> proprieta) {
   	this.proprieta=proprieta;
   }
 
@@ -143,8 +147,12 @@ public class Input extends org.openspcoop2.utils.beans.BaseBean implements Seria
   	return this.proprieta.size();
   }
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="descrizione",required=true)
-  protected java.lang.String descrizione;
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="and",required=false)
+  protected boolean and = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="not",required=false)
+  protected boolean not = false;
 
 }

@@ -42,6 +42,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 		super();
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"servizio-applicativo",ServizioApplicativo.class));
@@ -56,6 +57,7 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 		super(father);
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"servizio-applicativo",ServizioApplicativo.class));
@@ -68,6 +70,8 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 	
 
+	public org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel CONDITIONS = null;
+	 
 	public org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel REPLACE_MATCH = null;
 	 
 	public org.openspcoop2.protocol.information_missing.model.DescriptionModel HEADER = null;

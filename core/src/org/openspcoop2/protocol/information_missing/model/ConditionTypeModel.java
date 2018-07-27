@@ -21,7 +21,7 @@
  */
 package org.openspcoop2.protocol.information_missing.model;
 
-import org.openspcoop2.protocol.information_missing.Requisiti;
+import org.openspcoop2.protocol.information_missing.ConditionType;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -30,42 +30,46 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Requisiti 
+ * Model ConditionType 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RequisitiModel extends AbstractModel<Requisiti> {
+public class ConditionTypeModel extends AbstractModel<ConditionType> {
 
-	public RequisitiModel(){
+	public ConditionTypeModel(){
 	
 		super();
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new Field("protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new Field("input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.NOT = new Field("not",boolean.class,"ConditionType",ConditionType.class);
+		this.NOME = new Field("nome",java.lang.String.class,"ConditionType",ConditionType.class);
+		this.VALORE = new Field("valore",java.lang.String.class,"ConditionType",ConditionType.class);
 	
 	}
 	
-	public RequisitiModel(IField father){
+	public ConditionTypeModel(IField father){
 	
 		super(father);
 	
-		this.PROTOCOLLO = new org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel(new ComplexField(father,"protocollo",org.openspcoop2.protocol.information_missing.RequisitoProtocollo.class,"Requisiti",Requisiti.class));
-		this.INPUT = new org.openspcoop2.protocol.information_missing.model.RequisitoInputModel(new ComplexField(father,"input",org.openspcoop2.protocol.information_missing.RequisitoInput.class,"Requisiti",Requisiti.class));
+		this.NOT = new ComplexField(father,"not",boolean.class,"ConditionType",ConditionType.class);
+		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"ConditionType",ConditionType.class);
+		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"ConditionType",ConditionType.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoProtocolloModel PROTOCOLLO = null;
+	public IField NOT = null;
 	 
-	public org.openspcoop2.protocol.information_missing.model.RequisitoInputModel INPUT = null;
+	public IField NOME = null;
+	 
+	public IField VALORE = null;
 	 
 
 	@Override
-	public Class<Requisiti> getModeledClass(){
-		return Requisiti.class;
+	public Class<ConditionType> getModeledClass(){
+		return ConditionType.class;
 	}
 	
 	@Override

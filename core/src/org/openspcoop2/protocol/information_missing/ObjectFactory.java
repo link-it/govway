@@ -57,6 +57,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ProprietaRequisitoInput }
+     */
+    public ProprietaRequisitoInput createProprietaRequisitoInput() {
+        return new ProprietaRequisitoInput();
+    }
+
+    /**
      * Create an instance of {@link Proprieta }
      */
     public Proprieta createProprieta() {
@@ -89,6 +96,13 @@ public class ObjectFactory {
      */
     public Default createDefault() {
         return new Default();
+    }
+
+    /**
+     * Create an instance of {@link RequisitoInput }
+     */
+    public RequisitoInput createRequisitoInput() {
+        return new RequisitoInput();
     }
 
     /**
@@ -134,6 +148,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConditionsType }
+     */
+    public ConditionsType createConditionsType() {
+        return new ConditionsType();
+    }
+
+    /**
      * Create an instance of {@link AccordoServizioParteComune }
      */
     public AccordoServizioParteComune createAccordoServizioParteComune() {
@@ -159,6 +180,13 @@ public class ObjectFactory {
      */
     public Soggetto createSoggetto() {
         return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link ConditionType }
+     */
+    public ConditionType createConditionType() {
+        return new ConditionType();
     }
 
     /**

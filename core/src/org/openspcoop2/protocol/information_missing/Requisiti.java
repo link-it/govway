@@ -39,6 +39,7 @@ import java.util.List;
  * &lt;complexType name="Requisiti">
  * 		&lt;sequence>
  * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="input" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoInput" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,7 +53,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Requisiti", 
   propOrder = {
-  	"protocollo"
+  	"protocollo",
+  	"input"
   }
 )
 
@@ -84,6 +86,14 @@ public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements S
 
   public int sizeProtocolloList() {
     return this.protocollo.size();
+  }
+
+  public RequisitoInput getInput() {
+    return this.input;
+  }
+
+  public void setInput(RequisitoInput input) {
+    this.input = input;
   }
 
   private static final long serialVersionUID = 1L;
@@ -119,5 +129,8 @@ public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements S
   public int sizeProtocollo() {
   	return this.protocollo.size();
   }
+
+  @XmlElement(name="input",required=false,nillable=false)
+  protected RequisitoInput input;
 
 }

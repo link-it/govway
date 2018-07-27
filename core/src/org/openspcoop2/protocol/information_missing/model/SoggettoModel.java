@@ -42,6 +42,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 		super();
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"soggetto",Soggetto.class));
 		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"soggetto",Soggetto.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"soggetto",Soggetto.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"soggetto",Soggetto.class));
@@ -57,6 +58,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 		super(father);
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"soggetto",Soggetto.class));
 		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"soggetto",Soggetto.class));
 		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"soggetto",Soggetto.class));
 		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"soggetto",Soggetto.class));
@@ -70,6 +72,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 	
 
+	public org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel CONDITIONS = null;
+	 
 	public org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel REPLACE_MATCH = null;
 	 
 	public org.openspcoop2.protocol.information_missing.model.DescriptionModel HEADER = null;

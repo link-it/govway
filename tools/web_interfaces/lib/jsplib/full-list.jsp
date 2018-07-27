@@ -436,6 +436,9 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 													else if("warn".equals(de.getSelected())){
 														image = "check_yellow.png";
 													}
+													else if("off".equals(de.getSelected())){
+														image = "disconnected_grey.png";
+													}
 									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 
 									  				// tipo link

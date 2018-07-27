@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -51,6 +52,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.information_missing.ReplaceFruitoreMatchType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchType;
 import org.openspcoop2.protocol.information_missing.Soggetto;
@@ -182,6 +184,26 @@ public class ImporterInformationMissingSetter {
 		
 	}
 	
+	public static void setInformationMissingPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegata) throws ProtocolException{
+		
+		switch (portaDelegata.getTipo()) {
+		case STATO:
+			setInformationMissing_StatoPortaDelegata(archive, portaDelegata);
+			break;
+		}
+		
+	}
+	
+	public static void setInformationMissingPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativa) throws ProtocolException{
+		
+		switch (portaApplicativa.getTipo()) {
+		case STATO:
+			setInformationMissing_StatoPortaApplicativa(archive, portaApplicativa);
+			break;
+		}
+		
+	}
+	
 	
 	
 	
@@ -267,6 +289,69 @@ public class ImporterInformationMissingSetter {
 		return true;
 	}
 	
+	private static boolean matchFruitore(ReplaceFruitoreMatchType replaceMatch,
+			String tipoSoggetto,String nomeSoggetto,
+			String tipoServizio,String nomeServizio,
+			String tipoSoggettoErogatore,String nomeSoggettoErogatore){
+		
+		ReplaceMatchFieldType nome = replaceMatch.getNome();
+		ReplaceMatchFieldType tipo = replaceMatch.getTipo();
+		ReplaceMatchFieldType rNomeServizio = replaceMatch.getNomeServizio();
+		ReplaceMatchFieldType rTipoServizio = replaceMatch.getTipoServizio();
+		ReplaceMatchFieldType rNomeSoggettoErogatore = replaceMatch.getNomeErogatore();
+		ReplaceMatchFieldType rTipoSoggettoErogatore = replaceMatch.getTipoErogatore();
+		
+		if(nome==null && tipo==null &&
+				rNomeServizio==null && rTipoServizio==null &&
+				rNomeSoggettoErogatore==null && rTipoSoggettoErogatore==null){
+			return false; // per trovare un soggetto almeno un criterio di ricerca deve essere fornito
+		}
+		
+		// tipo/nome soggetto
+		
+		if(nome!=null){
+			if(match(nome, nomeSoggetto)==false){
+				return false;
+			}
+		}
+		
+		if(tipo!=null){
+			if(match(tipo, tipoSoggetto)==false){
+				return false;
+			}
+		}
+		
+		// tipo/nome servizio
+
+		if(rNomeServizio!=null){
+			if(match(rNomeServizio, nomeServizio)==false){
+				return false;
+			}
+		}
+		
+		if(rTipoServizio!=null){
+			if(match(rTipoServizio, tipoServizio)==false){
+				return false;
+			}
+		}
+		
+		// tipo/nome erogatore
+
+		if(rNomeSoggettoErogatore!=null){
+			if(match(rNomeSoggettoErogatore, nomeSoggettoErogatore)==false){
+				return false;
+			}
+		}
+		
+		if(rTipoSoggettoErogatore!=null){
+			if(match(rTipoSoggettoErogatore, tipoSoggettoErogatore)==false){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	private static boolean matchServizioApplicativo(ReplaceMatchType replaceMatch,
 			String nomeServizio){
 		ReplaceMatchFieldType nome = replaceMatch.getNome();
@@ -292,6 +377,22 @@ public class ImporterInformationMissingSetter {
 		
 		if(nome!=null){
 			if(match(nome, nomeAccordo)==false){
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private static boolean matchPorta(ReplaceMatchType replaceMatch,
+			String nomePorta){
+		ReplaceMatchFieldType nome = replaceMatch.getNome();
+		if(nome==null){
+			return false; // per trovare un accordo un criterio di ricerca deve essere fornito
+		}
+		
+		if(nome!=null){
+			if(match(nome, nomePorta)==false){
 				return false;
 			}
 		}
@@ -872,11 +973,28 @@ public class ImporterInformationMissingSetter {
 		
 		// Accordi
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
-			Fruitore fruitore = archive.getAccordiFruitori().get(i).getFruitore();
+			ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
+			Fruitore fruitore = archiveFruitore.getFruitore();
+			
+			String tipoServizio = null;
+			String nomeServizio = null;
+			String tipoSoggettoErogatore = null;
+			String nomeSoggettoErogatore = null;
+			if(archiveFruitore.getIdAccordoServizioParteSpecifica()!=null) {
+				tipoServizio = archiveFruitore.getIdAccordoServizioParteSpecifica().getTipo();
+				nomeServizio = archiveFruitore.getIdAccordoServizioParteSpecifica().getNome();
+				if(archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore()!=null) {
+					tipoSoggettoErogatore = archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore().getTipo();
+					nomeSoggettoErogatore = archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore().getNome();
+				}
+			}
+				
 			if(fruitore!=null){
 				
-				if(matchSoggetto(fruitoreMissingInfo.getReplaceMatch(), 
-						fruitore.getTipo(), fruitore.getNome())){
+				if(matchFruitore(fruitoreMissingInfo.getReplaceMatch(), 
+						fruitore.getTipo(), fruitore.getNome(),
+						tipoServizio,nomeServizio,
+						tipoSoggettoErogatore,nomeSoggettoErogatore)){
 					
 					if(fruitore.getConnettore()==null) {
 						fruitore.setConnettore(connettore);
@@ -902,9 +1020,26 @@ public class ImporterInformationMissingSetter {
 		// Fruitori
 		if(fruitoreMissingInfo.getStato()!=null){
 			for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
-				Fruitore fruitore = archive.getAccordiFruitori().get(i).getFruitore();
-				if(matchSoggetto(fruitoreMissingInfo.getReplaceMatch(), 
-						fruitore.getTipo(), fruitore.getNome())){
+				ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
+				Fruitore fruitore = archiveFruitore.getFruitore();
+				
+				String tipoServizio = null;
+				String nomeServizio = null;
+				String tipoSoggettoErogatore = null;
+				String nomeSoggettoErogatore = null;
+				if(archiveFruitore.getIdAccordoServizioParteSpecifica()!=null) {
+					tipoServizio = archiveFruitore.getIdAccordoServizioParteSpecifica().getTipo();
+					nomeServizio = archiveFruitore.getIdAccordoServizioParteSpecifica().getNome();
+					if(archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore()!=null) {
+						tipoSoggettoErogatore = archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore().getTipo();
+						nomeSoggettoErogatore = archiveFruitore.getIdAccordoServizioParteSpecifica().getSoggettoErogatore().getNome();
+					}
+				}
+				
+				if(matchFruitore(fruitoreMissingInfo.getReplaceMatch(), 
+						fruitore.getTipo(), fruitore.getNome(),
+						tipoServizio,nomeServizio,
+						tipoSoggettoErogatore,nomeSoggettoErogatore)){
 					fruitore.setStatoPackage(fruitoreMissingInfo.getStato().getValue());
 				}
 			}
@@ -912,6 +1047,51 @@ public class ImporterInformationMissingSetter {
 			
 	}
 	
+
+	
+	
+	
+	
+	
+	// ******* PORTA DELEGATA **********
+	
+	private static void setInformationMissing_StatoPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegataMissingInfo) throws ProtocolException{
+		
+		// portaDelegataMissingInfo
+		if(portaDelegataMissingInfo.getStato()!=null){
+			for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
+				PortaDelegata portaDelegata = archive.getPorteDelegate().get(i).getPortaDelegata();
+				if(matchPorta(portaDelegataMissingInfo.getReplaceMatch(), 
+						portaDelegata.getNome())){
+					portaDelegata.setStato(StatoFunzionalita.toEnumConstant(portaDelegataMissingInfo.getStato().getValue()));
+				}
+			}
+		}
+			
+	}
+	
+	
+	
+	
+	
+	
+	
+	// ******* PORTA APPLICATIVA **********
+	
+	private static void setInformationMissing_StatoPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativaMissingInfo) throws ProtocolException{
+		
+		// portaDelegataMissingInfo
+		if(portaApplicativaMissingInfo.getStato()!=null){
+			for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
+				PortaApplicativa portaApplicativa = archive.getPorteApplicative().get(i).getPortaApplicativa();
+				if(matchPorta(portaApplicativaMissingInfo.getReplaceMatch(), 
+						portaApplicativa.getNome())){
+					portaApplicativa.setStato(StatoFunzionalita.toEnumConstant(portaApplicativaMissingInfo.getStato().getValue()));
+				}
+			}
+		}
+			
+	}
 	
 	
 	

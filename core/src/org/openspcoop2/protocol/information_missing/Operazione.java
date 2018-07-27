@@ -46,6 +46,8 @@ import java.util.List;
  * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteSpecifica" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="accordo-servizio-composto" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteComune" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/protocol/information_missing}Fruitore" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/protocol/information_missing}PortaDelegata" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/protocol/information_missing}PortaApplicativa" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -66,7 +68,9 @@ import java.util.List;
   	"accordoServizioParteComune",
   	"accordoServizioParteSpecifica",
   	"accordoServizioComposto",
-  	"fruitore"
+  	"fruitore",
+  	"portaDelegata",
+  	"portaApplicativa"
   }
 )
 
@@ -266,6 +270,54 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   public int sizeFruitoreList() {
     return this.fruitore.size();
+  }
+
+  public void addPortaDelegata(PortaDelegata portaDelegata) {
+    this.portaDelegata.add(portaDelegata);
+  }
+
+  public PortaDelegata getPortaDelegata(int index) {
+    return this.portaDelegata.get( index );
+  }
+
+  public PortaDelegata removePortaDelegata(int index) {
+    return this.portaDelegata.remove( index );
+  }
+
+  public List<PortaDelegata> getPortaDelegataList() {
+    return this.portaDelegata;
+  }
+
+  public void setPortaDelegataList(List<PortaDelegata> portaDelegata) {
+    this.portaDelegata=portaDelegata;
+  }
+
+  public int sizePortaDelegataList() {
+    return this.portaDelegata.size();
+  }
+
+  public void addPortaApplicativa(PortaApplicativa portaApplicativa) {
+    this.portaApplicativa.add(portaApplicativa);
+  }
+
+  public PortaApplicativa getPortaApplicativa(int index) {
+    return this.portaApplicativa.get( index );
+  }
+
+  public PortaApplicativa removePortaApplicativa(int index) {
+    return this.portaApplicativa.remove( index );
+  }
+
+  public List<PortaApplicativa> getPortaApplicativaList() {
+    return this.portaApplicativa;
+  }
+
+  public void setPortaApplicativaList(List<PortaApplicativa> portaApplicativa) {
+    this.portaApplicativa=portaApplicativa;
+  }
+
+  public int sizePortaApplicativaList() {
+    return this.portaApplicativa.size();
   }
 
   private static final long serialVersionUID = 1L;
@@ -510,6 +562,66 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
   @Deprecated
   public int sizeFruitore() {
   	return this.fruitore.size();
+  }
+
+  @XmlElement(name="porta-delegata",required=true,nillable=false)
+  protected List<PortaDelegata> portaDelegata = new ArrayList<PortaDelegata>();
+
+  /**
+   * @deprecated Use method getPortaDelegataList
+   * @return List<PortaDelegata>
+  */
+  @Deprecated
+  public List<PortaDelegata> getPortaDelegata() {
+  	return this.portaDelegata;
+  }
+
+  /**
+   * @deprecated Use method setPortaDelegataList
+   * @param portaDelegata List<PortaDelegata>
+  */
+  @Deprecated
+  public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
+  	this.portaDelegata=portaDelegata;
+  }
+
+  /**
+   * @deprecated Use method sizePortaDelegataList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizePortaDelegata() {
+  	return this.portaDelegata.size();
+  }
+
+  @XmlElement(name="porta-applicativa",required=true,nillable=false)
+  protected List<PortaApplicativa> portaApplicativa = new ArrayList<PortaApplicativa>();
+
+  /**
+   * @deprecated Use method getPortaApplicativaList
+   * @return List<PortaApplicativa>
+  */
+  @Deprecated
+  public List<PortaApplicativa> getPortaApplicativa() {
+  	return this.portaApplicativa;
+  }
+
+  /**
+   * @deprecated Use method setPortaApplicativaList
+   * @param portaApplicativa List<PortaApplicativa>
+  */
+  @Deprecated
+  public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
+  	this.portaApplicativa=portaApplicativa;
+  }
+
+  /**
+   * @deprecated Use method sizePortaApplicativaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizePortaApplicativa() {
+  	return this.portaApplicativa.size();
   }
 
 }

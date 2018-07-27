@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.engine.archive;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.config.Credenziali;
@@ -50,6 +51,8 @@ public class ImportInformationMissing implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private HashMap<String, String> requisitiInput = new HashMap<>();
+	private HashMap<String, String> requisitiInputStepIncrement = new HashMap<>();
 	private IDSoggetto soggetto;
 	private Integer versione;
 	private List<PortType> portTypes = new ArrayList<PortType>();
@@ -60,6 +63,19 @@ public class ImportInformationMissing implements Serializable {
 	private Credenziali credenziali;
 	private Connettore connettore;
 	private MapPlaceholder inputPlaceholder;
+	
+	public HashMap<String, String> getRequisitiInput() {
+		return this.requisitiInput;
+	}
+	public void setRequisitiInput(HashMap<String, String> requisitiInput) {
+		this.requisitiInput = requisitiInput;
+	}
+	public HashMap<String, String> getRequisitiInputStepIncrement() {
+		return this.requisitiInputStepIncrement;
+	}
+	public void setRequisitiInputStepIncrement(HashMap<String, String> requisitiStepIncrement) {
+		this.requisitiInputStepIncrement = requisitiStepIncrement;
+	}
 	
 	public IDSoggetto getSoggetto() {
 		return this.soggetto;

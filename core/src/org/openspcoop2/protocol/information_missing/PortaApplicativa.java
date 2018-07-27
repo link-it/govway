@@ -27,17 +27,17 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.protocol.information_missing.constants.AccordoServizioParteSpecificaReplaceType;
-import org.openspcoop2.protocol.information_missing.constants.StatoType;
+import org.openspcoop2.protocol.information_missing.constants.PortaApplicativaReplaceType;
+import org.openspcoop2.protocol.information_missing.constants.PortaStatoType;
 import java.io.Serializable;
 
 
-/** <p>Java class for AccordoServizioParteSpecifica complex type.
+/** <p>Java class for PortaApplicativa complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="AccordoServizioParteSpecifica">
+ * &lt;complexType name="PortaApplicativa">
  * 		&lt;sequence>
  * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="replace-match" type="{http://www.openspcoop2.org/protocol/information_missing}replaceMatchType" minOccurs="1" maxOccurs="1"/>
@@ -46,8 +46,8 @@ import java.io.Serializable;
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/information_missing}Default" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteSpecificaReplaceType" use="required"/>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/protocol/information_missing}statoType" use="optional"/>
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}PortaApplicativaReplaceType" use="required"/>
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/protocol/information_missing}portaStatoType" use="optional"/>
  * 		&lt;attribute name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -59,7 +59,7 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AccordoServizioParteSpecifica", 
+@XmlType(name = "PortaApplicativa", 
   propOrder = {
   	"conditions",
   	"replaceMatch",
@@ -69,10 +69,10 @@ import java.io.Serializable;
   }
 )
 
-@XmlRootElement(name = "AccordoServizioParteSpecifica")
+@XmlRootElement(name = "PortaApplicativa")
 
-public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public AccordoServizioParteSpecifica() {
+public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public PortaApplicativa() {
   }
 
   public ConditionsType getConditions() {
@@ -124,7 +124,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   }
 
   public void set_value_tipo(String value) {
-    this.tipo = (AccordoServizioParteSpecificaReplaceType) AccordoServizioParteSpecificaReplaceType.toEnumConstantFromString(value);
+    this.tipo = (PortaApplicativaReplaceType) PortaApplicativaReplaceType.toEnumConstantFromString(value);
   }
 
   public String get_value_tipo() {
@@ -135,16 +135,16 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     }
   }
 
-  public org.openspcoop2.protocol.information_missing.constants.AccordoServizioParteSpecificaReplaceType getTipo() {
+  public org.openspcoop2.protocol.information_missing.constants.PortaApplicativaReplaceType getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(org.openspcoop2.protocol.information_missing.constants.AccordoServizioParteSpecificaReplaceType tipo) {
+  public void setTipo(org.openspcoop2.protocol.information_missing.constants.PortaApplicativaReplaceType tipo) {
     this.tipo = tipo;
   }
 
   public void set_value_stato(String value) {
-    this.stato = (StatoType) StatoType.toEnumConstantFromString(value);
+    this.stato = (PortaStatoType) PortaStatoType.toEnumConstantFromString(value);
   }
 
   public String get_value_stato() {
@@ -155,11 +155,11 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     }
   }
 
-  public org.openspcoop2.protocol.information_missing.constants.StatoType getStato() {
+  public org.openspcoop2.protocol.information_missing.constants.PortaStatoType getStato() {
     return this.stato;
   }
 
-  public void setStato(org.openspcoop2.protocol.information_missing.constants.StatoType stato) {
+  public void setStato(org.openspcoop2.protocol.information_missing.constants.PortaStatoType stato) {
     this.stato = stato;
   }
 
@@ -198,13 +198,13 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=true)
-  protected AccordoServizioParteSpecificaReplaceType tipo;
+  protected PortaApplicativaReplaceType tipo;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)
-  protected StatoType stato;
+  protected PortaStatoType stato;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="protocollo",required=false)

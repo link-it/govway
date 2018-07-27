@@ -24,6 +24,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -452,6 +453,23 @@ public final class Importer extends Action {
 				}
 			}
 			
+			// Requisiti
+			HashMap<String, String> mapRequisitiInput = null;
+			HashMap<String, String> mapRequisitiInputStepIncrement = null;
+			if(isOk) {
+				try{
+					if(!archiviHelper.isEditModeInProgress()){
+						mapRequisitiInput = archiviHelper.readRequisitiInput();
+						mapRequisitiInputStepIncrement = archiviHelper.readRequisitiStepIncrementInput();
+					}
+				}catch(Exception e){
+					ControlStationCore.getLog().error(e.getMessage(),e);
+					pd.setMessage(e.getMessage());
+					isOk = false;
+					convertForGetException = false; // forzo la non ricostruzione. C'e' un errore strutturale sul package
+				}
+			}
+			
 			// ImportInformationMissingCollection
 			ImportInformationMissingCollection importInformationMissingCollection = null;	
 			if(this.importInformationMissingCollectionFilePath!=null){
@@ -459,7 +477,8 @@ public final class Importer extends Action {
 			}
 			if(isOk){
 				importInformationMissingCollection = 
-						importerUtils.updateInformationMissingCheckData(this.importInformationMissing_soggettoInput, 
+						importerUtils.updateInformationMissingCheckData(mapRequisitiInput, mapRequisitiInputStepIncrement,
+								this.importInformationMissing_soggettoInput, 
 								this.importInformationMissing_versioneInput, 
 								this.importInformationMissing_portTypes,
 								this.importInformationMissing_portTypeImplementedInput,

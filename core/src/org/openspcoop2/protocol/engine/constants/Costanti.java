@@ -147,7 +147,7 @@ public class Costanti {
 	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = org.openspcoop2.core.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI;
 
     
-    
+    public final static String REQUISITI_INPUT_RACCOLTI = "[[InformationMissingRequisiti]]";
     
 }
 

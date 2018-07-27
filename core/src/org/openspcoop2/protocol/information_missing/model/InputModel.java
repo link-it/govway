@@ -42,6 +42,7 @@ public class InputModel extends AbstractModel<Input> {
 	
 		super();
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"input",Input.class));
 		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaModel(new Field("proprieta",org.openspcoop2.protocol.information_missing.Proprieta.class,"input",Input.class));
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"input",Input.class);
 	
@@ -51,6 +52,7 @@ public class InputModel extends AbstractModel<Input> {
 	
 		super(father);
 	
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"input",Input.class));
 		this.PROPRIETA = new org.openspcoop2.protocol.information_missing.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.protocol.information_missing.Proprieta.class,"input",Input.class));
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"input",Input.class);
 	
@@ -58,6 +60,8 @@ public class InputModel extends AbstractModel<Input> {
 	
 	
 
+	public org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel CONDITIONS = null;
+	 
 	public org.openspcoop2.protocol.information_missing.model.ProprietaModel PROPRIETA = null;
 	 
 	public IField DESCRIZIONE = null;

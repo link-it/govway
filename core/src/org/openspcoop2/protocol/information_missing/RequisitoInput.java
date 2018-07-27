@@ -32,15 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class for Input complex type.
+/** <p>Java class for RequisitoInput complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Input">
+ * &lt;complexType name="RequisitoInput">
  * 		&lt;sequence>
- * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}Proprieta" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ProprietaRequisitoInput" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
@@ -53,44 +52,35 @@ import java.util.List;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Input", 
+@XmlType(name = "RequisitoInput", 
   propOrder = {
-  	"conditions",
   	"proprieta"
   }
 )
 
-@XmlRootElement(name = "Input")
+@XmlRootElement(name = "RequisitoInput")
 
-public class Input extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public Input() {
+public class RequisitoInput extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public RequisitoInput() {
   }
 
-  public ConditionsType getConditions() {
-    return this.conditions;
-  }
-
-  public void setConditions(ConditionsType conditions) {
-    this.conditions = conditions;
-  }
-
-  public void addProprieta(Proprieta proprieta) {
+  public void addProprieta(ProprietaRequisitoInput proprieta) {
     this.proprieta.add(proprieta);
   }
 
-  public Proprieta getProprieta(int index) {
+  public ProprietaRequisitoInput getProprieta(int index) {
     return this.proprieta.get( index );
   }
 
-  public Proprieta removeProprieta(int index) {
+  public ProprietaRequisitoInput removeProprieta(int index) {
     return this.proprieta.remove( index );
   }
 
-  public List<Proprieta> getProprietaList() {
+  public List<ProprietaRequisitoInput> getProprietaList() {
     return this.proprieta;
   }
 
-  public void setProprietaList(List<Proprieta> proprieta) {
+  public void setProprietaList(List<ProprietaRequisitoInput> proprieta) {
     this.proprieta=proprieta;
   }
 
@@ -110,27 +100,24 @@ public class Input extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
 
 
-  @XmlElement(name="conditions",required=false,nillable=false)
-  protected ConditionsType conditions;
-
   @XmlElement(name="proprieta",required=true,nillable=false)
-  protected List<Proprieta> proprieta = new ArrayList<Proprieta>();
+  protected List<ProprietaRequisitoInput> proprieta = new ArrayList<ProprietaRequisitoInput>();
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List<ProprietaRequisitoInput>
   */
   @Deprecated
-  public List<Proprieta> getProprieta() {
+  public List<ProprietaRequisitoInput> getProprieta() {
   	return this.proprieta;
   }
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List<ProprietaRequisitoInput>
   */
   @Deprecated
-  public void setProprieta(List<Proprieta> proprieta) {
+  public void setProprieta(List<ProprietaRequisitoInput> proprieta) {
   	this.proprieta=proprieta;
   }
 

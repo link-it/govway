@@ -50,6 +50,8 @@ public class OperazioneModel extends AbstractModel<Operazione> {
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.protocol.information_missing.model.AccordoServizioParteSpecificaModel(new Field("accordo-servizio-parte-specifica",org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica.class,"operazione",Operazione.class));
 		this.ACCORDO_SERVIZIO_COMPOSTO = new org.openspcoop2.protocol.information_missing.model.AccordoServizioParteComuneModel(new Field("accordo-servizio-composto",org.openspcoop2.protocol.information_missing.AccordoServizioParteComune.class,"operazione",Operazione.class));
 		this.FRUITORE = new org.openspcoop2.protocol.information_missing.model.FruitoreModel(new Field("fruitore",org.openspcoop2.protocol.information_missing.Fruitore.class,"operazione",Operazione.class));
+		this.PORTA_DELEGATA = new org.openspcoop2.protocol.information_missing.model.PortaDelegataModel(new Field("porta-delegata",org.openspcoop2.protocol.information_missing.PortaDelegata.class,"operazione",Operazione.class));
+		this.PORTA_APPLICATIVA = new org.openspcoop2.protocol.information_missing.model.PortaApplicativaModel(new Field("porta-applicativa",org.openspcoop2.protocol.information_missing.PortaApplicativa.class,"operazione",Operazione.class));
 	
 	}
 	
@@ -65,6 +67,8 @@ public class OperazioneModel extends AbstractModel<Operazione> {
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.protocol.information_missing.model.AccordoServizioParteSpecificaModel(new ComplexField(father,"accordo-servizio-parte-specifica",org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica.class,"operazione",Operazione.class));
 		this.ACCORDO_SERVIZIO_COMPOSTO = new org.openspcoop2.protocol.information_missing.model.AccordoServizioParteComuneModel(new ComplexField(father,"accordo-servizio-composto",org.openspcoop2.protocol.information_missing.AccordoServizioParteComune.class,"operazione",Operazione.class));
 		this.FRUITORE = new org.openspcoop2.protocol.information_missing.model.FruitoreModel(new ComplexField(father,"fruitore",org.openspcoop2.protocol.information_missing.Fruitore.class,"operazione",Operazione.class));
+		this.PORTA_DELEGATA = new org.openspcoop2.protocol.information_missing.model.PortaDelegataModel(new ComplexField(father,"porta-delegata",org.openspcoop2.protocol.information_missing.PortaDelegata.class,"operazione",Operazione.class));
+		this.PORTA_APPLICATIVA = new org.openspcoop2.protocol.information_missing.model.PortaApplicativaModel(new ComplexField(father,"porta-applicativa",org.openspcoop2.protocol.information_missing.PortaApplicativa.class,"operazione",Operazione.class));
 	
 	}
 	
@@ -85,6 +89,10 @@ public class OperazioneModel extends AbstractModel<Operazione> {
 	public org.openspcoop2.protocol.information_missing.model.AccordoServizioParteComuneModel ACCORDO_SERVIZIO_COMPOSTO = null;
 	 
 	public org.openspcoop2.protocol.information_missing.model.FruitoreModel FRUITORE = null;
+	 
+	public org.openspcoop2.protocol.information_missing.model.PortaDelegataModel PORTA_DELEGATA = null;
+	 
+	public org.openspcoop2.protocol.information_missing.model.PortaApplicativaModel PORTA_APPLICATIVA = null;
 	 
 
 	@Override

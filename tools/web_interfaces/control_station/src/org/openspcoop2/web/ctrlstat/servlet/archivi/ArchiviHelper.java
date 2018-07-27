@@ -24,6 +24,8 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -56,14 +58,18 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.archive.ImportInformationMissing;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingCollection;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingException;
+import org.openspcoop2.protocol.engine.archive.ImporterInformationMissingUtils;
 import org.openspcoop2.protocol.information_missing.Default;
 import org.openspcoop2.protocol.information_missing.Description;
 import org.openspcoop2.protocol.information_missing.DescriptionType;
 import org.openspcoop2.protocol.information_missing.Input;
 import org.openspcoop2.protocol.information_missing.Proprieta;
 import org.openspcoop2.protocol.information_missing.ProprietaDefault;
+import org.openspcoop2.protocol.information_missing.ProprietaRequisitoInput;
+import org.openspcoop2.protocol.information_missing.RequisitoInput;
 import org.openspcoop2.protocol.information_missing.Wizard;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
@@ -412,6 +418,22 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String importInformationMissing_accordoServizioParteComuneInput,
 			String importInformationMissing_accordoCooperazioneInput) throws Exception{
 				
+		// check input
+		int index = 0;
+		String pRequisitoHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		while(pRequisitoHidden!=null || "".equals(pRequisitoHidden)){
+			String pValue = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_VALUE+index);
+			if(pValue==null || "".equals(pValue)){
+				if("true".equalsIgnoreCase(pRequisitoHidden)) {
+					this.pd.setMessage("Deve essere indicato un valore in tutti i campi obbligatori");
+					return false;
+				}
+			}
+				
+			index++;
+			pRequisitoHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		}
+		
 		// importInformationMissing: soggetto
 		if(importInformationMissing_soggettoInput!=null && 
 				!"".equals(importInformationMissing_soggettoInput)) {
@@ -440,7 +462,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		
 		// check input
-		int index = 0;
+		index = 0;
 		String pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
 		while(pHidden!=null || "".equals(pHidden)){
 			String pValue = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_VALUE+index);
@@ -888,6 +910,49 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		
 	}
 	
+	public HashMap<String, String> readRequisitiInput() throws Exception{
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		int index = 0;
+		String pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		while(pHidden!=null || "".equals(pHidden)){
+			String pName = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_NAME_HIDDEN+index);
+			String pValue = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_VALUE+index);
+			map.put(pName, pValue);
+			
+			index++;
+			pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		}
+		
+		if(map.size()<=0){
+			return null;
+		}
+		return map;
+		
+	}
+	public HashMap<String, String> readRequisitiStepIncrementInput() throws Exception{
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		int index = 0;
+		String pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		while(pHidden!=null || "".equals(pHidden)){
+			String pName = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_NAME_HIDDEN+index);
+			String pValue = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_STEP_INCREMENT_HIDDEN+index);
+			map.put(pName, pValue);
+			
+			index++;
+			pHidden = this.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+index);
+		}
+		
+		if(map.size()<=0){
+			return null;
+		}
+		return map;
+		
+	}
+	
 	
 	public org.openspcoop2.core.config.Credenziali readCredenzialiSA() throws Exception{
 		org.openspcoop2.core.config.Credenziali cis = null;
@@ -1241,6 +1306,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			boolean readedDatiConnettori,
 			Wizard wizard, int step,
 			boolean delete) throws Exception{
+				
 		
 		String oldMessage = this.pd.getMessage();
 		if(oldMessage!=null && !"".equals(oldMessage)){
@@ -1251,21 +1317,56 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		boolean showIntestazioneArchivio = true;
 		boolean showSection = true;
 		if(wizard!=null){
-			String stepDescription = " (Fase "+step;
-			int stepConfigurated = -1;
-			if(wizard.getStep()>0){
-				stepConfigurated = wizard.getStep();
+			
+			if ( importInformationMissingException!=null && importInformationMissingException.isMissingRequisitiInfoInput() ){
+				this.pd.setMessage(wizard.getDescrizione()+oldMessage,Costanti.MESSAGE_TYPE_INFO);
 			}
-			if(delete) {
-				if(wizard.getStepInDelete()>0){
-					stepConfigurated = wizard.getStepInDelete();
+			else {
+				int actualStep = step;
+				int stepConfigurated = -1;
+				if(wizard.getStep()>0){
+					stepConfigurated = wizard.getStep();
 				}
+				if(delete) {
+					if(wizard.getStepInDelete()>0){
+						stepConfigurated = wizard.getStepInDelete();
+					}
+				}
+				
+				// verifico se sono stati raccolti dei requisiti
+				if(importInformationMissingCollection!=null && importInformationMissingCollection.exists(org.openspcoop2.protocol.engine.constants.Costanti.REQUISITI_INPUT_RACCOLTI)) {
+					ImportInformationMissing miss = importInformationMissingCollection.get(org.openspcoop2.protocol.engine.constants.Costanti.REQUISITI_INPUT_RACCOLTI);
+					if(miss.getRequisitiInput()!=null && !miss.getRequisitiInput().isEmpty() &&
+							miss.getRequisitiInputStepIncrement()!=null && !miss.getRequisitiInputStepIncrement().isEmpty()) {
+						
+						actualStep--; // il primo step non si conta
+						
+						Iterator<String> it = miss.getRequisitiInputStepIncrement().keySet().iterator();
+						while (it.hasNext()) {
+							String inputName = (String) it.next();
+							String stepIncrementValue_incrementNumber_incrementCondition = miss.getRequisitiInputStepIncrement().get(inputName);
+							int increment = -1;
+							String stepIncrementValue = null;
+							if(stepIncrementValue_incrementNumber_incrementCondition.contains(" ")) {
+								String [] tmp = stepIncrementValue_incrementNumber_incrementCondition.split(" ");
+								increment = Integer.valueOf(tmp[0]);
+								stepIncrementValue = stepIncrementValue_incrementNumber_incrementCondition.substring((tmp[0]+" ").length());
+							}
+							String value = miss.getRequisitiInput().get(inputName);
+							if(stepIncrementValue.equals(value)) {
+								stepConfigurated = stepConfigurated + increment;
+							}
+						}
+					}
+				}
+						
+				String stepDescription = " (Fase "+actualStep;
+				if(stepConfigurated>0){
+					stepDescription+="/"+stepConfigurated;
+				}
+				stepDescription+=")";
+				this.pd.setMessage(wizard.getDescrizione()+stepDescription+oldMessage,Costanti.MESSAGE_TYPE_INFO);
 			}
-			if(stepConfigurated>0){
-				stepDescription+="/"+stepConfigurated;
-			}
-			stepDescription+=")";
-			this.pd.setMessage(wizard.getDescrizione()+stepDescription+oldMessage,Costanti.MESSAGE_TYPE_INFO);
 			
 			showIntestazioneArchivio = wizard.getIntestazioneOriginale();
 			
@@ -1280,6 +1381,19 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		String sessionId = this.request.getSession().getId();
 
 		// hidden fields
@@ -1402,6 +1516,134 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION);
 		dati.addElement(de);
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// requisiti
+		if ( importInformationMissingException.isMissingRequisitiInfoInput() ){
+		
+			RequisitoInput requisitoInput = importInformationMissingException.getMissingRequisitiInfoInputObject();
+			
+			if(showSection){
+				de = new DataElement();
+				de.setLabel(requisitoInput.getDescrizione());
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
+			
+			HashMap<String, String> mapRequisitiInput = this.readRequisitiInput();
+			if(mapRequisitiInput==null) {
+				mapRequisitiInput = new HashMap<String, String>();
+			}
+			for (int i = 0; i < requisitoInput.sizeProprietaList(); i++) {
+				ProprietaRequisitoInput p = requisitoInput.getProprieta(i);
+				if(mapRequisitiInput.containsKey(p.getNome())==false) {
+					if(p.getConditions()!=null) {
+						if(ImporterInformationMissingUtils.checkConditions(p.getConditions(),mapRequisitiInput)==false) {
+							continue;
+						}
+					}
+					mapRequisitiInput.put(p.getNome(), p.getDefault());
+				}
+			}
+			
+			int indexParam = 0;
+			
+			for (int k = 0; k < requisitoInput.sizeProprietaList(); k++) {
+				
+				ProprietaRequisitoInput p = requisitoInput.getProprieta(k);
+				
+				if(delete && !p.isUseInDelete()) {
+					continue;
+				}
+				
+				if(p.getConditions()!=null) {
+					if(ImporterInformationMissingUtils.checkConditions(p.getConditions(),mapRequisitiInput)==false) {
+						continue;
+					}
+				}
+								
+				if(p.getHeader()!=null) {
+					this.addDescriptionInformationMissingToDati(dati,  p.getHeader() );
+				}
+						
+				boolean required = false;
+				
+				String valore = p.getDefault();
+				if(mapRequisitiInput!=null && mapRequisitiInput.containsKey(p.getNome())) {
+					valore = mapRequisitiInput.get(p.getNome());
+				}
+				
+				de = new DataElement();
+				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_VALUE+indexParam);
+				switch (p.getTipo()) {
+				case HIDDEN:
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(valore);
+					break;
+				case CHECKBOX:
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(valore));
+					de.setPostBack(p.isReloadOnChange());
+					break;
+				case TEXTEDIT:
+					de.setRequired(true);
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setValue(valore);
+					required = true;
+					break;
+				}
+				de.setLabel(p.getLabel());
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_HIDDEN+indexParam);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(required+"");
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_NAME_HIDDEN+indexParam);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(p.getNome());
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_REQUISITO_INPUT_PROPRIETA_PREFIX_STEP_INCREMENT_HIDDEN+indexParam);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(p.getStepIncrementCondition()==null ? "1 N.D." : p.getStepIncrement() + " "+p.getStepIncrementCondition());
+				dati.addElement(de);
+				
+				if(p.getFooter()!=null) {
+					this.addDescriptionInformationMissingToDati(dati,  p.getFooter() );
+				}
+				
+				indexParam++;
+			}
+			
+		}
+				
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 

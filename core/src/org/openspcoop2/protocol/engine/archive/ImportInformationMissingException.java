@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.protocol.information_missing.Input;
+import org.openspcoop2.protocol.information_missing.RequisitoInput;
 import org.openspcoop2.protocol.information_missing.Description;
 import org.openspcoop2.protocol.information_missing.Default;
 
@@ -52,6 +53,9 @@ public class ImportInformationMissingException extends Exception implements Seri
 
 	private String missingInfoProtocollo;
 	
+	private boolean missingRequisitiInfoInput;
+	private RequisitoInput missingRequisitiInfoInputObject;
+	
 	private boolean missingInfoSoggetto;
 	private String missingInfoSoggetto_tipoPdD;
 	
@@ -72,7 +76,7 @@ public class ImportInformationMissingException extends Exception implements Seri
 	private boolean missingInfoCredenziali;
 	
 	private boolean missingInfoConnettore;
-	
+		
 	private boolean missingInfoInput;
 	private Input missingInfoInputObject;
 	
@@ -125,6 +129,19 @@ public class ImportInformationMissingException extends Exception implements Seri
 	}
 	public void setMissingInfoProtocollo(String missingInfoProtocollo) {
 		this.missingInfoProtocollo = missingInfoProtocollo;
+	}
+	
+	public boolean isMissingRequisitiInfoInput() {
+		return this.missingRequisitiInfoInput;
+	}
+	public void setMissingRequisitiInfoInput(boolean missingRequisitiInfoInput) {
+		this.missingRequisitiInfoInput = missingRequisitiInfoInput;
+	}
+	public RequisitoInput getMissingRequisitiInfoInputObject() {
+		return this.missingRequisitiInfoInputObject;
+	}
+	public void setMissingRequisitiInfoInputObject(RequisitoInput missingRequisitiInfoInputObject) {
+		this.missingRequisitiInfoInputObject = missingRequisitiInfoInputObject;
 	}
 	
 	public boolean isMissingInfoSoggetto() {
