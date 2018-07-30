@@ -1,4 +1,4 @@
-2017-07-27  Andrea Poli <apoli@link.it>
+2018-07-27  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0.rc1
 
@@ -10,7 +10,7 @@
 	è stata aggiunta l'informazione sullo stato (abilitato/disabilitato).
 	Inoltre tra le informazioni di riepilogo viene nascosta l'informazione sul connettore se almeno un gruppo l'ha ridefinito.
 
-2017-07-20  Andrea Poli <apoli@link.it>
+2018-07-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
 	Aggiunta funzionalità OP-395
@@ -97,7 +97,7 @@
 	La generazione di default di tale identificativo non deve quindi considerare solamente il nome del soggetto 
 	ma includere anche il tipo in modo che lo rende unico anche per protocolli differenti: <TIPO>/<NOME>PdD 
 
-2017-04-17  Andrea Poli <apoli@link.it>
+2018-04-17  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
 	Aggiunta funzionalità OP-710
@@ -106,7 +106,7 @@
 	Realizzata un nuovo tipo di integrazione che permetta di annullare qualsiasi meccanismo di integrazione da pddConsole. 
 	Per attivarla impostare il valore 'none' sui metadati della porta delegata o applicativa.
 
-2017-04-13  Andrea Poli <apoli@link.it>
+2018-04-13  Andrea Poli <apoli@link.it>
 
 	* [Utils]
 	Risolto Bug OP-708
