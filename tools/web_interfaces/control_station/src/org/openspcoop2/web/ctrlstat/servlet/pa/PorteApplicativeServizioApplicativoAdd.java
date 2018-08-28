@@ -168,6 +168,11 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			String nomeAzione = "";
 			if (paa != null)
 				nomeAzione = paa.getNome();
+			
+			boolean behaviourDefined = false;
+			if(pa!=null && pa.getBehaviour()!=null && !"".equals(pa.getBehaviour())) {
+				behaviourDefined = true;
+			}
 
 			// Recupero eventuale idServizio mancante
 			if(porteApplicativeCore.isRegistroServiziLocale()){
@@ -327,7 +332,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 				if (!isProfiloOneWay)
 					numSAassociati = pa.sizeServizioApplicativoList();
 
-				if (!isProfiloOneWay && numSAassociati > 0) {
+				if (!isProfiloOneWay && numSAassociati > 0 && !behaviourDefined) {
 					if ((nomeAzione != null && !nomeAzione.equals("")) && (profiloCollaborazioneAzione != null && !profiloCollaborazioneAzione.equals("")))
 						pd.setMessage("E' possibile associare un solo Servizio Applicativo alla Porta Applicativa [" + nomePorta + "] in quanto l'Azione [" + nomeAzione + "] dell'Accordo di Servizio [" + nomeAccordo + "] e' stata definito con profilo [" + profiloCollaborazioneAzione + "]");
 					else

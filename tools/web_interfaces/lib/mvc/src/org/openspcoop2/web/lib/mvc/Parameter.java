@@ -98,10 +98,15 @@ public class Parameter {
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		String val = null;
-		try {
-			val = URLEncoder.encode(this.value, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			val = this.value;
+		if(this.value!=null) {
+			try {
+				val = URLEncoder.encode(this.value, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				val = this.value;
+			}
+		}
+		else {
+			val = "";
 		}
 		sb.append(this.name).append("=").append(val);
 		return sb.toString();

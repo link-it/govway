@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPElement;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -841,12 +842,17 @@ public abstract class AbstractXPathExpressionEngine {
 				risultato = xPathEngine.getStringMatchPattern(element, dnc, pattern);
 			}catch(Exception e){
 				if(exceptionNodeSet!=null){
-					log.error("Errore avvenuto durante la getStringMatchPattern("+pattern
+					log.debug("Errore avvenuto durante la getStringMatchPattern("+pattern
 							+") ("+e.getMessage()+") invocata in seguito all'errore dell'invocazione getMatchPattern("+
 							pattern+",NODESET): "+exceptionNodeSet.getMessage(),exceptionNodeSet);
 				}
-				// lancio questo errore.
-				throw e;
+				// lancio questo errore e se presente anche quello con la ricerca notset nodoset.
+				if(exceptionNodeSet!=null) {
+					throw new UtilsMultiException(e,exceptionNodeSet);
+				}
+				else {
+					throw e;
+				}
 			}
 		}
 		
