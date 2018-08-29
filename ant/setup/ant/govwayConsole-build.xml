@@ -296,5 +296,22 @@
 		</if>
 		
 	</target>
+
+	<!-- console.audit.log4j2.properties -->
+	<target name="govwayConsole_console_audit_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+	
+	</target>
 		
 </project>

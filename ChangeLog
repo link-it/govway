@@ -1,3 +1,10 @@
+2018-08-29  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-746
+	Nel caso l'utente abbia scelto delle directory di configurazione o di log differenti da quelle di default indicate dall'Installer,
+	alcune configurazioni non venivano correttamente impostate sulle nuove directory indicate.
+
 2018-08-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

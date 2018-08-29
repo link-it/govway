@@ -351,6 +351,9 @@
 			<param name="token" value="org.openspcoop2.protocol.${protocolName}.confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+
+		<replace file="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties" token="/etc/govway" value="${work_dir}"/>
+
 		<delete file="${deploy_sw}/${archiveProtocol_name.txt}"/>
 		<jar destfile="${deploy_sw}/${archiveProtocol_name.txt}" basedir="${tmp_cfg}/JAR_${protocolName}"/>
 		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
@@ -444,6 +447,9 @@
 				</antcall>
 				<antcall target="pdd_log4j_properties_settings">
 				    <param name="file" value="${tmp_archivi}/govway.ear/properties/log4j2.properties"/>
+				</antcall>
+				<antcall target="pdd_protocolAdjunct_log4j_properties_settings">
+				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.protocolAdjunct.log4j2.properties"/>
 				</antcall>
 				<antcall target="pdd_govway.classRegistry.properties_settings">
 				    <param name="file" value="${tmp_archivi}/govway.ear/properties/govway.classRegistry.properties"/>
@@ -570,6 +576,9 @@
 		</antcall>
 		<antcall target="pdd_log4j_properties_settings">
 		    <param name="file" value="${tomcat_war}/WEB-INF/classes/log4j2.properties"/>
+		</antcall>
+		<antcall target="pdd_protocolAdjunct_log4j_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.protocolAdjunct.log4j2.properties"/>
 		</antcall>
 		<antcall target="pdd_govway.classRegistry.properties_settings">
 		    <param name="file" value="${tomcat_war}/WEB-INF/classes/govway.classRegistry.properties"/>
@@ -947,6 +956,9 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		</antcall>
 		<antcall target="govwayConsole_log4j_properties_settings">
 		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/log4j2.properties"/>
+		</antcall>
+		<antcall target="govwayConsole_console_audit_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/console.audit.log4j2.properties"/>
 		</antcall>
 		<antcall target="govwayConsole_datasource_properties_settings">
 		    <param name="file" value="${tmp_archivi}/govwayConsole.war/WEB-INF/classes/console.datasource.properties"/>
