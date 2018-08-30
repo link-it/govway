@@ -1,3 +1,18 @@
+2018-08-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-742
+	Dopo aver selezionato una erogazione o fruizione, i campi visualizzati possono essere editati usando l'icona sulla destra.
+	L'editing risulta però talvolta inappropriato, perchè non relativo a quel campo, ma all'oggetto a cui quel campo riferisce. 
+	Un esempio è il campo "API", che si riferisce all'editing dell'API, e non all'editing del campo API della fruizione/erogazione. 
+	In questo caso è stata utilizzata un'icona differente e si è scelto di aprire l'API su di un nuovo tab del browser.
+	La gestione dei gruppi è inoltre stata migliorata al fine di fornire l'elenco delle azioni/risorse di ogni gruppo, 
+	poichè in assenza di tale informazione si faceva fatica ad avere un quadro complessivo corretto.
+	Sono infine stati risolti i seguenti problemi emersi durante l'eliminazione di azioni/risorse o servizi:
+	- Se un'azione o risorsa viene ridefinita all'interno di un nuovo gruppo (differente da quello predefinito) di erogazione/fruizione,
+	  un'eventuale eliminazione di tale azione/risorsa non deve essere possibile. 
+	- Un servizio di un API Soap non è più eliminabile se implementato in una erogazione/fruizione
+
 2018-08-29  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

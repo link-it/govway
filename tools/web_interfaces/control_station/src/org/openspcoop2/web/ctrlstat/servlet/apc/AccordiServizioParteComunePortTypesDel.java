@@ -37,6 +37,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -47,6 +49,8 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -88,6 +92,8 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
+			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
@@ -146,7 +152,10 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 						}
 					}
 					if(tmp.size()>0){
-						errori.append("Servizio ["+nomept+"] non rimosso perche' correlato da azioni di altri servizi dell'accordo: <br>");
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Servizio ["+nomept+"] non rimosso poichè correlato da azioni di altri servizi dell'accordo: <br>");
 						for(int j=0; j<tmp.size();j++){
 							errori.append("- "+tmp.get(j).toString()+"<br>");
 						}
@@ -165,10 +174,39 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 					
 				}else{
 					
-					errori.append("Servizio ["+nomept+"] non rimosso perche' utilizzato in accordi di servizio parte specifica: <br>");
+					// Se esiste un mapping segnalo l'errore specifico
+					List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMapping(idServizi, true, false);
+					if(lPA!=null && !lPA.isEmpty()) {
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Servizio "+nomept+" non rimuovibile poichè implementato nell'erogazione del servizio: <BR>");
+						for(int j=0;j<lPA.size();j++){
+							errori.append("- "+lPA.get(j).getIdServizio()+"<BR>");
+						}
+						continue;
+					}
+					List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMapping(idServizi, true, false);
+					if(lPD!=null && !lPD.isEmpty()) {
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Servizio "+nomept+" non rimuovibile poichè implementato nella fruizione del servizio: <BR>");
+						for(int j=0;j<lPD.size();j++){
+							errori.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+")<BR>");
+						}
+						continue;
+					}
+					
+					// Altrimenti segnalo l'errore più generico sull'accordo
+					if(errori.length()>0) {
+						errori.append("<BR>");
+					}
+					errori.append("Servizio ["+nomept+"] non rimosso poichè risulta implementato in accordi di servizio parte specifica: <br>");
 					for(int j=0; j<idServizi.size();j++){
 						errori.append("- "+idServizi.get(j).toString()+"<br>");
 					}
+					//continue;
 					
 				}
 			}

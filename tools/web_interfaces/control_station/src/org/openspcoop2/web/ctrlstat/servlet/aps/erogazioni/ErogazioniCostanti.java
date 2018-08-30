@@ -93,6 +93,11 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP = "Modifica";
 	public final static String ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO = "Modifica {0}";
 	
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA = "&#xE89E;";
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP = "Visualizza";
+	public final static String ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO = "Visualizza {0}";
+	
+	
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE = "check_green.png";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE = "check_yellow.png";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE = "disabled_red.png";

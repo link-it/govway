@@ -37,10 +37,13 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -123,45 +126,72 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			
 			String nomeRisorsa = "";
 			boolean modificaAS_effettuata = false;
-			boolean checkPorte = true;
 			StringBuffer errori = new StringBuffer();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				nomeRisorsa = resourcesToRemove.get(i);
 				
+				// traduco nomeRisorsa in path
+				String methodPath = null;
+				for (int j = 0; j < as.sizeResourceList(); j++) {
+					Resource risorsa = as.getResource(j);
+					if (nomeRisorsa.equals(risorsa.getNome())) {
+						methodPath = NamingUtils.getLabelResource(risorsa);
+						break;
+					}
+				}
+				if(methodPath==null) {
+					methodPath = nomeRisorsa;
+				}
+				
+				// Se esiste un mapping
+				List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMappingConGruppiPerAzione(nomeRisorsa, idServiziWithAccordo);
+				if(lPA!=null && !lPA.isEmpty()) {
+					if(errori.length()>0) {
+						errori.append("<BR>");
+					}
+					errori.append("Risorsa '"+methodPath+"' non rimuovibile poichè riassegnata in un gruppo dell'erogazione del servizio: <BR>");
+					for(int j=0;j<lPA.size();j++){
+						errori.append("- "+lPA.get(j).getIdServizio()+" (gruppo: '"+lPA.get(j).getDescrizione()+"')<BR>");
+					}
+					continue;
+				}
+				List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMappingConGruppiPerAzione(nomeRisorsa, idServiziWithAccordo);
+				if(lPD!=null && !lPD.isEmpty()) {
+					if(errori.length()>0) {
+						errori.append("<BR>");
+					}
+					errori.append("Risorsa '"+methodPath+"' non rimuovibile poichè riassegnata in un gruppo della fruizione del servizio: <BR>");
+					for(int j=0;j<lPD.size();j++){
+						errori.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+") (gruppo: '"+lPD.get(j).getDescrizione()+"')<BR>");
+					}
+					continue;
+				}
+				
 				// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
 				if(idServiziWithAccordo!=null && idServiziWithAccordo.size()>0){
-				
-					if(checkPorte){
-						
-						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
-						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeRisorsa)) {
-							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeRisorsa);
-							errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' in uso in porte applicative: <BR>");
-							for(int j=0;j<idPAs.size();j++){
-								errori.append("- "+idPAs.get(j).toString()+"<BR>");
-							}
-							continue;
+					
+					// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
+					if (porteApplicativeCore.existsPortaApplicativaAzione(nomeRisorsa)) {
+						List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeRisorsa);
+						if(errori.length()>0) {
+							errori.append("<BR>");
 						}
-						if (porteDelegateCore.existsPortaDelegataAzione(nomeRisorsa)) {
-							List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeRisorsa);
-							errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' in uso in porte delegate: <BR>");
-							for(int j=0;j<idPDs.size();j++){
-								errori.append("- "+idPDs.get(j).toString()+"<BR>");
-							}
-							continue;
-						}
-						
-					}else{
-						
-						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
-						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
-						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
-						errori.append("Risorsa "+nomeRisorsa+" non rimuovibile poiche' l'accordo di servizio parte comune viene implementato dai seguenti servizi: <br>");
-						for(int j=0; j<idServiziWithAccordo.size();j++){
-							errori.append("- "+idServiziWithAccordo.get(j).toString()+"<br>");
+						errori.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in porte applicative: <BR>");
+						for(int j=0;j<idPAs.size();j++){
+							errori.append("- "+idPAs.get(j).toString()+"<BR>");
 						}
 						continue;
-						
+					}
+					if (porteDelegateCore.existsPortaDelegataAzione(nomeRisorsa)) {
+						List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeRisorsa);
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Risorsa '"+methodPath+"' non rimuovibile poichè in uso in porte delegate: <BR>");
+						for(int j=0;j<idPDs.size();j++){
+							errori.append("- "+idPDs.get(j).toString()+"<BR>");
+						}
+						continue;
 					}
 					
 				}

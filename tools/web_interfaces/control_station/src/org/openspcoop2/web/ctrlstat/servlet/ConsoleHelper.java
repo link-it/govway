@@ -5269,6 +5269,9 @@ public class ConsoleHelper {
 			for (String string : azioni.keySet()) {
 				azioniDisponibiliList[i] = string;
 				azioniDisponibiliLabelList[i] = azioni.get(string);
+				if("Qualsiasi".equals(azioniDisponibiliLabelList[i])) {
+					azioniDisponibiliLabelList[i] = "Method e Path Qualsiasi";
+				}
 				i++;
 			}
 		}
@@ -5283,7 +5286,7 @@ public class ConsoleHelper {
 			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI;
 			values[0] = CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA;
 			for (int i =0; i < azioni.length ; i ++) {
-				labels[i+1] = azioni[i];
+				labels[i+1] = azioniLabels[i];
 				values[i+1] = azioni[i];
 			}
 			

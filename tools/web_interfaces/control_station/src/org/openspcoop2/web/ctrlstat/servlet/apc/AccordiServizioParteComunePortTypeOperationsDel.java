@@ -38,6 +38,8 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -165,7 +167,10 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 					}
 				}
 				if(tmp.size()>0){
-					errori.append("Azione "+nomeop+" non rimuovibile poiche' perche' correlata ad altre azioni:<BR>" );
+					if(errori.length()>0) {
+						errori.append("<BR>");
+					}
+					errori.append("Azione "+nomeop+" non rimuovibile poichè perche' correlata ad altre azioni:<BR>" );
 					for(int p=0; p<tmp.size();p++){
 						errori.append("- "+tmp.get(p)+"<BR>");
 					}
@@ -176,12 +181,39 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
 				if(idServiziWithPortType!=null && idServiziWithPortType.size()>0){
 				
+					// Se esiste un mapping
+					List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMappingConGruppiPerAzione(nomeop, idServiziWithPortType);
+					if(lPA!=null && !lPA.isEmpty()) {
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Azione "+nomeop+" non rimuovibile poichè riassegnata in un gruppo dell'erogazione del servizio: <BR>");
+						for(int j=0;j<lPA.size();j++){
+							errori.append("- "+lPA.get(j).getIdServizio()+" (gruppo: '"+lPA.get(j).getDescrizione()+"')<BR>");
+						}
+						continue;
+					}
+					List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMappingConGruppiPerAzione(nomeop, idServiziWithPortType);
+					if(lPD!=null && !lPD.isEmpty()) {
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Azione "+nomeop+" non rimuovibile poichè riassegnata in un gruppo della fruizione del servizio: <BR>");
+						for(int j=0;j<lPD.size();j++){
+							errori.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+") (gruppo: '"+lPD.get(j).getDescrizione()+"')<BR>");
+						}
+						continue;
+					}
+					
 					if(apcCore.isUnicaAzioneInAccordi(nomeop)){
 						
 						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti.
 						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeop)) {
 							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeop);
-							errori.append("Azione "+nomeop+" non rimuovibile poiche' in uso in porte applicative: <BR>");
+							if(errori.length()>0) {
+								errori.append("<BR>");
+							}
+							errori.append("Azione "+nomeop+" non rimuovibile poichè in uso in porte applicative: <BR>");
 							for(int j=0;j<idPAs.size();j++){
 								errori.append("- "+idPAs.get(j).toString()+"<BR>");
 							}
@@ -189,7 +221,10 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 						}
 						if (porteDelegateCore.existsPortaDelegataAzione(nomeop)) {
 							List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeop);
-							errori.append("Azione "+nomeop+" non rimuovibile poiche' in uso in porte delegate: <BR>");
+							if(errori.length()>0) {
+								errori.append("<BR>");
+							}
+							errori.append("Azione "+nomeop+" non rimuovibile poichè in uso in porte delegate: <BR>");
 							for(int j=0;j<idPDs.size();j++){
 								errori.append("- "+idPDs.get(j).toString()+"<BR>");
 							}
@@ -199,9 +234,12 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 					}else{
 						
 						// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
-						// poiche' non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
-						// Allora non permetto l'eliminazione poiche' esistono dei servizi che implementano l'accordo
-						errori.append("Azione "+nomeop+" non rimuovibile poiche' il servizio "+nomept+" dell'accordo viene implementato da accordi di servizio parte specifica: <br>");
+						// poichè non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
+						// Allora non permetto l'eliminazione poichè esistono dei servizi che implementano l'accordo
+						if(errori.length()>0) {
+							errori.append("<BR>");
+						}
+						errori.append("Azione "+nomeop+" non rimuovibile poichè il servizio "+nomept+" dell'accordo viene implementato da accordi di servizio parte specifica: <br>");
 						for(int j=0; j<idServiziWithPortType.size();j++){
 							errori.append("- "+idServiziWithPortType.get(j).toString()+"<br>");
 						}

@@ -25,6 +25,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,14 +36,18 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -110,8 +115,27 @@ public final class PorteApplicativeAzioneList extends Action {
 				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+pa.getNome();
 			}
 			
+			MappingErogazionePortaApplicativa mappingErogazione = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+			List<String> listaAzioni = null;
+			if(mappingErogazione!=null && mappingErogazione.isDefault()) {
+				// calcolo azioni rimaste
+				List<IDServizio> listId = new ArrayList<>();
+				listId.add(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps));
+				List<MappingErogazionePortaApplicativa> lista = porteApplicativeCore.getMapping(listId, false, true);
+				if(lista!=null && !lista.isEmpty()) {
+					AccordiServizioParteSpecificaHelper aspsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					Map<String,String> azioni = porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+					List<String> azioniL = new ArrayList<>();
+					if(azioni != null && azioni.size() > 0)
+						azioniL.addAll(azioni.keySet());
+					listaAzioni = aspsHelper.getAllActionsNotRedefinedMappingErogazione(azioniL, lista);
+				}
+			}
+			else {
+				listaAzioni = pa.getAzione().getAzioneDelegataList(); 
+			}
+			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
-			List<String> listaAzioni = pa.getAzione().getAzioneDelegataList();
 			List<Parameter> listaParametriSessione = new ArrayList<>();
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta));
 			listaParametriSessione.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
@@ -119,6 +143,12 @@ public final class PorteApplicativeAzioneList extends Action {
 			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 	
+			if(mappingErogazione!=null && mappingErogazione.isDefault()) {
+				pd.setAddButton(false);
+				pd.setRemoveButton(false);
+				pd.setSelect(false);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

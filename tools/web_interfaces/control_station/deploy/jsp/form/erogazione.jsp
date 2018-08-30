@@ -82,6 +82,11 @@
 	
 	String classSpanNoEdit="spanNoEdit";
 	String classDivNoEdit="divNoEdit";
+	
+    DataElement deCheckBox = !vectorCheckBox.isEmpty() ? (DataElement) vectorCheckBox.elementAt(0) : null;
+    String imageCheckBox = deCheckBox != null ?  deCheckBox.getValue() : null ;
+	String tooltipCheckBox = deCheckBox != null ? (!deCheckBox.getToolTip().equals("") ? " title=\"" + deCheckBox.getToolTip() + "\"" : "") : "";
+	
 %>
 <tbody>
 	<% if(titoloSezione != null) { %>
@@ -120,7 +125,7 @@
 							
 							<table class="<%=classTabellaPanelLista %>">
 								<%
-							
+									boolean firstText = true;
 							for (int i = 0; i < vectorRiepilogo.size(); i++) {
 								DataElement de = (DataElement) vectorRiepilogo.elementAt(i);
 							  
@@ -169,18 +174,28 @@
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
+														<% if(firstText && deCheckBox != null){%>
+															<span class="<%=classSpanNoEdit %>-image" id="iconTitoloLeft">
+																<img src="images/tema_link/<%= imageCheckBox %>" <%= tooltipCheckBox %>/>
+															</span>
+														<% } %>
 						                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
 													<% if(!de.getUrl().equals("")){
 					                					String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 					                					String classLink = "";
+					                					String deTarget = " ";
+												  		if (!de.getTarget().equals("")) {
+												  			deTarget = " target=\""+ de.getTarget() +"\"";
+												  		}
+												  		String deIconName = de.getLabelRight();
 					                					%>
-					                					<a class="edit-link <%= classLink %>" <%= deTip %> href="<%= de.getUrl() %>" type="button">
-					                					<span class="icon-box">
-															<i class="material-icons md-18">&#xE3C9;</i>
-														</span>
-					                				</a>
+					                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
+					                						<span class="icon-box">
+																<i class="material-icons md-18"><%= deIconName %></i>
+															</span>
+					                					</a>
 					                				<%
 							                		} // end edit-link
 													%>
@@ -188,6 +203,7 @@
 												</td>
 											</tr>
 				                			<%
+				                				firstText = false;
 					                		} else { // else text
 					                		} // end else text
 											%>
@@ -206,18 +222,6 @@
 										<div class="riepilogo-links">
 											
 											<%	
-											for (int j = 0; j < vectorCheckBox.size(); j++) {
-											    DataElement de = (DataElement) vectorCheckBox.elementAt(j);
-											    String image = de.getValue();
-								  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
-											  	%>
-										  			<span class="riepilogo-links-pipe" id="iconConfigurazione_<%=j %>">
-														<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
-													</span>
-										  		<%
-											  	
-											} // for
-											
 											for (int i = 0; i < vectorLink.size(); i++) {
 												DataElement de = (DataElement) vectorLink.elementAt(i);
 											  
@@ -237,7 +241,7 @@
 							            				<span><a href="<%= de.getUrl() %>" <%= deTip %> ><%= de.getValue() %></a></span>
 							            			<%
 							            		}
-											}
+											} // for
 											%>
 										</div>
 									</td>

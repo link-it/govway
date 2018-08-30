@@ -908,6 +908,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
 				pNomeServizio, pTipoServizio, pIdSoggettoErogatore);
 		de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO));
+		de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 		dati.addElement(de);
 		
 		// soggetto erogatore
@@ -940,7 +941,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, 
 				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getIdAccordo() + ""),
 				new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME, as.getNome()), pTipoAccordo);
-		de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
+		de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
+		de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
+		de.setTarget("_blank"); 
 		dati.addElement(de);
 
 
@@ -973,6 +976,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
 			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE));
+			de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
 
@@ -1036,6 +1040,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+				de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				de.setType(DataElementType.TEXT);
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaServizioApplicativo.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
@@ -1125,6 +1130,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
 			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE));
+			de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			de.setType(DataElementType.TEXT);
 			String urlInvocazione = "";
 			ConfigurazioneProtocollo configProt = this.confCore.getConfigurazioneProtocollo(protocollo);
@@ -1188,6 +1194,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 				de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE));
+				de.setLabelRight(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 				de.setType(DataElementType.TEXT);
 				org.openspcoop2.core.registry.Connettore connettore = fruitore.getConnettore();
 				Map<String, String> props = connettore.getProperties();

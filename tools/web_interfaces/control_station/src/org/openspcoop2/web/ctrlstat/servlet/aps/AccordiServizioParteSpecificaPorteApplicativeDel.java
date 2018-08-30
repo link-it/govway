@@ -162,7 +162,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 					// Elimino entrambi gli oggetti
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
 				} else {
-					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT;
+					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE;
 				}
 			}// for
 			

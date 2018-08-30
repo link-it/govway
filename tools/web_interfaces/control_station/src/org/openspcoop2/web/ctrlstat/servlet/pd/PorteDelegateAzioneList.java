@@ -25,6 +25,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,14 +36,18 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -112,7 +117,26 @@ public final class PorteDelegateAzioneList extends Action {
 				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+nomePorta;
 			}
 			
-			List<String> listaAzioni = portaDelegata.getAzione().getAzioneDelegataList();
+			MappingFruizionePortaDelegata mappingFruizione = porteDelegateCore.getMappingFruizionePortaDelegata(portaDelegata);
+			List<String> listaAzioni = null;
+			if(mappingFruizione!=null && mappingFruizione.isDefault()) {
+				// calcolo azioni rimaste
+				List<IDServizio> listId = new ArrayList<>();
+				listId.add(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps));
+				List<MappingFruizionePortaDelegata> lista = porteDelegateCore.getMapping(listId, false, true);
+				if(lista!=null && !lista.isEmpty()) {
+					AccordiServizioParteSpecificaHelper aspsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+					Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+					List<String> azioniL = new ArrayList<>();
+					if(azioni != null && azioni.size() > 0)
+						azioniL.addAll(azioni.keySet());
+					listaAzioni = aspsHelper.getAllActionsNotRedefinedMappingFruizione(azioniL, lista);
+				}
+			}
+			else {
+				listaAzioni = portaDelegata.getAzione().getAzioneDelegataList(); 
+			}
+			
 			List<Parameter> listaParametriSessione = new ArrayList<>();
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta));
 			listaParametriSessione.add(new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg));
@@ -124,6 +148,12 @@ public final class PorteDelegateAzioneList extends Action {
 			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
 					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 	
+			if(mappingFruizione!=null && mappingFruizione.isDefault()) {
+				pd.setAddButton(false);
+				pd.setRemoveButton(false);
+				pd.setSelect(false);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI

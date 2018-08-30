@@ -1232,7 +1232,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public List<Fruitore> serviziFruitoriList(int idServizi, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Fruitore> serviziFruitoriList(long idServizi, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "serviziFruitoriList";
 		DriverControlStationDB driver = null;

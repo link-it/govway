@@ -1089,6 +1089,11 @@ p.note.labelLong {
 /* 	vertical-align: middle; */
 }
 
+.spanNoEdit-image {
+	vertical-align: sub;
+	margin-right: 4px;
+}
+
 .divNoEdit {
 	padding-top: 6px;
 }

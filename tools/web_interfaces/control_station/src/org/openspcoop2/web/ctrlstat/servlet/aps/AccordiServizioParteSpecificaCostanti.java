@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -358,5 +359,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_USO_ACCORDO_SERVIZIO_CON_VISIBILITA_PRIVATA_IN_UN_SERVIZIO_CON_VISIBILITA_PUBBLICA = "Non &egrave; possibile utilizzare un accordo di servizio con visibilit&agrave; privata, in un servizio con visibilit&agrave; pubblica.";
 	public static final String MESSAGGIO_ERRORE_PRIMA_DI_POTER_DEFINIRE_UN_ACCORDO_PARTE_SPECIFICA_DEVE_ESSERE_CREATO_UN_SERVIZIO_APPLICATIVO_EROGATO_DAL_SOGGETTO_X_Y = "Prima di poter definire un accordo parte specifica deve essere creato un servizio applicativo erogato dal soggetto {0}/{1}";
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_CREARE_L_ACCORDO_PARTE_SPECIFICA_SENZA_SELEZIONARE_UN_SERVIZIO_APPLICATIVO_EROGATORE = "Non &egrave; possibile creare l'accordo parte specifica senza selezionare un servizio applicativo erogatore";
-	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT = "Impossibile eliminare la configurazione di Default";
+	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"'";
+	public static final String MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_FRUIZIONE = "Non è possibile eliminare il gruppo '"+Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"'";
 }

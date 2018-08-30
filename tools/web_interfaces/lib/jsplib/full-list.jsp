@@ -629,8 +629,17 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							</td>
 						</tr>
 						<% 
-					}
-					else{
+					} else if(pd.getAddButton()) {
+						%>
+						<tr>
+							<td colspan=<%= labelLength + 1 %> class="buttonrow">
+								<div class="buttonrowlista">
+									<input type="button" onClick="AddEntry()" value='Aggiungi' />
+								</div>
+							</td>
+						</tr>
+						<%
+					} else{
 						%>
 						 <tr class="buttonrownobuttons">
 						  <td colspan="<%= labelLength + 1 %>">&nbsp;</td>
