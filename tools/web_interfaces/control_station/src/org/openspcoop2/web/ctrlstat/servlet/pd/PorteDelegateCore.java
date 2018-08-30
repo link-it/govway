@@ -849,6 +849,9 @@ public class PorteDelegateCore extends ControlStationCore {
 		String prefix = "";
 		if(functionDi!=null) {
 			prefix = functionDi;
+			if(showGroup) {
+				prefix = convertPrefixConfigDelGruppo(prefix);
+			}
 		}
 		
 		MappingFruizionePortaDelegata mapping = this.getMappingFruizionePortaDelegata(pd);

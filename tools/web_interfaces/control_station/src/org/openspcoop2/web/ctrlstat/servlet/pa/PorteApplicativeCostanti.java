@@ -433,8 +433,8 @@ public class PorteApplicativeCostanti {
 //	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Sicurezza Messaggio response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Parametri della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Parametri della Risposta";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Schema Sicurezza";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Schema Sicurezza";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Richiesta - Schema Sicurezza";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG = "Risposta - Schema Sicurezza";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM = "MTOM";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM_CONFIG = "Configurazione MTOM";
