@@ -645,6 +645,79 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
+	public List<MappingErogazionePortaApplicativa> getMappingConGruppiPerAzione(String nomeAzione, List<IDServizio> list) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMappingConGruppiPerAzione";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			List<MappingErogazionePortaApplicativa> listInUtilizzo = new ArrayList<>();
+			
+			for (IDServizio idServizio : list) {
+				List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+				if(lPA!=null && lPA.size()>0) {
+					for (MappingErogazionePortaApplicativa mapping : lPA) {
+						try {
+							PortaApplicativa pa = this.getPortaApplicativa(mapping.getIdPortaApplicativa());
+							if(pa!=null && pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null &&
+									pa.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
+								listInUtilizzo.add(mapping);
+							}
+						}catch(DriverConfigurazioneNotFound notFound) {}
+					}
+				}
+			}
+			
+			return listInUtilizzo;
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<MappingErogazionePortaApplicativa> getMapping(List<IDServizio> list, boolean addDefault, boolean addNotDefault) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMapping";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			List<MappingErogazionePortaApplicativa> listMappingDefault = new ArrayList<>();
+			
+			for (IDServizio idServizio : list) {
+				List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+				if(lPA!=null && lPA.size()>0) {
+					for (MappingErogazionePortaApplicativa mapping : lPA) {
+						if(mapping.isDefault()) {
+							if(addDefault) {
+								listMappingDefault.add(mapping);
+							}
+						}
+						else {
+							if(addNotDefault) {
+								listMappingDefault.add(mapping);
+							}
+						}
+					}
+				}
+			}
+			
+			return listMappingDefault;
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public List<IDPortaApplicativa> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getPortaApplicativaAzione";

@@ -57,12 +57,14 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -419,6 +421,103 @@ public class PorteDelegateCore extends ControlStationCore {
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<MappingFruizionePortaDelegata> getMappingConGruppiPerAzione(String nomeAzione, List<IDServizio> list) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMappingConGruppiPerAzione";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			List<MappingFruizionePortaDelegata> listInUtilizzo = new ArrayList<>();
+			
+			for (IDServizio idServizio : list) {
+				
+				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
+				Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+				Search s = new Search(true);
+				List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+				if(listFruitori!=null && !listFruitori.isEmpty()) {
+				
+					for (Fruitore fruitore : listFruitori) {
+						IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+						List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+						if(lPD!=null && lPD.size()>0) {
+							for (MappingFruizionePortaDelegata mapping : lPD) {
+								try {
+									PortaDelegata pd = this.getPortaDelegata(mapping.getIdPortaDelegata());
+									if(pd!=null && pd.getAzione()!=null && pd.getAzione().getAzioneDelegataList()!=null &&
+											pd.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
+										listInUtilizzo.add(mapping);
+									}
+								}catch(DriverConfigurazioneNotFound notFound) {}
+							}
+						}
+					}
+					
+				}
+			}
+			
+			return listInUtilizzo;
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<MappingFruizionePortaDelegata> getMapping(List<IDServizio> list, boolean addDefault, boolean addNotDefault) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getMapping";
+		
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			List<MappingFruizionePortaDelegata> listMappingDefault = new ArrayList<>();
+			
+			for (IDServizio idServizio : list) {
+				
+				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
+				Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+				Search s = new Search(true);
+				List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+				if(listFruitori!=null && !listFruitori.isEmpty()) {
+				
+					for (Fruitore fruitore : listFruitori) {
+						IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+						List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+						if(lPD!=null && lPD.size()>0) {
+							for (MappingFruizionePortaDelegata mapping : lPD) {
+								if(mapping.isDefault()) {
+									if(addDefault) {
+										listMappingDefault.add(mapping);
+									}
+								}
+								else {
+									if(addNotDefault) {
+										listMappingDefault.add(mapping);
+									}
+								}
+							}
+						}
+					}
+					
+				}
+			}
+			
+			return listMappingDefault;
+
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
