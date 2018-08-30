@@ -570,7 +570,19 @@ public final class PorteDelegateChange extends Action {
 				}
 				else if(datiAltro) {
 					lstParam.remove(lstParam.size()-1);
-					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					
+					String labelPerPorta = null;
+					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+						labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+								PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI,
+								PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE,
+								pde);
+					}
+					else {
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI+pde.getNome();
+					}				
+					lstParam.add(new Parameter(labelPerPorta,  null));
+					//lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
 					nomeBreadCrumb=null;
 				}
 				else {

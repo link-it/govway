@@ -5521,6 +5521,14 @@ public class ControlStationCore {
 		}			
 	}
 	
+	public String convertPrefixConfigDelGruppo(String prefix) {
+		String key = " di ";
+		if(prefix.endsWith(key)) {
+			return prefix.substring(0, prefix.length()-key.length())+" del gruppo ";
+		}
+		return prefix;
+	}
+	
 	public String getLabelGroup(String groupName) {
 		return "'"+groupName+"'";
 	}

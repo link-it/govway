@@ -1006,6 +1006,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 		String prefix = "";
 		if(functionDi!=null) {
 			prefix = functionDi;
+			if(showGroup) {
+				prefix = convertPrefixConfigDelGruppo(prefix);
+			}
 		}
 		
 		MappingErogazionePortaApplicativa mapping = this.getMappingErogazionePortaApplicativa(pa);
