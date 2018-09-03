@@ -6,7 +6,7 @@ then
 	IS_SNAPSHOT="$1"
 fi
 
-OPENSPCOOP_VERSION="$(svn info | grep URL | grep -v "Relative URL" | cut -d '/' -f 7)"
+OPENSPCOOP_VERSION="3.0"
 #utilizzare per le versioni di svn >= 1.8
 #OPENSPCOOP_VERSION="$(svn info | grep 'URL: svn' | cut -d '/' -f 7)"
 
@@ -52,6 +52,8 @@ echo "MVN_VERSION [" $MVN_VERSION "]"
 
 echo "Generazione dei JAR completa."
 
+
+
 echo "Deploy del JAR $UTILS_JAR in corso..."
 
 echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
@@ -61,7 +63,45 @@ echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://ww
 
 mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/$UTILS_JAR"_"$MVN_VERSION.pom -Dfile=dist/$UTILS_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
 
+rm -f "dist/${UTILS_JAR}_${MVN_VERSION}.pom"
+
 echo "Deploy del JAR $UTILS_JAR completato."
+
+
+
+LIST_PACKAGE_UTILS="beans cache checksum crypt csv datasource date dch digest id io jaxb jdbc jmx json logger mail mime openapi properties regexp resources rest security semaphore serialization sonde sql threads transport wadl wsdl xacml xml2json xml"
+
+for packageName in ${LIST_PACKAGE_UTILS}
+do
+	echo "Deploy del JAR $UTILS_JAR (${packageName}) in corso..."
+
+	echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+		xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
+		<artifactId>$UTILS_JAR-${packageName}</artifactId><groupId>org.openspcoop2.utils</groupId><version>$MVN_VERSION</version><modelVersion>4.0.0</modelVersion>
+		<name>Openspcoop2 Utils - ${packageName}</name></project>" > "dist/utils/${UTILS_JAR}-${packageName}_${MVN_VERSION}.pom"
+
+	mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/utils/$UTILS_JAR"-"${packageName}"_"$MVN_VERSION.pom -Dfile=dist/utils/$UTILS_JAR"-"${packageName}"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
+
+	rm -f "dist/utils/${UTILS_JAR}-${packageName}_${MVN_VERSION}.pom"
+
+	echo "Deploy del JAR $UTILS_JAR (${packageName}) completato."	
+done
+
+echo "Deploy del JAR $UTILS_JAR (base) in corso..."
+
+echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
+        <artifactId>$UTILS_JAR-core</artifactId><groupId>org.openspcoop2.utils</groupId><version>$MVN_VERSION</version><modelVersion>4.0.0</modelVersion>
+        <name>Openspcoop2 Utils - Base</name></project>" > "dist/utils/${UTILS_JAR}-base_${MVN_VERSION}.pom"
+
+mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/utils/$UTILS_JAR"-base_"$MVN_VERSION.pom -Dfile=dist/utils/$UTILS_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
+
+rm -f "dist/utils/${UTILS_JAR}-base_${MVN_VERSION}.pom"
+
+echo "Deploy del JAR $UTILS_JAR (base) completato."
+
+
+
 
 echo "Deploy del JAR $GENERIC_PROJECT_JAR in corso..."
 
@@ -72,7 +112,12 @@ echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://ww
 
 mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/$GENERIC_PROJECT_JAR"_"$MVN_VERSION.pom -Dfile=dist/$GENERIC_PROJECT_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
 
+rm -f "dist/${GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
+
 echo "Deploy del JAR $GENERIC_PROJECT_JAR completato."
+
+
+
 
 echo "Deploy del JAR $WEB_GENERIC_PROJECT_JAR in corso..."
 
@@ -99,16 +144,17 @@ echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://ww
 
 mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/$WEB_GENERIC_PROJECT_JAR"_"$MVN_VERSION.pom -Dfile=dist/$WEB_GENERIC_PROJECT_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
 
+rm -f "dist/${WEB_GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
+
 echo "Deploy del JAR $WEB_GENERIC_PROJECT_JAR completato."
 
-rm -f "dist/${WEB_GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
-rm -f "dist/${GENERIC_PROJECT_JAR}_${MVN_VERSION}.pom"
-rm -f "dist/${UTILS_JAR}_${MVN_VERSION}.pom"
 
 echo "Installazione JAR Openspcoop2 Utils, GenericProject, WebGenericProject nel repository Link.it completata."
 
+
 popd
 echo "Position: [${PWD}]"
+
 
 echo "Installazione JAR Openspcoop2 WebGenericProjectImpl nel repository Link.it in corso..."
 
@@ -150,6 +196,9 @@ echo "Installazione JAR Openspcoop2 WebGenericProjectImpl nel repository Link.it
 
 rm -f ../web_generic_project/impl/pom.xml
 rm -f ../web_generic_project/pom.xml
+
+
+
 
 
 if [ "$IS_SNAPSHOT" == "false" ]
