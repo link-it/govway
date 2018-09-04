@@ -196,7 +196,7 @@ public class SignPartialMessageProcessor implements Processor {
         // NOTA:
         // Vi sono fondamentalmente due versioni di XMLSignature con classi correlate.
         // - com.sun.org.apache.xml.internal.security.signature: presente nel runtime di java
-        // - org.apache.xml.security.signature: presente in xmlsec-2.0.7.jar
+        // - org.apache.xml.security.signature: presente in xmlsec-2.1.2.jar
         //
         // A seconda della versione utilizzata devono essere implementate delle classi a corredo:
         // - com.sun.org.apache.xml.internal.security.transforms.TransformSpi implementato tramite org.openspcoop2.security.message.signature.SunAttachmentContentTransform

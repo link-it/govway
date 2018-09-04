@@ -28,7 +28,7 @@
 			<include name="**/security/*"/>
 			<include name="**/httpcore/*"/>
 			<include name="**/commons/*"/>
-			<exclude name="**/shared/saxon*"/>
+			<exclude name="**/shared/Saxon*"/>
 			<include name="**/shared/*"/>
             		<include name="**/spring/*"/>
 		</fileset>

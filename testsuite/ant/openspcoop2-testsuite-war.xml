@@ -101,17 +101,23 @@
 				<include name="openspcoop2*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/axis14">
-				<include name="axis-1.4.jar"/>
+				<include name="axis-1.4.gw.jar"/>
 				<include name="axis-saaj-1.4.jar"/>
-				<include name="axis-jaxrpc-1.4.jar"/>
+				<include name="axis-jaxrpc-1.4.gw.jar"/>
 				<include name="wss4j-1.5.11.jar"/>
 				<include name="opensaml-1.1b.jar"/>
 				<include name="xmlsec-1.4.4.jar"/>
+				<include name="mailapi-1.5.6.jar"/> 
 			</lib>
 			<lib dir="${required_lib}/shared">
+				<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
+												e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
+																									Missing End Boundary for Mime Package : EOF while skipping headers 
+					Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
+				--> 
+				<!-- <include name="mailapi-1.6.2.jar"/> -->
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="activation-1.1.1.jar"/>
-				<include name="mailapi-1.5.6.jar"/>
 				<include name="addressing-1.1.jar"/>
 				<include name="soap.jar"/>
 				<include name="${xerces_jar}"/>
@@ -120,15 +126,15 @@
 				<include name="${xalan_serializer_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.10.jar"/>
+				<include name="commons-codec-1.11.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.5.jar"/>
+				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-155.jar"/>
+				<include name="bcprov-ext-jdk15on-160.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
@@ -137,7 +143,7 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-api-1.7.25.gw.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">

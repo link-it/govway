@@ -66,8 +66,8 @@ public class CostantiErroriIntegrazione {
 	/** String che contiene un codice di errore OpenSPCoop2: AutenticazioneFallita in msg*/
 	public final static String MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
 	/** String che contiene un codice di errore OpenSPCoop2: AutenticazioneFallita in msg*/
-	public final static String MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA = "L'identità del servizio applicativo fornita [SERVIZIO_APPLICATIVO] non esiste nella configurazione della Porta di Dominio";
-
+	public final static String MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA = "Autenticazione fallita, L'identità del servizio applicativo fornita [SERVIZIO_APPLICATIVO] non esiste nella configurazione"; 
+	
 	/** String che contiene un codice di errore OpenSPCoop2: Pattern di ricerca PD non valido in msg*/
 	public final static String MSG_403_PD_PATTERN_AZIONE_NON_VALIDA = "Identificazione dinamica dell'azione associata alla porta delegata fallita";
 	
@@ -171,8 +171,8 @@ public class CostantiErroriIntegrazione {
 			"Errore durante il processamento del messaggio di risposta da parte del SOAPEngine: ";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Header senza Actor con MustUnderstand="1" non bypassabile*/
-	public final static String MSG_427_MUSTUNDERSTAND_ERROR =  
-			"La Porta di Dominio non è in grado di processare i seguenti \"MustUnderstand\" header(s): ";
+	public final static String MSG_427_MUSTUNDERSTAND_ERROR = 
+			"Riscontrati header(s) \"MustUnderstand\" non processabili:"; 
 	
 	/** String che contiene un codice di errore OpenSPCoop2: AutorizzazioneFallita in msg*/
 	public final static String MSG_428_AUTORIZZAZIONE_CONTENUTO_FALLITA = 
@@ -195,7 +195,7 @@ public class CostantiErroriIntegrazione {
 	
 	/** String che contiene un codice di errore per messaggi malformati */
 	public final static String MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA =  
-			"Il contenuto applicativo della richiesta ricevuta non è processabile dalla Porta di Dominio";
+			"Il contenuto applicativo della richiesta ricevuta non è processabile:";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Content Type non presente*/
 	public final static String MSG_433_CONTENT_TYPE_NON_PRESENTE = 

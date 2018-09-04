@@ -338,12 +338,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msgRisposta = null;
 		if(use_axis14_engine){
-			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 			msgRisposta = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO, msg);
 		}
 		else{
-			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 			org.openspcoop2.pdd.services.cxf.IntegrationManagerMessage msgRisposta_cxf = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO, toIntegrationManagerMessage_cxf(msg));
 			msgRisposta = toIntegrationManagerMessage_axis14(msgRisposta_cxf);
@@ -481,12 +481,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msgRisposta = null;
 		if(use_axis14_engine){
-			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					"profiloAsincrono_richiestaAsincrona","123456");
 			msgRisposta = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA, msg);
 		}
 		else{
-			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					"profiloAsincrono_richiestaAsincrona","123456");
 			org.openspcoop2.pdd.services.cxf.IntegrationManagerMessage msgRisposta_cxf = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA, toIntegrationManagerMessage_cxf(msg));
 			msgRisposta = toIntegrationManagerMessage_axis14(msgRisposta_cxf);
@@ -692,12 +692,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage msgRisposta = null;
 		if(use_axis14_engine){
-			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.axis14.PD_PortType im = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					"profiloAsincrono_richiestaSincrona","123456");
 			msgRisposta = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA, msg);
 		}
 		else{
-			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			org.openspcoop2.pdd.services.cxf.PD im = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					"profiloAsincrono_richiestaSincrona","123456");
 			org.openspcoop2.pdd.services.cxf.IntegrationManagerMessage msgRisposta_cxf = im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA, toIntegrationManagerMessage_cxf(msg));
 			msgRisposta = toIntegrationManagerMessage_axis14(msgRisposta_cxf);
@@ -1194,13 +1194,13 @@ public class IntegrationManager {
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop3_axis14 = null;
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilCredenzialiErrate_axis14 = null;
 		if(use_axis14_engine){
-			imSilGop1_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop1","123456");
-			imSilGop2_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop2_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop2","123456");
-			imSilGop3_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop3_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop3","123456");
-			imSilCredenzialiErrate_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilCredenzialiErrate_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"usernameNonEsistente","passwordErrata");
 		}
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
@@ -1208,13 +1208,13 @@ public class IntegrationManager {
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop3_cxf = null;
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilCredenzialiErrate_cxf = null;
 		if(use_cxf_engine){
-			imSilGop1_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop1","123456");
-			imSilGop2_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop2_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop2","123456");
-			imSilGop3_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop3_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"gop3","123456");
-			imSilCredenzialiErrate_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilCredenzialiErrate_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"usernameNonEsistente","passwordErrata");
 		}
 		
@@ -2263,19 +2263,19 @@ public class IntegrationManager {
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
 		org.openspcoop2.pdd.services.axis14.PD_PortType imSilGop1_invokePD_axis14 = null;
 		if(use_axis14_engine){
-			imSilGop1_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_axis14 = getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop1","123456");
 			imSilGop1_invokePD_axis14 = 
-					getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+					getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 						"gop1","123456");
 		}
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
 		org.openspcoop2.pdd.services.cxf.PD imSilGop1_invokePD_cxf = null;
 		if(use_cxf_engine){
-			imSilGop1_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_cxf = getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop1","123456");
 			imSilGop1_invokePD_cxf = 
-					getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+					getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 						"gop1","123456");
 		}
 
@@ -2501,12 +2501,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.PD_PortType im_axis14 = null;
 		if(use_axis14_engine){
-			im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 		}
 		org.openspcoop2.pdd.services.cxf.PD im_cxf = null;
 		if(use_cxf_engine){
-			im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 		}
 		
@@ -2619,12 +2619,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.PD_PortType imRichiestaStatoAsincrona_axis14 = null;
 		if(use_axis14_engine){
-			imRichiestaStatoAsincrona_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			imRichiestaStatoAsincrona_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 		}
 		org.openspcoop2.pdd.services.cxf.PD imRichiestaStatoAsincrona_cxf = null;
 		if(use_cxf_engine){
-			imRichiestaStatoAsincrona_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			imRichiestaStatoAsincrona_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					null,null);
 		}
 		
@@ -2752,12 +2752,12 @@ public class IntegrationManager {
 		// IntegrationManager
 		org.openspcoop2.pdd.services.axis14.PD_PortType im_axis14 = null;
 		if(use_axis14_engine){
-			im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			im_axis14 = getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					user,password);
 		}
 		org.openspcoop2.pdd.services.cxf.PD im_cxf = null;
 		if(use_cxf_engine){
-			im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"), 
+			im_cxf = getIntegrationManagerPD_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"), 
 					user,password);
 		}
 		

@@ -8580,14 +8580,14 @@
         <servizio-applicativo nome="govwayTestSuiteTunnelSOAP"> 
             <invocazione-servizio sbustamento-soap="abilitato">
                 <connettore tipo="http" nome="trace_echo">
-                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_tunnelSOAP?OpenSPCoop2TunnelSOAP=true" />
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_tunnelSOAP?govway_soap_tunnel=true" />
                 </connettore>
             </invocazione-servizio>  
         </servizio-applicativo>
         <servizio-applicativo nome="govwayTestSuiteTunnelSOAPMimeType"> 
             <invocazione-servizio sbustamento-soap="abilitato">
                 <connettore tipo="http" nome="trace_echo">
-                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_tunnelSOAP?OpenSPCoop2TunnelSOAP=true&#38;OpenSPCoop2TunnelSOAPMimeType=application/octet-stream" />
+                    <property nome="location" valore="http://localhost:8080/govwayTestSuite/server_tunnelSOAP?govway_soap_tunnel=true&#38;govway_soap_tunnel_mime=application/octet-stream" />
                 </connettore>
             </invocazione-servizio>  
         </servizio-applicativo>

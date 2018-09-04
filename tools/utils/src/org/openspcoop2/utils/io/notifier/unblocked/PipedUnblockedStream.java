@@ -53,6 +53,7 @@ public class PipedUnblockedStream extends InputStream {
 		this.sizeBuffer = sizeBuffer / 2; 
 	}
 	
+	private final Integer semaphore = 1;
 	private ByteArrayOutputStream bout = new ByteArrayOutputStream();
 	private byte [] bytesReceived = null;
 	private int indexNextByteReceivedForRead = -1;
@@ -136,7 +137,7 @@ public class PipedUnblockedStream extends InputStream {
 		if(this.bytesReceived==null){
 			//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE FROM PRECEDENT BUFFERING IS NULL ...");
 			//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC ...");
-			synchronized (this.bout) {
+			synchronized (this.semaphore) {
 				//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A1 ...");
 				this.bout.flush();
 				//this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A2 ...");
@@ -185,7 +186,7 @@ public class PipedUnblockedStream extends InputStream {
 		
 //		this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC ...");
 //		byte[] buffer = null;
-//		synchronized (this.bout) {
+//		synchronized (this.semaphore) {
 //			
 //			this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A1 ...");
 //			
@@ -284,7 +285,7 @@ public class PipedUnblockedStream extends InputStream {
 		}
 		
 		//this.log.debug("########### WRITE byte SYNC ...");
-		synchronized (this.bout) {
+		synchronized (this.semaphore) {
 			this.bout.write(b);
 			//this.log.debug("########### WRITE byte SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD[1] SIZE_ATTUALE["+this.bout.size()+"]");
@@ -305,7 +306,7 @@ public class PipedUnblockedStream extends InputStream {
 		}
 		
 		//this.log.debug("########### WRITE byte ["+b.length+"] SYNC ...");
-		synchronized (this.bout) {
+		synchronized (this.semaphore) {
 			this.bout.write(b);
 			//this.log.debug("########### WRITE byte ["+b.length+"] SYNC OK");
 			//System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");

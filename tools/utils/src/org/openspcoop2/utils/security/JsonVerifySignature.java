@@ -51,7 +51,7 @@ public class JsonVerifySignature {
 
 	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders(),false);
+			this.provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
 			this.representation = representation;
 		}catch(Throwable t) {
 			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);

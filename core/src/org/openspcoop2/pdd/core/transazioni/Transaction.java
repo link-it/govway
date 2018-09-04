@@ -52,9 +52,10 @@ public class Transaction {
 	}
 	
 	/** Indicazione se la transazione e' stata gestita (e quindi non piu' ulteriormente arricchibile) tramite le set e add */
+	private final Integer semaphore = 1;
 	private Boolean deleted = false;
 	public void setDeleted() {
-		synchronized (this.deleted) {
+		synchronized (this.semaphore) {
 			this.deleted = true;	
 		}
 	}
@@ -275,7 +276,7 @@ public class Transaction {
 	
 	public void setRequestInfo(RequestInfo requestInfo) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -288,7 +289,7 @@ public class Transaction {
 	
 	public void setUrlInvocazione(String urlInvocazione) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -301,7 +302,7 @@ public class Transaction {
 	
 	public void setTracciaRichiesta(Traccia tracciaRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -314,7 +315,7 @@ public class Transaction {
 
 	public void setTracciaRisposta(Traccia tracciaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -327,7 +328,7 @@ public class Transaction {
 	
 	public void addMsgDiagnostico(MsgDiagnostico msgDiag) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -340,7 +341,7 @@ public class Transaction {
 	
 	public void addMessaggio(Messaggio messaggio) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -353,7 +354,7 @@ public class Transaction {
 
 	public void setScenarioCooperazione(String scenarioCooperazione) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -366,7 +367,7 @@ public class Transaction {
 	
 	public void setCodiceTrasportoRichiesta(String codiceTrasportoRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -379,7 +380,7 @@ public class Transaction {
 	
 	public void setLocation(String location) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -392,7 +393,7 @@ public class Transaction {
 	
 	public void setTipoConnettore(String tipoConnettore) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -405,7 +406,7 @@ public class Transaction {
 	
 	public void setCredenziali(String credenziali) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -418,7 +419,7 @@ public class Transaction {
 
 	public void setFaultIntegrazione(String fault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -431,7 +432,7 @@ public class Transaction {
 	
 	public void setFormatoFaultIntegrazione(String formatoFault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -444,7 +445,7 @@ public class Transaction {
 	
 	public void setFaultCooperazione(String fault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -457,7 +458,7 @@ public class Transaction {
 	
 	public void setFormatoFaultCooperazione(String formatoFault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -470,7 +471,7 @@ public class Transaction {
 
 	public void setDataAccettazioneRichiesta(Date dataAccettazioneRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -483,7 +484,7 @@ public class Transaction {
 	
 	public void setDataIngressoRichiesta(Date dataIngressoRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -496,7 +497,7 @@ public class Transaction {
 
 	public void setDataUscitaRichiesta(Date dataUscitaRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -509,7 +510,7 @@ public class Transaction {
 
 	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -522,7 +523,7 @@ public class Transaction {
 	
 	public void setDataIngressoRisposta(Date dataIngressoRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -535,7 +536,7 @@ public class Transaction {
 
 	public void setDataUscitaRisposta(Date dataUscitaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -549,7 +550,7 @@ public class Transaction {
 	public void setCorrelazioneApplicativaRisposta(
 			String correlazioneApplicativaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -562,7 +563,7 @@ public class Transaction {
 	
 	public void addServizioApplicativoErogatore(String servizioApplicativoErogatore) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -578,7 +579,7 @@ public class Transaction {
 			throw new RuntimeException("EventoGestione ["+evento+"] non deve contenere il carattere ','");
 		}
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -591,7 +592,7 @@ public class Transaction {
 	
 	public void setInformazioniToken(InformazioniToken informazioniToken) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}
@@ -604,7 +605,7 @@ public class Transaction {
 	
 	public void setCredenzialiMittente(CredenzialiMittente credenzialiMittente) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			synchronized (this.deleted) {
+			synchronized (this.semaphore) {
 				if(this.deleted){
 					throw new TransactionDeletedException("Transaction eliminata");
 				}

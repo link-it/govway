@@ -52,7 +52,7 @@ public abstract class AbstractJson2Xml implements IJson2Xml{
 	
 	public AbstractJson2Xml() {
 		this.xmlUtils = XMLUtils.getInstance();
-		// si trova in: jaxp-ri-1.4.5.jar
+		// si trova in: jaxp-ri-1.4.5.gw.jar
 		this.transformerFactory = TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", this.getClass().getClassLoader());
 	}
 

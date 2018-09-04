@@ -39,7 +39,6 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -405,8 +404,8 @@ public class IntegrazioneCorrelazioneApplicativa {
 				String msgVerifica="identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione urlBased (Pattern:.+correlazioneApplicativa=([^&]*).*): nessun match trovato";
 				Reporter.log("Controllo fault string ["+msgVerifica+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgVerifica));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -900,10 +899,10 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
 								   
-				String msgCheck = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): Espressione XPATH non applicabile al messaggio: javax.xml.transform.TransformerException: Prefix must resolve to a namespace: test";
-				String msgCheck2 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): Espressione XPATH non applicabile al messaggio: javax.xml.xpath.XPathExpressionException: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
-				String msgCheck3 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): Espressione XPATH non applicabile al messaggio: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test"; 
-				String msgCheck4 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): Espressione XPATH non applicabile al messaggio: com.sun.org.apache.xpath.internal.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
+				String msgCheck = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: javax.xml.transform.TransformerException: Prefix must resolve to a namespace: test";
+				String msgCheck2 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: javax.xml.xpath.XPathExpressionException: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
+				String msgCheck3 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: org.apache.xpath.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test"; 
+				String msgCheck4 = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern://test:idApplicativo/text()): org.openspcoop2.utils.xml.XPathNotFoundException: Espressione XPATH non applicabile al messaggio: com.sun.org.apache.xpath.internal.domapi.XPathStylesheetDOM3Exception: Prefix must resolve to a namespace: test";
 				
 				Reporter.log("Controllo fault string 1["+msgCheck+"]");
 				Reporter.log("Controllo fault string 2["+msgCheck2+"]");
@@ -913,8 +912,8 @@ public class IntegrazioneCorrelazioneApplicativa {
 						error.getFaultString().contains(msgCheck2) || 
 						error.getFaultString().contains(msgCheck3) ||
 						error.getFaultString().contains(msgCheck4));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -1823,11 +1822,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"BEGIN-ID_\",//test:idApplicativo/text(),\"_END-ID\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"BEGIN-ID_\",//test:idApplicativo/text(),\"_END-ID\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3021,8 +3020,8 @@ public class IntegrazioneCorrelazioneApplicativa {
 				String msgErrore = "La gestione della funzionalità di correlazione applicativa, per il messaggio di richiesta, ha generato un errore: identificativo di correlazione applicativa per l'elemento [*] con modalita' di acquisizione inputBased non presente tra le informazioni di integrazione";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3445,11 +3444,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3469,7 +3468,7 @@ public class IntegrazioneCorrelazioneApplicativa {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())");
+		err.setMsgErrore("identificativo di correlazione applicativa non identificato nell'elemento [testNome1] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME1_\",//test:idApplicativo/text(),\"_NOME1\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())");
 		this.erroriAttesiOpenSPCoopCore.add(err);		
 	}
 	@DataProvider (name="SincronoCorrelazioneApplicativaScelteMultipleCaso1DatiMancanti")
@@ -4119,11 +4118,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [test:testNome4] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOMEXPATH1_\",//test:idApplicativo/text(),\"_NOMEXPATH1\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [test:testNome4] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOMEXPATH1_\",//test:idApplicativo/text(),\"_NOMEXPATH1\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -4350,11 +4349,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome5] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME5_\",//test:idApplicativo/text(),\"_NOME5\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [testNome5] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"NOME5_\",//test:idApplicativo/text(),\"_NOME5\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -4582,11 +4581,11 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [GOVWAY_ORG_416]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"ALL_\",//test:idApplicativo/text(),\"_ALL\")): nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
+				String msgErrore = "identificativo di correlazione applicativa non identificato nell'elemento [*] con modalita' di acquisizione contentBased (Pattern:concat_openspcoop(\"ALL_\",//test:idApplicativo/text(),\"_ALL\")): org.openspcoop2.utils.xml.XPathNotFoundException: nessun match trovato per l'espressione xpath contenuta in concat_openspcoop (//test:idApplicativo/text())";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(error.getFaultString().contains(msgErrore));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -4880,8 +4879,8 @@ public class IntegrazioneCorrelazioneApplicativa {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [EGOV_IT_300]");
 				Assert.assertTrue("EGOV_IT_300".equals(error.getFaultCode().getLocalPart()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}

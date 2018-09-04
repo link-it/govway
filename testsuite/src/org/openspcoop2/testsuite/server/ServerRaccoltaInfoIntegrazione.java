@@ -116,56 +116,56 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nel trasporto: "+idTrasporto);
 			if(idTrasporto==null){
 				this.log.error("Id della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, id non presente");
+				returnSOAPFault(response,"Trasporto, id non presente");
 				return;
 			} 
 			String idTipoMittente=request.getHeader(this.testsuiteProperties.getTipoMittenteTrasporto());
 			this.log.debug("trovato nel trasporto: "+idTipoMittente);
 			if(idTipoMittente==null){
 				this.log.error("Tipo mittente della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, tipo mittente non presente");
+				returnSOAPFault(response,"Trasporto, tipo mittente non presente");
 				return;
 			} 
 			String idMittente=request.getHeader(this.testsuiteProperties.getMittenteTrasporto());
 			this.log.debug("trovato nel trasporto: "+idMittente);
 			if(idMittente==null){
 				this.log.error("Mittente della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, mittente non presente");
+				returnSOAPFault(response,"Trasporto, mittente non presente");
 				return;
 			} 
 			String idTipoDestinatario=request.getHeader(this.testsuiteProperties.getTipoDestinatarioTrasporto());
 			this.log.debug("trovato nel trasporto: "+idTipoDestinatario);
 			if(idTipoDestinatario==null){
 				this.log.error("Tipo destinatario della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, tipo destinatario non presente");
+				returnSOAPFault(response,"Trasporto, tipo destinatario non presente");
 				return;
 			} 
 			String idDestinatario=request.getHeader(this.testsuiteProperties.getDestinatarioTrasporto());
 			this.log.debug("trovato nel trasporto: "+idDestinatario);
 			if(idDestinatario==null){
 				this.log.error("Destinatario della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, destinatario non presente");
+				returnSOAPFault(response,"Trasporto, destinatario non presente");
 				return;
 			} 
 			String idTipoServizio=request.getHeader(this.testsuiteProperties.getTipoServizioTrasporto());
 			this.log.debug("trovato nel trasporto: "+idTipoServizio);
 			if(idTipoServizio==null){
 				this.log.error("Tipo servizio della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, tipo servizio non presente");
+				returnSOAPFault(response,"Trasporto, tipo servizio non presente");
 				return;
 			} 
 			String idNomeServizio=request.getHeader(this.testsuiteProperties.getNomeServizioTrasporto());
 			this.log.debug("trovato nel trasporto: "+idNomeServizio);
 			if(idNomeServizio==null){
 				this.log.error("Nome Servizio della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, nome servizio non presente");
+				returnSOAPFault(response,"Trasporto, nome servizio non presente");
 				return;
 			} 
 			String idVersioneServizio=request.getHeader(this.testsuiteProperties.getVersioneServizioTrasporto());
 			this.log.debug("trovato nel trasporto: "+idVersioneServizio);
 			if(idVersioneServizio==null){
 				this.log.error("Versione Servizio della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, versione servizio non presente");
+				returnSOAPFault(response,"Trasporto, versione servizio non presente");
 				return;
 			} 
 			String idAzione=request.getHeader(this.testsuiteProperties.getAzioneTrasporto());
@@ -176,12 +176,12 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				this.log.debug("trovato nel trasporto: "+userAgent);
 				if(userAgent==null){
 					this.log.error(""+HttpConstants.USER_AGENT+" non presente nell'header di trasporto");
-					returnSOAPFault(response.getOutputStream(),"Trasporto, "+HttpConstants.USER_AGENT+" non presente");
+					returnSOAPFault(response,"Trasporto, "+HttpConstants.USER_AGENT+" non presente");
 					return;
 				} 
 				if(userAgent.contains("GovWay")==false){
-					this.log.error(""+HttpConstants.USER_AGENT+" con valore non atteso presente nell'header di trasporto (trovato:"+userAgent+" si attendeva un agent che contenesse la stringa OpenSPCoop)");
-					returnSOAPFault(response.getOutputStream(),"Trasporto, "+HttpConstants.USER_AGENT+" non valido");
+					this.log.error(""+HttpConstants.USER_AGENT+" con valore non atteso presente nell'header di trasporto (trovato:"+userAgent+" si attendeva un agent che contenesse la stringa GovWay)");
+					returnSOAPFault(response,"Trasporto, "+HttpConstants.USER_AGENT+" non valido");
 					return;
 				} 
 			}
@@ -190,7 +190,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nel trasporto: "+idTransazione);
 			if(idTransazione==null){
 				this.log.error("IdTransazione della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, IdTransazione non presente");
+				returnSOAPFault(response,"Trasporto, IdTransazione non presente");
 				return;
 			} 
 			
@@ -198,12 +198,12 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nel trasporto: "+xPdD);
 			if(xPdD==null){
 				this.log.error(""+CostantiPdD.HEADER_HTTP_X_PDD+" non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non presente");
+				returnSOAPFault(response,"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non presente");
 				return;
 			} 
 			if(xPdD.contains("GovWay")==false){
-				this.log.error(""+CostantiPdD.HEADER_HTTP_X_PDD+" con valore non atteso presente nell'header di trasporto (trovato:"+xPdD+" si attendeva un valore che contenesse la stringa OpenSPCoop)");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non valido");
+				this.log.error(""+CostantiPdD.HEADER_HTTP_X_PDD+" con valore non atteso presente nell'header di trasporto (trovato:"+xPdD+" si attendeva un valore che contenesse la stringa GovWay)");
+				returnSOAPFault(response,"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD+" non valido");
 				return;
 			} 
 			
@@ -211,7 +211,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nel trasporto: "+xDetails);
 			if(xDetails==null){
 				this.log.error(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS+" non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD_DETAILS+" non presente");
+				returnSOAPFault(response,"Trasporto, "+CostantiPdD.HEADER_HTTP_X_PDD_DETAILS+" non presente");
 				return;
 			} 
 			
@@ -226,108 +226,108 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Id della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, id non presente");
+				returnSOAPFault(response,"Url, id non presente");
 				return;
 			} 
 			if(param.equals(idTrasporto)==false){
 				this.log.error("Id trovato nel trasporto["+idTrasporto+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Id trovato nel trasporto["+idTrasporto+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Id trovato nel trasporto["+idTrasporto+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getTipoMittenteUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Tipo mittente della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, tipo mittente non presente");
+				returnSOAPFault(response,"Url, tipo mittente non presente");
 				return;
 			} 
 			if(param.equals(idTipoMittente)==false){
 				this.log.error("Tipo mittente trovato nel trasporto["+idTipoMittente+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Tipo mittente trovato nel trasporto["+idTipoMittente+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Tipo mittente trovato nel trasporto["+idTipoMittente+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getMittenteUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Mittente della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, mittente non presente");
+				returnSOAPFault(response,"Url, mittente non presente");
 				return;
 			} 
 			if(param.equals(idMittente)==false){
 				this.log.error("Mittente trovato nel trasporto["+idMittente+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Mittente trovato nel trasporto["+idMittente+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Mittente trovato nel trasporto["+idMittente+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getTipoDestinatarioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Tipo destinatario della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, tipo destinatario non presente");
+				returnSOAPFault(response,"Url, tipo destinatario non presente");
 				return;
 			} 
 			if(param.equals(idTipoDestinatario)==false){
 				this.log.error("Tipo destinatario trovato nel trasporto["+idTipoDestinatario+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Tipo destinatario trovato nel trasporto["+idTipoDestinatario+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Tipo destinatario trovato nel trasporto["+idTipoDestinatario+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getDestinatarioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Destinatario della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, destinatario non presente");
+				returnSOAPFault(response,"Url, destinatario non presente");
 				return;
 			} 
 			if(param.equals(idDestinatario)==false){
 				this.log.error("Destinatario trovato nel trasporto["+idDestinatario+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Destinatario trovato nel trasporto["+idDestinatario+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Destinatario trovato nel trasporto["+idDestinatario+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getTipoServizioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Tipo servizio della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, tipo servizio non presente");
+				returnSOAPFault(response,"Url, tipo servizio non presente");
 				return;
 			} 
 			if(param.equals(idTipoServizio)==false){
 				this.log.error("Tipo servizio trovato nel trasporto["+idTipoServizio+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Tipo servizio trovato nel trasporto["+idTipoServizio+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Tipo servizio trovato nel trasporto["+idTipoServizio+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getNomeServizioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Nome servizio della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, nome servizio non presente");
+				returnSOAPFault(response,"Url, nome servizio non presente");
 				return;
 			} 
 			if(param.equals(idNomeServizio)==false){
 				this.log.error("Servizio trovato nel trasporto["+idNomeServizio+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Servizio trovato nel trasporto["+idNomeServizio+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Servizio trovato nel trasporto["+idNomeServizio+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getVersioneServizioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("Versione servizio della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, Versione servizio non presente");
+				returnSOAPFault(response,"Url, Versione servizio non presente");
 				return;
 			} 
 			if(param.equals(idVersioneServizio)==false){
 				this.log.error("Versione servizio trovato nel trasporto["+idVersioneServizio+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Versione servizio trovato nel trasporto["+idVersioneServizio+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Versione servizio trovato nel trasporto["+idVersioneServizio+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getAzioneUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if((param==null) && (idAzione!=null)){
 				this.log.error("Azione della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, azione non presente");
+				returnSOAPFault(response,"Url, azione non presente");
 				return;
 			} 
 			if(param.equals(idAzione)==false){
 				this.log.error("Azione trovato nel trasporto["+idAzione+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Azione trovato nel trasporto["+idAzione+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"Azione trovato nel trasporto["+idAzione+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			
@@ -335,12 +335,12 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
 				this.log.error("IdTransazione della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, IdTransazione non presente");
+				returnSOAPFault(response,"Url, IdTransazione non presente");
 				return;
 			} 
 			if(param.equals(idTransazione)==false){
 				this.log.error("IdTransazione trovato nel trasporto["+idTransazione+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"IdTransazione trovato nel trasporto["+idTransazione+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response,"IdTransazione trovato nel trasporto["+idTransazione+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			
@@ -348,12 +348,12 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nella url: "+urlPdD);
 			if(urlPdD==null){
 				this.log.error(""+CostantiPdD.URL_BASED_PDD+" non presente nella url");
-				returnSOAPFault(response.getOutputStream(),"Url, "+CostantiPdD.URL_BASED_PDD+" non presente");
+				returnSOAPFault(response,"Url, "+CostantiPdD.URL_BASED_PDD+" non presente");
 				return;
 			} 
-			if(urlPdD.contains("OpenSPCoop")==false){
-				this.log.error(""+CostantiPdD.URL_BASED_PDD+" con valore non atteso presente nella url (trovato:"+urlPdD+" si attendeva un valore che contenesse la stringa OpenSPCoop)");
-				returnSOAPFault(response.getOutputStream(),"Url, "+CostantiPdD.URL_BASED_PDD+" non valido");
+			if(urlPdD.contains("GovWay")==false){
+				this.log.error(""+CostantiPdD.URL_BASED_PDD+" con valore non atteso presente nella url (trovato:"+urlPdD+" si attendeva un valore che contenesse la stringa GovWay)");
+				returnSOAPFault(response,"Url, "+CostantiPdD.URL_BASED_PDD+" non valido");
 				return;
 			} 
 			
@@ -361,7 +361,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			this.log.debug("trovato nella url: "+urlDetails);
 			if(urlDetails==null){
 				this.log.error(CostantiPdD.URL_BASED_PDD_DETAILS+" non presente nella url");
-				returnSOAPFault(response.getOutputStream(),"Url, "+CostantiPdD.URL_BASED_PDD_DETAILS+" non presente");
+				returnSOAPFault(response,"Url, "+CostantiPdD.URL_BASED_PDD_DETAILS+" non presente");
 				return;
 			} 
 			
@@ -370,22 +370,22 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			Message requestMessage = Axis14SoapUtils.build(bout.toByteArray(), false);
 			if(requestMessage==null){
 				this.log.error("Ricostruzione messaggio non riuscita");
-				returnSOAPFault(response.getOutputStream(),"Ricostruzione messaggio non riuscita");
+				returnSOAPFault(response,"Ricostruzione messaggio non riuscita");
 				return;
 			}
 			if(requestMessage.getSOAPHeader()==null){
 				this.log.error("Header SOAP non presente");
-				returnSOAPFault(response.getOutputStream(),"Header SOAP non presente");
+				returnSOAPFault(response,"Header SOAP non presente");
 				return;
 			}
 			if(requestMessage.getSOAPHeader().hasChildNodes()==false){
 				this.log.error("Header SOAP vuoto");
-				returnSOAPFault(response.getOutputStream(),"Header SOAP vuoto");
+				returnSOAPFault(response,"Header SOAP vuoto");
 				return;
 			}
 			Iterator<?> elements = requestMessage.getSOAPHeader().getChildElements();
 			
-			// Integrazione Proprietaria OpenSPCoop
+			// Integrazione Proprietaria GovWay
 			boolean find = false;
 			boolean findTipoMittente = false;
 			boolean findMittente = false;
@@ -412,7 +412,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 					this.log.debug("Elemento nell'header name["+elem.getLocalName()+"] prefix["+elem.getPrefix()+"] namespace["+elem.getNamespaceURI()+"]");
 					
 					
-					// Integrazione Proprietaria OpenSPCoop
+					// Integrazione Proprietaria GovWay
 					if(org.openspcoop2.core.integrazione.constants.Costanti.ROOT_LOCAL_NAME_INTEGRATION.equals(elem.getLocalName()) && "gw".equals(elem.getPrefix()) && org.openspcoop2.core.integrazione.constants.Costanti.TARGET_NAMESPACE.equals(elem.getNamespaceURI())){
 						find = true;
 						Iterator<?> attributes = elem.getAllAttributes();
@@ -680,7 +680,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				
 			}catch(Exception e){
 				this.log.error("Header integrazione non corretto: "+e.getMessage());
-				returnSOAPFault(response.getOutputStream(),"Header integrazione non corretto: "+e.getMessage());
+				returnSOAPFault(response,"Header integrazione non corretto: "+e.getMessage());
 				return;
 			}
 			
@@ -713,7 +713,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 		}catch(Exception e){
 			this.log.error("Errore durante la gestione di una richiesta: "+e.getMessage(),e);
 			try{
-				returnSOAPFault(response.getOutputStream(),"Errore durante la gestione di una richiesta: "+e.getMessage());
+				returnSOAPFault(response,"Errore durante la gestione di una richiesta: "+e.getMessage());
 			}catch(Exception eFinal){
 				throw new ServletException("Errore durante la gestione di una richiesta: "+eFinal.getMessage());
 			}
@@ -728,16 +728,18 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 	
 	
 	
-	public void returnSOAPFault(ServletOutputStream sout,String messaggio) throws Exception{
-		 org.apache.axis.soap.MessageFactoryImpl mf = new org.apache.axis.soap.MessageFactoryImpl();
-         org.apache.axis.Message msg = (org.apache.axis.Message) mf.createMessage();
-         org.apache.axis.message.SOAPEnvelope env = msg.getSOAPEnvelope();
-         org.apache.axis.message.SOAPBody bdy = (org.apache.axis.message.SOAPBody) env.getBody();
-         bdy.addFault();
-         org.apache.axis.message.SOAPFault f = (org.apache.axis.message.SOAPFault) bdy.getFault();
-         f.setFaultString(messaggio);
-         f.setFaultCode("Server.infoMancante");
-         f.setFaultActor("TestSuite");
-         msg.writeTo(sout);
+	public void returnSOAPFault(HttpServletResponse response ,String messaggio) throws Exception{
+		response.setContentType(HttpConstants.CONTENT_TYPE_SOAP_1_1);
+		ServletOutputStream sout = response.getOutputStream();
+		org.apache.axis.soap.MessageFactoryImpl mf = new org.apache.axis.soap.MessageFactoryImpl();
+		org.apache.axis.Message msg = (org.apache.axis.Message) mf.createMessage();
+		org.apache.axis.message.SOAPEnvelope env = msg.getSOAPEnvelope();
+		org.apache.axis.message.SOAPBody bdy = (org.apache.axis.message.SOAPBody) env.getBody();
+		bdy.addFault();
+		org.apache.axis.message.SOAPFault f = (org.apache.axis.message.SOAPFault) bdy.getFault();
+		f.setFaultString(messaggio);
+		f.setFaultCode("Server.infoMancante");
+		f.setFaultActor("TestSuite");
+		msg.writeTo(sout);
 	}
 }

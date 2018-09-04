@@ -59,10 +59,39 @@ public class ContentTypeUtilities {
 					cType.getParameterList().set(parameterName, parameterValue);
 				}
 			}
-			return cType.toString();
+			String ct = cType.toString();
+			ct = normalizeToRfc7230(ct);			
+			ct = ct.trim();
+			return ct;
 		}catch(Exception e){
 			throw new RuntimeException("Error during buildContentType: "+e.getMessage(), e);
 		}
+	}
+	
+	public static String normalizeToRfc7230(String ct) {
+		// Line folding of headers has been deprecated in the latest HTTP RFC:
+		// http://tools.ietf.org/html/rfc7230#section-3.2.4
+		if(ct.contains("\r\n")) {
+			while (ct.contains("\r\n")) {
+				ct = ct.replace("\r\n", " ");
+			}
+		}
+		if(ct.contains("\r")) {
+			while (ct.contains("\r")) {
+				ct = ct.replace("\r", " ");
+			}
+		}
+		if(ct.contains("\n")) {
+			while (ct.contains("\n")) {
+				ct = ct.replace("\n", " ");
+			}
+		}
+		if(ct.contains("\t")) {
+			while (ct.contains("\t")) {
+				ct = ct.replace("\t", " ");
+			}
+		}
+		return ct.trim();
 	}
 	
 	public static String readBaseTypeFromContentType(String cType) throws UtilsException {

@@ -221,6 +221,27 @@ public class InitListener implements ServletContextListener {
 		}
 		
 		try{
+			// Notes on Apache Commons FileUpload 1.3.3
+			// Regarding potential security problems with the class called DiskFileItem, it is true, that this class exists, 
+			// and can be serialized/deserialized in FileUpload versions, up to, and including 1.3.2. 
+			// ...
+			// Beginning with 1.3.3, the class DiskFileItem is still implementing the interface java.io.Serializable. 
+			// In other words, it still declares itself as serializable, and deserializable to the JVM. 
+			// In practice, however, an attempt to deserialize an instance of DiskFileItem will trigger an Exception. 
+			// In the unlikely case, that your application depends on the deserialization of DiskFileItems, 
+			// you can revert to the previous behaviour by setting the system property "org.apache.commons.fileupload.disk.DiskFileItem.serializable" to "true".
+			// 
+			// Purtroppo la classe 'org.apache.struts.upload.FormFile', all'interna utilizza DiskFileItem per serializzare le informazioni.
+			// Tale classe viene usata nel meccanismo di import/export nei metodi writeFormFile e readFormFile della classe org.openspcoop2.web.ctrlstat.servlet.archivi.ImporterUtils
+			// Per questo motivo si riabilita' l'opzione!
+			InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), in corso...");
+			System.setProperty("org.apache.commons.fileupload.disk.DiskFileItem.serializable", "true");
+			InitListener.log.info("Inizializzazione DiskFileItem (opzione serializable), effettuata.");
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		
+		try{
 			if(consoleProperties.isGestoreConsistenzaDatiEnabled()){
 				this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGestoreConsistenzaDati_forceCheckMapping());
                 new Thread(this.gestoreConsistenzaDati).start();

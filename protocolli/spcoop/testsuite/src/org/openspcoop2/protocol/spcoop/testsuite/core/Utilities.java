@@ -31,7 +31,6 @@ import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -152,7 +151,7 @@ public class Utilities {
 	
 	public static void verificaFaultIntegrazione(AxisFault error, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
 			String codiceEccezioneAtteso, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{
-		verificaFaultIntegrazione(error, CostantiPdD.OPENSPCOOP2, identificativoPortaAtteso, identificativoFunzioneAtteso, codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);
+		verificaFaultIntegrazione(error, org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR, identificativoPortaAtteso, identificativoFunzioneAtteso, codiceEccezioneAtteso, descrizioneEccezioneAttesa, checkDescrizioneTramiteMatchEsatto);
 	}
 	public static void verificaFaultIntegrazione(AxisFault error,String actor, String identificativoPortaAtteso,String identificativoFunzioneAtteso,
 			String codiceEccezioneAtteso, String descrizioneEccezioneAttesa, boolean checkDescrizioneTramiteMatchEsatto) throws Exception{

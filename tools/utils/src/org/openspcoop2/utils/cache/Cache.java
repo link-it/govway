@@ -24,29 +24,31 @@ package org.openspcoop2.utils.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.jcs.JCS;
-import org.apache.jcs.admin.CacheRegionInfo;
-import org.apache.jcs.admin.CountingOnlyOutputStream;
-import org.apache.jcs.admin.JCSAdminBean;
-import org.apache.jcs.engine.behavior.ICacheElement;
-import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
-import org.apache.jcs.engine.behavior.IElementAttributes;
-import org.apache.jcs.engine.control.CompositeCache;
-import org.apache.jcs.engine.memory.behavior.IMemoryCache;
-import org.slf4j.Logger;
+import org.apache.commons.jcs.JCS;
+import org.apache.commons.jcs.access.CacheAccess;
+import org.apache.commons.jcs.admin.CountingOnlyOutputStream;
+import org.apache.commons.jcs.admin.JCSAdminBean;
+import org.apache.commons.jcs.engine.CacheElementSerialized;
+import org.apache.commons.jcs.engine.behavior.ICacheElement;
+import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
+import org.apache.commons.jcs.engine.behavior.IElementAttributes;
+import org.apache.commons.jcs.engine.control.CompositeCache;
+import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.slf4j.Logger;
 
 /**
  * Cache
@@ -135,7 +137,8 @@ public class Cache {
 	}
 	
 	
-	private JCS cache = null;
+	private CacheAccess<Object, Serializable> cache = null;
+	@SuppressWarnings("unused")
 	private JCSAdminBean cacheAdmin = null;
 	private String cacheName = null;
 	
@@ -193,7 +196,7 @@ public class Cache {
 
 	public long getItemLifeTime() throws UtilsException {
 		try{
-			return this.cache.getDefaultElementAttributes().getMaxLifeSeconds();
+			return this.cache.getDefaultElementAttributes().getMaxLife();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -202,7 +205,7 @@ public class Cache {
 		try{
 			// E' necessario prendere l'oggetto e poi risettarlo a causa di un bug.
 			IElementAttributes el = this.cache.getDefaultElementAttributes();
-			el.setMaxLifeSeconds(itemLifeTimeCache);
+			el.setMaxLife(itemLifeTimeCache);
 			this.cache.setDefaultElementAttributes(el);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -249,15 +252,15 @@ public class Cache {
 	}
 	
 	public int getItemCount()  throws UtilsException {
-		return this.getCacheRegionInfo().getCache().getSize();
+		CompositeCache<Object, Serializable> cache = JCSAdminBean.getCompositeCacheManager().getCache(this.cacheName);
+		return cache.getSize();
 	}
 	
 	public List<String> keys() throws UtilsException {
 		try{
 			
 			List<String> keys = new ArrayList<String>();
-			CacheRegionInfo record = this.getCacheRegionInfo();
-			Object[] keysObject = record.getCache().getMemoryCache().getKeyArray();
+			Serializable[] keysObject = this.cache.getCacheControl().getKeySet().toArray(new Serializable[0]);
 			if(keysObject!=null){
 				for (int i = 0; i < keysObject.length; i++) {
 					keys.add((String)keysObject[i]);
@@ -282,7 +285,7 @@ public class Cache {
 		}
 	}
 	public void printStats(OutputStream out, String separator) throws UtilsException {
-		this.printStats(this.getCacheRegionInfo(),out,separator,true);
+		this.printStats(this.cacheName,out,separator,true);
 	}
 	
 	public String printAllStats(String separatorStat, String separatorCache) throws UtilsException {
@@ -298,11 +301,10 @@ public class Cache {
 	}
 	public void printAllStats(OutputStream out, String separatorStat, String separatorCache) throws UtilsException {
 		try{
-			List<CacheRegionInfo> list = this.listCacheRegionInfo();
-		    Iterator<CacheRegionInfo> it = list.iterator();
-		    while (it.hasNext()) {
-		    	CacheRegionInfo record = it.next();
-		    	this.printStats(record,out,separatorStat,false);
+			String[] cacheNames = JCSAdminBean.getCompositeCacheManager().getCacheNames();
+	        Arrays.sort( cacheNames );
+	        for ( int i = 0; i < cacheNames.length; i++ ) {
+		    	this.printStats(cacheNames[i],out,separatorStat,false);
 		    	out.write(separatorCache.getBytes());
 		    }		    
 		}catch(Exception e){
@@ -317,107 +319,145 @@ public class Cache {
 	
 	
 	
+	
+	
 	// PRIVATE
+	
 	private boolean errorOccursCountingBytes = false;
-    private int getByteCount( CompositeCache cache )
-            throws Exception {
-    	
+    public <K, V> int getByteCount(CompositeCache<K, V> cache)
+    {
     	this.errorOccursCountingBytes = false;
     	
-        IMemoryCache memCache = cache.getMemoryCache();
-
-        CountingOnlyOutputStream counter = new CountingOnlyOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream( counter );
-
-        // non serializable objects will cause problems here
-        // stop at the first non serializable exception.
-        try
+        if (cache == null)
         {
-        	// OLD Iteration:
-        	/*
-        	Iterator<?> iter = memCache.getIterator();
-            while ( iter.hasNext() )
-            {
-                ICacheElement ce = (ICacheElement) ( (java.util.Map.Entry) iter.next() ).getValue();
+            throw new IllegalArgumentException("The cache object specified was null.");
+        }
 
-                out.writeObject( ce.getVal() );
-            }
-            */
-        	
-        	// Fixed Iteration:
-        	Object[] keys = memCache.getKeyArray();
-        	if(keys==null){
-        		return 0;
-        	}
-        	else{
-        		for (int i = 0; i < keys.length; i++) {
-        			ICacheElement ce = cache.get((String)keys[i]);
-        			//System.out.println("Serialize["+keys[i]+"] ...");
-        			if(ce!=null){
-	        			Serializable object = ce.getVal();
-	        			if(object!=null){
-	        				out.writeObject( object );
-	        				//System.out.println("Serialize["+ce.getKey()+"] ok");
-	        			}else{
-	        				//System.err.println("Serialize["+keys[i]+"] ok-null");
-	        				this.errorOccursCountingBytes = true;
-	        			}
-        			}else{
-        				//System.err.println("Serialize["+keys[i]+"] ok-ce-null");
-        				this.errorOccursCountingBytes = true;
-        			}
+        long size = 0;
+        IMemoryCache<K, V> memCache = cache.getMemoryCache();
+
+        try {
+	        for (K key : memCache.getKeySet())
+	        {
+	            ICacheElement<K, V> ice = null;
+				try
+				{
+					ice = memCache.get(key);
 				}
-        	}
-        	
+				catch (IOException e)
+				{
+					//Modificato per openspcoop
+					this.errorOccursCountingBytes = true;
+					continue;
+	                // throw new RuntimeException("IOException while trying to get a cached element", e);
+				}
+	
+				if (ice == null)
+				{
+					continue;
+				}
+	
+				if (ice instanceof CacheElementSerialized)
+	            {
+	                size = size + ((CacheElementSerialized<K, V>) ice).getSerializedValue().length;
+	            }
+	            else
+	            {
+	                Object element = ice.getVal();
+	                if(element == null) {
+	                	//Modificato per openspcoop
+	    				this.errorOccursCountingBytes = true;
+	    				continue;
+	                }
+	
+	                //CountingOnlyOutputStream: Keeps track of the number of bytes written to it, but doesn't write them anywhere.
+	                CountingOnlyOutputStream counter = new CountingOnlyOutputStream();
+	                ObjectOutputStream out = null;
+	                try
+	                {
+	                    out = new ObjectOutputStream(counter);
+	                    out.writeObject(element);
+	                }
+	                catch (IOException e)
+	                {
+	                	//Modificato per openspcoop
+	    				this.errorOccursCountingBytes = true;
+	    				continue;
+	                    //throw new RuntimeException("IOException while trying to measure the size of the cached element", e);
+	                }
+	                finally
+	                {
+	                	try
+	                	{
+	                		if (out != null)
+	                		{
+	                			out.close();
+	                		}
+						}
+	                	catch (IOException e)
+	                	{
+	                		// ignore
+						}
+	                	try
+	                	{
+							counter.close();
+						}
+	                	catch (IOException e)
+	                	{
+	                		// ignore
+						}
+	                }
+	
+	                // 4 bytes lost for the serialization header
+	                size = size + counter.getCount() - 4;
+	            }
+	        }
         }
         catch ( Exception e )
         {
             System.err.println( "Problem getting byte count (Modified by OpenSPCoop).  Likley cause is a non serilizable object." + e.getMessage() );
-            e.printStackTrace();
-            
-        }finally{
-        	out.flush();
-        	out.close();
-        	counter.flush();
-        	counter.close();
+            e.printStackTrace();   
+        }
+	        
+        if (size > Integer.MAX_VALUE)
+        {
+            throw new IllegalStateException("The size of cache " + cache.getCacheName() + " (" + size + " bytes) is too large to be represented as an integer.");
         }
 
-        // 4 bytes lost for the serialization header
-        int count = counter.getCount();
-        if(count<4){
-        	return 0;
-        }
-        return  count - 4;
+        return (int) size;
     }
-
 	
-	private void printStats(CacheRegionInfo region, OutputStream out, String separator, boolean thisCache) throws UtilsException {
+	
+	
+	private void printStats(String cacheName, OutputStream out, String separator, boolean thisCache) throws UtilsException {
 		
 		try{
 		
 			StringBuffer bf = new StringBuffer();
 			
+			CompositeCache<Object, Serializable> cache = JCSAdminBean.getCompositeCacheManager().getCache(cacheName);
+						
 			//bf.append(Utilities.convertBytesToFormatString(region.getByteCount()));
 			// NOTA: e' stato re-implementato il metodo poiche' casualmente avveniva un errore del tipo:
 			//		 Problem getting byte count.  Likley cause is a non serilizable object.null
-			//		 Il problema derivava dall'implementazione del metodo all'interno della classe org/apache/jcs/admin/JCSAdminBean
+			//		 Il problema derivava dall'implementazione del metodo all'interno della classe org/apache/commons/jcs/admin/JCSAdminBean
 			//		 Viene utilizzato l'iterator dentro una struttura dinamica che cambia.
 			//		 A volte, quando poi veniva registrato l'errore soprastante, avveniva questo errore (scoperto aggiungendo stampe nelle classi di JCS)
 			//		 java.util.ConcurrentModificationException
 			//		 	at java.util.Hashtable$Enumerator.next(Hashtable.java:1031)
-			//			at org.apache.jcs.engine.memory.lru.LRUMemoryCache$IteratorWrapper.next(LRUMemoryCache.java:428)
-			//			at org.apache.jcs.admin.JCSAdminBean.getByteCount(JCSAdminBean.java:95)
+			//			at org.apache.commons.jcs.engine.memory.lru.LRUMemoryCache$IteratorWrapper.next(LRUMemoryCache.java:428)
+			//			at org.apache.commons.jcs.admin.JCSAdminBean.getByteCount(JCSAdminBean.java:95)
 			int tentativi = 0;
 			int sizeAttuale = -1;
 			while (tentativi<10) {
-				sizeAttuale = this.getByteCount(region.getCache());
+				sizeAttuale = this.getByteCount(cache);
 				if(this.errorOccursCountingBytes==false){
 					break;
 				}
 				if(thisCache){
 					//System.err.println("PROVO ALTRO TENTATIVO");
 					tentativi++;
-					region = this.getCacheRegionInfo();
+					cache = JCSAdminBean.getCompositeCacheManager().getCache(cacheName);
 				}
 				else{
 					break;
@@ -426,21 +466,21 @@ public class Cache {
 				
 			
 			bf.append("Nome:");
-			bf.append(region.getCache().getCacheName());
+			bf.append(cacheName);
 			bf.append(" ");
 			
 			bf.append(separator);
 			
 			bf.append("Stato:");
-			bf.append(region.getStatus());
+			bf.append(cache.getStatus());
 			bf.append(" ");
 			
 			bf.append(separator);
 			
-			if(region.getCache().getCacheAttributes()!=null){
+			if(cache.getCacheAttributes()!=null){
 			
 				bf.append("Algoritmo:");
-				String cacheAlgoName = region.getCache().getCacheAttributes().getCacheName();
+				String cacheAlgoName = cache.getCacheAttributes().getCacheName();
 				CacheAlgorithm cacheEnum = CacheAlgorithm.toEnum(cacheAlgoName);
 				if(cacheEnum!=null){
 					bf.append(cacheEnum.name());
@@ -452,7 +492,7 @@ public class Cache {
 				bf.append(separator);
 				
 				bf.append("Dimensione:");
-				bf.append(region.getCache().getCacheAttributes().getMaxObjects());
+				bf.append(cache.getCacheAttributes().getMaxObjects());
 				bf.append(" ");
 				
 				bf.append(separator);
@@ -460,7 +500,7 @@ public class Cache {
 			}
 			
 			bf.append("ElementiInCache:");
-			bf.append(region.getCache().getMemoryCache().getSize());
+			bf.append(cache.getSize());
 			bf.append(" ");
 			
 			bf.append(separator);
@@ -474,10 +514,10 @@ public class Cache {
 			
 			bf.append(separator);
 			
-			if(region.getCache().getElementAttributes()!=null){
+			if(cache.getElementAttributes()!=null){
 			
 				bf.append("IdleTime:");
-				long idleTime = region.getCache().getElementAttributes().getIdleTime();
+				long idleTime = cache.getElementAttributes().getIdleTime();
 				if(idleTime>0){
 					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(idleTime*1000,false));
 				}
@@ -492,7 +532,7 @@ public class Cache {
 				bf.append(separator);
 				
 				bf.append("LifeTime:");
-				long lifeTime = region.getCache().getElementAttributes().getMaxLifeSeconds();
+				long lifeTime = cache.getElementAttributes().getMaxLife();
 				if(lifeTime>0){
 					bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
 				}
@@ -509,37 +549,31 @@ public class Cache {
 			}
 			
 			bf.append("PutCount:");
-			bf.append(region.getCache().getUpdateCount());
+			bf.append(cache.getUpdateCount());
 			bf.append(" ");
 			
 			bf.append(separator);
 			
 			bf.append("HitCount(Aux):");
-			bf.append(region.getCache().getHitCountAux());
+			bf.append(cache.getHitCountAux());
 			bf.append(" ");
 			
 			bf.append(separator);
 			
 			bf.append("HitCount(Ram):");
-			bf.append(region.getCache().getHitCountRam());
+			bf.append(cache.getHitCountRam());
 			bf.append(" ");
 			
 			bf.append(separator);
 			
 			bf.append("MissCount(Expired):");
-			bf.append(region.getCache().getMissCountExpired());
+			bf.append(cache.getMissCountExpired());
 			bf.append(" ");
 			
 			bf.append(separator);
 			
 			bf.append("MissCount(NotFound):");
-			bf.append(region.getCache().getMissCountNotFound());
-			bf.append(" ");
-			
-			bf.append(separator);
-			
-			bf.append("RemoveCount:");
-			bf.append(region.getCache().getRemoveCount());
+			bf.append(cache.getMissCountNotFound());
 			bf.append(" ");
 			
 			out.write(bf.toString().getBytes());
@@ -549,35 +583,9 @@ public class Cache {
 		}
 	}
 	
+
 	
-	private CacheRegionInfo getCacheRegionInfo() throws UtilsException{
-		try{
-			List<CacheRegionInfo> list = this.listCacheRegionInfo();
-		    Iterator<CacheRegionInfo> it = list.iterator();
-		
-		    while (it.hasNext()) {
-		
-		        CacheRegionInfo record = it.next();
-		        if(this.cacheName.equals(record.getCache().getCacheName())){
-		        	return record;
-		        }
-		    }
-		    
-		    throw new Exception("Not found");
-		    
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-	}
 	
-	@SuppressWarnings("unchecked")
-	private List<CacheRegionInfo> listCacheRegionInfo() throws UtilsException{
-		try{
-			return this.cacheAdmin.buildCacheInfo();
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-	}
 	
 	/**
 	 * Ritorna un intero che rappresenta la chiave di una stringa.
@@ -587,7 +595,7 @@ public class Cache {
 	 * 
 	 */
 	private String formatKeyCache(String key) {
-		// org/apache/jcs/engine/control/CompositeCache.java
+		// org/apache/commons/jcs/engine/control/CompositeCache.java
 		//		if ( cacheElement.getKey() instanceof String
 		//	            && cacheElement.getKey().toString().endsWith( CacheConstants.NAME_COMPONENT_DELIMITER ) )
 		//	        {
@@ -595,10 +603,10 @@ public class Cache {
 		//	                + " for a put operation" );
 		//	        }
 		//
-		// Dove in org.apache.jcs.engine.CacheConstants
+		// Dove in org.apache.commons.jcs.engine.CacheConstants
 		// 		public final static String NAME_COMPONENT_DELIMITER = ":";
 		StringBuffer bf = new StringBuffer(key);
-		if(bf.toString().endsWith(org.apache.jcs.engine.CacheConstants.NAME_COMPONENT_DELIMITER)){
+		if(bf.toString().endsWith(org.apache.commons.jcs.engine.CacheConstants.NAME_COMPONENT_DELIMITER)){
 			bf.append("_");
 		}
 		return bf.toString();

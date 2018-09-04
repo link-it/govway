@@ -228,9 +228,9 @@ public class AS4Sbustamento {
 					mimeTypeRoot = HttpConstants.CONTENT_TYPE_SOAP_1_2; 
 					// altrimenti se continuo ad utilizzare originale text/xml da errore: 
 					// Caused by: com.sun.xml.messaging.saaj.soap.SOAPVersionMismatchException: Cannot create message: incorrect content-type for SOAP version. Got: text/xml Expected: application/soap+xml
-			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.init(MessageImpl.java:403) ~[saaj-impl-1.3.25.jar:?]
-			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.<init>(MessageImpl.java:320) ~[saaj-impl-1.3.25.jar:?]
-			        //  at com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl.<init>(Message1_2Impl.java:74) ~[saaj-impl-1.3.25.jar:?]
+			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.init(MessageImpl.java:403) ~[saaj-impl-1.3.28.jar:?]
+			        //  at com.sun.xml.messaging.saaj.soap.MessageImpl.<init>(MessageImpl.java:320) ~[saaj-impl-1.3.28.jar:?]
+			        //  at com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl.<init>(Message1_2Impl.java:74) ~[saaj-impl-1.3.28.jar:?]
 			        //  at org.openspcoop2.message.soap.Message1_2_FIX_Impl.<init>(Message1_2_FIX_Impl.java:79) ~[openspcoop2_message_BUILD-13647.jar:?]
 			        //  at org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl.<init>(OpenSPCoop2Message_saaj_12_impl.java:59)
 				}

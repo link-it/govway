@@ -250,8 +250,8 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 		}
 		if(signatureUser && !user) {
 			// fix: Caused by: org.apache.cxf.binding.soap.SoapFault: Empty username for specified action.
-	        // at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessageInternal(WSS4JOutInterceptor.java:230) ~[cxf-rt-ws-security-3.1.7.jar:3.1.7]
-	        //        at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessage(WSS4JOutInterceptor.java:135) ~[cxf-rt-ws-security-3.1.7.jar:3.1.7]
+	        // at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessageInternal(WSS4JOutInterceptor.java:230) ~[cxf-rt-ws-security-3.2.6.jar:3.1.7]
+	        //        at org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor$WSS4JOutInterceptorInternal.handleMessage(WSS4JOutInterceptor.java:135) ~[cxf-rt-ws-security-3.2.6.jar:3.1.7]
 			msgCtx.put(SecurityConstants.USER, (String) msgCtx.get(SecurityConstants.SIGNATURE_USER));
 		}
     }

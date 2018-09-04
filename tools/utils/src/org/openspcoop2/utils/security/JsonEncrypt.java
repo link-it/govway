@@ -56,7 +56,7 @@ public class JsonEncrypt {
 	
 	public JsonEncrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JweUtils.loadEncryptionProvider(JsonUtils.newMessage(), props, new JweHeaders(), false);
+			this.provider = JweUtils.loadEncryptionProvider(props, JsonUtils.newMessage(), new JweHeaders());
 			this.representation=representation;
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);

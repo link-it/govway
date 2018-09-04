@@ -104,8 +104,8 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xerces_jar" value="xercesImpl-2.11.0.jar"/>
-			<var name="xml_apis_jar" value="xml-apis-2.11.0.jar"/>
+			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
 		</then>
 	</if>
 	<!-- jaxp_ri -->
@@ -115,7 +115,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
 		</then>
 	</if>
 	<!-- neethi -->
@@ -125,7 +125,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
+			<var name="neethi_jar" value="neethi-3.1.1.jar"/>
 		</then>
 	</if>
 	<!-- geronimo_jaxws_spec -->

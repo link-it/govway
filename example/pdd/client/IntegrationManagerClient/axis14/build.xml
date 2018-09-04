@@ -65,6 +65,7 @@
 			<include name="stub/axis14/*.jar"/>
 			<include name="axis14/*.jar"/>
 			<include name="shared/*.jar"/>
+			<exclude name="shared/mailapi*.jar"/> 
 			<include name="commons/*.jar"/>
 		</fileset>
 	</path>

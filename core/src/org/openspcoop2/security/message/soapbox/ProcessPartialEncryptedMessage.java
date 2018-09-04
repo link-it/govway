@@ -85,10 +85,10 @@ import org.apache.xml.security.algorithms.JCEMapper;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.exceptions.Base64DecodingException;
-import org.apache.xml.security.utils.Base64;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -328,7 +328,7 @@ public class ProcessPartialEncryptedMessage implements Processor {
             part.removeMimeHeader(MimeConstants.CONTENT_TRANSFER_ENCODING);
             
             part.clearContent();
-			part.setDataHandler(new javax.activation.DataHandler(new _DS(Base64.decode(cipherOutput), mimeType)));
+			part.setDataHandler(new javax.activation.DataHandler(new _DS(Base64Utilities.decode(cipherOutput), mimeType)));
            
         } else {
             MimeBodyPart decryptedAttachment = new MimeBodyPart(new ByteArrayInputStream(cipherOutput));
@@ -357,7 +357,7 @@ public class ProcessPartialEncryptedMessage implements Processor {
             
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             decryptedAttachment.getDataHandler().writeTo(bs);
-			part.setDataHandler(new javax.activation.DataHandler(new _DS(Base64.decode(bs.toByteArray()), mimeType)));
+			part.setDataHandler(new javax.activation.DataHandler(new _DS(Base64Utilities.decode(bs.toByteArray()), mimeType)));
         }
         return part;
     }

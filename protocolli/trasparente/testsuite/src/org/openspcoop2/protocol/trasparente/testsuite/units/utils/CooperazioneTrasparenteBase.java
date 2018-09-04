@@ -46,6 +46,8 @@ import org.testng.Reporter;
  */
 public class CooperazioneTrasparenteBase extends CooperazioneBase {
 
+	public static boolean protocolloEmetteTracce = false;
+	
 	public CooperazioneTrasparenteBase(boolean soapWithAttachments, boolean portaDelegata,
 			MessageType messageType, CooperazioneBaseInformazioni info,
 			UnitsTestSuiteProperties unitsTestsuiteProperties,
@@ -82,7 +84,9 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 			DatabaseMsgDiagnosticiComponent msgDiagData, String id,
 			String tipoServizio, String nomeServizio,boolean checkServizioApplicativo) {
 
-		this.testOneWay(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		if(CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			this.testOneWay(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		}
 		
 		verifyOk(data, msgDiagData, id);
 
@@ -122,7 +126,9 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 			DatabaseMsgDiagnosticiComponent msgDiagData, String id,
 			String tipoServizio, String nomeServizio, boolean checkServizioApplicativo) {
 
-		this.testSincrono(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		if(CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			this.testSincrono(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		}
 		
 		verifyOk(data, msgDiagData, id);
 	}
@@ -183,7 +189,9 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 			boolean is500, boolean stateful,
 			boolean checkServizioApplicativo) throws Exception {
 	
-		this.testOneWay(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		if(CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			this.testOneWay(data, id, tipoServizio, nomeServizio,null, checkServizioApplicativo,null);
+		}
 		boolean checkMsgInProcessamento = !(!this.portaDelegata && is500 && stateful);
 		this.testFaultDiag(data, msgDiagData, id, tipoServizio, nomeServizio, is500, stateful, checkMsgInProcessamento);
 	}
@@ -193,7 +201,9 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 			String tipoServizio, String nomeServizio,
 			boolean is500, boolean stateful) throws Exception {
 	
-		this.testSincrono(data, id, tipoServizio, nomeServizio,null, true,null);
+		if(CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			this.testSincrono(data, id, tipoServizio, nomeServizio,null, true,null);
+		}
 		this.testFaultDiag(data, msgDiagData, id, tipoServizio, nomeServizio, is500, stateful, false);
 	}
 

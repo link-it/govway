@@ -155,10 +155,12 @@ public class RESTCore {
 		
 		DatabaseComponent data = null;
 		boolean isDelegata = this.ruolo.equals(RUOLO.PORTA_DELEGATA);
-		if(isDelegata) {
-			data = DatabaseProperties.getDatabaseComponentFruitore();
-		} else {
-			data = DatabaseProperties.getDatabaseComponentErogatore();
+		if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			if(isDelegata) {
+				data = DatabaseProperties.getDatabaseComponentFruitore();
+			} else {
+				data = DatabaseProperties.getDatabaseComponentErogatore();
+			}
 		}
 		
 		if(!isDelegata) {
@@ -171,13 +173,15 @@ public class RESTCore {
 			}
 		}
 		
-		try{
-			this.collaborazioneTrasparenteBase.testSincrono(data,id, CostantiTestSuite.REST_TIPO_SERVIZIO,
-					CostantiTestSuite.SOAP_NOME_SERVIZIO_API, null, !isDelegata,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			try{
+				this.collaborazioneTrasparenteBase.testSincrono(data,id, CostantiTestSuite.REST_TIPO_SERVIZIO,
+						CostantiTestSuite.SOAP_NOME_SERVIZIO_API, null, !isDelegata,null);
+			}catch(Exception e){
+				throw e;
+			}finally{
+				data.close();
+			}
 		}
 	}
 

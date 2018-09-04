@@ -57,7 +57,7 @@ public class JsonDecrypt {
 	
 	public JsonDecrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JweUtils.loadDecryptionProvider(JsonUtils.newMessage(), props, null, false); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+			this.provider = JweUtils.loadDecryptionProvider(props, JsonUtils.newMessage(), null); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
 			this.representation=representation;
 			
 //			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {

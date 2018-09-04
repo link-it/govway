@@ -67,7 +67,6 @@ import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.Eliminazion
 import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLRequestType;
 import org.openspcoop2.ValidazioneContenutiWS.Service.types.esempio1.RegistrazioneUtenteWDLResponseType;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -354,7 +353,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteWDL");
 		
@@ -377,7 +376,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteWDL");
 		Date dataFineTestB = DateManager.getDate();
@@ -404,8 +403,8 @@ public class ValidazioneContenutiApplicativi {
 			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
 		} catch (AxisFault error) {
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault actor [OpenSPCoop]");
-			Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+			Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+			Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			Reporter.log("Controllo fault code [GOVWAY_ORG_418]");
 			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA).equals(error.getFaultCode().getLocalPart().trim()));
 			Reporter.log("Controllo fault string [Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi] con ["+error.getFaultString()+"]");
@@ -435,8 +434,8 @@ public class ValidazioneContenutiApplicativi {
 			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
 		} catch (AxisFault error) {
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-			Reporter.log("Controllo fault actor [OpenSPCoop]");
-			Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+			Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+			Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			Reporter.log("Controllo fault code [GOVWAY_ORG_418]");
 			Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA).equals(error.getFaultCode().getLocalPart().trim()));
 			Reporter.log("Controllo fault string [Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi] con ["+error.getFaultString()+"]");
@@ -461,7 +460,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"SOAP_ACTION_ERRATA");
 		Date dataFineTest3 = DateManager.getDate();
@@ -483,7 +482,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"SOAP_ACTION_ERRATA");
 		Date dataFineTest4 = DateManager.getDate();
@@ -1411,7 +1410,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		Date dataFineTest = DateManager.getDate();
@@ -1433,7 +1432,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		dataFineTest = DateManager.getDate();
@@ -1455,7 +1454,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		dataFineTest = DateManager.getDate();
@@ -1477,7 +1476,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		dataFineTest = DateManager.getDate();
@@ -1499,7 +1498,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		dataFineTest = DateManager.getDate();
@@ -1521,7 +1520,7 @@ public class ValidazioneContenutiApplicativi {
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
 				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
-				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
+				org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
 				"registrazioneUtenteDL");
 		dataFineTest = DateManager.getDate();

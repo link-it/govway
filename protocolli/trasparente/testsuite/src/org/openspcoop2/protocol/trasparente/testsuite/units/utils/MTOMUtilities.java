@@ -249,23 +249,25 @@ public class MTOMUtilities {
 	    		String id = headers.get(TestSuiteProperties.getInstance().getIdMessaggioTrasporto()).get(0);
 	    	
 	    		
-	    		DatabaseComponent data = null;
-	    		try{
-	    			boolean checkServizioApplicativo = false;
-	    			if(portaDelegata)
-	    				data = DatabaseProperties.getDatabaseComponentFruitore();
-	    			else
-	    				data = DatabaseProperties.getDatabaseComponentErogatore();
-	    			testSincrono(data, id,
-	    					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
-	    					CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-	    					CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
-	    					false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
-	    					checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
-	    		}catch(Exception e){
-	    			throw e;
-	    		}finally{
-	    			data.close();
+	    		if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+		    		DatabaseComponent data = null;
+		    		try{
+		    			boolean checkServizioApplicativo = false;
+		    			if(portaDelegata)
+		    				data = DatabaseProperties.getDatabaseComponentFruitore();
+		    			else
+		    				data = DatabaseProperties.getDatabaseComponentErogatore();
+		    			testSincrono(data, id,
+		    					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+		    					CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
+		    					CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
+		    					false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
+		    					checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
+		    		}catch(Exception e){
+		    			throw e;
+		    		}finally{
+		    			data.close();
+		    		}
 	    		}
 	        	
 	        }
@@ -295,7 +297,7 @@ public class MTOMUtilities {
 						Assert.assertEquals(sub, "GOVWAY_ORG_500");
 					}
 					Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
-					Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integrazione");
+					Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
 				}
 				else{
 					if(soap11){
@@ -510,24 +512,25 @@ public class MTOMUtilities {
 
 		String id = r.getNext();
 	
-		
-		DatabaseComponent data = null;
-		try{
-			boolean checkServizioApplicativo = false;
-			if(portaDelegata)
-				data = DatabaseProperties.getDatabaseComponentFruitore();
-			else
-				data = DatabaseProperties.getDatabaseComponentErogatore();
-			testSincrono(data, id,
-					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
-					CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-					CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
-					false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
-					checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
+		if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+			DatabaseComponent data = null;
+			try{
+				boolean checkServizioApplicativo = false;
+				if(portaDelegata)
+					data = DatabaseProperties.getDatabaseComponentFruitore();
+				else
+					data = DatabaseProperties.getDatabaseComponentErogatore();
+				testSincrono(data, id,
+						CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
+						CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
+						CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
+						false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
+						checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
+			}catch(Exception e){
+				throw e;
+			}finally{
+				data.close();
+			}
 		}
 		
 		

@@ -48,7 +48,7 @@
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
-		<unzip src="${required_lib}/shared/mailapi-1.5.6.jar" dest="${build}/tmp/mailapi"/>
+		<unzip src="${required_lib}/shared/mailapi-1.6.2.jar" dest="${build}/tmp/mailapi"/>
 		<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 			<filelist dir="${data_content_handler_dir}"
                            files="mailcap"/>
@@ -143,27 +143,27 @@
 				<include name="openspcoop2_management_registro_search_stub.jar" />
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.10.jar"/>
+				<include name="commons-codec-1.11.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-logging-1.2.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="commons-net-3.5.jar"/>
-				<include name="commons-io-2.5.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-net-3.6.jar"/>
+				<include name="commons-io-2.6.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="commons-validator-1.6.jar"/>
-				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
-				<include name="commons-lang3-3.4.jar"/>
+				<include name="commons-beanutils-1.9.3.jar"/> <!--jmx mini console -->
+				<include name="commons-lang3-3.8.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-api-1.7.25.gw.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-155.jar"/>
-				<include name="bcpkix-jdk15on-155.jar"/>
-				<include name="neethi-3.0.3.jar"/>
-				<include name="xmlsec-2.0.7.jar"/>
-				<include name="cryptacular-1.1.1.jar"/>
+				<include name="bcprov-ext-jdk15on-160.jar"/>
+				<include name="bcpkix-jdk15on-160.jar"/>
+				<include name="neethi-3.1.1.jar"/>
+				<include name="xmlsec-2.1.2.jar"/>
+				<include name="cryptacular-1.2.2.jar"/>
 				<include name="jasypt-1.9.2.jar"/>
 				<include name="herasaf-xacml-core-1.0.4.RELEASE.jar"/>
 			</lib>
@@ -181,24 +181,24 @@
 			<lib dir="${required_lib}/shared">
 				<include name="activation-1.1.1.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="addressing-1.1.jar"/>
-				<include name="concurrent-1.0.jar"/> <!-- (non necessario in A.S.) -->
-				<include name="jcs-1.3.jar"/>
+				<include name="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="commons-jcs-core-2.2.gw.jar"/>
 				<include name="soap.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
-				<include name="xercesImpl-2.11.0.jar"/>
-				<include name="xml-apis-2.11.0.jar"/>
+				<include name="xercesImpl-2.12.0.jar"/>
+				<include name="xml-apis-2.12.0.jar"/>
 				<include name="xalan-2.7.1.jar"/>
 				<include name="xalan-2.7.1_serializer.jar"/> 
 				<include name="velocity-1.7.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
-				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
-				<include name="joda-time-2.9.4.jar" />
-				<include name="guava-19.0.jar"/>
-				<include name="java-uuid-generator-3.1.4.jar"/>
-				<include name="freemarker-2.3.25.jar"/>
-				<include name="snakeyaml-1.19.jar"/>
+				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
+				<include name="joda-time-2.10.jar" />
+				<include name="guava-26.0-jre.jar"/>
+				<include name="java-uuid-generator-3.1.5.jar"/>
+				<include name="freemarker-2.3.28.jar"/>
+				<include name="snakeyaml-1.22.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>
@@ -206,14 +206,14 @@
 			<lib dir="${required_lib}/cxf">
 				<include name="*.jar" />
 				<exclude name="cxf-tools-*.jar"/>
-				<exclude name="geronimo-servlet_3.0_spec-1.0.jar"/>
+				<exclude name="javax.servlet-api-3.1.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar" />
 			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="jaxb*.jar" />
-				<include name="jaxws-api-2.2.11.jar" />
+				<include name="jaxws-api-2.3.0.2.jar" />
 			</lib>
 			<lib dir="${required_lib}/spring">
 				<include name="*.jar" />

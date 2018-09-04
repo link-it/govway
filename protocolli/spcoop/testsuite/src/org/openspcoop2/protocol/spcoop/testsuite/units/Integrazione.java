@@ -530,7 +530,7 @@ public class Integrazione {
 					throw new Exception("Valore dell'elemento WSA-To non definito");
 				}else{
 					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+"" +
-							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versione;
+							".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versione;
 					if(test.equals(v)==false){
 						throw new Exception("WSATo con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -555,7 +555,7 @@ public class Integrazione {
 				if(v==null){
 					throw new Exception("Valore dell'elemento WSA-From non definito");
 				}else{
-					String test = "http://"+collaborazioneSPCoopBase.getMittente().getTipo()+"_"+collaborazioneSPCoopBase.getMittente().getNome()+".openspcoop2.org";
+					String test = "http://"+collaborazioneSPCoopBase.getMittente().getTipo()+"_"+collaborazioneSPCoopBase.getMittente().getNome()+".govway.org";
 					if(test.equals(v)==false){
 						throw new Exception("WSAFrom con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -570,7 +570,7 @@ public class Integrazione {
 					throw new Exception("Valore dell'elemento WSA-Action non definito");
 				}else{
 					String test = "http://"+collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+collaborazioneSPCoopBase.getDestinatario().getNome()+
-							".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versione+"/"+azione;
+							".govway.org/services/"+tipoServizio+"_"+nomeServizio+"/"+versione+"/"+azione;
 					if(test.equals(v)==false){
 						throw new Exception("WSAAction con valore ["+v+"] diverso da quello atteso ["+test+"]");
 					}
@@ -1960,8 +1960,8 @@ public class Integrazione {
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -2224,8 +2224,8 @@ public class Integrazione {
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -2407,8 +2407,8 @@ public class Integrazione {
 				String msgErrore = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:BEGIN-ID__END-ID) azione [BEGIN-ID__END-ID] non trovata nell'accordo di servizio ASRichiestaStatoAvanzamento:1";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				return;
 			}finally{
 				dbComponentFruitore.close();
@@ -2587,8 +2587,8 @@ public class Integrazione {
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				return;
 			}finally{
 				dbComponentFruitore.close();
@@ -2962,9 +2962,9 @@ public class Integrazione {
 			headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			
 			headerTo.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
-					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1");
+					".govway.org/services/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1");
 			headerAction.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
-					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1/"+
+					".govway.org/services/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1/"+
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			
 			if(msg.getSOAPHeader()==null)
@@ -3102,8 +3102,8 @@ public class Integrazione {
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3365,8 +3365,8 @@ public class Integrazione {
 				msgErrore = msgErrore.replace("@ACCORDO_SERVIZIO@", "ASRichiestaStatoAvanzamento:1");
 				Reporter.log("Controllo faultString ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3454,8 +3454,8 @@ public class Integrazione {
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+MSG_ERRORE+"]");
 				Assert.assertTrue(MSG_ERRORE.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}
@@ -3542,8 +3542,8 @@ public class Integrazione {
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
-				Reporter.log("Controllo fault actor [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentFruitore.close();
 			}

@@ -33,7 +33,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
@@ -44,9 +43,9 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
-import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.xml.XMLDiff;
@@ -155,7 +154,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
 			String msg = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX;
@@ -394,7 +393,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO);
 			String msg = CostantiErroriIntegrazione.MSG_5XX_SISTEMA_NON_DISPONIBILE;
@@ -1784,7 +1783,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
@@ -2013,7 +2012,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
@@ -2244,7 +2243,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
@@ -2475,7 +2474,7 @@ public class ErroreApplicativoCNIPA {
 				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
 			}
 			
-			String actor = CostantiPdD.OPENSPCOOP2;
+			String actor = org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
 			String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;

@@ -55,7 +55,7 @@
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 			<exclude name="axis14/*"/>
-			<exclude name="cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
+			<exclude name="cxf/javax.servlet-api-3.1.0.jar"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>

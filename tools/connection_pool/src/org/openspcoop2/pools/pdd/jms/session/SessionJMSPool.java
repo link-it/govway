@@ -110,7 +110,7 @@ public class SessionJMSPool implements java.io.Serializable  {
 		this.jndiName = configuration.getJndiName();
 
 		// Configurazione del Pool
-		GenericObjectPoolConfig configPool = new GenericObjectPoolConfig();
+		GenericObjectPoolConfig<org.openspcoop2.pools.pdd.jms.session.Connection> configPool = new GenericObjectPoolConfig<org.openspcoop2.pools.pdd.jms.session.Connection>();
 		setConfigurazione(configPool,configuration);
 
 		// User e Password
@@ -257,7 +257,7 @@ public class SessionJMSPool implements java.io.Serializable  {
 	 *
 	 * 
 	 */
-	public void setConfigurazione(GenericObjectPoolConfig configPool,JMSInfo configuration) {	
+	public void setConfigurazione(GenericObjectPoolConfig<org.openspcoop2.pools.pdd.jms.session.Connection> configPool,JMSInfo configuration) {	
 		// controls the maximum number of objects that can be borrowed from the pool at one time. 
 		// When non-positive, there is no limit to the number of objects that may be active at one time. 
 		// When maxActive is exceeded, the pool is said to be exhausted.

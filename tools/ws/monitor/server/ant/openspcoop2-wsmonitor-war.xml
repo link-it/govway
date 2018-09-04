@@ -130,8 +130,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="neethi-3.0.3.jar"/>
-				<include name="xmlsec-2.0.7.jar"/>
+				<include name="neethi-3.1.1.jar"/>
+				<include name="xmlsec-2.1.2.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="jaxws-*.jar"/>
@@ -140,7 +140,7 @@
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="ezmorph-1.0.6.jar"/>
-				<include name="xom-1.2.10.jar"/>
+				<include name="xom-1.2.11.jar"/>
 				<include name="soap.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/json">
@@ -151,12 +151,12 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-beanutils-1.9.2.jar"/>
+				<include name="commons-beanutils-1.9.3.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
-				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-api-1.7.25.gw.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			

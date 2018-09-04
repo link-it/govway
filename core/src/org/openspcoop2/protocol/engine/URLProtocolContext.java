@@ -58,6 +58,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
 	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
 	public static final String IntegrationManager_SERVICE_PD = "PD";
+	public static final String IntegrationManager_SERVICE_PD_GOVWAY = "out";
 	public static final String IntegrationManager_SERVICE_MessageBox = "MessageBox";
 	public static final String IntegrationManager_FUNCTION_PD = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_PD;
 	public static final String IntegrationManager_FUNCTION_MessageBox = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_MessageBox;

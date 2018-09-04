@@ -125,8 +125,8 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="xerces_jar" value="xercesImpl-2.11.0.jar"/>
-			<var name="xml_apis_jar" value="xml-apis-2.11.0.jar"/>
+			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
 		</then>
 	</if>
 	<!-- jaxp_ri -->
@@ -136,7 +136,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
 		</then>
 	</if>
 	<!-- geronimo_jaxws_spec -->
@@ -155,7 +155,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="ecj_jar" value="ecj-4.3.1.jar" />
+			<var name="ecj_jar" value="ecj-4.4.2.jar" />
 		</then>
 	</if>
 	<!-- jsr311-api_jar -->

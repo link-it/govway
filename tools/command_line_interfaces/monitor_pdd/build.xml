@@ -74,7 +74,7 @@
 		</fileset>
 		<pathelement path="${openspcoop2.lib}/shared/soap.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/uddi4j-2.0.5.jar"/>
-		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.5.6.jar"/>
+		<pathelement path="${openspcoop2.lib}/shared/mailapi-1.6.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/shared/activation-1.1.1.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-logging-1.2.jar"/>
 		<pathelement path="${openspcoop2.lib}/commons/commons-discovery-0.5.jar"/>

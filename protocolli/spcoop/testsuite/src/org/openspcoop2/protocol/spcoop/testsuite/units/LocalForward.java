@@ -454,18 +454,18 @@ public class LocalForward {
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop3_axis14 = null;
 		if(use_axis14_engine){
-			imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop1","123456");
-			imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop3","123456");
 
 		}
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
 		org.openspcoop2.pdd.services.cxf.MessageBox imSilGop3_cxf = null;
 		if(use_cxf_engine){
-			imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop1","123456");
-			imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 					"gop3","123456");
 		}
 
@@ -568,18 +568,18 @@ public class LocalForward {
 			org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop1_axis14 = null;
 			org.openspcoop2.pdd.services.axis14.MessageBox_PortType imSilGop3_axis14 = null;
 			if(use_axis14_engine){
-				imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+				imSilGop1_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 						"gop1","123456");
-				imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+				imSilGop3_axis14 = IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 						"gop3","123456");
 
 			}
 			org.openspcoop2.pdd.services.cxf.MessageBox imSilGop1_cxf = null;
 			org.openspcoop2.pdd.services.cxf.MessageBox imSilGop3_cxf = null;
 			if(use_cxf_engine){
-				imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+				imSilGop1_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 						"gop1","123456");
-				imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+				imSilGop3_cxf = IntegrationManager.getIntegrationManagerMessageBox_cxf(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 						"gop3","123456");
 			}
 
@@ -695,13 +695,12 @@ public class LocalForward {
 			} catch (AxisFault error) {
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
-
-				String infoServizio = "( Servizio v1 SPC/RichiestaStatoAvanzamentoAsincronoAsimmetrico Azione richiestaAsincrona Erogatore SPC/MinisteroErogatore )";
+				String infoServizio = "( Servizio spc/MinisteroErogatore:spc/RichiestaStatoAvanzamentoAsincronoAsimmetrico:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione AsincronoAsimmetrico non supportato";
-
+				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
@@ -766,12 +765,12 @@ public class LocalForward {
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 
-				String infoServizio = "( Servizio v1 SPC/RichiestaStatoAvanzamento Azione stateful Erogatore SPC/MinisteroErogatore )";
+				String infoServizio = "( Servizio spc/MinisteroErogatore:spc/RichiestaStatoAvanzamento:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione Sincrono non supportato nella modalità stateful";
 
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());
@@ -831,20 +830,20 @@ public class LocalForward {
 
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 
-				String infoServizio = "( Servizio v1 SPC/ComunicazioneVariazione Erogatore SPC/SoggettoConnettoreErrato )";
+				String infoServizio = "( Servizio spc/SoggettoConnettoreErrato:spc/ComunicazioneVariazione:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" il soggetto erogatore non risulta essere gestito localmente dalla Porta";
 				String msgErrore2 = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" non risulta esistere una porta applicativa associata al servizio richiesto";
 
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart())){
 					try{
 						Utilities.verificaFaultIntegrazione(error, 
-								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 								Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 								msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 					}catch(Throwable e){
 						// test per la configurazione su db
 						Utilities.verificaFaultIntegrazione(error, 
-								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+								this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 								Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 								msgErrore2, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 					}
@@ -1067,7 +1066,7 @@ public class LocalForward {
 
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());
@@ -1451,7 +1450,7 @@ public class LocalForward {
 
 				if(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+							this.collaborazioneSPCoopBase.getMittente().getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (200): " + error.getFaultCode().getLocalPart());

@@ -66,7 +66,7 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 	@Override
 	public void setSchema(byte[] schema, JsonSchemaValidatorConfig config) throws ValidationException {
 		try {
-	        JsonSchemaFactory factory = new JsonSchemaFactory();
+	        JsonSchemaFactory factory = JsonSchemaFactory.getInstance();
 
 	        ObjectMapper mapper = new ObjectMapper();
 	        JsonNode jsonSchema =  mapper.readTree(schema);

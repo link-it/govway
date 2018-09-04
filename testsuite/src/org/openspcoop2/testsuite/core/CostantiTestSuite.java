@@ -171,20 +171,12 @@ public class CostantiTestSuite {
 	/** Soap Action */
 	public static final String SOAP_ACTION="SOAPAction";
 	
+	/** Actor */
+	public static final String OPENSPCOOP2_INTEGRATION_ACTOR="http://govway.org/integration";
+	
 	/** IntegrationManager utilizzo */
 	public static final String UTILIZZO_INTEGRATION_MANAGER = "$$$IntegrationManager$$$";
-		
-	/** Pulsante di 'Select All' */
-	public static final String BOTTONE_SELECT_ALL = "Seleziona Tutti";
-	/** Pulsante di 'Deselect All' */
-	public static final String BOTTONE_DESELECT_ALL = "Deseleziona Tutti";
-	/** Pulsante di 'Remove Selected' */
-	public static final String BOTTONE_REMOVE_SELECTED = "Rimuovi Selezionati";
-	/** Pulsante di 'Add' */
-	public static final String BOTTONE_ADD = "Aggiungi";
-	/** Pulsante di 'Invia' */
-	public static final String BOTTONE_INVIA = "Invia";
-	
+			
 	public static final String TABLE_TRANSAZIONI = "transazioni";
 	public static final String TABLE_TRANSAZIONI_ID_MESSAGGIO_RICHIESTA = "id_messaggio_richiesta";
 	public static final String TABLE_TRANSAZIONI_DUPLICATI_RICHIESTA = "duplicati_richiesta";

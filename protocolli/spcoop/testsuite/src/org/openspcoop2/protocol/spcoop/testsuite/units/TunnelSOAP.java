@@ -636,7 +636,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -736,7 +736,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -837,7 +837,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -939,7 +939,7 @@ public class TunnelSOAP {
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsOpenSPCoopFormMultipart);
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1075,7 +1075,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1179,7 +1179,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1285,7 +1285,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?govway_soap_tunnel=true");
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1392,7 +1392,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1496,7 +1496,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1601,7 +1601,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1711,7 +1711,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1818,7 +1818,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1921,7 +1921,7 @@ public class TunnelSOAP {
 			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out", "out/xml2soap"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?govway_soap_tunnel=true&govway_soap_tunnel_mime="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);

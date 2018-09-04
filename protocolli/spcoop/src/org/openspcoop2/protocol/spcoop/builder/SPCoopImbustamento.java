@@ -996,7 +996,7 @@ public class SPCoopImbustamento {
 						// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
 						// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
 						// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
-						//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
 						//System.out.println("XML (DOMSource)");
 						streamSource = new DOMSource(this.xmlUtils.newElement(body));
 					}
@@ -1006,7 +1006,7 @@ public class SPCoopImbustamento {
 						// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
 						//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
 						//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
-						//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.25.jar:?]
+						//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
 						//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
 						//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
 						//System.out.println("XML (StreamSource)");

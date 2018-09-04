@@ -51,10 +51,10 @@
 
 	<!-- Classpath -->
 	<path id="classpath_compile">
-		<fileset dir="${required_lib}" includes="axis-1.4.jar"/>
+		<fileset dir="${required_lib}" includes="axis-1.4.gw.jar"/>
 	</path>
 	<path id="classpath_run">
-		<fileset dir="${required_lib}" includes="axis-1.4.jar"/>
+		<fileset dir="${required_lib}" includes="axis-1.4.gw.jar"/>
 	</path>
 
 

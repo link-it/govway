@@ -361,7 +361,7 @@ public class SOAPMessageScorretti {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR+"{http://openspcoop.exampleMustUnderstand.unknown/1}headerUnknownA, {http://openspcoop.exampleMustUnderstand.unknown/2}headerUnknownB";
+				String msgErrore = CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR+" {http://openspcoop.exampleMustUnderstand.unknown/1}headerUnknownA, {http://openspcoop.exampleMustUnderstand.unknown/2}headerUnknownB";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -440,7 +440,7 @@ public class SOAPMessageScorretti {
 						new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
 				org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
 				ecc.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR));
-				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR +"{http://openspcoop.exampleMustUnderstand.unknown/1}headerUnknownA, {http://openspcoop.exampleMustUnderstand.unknown/2}headerUnknownB");
+				ecc.setDescrizione(CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR +" {http://openspcoop.exampleMustUnderstand.unknown/1}headerUnknownA, {http://openspcoop.exampleMustUnderstand.unknown/2}headerUnknownB");
 				ecc.setCheckDescrizioneTramiteMatchEsatto(true);
 				eccezioni.add(ecc);
 
@@ -2646,8 +2646,8 @@ public class SOAPMessageScorretti {
 					Assert.assertTrue(false, "FaultCode non atteso");
 				}
 
-				Reporter.log("Controllo fault actor. Atteso [OpenSPCoop] - Trovato [" + error.getFaultActor() + "]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentErogatore.close();
 			}
@@ -2887,7 +2887,7 @@ public class SOAPMessageScorretti {
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
-				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"),
+				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"),
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
 			msg.setMessage(messaggioXMLRichiesta);

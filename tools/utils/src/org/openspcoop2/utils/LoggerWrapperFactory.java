@@ -343,7 +343,7 @@ public class LoggerWrapperFactory {
 		Configuration actualConfiguration = context.getConfiguration();
 		
 		ConfigurationFactory configurationFactory = ConfigurationFactory.getInstance();
-		Configuration appendConfiguration = configurationFactory.getConfiguration(actualConfiguration.getName(), configUri);
+		Configuration appendConfiguration = configurationFactory.getConfiguration(new LoggerContext(actualConfiguration.getName()), actualConfiguration.getName(), configUri);
 		appendConfiguration.initialize();
 		
 		Map<String, Appender> mapAppenders = appendConfiguration.getAppenders();

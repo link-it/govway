@@ -1806,7 +1806,7 @@
     <!-- SOAP Fault generato da un vero servizio ws -->
     <soggetto tipo="spc" nome="SOAPFaultIM">
         <connettore tipo="http" nome="PdDSOAPFaultIM">
-            <property nome="location" valore="http://localhost:8080/openspcoop2/IntegrationManager/PD"/>
+            <property nome="location" valore="http://localhost:8080/govway/spcoop/IntegrationManager/PD"/>
         </connettore>
         <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">

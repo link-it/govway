@@ -412,7 +412,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
-			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
+			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-160.jar" use-physical-code-source="true"/>
 			 *  all'interno del file jboss-deployment-structure.xml non è più sufficente da quanto è stato necessario
 			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'
@@ -426,9 +426,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ------------ 
 			 * Inizializzazione Resource Bundle:
-			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.0.7.jar)
-			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.0.7.jar)
-			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.1.7.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.1.2.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.1.2.jar)
+			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.2.2.jar)
 			 * 
 			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
 			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"

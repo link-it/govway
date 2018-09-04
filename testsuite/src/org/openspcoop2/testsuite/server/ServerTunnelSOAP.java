@@ -95,7 +95,7 @@ public class ServerTunnelSOAP extends ServerCore{
 			}
 			
 			// opzioni tunnel SOAP
-            String tunnelSoap = request.getParameter("govWayTunnelSOAP");
+            String tunnelSoap = request.getParameter("govway_soap_tunnel");
             boolean tunnel = false;
             if(tunnelSoap!=null){
                     tunnelSoap = tunnelSoap.trim();

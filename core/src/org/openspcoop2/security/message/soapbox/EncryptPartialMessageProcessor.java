@@ -93,10 +93,10 @@ import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.keys.KeyInfo;
-import org.apache.xml.security.utils.Base64;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -218,7 +218,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 	            }
 	            //System.out.println("cipher (Algoritmo["+cipher.getAlgorithm()+"]) blksize: " + blockSize);
 				cipher.init(Cipher.WRAP_MODE, secConfigOpenSPCoop.getSymmetricKey(encReq.getCertAlias()), new IvParameterSpec(new byte[blockSize]));
-				cipherValue = Base64.encode(cipher.wrap(encKeyObject));
+				cipherValue = Base64Utilities.encodeAsString(cipher.wrap(encKeyObject));
 			}
 			else{
 
@@ -229,7 +229,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 							" - cipher block size : " + cipher.getBlockSize() + " encrypted bytes length : " + encKey.length);
 				}
 
-				cipherValue = Base64.encode(cipher.doFinal(encKey));
+				cipherValue = Base64Utilities.encodeAsString(cipher.doFinal(encKey));
 			}
 
 		} catch (InvalidKeyException e) {
@@ -515,7 +515,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();  
 		dh.writeTo(baos);
-		return Base64.encode(baos.toByteArray()).getBytes("US-ASCII");
+		return Base64Utilities.encodeAsString(baos.toByteArray()).getBytes("US-ASCII");
 
 	}
 

@@ -34,7 +34,6 @@ import javax.xml.soap.SOAPException;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerException;
@@ -758,7 +757,7 @@ public class RichiesteApplicativeScorrette {
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".406"})
 	public void testIM_messaggiNonDisponibili() throws Exception{
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
-			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"sil01","SIL_01");
 		try{
 			im.getAllMessagesId();
@@ -841,7 +840,7 @@ public class RichiesteApplicativeScorrette {
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".407"})
 	public void testIM_messaggioNonEsistente() throws Exception{
 		org.openspcoop2.pdd.services.axis14.MessageBox_PortType im = 
-			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"), 
+			IntegrationManager.getIntegrationManagerMessageBox_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"), 
 				"sil01","SIL_01");
 		try{
 			im.getMessage("ID_EGOV_XXX");
@@ -1374,7 +1373,7 @@ public class RichiesteApplicativeScorrette {
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
-				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"),
+				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"),
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
 			msg.setMessage(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
@@ -2191,7 +2190,7 @@ public class RichiesteApplicativeScorrette {
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
-				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"),
+				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"),
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
 			msg.setMessage("CONTENUTO_ERRATO".getBytes());
@@ -2324,7 +2323,7 @@ public class RichiesteApplicativeScorrette {
 			
 			Reporter.log("Effettuo invocazione per riferimento");
 			org.openspcoop2.pdd.services.axis14.PD_PortType im = 
-				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/PD"),
+				IntegrationManager.getIntegrationManagerPD_axis14(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/out"),
 						"adminSilX", "123456");
 			IntegrationManagerMessage msg = new IntegrationManagerMessage();
 			msg.setImbustamento(true);
@@ -2977,8 +2976,8 @@ public class RichiesteApplicativeScorrette {
 				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR).equals(error.getFaultCode().getLocalPart()));
 				
@@ -3412,8 +3411,8 @@ public class RichiesteApplicativeScorrette {
 					Assert.assertTrue(false, "FaultCode non atteso");
 				}
 
-				Reporter.log("Controllo fault actor. Atteso [OpenSPCoop] - Trovato [" + error.getFaultActor() + "]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
 				dbComponentErogatore.close();
 			}

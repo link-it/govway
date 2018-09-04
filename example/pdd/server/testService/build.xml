@@ -80,7 +80,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
 		</then>
 	</if>
 	<!-- neethi -->
@@ -90,7 +90,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
+			<var name="neethi_jar" value="neethi-3.1.1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_deployment_structure -->
@@ -138,7 +138,7 @@
 			</classes>
 			<lib dir="${libs}/commons">
 				<include name="commons-discovery-0.5.jar"/>
-				<include name="commons-io-2.5.jar"/>
+				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
@@ -163,7 +163,7 @@
 				<include name="openspcoop2_message_*.jar"/>
 			</lib>
 			<lib dir="${libs}/log">
-				<include name="slf4j-api-1.7.21.jar"/>
+				<include name="slf4j-api-1.7.25.gw.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">

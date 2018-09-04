@@ -224,7 +224,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 			msgIM.setProtocolHeaderInfo(protocolInfo);
 			String url = null;
 			try {
-				url = this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("PD", "IntegrationManager/PD");
+				url = this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("out", "IntegrationManager/out");
 				PDServiceLocator locator = new PDServiceLocator();
 			    locator.setPDEndpointAddress(url);
 			    this.log.info("Invocazione url del servizio di IntegrationManager ["+locator.getPDAddress()+"] ...");
@@ -361,7 +361,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 			msgIM.setProtocolHeaderInfo(protocolInfo);
 			try {
 				PDServiceLocator locator = new PDServiceLocator();
-			    locator.setPDEndpointAddress(this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("PD", "IntegrationManager/PD"));
+			    locator.setPDEndpointAddress(this.testSuiteProperties.getOpenSPCoopPDConsegnaRispostaAsincronaSimmetrica(protocol).replace("out", "IntegrationManager/out"));
 			    this.log.info("Invocazione url del servizio di IntegrationManager ["+locator.getPDAddress()+"] ...");
 			    PD_PortType port = locator.getPD();
 			    

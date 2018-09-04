@@ -46,7 +46,7 @@ public class JsonSignature {
 	
 	public JsonSignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, new JwsHeaders(props), false);
+			this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, new JwsHeaders(props));
 			this.representation=representation;
 		}catch(Throwable t) {
 			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
@@ -82,9 +82,10 @@ public class JsonSignature {
 	}
 
 	private String signDetached(String jsonString) {
-		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString);
+		boolean detached = true;
+		JwsJsonProducer jwsProducer = new JwsJsonProducer(jsonString, false, detached);
 		jwsProducer.signWith(this.provider);
-		return jwsProducer.getJwsJsonSignedDocument(true);
+		return jwsProducer.getJwsJsonSignedDocument();
 	}
 
 	private String signCompact(String jsonString) {

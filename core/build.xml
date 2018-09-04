@@ -59,7 +59,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
-			<exclude name="**/cxf/geronimo-servlet_3.0_spec-1.0.jar"/>
+			<exclude name="**/cxf/javax.servlet-api-3.1.0.jar"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 			<include name="commons/*"/>
@@ -586,7 +586,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -635,7 +635,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -684,7 +684,7 @@
 		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -708,7 +708,7 @@
 		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -730,7 +730,7 @@
 		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -752,7 +752,7 @@
 		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>
@@ -774,7 +774,7 @@
 		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
 		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
 		        </classpath>
 		</java>
 	</target>

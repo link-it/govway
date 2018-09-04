@@ -122,10 +122,16 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcprov-ext-jdk15on-155.jar"/>
-			<include name="neethi-3.0.3.jar"/>
+			<include name="bcprov-ext-jdk15on-160.jar"/>
+			<include name="neethi-3.1.1.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
+			<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
+											e la Porta genera errori simili al seguente: com.sun.xml.messaging.saaj.packaging.mime.MessagingException: 
+																								Missing End Boundary for Mime Package : EOF while skipping headers 
+				Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
+			--> 
+			<exclude name="mailapi*.jar"/> 
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/httpcore" >

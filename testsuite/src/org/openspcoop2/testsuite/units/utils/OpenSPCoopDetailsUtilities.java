@@ -69,7 +69,7 @@ public class OpenSPCoopDetailsUtilities {
 		for(int i=0; i<details.length; i++){
 			Element detail = details[i];
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("dettaglio-eccezione".equals(detail.getLocalName())){
+			if("fault-details".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma il dettaglio di OpenSPCoop
 				boolean result = org.openspcoop2.core.eccezione.details.utils.XMLUtils.isDettaglioEccezione(detail);
 				if(result==false){
@@ -96,7 +96,7 @@ public class OpenSPCoopDetailsUtilities {
 		for(int i=0; i<xml.getChildNodes().getLength(); i++){
 			Node detail = xml.getChildNodes().item(i);
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("dettaglio-eccezione".equals(detail.getLocalName())){
+			if("fault-details".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma il dettaglio di OpenSPCoop
 				return org.openspcoop2.core.eccezione.details.utils.XMLUtils.isDettaglioEccezione(detail);
 			}
@@ -114,7 +114,7 @@ public class OpenSPCoopDetailsUtilities {
 		for(int i=0; i<xml.getChildNodes().getLength(); i++){
 			Node detail = xml.getChildNodes().item(i);
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("dettaglio-eccezione".equals(detail.getLocalName())){
+			if("fault-details".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma il dettaglio di OpenSPCoop
 				if(org.openspcoop2.core.eccezione.details.utils.XMLUtils.isDettaglioEccezione(detail)){
 					return detail;
@@ -154,7 +154,7 @@ public class OpenSPCoopDetailsUtilities {
 		for(int i=0; i<details.length; i++){
 			Element detail = details[i];
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("dettaglio-eccezione".equals(detail.getLocalName())){
+			if("fault-details".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma il dettaglio di OpenSPCoop
 				if(org.openspcoop2.core.eccezione.details.utils.XMLUtils.isDettaglioEccezione(detail)){
 					dettaglioOpenSPCoop = detail;
@@ -200,18 +200,18 @@ public class OpenSPCoopDetailsUtilities {
 			for(int i=0; i<listDettaglioOpenSPCoop.getLength(); i++){
 				Node n = listDettaglioOpenSPCoop.item(i);
 				Reporter.log("DettaglioOpenSPCoop, elemento ["+n.getLocalName()+"] ["+n.getNamespaceURI()+"]");
-				if("ora-registrazione".equals(n.getLocalName())){
+				if("timestamp".equals(n.getLocalName())){
 					if(oraRegistrazioneOk){
-						throw new Exception("Elemento ora-registrazione presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
+						throw new Exception("Elemento timestamp presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
 					}
 					oraRegistrazioneOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					String ora = n.getTextContent();
 					Assert.assertTrue(ora!=null);
 					Reporter.log("ora: "+ora);
-				}else if("dominio".equals(n.getLocalName())){
+				}else if("domain".equals(n.getLocalName())){
 					if(dominioOk){
-						throw new Exception("Elemento dominio presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
+						throw new Exception("Elemento domain presente piu' di una volta all'interno del dettaglio di OpenSPCoop");
 					}
 					dominioOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
@@ -223,16 +223,16 @@ public class OpenSPCoopDetailsUtilities {
 					Assert.assertTrue(attributi.getLength()==2);
 					
 					// modulo
-					Attr modulo = (Attr) attributi.getNamedItem("modulo");
+					Attr modulo = (Attr) attributi.getNamedItem("module");
 					Assert.assertTrue(modulo!=null);
 					if(identificativoModuloOk){
-						throw new Exception("Attributo modulo presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
+						throw new Exception("Attributo module presente piu' di una volta all'interno del fault-details.domain di OpenSPCoop");
 					}
 					identificativoModuloOk = true;
 					String idModuloValue = modulo.getTextContent();
 					boolean match=false;
 					for(int h=0;h<identificativoModuloAtteso.length;h++){
-						Reporter.log("Controllo identificativoFunzione presente["+idModuloValue+"] atteso("+h+")["+identificativoModuloAtteso[h]+"]");
+						Reporter.log("Controllo module presente["+idModuloValue+"] atteso("+h+")["+identificativoModuloAtteso[h]+"]");
 						if(idModuloValue.equals(identificativoModuloAtteso[h])){ 
 							match = true;
 							break;
@@ -241,10 +241,10 @@ public class OpenSPCoopDetailsUtilities {
 					Assert.assertTrue(match);
 					
 					// funzione
-					Attr funzione = (Attr) attributi.getNamedItem("funzione");
+					Attr funzione = (Attr) attributi.getNamedItem("role");
 					Assert.assertTrue(funzione!=null);
 					if(identificativoFunzioneOk){
-						throw new Exception("Attributo funzione presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
+						throw new Exception("Attributo role presente piu' di una volta all'interno del fault-details.domain di OpenSPCoop");
 					}
 					identificativoFunzioneOk = true;
 					String idFunzioneValue = funzione.getTextContent();
@@ -261,7 +261,7 @@ public class OpenSPCoopDetailsUtilities {
 					else if(tipoPdDAtteso.equals(TipoPdD.ROUTER)){
 						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.ROUTER.getValue();
 					}
-					Reporter.log("Controllo identificativoFunzione presente["+idFunzioneValue+"] atteso["+identificativoFunzioneAtteso+"]");
+					Reporter.log("Controllo role presente["+idFunzioneValue+"] atteso["+identificativoFunzioneAtteso+"]");
 					Assert.assertTrue(idFunzioneValue.equals(identificativoFunzioneAtteso));
 					
 					// child-node
@@ -272,9 +272,9 @@ public class OpenSPCoopDetailsUtilities {
 						Node nDominio = listDominio.item(j);
 						Reporter.log("DettaglioOpenSPCoop.dominio, elemento ["+nDominio.getLocalName()+"] ["+nDominio.getNamespaceURI()+"]");
 						
-						if("identificativo-porta".equals(nDominio.getLocalName())){
+						if("id".equals(nDominio.getLocalName())){
 							if(identificativoPortaOk){
-								throw new Exception("Elemento identificativo-porta presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
+								throw new Exception("Elemento id presente piu' di una volta all'interno del fault-details.domain di OpenSPCoop");
 							}
 							identificativoPortaOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
@@ -284,21 +284,21 @@ public class OpenSPCoopDetailsUtilities {
 							Assert.assertTrue(idPortaValue.equals(identificativoPortaAtteso));
 						}
 						
-						if("soggetto".equals(nDominio.getLocalName())){
+						if("organization".equals(nDominio.getLocalName())){
 							if(dominioSoggettoOk){
-								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
+								throw new Exception("Elemento organization presente piu' di una volta all'interno del fault-details.domain di OpenSPCoop");
 							}
 							dominioSoggettoOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
 							
-							// tipo
+							// type
 							NamedNodeMap attributiSoggetto = nDominio.getAttributes();
 							Assert.assertTrue(attributiSoggetto!=null);
 							Assert.assertTrue(attributiSoggetto.getLength()==1);
-							Attr tipoSoggetto = (Attr) attributiSoggetto.getNamedItem("tipo");
+							Attr tipoSoggetto = (Attr) attributiSoggetto.getNamedItem("type");
 							Assert.assertTrue(tipoSoggetto!=null);
 							if(dominioSoggettoTipoOk){
-								throw new Exception("Attributo tipo presente piu' di una volta all'interno del dettaglio.dominio.soggetto di OpenSPCoop");
+								throw new Exception("Attributo type presente piu' di una volta all'interno del fault-details.domain.organization di OpenSPCoop");
 							}
 							dominioSoggettoTipoOk = true;
 							String tipoValue = tipoSoggetto.getTextContent();
@@ -308,7 +308,7 @@ public class OpenSPCoopDetailsUtilities {
 							
 							// nome
 							if(dominioSoggettoNomeOk){
-								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del dettaglio.dominio di OpenSPCoop");
+								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del fault-details.domain di OpenSPCoop");
 							}
 							dominioSoggettoNomeOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
@@ -320,7 +320,7 @@ public class OpenSPCoopDetailsUtilities {
 					}
 					
 				}
-				else if("eccezioni".equals(n.getLocalName())){
+				else if("exceptions".equals(n.getLocalName())){
 					eccezioneOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					Assert.assertTrue(n.hasChildNodes()==true);
@@ -331,7 +331,7 @@ public class OpenSPCoopDetailsUtilities {
 					for(int j=0; j<listTipoEccezione.getLength(); j++){
 						Node tmp = listTipoEccezione.item(j);
 						Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"]");
-						if("eccezione".equals(tmp.getLocalName())){
+						if("exception".equals(tmp.getLocalName())){
 							findEccezione = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(tmp.getNamespaceURI()) );
 						}
@@ -342,28 +342,28 @@ public class OpenSPCoopDetailsUtilities {
 						Assert.assertTrue(attributi!=null);
 						Assert.assertTrue(attributi.getLength()==3 || attributi.getLength()==5);
 						
-						Attr codiceEccezione = (Attr) attributi.getNamedItem("codice");
+						Attr codiceEccezione = (Attr) attributi.getNamedItem("code");
 						Assert.assertTrue(codiceEccezione!=null);
 						String namespaceCodiceEccezione = codiceEccezione.getNamespaceURI();
 						String valoreCodiceEccezione = codiceEccezione.getTextContent();
 						
-						Attr descrizioneEccezione = (Attr) attributi.getNamedItem("descrizione");
+						Attr descrizioneEccezione = (Attr) attributi.getNamedItem("description");
 						Assert.assertTrue(descrizioneEccezione!=null);
 						String valoreDescrizioneEccezione = descrizioneEccezione.getTextContent();
 						
-						Attr tipoEccezione = (Attr) attributi.getNamedItem("tipo");
+						Attr tipoEccezione = (Attr) attributi.getNamedItem("type");
 						Assert.assertTrue(tipoEccezione!=null);
 						String valoreTipoEccezione = tipoEccezione.getTextContent();
 						
 						// Check eccezione attesa
 						boolean findEccezioneAttesa = false;
 						
-						Reporter.log("Verifico codiceEccezione["+valoreCodiceEccezione+"] descrizioneEccezione["+valoreDescrizioneEccezione+"] tipoEccezione["+valoreTipoEccezione+"]");
+						Reporter.log("Verifico code["+valoreCodiceEccezione+"] description["+valoreDescrizioneEccezione+"] type["+valoreTipoEccezione+"]");
 						
 						for (int k = 0; k < eccezioni.size(); k++) {
 														
-							Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"] Controllo presenza codice["+eccezioni.get(k).getCodice()
-									+"] descrizione["+eccezioni.get(k).getDescrizione()+"] matchEsatto["+eccezioni.get(k).isCheckDescrizioneTramiteMatchEsatto()+"] ...");
+							Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"] Controllo presenza code["+eccezioni.get(k).getCodice()
+									+"] description["+eccezioni.get(k).getDescrizione()+"] matchEsatto["+eccezioni.get(k).isCheckDescrizioneTramiteMatchEsatto()+"] ...");
 							
 							// check codice
 							if(eccezioni.get(k).getCodice().equals(valoreCodiceEccezione)){
@@ -401,8 +401,8 @@ public class OpenSPCoopDetailsUtilities {
 							}
 							
 							if(findEccezioneAttesa){
-								Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"] Controllo presenza codice["+eccezioni.get(k).getCodice()
-										+"] descrizione["+eccezioni.get(k).getDescrizione()+"] matchEsatto["+eccezioni.get(k).isCheckDescrizioneTramiteMatchEsatto()+"] FIND");
+								Reporter.log("Eccezioni, eccezione ["+tmp.getLocalName()+"] Controllo presenza code["+eccezioni.get(k).getCodice()
+										+"] description["+eccezioni.get(k).getDescrizione()+"] matchEsatto["+eccezioni.get(k).isCheckDescrizioneTramiteMatchEsatto()+"] FIND");
 								eccezioni.remove(k);
 								break;
 							}
@@ -418,7 +418,7 @@ public class OpenSPCoopDetailsUtilities {
 					// Verifico che tutte le eccezioni attese siano state riscontrate
 					if(verificatutto) Assert.assertTrue( eccezioni.size() == 0);
 				}
-				else if("dettagli".equals(n.getLocalName())){
+				else if("details".equals(n.getLocalName())){
 					Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					if(dettagli.size()>0){
 						Assert.assertTrue(n.hasChildNodes()==true);
@@ -429,7 +429,7 @@ public class OpenSPCoopDetailsUtilities {
 						for(int j=0; j<listDettagli.getLength(); j++){
 							Node tmp = listDettagli.item(j);
 							Reporter.log("Dettagli, dettaglio ["+tmp.getLocalName()+"]");
-							if("dettaglio".equals(tmp.getLocalName())){
+							if("detail".equals(tmp.getLocalName())){
 								findDettaglio = true;
 								Assert.assertTrue( org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(tmp.getNamespaceURI()) );
 							}
@@ -440,7 +440,7 @@ public class OpenSPCoopDetailsUtilities {
 							Assert.assertTrue(attributi!=null);
 							Assert.assertTrue(attributi.getLength()==1);
 							
-							Attr tipoDettaglio = (Attr) attributi.getNamedItem("tipo");
+							Attr tipoDettaglio = (Attr) attributi.getNamedItem("type");
 							Assert.assertTrue(tipoDettaglio!=null);
 							String valoreTipo = tipoDettaglio.getTextContent();
 							

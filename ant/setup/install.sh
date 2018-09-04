@@ -41,8 +41,8 @@ LIBRARIES=${ROOT_OPENSPCOOP}/lib
 ANTINSTALLER_LIBRARIES=${LIBRARIES}/antinstaller
 
 # Installer from command line classpath
-CLASSPATH=${LIBRARIES}/shared/xercesImpl-2.11.0.jar
-CLASSPATH=${LIBRARIES}/shared/xml-apis-2.11.0.jar
+CLASSPATH=${LIBRARIES}/shared/xercesImpl-2.12.0.jar
+CLASSPATH=${LIBRARIES}/shared/xml-apis-2.12.0.jar
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/xml-apis_antinstaller0.8b.jar
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ant-installer-0.8b.jar
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ai-icons-eclipse_antinstaller0.8b.jar
