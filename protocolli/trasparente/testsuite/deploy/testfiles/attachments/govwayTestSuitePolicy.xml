@@ -10,7 +10,7 @@
 				<Apply
 					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
 					<SubjectAttributeDesignator
-						AttributeId="org:openspcoop:subject:role"
+						AttributeId="org:govway:subject:role"
 						DataType="http://www.w3.org/2001/XMLSchema#string" />
 					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
 						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">role3AllPD_OpenSPCoopTest</AttributeValue>
@@ -21,7 +21,7 @@
 				<Apply
 					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
 					<SubjectAttributeDesignator
-						AttributeId="org:openspcoop:action:pddService"
+						AttributeId="org:govway:action:gwService"
 						DataType="http://www.w3.org/2001/XMLSchema#string" />
 					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
 						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PD</AttributeValue>

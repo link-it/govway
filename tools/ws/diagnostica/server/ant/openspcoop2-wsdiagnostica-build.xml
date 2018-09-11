@@ -136,11 +136,11 @@
 				<mkdir dir="${build_diagnostica_ws}/classes" />
 				<unzip dest="${build_diagnostica_ws}/classes">
 					<fileset dir="${dist_diagnostica_ws}">
-						<include name="govway_ws-diagnostica-server*.jar"/>
+						<include name="openspcoop2_ws-diagnostica-server*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_diagnostica_ws}" >
-					<include name="govway_ws-diagnostica-server*.jar"/>
+					<include name="openspcoop2_ws-diagnostica-server*.jar"/>
 				</delete>
 				
 				<!-- Jar Complessivo -->

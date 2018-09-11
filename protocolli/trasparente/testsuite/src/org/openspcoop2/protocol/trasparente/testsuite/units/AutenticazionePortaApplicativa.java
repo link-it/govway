@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.AuthUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.CredenzialiInvocazione;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -182,6 +183,7 @@ public class AutenticazionePortaApplicativa {
 	public void testSslOptional(CredenzialiInvocazione credenzialiInvocazione, IDSoggetto fruitore, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		// Con autenticazione opzionale tutte le invocazioni avvengono con successo.
 		ricercaEsatta = false; // il diagnostico e' arricchito dell'informazione che l'autenticazione e' opzionale
+		Utilities.sleep(5000);
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTH_OPTIONAL_SSL, fruitore,
 				credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta,  DateManager.getDate(), 

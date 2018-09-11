@@ -72,6 +72,7 @@ abstract class AbstractAutorizzazioneAuthenticatedRoles extends AbstractAutorizz
     	else {
     		authRuoli = new AutorizzazioneExternalRoles();
     	}
+    	authRuoli.init(this.getPddContext(), this.getProtocolFactory(), this.getArgs());
     	EsitoAutorizzazionePortaDelegata esitoAuthRoles = authRuoli.process(datiInvocazione);
     	if(esitoAuthRoles.isAutorizzato()){
     		return esitoAuthRoles;

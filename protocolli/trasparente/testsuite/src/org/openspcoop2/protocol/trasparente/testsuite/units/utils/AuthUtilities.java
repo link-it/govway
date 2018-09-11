@@ -33,7 +33,6 @@ import org.apache.axis.Message;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.services.connector.RicezioneBusteConnector;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiConnector;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -78,43 +77,83 @@ public class AuthUtilities {
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+		testPortaDelegata(nomePorta,
+				credenzialiInvocazione, addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				null);
+	}
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			Integer readTimeout) throws Exception{
 		test(true, nomePorta, credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
-				returnCodeAtteso, false);
+				returnCodeAtteso, false,
+				readTimeout);
 	}
 	public static void testPortaDelegata(String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+		testPortaDelegata(nomePorta,
+				credenzialiInvocazione, addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				null);
+	}
+	public static void testPortaDelegata(String nomePorta,
+			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreIntegrazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			Integer readTimeout) throws Exception{
 		test(true, nomePorta, credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, codiceErrore, null, ricercaEsatta, dataInizioTest, 
 				CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO,
-				returnCodeAtteso, checkOpenSPCoopDetail);
+				returnCodeAtteso, checkOpenSPCoopDetail,
+				readTimeout);
 	}
 	
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso) throws Exception{
+		testPortaApplicativa(nomePorta, soggettoFruitore,
+				credenzialiInvocazione, addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				null);
+	}
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso,
+			Integer readTimeout) throws Exception{
 		test(false, nomePorta, credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-				returnCodeAtteso, false);
+				returnCodeAtteso, false,
+				readTimeout);
 	}
 	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
 			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail) throws Exception{
+		testPortaApplicativa(nomePorta, soggettoFruitore,
+				credenzialiInvocazione, addIDUnivoco,
+				erroreAtteso, codiceErrore, ricercaEsatta, dataInizioTest, returnCodeAtteso, checkOpenSPCoopDetail,
+				null);
+	}
+	public static void testPortaApplicativa(String nomePorta, IDSoggetto soggettoFruitore,
+			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
+			String erroreAtteso, CodiceErroreCooperazione codiceErrore, boolean ricercaEsatta, Date dataInizioTest, int returnCodeAtteso, boolean checkOpenSPCoopDetail,
+			Integer readTimeout) throws Exception{
 		test(false, nomePorta, credenzialiInvocazione, addIDUnivoco, 
 				erroreAtteso, null, codiceErrore, ricercaEsatta, dataInizioTest, 
 				soggettoFruitore, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-				returnCodeAtteso, checkOpenSPCoopDetail);
+				returnCodeAtteso, checkOpenSPCoopDetail,
+				readTimeout);
 	}
 	
 	private static void test(boolean portaDelegata, String nomePorta,
 			CredenzialiInvocazione credenzialiInvocazione, boolean addIDUnivoco,
 			String erroreAtteso, CodiceErroreIntegrazione codiceErroreIntegrazione, CodiceErroreCooperazione codiceErroreCooperazone, boolean ricercaEsatta, Date dataInizioTest,
 			IDSoggetto fruitore,IDSoggetto erogatore, int returnCodeAtteso, 
-			boolean checkOpenSPCoopDetail // presente solamente in caso di errore di processamento
-			) throws Exception{
+			boolean checkOpenSPCoopDetail, // presente solamente in caso di errore di processamento
+			Integer readTimeout) throws Exception{
 		
 		java.io.FileInputStream fin = null;
 		Repository repository=new Repository();
@@ -154,6 +193,9 @@ public class AuthUtilities {
 			}
 	
 			ClientHttpGenerico client=new ClientHttpGenerico(repository,sslContext);
+			if(readTimeout!=null) {
+				client.setConnectionReadTimeout(readTimeout);
+			}
 			client.setSoapAction("\"TEST\"");
 			if(portaDelegata) {
 				if(credenzialiInvocazione!=null && TipoAutenticazione.PRINCIPAL.equals(credenzialiInvocazione.getAutenticazione())) {
@@ -223,8 +265,8 @@ public class AuthUtilities {
 					modulo = RicezioneContenutiApplicativiConnector.ID_MODULO;
 					Reporter.log("Modulo ["+modulo+"]");
 					
-					Reporter.log("Controllo actor code ["+CostantiPdD.OPENSPCOOP2+"],  found["+error.getFaultActor()+"]");
-					Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
+					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 					
 					Reporter.log("Controllo fault code ["+Utilities.toString(codiceErroreIntegrazione)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
 					Assert.assertTrue(Utilities.toString(codiceErroreIntegrazione).equals(error.getFaultCode().getLocalPart()));
@@ -333,21 +375,23 @@ public class AuthUtilities {
 			checkDB = (stato==200);
 		}
 		if(checkDB) {
-			try{
-				boolean checkServizioApplicativo = false;
-				if(portaDelegata)
-					data = DatabaseProperties.getDatabaseComponentFruitore();
-				else
-					data = DatabaseProperties.getDatabaseComponentErogatore();
-				testSincrono(data, id,
-						fruitore, erogatore,
-						CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO,
-						false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
-						checkServizioApplicativo, null, null, null);
-			}catch(Exception e){
-				throw e;
-			}finally{
-				data.close();
+			if(org.openspcoop2.protocol.trasparente.testsuite.units.utils.CooperazioneTrasparenteBase.protocolloEmetteTracce) {
+				try{
+					boolean checkServizioApplicativo = false;
+					if(portaDelegata)
+						data = DatabaseProperties.getDatabaseComponentFruitore();
+					else
+						data = DatabaseProperties.getDatabaseComponentErogatore();
+					testSincrono(data, id,
+							fruitore, erogatore,
+							CostantiTestSuite.SOAP_TIPO_SERVIZIO, CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, CostantiTestSuite.PROXY_SERVIZIO_SINCRONO_AZIONE_AGGIORNAMENTO,
+							false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
+							checkServizioApplicativo, null, null, null);
+				}catch(Exception e){
+					throw e;
+				}finally{
+					data.close();
+				}
 			}
 		}
 		

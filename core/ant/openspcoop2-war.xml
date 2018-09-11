@@ -188,8 +188,8 @@
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="xercesImpl-2.12.0.jar"/>
 				<include name="xml-apis-2.12.0.jar"/>
-				<include name="xalan-2.7.1.jar"/>
-				<include name="xalan-2.7.1_serializer.jar"/> 
+				<include name="xalan-2.7.2.jar"/>
+				<include name="xalan-2.7.2_serializer.jar"/> 
 				<include name="velocity-1.7.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->

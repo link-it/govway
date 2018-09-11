@@ -136,11 +136,11 @@
 				<mkdir dir="${build_config_ws}/classes" />
 				<unzip dest="${build_config_ws}/classes">
 					<fileset dir="${dist_config_ws}">
-						<include name="govway_ws-config-server*.jar"/>
+						<include name="openspcoop2_ws-config-server*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_config_ws}" >
-					<include name="govway_ws-config-server*.jar"/>
+					<include name="openspcoop2_ws-config-server*.jar"/>
 				</delete>
 				
 				<!-- Jar Complessivo -->

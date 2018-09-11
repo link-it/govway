@@ -1,3 +1,9 @@
+2018-09-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-750
+	Verificato supporto per WildFly 14
+
 2018-09-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
@@ -89,6 +95,8 @@
 	concurrent-1.0.jar -> com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar
 	xercesImpl-2.11.0.jar -> xercesImpl-2.12.0.jar
 	xml-apis-2.11.0.jar -> xml-apis-2.12.0.jar
+	xalan-2.7.1.jar -> xalan-2.7.2.jar
+	xalan-2.7.1_serializer.jar -> xalan-2.7.2_serializer.jar
 	aspectjrt-1.8.9.jar -> aspectjrt-1.9.1.jar
 	aspectjweaver-1.8.9.jar -> aspectjweaver-1.9.1.jar
 	freemarker-2.3.25.jar -> freemarker-2.3.28.jar
@@ -2481,7 +2489,7 @@
 	La versione 'com.sun.org.apache.xalan.internal.xsltc.trax.*' non funziona correttamente per tutti gli xml potenziali presenti nei package CNIPA.
 	Tale versione veniva presa dalla ricerca nel classpath effettuato dal metodo 'newInstance' se nel classpath sono presenti i jar:
 	- jaxp-ri-1.4.5.jar (META-INF/services/javax.xml.transform.TransformerFactory contiene 'com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl')
-	- xalan-2.7.1.jar (META-INF/services/javax.xml.transform.TransformerFactory contiene 'org.apache.xalan.processor.TransformerFactoryImpl')
+	- xalan-2.7.2.jar (META-INF/services/javax.xml.transform.TransformerFactory contiene 'org.apache.xalan.processor.TransformerFactoryImpl')
 	Il problema e' stato risolto eliminando la registrazione 'javax.xml.transform.TransformerFactory' dal jar 'jaxp-ri-1.4.5.jar'.
 
 2015-01-19  Andrea Poli <apoli@link.it>

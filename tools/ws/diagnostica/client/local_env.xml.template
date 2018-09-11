@@ -18,7 +18,7 @@
 	
 	<!-- BaseURL dell'Application Server -->
 	<property name="baseWsdlURL_diagnostica_ws_client" value="http://localhost:8080/" />
-	<property name="wsdlURL_diagnostica_ws_client" value="${baseWsdlURL_diagnostica_ws_client}govwayDiagnostica" />
+	<property name="wsdlURL_diagnostica_ws_client" value="${baseWsdlURL_diagnostica_ws_client}govwayDiagnosticaApi" />
 	
 	
 </project>

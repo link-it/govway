@@ -70,7 +70,7 @@ public class ErroreApplicativoUtilities {
 		for(int i=0; i<details.length; i++){
 			Element detail = details[i];
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("errore-applicativo".equals(detail.getLocalName())){
+			if("fault".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma ill'errore applicativo
 				boolean result = org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.isErroreApplicativo(detail);
 				if(result==false){
@@ -97,7 +97,7 @@ public class ErroreApplicativoUtilities {
 		for(int i=0; i<xml.getChildNodes().getLength(); i++){
 			Node detail = xml.getChildNodes().item(i);
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("errore-applicativo".equals(detail.getLocalName())){
+			if("fault".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma ill'errore applicativo
 				return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.isErroreApplicativo(detail);
 			}
@@ -115,7 +115,7 @@ public class ErroreApplicativoUtilities {
 		for(int i=0; i<xml.getChildNodes().getLength(); i++){
 			Node detail = xml.getChildNodes().item(i);
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("errore-applicativo".equals(detail.getLocalName())){
+			if("fault".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma ill'errore applicativo
 				if(org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.isErroreApplicativo(detail)){
 					return detail;
@@ -162,7 +162,7 @@ public class ErroreApplicativoUtilities {
 		for(int i=0; i<details.length; i++){
 			Element detail = details[i];
 			Reporter.log("Detail["+detail.getLocalName()+"]");
-			if("errore-applicativo".equals(detail.getLocalName())){
+			if("fault".equals(detail.getLocalName())){
 				// Details, contiene l'xml che forma ill'errore applicativo
 				if(org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.isErroreApplicativo(detail)){
 					dettaglioOpenSPCoop = detail;
@@ -218,9 +218,9 @@ public class ErroreApplicativoUtilities {
 			for(int i=0; i<listDettaglioOpenSPCoop.getLength(); i++){
 				Node n = listDettaglioOpenSPCoop.item(i);
 				Reporter.log("ErroreApplicativo, elemento ["+n.getLocalName()+"] ["+n.getNamespaceURI()+"]");
-				if("ora-registrazione".equals(n.getLocalName())){
+				if("timestamp".equals(n.getLocalName())){
 					if(oraRegistrazioneOk){
-						throw new Exception("Elemento ora-registrazione presente piu' di una volta all'interno dell'errore applicativo");
+						throw new Exception("Elemento timestamp presente piu' di una volta all'interno dell'errore applicativo");
 					}
 					oraRegistrazioneOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
@@ -228,9 +228,9 @@ public class ErroreApplicativoUtilities {
 					Assert.assertTrue(ora!=null);
 					Reporter.log("ora: "+ora);
 				}
-				else if("dominio".equals(n.getLocalName())){
+				else if("domain".equals(n.getLocalName())){
 					if(dominioOk){
-						throw new Exception("Elemento dominio presente piu' di una volta all'interno dell'errore applicativo");
+						throw new Exception("Elemento domain presente piu' di una volta all'interno dell'errore applicativo");
 					}
 					dominioOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
@@ -242,16 +242,16 @@ public class ErroreApplicativoUtilities {
 					Assert.assertTrue(attributi.getLength()==2);
 					
 					// modulo
-					Attr modulo = (Attr) attributi.getNamedItem("modulo");
+					Attr modulo = (Attr) attributi.getNamedItem("module");
 					Assert.assertTrue(modulo!=null);
 					if(identificativoModuloOk){
-						throw new Exception("Attributo modulo presente piu' di una volta all'interno del erroreApplicativo.dominio di OpenSPCoop");
+						throw new Exception("Attributo module presente piu' di una volta all'interno del fault.domain di OpenSPCoop");
 					}
 					identificativoModuloOk = true;
 					String idModuloValue = modulo.getTextContent();
 					boolean match=false;
 					for(int h=0;h<identificativoModuloAtteso.length;h++){
-						Reporter.log("Controllo identificativoFunzione presente["+idModuloValue+"] atteso("+h+")["+identificativoModuloAtteso[h]+"]");
+						Reporter.log("Controllo module presente["+idModuloValue+"] atteso("+h+")["+identificativoModuloAtteso[h]+"]");
 						if(idModuloValue.equals(identificativoModuloAtteso[h])){ 
 							match = true;
 							break;
@@ -260,10 +260,10 @@ public class ErroreApplicativoUtilities {
 					Assert.assertTrue(match);
 					
 					// funzione
-					Attr funzione = (Attr) attributi.getNamedItem("funzione");
+					Attr funzione = (Attr) attributi.getNamedItem("role");
 					Assert.assertTrue(funzione!=null);
 					if(identificativoFunzioneOk){
-						throw new Exception("Attributo funzione presente piu' di una volta all'interno del erroreApplicativo.dominio di OpenSPCoop");
+						throw new Exception("Attributo role presente piu' di una volta all'interno del fault.domain di OpenSPCoop");
 					}
 					identificativoFunzioneOk = true;
 					String idFunzioneValue = funzione.getTextContent();
@@ -280,7 +280,7 @@ public class ErroreApplicativoUtilities {
 					else if(tipoPdDAtteso.equals(TipoPdD.ROUTER)){
 						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoPdD.ROUTER.getValue();
 					}
-					Reporter.log("Controllo identificativoFunzione presente["+idFunzioneValue+"] atteso["+identificativoFunzioneAtteso+"]");
+					Reporter.log("Controllo role presente["+idFunzioneValue+"] atteso["+identificativoFunzioneAtteso+"]");
 					Assert.assertTrue(idFunzioneValue.equals(identificativoFunzioneAtteso));
 					
 					// child-node
@@ -291,21 +291,21 @@ public class ErroreApplicativoUtilities {
 						Node nDominio = listDominio.item(j);
 						Reporter.log("DettaglioOpenSPCoop.dominio, elemento ["+nDominio.getLocalName()+"] ["+nDominio.getNamespaceURI()+"]");
 						
-						if("identificativo-porta".equals(nDominio.getLocalName())){
+						if("id".equals(nDominio.getLocalName())){
 							if(identificativoPortaOk){
-								throw new Exception("Elemento identificativo-porta presente piu' di una volta all'interno del erroreApplicativo.dominio di OpenSPCoop");
+								throw new Exception("Elemento id presente piu' di una volta all'interno del fault.domain di OpenSPCoop");
 							}
 							identificativoPortaOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
 							String idPortaValue = nDominio.getTextContent();
 							String identificativoPortaAtteso = dominioAtteso.getCodicePorta();
-							Reporter.log("Controllo identificativoPorta presente["+idPortaValue+"] atteso["+identificativoPortaAtteso+"]");
+							Reporter.log("Controllo id presente["+idPortaValue+"] atteso["+identificativoPortaAtteso+"]");
 							Assert.assertTrue(idPortaValue.equals(identificativoPortaAtteso));
 						}
 						
-						if("soggetto".equals(nDominio.getLocalName())){
+						if("organization".equals(nDominio.getLocalName())){
 							if(dominioSoggettoOk){
-								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del erroreApplicativo.dominio di OpenSPCoop");
+								throw new Exception("Elemento organization presente piu' di una volta all'interno del fault.domain di OpenSPCoop");
 							}
 							dominioSoggettoOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
@@ -314,20 +314,20 @@ public class ErroreApplicativoUtilities {
 							NamedNodeMap attributiSoggetto = nDominio.getAttributes();
 							Assert.assertTrue(attributiSoggetto!=null);
 							Assert.assertTrue(attributiSoggetto.getLength()==1);
-							Attr tipoSoggetto = (Attr) attributiSoggetto.getNamedItem("tipo");
+							Attr tipoSoggetto = (Attr) attributiSoggetto.getNamedItem("type");
 							Assert.assertTrue(tipoSoggetto!=null);
 							if(dominioSoggettoTipoOk){
-								throw new Exception("Attributo tipo presente piu' di una volta all'interno del erroreApplicativo.dominio.soggetto di OpenSPCoop");
+								throw new Exception("Attributo tipo presente piu' di una volta all'interno del fault.domain.organization di OpenSPCoop");
 							}
 							dominioSoggettoTipoOk = true;
 							String tipoValue = tipoSoggetto.getTextContent();
 							String tipoAtteso = dominioAtteso.getTipo();
-							Reporter.log("Controllo tipo presente["+tipoValue+"] atteso["+tipoAtteso+"]");
+							Reporter.log("Controllo type presente["+tipoValue+"] atteso["+tipoAtteso+"]");
 							Assert.assertTrue(tipoValue.equals(tipoAtteso));
 							
 							// nome
 							if(dominioSoggettoNomeOk){
-								throw new Exception("Elemento soggetto presente piu' di una volta all'interno del erroreApplicativo.dominio di OpenSPCoop");
+								throw new Exception("Elemento organization presente piu' di una volta all'interno del fault.domain di OpenSPCoop");
 							}
 							dominioSoggettoNomeOk = true;
 							Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(nDominio.getNamespaceURI()) );
@@ -339,10 +339,10 @@ public class ErroreApplicativoUtilities {
 					}
 					
 				}
-				else if("dati-cooperazione".equals(n.getLocalName())){
+				else if("service".equals(n.getLocalName())){
 					// per ora non sono implementati controlli
 				}
-				else if("eccezione".equals(n.getLocalName())){
+				else if("exception".equals(n.getLocalName())){
 					eccezioneOk = true;
 					Assert.assertTrue( org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE.equals(n.getNamespaceURI()) );
 					Assert.assertTrue(n.hasChildNodes()==true);
@@ -356,7 +356,7 @@ public class ErroreApplicativoUtilities {
 					Assert.assertTrue(attributi!=null);
 					Assert.assertTrue(attributi.getLength()==1);
 					
-					Attr tipoEccezione = (Attr) attributi.getNamedItem("tipo");
+					Attr tipoEccezione = (Attr) attributi.getNamedItem("type");
 					Assert.assertTrue(tipoEccezione!=null);
 					String valoreTipoEccezione = tipoEccezione.getTextContent();
 					Assert.assertTrue(valoreTipoEccezione!=null);
@@ -376,10 +376,10 @@ public class ErroreApplicativoUtilities {
 						Node tmp = listTipoEccezione.item(j);
 						Reporter.log("Eccezione, ["+tmp.getLocalName()+"]");
 						
-						if("codice".equals(tmp.getLocalName())){
+						if("code".equals(tmp.getLocalName())){
 							
 							if(findCodice){
-								throw new Exception("Elemento codice presente piu' di una volta all'interno del erroreApplicativo.eccezione di OpenSPCoop");
+								throw new Exception("Elemento code presente piu' di una volta all'interno del fault.exception di OpenSPCoop");
 							}
 							
 							findCodice = true;
@@ -391,16 +391,16 @@ public class ErroreApplicativoUtilities {
 							Assert.assertTrue(attributiCodice!=null);
 							Assert.assertTrue(attributiCodice.getLength()==1);
 							
-							Attr tipoCodice = (Attr) attributiCodice.getNamedItem("tipo");
+							Attr tipoCodice = (Attr) attributiCodice.getNamedItem("type");
 							Assert.assertTrue(tipoCodice!=null);
 							String valoreTipoCodice = tipoCodice.getTextContent();
 							Assert.assertTrue(valoreTipoCodice!=null);
 							if(codiceErroreIntegrazione!=null) {
-								Reporter.log("Controllo codice presente["+valoreTipoCodice+"] atteso-integrazione["+codiceErroreIntegrazione.getCodice()+"]");
+								Reporter.log("Controllo code presente["+valoreTipoCodice+"] atteso-integrazione["+codiceErroreIntegrazione.getCodice()+"]");
 								Assert.assertTrue(valoreTipoCodice.equals(codiceErroreIntegrazione.getCodice()+""));
 							}
 							else {
-								Reporter.log("Controllo codice presente["+valoreTipoCodice+"] atteso-cooperazione["+codiceErroreCooperazione.getCodice()+"]");
+								Reporter.log("Controllo code presente["+valoreTipoCodice+"] atteso-cooperazione["+codiceErroreCooperazione.getCodice()+"]");
 								Assert.assertTrue(valoreTipoCodice.equals(codiceErroreCooperazione.getCodice()+""));
 							}
 							
@@ -415,10 +415,10 @@ public class ErroreApplicativoUtilities {
 							Reporter.log("Controllo codice descrittivo presente["+value+"] atteso["+atteso+"]");
 							Assert.assertTrue(value.equals(atteso));
 						}
-						else if("descrizione".equals(tmp.getLocalName())){
+						else if("description".equals(tmp.getLocalName())){
 							
 							if(findDescrizione){
-								throw new Exception("Elemento descrizione presente piu' di una volta all'interno del erroreApplicativo.eccezione di OpenSPCoop");
+								throw new Exception("Elemento description presente piu' di una volta all'interno del fault.exception di OpenSPCoop");
 							}
 							
 							findDescrizione = true;
@@ -426,7 +426,7 @@ public class ErroreApplicativoUtilities {
 							
 							String value = tmp.getTextContent();
 							String atteso = descrizione;
-							Reporter.log("Controllo descrizione presente["+value+"] atteso["+atteso+"] checkDescrizioneTramiteMatchEsatto["+checkDescrizioneTramiteMatchEsatto+"]");
+							Reporter.log("Controllo description presente["+value+"] atteso["+atteso+"] checkDescrizioneTramiteMatchEsatto["+checkDescrizioneTramiteMatchEsatto+"]");
 							if(checkDescrizioneTramiteMatchEsatto) {
 								Assert.assertTrue(value.equals(atteso));
 							}

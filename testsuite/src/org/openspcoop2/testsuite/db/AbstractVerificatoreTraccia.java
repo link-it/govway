@@ -128,6 +128,7 @@ public abstract class AbstractVerificatoreTraccia {
 				query = query + CostantiDB.TRACCE_COLUMN_AZIONE+"=? ";
 			else
 				query = query + CostantiDB.TRACCE_COLUMN_AZIONE+" is null ";
+			//System.out.println("QUERY ["+query+"] idMessaggio["+idMessaggio+"] tipoServizio["+tipoServizio+"] nomeServizio["+nomeServizio+"] versioneServizio["+versioneServizio+"] azione["+azione+"]");
 			PreparedStatement pstmt = this.con.prepareStatement(query);
 			int index = 1;
 			pstmt.setString(index++, idMessaggio);

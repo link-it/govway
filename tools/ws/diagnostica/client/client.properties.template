@@ -1,8 +1,8 @@
-messaggioDiagnostico.soap11.url=http://127.0.0.1:8080/govwayDiagnostica/MessaggioDiagnostico/Soap11
+messaggioDiagnostico.soap11.url=http://127.0.0.1:8080/govwayDiagnosticaApi/MessaggioDiagnostico/Soap11
 #messaggioDiagnostico.soap11.username=INSERIRE_USERNAME
 #messaggioDiagnostico.soap11.password=INSERIRE_PASSWORD
 
-messaggioDiagnostico.soap12.url=http://127.0.0.1:8080/govwayDiagnostica/MessaggioDiagnostico/Soap12
+messaggioDiagnostico.soap12.url=http://127.0.0.1:8080/govwayDiagnosticaApi/MessaggioDiagnostico/Soap12
 #messaggioDiagnostico.soap12.username=INSERIRE_USERNAME
 #messaggioDiagnostico.soap12.password=INSERIRE_PASSWORD
 

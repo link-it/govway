@@ -296,7 +296,8 @@ public class AutorizzazionePortaApplicativa {
 		
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTHZ_EXTERNAL_ROLES_ANY, fruitore,
 				credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				30000);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();
@@ -646,7 +647,8 @@ public class AutorizzazionePortaApplicativa {
 		
 		AuthUtilities.testPortaApplicativa(CostantiTestSuite.PORTA_APPLICATIVA_AUTHZ_XACML_POLICY, fruitore,
 				credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				erroreAtteso, CodiceErroreCooperazione.toCodiceErroreCooperazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				30000);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();

@@ -142,7 +142,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_config_ws}/govwayConfig${ext_war}.war" webxml="deploy/cxf/web.xml">
+		<war destfile="${dist_config_ws}/govwayConfigApi${ext_war}.war" webxml="deploy/cxf/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>
@@ -161,7 +161,7 @@
 				<include name="openspcoop2_core_*.jar"/>
 			</lib>
 			<lib dir="${dist_config_ws}">
-				<include name="govway_ws-config-server*.jar"/>
+				<include name="openspcoop2_ws-config-server*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>

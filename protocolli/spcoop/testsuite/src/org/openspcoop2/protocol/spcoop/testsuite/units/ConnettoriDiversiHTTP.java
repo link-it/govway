@@ -296,7 +296,7 @@ public class ConnettoriDiversiHTTP {
 			}catch(Exception e){
 				throw new Exception("Proprieta' di trasporto ["+keyTrasporto+"] non riscontrata nell'header di trasporto JMS: "+e.getMessage());
 			}
-			if(value.contains("OpenSPCoop")==false){
+			if(value.contains(CostantiPdD.OPENSPCOOP2_PRODUCT)==false){
 				throw new Exception("Proprieta' di trasporto ["+keyTrasporto+"] presente nell'header di trasporto JMS ["+value+"] con un valore diverso da quello atteso["+value+"] (Non contiene OpenSPCoop)");
 			}
 			
@@ -307,7 +307,7 @@ public class ConnettoriDiversiHTTP {
 			}catch(Exception e){
 				throw new Exception("Proprieta' di trasporto ["+keyTrasporto+"] non riscontrata nell'header di trasporto JMS: "+e.getMessage());
 			}
-			if(value.contains("OpenSPCoop")==false){
+			if(value.contains(CostantiPdD.OPENSPCOOP2_PRODUCT)==false){
 				throw new Exception("Proprieta' di trasporto ["+keyTrasporto+"] presente nell'header di trasporto JMS ["+value+"] con un valore diverso da quello atteso["+value+"] (Non contiene OpenSPCoop)");
 			}
 			

@@ -99,7 +99,12 @@ public class PostOutResponse implements PostOutResponseHandler {
 			Utilities.verificaLunghezza(context.getInputRequestMessageSize(), "InputRequestMessage");
 			Utilities.verificaLunghezza(context.getOutputRequestMessageSize(), "OutputRequestMessage");
 			if(TipoPdD.DELEGATA.equals(context.getTipoPorta())){
-				Utilities.verificaLunghezza(context.getInputResponseMessageSize(), "InputResponseMessage", !test.isRispostaVuotaPD_PA());	
+				if(EsitoTransazioneName.OK.equals(test.getEsito()) && test.getEgovContext()!=null && org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(test.getEgovContext().getScenarioCooperazione())){
+					// Puo' essere o non essere presente la InputResponse a seconda se viene ritornato o meno un messaggio
+				}
+				else {
+					Utilities.verificaLunghezza(context.getInputResponseMessageSize(), "InputResponseMessage", !test.isRispostaVuotaPD_PA());	
+				}
 				Utilities.verificaLunghezza(context.getOutputResponseMessageSize(), "OutputResponseMessage", !test.isRispostaVuotaSA_PD());
 			}else{
 				if(EsitoTransazioneName.OK.equals(test.getEsito()) && test.getEgovContext()!=null && org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(test.getEgovContext().getScenarioCooperazione())){

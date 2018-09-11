@@ -97,7 +97,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_diagnostica_ws}/govwayDiagnostica${ext_war}.war" webxml="deploy/cxf/web.xml">
+		<war destfile="${dist_diagnostica_ws}/govwayDiagnosticaApi${ext_war}.war" webxml="deploy/cxf/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>
@@ -114,7 +114,7 @@
 				<include name="openspcoop2_*.jar"/>
 			</lib>
 			<lib dir="${dist_diagnostica_ws}">
-				<include name="govway_ws-diagnostica-server*.jar"/>
+				<include name="openspcoop2_ws-diagnostica-server*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/cxf">
 				<include name="*.jar"/>

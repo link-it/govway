@@ -333,6 +333,14 @@ public class CleanerOpenSPCoop2Extensions {
 			this.clean(fruitore.getConnettore());
 		}
 		
+		if(fruitore.sizeConfigurazioneAzioneList()>0) {
+			for (ConfigurazioneServizioAzione configServizioAzione : fruitore.getConfigurazioneAzioneList()) {
+				if(configServizioAzione.getConnettore()!=null) {
+					this.clean(configServizioAzione.getConnettore());
+				}
+			}
+		}
+		
 		while(fruitore.sizeServizioApplicativoList()>0){
 			fruitore.removeServizioApplicativo(0);
 		}

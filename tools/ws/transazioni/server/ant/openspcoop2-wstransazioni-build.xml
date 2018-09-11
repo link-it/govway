@@ -136,11 +136,11 @@
 				<mkdir dir="${build_transazioni_ws}/classes" />
 				<unzip dest="${build_transazioni_ws}/classes">
 					<fileset dir="${dist_transazioni_ws}">
-						<include name="govway_ws-transazioni-server*.jar"/>
+						<include name="openspcoop2_ws-transazioni-server*.jar"/>
 					</fileset>
 				</unzip>
 				<delete dir="${dist_transazioni_ws}" >
-					<include name="govway_ws-transazioni-server*.jar"/>
+					<include name="openspcoop2_ws-transazioni-server*.jar"/>
 				</delete>
 				
 				<!-- Jar Complessivo -->

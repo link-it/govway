@@ -43,7 +43,6 @@ import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -498,9 +497,9 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO,
 				null,null,param);
 		
@@ -523,9 +522,9 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
 				"profiloAsincrono_richiestaSincrona","123456",param);
 		
@@ -548,9 +547,9 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
 				null,null,param);
 		
@@ -563,9 +562,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(6);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ONEWAY_STATELESS,
 				null,null,param);
 	
@@ -578,9 +577,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(7);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS,
 				null,null,param);
 		
@@ -593,9 +592,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(8);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
 				"profiloAsincrono_richiestaAsincrona","123456",param);
 				
@@ -608,9 +607,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(9);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
 				"profiloAsincrono_richiestaSincrona","123456",param);
 		
@@ -623,9 +622,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(10);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATELESS,
 				null,null,param);
 				
@@ -638,9 +637,9 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(11);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Servizio erogato dal Soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATELESS,
 				null,null,param);
 	
@@ -1178,7 +1177,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO,
@@ -1203,7 +1202,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
@@ -1228,7 +1227,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
@@ -1243,7 +1242,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(6);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ONEWAY_STATELESS,
@@ -1258,7 +1257,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(7);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS,
@@ -1271,7 +1270,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -1284,7 +1283,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
@@ -1297,7 +1296,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -1310,7 +1309,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Servizio Applicativo non disponibile");
 		invocaServizio(this.repositoryConnettoreErratoServizioApplicativo,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATELESS,
@@ -1972,7 +1971,7 @@ public class CooperazioneConErrori {
 		param = new ParametriCooperazioneConErrori();
 		param.setInvocazioneOK(true);
 		if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (EccezioneProtocollo) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
+			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (protocol) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setMotivoErroreProcessamento_alternativoConfigurazioneDB(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione GRAVE con codice [EGOV_IT_300] - Sbustamento_ErroreProcessamentoMessaggioSPCoop, descrizione errore: La porta applicativa richiesta dalla busta eGov non esiste"});
 		}
@@ -1992,7 +1991,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2021,7 +2020,7 @@ public class CooperazioneConErrori {
 			param.setEliminaMessaggioErogatore(false);
 			param.setModalitaAsincrona(false);
 			param.setVerificaRollbackProcessamento(false);
-			param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+			param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 			param.setFaultCodeAtteso("EGOV_IT_300");
 			param.setFaultString("Errore nel processamento del messaggio SPCoop");
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2053,7 +2052,7 @@ public class CooperazioneConErrori {
 			param.setEliminaMessaggioErogatore(false);
 			param.setModalitaAsincrona(false);
 			param.setVerificaRollbackProcessamento(false);
-			param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+			param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 			param.setFaultCodeAtteso("EGOV_IT_300");
 			param.setFaultString("Errore nel processamento del messaggio SPCoop");
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2078,7 +2077,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(indexMessage);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2096,7 +2095,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(indexMessage);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2112,7 +2111,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2127,7 +2126,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2142,7 +2141,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2157,7 +2156,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
 		param.setFaultString("Errore nel processamento del messaggio SPCoop");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
@@ -2454,7 +2453,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_SINCRONO,
@@ -2478,7 +2477,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
@@ -2502,7 +2501,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
@@ -2521,7 +2520,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(6);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ONEWAY_STATELESS,
@@ -2536,7 +2535,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setIndexIdMessaggioDaEliminare(7);
 		param.setVerificaRollbackNonEffettuato(true);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_SINCRONO_STATELESS,
@@ -2549,7 +2548,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -2562,7 +2561,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
@@ -2575,7 +2574,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -2588,7 +2587,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setModalitaAsincrona(false);
 		param.setVerificaRollbackProcessamento(false);
-		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
+		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATELESS,
@@ -2869,7 +2868,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(4);
 		if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (EccezioneProtocollo) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
+			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (protocol) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setMotivoErroreProcessamento_alternativoConfigurazioneDB(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione GRAVE con codice [EGOV_IT_300] - Sbustamento_ErroreProcessamentoMessaggioSPCoop, descrizione errore: La porta applicativa richiesta dalla busta eGov non esiste"});
 			param.setVerificaRollbackProcessamento(true);

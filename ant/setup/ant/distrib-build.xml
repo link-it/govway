@@ -81,7 +81,7 @@
 								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
 							</then>
 							<else>
-								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10_v11_v12_v13" tofile="${dist}/INSTALL.txt" />
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10-v14" tofile="${dist}/INSTALL.txt" />
 							</else>
 						</if>
 						<mkdir dir="${dist}/jms" />

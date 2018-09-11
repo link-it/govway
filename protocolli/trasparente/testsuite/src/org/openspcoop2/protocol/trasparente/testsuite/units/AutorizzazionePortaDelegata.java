@@ -281,9 +281,9 @@ public class AutorizzazionePortaDelegata {
 	@Test(groups={AutorizzazionePortaDelegata.ID_GRUPPO,AutorizzazionePortaDelegata.ID_GRUPPO+".ROLES_EXTERNAL_ANY"},dataProvider="rolesExternalAnyProvider")
 	public void test_rolesExternalAny(CredenzialiInvocazione credenzialiInvocazione, String erroreAtteso, int codiceErrore, boolean ricercaEsatta, int returnCodeAtteso ) throws Exception{
 		Date dataInizioTest = DateManager.getDate();
-		
 		AuthUtilities.testPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTHZ_EXTERNAL_ROLES_ANY, credenzialiInvocazione, addIDUnivoco, 
-				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso);
+				erroreAtteso, CodiceErroreIntegrazione.toCodiceErroreIntegrazione(codiceErrore), ricercaEsatta, dataInizioTest, returnCodeAtteso,
+				30000);
 		
 		if(erroreAtteso!=null) {
 			Date dataFineTest = DateManager.getDate();

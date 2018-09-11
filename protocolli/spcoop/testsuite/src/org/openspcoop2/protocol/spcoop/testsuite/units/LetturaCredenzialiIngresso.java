@@ -32,7 +32,6 @@ import java.util.Vector;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -1086,8 +1085,8 @@ public class LetturaCredenzialiIngresso {
 				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_431_GESTORE_CREDENZIALI_ERROR).equals(error.getFaultCode().getLocalPart()));
 				
@@ -1173,8 +1172,8 @@ public class LetturaCredenzialiIngresso {
 				
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO).equals(error.getFaultCode().getLocalPart()));
 				
@@ -2256,7 +2255,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoBASIC_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -2382,7 +2381,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoSSL_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=IdentitaInesistente");
 			client.setMessage(msg);
@@ -2508,7 +2507,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeBASICtoBASIC_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilX", "123456");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
@@ -2636,7 +2635,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeBASICtoSSL_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setAutenticazione("adminSilX", "123456");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=IdentitaInesistente");
@@ -2775,7 +2774,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeSSLtoBASIC_IM,sslContext);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -2912,7 +2911,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeSSLtoSSL_IM,sslContext);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore_httpsConAutenticazioneClient().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SSL_SUBJECT, "CN=IdentitaInesistente");
 			client.setMessage(msg);
@@ -3045,7 +3044,7 @@ public class LetturaCredenzialiIngresso {
 						
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeErroreConfigurazione_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE_CONFIGURAZIONE, "errore");
 			client.setMessage(msg);
@@ -3134,7 +3133,7 @@ public class LetturaCredenzialiIngresso {
 						
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeErroreGenerale_IM);
 			client.setSoapAction("\"getAllMessagesId\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_SIMULAZIONE_ERRORE, "errore");
 			client.setMessage(msg);
@@ -3227,7 +3226,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoBASIC_OperationGetMessage_IM);
 			client.setSoapAction("\"getMessage\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -3357,7 +3356,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteMessage_IM);
 			client.setSoapAction("\"deleteMessage\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");
@@ -3492,7 +3491,7 @@ public class LetturaCredenzialiIngresso {
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryLetturaCredenzialeNONEtoBASIC_OperationDeleteAllMessages_IM);
 			client.setSoapAction("\"deleteAllMessages\"");
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("PD","IntegrationManager/MessageBox"));
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiErogatore().replace("out","IntegrationManager/MessageBox"));
 			client.connectToSoapEngine();
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_USERNAME, "IdentitaInesistenteY");
 			client.setProperty(GestoreCredenzialiTest.TEST_CREDENZIALI_BASIC_PASSWORD, "123456");

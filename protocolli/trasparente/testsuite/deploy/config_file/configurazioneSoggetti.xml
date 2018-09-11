@@ -34,7 +34,7 @@
 		    <azione identificazione="static" nome="invokeBasicPdD"/>
 		</porta-delegata>
 
-		<porta-delegata nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
+		<porta-delegata nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicFwHdr" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
 		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
 		    <servizio tipo="gw" nome="API"/>
@@ -1055,7 +1055,7 @@
 		    <servizio-applicativo nome="api_authBasic"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
+		<porta-applicativa nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicFwHdr" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
 		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeBasicPdD_credenzialiNonBruciate"/>

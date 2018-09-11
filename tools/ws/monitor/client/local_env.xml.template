@@ -18,7 +18,7 @@
 	
 	<!-- BaseURL dell'Application Server -->
 	<property name="baseWsdlURL_monitor_ws_client" value="http://localhost:8080/" />
-	<property name="wsdlURL_monitor_ws_client" value="${baseWsdlURL_monitor_ws_client}govwayMonitor" />
+	<property name="wsdlURL_monitor_ws_client" value="${baseWsdlURL_monitor_ws_client}govwayMonitorApi" />
 	
 	
 </project>

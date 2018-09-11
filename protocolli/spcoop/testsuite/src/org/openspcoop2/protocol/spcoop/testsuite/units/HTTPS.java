@@ -35,7 +35,6 @@ import javax.xml.soap.SOAPException;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -123,7 +122,7 @@ public class HTTPS {
 	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE = _SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA;
 			//+" (subject della porta di dominio che ha inviato la busta non presente (https attivo?, client-auth attivo?))";
 	
-	private static final String PDD_NON_DISPONIBILE = "Porta di Dominio del soggetto @DESTINATARIO@ non disponibile";
+	private static final String PDD_NON_DISPONIBILE = "Servizio erogato dal Soggetto @DESTINATARIO@ non disponibile";
 	private static final String BAD_CERTIFICATE = "bad_certificate";
 	private static final String BAD_CERTIFICATE_2 = "Remote host closed connection during handshake";
 	private static final String CA_NON_PRESENTE = "unable to find valid certification path to requested target";
@@ -323,8 +322,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
@@ -522,8 +521,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
@@ -641,8 +640,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore di hostname verifier");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
 				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
@@ -800,8 +799,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				
 				if(location!=null){
 					// cmq autenticazione ssl poich' ci sono credenziali ssl. Poi l'identificazione di un sa non porta a riconoscerne alcuno.
@@ -1166,8 +1165,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
 				
@@ -1333,8 +1332,8 @@ public class HTTPS {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
 				if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-					Reporter.log("Controllo actor code [OpenSPCoop]");
-					Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+					Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+					Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 					Reporter.log("Controllo fault code [EGOV_IT_201]");
 					Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 					
@@ -1530,8 +1529,8 @@ public class HTTPS {
 				throw new Exception("Atteso errore");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: ["+error.getFaultString()+"]");
-				Reporter.log("Controllo actor code [OpenSPCoop]");
-				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
+				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
+				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code [EGOV_IT_201]");
 				Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 				

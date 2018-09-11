@@ -18,7 +18,7 @@
 	
 	<!-- BaseURL dell'Application Server -->
 	<property name="baseWsdlURL_transazioni_ws_client" value="http://localhost:8080/" />
-	<property name="wsdlURL_transazioni_ws_client" value="${baseWsdlURL_transazioni_ws_client}openspcoop2Tracciamento" />
+	<property name="wsdlURL_transazioni_ws_client" value="${baseWsdlURL_transazioni_ws_client}openspcoop2TracciamentoApi" />
 	
 	
 </project>

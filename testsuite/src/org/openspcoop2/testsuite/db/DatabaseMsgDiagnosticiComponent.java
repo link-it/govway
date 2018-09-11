@@ -473,7 +473,9 @@ public class DatabaseMsgDiagnosticiComponent {
 					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=? AND "+
 					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(messaggio)+"%' ");
 			prep.setString(1, id);
-
+//			System.out.println("AAAAAAAAAAAAAAAAAAAAAAA [select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+
+//					CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"='"+id+"' AND "+
+//					CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+" LIKE '%"+org.openspcoop2.utils.sql.SQLQueryObjectCore.getEscapeStringValue(messaggio)+"%' ]");
 			res = prep.executeQuery();
 			return res.next();
 		} catch (SQLException e) {

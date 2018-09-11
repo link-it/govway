@@ -18,7 +18,7 @@
 	
 	<!-- BaseURL dell'Application Server -->
 	<property name="baseWsdlURL_registry_ws_client" value="http://localhost:8080/" />
-	<property name="wsdlURL_registry_ws_client" value="${baseWsdlURL_registry_ws_client}govwayRegistry" />
+	<property name="wsdlURL_registry_ws_client" value="${baseWsdlURL_registry_ws_client}govwayRegistryApi" />
 	
 	
 </project>

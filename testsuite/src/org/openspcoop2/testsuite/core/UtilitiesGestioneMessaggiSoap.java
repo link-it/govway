@@ -602,7 +602,7 @@ public class UtilitiesGestioneMessaggiSoap {
 
 
 	public String buildContentType(String str){
-		String cont="multipart/related; type=\"text/xml\"; start=\"<"+str+">\"; 	boundary=\""+this.mimeBoundary+"\"";
+		String cont="multipart/related; type=\"text/xml\"; start=\"<"+str+">\"; boundary=\""+this.mimeBoundary+"\"";
 		return cont;
 	}
 
