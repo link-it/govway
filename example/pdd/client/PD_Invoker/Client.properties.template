@@ -27,6 +27,9 @@ openspcoop2.password = PASSWORD
 openspcoop2.printFileSent = true
 openspcoop2.printFileReceived = true
 
+# Per salvere la risposta ottenuta su file disabilitare la seguente opzione
+#openspcoop2.saveResponseIn=response.bin
+
 
 
 

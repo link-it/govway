@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -93,6 +94,8 @@ public class Client {
 		String tipoServizio = Client.getProperty(reader, "openspcoop2.integrazione.tipoServizio", false);
 		String servizio = Client.getProperty(reader, "openspcoop2.integrazione.servizio", false);
 		String azione = Client.getProperty(reader, "openspcoop2.integrazione.azione", false);
+		
+		String saveResponseIn = Client.getProperty(reader, "openspcoop2.saveResponseIn", false);
 		
 		@SuppressWarnings("unused")
 		String trasportoKeywordTipoMittente = Client.getProperty(reader, "openspcoop2.trasporto.keyword.tipoMittente", true);
@@ -250,6 +253,10 @@ public class Client {
 				System.out.println(boutResponse.toString());
 			}else{
 				System.out.println("File ricevuto di dimensione "+boutResponse.size()+" bytes");
+			}
+			if(saveResponseIn!=null) {
+				FileSystemUtilities.writeFile(saveResponseIn, boutResponse.toByteArray());
+				System.out.println("File ricevuto salvato in ["+saveResponseIn+"]");
 			}
 		}
 		else {

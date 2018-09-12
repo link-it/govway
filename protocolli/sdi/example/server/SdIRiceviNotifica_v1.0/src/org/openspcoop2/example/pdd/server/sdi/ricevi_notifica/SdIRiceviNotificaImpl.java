@@ -73,7 +73,11 @@ public class SdIRiceviNotificaImpl implements SdIRiceviNotifica {
         	bout.write(parameters.getFile());
         	bout.flush();
         	bout.close();
-        	System.out.println("Notifica: "+bout.toString());
+        	// Lo salvo sempre per poterlo confrontare con l'originale
+//        	System.out.println("Notifica: "+bout.toString());
+        	File f = File.createTempFile("file", ".tmp");
+    		FileSystemUtilities.writeFile(f, bout.toByteArray());
+    		System.out.println("File received serialized in : "+f.getAbsolutePath());
         	
             org.openspcoop2.example.pdd.server.sdi.ricevi_notifica.RispostaSdINotificaEsitoType _return = new RispostaSdINotificaEsitoType();
             

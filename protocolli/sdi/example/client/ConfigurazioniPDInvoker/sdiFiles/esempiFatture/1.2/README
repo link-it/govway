@@ -6,8 +6,13 @@ Fattura singola versione 1.2 con più linee di fattura:
 IT01234567890_12002.xml (per PA)
 IT01234567890_12012.xml (per Privati)
 
+Fattura singola versione 1.2 con più linee di fattura e firma XADES (!!costruite a mano, non verificabili!!):
+IT01234567890_13001.xml (per PA)
+IT01234567890_13011.xml (per Privati)
+
 Lotto di fatture versione 1.2
-IT01234567890_12003.xml
+IT01234567890_12003.xml (per PA)
+IT01234567890_12013.xml (per Privati)
 
 Esempio di fattura singola versione 1.2 che prevede, nell'intestazione, una visualizzazione attraverso il foglio di stile
 (per visualizzare il file FatturaPA attraverso il foglio di stile occorre scaricare entrambi i files nella stessa cartella):

@@ -1,3 +1,12 @@
+2018-09-12  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug OP-752
+	Alcune fatture XACML, veicolate nel protocollo SDI, venivano modificate nella struttura di alcuni elementi xml della signature 
+	(venivano erroneamente effettuate alcune ottimizzazioni dei prefissi).
+	Il problema risiedeva sia sulla fatturazione attiva che quella passiva per quanto concerne le sole fattura XACML.
+	Sulle fatture CaDES il problema non si presentava.
+
 2018-09-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

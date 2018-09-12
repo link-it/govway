@@ -76,13 +76,14 @@ public class SdIRiceviFileImpl implements SdIRiceviFile {
         	bout.write(parametersIn.getFile());
         	bout.flush();
         	bout.close();
-        	if(parametersIn.getNomeFile().endsWith("xml"))
-        		System.out.println("File: "+bout.toString());
-        	else{
-        		File f = File.createTempFile("file", ".tmp");
-        		FileSystemUtilities.writeFile(f, bout.toByteArray());
-        		System.out.println("File: "+f.getAbsolutePath());
-        	}
+        	// Lo salvo sempre per poterlo confrontare con l'originale
+//        	if(parametersIn.getNomeFile().endsWith("xml"))
+//        		System.out.println("File: "+bout.toString());
+//        	else{
+    		File f = File.createTempFile("file", ".tmp");
+    		FileSystemUtilities.writeFile(f, bout.toByteArray());
+    		System.out.println("File received serialized in : "+f.getAbsolutePath());
+//        	}
         	
             org.openspcoop2.example.pdd.server.sdi.ricevi_file.RispostaSdIRiceviFileType _return = new RispostaSdIRiceviFileType();
             

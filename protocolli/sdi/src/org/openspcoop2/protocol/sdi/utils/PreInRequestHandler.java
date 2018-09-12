@@ -156,7 +156,10 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 				}
 				
 				if(valoreUrl==null && valoreHeader==null){
-					return;
+					//return;
+					// Bug Fix: OP-752
+					// forzo xml che gestiro' comunque come attachment
+					valoreHeader = SDICostanti.SDI_TIPO_FATTURA_XML;
 				}
 				String valore = null;
 				if(valoreUrl!=null){
@@ -174,11 +177,25 @@ public class PreInRequestHandler implements org.openspcoop2.pdd.core.handlers.Pr
 					imbustamentoSOAP = true;
 				}
 				
+				// Bug Fix: OP-752
+				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
+				// Uso esattamente il codice sopra con il contentType per zip e p7m:
+				imbustamentoSOAP = true;
+				
 				if(imbustamentoSOAP){
 					OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
 					context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased(), "true");
 					context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased(),"application/octet-stream");
 				}
+			}
+			else if(passiva) {
+				// Bug Fix: OP-752
+				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
+				// Le notifiche inviate non sono firmate, ma se lo fossero questo fix risolverebbe il problema.
+				// Non capisco perche' se cmq attivo questo canale poi l'xpath per mtom non funziona
+				OpenSPCoop2Properties openSPCoopProperties = OpenSPCoop2Properties.getInstance();
+				context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWord_urlBased(), "true");
+				context.getTransportContext().put(openSPCoopProperties.getTunnelSOAPKeyWordMimeType_urlBased(),"application/octet-stream");
 			}
 			
 		}catch(Exception e){

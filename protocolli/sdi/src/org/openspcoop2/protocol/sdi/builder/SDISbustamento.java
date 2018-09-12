@@ -66,8 +66,8 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoNotificaType;
  */
 public class SDISbustamento {
 
-	@SuppressWarnings("unused")
 	private SDIBustaBuilder bustaBuilder = null;
+	@SuppressWarnings("unused")
 	private AbstractXMLUtils xmlUtils = null;
 	public SDISbustamento(SDIBustaBuilder bustaBuilder){
 		this.bustaBuilder = bustaBuilder;
@@ -196,7 +196,18 @@ public class SDISbustamento {
 				DumpSoapMessageUtils.dumpMessage(msg, true);
 
 			}else{
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlFattura)));
+				//soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlFattura)));
+				// Bug Fix: OP-752
+				
+				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
+				// Uso esattamente il codice sopra utilizzando pero' come content type text/xml:
+				TunnelSoapUtils.
+				imbustamentoMessaggioConAttachment(msg,xmlFattura,HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+						MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+						HttpConstants.CONTENT_TYPE_TEXT_XML, SDICostanti.SDI_PROTOCOL_NAMESPACE);
+			
+				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
+				DumpSoapMessageUtils.dumpMessage(msg, true);
 			}
 			
 			
@@ -237,13 +248,12 @@ public class SDISbustamento {
 				List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
-					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName()) &&
-							child instanceof SOAPElement){
+					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName())){
 						
-						List<SOAPElement> elementScartoChilds = SoapUtils.getNotEmptyChildSOAPElement((SOAPElement)child);
+						List<Node> elementScartoChilds = SoapUtils.getNotEmptyChildNodes(child, false);
 						if(elementScartoChilds!=null){
 							for (int j = 0; j < elementScartoChilds.size(); j++) {
-								SOAPElement scartoChild = elementScartoChilds.get(j);
+								Node scartoChild = elementScartoChilds.get(j);
 						
 								if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE.equals(scartoChild.getLocalName())){
 									
@@ -280,7 +290,18 @@ public class SDISbustamento {
 			
 			// se esiste uno scarto committente lo aggiungo come body
 			if(xmlNotificaScartoEsitoCommittente!=null){
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));
+				//soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));
+				// Bug Fix: OP-752
+				
+				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
+				// Uso esattamente il codice sopra utilizzando pero' come content type text/xml:
+				TunnelSoapUtils.
+				imbustamentoMessaggioConAttachment(msg,xmlNotificaScartoEsitoCommittente,HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+						MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+						HttpConstants.CONTENT_TYPE_TEXT_XML, SDICostanti.SDI_PROTOCOL_NAMESPACE);
+			
+				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
+				DumpSoapMessageUtils.dumpMessage(msg, true);
 			}
 			
 			// se lo sdi ha restituito un esito non ok imposto 500 come codice di trasporto verso il client
@@ -434,7 +455,18 @@ public class SDISbustamento {
 				DumpSoapMessageUtils.dumpMessage(msg, true);
 
 			}else{
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotifica)));
+				//soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotifica)));
+				// Bug Fix: OP-752
+				
+				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
+				// Uso esattamente il codice sopra utilizzando pero' come content type text/xml:
+				TunnelSoapUtils.
+				imbustamentoMessaggioConAttachment(msg,xmlNotifica,HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+						MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+						HttpConstants.CONTENT_TYPE_TEXT_XML, SDICostanti.SDI_PROTOCOL_NAMESPACE);
+			
+				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
+				DumpSoapMessageUtils.dumpMessage(msg, true);
 			}
 				
 			return element;

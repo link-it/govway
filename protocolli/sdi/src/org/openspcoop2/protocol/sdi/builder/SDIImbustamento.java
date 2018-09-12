@@ -120,10 +120,10 @@ public class SDIImbustamento {
 				if(msg.getTransportRequestContext()!=null){
 					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
 					}
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
 					}
 				}
 				if(versioneFattura==null){
@@ -133,35 +133,7 @@ public class SDIImbustamento {
 				if(SDICostanti.SDI_VERSIONI_FATTURA.contains(versioneFattura)==false){
 					throw new Exception("Versione fornita ["+versioneFattura+"] non supportata (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
 				}
-				
-				// idPaese
-				if(msg.getTransportRequestContext()!=null){
-					idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE);
-					if(idPaese==null){
-						idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1);
-					}
-					if(idPaese==null){
-						idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2);
-					}
-				}
-				if(idPaese==null){
-					throw new Exception("IdPaese non fornito");
-				}
-				
-				// idCodice
-				if(msg.getTransportRequestContext()!=null){
-					idCodice =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE);
-					if(idCodice==null){
-						idCodice =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1);
-					}
-					if(idCodice==null){
-						idCodice =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2);
-					}
-				}
-				if(idCodice==null){
-					throw new Exception("IdCodice non fornito");
-				}
-				
+								
 				// nomeFileFattura
 				String tipoFileFattura = null;
 				if(msg.getTransportRequestContext()!=null){
@@ -173,26 +145,29 @@ public class SDIImbustamento {
 						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE.toUpperCase());
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1);
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toLowerCase());
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1.toUpperCase());
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2);
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toLowerCase());
 					}
 					if(tipoFileFattura==null){
-						tipoFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
+						tipoFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_2.toUpperCase());
 					}
 				}
 				if(tipoFileFattura==null){
-					throw new Exception("TipoFileFattura non fornito");
+					//throw new Exception("TipoFileFattura non fornito");
+					// Bug Fix: OP-752
+					// forzo xml che gestiro' comunque come attachment
+					tipoFileFattura = SDICostanti.SDI_TIPO_FATTURA_XML;
 				}
 				if(SDICostanti.SDI_TIPO_FATTURA_XML.equalsIgnoreCase(tipoFileFattura)){
 					tipoInvioFattura = SDICostanti.SDI_TIPO_FATTURA_XML;
@@ -205,6 +180,38 @@ public class SDIImbustamento {
 				}
 				else{
 					throw new Exception("TipoFileFattura fornito non supportato: "+tipoInvioFattura);
+				}
+				
+				// idPaese
+				if(msg.getTransportRequestContext()!=null){
+					idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE);
+					if(idPaese==null){
+						idPaese =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_1);
+					}
+					if(idPaese==null){
+						idPaese =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_PAESE_2);
+					}
+				}
+				if(idPaese==null){
+					if(!SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
+						throw new Exception("IdPaese non fornito");
+					}
+				}
+				
+				// idCodice
+				if(msg.getTransportRequestContext()!=null){
+					idCodice =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_CODICE);
+					if(idCodice==null){
+						idCodice =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_1);
+					}
+					if(idCodice==null){
+						idCodice =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_ID_CODICE_2);
+					}
+				}
+				if(idCodice==null){
+					if(!SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
+						throw new Exception("IdCodice non fornito");
+					}
 				}
 				
 				if(msg.countAttachments()<=0){
@@ -221,10 +228,10 @@ public class SDIImbustamento {
 				if(msg.getTransportRequestContext()!=null){
 					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
 					}
 					if(versioneFattura==null){
-						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+						versioneFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
 					}
 				}
 				if(versioneFattura==null){
@@ -359,8 +366,8 @@ public class SDIImbustamento {
 			fileSdi.setFile(fatturaBytes);
 			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
 				fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
-						busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE),
-						busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE),
+						idPaese!=null ? idPaese : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_PAESE),
+						idCodice!=null ? idCodice : busta.getProperty(SDICostanti.SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE),
 						tipoInvioFattura));
 			}else{
 				fileSdi.setNomeFile(SDIUtils.getNomeFileFattura(protocolFactory, state, 
@@ -461,10 +468,10 @@ public class SDIImbustamento {
 			if(msg.getTransportRequestContext()!=null){
 				nomeFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_NOME_FILE);
 				if(nomeFileFattura==null){
-					nomeFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
+					nomeFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_1);
 				}
 				if(nomeFileFattura==null){
-					nomeFileFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
+					nomeFileFattura =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_NOME_FILE_2);
 				}
 			}
 			if(nomeFileFattura==null){
@@ -477,10 +484,10 @@ public class SDIImbustamento {
 			if(msg.getTransportRequestContext()!=null){
 				tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI);
 				if(tmpIdentificativoSdi==null){
-					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1);
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_1);
 				}
 				if(tmpIdentificativoSdi==null){
-					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2);
+					tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterTrasporto(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_TRASPORTO_IDENTIFICATIVO_SDI_2);
 				}
 			}
 			boolean accessoNotificaDaInviare = this.sdiProperties.isEnableAccessoNotificaDaInviare();
@@ -505,8 +512,19 @@ public class SDIImbustamento {
 			}
 			SOAPElement notificaEsitoCommittenteSOAPElement = childs.get(0);
 			
-			// effettuo validazione del messaggio ricevuto
 			byte[]notificaEsitoCommittenteBytes = null;
+			if(Costanti.SOAP_TUNNEL_NAMESPACE.equals(notificaEsitoCommittenteSOAPElement.getNamespaceURI())){
+				if(msg.countAttachments()<=0){
+					throw new Exception("Attesa notifica come attachment");
+				}
+				AttachmentPart ap = (AttachmentPart) msg.getAttachments().next();
+				notificaEsitoCommittenteBytes = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
+			}
+			else {
+				notificaEsitoCommittenteBytes = this.xmlUtils.toByteArray(notificaEsitoCommittenteSOAPElement);
+			}
+			// effettuo validazione del messaggio ricevuto
+			byte [] notificaEsitoCommittenteBytesCompatibilitaSenzaGov = notificaEsitoCommittenteBytes;
 			try{
 				// Fix Validazione versione
 //				Attr attr = notificaEsitoCommittenteSOAPElement.getAttributeNode("versione");
@@ -522,15 +540,14 @@ public class SDIImbustamento {
 //				validatore.valida(notificaEsitoCommittenteSOAPElement);
 				
 				// effettuo validazione con bytes, per ovviare al problema del namespace 'gov'
-				notificaEsitoCommittenteBytes = this.xmlUtils.toByteArray(notificaEsitoCommittenteSOAPElement);
 				if(isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov){
-					notificaEsitoCommittenteBytes = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), notificaEsitoCommittenteBytes);
+					notificaEsitoCommittenteBytesCompatibilitaSenzaGov = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), notificaEsitoCommittenteBytes);
 				}
 				
 				// validazione
 				if(this.sdiProperties.isEnableValidazioneXsdNotificaDaInviare()){
 					AbstractValidatoreXSD validatore = it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
-					validatore.valida(new ByteArrayInputStream(notificaEsitoCommittenteBytes));
+					validatore.valida(new ByteArrayInputStream(notificaEsitoCommittenteBytesCompatibilitaSenzaGov));
 				}
 				
 			}catch(Exception e){
@@ -544,7 +561,7 @@ public class SDIImbustamento {
 					// fatto prima in validazion: notificaEsitoCommittenteBytes = this.xmlUtils.toByteArray(notificaEsitoCommittenteSOAPElement);
 					it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new 
 							it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-					notificaEsitoCommittente = deserializer.readNotificaEsitoCommittenteType(notificaEsitoCommittenteBytes);
+					notificaEsitoCommittente = deserializer.readNotificaEsitoCommittenteType(notificaEsitoCommittenteBytesCompatibilitaSenzaGov);
 				}catch(Exception e){
 					throw new Exception("Notifica di Esito Committente non valida: "+e.getMessage(),e);
 				}
@@ -609,8 +626,8 @@ public class SDIImbustamento {
 			
 			// add MessaggioProtocollo
 			it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer();
-			String xmlRisposta = serializer.toString(of.createFileSdI(fileSdi));
-			SOAPElement element = SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlRisposta.getBytes()));
+			String xmlRichiesta = serializer.toString(of.createFileSdI(fileSdi));
+			SOAPElement element = SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlRichiesta.getBytes()));
 			soapBody.addChildElement(element);
 			
 			// soapAction

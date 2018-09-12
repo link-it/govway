@@ -83,6 +83,14 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12012.xml
 #metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12012_MT_001.xml
 
+# Fattura singola versione 1.2 con più linee di fattura e firma XADES (per PA) (!!costruite a mano, non verificabili!!):
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_13001.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_13001_001.xml
+
+# Fattura singola versione 1.2 con più linee di fattura e firma XADES (per Privati) (!!costruite a mano, non verificabili!!):
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_13011.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_13011_001.xml
+
 # Lotto di fatture versione 1.2 (per PA)
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12003.xml
 #metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12003_MT_001.xml
@@ -115,3 +123,11 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 
 # Esempio di NotificaDecorrenzaTermini con namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
 notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
+
+# Esempio di NotificaDecorrenzaTermini con namespace corretto 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0' 
+# e firma XADES (!!costruite a mano, non verificabili!!)
+#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11112_DT_001.xml
+
+# Esempio di NotificaDecorrenzaTermini con namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
+# e firma XADES (!!costruite a mano, non verificabili!!)
+#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11112_DT_001.xml
