@@ -160,6 +160,8 @@ Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto
   <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
 TODO: Scoprire come fare sugli altri AS
 
+(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+
 Batterie di test che verificano la normale gestione del servizio REST:
 - 'REST.PD': vengono eseguiti tutti i test riguardanti la PortaDelegata
 - 'REST.PA': vengono eseguiti tutti i test riguardanti la PortaApplicativa

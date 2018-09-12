@@ -219,7 +219,13 @@ public class Utilities {
 	}
 	public static byte[] getAsByteArray(InputStream is,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		try{
-			return Utilities.getAsByteArrayOuputStream(is,throwExceptionInputStreamEmpty).toByteArray();
+			ByteArrayOutputStream bout = Utilities.getAsByteArrayOuputStream(is,throwExceptionInputStreamEmpty);
+			if(bout!=null) {
+				return bout.toByteArray();
+			}
+			else {
+				return null; // puo' succedere solo se throwExceptionInputStreamEmpty e' false
+			}
 		}
 		catch (UtilsException e) {
 			throw e;

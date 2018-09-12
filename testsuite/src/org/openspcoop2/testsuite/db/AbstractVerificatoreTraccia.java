@@ -532,18 +532,31 @@ public abstract class AbstractVerificatoreTraccia {
 
 	public boolean isTracedMittente(String idMessaggio, IDSoggetto mittente, String indirizzoMittente)
 			throws TestSuiteException {
-		return _isTracedMittente(this.prepareStatement(idMessaggio),mittente, indirizzoMittente);
+		return _isTracedMittente(this.prepareStatement(idMessaggio),mittente, indirizzoMittente, false);
 	}
 	public boolean isTracedMittente(String idMessaggio,IDSoggetto idPortaMessaggio, IDSoggetto mittente, String indirizzoMittente)
 			throws TestSuiteException {
-		return _isTracedMittente(this.prepareStatement(idMessaggio,idPortaMessaggio),mittente, indirizzoMittente);
+		return _isTracedMittente(this.prepareStatement(idMessaggio,idPortaMessaggio),mittente, indirizzoMittente, false);
 	}
 	public boolean isTracedMittente(String idMessaggio, DatiServizioAzione datiServizioAzione, 
 			IDSoggetto mittente, String indirizzoMittente)
 			throws TestSuiteException {
-		return _isTracedMittente(this.prepareStatement(idMessaggio,datiServizioAzione),mittente, indirizzoMittente);
+		return _isTracedMittente(this.prepareStatement(idMessaggio,datiServizioAzione),mittente, indirizzoMittente, false);
 	}
-	private boolean _isTracedMittente(PreparedStatement pstmt, IDSoggetto mittente, String indirizzoMittente)
+	public boolean isTracedMittente(String idMessaggio, IDSoggetto mittente, String indirizzoMittente, boolean permettiIdentificativoPortaNull)
+			throws TestSuiteException {
+		return _isTracedMittente(this.prepareStatement(idMessaggio),mittente, indirizzoMittente, permettiIdentificativoPortaNull);
+	}
+	public boolean isTracedMittente(String idMessaggio,IDSoggetto idPortaMessaggio, IDSoggetto mittente, String indirizzoMittente, boolean permettiIdentificativoPortaNull)
+			throws TestSuiteException {
+		return _isTracedMittente(this.prepareStatement(idMessaggio,idPortaMessaggio),mittente, indirizzoMittente, permettiIdentificativoPortaNull);
+	}
+	public boolean isTracedMittente(String idMessaggio, DatiServizioAzione datiServizioAzione, 
+			IDSoggetto mittente, String indirizzoMittente, boolean permettiIdentificativoPortaNull)
+			throws TestSuiteException {
+		return _isTracedMittente(this.prepareStatement(idMessaggio,datiServizioAzione),mittente, indirizzoMittente, permettiIdentificativoPortaNull);
+	}
+	private boolean _isTracedMittente(PreparedStatement pstmt, IDSoggetto mittente, String indirizzoMittente, boolean permettiIdentificativoPortaNull)
 			throws TestSuiteException {
 
 		ResultSet res = null;
@@ -554,7 +567,7 @@ public abstract class AbstractVerificatoreTraccia {
 			while (res.next()) {
 				presente = true;
 
-				if(!_isTracedMittente(res, mittente, indirizzoMittente)){
+				if(!_isTracedMittente(res, mittente, indirizzoMittente, permettiIdentificativoPortaNull)){
 					return false;
 				}
 			}
@@ -603,7 +616,7 @@ public abstract class AbstractVerificatoreTraccia {
 
 	}
 
-	private boolean _isTracedMittente(ResultSet res, IDSoggetto mittente, String indirizzoMittente) throws SQLException{
+	private boolean _isTracedMittente(ResultSet res, IDSoggetto mittente, String indirizzoMittente, boolean permettiIdentificativoPortaNull) throws SQLException{
 		
 		if(mittente==null){
 			// creo oggetto vuoto per evitare null pointer.
@@ -635,9 +648,9 @@ public abstract class AbstractVerificatoreTraccia {
 
 		// IDPorta
 		String idPorta = res.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA);
-		//System.out.println("MITT IDPORTA TROVATO["+idPorta+"] ATTESO["+mittente.getCodicePorta()+"]");
+		//System.out.println("MITT IDPORTA TROVATO["+idPorta+"] ATTESO["+mittente.getCodicePorta()+"] permitIdentificativoPortaNull ["+permettiIdentificativoPortaNull+"]");
 		if(idPorta==null){
-			if(mittente.getCodicePorta()!=null)
+			if(mittente.getCodicePorta()!=null && !permettiIdentificativoPortaNull)
 				return false;
 		}else{
 			if (!(idPorta.equals(mittente.getCodicePorta())))

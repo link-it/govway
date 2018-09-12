@@ -272,6 +272,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			if(context==null) {
 				context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
 			}
+			context.setDataIngressoRichiesta(dataIngressoRichiesta);
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
+			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, requestInfo);
+			context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
+			context.setTipoPorta(TipoPdD.DELEGATA);
+			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+			
 			if(dumpRaw!=null){
 				dumpRaw.setPddContext(msgDiag.getPorta(), context.getPddContext());
 			}
@@ -279,10 +286,6 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
 		}
-		context.setDataIngressoRichiesta(dataIngressoRichiesta);
-		context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
-		context.setTipoPorta(TipoPdD.DELEGATA);
-		msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		
 		try{
 			if(openSPCoopProperties.isTransazioniEnabled()) {

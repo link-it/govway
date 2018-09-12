@@ -1,3 +1,7 @@
+2018-07-28  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.0.0
+
 2018-09-12  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
@@ -131,7 +135,7 @@
 	swagger-core-1.5.18.jar -> swagger-core-1.5.21.jar
 	swagger-parser-1.0.34.jar -> swagger-parser-1.0.37.jar
 	swagger-models-1.5.18.jar -> swagger-models-1.5.21.jar                   
-        --- Test ---               
+	--- Test ---               
 	testng-6.9.12.jar -> testng-6.14.3.jar
 	jcommander-1.48.jar -> jcommander-1.72.jar
 	--- Wss4j ---    

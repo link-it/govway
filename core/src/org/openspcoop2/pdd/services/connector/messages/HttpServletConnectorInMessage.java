@@ -181,14 +181,18 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			byte[] b = null;
 			ByteArrayInputStream bin = null;
 			try{
-				b = Utilities.getAsByteArray(this.is);
-				bin = new ByteArrayInputStream(b);
+				b = Utilities.getAsByteArray(this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
+				if(b!=null) {
+					bin = new ByteArrayInputStream(b);
+				}
 			}catch(Throwable t){
 				OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 				result.setParseException(ParseExceptionUtils.buildParseException(t));
 				return result;
 			}
-			buffer.write(b);
+			if(b!=null) {
+				buffer.write(b);
+			}
 			OpenSPCoop2MessageParseResult pr = factory.createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					bin,notifierInputStreamParams,
@@ -206,7 +210,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public byte[] getRequest() throws ConnectorException{
 		try{
-			byte[] b = Utilities.getAsByteArray(this.is);
+			byte[] b = Utilities.getAsByteArray(this.is,false); // se l'input stream is empty ritorna null grazie al parametro false
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return b;
 		}catch(Exception e){

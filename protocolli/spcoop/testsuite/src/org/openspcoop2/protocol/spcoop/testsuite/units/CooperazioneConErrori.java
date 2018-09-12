@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
+import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
@@ -388,7 +389,15 @@ public class CooperazioneConErrori {
 				//IDSoggetto idSoggetto = new IDSoggetto(cooperazione.getDestinatario().getTipo(), mittenteRisposta[i], cooperazione.getDestinatario().getCodicePorta());
 				//System.out.println("Verifico per mittente["+mittenteRisposta[i].toString()+"]");
 				Reporter.log("IsTracedMittente riposta tipoServizio["+tipoServizio+"] servizio["+servizio+"] azione["+azione+"] mittente["+mittenteRisposta[i]+"] : " +id);
-				if(data.getVerificatoreTracciaRisposta().isTracedMittente(id, datiServizioAzione, mittenteRisposta[i] ,null)){
+				//System.out.println("VERIFICA PER ["+mittenteRisposta[i]+"]");
+				// provo ad iterare impostando a null l'identificativo porta. 
+				// Per la risposta se viene ritornato OpenSPCoop puo' non essere poi possibile stabilire l'identificativo porta
+				boolean permettiIdentificativoPortaNull = false;
+				if(TestSuiteProperties.getInstance().getIdentitaDefault_dominio().equals(mittenteRisposta[i].getCodicePorta())) {
+					//System.out.println("PERMETTI!");
+					permettiIdentificativoPortaNull = true;
+				}
+				if(data.getVerificatoreTracciaRisposta().isTracedMittente(id, datiServizioAzione, mittenteRisposta[i] ,null, permettiIdentificativoPortaNull)){
 					//System.out.println("OK");
 					test = true;
 					break;
