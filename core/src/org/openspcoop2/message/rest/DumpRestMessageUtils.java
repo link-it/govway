@@ -494,17 +494,33 @@ public class DumpRestMessageUtils {
 				bout.close();		
 			}
 			// Per non perdere quanto letto
-			if(MailcapActivationReader.existsDataContentHandler(bodyPart.getContentType())){
+			boolean convert = false;
+			// in rest con le api utilizzate non sembra necessario ricostruirlo come si fa in soap.
+			// anche il caso del tunnel soap non esiste.
+			if(convert && MailcapActivationReader.existsDataContentHandler(bodyPart.getContentType())){
 				if(bodyPart.getContentType()!=null && bodyPart.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
+					// Se siamo in text plain non devo fare nulla. Comunque non l'ho perso.
+					// Se uso il codice sotto, poi si perde il content-type, non viene serializzato
+					/*
 					if(s!=null){
 						bodyPart.setDataHandler(new javax.activation.DataHandler(s,bodyPart.getContentType()));
+						//bodyPart.setContent(s,bodyPart.getContentType());
+						//bodyPart.setText(s);
 					}
 					else{
-						bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
-					}
+						//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+						// devo comunque impostare una stringa nel caso di text/plain, senno ottengo un errore:
+						// "text/plain" DataContentHandler requires String object, was given object of type class [B
+						bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toString(),bodyPart.getContentType()));
+						//bodyPart.setContent(bout.toString(),bodyPart.getContentType());
+						//bodyPart.setText(bout.toString());
+					}*/
 				}
 				else{
-					bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+					//bodyPart.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),bodyPart.getContentType()));
+					// Nel caso sia xml si ottiene il seguente errore:
+					//Invalid Object type = class [B. XmlDCH can only convert DataSource or Source to XML.
+					// Si potrebbe vederlo di gestire come e' stato fatto per il rebuild dell'attachment su SOAP.
 				}
 			}
 			if(s!=null){

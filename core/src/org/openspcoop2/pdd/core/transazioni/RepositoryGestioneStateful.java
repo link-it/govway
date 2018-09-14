@@ -87,6 +87,7 @@ public class RepositoryGestioneStateful {
 				daoFactoryProperties = DAOFactoryProperties.getInstance(daoFactoryLoggerTransazioni);
 				daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 				daoFactoryServiceManagerPropertiesTransazioni.setShowSql(debug);	
+				daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 
 			}catch(Exception e){
 				throw new TransactionStatefulNotSupportedException("Inizializzazione risorse database non riuscita: "+e.getMessage(),e);

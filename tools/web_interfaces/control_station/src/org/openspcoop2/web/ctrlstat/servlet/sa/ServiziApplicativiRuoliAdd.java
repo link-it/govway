@@ -147,18 +147,18 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			if (saHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
+				List<Parameter> lstParm = new ArrayList<>();
 				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-							new Parameter( "Ruoli di " + nomeservizioApplicativo, null)
-							);
+					lstParm.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+					lstParm.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
 				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, labelApplicativi, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Ruoli di " + nomeservizioApplicativo);
+					lstParm.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 				}
+				lstParm.add(new Parameter( "Ruoli di " + nomeservizioApplicativo, null));
+				lstParm.add(ServletUtils.getParameterAggiungi());
+				ServletUtils.setPageDataTitle(pd,lstParm); 
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -193,18 +193,18 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			boolean isOk = saHelper.ruoloCheckData(TipoOperazione.ADD, nome, ruoli);
 			if (!isOk) {
 				// setto la barra del titolo
+				List<Parameter> lstParm = new ArrayList<>();
 				if(useIdSogg){
-					ServletUtils.setPageDataTitle(pd, 
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-							new Parameter(labelApplicativiDi + tipoENomeSoggetto,
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)),								
-									new Parameter( "Ruoli di " + nomeservizioApplicativo, null)
-							);
+					lstParm.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+					lstParm.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
 				}else {
-					ServletUtils.setPageDataTitle_ServletChange(pd, labelApplicativi, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST, "Ruoli di " + nomeservizioApplicativo);
+					lstParm.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
 				}
+				lstParm.add(new Parameter( "Ruoli di " + nomeservizioApplicativo, null));
+				lstParm.add(ServletUtils.getParameterAggiungi());
+				ServletUtils.setPageDataTitle(pd,lstParm); 
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

@@ -51,7 +51,6 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.Text;
-import org.slf4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
 import org.openspcoop2.message.constants.MessageType;
@@ -64,6 +63,10 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -469,50 +472,95 @@ public class Utilities {
 	 */
 	public static boolean equalsAttachment(AttachmentPart att,AttachmentPart att2) throws SOAPException, IOException{
 
-		DataHandler hand= att.getDataHandler();
-		BufferedInputStream buff1=new BufferedInputStream(hand.getInputStream());
+		try {
 		
-		//String s1 = (String) hand.getContent();
-		
-		DataHandler hand2=att2.getDataHandler();
-		BufferedInputStream buff2=new BufferedInputStream(hand2.getInputStream());
-				
-		//String s2 = (String) hand2.getContent();
-		
-		//System.out.println("s1["+s1+"]");
-		//System.out.println("s2["+s2+"]");
-		//if(s1.equals(s2)==false){
-		//	System.out.println("NON UGUALI");
-		//}
-		
-		int temp;
-		while((temp=buff1.read())!=-1){
-			int temp2=buff2.read();
-			if(temp2==-1){
+			org.openspcoop2.utils.xml.XMLUtils xmlUtils = org.openspcoop2.utils.xml.XMLUtils.getInstance();
+			
+			DataHandler hand= att.getDataHandler();
+			byte[] attach1 = org.openspcoop2.utils.Utilities.getAsByteArray(hand.getInputStream());
+			if(att.getContentType()!=null && HttpConstants.CONTENT_TYPE_TEXT_XML.equals(att.getContentType())) {
+				// normalizzo per non tenere conto delle istruzioni <?
+				Document d = xmlUtils.newDocument(attach1);
+				attach1 = xmlUtils.toByteArray(d, true);
+			}
+			BufferedInputStream buff1=new BufferedInputStream(new ByteArrayInputStream(attach1));
+						
+			//String s1 = (String) hand.getContent();
+			
+			DataHandler hand2=att2.getDataHandler();
+			byte[] attach2 = org.openspcoop2.utils.Utilities.getAsByteArray(hand2.getInputStream());
+			if(att2.getContentType()!=null && HttpConstants.CONTENT_TYPE_TEXT_XML.equals(att2.getContentType())) {
+				// normalizzo per non tenere conto delle istruzioni <?
+				Document d = xmlUtils.newDocument(attach2);
+				attach2 = xmlUtils.toByteArray(d, true);
+			}
+			BufferedInputStream buff2=new BufferedInputStream(new ByteArrayInputStream(attach2));
+					
+			//String s2 = (String) hand2.getContent();
+			
+			//System.out.println("s1["+s1+"]");
+			//System.out.println("s2["+s2+"]");
+			//if(s1.equals(s2)==false){
+			//	System.out.println("NON UGUALI");
+			//}
+			
+			int temp;
+			while((temp=buff1.read())!=-1){
+				int temp2=buff2.read();
+				if(temp2==-1){
+					System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
+					System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
+					System.out.println("RET 1");
+					File fAtt1 = File.createTempFile("equalsRet1Attach1", ".bin");
+					File fAtt2 = File.createTempFile("equalsRet1Attach2", ".bin");
+					FileSystemUtilities.writeFile(fAtt1, attach1);
+					FileSystemUtilities.writeFile(fAtt2, attach2);
+					System.out.println("RET 1 ATTACH1: "+fAtt1.getAbsolutePath());
+					System.out.println("RET 1 ATTACH2: "+fAtt2.getAbsolutePath());
+					return false;
+				}
+				if(temp!=temp2){
+					System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
+					System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
+					System.out.println("RET 2 ["+temp+"]!=["+temp2+"]");
+					File fAtt1 = File.createTempFile("equalsRet2Attach1", ".bin");
+					File fAtt2 = File.createTempFile("equalsRet2Attach2", ".bin");
+					FileSystemUtilities.writeFile(fAtt1, attach1);
+					FileSystemUtilities.writeFile(fAtt2, attach2);
+					System.out.println("RET 2 ATTACH1: "+fAtt1.getAbsolutePath());
+					System.out.println("RET 2 ATTACH2: "+fAtt2.getAbsolutePath());
+					return false;
+				}
+			}
+			//buff2.read();
+			int num;
+			if((num=buff2.read())!=-1){
+				while(num!=-1){
+					num=buff2.read();
+				}
 				System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
 				System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
-				System.out.println("RET 1");
+				System.out.println("RET 3");
+				File fAtt1 = File.createTempFile("equalsRet3Attach1", ".bin");
+				File fAtt2 = File.createTempFile("equalsRet3Attach2", ".bin");
+				FileSystemUtilities.writeFile(fAtt1, attach1);
+				FileSystemUtilities.writeFile(fAtt2, attach2);
+				System.out.println("RET 3 ATTACH1: "+fAtt1.getAbsolutePath());
+				System.out.println("RET 3 ATTACH2: "+fAtt2.getAbsolutePath());
 				return false;
 			}
-			if(temp!=temp2){
-				System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
-				System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
-				System.out.println("RET 2 ["+temp+"]!=["+temp2+"]");
-				return false;
-			}
+			return true;
+			
 		}
-		//buff2.read();
-		int num;
-		if((num=buff2.read())!=-1){
-			while(num!=-1){
-				num=buff2.read();
-			}
-			System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
-			System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
-			System.out.println("RET 3");
-			return false;
+		catch(SOAPException e) {
+			throw e;
 		}
-		return true;
+		catch(IOException e) {
+			throw e;
+		}
+		catch(Exception e) {
+			throw new IOException(e.getMessage(),e);
+		}
 	}
 
 

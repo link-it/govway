@@ -852,7 +852,7 @@ span.modalitaImg {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 200px;
+	min-width: 260px;
 	padding-right: 16px;
 	cursor: pointer;
 }  
@@ -866,7 +866,7 @@ span.modalitaImg {
 	color: ${page.header.text.color};
 	top: 18px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-	left: 8px;
+	left: 68px;
 } 
 
 .menu-separator {

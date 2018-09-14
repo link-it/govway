@@ -52,8 +52,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 public class JsonJacksonSerializer implements ISerializer {
 
 
-////	@JsonIgnoreType
-//	public class MyMixInForIgnoreType {}
 	private static final String DEFAULT = "__default";
 	private ObjectWriter writer;
 
@@ -87,24 +85,29 @@ public class JsonJacksonSerializer implements ISerializer {
 			mapper.setSerializationInclusion(Include.NON_NULL);
 		
 		SimpleFilterProvider filters = new SimpleFilterProvider();
-		if((config.getFilter() != null && config.getFilter().sizeFiltersByName()>0) || config.getExcludes() != null) {
+		if( (
+				config.getFilter() != null 
+				&& 
+				( (config.getFilter().sizeFiltersByName()>0) || (config.getFilter().sizeFiltersByValue()>0))
+			)
+				|| 
+			config.getExcludes() != null) {
 			filters = filters.addFilter(DEFAULT, new JacksonSimpleBeanPropertyFilter(config, new JsonJacksonSerializer()));
 		} else if(config.getIncludes()!=null) {
 			HashSet<String> hashSet = new HashSet<String>();
 			hashSet.addAll(config.getIncludes());
 			filters = filters.addFilter(DEFAULT, SimpleBeanPropertyFilter.filterOutAllExcept(hashSet));
 		}
-
-//		if(config.getFilter() != null && config.getFilter().sizeFiltersByValue()>0) {
-//			for(Class<?> value: config.getFilter().getFilterByValue()) {
-//				mapper.addMixIn(value, MyMixInForIgnoreType.class);
-//			}
-//		}
-
+		
 		filters = filters.setFailOnUnknownId(false);
 
 		mapper.setFilterProvider(filters);
-		this.writer = mapper.writer();
+		if(config.isPrettyPrint()) {
+			this.writer = mapper.writer().withDefaultPrettyPrinter();
+		}
+		else {
+			this.writer = mapper.writer();
+		}
 	}
 
 	@Override

@@ -23,19 +23,18 @@ package org.openspcoop2.pdd.core.eventi;
 
 import java.sql.Connection;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.eventi.Evento;
+import org.openspcoop2.core.eventi.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.date.DateManager;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import org.openspcoop2.core.eventi.Evento;
-import org.openspcoop2.core.eventi.dao.jdbc.JDBCServiceManager;
+import org.slf4j.Logger;
 
 /**     
  * GestoreEventi
@@ -87,6 +86,7 @@ public class GestoreEventi {
 			daoFactoryProperties = DAOFactoryProperties.getInstance(this.daoFactoryLogger);
 			this.daoFactoryServiceManagerProperties = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerProperties.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerProperties.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 			
     	}catch(Exception e){
     		throw new DriverConfigurazioneException(e.getMessage(),e);
@@ -108,11 +108,11 @@ public class GestoreEventi {
     		logError = false;
     	}
     	
-    	DBManager dbManager = null;
+    	DBTransazioniManager dbManager = null;
     	Resource r = null;
     	String modulo = ID_MODULO+"."+evento.getTipo()+"."+evento.getCodice();
 		try{
-			dbManager = DBManager.getInstance();
+			dbManager = DBTransazioniManager.getInstance();
 			r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), modulo, evento.getIdTransazione(), logError);
 			if(r==null){
 				throw new Exception("Risorsa al database non disponibile");

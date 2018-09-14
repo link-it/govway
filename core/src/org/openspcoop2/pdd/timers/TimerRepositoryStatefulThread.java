@@ -112,6 +112,7 @@ public class TimerRepositoryStatefulThread extends Thread{
 			daoFactoryProperties = DAOFactoryProperties.getInstance(this.daoFactoryLoggerTransazioni);
 			this.daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerPropertiesTransazioni.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 
 		}catch(Exception e){
 			throw new HandlerException("Errore durante l'inizializzazione delle risorse per l'accesso al database: "+e.getMessage(),e);

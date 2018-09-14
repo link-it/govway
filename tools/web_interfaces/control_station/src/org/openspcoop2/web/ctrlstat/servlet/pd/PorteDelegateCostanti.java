@@ -452,8 +452,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI = "Opzioni Avanzate di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = "Elemento";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR = "Elemento<BR/>(Il campo vuoto indica qualsiasi elemento)";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML+"<BR/>(Il campo vuoto indica qualsiasi elemento)";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA = "Risultati Ricerca";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "Sicurezza Messaggio";

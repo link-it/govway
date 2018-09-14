@@ -82,6 +82,7 @@ public class NotifierDump {
 					daoFactoryProperties = DAOFactoryProperties.getInstance(daoFactoryLogger);
 					daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 					daoFactoryServiceManagerPropertiesTransazioni.setShowSql(debug);	
+					daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 				}catch(Exception e){
 					throw new TracciamentoException("Errore durante l'inizializzazione del daoFactory: "+e.getMessage(),e);
 				}

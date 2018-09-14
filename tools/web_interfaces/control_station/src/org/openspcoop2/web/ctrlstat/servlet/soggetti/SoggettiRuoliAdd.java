@@ -50,6 +50,7 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -113,9 +114,13 @@ public final class SoggettiRuoliAdd extends Action {
 			if (soggettiHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
-						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
-
+				List<Parameter> lstParm = new ArrayList<>();
+				lstParm.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+				lstParm.add(new Parameter("Ruoli di " + tmpTitle, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+"")));
+				lstParm.add(ServletUtils.getParameterAggiungi());
+				ServletUtils.setPageDataTitle(pd,lstParm); 
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
@@ -141,8 +146,12 @@ public final class SoggettiRuoliAdd extends Action {
 			boolean isOk = soggettiHelper.ruoloCheckData(TipoOperazione.ADD, nome, ruoli);
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
-						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
+				List<Parameter> lstParm = new ArrayList<>();
+				lstParm.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+				lstParm.add(new Parameter("Ruoli di " + tmpTitle, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+"")));
+				lstParm.add(ServletUtils.getParameterAggiungi());
+				ServletUtils.setPageDataTitle(pd,lstParm); 
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();

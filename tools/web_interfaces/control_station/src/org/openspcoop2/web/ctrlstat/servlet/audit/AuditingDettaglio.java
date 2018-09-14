@@ -117,8 +117,10 @@ public final class AuditingDettaglio extends Action {
 			Operation singleOp = auditingCore.getAuditOperation(idlong);
 
 			// preparo i campi
+			boolean showLinkDocumentiBinari = !auditingCore.isAuditingRegistrazioneElementiBinari();
 			Vector<DataElement> dati = auditingHelper.getAuditHelper().addAuditReportDettaglioToDati(
-					singleOp, pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto);
+					singleOp, showLinkDocumentiBinari, 
+					pDataInizio, pDataFine, pTipoOperazione, pTipoOggetto, pId, pOldId, pUtente, pStatoOperazione, pContoggetto);
 
 			pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 			pd.setDati(dati);

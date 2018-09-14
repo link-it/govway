@@ -965,7 +965,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(this.checkIntegrationEntityName(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME)==false){
 				return false;
 			}
-			
+			if(this.checkLength255(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME)==false) {
+				return false;
+			}
 			
 			
 //			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {

@@ -189,6 +189,8 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
 - 'AutorizzazioneContenuto' vengono verificate le funzionalita' di autorizzazione dei contenuti per i servizi PD e PA
 - 'WSSecurity' vengono provate le funzionalita' di WSSecurity con i vari profili di collaborazione e riscontri (libreria wss4j)
    (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+   (NOTA2: Su Tomcat se si installano due war differenti, govwar.war e govwaySec.ear con la signature degli attachments si ottiene un errore simile al seguente:
+	java.security.InvalidAlgorithmParameterException: Expected AttachmentTransformParameterSpec)
 - 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
 Il test richiede l'installazione di diversi keystore in /etc/govway/keys:

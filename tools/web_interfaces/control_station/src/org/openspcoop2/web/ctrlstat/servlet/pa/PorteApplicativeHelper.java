@@ -134,6 +134,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String xsd = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_XSD);
 
 			String behaviour = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
+			String integrazione = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
 			
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
@@ -145,6 +146,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+						
 			// Campi obbligatori
 			if (nomePorta.equals("") || soggvirt.equals("") || servizio.equals("")) {
 				String tmpElenco = "";
@@ -173,6 +176,16 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			if(behaviour!=null && !"".equals(behaviour)){
 				if (behaviour.indexOf(" ") != -1 || behaviour.indexOf(",") != -1 ) {
 					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR);
+					return false;
+				}
+				if(this.checkLength255(behaviour, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR)==false) {
+					return false;
+				}
+			}
+			
+			// length
+			if(integrazione!=null && !"".equals(integrazione)){
+				if(this.checkLength255(integrazione, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI)==false) {
 					return false;
 				}
 			}
@@ -473,7 +486,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						autorizzazioneContenuti,
+						protocollo)==false){
 					return false;
 				}
 			}
@@ -708,6 +723,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			
+			// Check Lunghezza
+			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(valore, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE)==false) {
+				return false;
+			}
+			
 			// Se tipoOp = add, controllo che la property non sia gia'
 			// stata
 			// registrata per la porta applicativa
@@ -772,6 +796,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
+				return false;
+			}
+			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
 				return false;
 			}
 
@@ -842,6 +869,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 			if(valore.startsWith(" ") || valore.endsWith(" ")){
 				this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
+				return false;
+			}
+			if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false) {
 				return false;
 			}
 

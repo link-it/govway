@@ -124,6 +124,16 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			if(this.checkNCName(nome,AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME)==false){
 				return false;
 			}
+			
+			// lunghezza
+			if(this.checkLength255(nome, AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME)==false) {
+				return false;
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
 
 			// La versione deve contenere solo lettere e numeri e '.'
 //			if (gestioneWSBL.equals("yes")) {

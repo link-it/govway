@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -98,6 +99,8 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 	/** Risorsa: Tracciamenti Personalizzati */
 	private List<ITracciaProducer> tracciamentiPersonalizzati=null;
 	private List<String> tipiTracciamentiPersonalizzati=null;
+	/** Risorsa: Transazioni di OpenSPCoop */
+	private DBTransazioniManager dbTransazioniManager=null;
 	/** Risorsa: MsgDiagnostici Personalizzati */
 	private List<IDiagnosticProducer> msgDiagnosticiPersonalizzati=null;
 	private List<String> tipiMsgDiagnosticiPersonalizzati=null;
@@ -126,6 +129,9 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 		if(this.propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
 			this.tracciamentiPersonalizzati = OpenSPCoop2Logger.getLoggerTracciamentoOpenSPCoopAppender();
 			this.tipiTracciamentiPersonalizzati = OpenSPCoop2Logger.getTipoTracciamentoOpenSPCoopAppender();
+			if(this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+				this.dbTransazioniManager = DBTransazioniManager.getInstance();
+			}
 		}
 		if(this.propertiesReader.isAbilitatoControlloRisorseMsgDiagnosticiPersonalizzati()){
 			this.msgDiagnosticiPersonalizzati = OpenSPCoop2Logger.getLoggerMsgDiagnosticoOpenSPCoopAppender();
@@ -283,8 +289,20 @@ public class TimerMonitoraggioRisorseThread extends Thread{
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
+				
+				// nel tracciamento considero anche le transazioni
+				if(checkRisorseDisponibili && this.propertiesReader.isTransazioniUsePddRuntimeDatasource()==false) {
+					try{
+						this.logger.debug("Controllo Database Transazioni");
+						this.dbTransazioniManager.isAlive();
+					}catch(Exception e){
+						risorsaNonDisponibile = "[DatabaseTransazioni]";
+						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
+						checkRisorseDisponibili = false;
+					}
+				}
 			}
-			
 				
 			
 			// avvisi

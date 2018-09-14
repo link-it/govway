@@ -440,7 +440,9 @@ public class PorteDelegateControlloAccessi extends Action {
 					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo);
+						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						autorizzazioneContenuti,
+						protocollo);
 			
 			if (!isOk) {
 				// preparo i campi

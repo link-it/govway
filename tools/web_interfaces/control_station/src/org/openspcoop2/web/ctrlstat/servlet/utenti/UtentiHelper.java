@@ -848,6 +848,11 @@ public class UtentiHelper extends ConsoleHelper {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
+			
+			// length
+			if(this.checkLength255(nomesu, UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME)==false) {
+				return false;
+			}
 
 			// Controllo che i campi "checkbox" abbiano uno dei valori
 			// ammessi

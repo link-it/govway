@@ -486,6 +486,12 @@ public class ControlStationCore {
 	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
 		return this.policyGestioneTokenPropertiesSourceConfiguration;
 	}
+	
+	/** Auditing */
+	private boolean isAuditingRegistrazioneElementiBinari;
+	public boolean isAuditingRegistrazioneElementiBinari() {
+		return this.isAuditingRegistrazioneElementiBinari;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -1410,6 +1416,9 @@ public class ControlStationCore {
 		/** PolicyGestioneToken PropertiesSourceConfiguration */
 		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
 		
+		/** Auditing */
+		this.isAuditingRegistrazioneElementiBinari = core.isAuditingRegistrazioneElementiBinari;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1662,6 +1671,7 @@ public class ControlStationCore {
 			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
+			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -4076,7 +4086,7 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg, this.isAuditingRegistrazioneElementiBinari);
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 			auditAbilitato = false;
@@ -4097,7 +4107,7 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg, this.isAuditingRegistrazioneElementiBinari);
 
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
@@ -4170,7 +4180,7 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, asClone, user,msg);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, asClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
 
 				}else if(oggetto instanceof AccordoCooperazione){
 
@@ -4190,7 +4200,7 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, acClone, user,msg);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, acClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
 
 				}else if(oggetto instanceof AccordoServizioParteSpecifica){
 
@@ -4224,10 +4234,10 @@ public class ControlStationCore {
 						}
 					}
 
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, sClone, user,msg);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, sClone, user,msg, this.isAuditingRegistrazioneElementiBinari);
 
 				}else {
-					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, oggetto, user,msg);
+					idOperazione[i] = auditManager.registraOperazioneInFaseDiElaborazione(tipoOperazione, oggetto, user,msg, this.isAuditingRegistrazioneElementiBinari);
 				}
 
 			}catch(AuditDisabilitatoException disabilitato){

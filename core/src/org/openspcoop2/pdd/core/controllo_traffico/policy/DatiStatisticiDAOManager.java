@@ -115,6 +115,7 @@ public class DatiStatisticiDAOManager  {
 						
 			this.daoFactoryServiceManagerPropertiesStatistiche = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerPropertiesStatistiche.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(this.tipoDatabase);
 			
 			this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 			

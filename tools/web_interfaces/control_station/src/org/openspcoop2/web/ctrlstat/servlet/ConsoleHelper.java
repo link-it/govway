@@ -2029,6 +2029,25 @@ public class ConsoleHelper {
 		return true;
 	}
 	
+	public boolean checkLength255(String value, String object) throws Exception{
+		return this.checkLength(value, object, -1, 255);
+	}
+	public boolean checkLength(String value, String object, int minLength, int maxLength) throws Exception{
+		if(minLength>0) {
+			if(value==null || value.length()<minLength) {
+				this.pd.setMessage("L'informazione fornita nel campo '"+object+"' deve possedere una lunghezza maggiore di "+(minLength-1));
+				return false;
+			}
+		}
+		if(maxLength>0) {
+			if(value!=null && value.length()>maxLength) {
+				this.pd.setMessage("L'informazione fornita nel campo '"+object+"' deve possedere una lunghezza minore di "+maxLength);
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
@@ -2547,6 +2566,12 @@ public class ConsoleHelper {
 				idcorrInt = Integer.parseInt(idcorr);
 			}
 
+			if(elemxml!=null && !"".equals(elemxml)) {
+				if(this.checkLength255(elemxml, CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML)==false) {
+					return false;
+				}
+			}
+			
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
 			if ( 
@@ -2655,6 +2680,12 @@ public class ConsoleHelper {
 				idcorrInt = Integer.parseInt(idcorr);
 			}
 
+			if(elemxml!=null && !"".equals(elemxml)) {
+				if(this.checkLength255(elemxml, CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML)==false) {
+					return false;
+				}
+			}
+			
 			// Campi obbligatori
 			// if ( elemxml.equals("")||
 			if ( 
@@ -2827,6 +2858,16 @@ public class ConsoleHelper {
 				return false;
 			}
 
+			// length
+			if(this.checkLength255(nome, CostantiControlStation.LABEL_PARAMETRO_NOME)==false) {
+				return false;
+			}
+			if(contentType!=null && !"".equals(contentType)){
+				if(this.checkLength255(contentType, CostantiControlStation.LABEL_PARAMETRO_CONTENT_TYPE)==false) {
+					return false;
+				}
+			}
+			
 			// Se tipoOp = add, controllo che il message-security non sia gia' stato
 			// registrato per la porta delegata
 			if (tipoOp.equals(TipoOperazione.ADD)) {
@@ -2908,7 +2949,7 @@ public class ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PATTERN);
 		de.setValue(pattern);
-		de.setType(DataElementType.TEXT_EDIT);
+		de.setType(DataElementType.TEXT_AREA);
 		de.setName(CostantiControlStation.PARAMETRO_PATTERN);
 		de.setSize(this.getSize());
 		de.setRequired(true);
@@ -3147,10 +3188,10 @@ public class ConsoleHelper {
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(allRuoli.size()>0){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI_AL_SOGGETTO);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI);
 				}
 				else{
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI_AL_SOGGETTO);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI);
 				}
 				this.pd.disableEditMode();
 			}
@@ -3215,10 +3256,10 @@ public class ConsoleHelper {
 		else{
 			if(addMsgServiziApplicativoNonDisponibili){
 				if(allRuoli.size()>0){
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_SCOPE_ASSOCIABILI_AL_SOGGETTO);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_SCOPE_ASSOCIABILI);
 				}
 				else{
-					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_SCOPE_ASSOCIABILI_AL_SOGGETTO);
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_ESISTONO_SCOPE_ASSOCIABILI);
 				}
 				this.pd.disableEditMode();
 			}
@@ -3989,7 +4030,9 @@ public class ConsoleHelper {
 			List<String> ruoli,String gestioneToken, 
 			String policy, String validazioneInput, String introspection, String userInfo, String forward,
 			String autorizzazione_tokenOptions,
-			String autorizzazioneScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,String protocollo) throws Exception{
+			String autorizzazioneScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
+			String autorizzazioneContenuto,
+			String protocollo) throws Exception{
 		try {
 			
 			// check token
@@ -4085,6 +4128,10 @@ public class ConsoleHelper {
 						}
 					}finally {
 						scanner.close();
+					}
+					
+					if(this.checkLength(autorizzazione_tokenOptions, CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS,-1,4000)==false) {
+						return false;
 					}
 				}
 			}
@@ -4245,6 +4292,13 @@ public class ConsoleHelper {
 							return false;
 						}
 					}
+				}
+			}
+			
+			if(autorizzazioneContenuto!=null && !"".equalsIgnoreCase(autorizzazioneContenuto)) {
+				if(this.checkLength255(autorizzazioneContenuto,
+						CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI+" - "+CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI)==false) {
+					return false;
 				}
 			}
 			

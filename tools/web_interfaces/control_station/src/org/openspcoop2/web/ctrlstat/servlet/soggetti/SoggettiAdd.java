@@ -344,7 +344,7 @@ public final class SoggettiAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
-					null, false);
+					null, false, this.descr);
 
 			if (isOk) {
 				if(soggettiCore.isRegistroServiziLocale()){

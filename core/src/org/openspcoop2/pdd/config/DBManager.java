@@ -337,7 +337,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 			stmtTest.execute("SELECT * from "+CostantiDB.DB_INFO);
 					
 		} catch (Exception e) {
-			throw new CoreException("Connessione al database OpenSPCoop non disponibile: "+e.getMessage(),e);
+			throw new CoreException("Connessione al database GovWay non disponibile: "+e.getMessage(),e);
 
 		}finally{
 			try{

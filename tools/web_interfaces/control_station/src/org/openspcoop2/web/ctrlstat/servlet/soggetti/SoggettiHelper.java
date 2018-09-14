@@ -588,7 +588,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 	}
 
 	boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter,
-			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti) throws Exception {
+			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione) throws Exception {
 		try {
 //			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idInt = 0;
@@ -634,6 +634,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// check lunghezza NOTA: Si usa una lunghezza inferiore di 20 al limite massimo della colonna 
+			// per poter salvaguardare poi il 255 delle colonne per codice ipa e identificativo porta calcolate in base al nome del soggetto
+			int maxLength = 255 - 20;
+			if(this.checkLength(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME, -1, maxLength)==false) {
+				return false;
+			}
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength255(descrizione, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+
+			
 			// check Codice IPA
 			// TODO CODICE IPA
 			/*try{
@@ -663,6 +676,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
+			String labelSoggetto = this.getLabelNomeSoggetto(ids);
 			
 			// Se tipoOp = add o tipoOp = change, controllo che non esistano
 			// altri soggetti con stessi nome e tipo
@@ -681,7 +695,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 					}
 				}
 				if ((idSogg != 0) && (tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (idInt != idSogg)))) {
-					this.pd.setMessage("Esiste gi&agrave; un soggetto con nome " + nomeprov + " e tipo " + tipoprov);
+					//this.pd.setMessage("Esiste gi&agrave; un soggetto con nome " + nomeprov + " e tipo " + tipoprov);
+					this.pd.setMessage("Esiste gi&agrave; un soggetto "+labelSoggetto);
 					return false;
 				}
 
@@ -774,7 +789,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
-					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali basic indicate.");
+					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali basic indicate.");
 					return false;
 				}
 				
@@ -790,7 +806,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
-					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali subject indicate.");
+					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali subject indicate.");
 					return false;
 				}
 			}
@@ -806,7 +823,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 				// Messaggio di errore
 				if(soggettoAutenticato!=null){
-					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali principal indicate.");
+					String labelSoggettoAutenticato = this.getLabelNomeSoggetto(new IDSoggetto(soggettoAutenticato.getTipo(), soggettoAutenticato.getNome()));
+					this.pd.setMessage("Il soggetto "+labelSoggettoAutenticato+" possiede già le credenziali principal indicate.");
 					return false;
 				}
 			} 
@@ -1384,7 +1402,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
 			Soggetto soggettoRegistry = this.soggettiCore.getSoggettoRegistro(Long.parseLong(id));
-			String tmpTitle = soggettoRegistry.getTipo() + "/" + soggettoRegistry.getNome();
+			String tmpTitle = this.getLabelNomeSoggetto(new IDSoggetto(soggettoRegistry.getTipo(),soggettoRegistry.getNome()));
 
 
 

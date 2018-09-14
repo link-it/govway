@@ -2634,9 +2634,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					return true;
 
 				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()))
-					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") e' gia' presente nell'accordo.");
+					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") è già presente nella API.");
 				else
-					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") e' gia' presente nell'accordo.");
+					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") è già presente nella API.");
 
 				return false;
 			}

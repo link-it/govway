@@ -437,6 +437,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
+			
+			// Lunghezza
+			if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(valore, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE)==false) {
+				return false;
+			}
 
 			// Controllo che la property non sia gia' stata
 			// registrata
@@ -2187,6 +2195,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}
 				
+				// Check lunghezza
+				if(this.checkLength255(proxy_hostname, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME)==false) {
+					return false;
+				}
+				if(proxy_username!=null && !"".equals(proxy_username)) {
+					if(this.checkLength255(proxy_username, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME)==false) {
+						return false;
+					}
+				}
+				if(proxy_password!=null && !"".equals(proxy_password)) {
+					if(this.checkLength255(proxy_password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)==false) {
+						return false;
+					}
+				}
 			}
 			
 			if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
@@ -2276,6 +2298,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 					this.pd.setMessage("Password obbligatoria per l'autenticazione http");
 					return false;
 				}
+				if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)==false) {
+					return false;
+				}
+				if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)==false) {
+					return false;
+				}
 			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
@@ -2319,6 +2347,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore custom");
 				return false;
 			}
+			if (endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
+				if(this.checkLength255(tipoconn, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO)==false) {
+					return false;
+				}
+			}
 
 			// Controllo campi obbligatori per il tipo di connettore http
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) && (url == null || "".equals(url))) {
@@ -2340,6 +2373,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 					return false;
 				}
+				if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
+					return false;
+				}
 			}
 
 			// Controllo campi obbligatori per il tipo di connettore jms
@@ -2359,6 +2395,38 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if (connfact == null || "".equals(connfact)) {
 					this.pd.setMessage("Connection Factory obbligatoria per il tipo di connettore jms");
 					return false;
+				}
+				
+				if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA)==false) {
+					return false;
+				}
+				if(this.checkLength255(connfact, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY)==false) {
+					return false;
+				}
+				if(user!=null && !"".equals(user)) {
+					if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME)==false) {
+						return false;
+					}
+				}
+				if(password!=null && !"".equals(password)) {
+					if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD)==false) {
+						return false;
+					}
+				}
+				if(initcont!=null && !"".equals(initcont)) {
+					if(this.checkLength255(initcont, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX)==false) {
+						return false;
+					}
+				}
+				if(urlpgk!=null && !"".equals(urlpgk)) {
+					if(this.checkLength255(urlpgk, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG)==false) {
+						return false;
+					}
+				}
+				if(provurl!=null && !"".equals(provurl)) {
+					if(this.checkLength255(provurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL)==false) {
+						return false;
+					}
 				}
 			}
 
@@ -2384,6 +2452,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 				}
+				if(this.checkLength255(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
+					return false;
+				}
+				
 				if ("".equals(httpspath)) {
 					this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Server");
 					return false;
@@ -2396,24 +2468,44 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 				}
+				if(this.checkLength255(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
+					return false;
+				}
+				
 				if ("".equals(httpspwd)) {
 					this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
 					return false;
 				}
+				if(this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)==false) {
+					return false;
+				}
+				
 				if ("".equals(httpsalgoritmo)) {
 					this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Server");
 					return false;
 				}
+				if(this.checkLength255(httpsalgoritmo, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)==false) {
+					return false;
+				}
+				
 				if (httpsstato) {
 					if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
 						if ("".equals(httpspwdprivatekeytrust)) {
 							this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 							return false;
 						}
+						if(this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
+							return false;
+						}
+						
 						if ("".equals(httpsalgoritmokey)) {
 							this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio in caso di Autenticazione Client abilitata");
 							return false;
 						}
+						if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
+							return false;
+						}
+						
 					} else {
 						if ("".equals(httpspathkey)) {
 							this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
@@ -2427,16 +2519,31 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 						}
+						if(this.checkLength255(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
+							return false;
+						}
+						
 						if ("".equals(httpspwdkey)) {
 							this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
 							return false;
 						}
+						if(this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)==false) {
+							return false;
+						}
+						
 						if ("".equals(httpspwdprivatekey)) {
 							this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 							return false;
 						}
+						if(this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
+							return false;
+						}
+						
 						if ("".equals(httpsalgoritmokey)) {
 							this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
+							return false;
+						}
+						if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
 							return false;
 						}
 					}
@@ -2459,6 +2566,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 						return false;
 					}
 				}
+				if(this.checkLength255(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
+					return false;
+				}
 				
 				if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
 					try{
@@ -2466,6 +2576,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}catch(Exception e){
 						this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
 								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+						return false;
+					}
+					if(this.checkLength255(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
 						return false;
 					}
 				}
@@ -2485,6 +2598,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 							return false;
 						}
 					}
+					if(this.checkLength255(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
+						return false;
+					}
 					
 					if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
 						try{
@@ -2492,6 +2608,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}catch(Exception e){
 							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
 									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
+							return false;
+						}
+						if(this.checkLength255(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
 							return false;
 						}
 					}
@@ -3012,34 +3131,35 @@ public class ConnettoriHelper extends ConsoleHelper {
 		String subject = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 		String principal = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 		
-		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && (utente.equals("") || password.equals("") /*
-		 * ||
-		 * confpw
-		 * .
-		 * equals
-		 * (
-		 * ""
-		 * )
-		 */)) {
-			String tmpElenco = "";
-			if (utente.equals("")) {
-				tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
-			}
-			if (password.equals("")) {
-				if (tmpElenco.equals("")) {
-					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
-				} else {
-					tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+			if(utente.equals("") || password.equals("")){
+				String tmpElenco = "";
+				if (utente.equals("")) {
+					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 				}
+				if (password.equals("")) {
+					if (tmpElenco.equals("")) {
+						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+					} else {
+						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+					}
+				}
+				/*
+				 * if (confpw.equals("")) { if (tmpElenco.equals("")) {
+				 * tmpElenco = "Conferma password"; } else { tmpElenco =
+				 * tmpElenco + ", Conferma password"; } }
+				 */
+				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				return false;
 			}
-			/*
-			 * if (confpw.equals("")) { if (tmpElenco.equals("")) {
-			 * tmpElenco = "Conferma password"; } else { tmpElenco =
-			 * tmpElenco + ", Conferma password"; } }
-			 */
-			this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
-			return false;
+			if(this.checkLength255(utente, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)==false) {
+				return false;
+			}
+			if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)==false) {
+				return false;
+			}
 		}
+		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)){
 			if (subject.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+
@@ -3053,15 +3173,23 @@ public class ConnettoriHelper extends ConsoleHelper {
 					return false;
 				}
 			}
+			if(this.checkLength255(subject, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT)==false) {
+				return false;
+			}
 		}
 		
-		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) && principal.equals("") ) {
-			String tmpElenco = "";
-			if (principal.equals("")) {
-				tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL;
+		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ) {
+			if(principal.equals("")) {
+				String tmpElenco = "";
+				if (principal.equals("")) {
+					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL;
+				}
+				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
+				return false;
 			}
-			this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
-			return false;
+			if(this.checkLength255(principal, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL)==false) {
+				return false;
+			}
 		}
 		
 		if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {

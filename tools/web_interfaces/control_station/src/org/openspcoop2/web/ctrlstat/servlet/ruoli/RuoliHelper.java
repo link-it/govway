@@ -147,7 +147,8 @@ public class RuoliHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME);
-			//String descrizione = this.ruoliHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
+			String descrizione = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE);
+			String nomeEsterno = this.getParameter(RuoliCostanti.PARAMETRO_RUOLO_NOME_ESTERNO);
 			//String tipologia = this.ruoliHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_RUOLO_TIPOLOGIA);
 			//String contesto = this.ruoliHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_RUOLO_CONTESTO);
 			
@@ -168,6 +169,20 @@ public class RuoliHelper extends ConsoleHelper{
 			}
 			if(this.checkNCName(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)==false){
 				return false;
+			}
+			if(this.checkLength255(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)==false) {
+				return false;
+			}
+			
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength255(descrizione, RuoliCostanti.LABEL_PARAMETRO_RUOLO_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			if(nomeEsterno!=null && !"".equals(nomeEsterno)) {
+				if(this.checkLength255(nomeEsterno, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME_ESTERNO)==false) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che il registro non sia gia' stato

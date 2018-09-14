@@ -305,6 +305,13 @@ public class SOAPAction {
 			
 			try {
 				client.run();
+				if(version_jbossas!=null && version_jbossas.startsWith("tomcat")){
+					// alcune versioni tornato 400 poichè l'header SOAPAction non ha un valore
+					if(400 == client.getCodiceStatoHTTP()) {
+						System.out.println("Codice Http 400 Atteso per Tomcat in invocazioni con soapAction non valorizzata");
+						return;
+					}
+				}
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
@@ -380,6 +387,13 @@ public class SOAPAction {
 			
 			try {
 				client.run();
+				if(version_jbossas!=null && version_jbossas.startsWith("tomcat")){
+					// alcune versioni tornato 400 poichè l'header SOAPAction non ha un valore
+					if(400 == client.getCodiceStatoHTTP()) {
+						System.out.println("Codice Http 400 Atteso per Tomcat in invocazioni con soapAction non valorizzata");
+						return;
+					}
+				}
 				throw new Exception("Attesa eccezione per controllo soapAction");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());

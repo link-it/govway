@@ -89,7 +89,7 @@
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.5.6-openspcoop_ext.jar">
+				<jar jarfile="${build_govwayMonitor}/tmp/mailapi-1.6.2.gw.jar" manifest="${build_govwayMonitor}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayMonitor}/tmp/mailapi"/>
 				</jar>
 		<!--	</then>
@@ -252,7 +252,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayMonitor}/tmp">
-				<include name="mailapi-1.5.6-openspcoop_ext.jar" />
+				<include name="mailapi-1.6.2.gw.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayMonitor}">

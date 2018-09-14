@@ -745,6 +745,16 @@ public class DatabaseMsgDiagnosticiComponent {
 					}
 				}
 				
+				if(!casoSpecialeEmail){
+					if(messaggio.contains("@www.openspcoop2.org") && messaggio.contains("href")){
+						String tmp = new String(messaggio);
+						while(tmp.contains("@www.openspcoop2.org")) {
+							tmp = tmp.replace("@www.openspcoop2.org", "");
+						}
+						casoSpecialeEmail = tmp.contains("@")==false;
+					}
+				}
+				
 				if(casoSpecialeEmail==false){
 					resultsVector.add(CostantiDB.MSG_DIAGNOSTICI+"."+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO)+
 							": "+res.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));

@@ -655,17 +655,19 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			List<MappingErogazionePortaApplicativa> listInUtilizzo = new ArrayList<>();
 			
-			for (IDServizio idServizio : list) {
-				List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
-				if(lPA!=null && lPA.size()>0) {
-					for (MappingErogazionePortaApplicativa mapping : lPA) {
-						try {
-							PortaApplicativa pa = this.getPortaApplicativa(mapping.getIdPortaApplicativa());
-							if(pa!=null && pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null &&
-									pa.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
-								listInUtilizzo.add(mapping);
-							}
-						}catch(DriverConfigurazioneNotFound notFound) {}
+			if(list!=null && !list.isEmpty()) {
+				for (IDServizio idServizio : list) {
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+					if(lPA!=null && lPA.size()>0) {
+						for (MappingErogazionePortaApplicativa mapping : lPA) {
+							try {
+								PortaApplicativa pa = this.getPortaApplicativa(mapping.getIdPortaApplicativa());
+								if(pa!=null && pa.getAzione()!=null && pa.getAzione().getAzioneDelegataList()!=null &&
+										pa.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
+									listInUtilizzo.add(mapping);
+								}
+							}catch(DriverConfigurazioneNotFound notFound) {}
+						}
 					}
 				}
 			}
@@ -690,18 +692,20 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			List<MappingErogazionePortaApplicativa> listMappingDefault = new ArrayList<>();
 			
-			for (IDServizio idServizio : list) {
-				List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
-				if(lPA!=null && lPA.size()>0) {
-					for (MappingErogazionePortaApplicativa mapping : lPA) {
-						if(mapping.isDefault()) {
-							if(addDefault) {
-								listMappingDefault.add(mapping);
+			if(list!=null && !list.isEmpty()) {
+				for (IDServizio idServizio : list) {
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, this.tipoDB, idServizio);
+					if(lPA!=null && lPA.size()>0) {
+						for (MappingErogazionePortaApplicativa mapping : lPA) {
+							if(mapping.isDefault()) {
+								if(addDefault) {
+									listMappingDefault.add(mapping);
+								}
 							}
-						}
-						else {
-							if(addNotDefault) {
-								listMappingDefault.add(mapping);
+							else {
+								if(addNotDefault) {
+									listMappingDefault.add(mapping);
+								}
 							}
 						}
 					}

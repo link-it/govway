@@ -439,33 +439,35 @@ public class PorteDelegateCore extends ControlStationCore {
 			
 			List<MappingFruizionePortaDelegata> listInUtilizzo = new ArrayList<>();
 			
-			for (IDServizio idServizio : list) {
-				
-				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
-				Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
-				Search s = new Search(true);
-				List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
-				if(listFruitori!=null && !listFruitori.isEmpty()) {
-				
-					for (Fruitore fruitore : listFruitori) {
-						IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-						List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
-						if(lPD!=null && lPD.size()>0) {
-							for (MappingFruizionePortaDelegata mapping : lPD) {
-								try {
-									PortaDelegata pd = this.getPortaDelegata(mapping.getIdPortaDelegata());
-									if(pd!=null && pd.getAzione()!=null && pd.getAzione().getAzioneDelegataList()!=null &&
-											pd.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
-										listInUtilizzo.add(mapping);
-									}
-								}catch(DriverConfigurazioneNotFound notFound) {}
+			if(list!=null && !list.isEmpty()) {
+				for (IDServizio idServizio : list) {
+					
+					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
+					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+					Search s = new Search(true);
+					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+					if(listFruitori!=null && !listFruitori.isEmpty()) {
+					
+						for (Fruitore fruitore : listFruitori) {
+							IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+							if(lPD!=null && lPD.size()>0) {
+								for (MappingFruizionePortaDelegata mapping : lPD) {
+									try {
+										PortaDelegata pd = this.getPortaDelegata(mapping.getIdPortaDelegata());
+										if(pd!=null && pd.getAzione()!=null && pd.getAzione().getAzioneDelegataList()!=null &&
+												pd.getAzione().getAzioneDelegataList().contains(nomeAzione)) {
+											listInUtilizzo.add(mapping);
+										}
+									}catch(DriverConfigurazioneNotFound notFound) {}
+								}
 							}
 						}
+						
 					}
-					
 				}
 			}
-			
+				
 			return listInUtilizzo;
 
 		} catch (Exception e) {
@@ -486,33 +488,35 @@ public class PorteDelegateCore extends ControlStationCore {
 			
 			List<MappingFruizionePortaDelegata> listMappingDefault = new ArrayList<>();
 			
-			for (IDServizio idServizio : list) {
-				
-				AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
-				Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
-				Search s = new Search(true);
-				List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
-				if(listFruitori!=null && !listFruitori.isEmpty()) {
-				
-					for (Fruitore fruitore : listFruitori) {
-						IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
-						List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
-						if(lPD!=null && lPD.size()>0) {
-							for (MappingFruizionePortaDelegata mapping : lPD) {
-								if(mapping.isDefault()) {
-									if(addDefault) {
-										listMappingDefault.add(mapping);
+			if(list!=null && !list.isEmpty()) {
+				for (IDServizio idServizio : list) {
+					
+					AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(this);
+					Long idS = aspsCore.getIdAccordoServizioParteSpecifica(idServizio);
+					Search s = new Search(true);
+					List<Fruitore> listFruitori = aspsCore.serviziFruitoriList(idS, s);
+					if(listFruitori!=null && !listFruitori.isEmpty()) {
+					
+						for (Fruitore fruitore : listFruitori) {
+							IDSoggetto idSoggettoFruitore = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, this.tipoDB, idSoggettoFruitore, idServizio);
+							if(lPD!=null && lPD.size()>0) {
+								for (MappingFruizionePortaDelegata mapping : lPD) {
+									if(mapping.isDefault()) {
+										if(addDefault) {
+											listMappingDefault.add(mapping);
+										}
 									}
-								}
-								else {
-									if(addNotDefault) {
-										listMappingDefault.add(mapping);
+									else {
+										if(addNotDefault) {
+											listMappingDefault.add(mapping);
+										}
 									}
 								}
 							}
 						}
+						
 					}
-					
 				}
 			}
 			

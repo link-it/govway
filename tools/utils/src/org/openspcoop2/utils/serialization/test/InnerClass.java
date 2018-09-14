@@ -24,6 +24,8 @@ package org.openspcoop2.utils.serialization.test;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.bouncycastle.util.Arrays;
+
 /**
  * @author Bussu Giovanni (bussu@link.it)
  * @author  $Author$
@@ -39,6 +41,13 @@ public class InnerClass implements Serializable {
 	
 	private String str;
 	private long lng;
+	private byte[] bytea;
+	public byte[] getBytea() {
+		return this.bytea;
+	}
+	public void setBytea(byte[] bytea) {
+		this.bytea = bytea;
+	}
 	public String getStr() {
 		return this.str;
 	}
@@ -57,6 +66,7 @@ public class InnerClass implements Serializable {
 	public void init() {
 		this.str = Math.random() + "";
 		this.lng = Math.round(Math.random());
+		this.bytea = "TESTINTERNAL".getBytes(); 
 	}
 
 	/* (non-Javadoc)
@@ -73,6 +83,8 @@ public class InnerClass implements Serializable {
 		if(!Objects.equals(this.str,classObj.getStr()))
 			return false;
 		if(this.lng != classObj.getLng())
+			return false;
+		if(!Arrays.areEqual(this.bytea, classObj.getBytea()))
 			return false;
 		return true;
 	}

@@ -1413,6 +1413,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI);
 				return false;
 			}
+			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+				return false;
+			}
 
 			// Se tipoOp = add, controllo che il message-security non sia gia' stato
 			// registrato per la porta delegata
@@ -1478,6 +1481,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String azione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String statoValidazione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
 
+			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+			
+			String integrazione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
+			
 			// Campi obbligatori
 			if (nomePD==null || nomePD.equals("")) {
 				this.pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_EGRAVE_NECESSARIO_INDICARE_IL_NOME);
@@ -1527,6 +1534,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// length
+			if(integrazione!=null && !"".equals(integrazione)){
+				if(this.checkLength255(integrazione, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_METADATI)==false) {
+					return false;
+				}
+			}
+			
 //			// Controllo che i campi "select" abbiano uno dei valori ammessi
 //			if ((modeaz != null) && !modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED) && 
 //					!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT) && 
@@ -1599,7 +1613,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						autorizzazioneContenuti,
+						protocollo)==false){
 					return false;
 				}
 			}
@@ -2779,6 +2795,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
 				return false;
 			}
+			if(this.checkLength255(nome, PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+				return false;
+			}
 
 			// Se tipoOp = add, controllo che il message-security non sia gia' stato
 			// registrato per la porta delegata
@@ -3582,6 +3601,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((nome.indexOf(" ") != -1) || (valore.indexOf(" ") != -1)) {
 				this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+				return false;
+			}
+			
+			// Check Lunghezza
+			if(this.checkLength255(nome, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(valore, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALORE)==false) {
 				return false;
 			}
 

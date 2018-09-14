@@ -6190,7 +6190,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
 			if(tipologia!=null) {
 				sqlQueryObject.addWhereCondition("tipologia=?");
 			}
@@ -12039,6 +12040,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("id_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField("tipo_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
@@ -12068,6 +12071,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("id_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField("tipo_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
@@ -12270,6 +12275,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("id_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField("tipo_soggetto");
 				if (idSoggetto!=null)
 					sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
@@ -12301,6 +12308,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
 				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addSelectField("id_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField("tipo_soggetto");
 				if (idSoggetto!=null)
 					sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {

@@ -339,7 +339,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_CON_PARAMETRO = "Esiste gi&agrave; una porta applicativa con nome {0}";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UN_ACCORDO_DI_SERVIZIO_PARTE_SPECIFICA_CON_TIPO_NOME_VERSIONE_E_SOGGETTO_INDICATO = "Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.";
 	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI = 
-			"Esiste gi&agrave; un servizio {0} erogato dal Soggetto {1}";
+			"Esiste gi&agrave; una erogazione del servizio {0} erogato dal Soggetto {1}";
 	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI_FRUIZIONE = 
 			"Esiste gi&agrave; una fruizione del servizio {0} erogato dal Soggetto {1}";
 	public static final String MESSAGGIO_ERRORE_ID_ACCORDO_SERVIZIO_NON_DEFINITO = "id Accordo Servizio non definito";

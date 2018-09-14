@@ -39,6 +39,7 @@ public class SerializationConfig {
 	private DateFormat df;
 	private Boolean ignoreNullValues;
 	private boolean serializeEnumAsString = true; //default
+	private boolean prettyPrint = false;
 	
 	public Filter getFilter() {
 		return this.filter;
@@ -81,5 +82,11 @@ public class SerializationConfig {
 	}
 	public void setSerializeEnumAsString(boolean serializeEnumAsString) {
 		this.serializeEnumAsString = serializeEnumAsString;
+	}
+	public boolean isPrettyPrint() {
+		return this.prettyPrint;
+	}
+	public void setPrettyPrint(boolean prettyPrint) {
+		this.prettyPrint = prettyPrint;
 	}
 }

@@ -155,7 +155,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 						if(errori.length()>0) {
 							errori.append("<BR>");
 						}
-						errori.append("Servizio ["+nomept+"] non rimosso poichè correlato da azioni di altri servizi dell'accordo: <br>");
+						errori.append("Servizio ["+nomept+"] non rimosso poichè correlato da azioni di altri servizi della API: <br>");
 						for(int j=0; j<tmp.size();j++){
 							errori.append("- "+tmp.get(j).toString()+"<br>");
 						}
@@ -202,7 +202,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 					if(errori.length()>0) {
 						errori.append("<BR>");
 					}
-					errori.append("Servizio ["+nomept+"] non rimosso poichè risulta implementato in accordi di servizio parte specifica: <br>");
+					errori.append("Servizio ["+nomept+"] non rimosso poichè viene implementato dai seguenti servizi: <br>");
 					for(int j=0; j<idServizi.size();j++){
 						errori.append("- "+idServizi.get(j).toString()+"<br>");
 					}

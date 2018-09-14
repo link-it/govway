@@ -1255,6 +1255,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi all'inizio o alla fine dei valori");
 				return false;
 			}
+			
+			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(valore, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE)==false) {
+				return false;
+			}
 
 			// Se tipoOp = add, controllo che non sia gia' stato
 			// registrato per la porta delegata
@@ -1729,6 +1736,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 
+			// length
+			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(location, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOCATION)==false) {
+				return false;
+			}
+			if(utente!=null && !"".equals(utente)) {
+				if(this.checkLength255(utente, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_UTENTE)==false) {
+					return false;
+				}
+			}
+			if(password!=null && !"".equals(password)) {
+				if(this.checkLength255(password, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_PASSWORD)==false) {
+					return false;
+				}
+			}
+			
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML) &&
 					!tipo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DB) &&
@@ -9016,6 +9041,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setMessage(messaggio);
 			return false;
 		}
+		if(this.checkLength255(policy.getIdPolicy(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME)==false) {
+			return false;
+		}
 		
 		// Descrizione
 		if(policy.getDescrizione()==null || "".equals(policy.getDescrizione())){
@@ -11392,6 +11420,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
+		if(policy.getAlias()!=null && !"".equals(policy.getAlias())) {
+			if(this.checkLength255(policy.getAlias(), ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS)==false) {
+				return false;
+			}
+		}
+		
 		if(policy.isRidefinisci()){
 		
 			// Valori di Soglia
@@ -11917,6 +11951,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 		
+			if(this.checkLength255(nome, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME)==false) {
+				return false;
+			}
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength255(descrizione, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			
 			try {
 				// check duplicati per tipologia
 				this.confCore.getGenericProperties(nome, tipologia);

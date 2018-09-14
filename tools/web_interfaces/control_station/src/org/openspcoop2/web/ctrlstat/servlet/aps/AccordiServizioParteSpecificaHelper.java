@@ -215,7 +215,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean generaPACheckSoggetto, List<ExtendedConnettore> listExtendedConnettore,
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			String protocollo,BinaryParameter allegatoXacmlPolicy)	throws Exception {
+			String protocollo,BinaryParameter allegatoXacmlPolicy,
+			String descrizione)	throws Exception {
 
 		boolean isModalitaAvanzata = this.isModalitaAvanzata();
 
@@ -391,6 +392,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Versione deve essere un numero intero
 			if (!versione.equals("") && !this.checkNumber(versione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE, false)) {
 				return false;
+			}
+			
+			// Check lunghezza
+			if(this.checkLength255(nomeservizio, AccordiServizioParteSpecificaCostanti.LABEL_APS_NOME_SERVIZIO)==false) {
+				return false;
+			}
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength255(descrizione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE)==false) {
+					return false;
+				}
 			}
 			
 			// Controllo dell'end-point
@@ -680,6 +691,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 
+				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				
 				if(gestioneFruitori) {
 					
 					if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
@@ -688,7 +701,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							true, true, null, null,gestioneToken, gestioneTokenPolicy, 
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							autorizzazioneContenuti,
+							protocollo)==false){
 						return false;
 					}
 				}
@@ -701,7 +716,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							isSupportatoAutenticazione, false, null, null,gestioneToken, gestioneTokenPolicy, 
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autorizzazione_tokenOptions,
-							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+							autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+							autorizzazioneContenuti,
+							protocollo)==false){
 						return false;
 					}
 				}
@@ -941,13 +958,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 				
+				String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+				
 				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 						true, true, null, null,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autorizzazione_tokenOptions,
-						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						autorizzazioneContenuti,
+						protocollo)==false){
 					return false;
 				}
 			}
@@ -6731,6 +6752,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
 			return false;
 		}
+		// Check lunghezza
+		if(this.checkLength255(nomeGruppo, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO)==false) {
+			return false;
+		}
 		
 		if(azioni == null || azioni.length == 0) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA);
@@ -6762,6 +6787,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneRuoli = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			
+			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			
 //			if() {
 //				
@@ -6811,7 +6838,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					autorizzazioneContenuti,
+					protocollo)==false){
 				return false;
 			}
 		}
@@ -6825,6 +6854,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		if(nomeGruppo==null || "".equals(nomeGruppo.trim())) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
+			return false;
+		}
+		
+		// Check lunghezza
+		if(this.checkLength255(nomeGruppo, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO)==false) {
 			return false;
 		}
 		
@@ -6858,6 +6892,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String autorizzazioneRuoli = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 			String autorizzazioneRuoliTipologia = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = this.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			
+			String autorizzazioneContenuti = this.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			
 			// Se autenticazione = custom, nomeauth dev'essere specificato
 			if (CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione) && 
@@ -6904,7 +6940,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					isSupportatoAutenticazione, true, pd, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo)==false){
+					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					autorizzazioneContenuti,
+					protocollo)==false){
 				return false;
 			}
 		}

@@ -218,7 +218,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 						if(errori.length()>0) {
 							errori.append("<BR>");
 						}
-						errori.append("Azione "+nomeaz+" non rimuovibile poichè l'accordo di servizio parte comune viene implementato dai seguenti servizi: <br>");
+						errori.append("Azione "+nomeaz+" non rimuovibile poichè la API viene implementata dai seguenti servizi: <br>");
 						for(int j=0; j<idServiziWithAccordo.size();j++){
 							errori.append("- "+idServiziWithAccordo.get(j).toString()+"<br>");
 						}

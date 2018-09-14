@@ -306,7 +306,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			
 			// Controlli sui campi immessi
 			if(isOk){
-				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null,
+				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, descr, messageType, null,null,null,null,
 						profProtocollo, filtrodupaz, confricaz, idcollaz, idRifRichiestaAz, consordaz, scadenzaaz);
 			}
 

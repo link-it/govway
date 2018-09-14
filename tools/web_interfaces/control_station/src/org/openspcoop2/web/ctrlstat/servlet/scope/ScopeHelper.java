@@ -142,6 +142,8 @@ public class ScopeHelper extends ConsoleHelper{
 		try{
 
 			String nome = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME);
+			String descrizione = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
+			String nomeEsterno = this.getParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO);
 			//String descrizione = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_DESCRIZIONE);
 			//String tipologia = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_TIPOLOGIA);
 			//String contesto = this.scopeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_SCOPE_CONTESTO);
@@ -163,6 +165,20 @@ public class ScopeHelper extends ConsoleHelper{
 			}
 			if(this.checkNCName(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)==false){
 				return false;
+			}
+			if(this.checkLength255(nome, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME)==false) {
+				return false;
+			}
+			
+			if(descrizione!=null && !"".equals(descrizione)) {
+				if(this.checkLength255(descrizione, ScopeCostanti.LABEL_PARAMETRO_SCOPE_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			if(nomeEsterno!=null && !"".equals(nomeEsterno)) {
+				if(this.checkLength255(nomeEsterno, ScopeCostanti.LABEL_PARAMETRO_SCOPE_NOME_ESTERNO)==false) {
+					return false;
+				}
 			}
 
 			// Se tipoOp = add, controllo che il registro non sia gia' stato

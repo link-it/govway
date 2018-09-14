@@ -371,7 +371,7 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			
 			// Controlli sui campi immessi
 			if(isOk){
-				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa,nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType,oldNomeRisorsa,oldNomeRisorsaGenerato,oldPath,oldHttpMethod,
+				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa,nomeRisorsaProposto, pathNormalizzato, httpMethod, descr, messageType,oldNomeRisorsa,oldNomeRisorsaGenerato,oldPath,oldHttpMethod,
 						profProtocollo, filtrodupaz, confricaz, idcollaz, idRifRichiestaAz, consordaz, scadenzaaz);
 			}
 

@@ -158,8 +158,8 @@ ault con codice di trasporto 500
 a. Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
 Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto:
   <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
-TODO: Scoprire come fare sugli altri AS
-
+Per farlo su tomcat aggiungere l'attributo allowTrace="true" nel'elemento Connector:
+  <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" allowTrace="true" />
 (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la normale gestione del servizio REST:

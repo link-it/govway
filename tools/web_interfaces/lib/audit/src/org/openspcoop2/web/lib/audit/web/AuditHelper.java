@@ -955,7 +955,7 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addAuditReportDettaglioToDati(Operation op,
+	public Vector<DataElement> addAuditReportDettaglioToDati(Operation op, boolean showLinkDocumentiBinari,
 			Parameter ... params) throws Exception {
 		try {
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -1075,12 +1075,14 @@ public class AuditHelper {
 			}
 			}
 			
-			de = new DataElement();
-			de.setLabel(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI);
-			de.setUrl(AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_DOCUMENTI_BINARI, params2);
-			de.setValue(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI + " ("+op.sizeBinaryList()+")");
-			de.setType(DataElementType.LINK);
-			dati.addElement(de);
+			if(showLinkDocumentiBinari) {
+				de = new DataElement();
+				de.setLabel(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI);
+				de.setUrl(AuditCostanti.SERVLET_NAME_AUDITING_DETTAGLIO_DOCUMENTI_BINARI, params2);
+				de.setValue(AuditCostanti.LABEL_AUDIT_DOCUMENTI_BINARI + " ("+op.sizeBinaryList()+")");
+				de.setType(DataElementType.LINK);
+				dati.addElement(de);
+			}
 
 			return dati;
 		} catch (Exception e) {

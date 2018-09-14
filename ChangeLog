@@ -1,6 +1,16 @@
-2018-07-28  Andrea Poli <apoli@link.it>
+2018-09-17  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0
+
+2018-09-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Risolto Bug OP-760
+	GovWay non funzionava correttamente su database 'Oracle'. 
+	All'avvio il log evidenziava errori durante l'emissione di eventi.
+	Inoltre durante la gestione delle transazioni, in presenza di policy di rate limiting, 
+	occorrevano errori che non permettano alle invocazioni di terminare correttamente.
+	Infine anche la console non funzionava correttamente per quanto concerne la consultazione delle sezioni 'Fruizioni' e 'Token Policy'
 
 2018-09-12  Andrea Poli <apoli@link.it>
 

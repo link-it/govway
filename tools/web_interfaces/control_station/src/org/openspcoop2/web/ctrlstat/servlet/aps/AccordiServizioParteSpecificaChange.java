@@ -1106,7 +1106,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					generaPACheckSoggetto, listExtendedConnettore,
 					null,null,null,null,null,
 					null, null, null, null,
-					tipoProtocollo,null);
+					tipoProtocollo,null, descrizione);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){

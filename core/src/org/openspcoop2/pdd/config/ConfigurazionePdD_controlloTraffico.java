@@ -41,6 +41,7 @@ import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSear
 import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
 
@@ -58,6 +59,8 @@ public class ConfigurazionePdD_controlloTraffico {
 	private boolean useConnectionPdD = false;
 	private DriverConfigurazioneDB driver;
 	private Logger log;
+	private ServiceManagerProperties smp;
+	
 	
 	public ConfigurazionePdD_controlloTraffico(OpenSPCoop2Properties openspcoopProperties, DriverConfigurazioneDB driver, boolean useConnectionPdD) {
 		this.openspcoopProperties = openspcoopProperties;
@@ -65,6 +68,10 @@ public class ConfigurazionePdD_controlloTraffico {
 		this.useConnectionPdD = useConnectionPdD;
 		this.driver = driver;
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(this.openspcoopProperties.isControlloTrafficoDebug());
+	
+		this.smp = new ServiceManagerProperties();
+		this.smp.setShowSql(this.openspcoopProperties.isControlloTrafficoDebug());
+		this.smp.setDatabaseType(this.driver.getTipoDB());
 	}
 	
 	
@@ -103,7 +110,7 @@ public class ConfigurazionePdD_controlloTraffico {
 				org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 						(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-								cr.connectionDB,this.log);
+								cr.connectionDB,this.smp,this.log);
 				
 				ConfigurazionePdD_controlloTraffico.configurazioneGenerale = sm.getConfigurazioneGeneraleServiceSearch().get();
 			}
@@ -137,7 +144,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 					(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							cr.connectionDB,this.log);
+							cr.connectionDB,this.smp,this.log);
 			
 			ElencoIdPolicyAttive elencoIdPolicy = new ElencoIdPolicyAttive();
 			IAttivazionePolicyServiceSearch search =  sm.getAttivazionePolicyServiceSearch();
@@ -177,7 +184,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 					(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							cr.connectionDB,this.log);
+							cr.connectionDB,this.smp,this.log);
 			
 			IAttivazionePolicyServiceSearch search =  sm.getAttivazionePolicyServiceSearch();
 			IdActivePolicy policyId = new IdActivePolicy();
@@ -211,7 +218,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 					(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							cr.connectionDB,this.log);
+							cr.connectionDB,this.smp,this.log);
 			
 			ElencoIdPolicy elencoIdPolicy = new ElencoIdPolicy();
 			IConfigurazionePolicyServiceSearch search =  sm.getConfigurazionePolicyServiceSearch();
@@ -251,7 +258,7 @@ public class ConfigurazionePdD_controlloTraffico {
 			org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 					(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							cr.connectionDB,this.log);
+							cr.connectionDB,this.smp,this.log);
 			
 			IConfigurazionePolicyServiceSearch search =  sm.getConfigurazionePolicyServiceSearch();
 			IdPolicy policyId = new IdPolicy();

@@ -839,6 +839,7 @@ public class GestoreAutenticazione {
 			DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(logSql);
 			ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 			daoFactoryServiceManagerPropertiesTransazioni.setShowSql(debug);
+			daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 			
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = 
 					(org.openspcoop2.core.transazioni.dao.IServiceManager) 

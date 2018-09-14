@@ -219,7 +219,7 @@ public class DumpMessaggio implements Serializable{
 						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentLocation()+"\n");
 					}
 					if(ap.getContentType()!=null) {
-						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentType()+"\n");
+						out.append("- "+HttpConstants.CONTENT_TYPE+": "+ap.getContentType()+"\n");
 					}
 					if(config.isDumpMultipartHeaders() && ap.getHeaders().size()>0) {
 						Iterator<?> itM = ap.getHeaders().keySet().iterator();

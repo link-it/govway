@@ -239,7 +239,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 						if(errori.length()>0) {
 							errori.append("<BR>");
 						}
-						errori.append("Azione "+nomeop+" non rimuovibile poichè il servizio "+nomept+" dell'accordo viene implementato da accordi di servizio parte specifica: <br>");
+						errori.append("Azione "+nomeop+" non rimuovibile poichè il servizio "+nomept+" della API viene implementato dai seguenti servizi: <br>");
 						for(int j=0; j<idServiziWithPortType.size();j++){
 							errori.append("- "+idServiziWithPortType.get(j).toString()+"<br>");
 						}

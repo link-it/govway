@@ -128,7 +128,7 @@ public class AuditAppender {
 
 	
 	
-	public IDOperazione registraOperazioneInFaseDiElaborazione(Tipologia tipoOperazione,Object object,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
+	public IDOperazione registraOperazioneInFaseDiElaborazione(Tipologia tipoOperazione,Object object,String user,String interfaceMsg, boolean registrazioneBinari) throws AuditException,AuditDisabilitatoException{
 		
 		if(AuditAppender.configurazioneAuditing.isAuditEngineEnabled()==false){
 			throw new AuditDisabilitatoException("Audit engine disabilitato");
@@ -159,7 +159,7 @@ public class AuditAppender {
 			
 			// Filtro operazioni
 			org.openspcoop2.utils.serialization.Filter listFilter = new org.openspcoop2.utils.serialization.Filter();
-			String objectDetails = filtraOperazione(operation,object,listFilter);
+			String objectDetails = filtraOperazione(operation,object,listFilter, registrazioneBinari);
 			
 			if(objectDetails!=null){
 				operation.setObjectDetails(objectDetails);
@@ -205,7 +205,7 @@ public class AuditAppender {
 	
 	
 	
-	public void registraOperazioneAccesso(Tipologia tipoOperazione,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
+	public void registraOperazioneAccesso(Tipologia tipoOperazione,String user,String interfaceMsg, boolean registrazioneBinari) throws AuditException,AuditDisabilitatoException{
 		
 		if(AuditAppender.configurazioneAuditing.isAuditEngineEnabled()==false){
 			throw new AuditDisabilitatoException("Audit engine disabilitato");
@@ -224,7 +224,7 @@ public class AuditAppender {
 					
 			
 			// Filtro operazioni
-			filtraOperazione(operation);
+			filtraOperazione(operation, registrazioneBinari);
 			
 			
 			// Appender
@@ -357,12 +357,15 @@ public class AuditAppender {
 	
 	// -------------- UTILITY -------------------
 	
-	private String serializeJsonObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException{
+	private String serializeJsonObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari) throws AuditException{
 		try{
-			listFilter.addFilterByValue(byte[].class);
+			if(registrazioneBinari==false) {
+				listFilter.addFilterByValue(byte[].class);
+			}
 			SerializationConfig config = new SerializationConfig();
 			config.setFilter(listFilter);
 			config.setIdBuilder(AuditAppender.idBuilder);
+			config.setPrettyPrint(true);
 			// Deprecato
 //			org.openspcoop2.utils.serialization.JSonSerializer serializer = 
 //				new org.openspcoop2.utils.serialization.JSonSerializer(config);
@@ -374,12 +377,15 @@ public class AuditAppender {
 		}
 	}
 	
-	private String serializeXMLObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException{
+	private String serializeXMLObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari) throws AuditException{
 		try{
-			listFilter.addFilterByValue(byte[].class);
+			if(registrazioneBinari==false) {
+				listFilter.addFilterByValue(byte[].class);
+			}
 			SerializationConfig config = new SerializationConfig();
 			config.setFilter(listFilter);
 			config.setIdBuilder(AuditAppender.idBuilder);
+			config.setPrettyPrint(true);
 			org.openspcoop2.utils.serialization.XMLSerializer serializer = 
 				new org.openspcoop2.utils.serialization.XMLSerializer(config);
 			return  serializer.getObject(o);		
@@ -388,10 +394,10 @@ public class AuditAppender {
 		}
 	}
 	
-	private void filtraOperazione(Operation operation) throws AuditException,AuditDisabilitatoException{
-		this.filtraOperazione(operation, null, null);
+	private void filtraOperazione(Operation operation, boolean registrazioneBinari) throws AuditException,AuditDisabilitatoException{
+		this.filtraOperazione(operation, null, null, registrazioneBinari);
 	}
-	private String filtraOperazione(Operation operation,Object object,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException,AuditDisabilitatoException{
+	private String filtraOperazione(Operation operation,Object object,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari) throws AuditException,AuditDisabilitatoException{
 		
 		try{
 		
@@ -450,7 +456,7 @@ public class AuditAppender {
 					
 					if(objectDetails==null){
 						// Serializzo l'oggetto
-						objectDetails = this.serialize(object, listFilter);
+						objectDetails = this.serialize(object, listFilter, registrazioneBinari);
 					}
 					
 					// Se e' definito un filtro sul contenuto dell'operazione nel filtro controllo che corrisponda
@@ -474,7 +480,7 @@ public class AuditAppender {
 						// Se non avevo gia' serializzato prima per la ricerca tramite contenuto
 						if(objectDetails==null){
 							// Serializzo l'oggetto
-							objectDetails = this.serialize(object, listFilter);
+							objectDetails = this.serialize(object, listFilter, registrazioneBinari);
 						}
 					}
 				}else{
@@ -495,7 +501,7 @@ public class AuditAppender {
 					// Se non avevo gia' serializzato prima per la ricerca tramite contenuto
 					if(objectDetails==null){
 						// Serializzo l'oggetto
-						objectDetails = this.serialize(object, listFilter);
+						objectDetails = this.serialize(object, listFilter, registrazioneBinari);
 					}
 				}
 			}else{
@@ -514,12 +520,12 @@ public class AuditAppender {
 	}
 	
 	
-	private String serialize(Object object,org.openspcoop2.utils.serialization.Filter listFilter)throws AuditException{
+	private String serialize(Object object,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari)throws AuditException{
 		if(Costanti.DUMP_JSON_FORMAT.equals(AuditAppender.configurazioneAuditing.getDumpFormat())){
-			return this.serializeJsonObject(object, listFilter);
+			return this.serializeJsonObject(object, listFilter, registrazioneBinari);
 		}
 		else if(Costanti.DUMP_XML_FORMAT.equals(AuditAppender.configurazioneAuditing.getDumpFormat())){
-			return this.serializeXMLObject(object, listFilter);
+			return this.serializeXMLObject(object, listFilter, registrazioneBinari);
 		}else {
 			throw new AuditException("Tipo di formattazione non conosciuta: "+AuditAppender.configurazioneAuditing.getDumpFormat());
 		}

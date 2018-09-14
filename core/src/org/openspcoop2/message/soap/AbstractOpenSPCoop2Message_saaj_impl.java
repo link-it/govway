@@ -41,6 +41,8 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.wss4j.common.WSS4JConstants;
@@ -58,6 +60,8 @@ import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.dch.DataContentHandlerManager;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -187,7 +191,42 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 	
 	@Override
 	public void updateAttachmentPart(AttachmentPart ap,byte[]content,String contentType) throws MessageException,MessageNotSupportedException {
-		this.updateAttachmentPart(ap, new DataHandler(content,contentType));
+		// Se si usa il solo metodo del ramo else, in tomcat si ottiene il seguente errore (con dump abilitato):
+		// ... Unable to run the JAXP transformer on a stream [B cannot be cast to javax.xml.transform.Source (sourceException: Error during saving a multipart message)
+		try {
+			String baseType = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
+			if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(baseType)) {
+				Source streamSource = null;
+				DataContentHandlerManager dchManager = new DataContentHandlerManager(LoggerWrapperFactory.getLogger(AbstractOpenSPCoop2Message_saaj_impl.class));
+				if(dchManager.readMimeTypesContentHandler().containsKey(HttpConstants.CONTENT_TYPE_TEXT_XML)) {
+					// Se è non registrato un content handler per text/xml
+					// succede se dentro l'ear non c'e' il jar mailapi e l'application server non ha caricato il modulo mailapi (es. tramite versione standalone standard)
+					// e si usa il metodo seguente DOMSource si ottiene il seguente errore:
+					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
+					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
+					//System.out.println("XML (DOMSource)");
+					streamSource = new DOMSource(XMLUtils.getInstance().newElement(content));
+				}
+				else {
+					// Se è registrato un content handler per text/xml
+					// e succede se dentro l'ear c'e' il jar mailapi oppure se l'application server ha caricato il modulo mailapi (es. tramite versione standalone full)
+					// e si usa il metodo seguente StreamSource, si ottiene il seguente errore:
+					//  Unable to run the JAXP transformer on a stream org.xml.sax.SAXParseException; Premature end of file. (sourceException: Error during saving a multipart message) 
+					//  	com.sun.xml.messaging.saaj.SOAPExceptionImpl: Error during saving a multipart message
+					//        at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
+					//        at org.openspcoop2.message.Message1_1_FIX_Impl.writeTo(Message1_1_FIX_Impl.java:172) ~[openspcoop2_message_BUILD-13516.jar:?]
+					//        at org.openspcoop2.message.OpenSPCoop2Message_11_impl.writeTo
+					//System.out.println("XML (StreamSource)");
+					streamSource = new javax.xml.transform.stream.StreamSource(new java.io.ByteArrayInputStream(content));
+				}
+				ap.setContent(streamSource, contentType);
+			}
+			else {
+				this.updateAttachmentPart(ap, new DataHandler(content,contentType)); 
+			}
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
 	}
 	
 	@Override

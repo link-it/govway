@@ -873,6 +873,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 
+			// check lunghezza
+			if(this.checkLength255(nomeop, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false) {
+				return false;
+			}
+			if(soapActionOp!=null && !"".equals(soapActionOp)) {
+				if(this.checkLength255(soapActionOp, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_SOAP_ACTION)==false) {
+					return false;
+				}
+			}
+			if(nsWSDLOp!=null && !"".equals(nsWSDLOp)) {
+				if(this.checkLength255(nsWSDLOp, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS)==false) {
+					return false;
+				}
+			}
+			
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(this.checkNCName(nomeop, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
@@ -1605,7 +1620,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati del porttype dell'accordo
-	public boolean accordiPorttypeCheckData(TipoOperazione tipoOperazione,String id,String nomept,String profProtocollo,String filtroduppt,
+	public boolean accordiPorttypeCheckData(TipoOperazione tipoOperazione,String id,String nomept,String descr,String profProtocollo,String filtroduppt,
 			String confricpt,String idcollpt,String idRifRichiestaPt,String consordpt,String scadenzapt) throws Exception {
 
 		try{
@@ -1615,6 +1630,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// check lunghezza
+			if(this.checkLength255(nomept, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false) {
+				return false;
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(this.checkNCName(nomept, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
@@ -1661,7 +1686,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioPorttype(nomept, Integer.parseInt(id));
 				if (giaRegistrato) {
-					this.pd.setMessage("Il servizio " + nomept + " &egrave; gi&agrave; stato associato all'accordo");
+					this.pd.setMessage("Il servizio " + nomept + " &egrave; gi&agrave; stato associato alla API");
 					return false;
 				}
 			}
@@ -2250,6 +2275,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// check lunghezza
+			if(this.checkLength255(nomeaz, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false) {
+				return false;
+			}
+			
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(this.checkNCName(nomeaz, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
@@ -2298,7 +2328,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				int idInt = Integer.parseInt(id);
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioAzione(nomeaz, idInt);
 				if (giaRegistrato) {
-					this.pd.setMessage("L'azione " + nomeaz + " &egrave; gi&agrave; stata associata all'accordo " + id);
+					this.pd.setMessage("L'azione " + nomeaz + " &egrave; gi&agrave; stata associata alla API " + id);
 					return false;
 				}
 			}
@@ -4384,6 +4414,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 
+			// Check lunghezza
+			if(this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false) {
+				return false;
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 			if(this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
@@ -4496,11 +4535,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				idAcc = as.getId().intValue();
 			}
 			if ((idAcc != 0) && (tipoOperazione.equals(TipoOperazione.ADD) || (tipoOperazione.equals(TipoOperazione.CHANGE) && (idInt != idAcc)))) {
-				if(soggettoReferente!=null) {
-					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
+				if(soggettoReferente!=null && checkReferente) {
+					this.pd.setMessage("Esiste gi&agrave; una API (versione "+versione+") con nome " + nome+" del soggetto referente "+
+							this.getLabelNomeSoggetto(tipoProtocollo,soggettoReferente));
 				}
 				else {
-					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome);
+					this.pd.setMessage("Esiste gi&agrave; una API (versione "+versione+") con nome " + nome);
 				}
 				return false;
 			}
@@ -5547,43 +5587,53 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				m = operation.getMessageOutput();
 
 			if (messagePartName == null || messagePartName.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il name.");
+				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME+".");
 				return false;
 			}
 
 			if (messagePartName.indexOf(" ") != -1 ) {
-				this.pd.setMessage("Il campo name non pu&ograve; contenere spazi");
+				this.pd.setMessage("Il campo "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME+" non pu&ograve; contenere spazi");
 				return false;
 			}
 
 
 			if (messagePartLocalName == null || messagePartLocalName.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il localname.");
+				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME+".");
 				return false;
 			}
 
 			if (messagePartLocalName.indexOf(" ") != -1 ) {
-				this.pd.setMessage("Il campo localname non pu&ograve; contenere spazi");
+				this.pd.setMessage("Il campo "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME+" non pu&ograve; contenere spazi");
 				return false;
 			}
 
 			if (messagePartNs == null || messagePartNs.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il namespace.");
+				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS+".");
 				return false;
 			}
 
 			if (messagePartNs.indexOf(" ") != -1 ) {
-				this.pd.setMessage("Il campo namespace non pu&ograve; contenere spazi");
+				this.pd.setMessage("Il campo "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS+" non pu&ograve; contenere spazi");
 				return false;
 			}	
 
 			try{
 				URI.create(messagePartNs);
 			}catch(Exception e){
-				this.pd.setMessage("Il campo namespacezio non contiene una URI valida");
+				this.pd.setMessage("Il campo "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS+" non contiene una URI valida");
 				return false;
 			}
 
+			// check lunghezza
+			if(this.checkLength255(messagePartName, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NAME)==false) {
+				return false;
+			}
+			if(this.checkLength255(messagePartLocalName, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_LOCAL_NAME)==false) {
+				return false;
+			}
+			if(this.checkLength255(messagePartNs, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PORT_TYPE_OPERATION_MESSAGE_PART_NS)==false) {
+				return false;
+			}
 
 			// controllo esistenza
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
@@ -6309,7 +6359,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public boolean accordiResourceCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa, String nomeRisorsaProposto, String path,
-			String httpMethod, MessageType messageType, String oldNomeRisorsa, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod,
+			String httpMethod, String descr, MessageType messageType, String oldNomeRisorsa, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod,
 			String profProtocollo, String filtrodupaz, String confricaz, String idcollaz, String idRifRichiestaAz,
 			String consordaz, String scadenzaaz) throws Exception {
 
@@ -6348,6 +6398,29 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 //				return false;
 //			}
 
+			// Check lunghezza
+			if(nomeRisorsa!=null && !"".equals(nomeRisorsa)) {
+				if(this.checkLength255(nomeRisorsa, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME)==false) {
+					return false;
+				}
+			}
+			else if(nomeRisorsaProposto!=null && !"".equals(nomeRisorsaProposto)) {
+				if(this.checkLength255(nomeRisorsaProposto, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_NOME)==false) {
+					this.pd.setMessage(this.pd.getMessage()+"<br/>Il nome auto-generato rispetto al path ed al method supera la lunghezza massima consentita; ridefinire un nome manualmente"); 
+					return false;
+				}
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			if(path!=null && !"".equals(path)) {
+				if(this.checkLength255(path, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH)==false) {
+					return false;
+				}
+			}
+			
 			// controllo il formato del nome solo se non e' vuoto
 			if(!nomeRisorsa.equals("")) {
 				// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
@@ -6406,14 +6479,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						p = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI;
 					}
 					this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +m +" , "
-								+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +p + ") &egrave; gi&agrave; stata associata all'accordo");
+								+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +p + ") &egrave; gi&agrave; stata associata alla API");
 					return false;
 				}
 				
 				if(!nomeRisorsa.equals("")) {
 					giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
 					if (giaRegistrato) {
-						this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata all'accordo");
+						this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata alla API");
 						return false;
 					}
 				}
@@ -6440,14 +6513,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
 					if (giaRegistrato) {
 						this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
-									+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata all'accordo");
+									+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata alla API");
 						return false;
 					}
 					if(!nomeRisorsaProposto.equals(oldNomeRisorsa)) {
 						if(!nomeRisorsaProposto.equals("") ) {
 							giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
 							if (giaRegistrato) {
-								this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata all'accordo");
+								this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata alla API");
 								return false;
 							}
 						}
@@ -6647,6 +6720,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			else {
 				httpStatus = ApiResponse.getDefaultHttpReturnCode();
+			}
+			
+			// check lunghezza
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE)==false) {
+					return false;
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
@@ -7460,6 +7540,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				return false;
 			}
 			
+			// check lunghezza
+			if(this.checkLength255(mediaType, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_REPRESENTATION_MEDIA_TYPE)==false) {
+				return false;
+			}
+			if(nome!=null && !"".equals(nome)) {
+				if(this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME)==false) {
+					return false;
+				}
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE)==false) {
+					return false;
+				}
+			}
+			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResourceRepresentation(idRisorsa, isRequest, idResponse, mediaType);
@@ -7666,6 +7761,19 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipo == null || tipo.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare un "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO);
 				return false;
+			}
+			
+			// check lunghezza
+			if(this.checkLength255(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME)==false) {
+				return false;
+			}
+			if(this.checkLength255(tipo, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_TIPO)==false) {
+				return false;
+			}
+			if(descr!=null && !"".equals(descr)) {
+				if(this.checkLength255(descr, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_DESCRIZIONE)==false) {
+					return false;
+				}
 			}
 			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo

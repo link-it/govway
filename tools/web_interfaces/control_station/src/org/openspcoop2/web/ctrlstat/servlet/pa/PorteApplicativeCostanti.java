@@ -453,8 +453,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONI_APPLICATIVE_RISPOSTA_DI = "Correlazione Applicativa Risposta";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE = "Modalit&agrave; identificazione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = "Elemento";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = "Elemento<BR/>(Il campo vuoto indica qualsiasi elemento)";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_BR = CostantiControlStation.LABEL_PARAMETRO_PORTE_ELEMENTO_XML+"<BR/>(Il campo vuoto indica qualsiasi elemento)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML_NOTE = "Il campo vuoto indica qualsiasi elemento";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = CostantiControlStation.LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI;

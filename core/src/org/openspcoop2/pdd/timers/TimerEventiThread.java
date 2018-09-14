@@ -28,8 +28,11 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.util.Date;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.eventi.dao.IEventoService;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
@@ -37,10 +40,6 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import org.openspcoop2.core.eventi.dao.IEventoService;
 
 
 /**     
@@ -165,6 +164,7 @@ public class TimerEventiThread extends Thread{
 			
 			this.daoFactoryServiceManagerPropertiesPlugins = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerPropertiesPlugins.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerPropertiesPlugins.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 			
 		}catch(Exception e){
 			throw new Exception("Errore durante l'inizializzazione del datasource: "+e.getMessage(),e);
@@ -181,10 +181,10 @@ public class TimerEventiThread extends Thread{
 		
 		while(this.stop == false){
 			
-			DBManager dbManager = null;
+			DBTransazioniManager dbManager = null;
 	    	Resource r = null;
 	    	try{
-	    		dbManager = DBManager.getInstance();
+	    		dbManager = DBTransazioniManager.getInstance();
 				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
 				if(r==null){
 					throw new Exception("Risorsa al database non disponibile");

@@ -257,7 +257,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiPorttypeCheckData(tipoOp, id, nomept, profProtocollo, filtroduppt, confricpt, idcollpt, idRifRichiestaPt, consordpt, scadenzapt);
+			boolean isOk = apcHelper.accordiPorttypeCheckData(tipoOp, id, nomept, descr, profProtocollo, filtroduppt, confricpt, idcollpt, idRifRichiestaPt, consordpt, scadenzapt);
 
 			// Validazione base dei parametri custom 
 			if(isOk){

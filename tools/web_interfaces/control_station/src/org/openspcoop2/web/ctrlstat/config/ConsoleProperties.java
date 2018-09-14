@@ -294,6 +294,10 @@ public class ConsoleProperties {
 				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
 	}
 	
+	public boolean isAuditingRegistrazioneElementiBinari() throws UtilsException{
+		return this.readBooleanProperty(true, "auditing.registrazioneElementiBinari");
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	

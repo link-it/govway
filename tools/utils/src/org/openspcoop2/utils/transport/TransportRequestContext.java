@@ -164,7 +164,15 @@ public class TransportRequestContext implements java.io.Serializable {
 	}
 	public String getContentType(boolean returnMsgErroreIfNotFound) throws Exception{
 
-		if(this.parametersTrasporto!=null && this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE)){
+		if(this.parametersTrasporto!=null && 
+				(
+						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE)
+						||
+						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE.toLowerCase())
+						||
+						this.parametersTrasporto.containsKey(HttpConstants.CONTENT_TYPE.toUpperCase())
+				) 
+			){
 			String ct = this.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
 			if(ct==null){
 				if(returnMsgErroreIfNotFound)

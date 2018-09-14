@@ -452,7 +452,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 					autorizzazione_tokenOptions,
-					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,protocollo);
+					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					autorizzazioneContenuti,
+					protocollo);
 					
 			if (!isOk) {
 				// preparo i campi

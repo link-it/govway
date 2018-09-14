@@ -144,6 +144,11 @@ public class TimerStatisticheLib {
 			if(this.tipoDatabase==null){
 				throw new Exception("Tipo Database non definito");
 			}
+			
+			String tipoDatabaseTransazioni = DBTransazioniManager.getInstance().getTipoDatabase();
+			if(tipoDatabaseTransazioni==null){
+				throw new Exception("Tipo Database Transazioni non definito");
+			}
 
 			// Inizializzazione datasource
 //			GestoreJNDI jndi = new GestoreJNDI();
@@ -158,30 +163,36 @@ public class TimerStatisticheLib {
 			this.daoFactoryServiceManagerPropertiesTransazioni = 
 					daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerPropertiesTransazioni.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(tipoDatabaseTransazioni);
 			
 			this.daoFactoryServiceManagerPropertiesStatistiche = 
 					daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
 			this.daoFactoryServiceManagerPropertiesStatistiche.setShowSql(this.debug);	
+			this.daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(tipoDatabaseTransazioni);
 			
 			if(this.generazioneStatisticheCustom){
 			
 				this.daoFactoryServiceManagerPropertiesPluginsStatistiche = 
 						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesPluginsStatistiche.setShowSql(this.debug);	
+				this.daoFactoryServiceManagerPropertiesPluginsStatistiche.setDatabaseType(this.tipoDatabase);
 				
 				this.daoFactoryServiceManagerPropertiesPluginsBase = 
 						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesPluginsBase.setShowSql(this.debug);	
+				this.daoFactoryServiceManagerPropertiesPluginsBase.setDatabaseType(this.tipoDatabase);
 				
 				this.daoFactoryServiceManagerPropertiesUtils = 
 						daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesUtils.setShowSql(this.debug);	
+				this.daoFactoryServiceManagerPropertiesUtils.setDatabaseType(this.tipoDatabase);
 				
 				if(this.analisiTransazioniCustom){
 				
 					this.daoFactoryServiceManagerPropertiesPluginsTransazioni = 
 							daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance());
 					this.daoFactoryServiceManagerPropertiesPluginsTransazioni.setShowSql(this.debug);	
+					this.daoFactoryServiceManagerPropertiesPluginsTransazioni.setDatabaseType(this.tipoDatabase);
 					
 				}
 				

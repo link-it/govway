@@ -16272,6 +16272,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
 				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -16285,6 +16286,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
 				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addSelectField("nome");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.setSortType(true);
@@ -18877,8 +18879,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("servizio_correlato");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI+".nome_soggetto","nomeSoggettoErogatore");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI+".tipo_soggetto","tipoSoggettoErogatore");
 				sqlQueryObject.addSelectField("port_type");
 				if(gestioneFruitori) {
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI+".id","idFruizione");
@@ -18930,9 +18932,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_servizio");
 				sqlQueryObject.addOrderBy("versione_servizio");
-				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("nomeSoggettoErogatore");
 				sqlQueryObject.addOrderBy("tipo_servizio");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy("tipoSoggettoErogatore");
 				if(gestioneFruitori) {
 					sqlQueryObject.addOrderBy("nomeSoggettoFruitore");
 					sqlQueryObject.addOrderBy("tipoSoggettoFruitore");
@@ -18966,8 +18968,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("servizio_correlato");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI+".stato","statoServizio");
 				sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"descrizione","descrizioneServizio");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
-				sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI+".nome_soggetto","nomeSoggettoErogatore");
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI+".tipo_soggetto","tipoSoggettoErogatore");
 				sqlQueryObject.addSelectField("port_type");
 				if(gestioneFruitori) {
 					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI+".id","idFruizione");
@@ -19013,9 +19015,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_servizio");
 				sqlQueryObject.addOrderBy("versione_servizio");
-				sqlQueryObject.addOrderBy("nome_soggetto");
+				sqlQueryObject.addOrderBy("nomeSoggettoErogatore");
 				sqlQueryObject.addOrderBy("tipo_servizio");
-				sqlQueryObject.addOrderBy("tipo_soggetto");
+				sqlQueryObject.addOrderBy("tipoSoggettoErogatore");
 				if(gestioneFruitori) {
 					sqlQueryObject.addOrderBy("nomeSoggettoFruitore");
 					sqlQueryObject.addOrderBy("tipoSoggettoFruitore");

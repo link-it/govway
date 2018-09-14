@@ -1468,7 +1468,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					generaPortaApplicativa, listExtendedConnettore,
 					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-					this.tipoProtocollo, allegatoXacmlPolicy);
+					this.tipoProtocollo, allegatoXacmlPolicy, this.descrizione);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){

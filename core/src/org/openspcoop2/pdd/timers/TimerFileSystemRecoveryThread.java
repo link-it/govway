@@ -129,11 +129,13 @@ public class TimerFileSystemRecoveryThread extends Thread{
 			if(this.recoveryTransazioni){
 				this.daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesTransazioni.setShowSql(this.debug);
+				this.daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 			}
 						
 			if(this.recoveryEventi){
 				this.daoFactoryServiceManagerPropertiesPluginsEventi = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance());
 				this.daoFactoryServiceManagerPropertiesPluginsEventi.setShowSql(this.debug);
+				this.daoFactoryServiceManagerPropertiesPluginsEventi.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 			}
 			
 		}catch(Exception e){

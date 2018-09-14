@@ -23,11 +23,15 @@
 package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Hashtable;
 
 import javax.sql.DataSource;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
@@ -42,7 +46,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DBTransazioniManager {
+public class DBTransazioniManager implements IMonitoraggioRisorsa {
 
 	private static DBTransazioniManager staticInstanceDBTransazioniManager;
 	public static synchronized void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
@@ -116,8 +120,11 @@ public class DBTransazioniManager {
 	
 	
 	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		return this.getResource(idPDD, modulo, idTransazione, true);
+	}
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
 		if(this.dbManagerRuntimePdD!=null) {
-			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione);
+			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else {
 			try {
@@ -158,9 +165,12 @@ public class DBTransazioniManager {
 	}
 	
 	public void releaseResource(IDSoggetto idPDD,String modulo,Resource resource){
+		this.releaseResource(idPDD, modulo, resource, true);
+	}
+	public void releaseResource(IDSoggetto idPDD,String modulo,Resource resource, boolean logError){
 		try {
 			if(this.dbManagerRuntimePdD!=null) {
-				this.dbManagerRuntimePdD.releaseResource(idPDD, modulo, resource);
+				this.dbManagerRuntimePdD.releaseResource(idPDD, modulo, resource, logError);
 			}
 			else {
 				if(resource!=null){
@@ -180,6 +190,57 @@ public class DBTransazioniManager {
 		}
 		catch(Exception e) {
 			this.log.error("Errore durante il rilascio di una risorsa: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	/**
+	 * Metodo che verica la connessione ad una risorsa.
+	 * Se la connessione non e' presente, viene lanciata una eccezione che contiene il motivo della mancata connessione
+	 * 
+	 * @throws DriverException eccezione che contiene il motivo della mancata connessione
+	 */
+	@Override
+	public void isAlive() throws CoreException{
+		if(this.dbManagerRuntimePdD!=null) {
+			this.dbManagerRuntimePdD.isAlive();
+		}
+		else {
+			// Verifico la connessione
+			Resource resource = null;
+			Statement stmtTest = null;
+			IDSoggetto idSoggettAlive = new IDSoggetto();
+			idSoggettAlive.setCodicePorta("DBTransazioniManager");
+			idSoggettAlive.setTipo("DBTransazioniManager");
+			idSoggettAlive.setNome("DBTransazioniManager");
+			try {
+				try{
+					resource = this.getResource(idSoggettAlive, "CheckIsAlive", null);
+				}catch(Exception e){
+					throw e;
+				}
+				if(resource == null)
+					throw new Exception("Resource is null");
+				if(resource.getResource() == null)
+					throw new Exception("Connessione is null");
+				Connection con = (Connection) resource.getResource();
+				// test:
+				stmtTest = con.createStatement();
+				stmtTest.execute("SELECT * from "+CostantiDB.DB_INFO);
+						
+			} catch (Exception e) {
+				throw new CoreException("Connessione al database GovWay - Transazioni non disponibile: "+e.getMessage(),e);
+	
+			}finally{
+				try{
+					if(stmtTest!=null)
+						stmtTest.close();
+				}catch(Exception e){}
+				try{
+					this.releaseResource(idSoggettAlive, "CheckIsAlive", resource);
+				}catch(Exception e){}
+			}
 		}
 	}
 }
