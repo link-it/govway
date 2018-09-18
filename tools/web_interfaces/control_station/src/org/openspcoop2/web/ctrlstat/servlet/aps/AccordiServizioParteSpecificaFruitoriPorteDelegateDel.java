@@ -36,6 +36,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -48,6 +50,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -116,6 +119,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -178,6 +182,12 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 					mappingFruizione.setIdServizio(idServizioFromAccordo);
 					listaOggettiDaEliminare.add(mappingFruizione);
 				
+					// cancello per policy associate alla porta se esistono
+					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, tmpPD.getNome());
+					if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+						listaOggettiDaEliminare.addAll(listAttivazione);
+					}
+					
 					// cancello la porta associata
 					listaOggettiDaEliminare.add(tmpPD);
 					

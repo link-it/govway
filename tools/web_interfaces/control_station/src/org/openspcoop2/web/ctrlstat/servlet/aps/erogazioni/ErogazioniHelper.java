@@ -899,7 +899,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// Titolo Servizio
 		DataElement de = new DataElement();
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-		String labelServizio = gestioneFruitori ? this.getLabelIdServizio(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
+		String labelServizio = gestioneFruitori ? this.getLabelIdServizioSenzaErogatore(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 		de.setValue(labelServizio);
 		de.setType(DataElementType.TEXT);

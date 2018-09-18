@@ -37,11 +37,11 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -52,8 +52,6 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.transport.http.SSLConstants;
@@ -64,13 +62,17 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettoreConverter;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -109,7 +111,24 @@ public class ConnettoriHelper extends ConsoleHelper {
 	public void setTitleProprietaConnettoriCustom(PageData pd,TipoOperazione tipoOperazione,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
-			String provider) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverControlStationException{
+			String provider, String idPorta) throws Exception{
+		
+		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+		
+		boolean accessoDaListaAPS = false;
+		String accessoDaAPSParametro = null;
+		// nell'erogazione vale sempre
+		//if(gestioneErogatori) {
+		accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+		if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+			accessoDaListaAPS = true;
+		}
+		
+		String azioneConnettoreIdPorta = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
+		if(azioneConnettoreIdPorta==null) {
+			azioneConnettoreIdPorta="";
+		}
 				
 		if (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE.equals(servlet)) {
 			int idServizioInt = Integer.parseInt(id);
@@ -137,44 +156,142 @@ public class ConnettoriHelper extends ConsoleHelper {
 			Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
 			String nomefru = servFru.getNome();
 			String tipofru = servFru.getTipo();
-
-			ServletUtils.setPageDataTitle(pd, 
-					// t1
-					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
-					// t2
-					new Parameter(
-						"Fruitori del servizio " + IDServizioFactory.getInstance().getUriFromAccordo(asps),
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE+"=" + idSoggErogatore),
-					// t3
-					new Parameter(
-						"Connettore del fruitore "+tipofru + "/" + nomefru,
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID+"=" + myId + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE+"=" + idSoggErogatore
-						)
-					);
-
+			Long idSoggettoFruitore = servFru.getIdSoggetto();
+			
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) 
+				parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			boolean gestioneFruitori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+			}
+			
+			
+			boolean viewOnlyConnettore = gestioneFruitori || (PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE==parentPD);
+			
+			PorteDelegateHelper porteDelegateHelper = new PorteDelegateHelper(this.request, this.pd, this.session);
+			List<Parameter> lstParm = porteDelegateHelper.getTitoloPD(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, idSoggettoFruitore+"",id, myId);
+			
+			String protocollo = this.apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
+			String fruitoreLabel = this.getLabelNomeSoggetto(protocollo, tipofru , nomefru);
+			
+			List<Parameter> lstParameteriASPSFruitoriChange = new ArrayList<>();
+			
+			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+"");
+			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, myId);
+			Parameter pConnettoreDaListaAPS = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro);
+			Parameter pIdProviderFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE, idSoggettoFruitore + "");
+			Parameter pAzioneConnettoreIdPorta = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, azioneConnettoreIdPorta);
+			
+			lstParameteriASPSFruitoriChange.add(pId);
+			lstParameteriASPSFruitoriChange.add(pIdFruitore);
+			lstParameteriASPSFruitoriChange.add(pIdSoggettoErogatore);
+			lstParameteriASPSFruitoriChange.add(pIdProviderFruitore);
+			lstParameteriASPSFruitoriChange.add(pConnettoreDaListaAPS);
+			lstParameteriASPSFruitoriChange.add(pAzioneConnettoreIdPorta);
+			
+			if(viewOnlyConnettore) {
+				
+				String labelPerPorta = null;
+				if(accessoDaListaAPS) {
+					if(!multitenant) {
+						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_DELEGATE_MODIFICA_CONNETTORE;
+						} else {
+							labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+	porteDelegateHelper.getLabelIdServizio(asps);
+						}
+					}
+					else {
+						labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
+					}
+				}
+				else {
+					PortaDelegata portaDelegata = this.porteDelegateCore.getPortaDelegata(Long.parseLong(azioneConnettoreIdPorta)); 
+					labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI,
+							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE,
+							portaDelegata);
+				}
+				
+				Parameter pConnettore = new Parameter(labelPerPorta, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, lstParameteriASPSFruitoriChange.toArray(new Parameter[lstParameteriASPSFruitoriChange.size()]));
+				if(accessoDaListaAPS) {
+					lstParm.set(lstParm.size()-1, pConnettore);
+				}
+				else {
+					lstParm.add(pConnettore);
+				}
+			}
+			else {
+				lstParm.set(lstParm.size()-1, new Parameter(fruitoreLabel, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, lstParameteriASPSFruitoriChange.toArray(new Parameter[lstParameteriASPSFruitoriChange.size()])));
+			}
+			
+			ServletUtils.setPageDataTitle(pd,lstParm);
 		}
 		
 		if (ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servlet)) {
 			int idInt = Integer.parseInt(idsil);
 			ServizioApplicativo sa = this.saCore.getServizioApplicativo(idInt);
+			
+			
+			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
+			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
+			
+			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(this.request, this.pd, this.session);
+			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, id, idPorta);
+			
+			String labelPerPorta = null;
+			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+				
+				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
+				
+				if(accessoDaListaAPS) {
+					if(!multitenant) {
+						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE;
+						} else {
+							labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
+								saHelper.getLabelIdServizio(asps);
+						}
+					}
+					else {
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
+					}
+				}
+				else {
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+					labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE,
+							pa);
+				}
+			}
+			else {
+				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI+nomeservizioApplicativo;
+				
+				labelPerPorta = "Connettore del servizio applicativo (InvocazioneServizio) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario();
+			}
+			
+			if(accessoDaListaAPS) {
+				lstParm.remove(lstParm.size()-1);
+			}
+			
+			List<Parameter> lstParameteriSAEndpoint = new ArrayList<>();
+			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, id));
+			lstParameteriSAEndpoint.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider));
+			lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, idsil));
+			lstParameteriSAEndpoint.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO,nomeservizioApplicativo ));
+			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, idPorta ));
+			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE,Costanti.CHECK_BOX_ENABLED_TRUE));
+			lstParameteriSAEndpoint.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS,accessoDaAPSParametro ));
 
-			ServletUtils.setPageDataTitle(pd, 
-					// t1
-					new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST), 
-					// t2
-					new Parameter(
-						"Connettore del servizio applicativo (InvocazioneServizio) " + nomeservizioApplicativo+" del soggetto "+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario(),
-						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO+"=" + nomeservizioApplicativo + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO+"=" + idsil +
-						"&"+ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER+"=" + provider
-						)
-					);
+			lstParm.add(new Parameter(labelPerPorta,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, lstParameteriSAEndpoint.toArray(new Parameter[lstParameteriSAEndpoint.size()]))); 
+					
+			ServletUtils.setPageDataTitle(pd,lstParm);
 		}
 		
 		if (ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servlet)) {
@@ -197,17 +314,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		
 		if (SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT.equals(servlet)) {
-			int idInt = Integer.parseInt(id);
-			SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
-			String nomeprov1 = scs.getNome();
-			String tipoprov1 = scs.getTipo();
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			String label = this.getLabelNomeSoggetto(protocollo, tipoprov , nomeprov);
 
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
 					new Parameter(SoggettiCostanti.LABEL_SOGGETTI,SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST), 
 					// t2
-					new Parameter(
-						"Connettore del soggetto " + tipoprov1 + "/" + nomeprov1,
+					new Parameter("Connettore di " + label ,
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT+
 						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO+"=" + nomeprov + 
@@ -222,23 +336,37 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// t1
 					new Parameter(
 						ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA,
-						ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST+
-						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET+"=" + servlet + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO+"=" + nomeprov + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO+"=" + tipoprov +
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO+"=" + nomeservizio + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO+"=" + tiposervizio + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO+"=" + correlato +
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID+"=" + myId + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE+"=" + idSoggErogatore +
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO+"=" + nomeservizioApplicativo + 
-						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO+"=" + idsil
+						ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET,servlet), 
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID,id),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO,nomeprov), 
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO,tipoprov),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO,nomeservizio), 
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO,tiposervizio), 
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO,correlato),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID,myId),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE,idSoggErogatore),
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO,nomeservizioApplicativo), 
+						new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO,idsil),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, idPorta ),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS,accessoDaAPSParametro ),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, azioneConnettoreIdPorta)
+						
 							)
 					);
+			
+			ServletUtils.appendPageDataTitle(pd,
+					ServletUtils.getParameterAggiungi());
+		} else {
+			ServletUtils.appendPageDataTitle(pd,
+					// t1
+					new Parameter(
+						ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA,null));
 		}
-		ServletUtils.appendPageDataTitle(pd,
-				ServletUtils.getParameterAggiungi());
+		
+		
+		
 	}
 
 	
@@ -263,6 +391,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String nomeservizioApplicativo = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO);
 			String provider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			String idPorta = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA);
+			if(idPorta == null)
+				idPorta = "";
+			
+			String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			if(accessoDaAPSParametro == null)
+				accessoDaAPSParametro = "";
+			
+			String azioneConnettoreIdPorta = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
+			if(azioneConnettoreIdPorta == null)
+				azioneConnettoreIdPorta = "";
 			
 			ServletUtils.addListElementIntoSession(this.session, ConnettoriCostanti.OBJECT_NAME_CONNETTORI_CUSTOM_PROPERTIES,
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servlet),
@@ -276,7 +415,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, idSoggErogatore),
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, nomeservizioApplicativo),
 					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, idsil),
-					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider));
+					new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, provider),
+					new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, idPorta),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro),
+					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, azioneConnettoreIdPorta));
 			
 //			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 //			
@@ -291,7 +433,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			// setto la barra del titolo
 			setTitleProprietaConnettoriCustom(this.pd, TipoOperazione.LIST, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, 
-					myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
+					myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,idPorta);
 			
 			ServletUtils.disabledPageDataSearch(this.pd);
 			
@@ -348,6 +490,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, idSoggErogatore != null ? idSoggErogatore : "");
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, nomeservizioApplicativo != null ? nomeservizioApplicativo : "");
 			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, idsil != null ? idsil : "");
+			hidden.put(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, idPorta != null ? idPorta : "");
+			hidden.put(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
+			hidden.put(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, azioneConnettoreIdPorta != null ? azioneConnettoreIdPorta : "");
 
 			this.pd.setHidden(hidden);
 
@@ -907,7 +1052,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 				boolean autenticazioneNessuna = autenticazioneNessunaAbilitata;
 				if (! (SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD.equals(toCall) || 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE.equals(toCall)) ) {
-					if (this.isModalitaStandard()){
+					boolean creazione_modifica_SA = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD.equals(toCall) || 
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE.equals(toCall);
+					if (this.isModalitaStandard() || creazione_modifica_SA){
 						autenticazioneNessuna = false;
 					}
 				}
@@ -1555,11 +1702,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 					}
 					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
+						List<Parameter> lstParams = new ArrayList<>();
+						
+						String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+						if(accessoDaAPSParametro != null)
+							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+						
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1));
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2));
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
+						lstParams.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, elem4));
+						
+						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+						
+						
 						int idServizioFruitoreInt = Integer.parseInt(elem2);
 						Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
 						org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
@@ -1578,12 +1735,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 						int idSilInt = Integer.parseInt(elem2);
 						ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
 						Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2),
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
+						List<Parameter> lstParams = new ArrayList<>();
 						
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1));
+						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2));
+						if(elem3 != null)
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
+						if(elem3 != null)
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem4));
+						lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
+						
+						String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+						if(accessoDaAPSParametro != null)
+							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+
+						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
 						
 						if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
 							InvocazioneServizio is = sa.getInvocazioneServizio();

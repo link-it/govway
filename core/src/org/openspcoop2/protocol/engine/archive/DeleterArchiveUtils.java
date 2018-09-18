@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -94,7 +94,7 @@ public class DeleterArchiveUtils {
 	}
 	
 	private static String NEW_LINE = "\n\t\t";
-
+	private static boolean NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO = false;
 	
 	
 	public ArchiveEsitoDelete deleteArchive(Archive archive, String userLogin) throws Exception,ImportInformationMissingException{
@@ -624,7 +624,7 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			List<String> whereIsInUso = new ArrayList<String>();
-			if (this.importerEngine.isPddInUso(nomePdd, whereIsInUso)) {
+			if (this.importerEngine.isPddInUso(nomePdd, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePdd, whereIsInUso,false,NEW_LINE));
 			}
 			
@@ -670,7 +670,7 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isRuoloInUso(idRuolo, whereIsInUso)) {
+			if (this.importerEngine.isRuoloInUso(idRuolo, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idRuolo, whereIsInUso,false,NEW_LINE));
 			}
 			
@@ -716,7 +716,7 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isScopeInUso(idScope, whereIsInUso)) {
+			if (this.importerEngine.isScopeInUso(idScope, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idScope, whereIsInUso,false,NEW_LINE));
 			}
 			
@@ -760,8 +760,8 @@ public class DeleterArchiveUtils {
 					// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 					
 					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-					if (this.importerEngine.isSoggettoRegistroInUso(idSoggetto, whereIsInUso)){
-						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE));
+					if (this.importerEngine.isSoggettoRegistroInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 					}
 					
 					// ---- controllo che il soggetto non sia un soggetto 'operativo' ---
@@ -788,8 +788,8 @@ public class DeleterArchiveUtils {
 					// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 					
 					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-					if (this.importerEngine.isSoggettoConfigurazioneInUso(idSoggetto, whereIsInUso)){
-						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE));
+					if (this.importerEngine.isSoggettoConfigurazioneInUso(idSoggetto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 					}
 					
 					// --- delete ---
@@ -848,8 +848,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 			}
 			
 		
@@ -894,8 +894,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isAccordoCooperazioneInUso(idAccordoCooperazione, whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoCooperazione, whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isAccordoCooperazioneInUso(idAccordoCooperazione, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoCooperazione, whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 			}
 			
 			
@@ -940,8 +940,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isAccordoServizioParteComuneInUso(idAccordoServizioParteComune, whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoServizioParteComune, whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isAccordoServizioParteComuneInUso(idAccordoServizioParteComune, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoServizioParteComune, whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 			}
 			
 			
@@ -983,8 +983,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isAccordoServizioParteComuneInUso(idAccordoServizioComposto, whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoServizioComposto, whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isAccordoServizioParteComuneInUso(idAccordoServizioComposto, whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idAccordoServizioComposto, whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO));
 			}
 			
 			
@@ -1028,8 +1028,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isAccordoServizioParteSpecificaInUso(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isAccordoServizioParteSpecificaInUso(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso, NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso,false,NEW_LINE,NORMALIZE_OBJECT_ID_MESSAGGIO_IN_USO,"Servizio"));
 			}
 			
 			

@@ -35,7 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -119,9 +119,10 @@ public final class AccordiCooperazioneDel extends Action {
 				AccordoCooperazione ac = acCore.getAccordoCooperazione(idAccordo);
 				IDAccordoCooperazione idAccordoCooperazione = idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);
 
-				if (acCore.isAccordoCooperazioneInUso(ac, whereIsInUso)) {// accordo in uso
+				boolean normalizeObjectIds = !acHelper.isModalitaCompleta();
+				if (acCore.isAccordoCooperazioneInUso(ac, whereIsInUso, normalizeObjectIds)) {// accordo in uso
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idAccordoCooperazione, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += DBOggettiInUsoUtils.toString(idAccordoCooperazione, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					acCore.performDeleteOperation(userLogin, acHelper.smista(), ac);

@@ -157,7 +157,7 @@ public class AccordiCooperazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean isAccordoCooperazioneInUso(AccordoCooperazione ac, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+	public boolean isAccordoCooperazioneInUso(AccordoCooperazione ac, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAccordoCooperazioneInUso";
 		DriverControlStationDB driver = null;
@@ -168,7 +168,7 @@ public class AccordiCooperazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().isAccordoCooperazioneInUso(ac, whereIsInUso);
+			return driver.isAccordoCooperazioneInUso(ac, whereIsInUso, normalizeObjectIds);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);

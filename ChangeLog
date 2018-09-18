@@ -1,6 +1,14 @@
-2018-09-17  Andrea Poli <apoli@link.it>
+2018-09-18  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0
+
+2018-09-17  Andrea Poli <apoli@link.it>
+	
+	* [GovWayConsole]
+	Risolto Bug OP-757
+	La modifica del nome di un soggetto o di un servizio tramite console non funzionava correttamente.
+
+Rivedere anche il discorso del cambio di versione di una API
 
 2018-09-14  Andrea Poli <apoli@link.it>
 

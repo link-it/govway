@@ -216,6 +216,7 @@
             <forward name="soggettiChangeOk" path="/jsplib/listElement.jsp"/>
             <forward name="soggettiChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="soggettiError" path="/jsplib/info.jsp"/>
+	    <forward name="configurazioneGeneraleOk" path="/jsplib/addElement.jsp"/>
         </action>
         <action path="/soggettiDel" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiDel"
             scope="request" validate="true">

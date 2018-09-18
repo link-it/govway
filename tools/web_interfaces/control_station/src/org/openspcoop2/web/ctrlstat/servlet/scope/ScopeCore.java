@@ -139,7 +139,7 @@ public class ScopeCore extends ControlStationCore {
 
 	}
 	
-	public boolean isScopeInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+	public boolean isScopeInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isScopeInUso";
 		DriverControlStationDB driver = null;
@@ -150,7 +150,7 @@ public class ScopeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isScopeInUso(new IDScope(scope), whereIsInUso);
+			return driver.isScopeInUso(new IDScope(scope), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -161,7 +161,7 @@ public class ScopeCore extends ControlStationCore {
 
 	}
 	
-	public boolean isScopeConfigInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+	public boolean isScopeConfigInUso(String scope, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isScopeConfigInUso";
 		DriverControlStationDB driver = null;
@@ -172,7 +172,7 @@ public class ScopeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isScopeConfigInUso(new IDScope(scope), whereIsInUso);
+			return driver.isScopeConfigInUso(new IDScope(scope), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

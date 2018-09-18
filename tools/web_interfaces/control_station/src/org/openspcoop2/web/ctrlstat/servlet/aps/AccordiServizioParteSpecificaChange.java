@@ -42,12 +42,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
-import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -55,6 +59,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -100,6 +105,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -323,6 +329,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			AccordiServizioParteComuneCore apcCore = null;
 			PorteApplicativeCore porteApplicativeCore = null;
 			PorteDelegateCore porteDelegateCore = null;
+			ServiziApplicativiCore saCore = null;
 			String nomeSoggettoErogatore = "";
 			String tipoSoggettoErogatore = "";
 			AccordoServizioParteSpecifica asps = null;
@@ -348,6 +355,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			porteDelegateCore = new PorteDelegateCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
+			saCore = new ServiziApplicativiCore(apsCore);
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -1369,6 +1377,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 
 			// idErogatoreServizio
+			@SuppressWarnings("unused")
 			Soggetto soggettoErogatore = soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
 			
 			// nuovi valori
@@ -1572,347 +1581,326 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// anche le porte delegate e porte applicative
 			List<PortaDelegata> listaPD = new ArrayList<PortaDelegata>();
 			List<PortaApplicativa> listaPA = new ArrayList<PortaApplicativa>();
-			// Lista di id per tenere traccia delle Porte Delegate inserite
-			List<Long> idListPD = new ArrayList<Long>();
-			List<Long> idListPA = new ArrayList<Long>();
+			List<ServizioApplicativo> listaPA_SA = new ArrayList<ServizioApplicativo>();
+
+			// check dati modificati
 			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
 			if (!newUri.equals(oldUri)) {
-				List<PortaDelegata> tmpListPD = null;
-				// recupero lo porte delegate per nome e le aggiorno
-				String locationPrefix = "";
-				String locationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
-						"/" + asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome() +
-						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
-				for (Fruitore fruitore : asps.getFruitoreList()) {
-					locationPrefix = fruitore.getTipo() + fruitore.getNome();
-					String location = locationPrefix + locationSuffix;
-					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setNome(location);
-					PortaDelegata tmpPorta = porteDelegateCore.getPortaDelegata(idPD);
-					if(tmpPorta!=null){
-						Long idPorta = tmpPorta.getId();
-						if (!idListPD.contains(idPorta)) {
-							// new locationSuffix
-							String newLocationSuffix = "/" + asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + 
-									"/" + asps.getTipo() + asps.getNome() +
-									"/" + asps.getVersione().intValue();
-							String newLocation = locationPrefix + newLocationSuffix;
-							idListPD.add(idPorta);
+				
+				
+				// check PD
+				FiltroRicercaPorteDelegate filtroPD = new FiltroRicercaPorteDelegate();
+				filtroPD.setTipoSoggettoErogatore(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo());
+				filtroPD.setNomeSoggettoErogatore(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome());
+				filtroPD.setTipoServizio(asps.getOldIDServizioForUpdate().getTipo());
+				filtroPD.setNomeServizio(asps.getOldIDServizioForUpdate().getNome());
+				filtroPD.setVersioneServizio(asps.getOldIDServizioForUpdate().getVersione());
+				List<IDPortaDelegata> listIdsPorteDelegate = porteDelegateCore.getAllIdPorteDelegate(filtroPD);
+				if(listIdsPorteDelegate!=null && !listIdsPorteDelegate.isEmpty()) {
+					
+					String locationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome() +
+							"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
+					
+					String newLocationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getTipo() + "_" + asps.getNome() +
+							"/" + asps.getVersione().intValue();
+					
+					for (IDPortaDelegata idPortaDelegata : listIdsPorteDelegate) {
+						PortaDelegata tmpPorta = porteDelegateCore.getPortaDelegata(idPortaDelegata);	
+						
+						// aggiorno dati servizio
+						tmpPorta.getServizio().setTipo(asps.getTipo());
+						tmpPorta.getServizio().setNome(asps.getNome());
+						tmpPorta.getServizio().setVersione(asps.getVersione());
+						
+						String locationPrefix = tmpPorta.getTipoSoggettoProprietario()+"_"+tmpPorta.getNomeSoggettoProprietario();
+						String check1 = locationPrefix+locationSuffix;
+						String check2 = "__"+locationPrefix+locationSuffix;
+						String parteRimanente = "";
+						String nuovoNome = null;
+						boolean match = false;
+						if(tmpPorta.getNome().equals(check1)) {
+							match = true;	
+							nuovoNome = locationPrefix+newLocationSuffix;
+						}
+						else if(tmpPorta.getNome().startsWith(check2)) {
+							match = true;	
+							parteRimanente = tmpPorta.getNome().substring(check2.length());
+							nuovoNome = "__"+locationPrefix+newLocationSuffix+parteRimanente;
+						}
+						
+						if(match) {
 							IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
 							oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
 							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-							tmpPorta.setNome(newLocation);
-							// aggiorno la descrizione della porta
+							tmpPorta.setNome(nuovoNome);
+							
+							// modifica della descrizione
 							String descrizionePD = tmpPorta.getDescrizione();
 							if (descrizionePD != null && !descrizionePD.equals("")) {
-								// pattern descrizione: Invocazione
-								// servizio(.*)erogato da(.*) (old
-								// tipo/nome soggetto)
-								String descrRegex = "Invocazione servizio(.*)erogato da(.*)";
-								if (descrizionePD.matches(descrRegex)) {
-									descrizionePD = descrizionePD.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
-											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
-								}
 
+								// Caso 1: subscription default
+								// Subscription from gw/ENTE for service gw/ErogatoreEsterno:gw/EsempioREST:1
+								String match_caso = ":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								if(descrizionePD.endsWith(match_caso)) {
+									String replace_caso = ":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+									descrizionePD = descrizionePD.replace(match_caso, replace_caso);
+								}
+							
+								// Caso 2: altra subscription
+								// Internal Subscription 'Specific1' for gw_ENTE/gw_ErogatoreEsterno/gw_EsempioREST/1
+								String match_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								if(descrizionePD.contains(match_caso2)) {
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue();
+									descrizionePD = descrizionePD.replace(match_caso2, replace_caso2);
+								}
+								
 								tmpPorta.setDescrizione(descrizionePD);
-							}
-							// aggiorno anche il servizio
-							PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-							servizioPD.setTipo(asps.getTipo());
-							servizioPD.setNome(asps.getNome());
-							servizioPD.setVersione(asps.getVersione());
-							tmpPorta.setServizio(servizioPD);
 
-							/*
-							 * CONTROLLO PATTERN AZIONE inoltre va
-							 * controllato anche il pattern dell'azione
-							 * in caso il pattern azione fosse URLBASED
-							 * e fosse quello di default allora va
-							 * cambiato
-							 */
-							String regex = "(.*)\\/(.*)\\/(.*)";
+							}
+							
+							// regex del pattern azione
+							// .*(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
 							PortaDelegataAzione pdAzione = tmpPorta.getAzione();
 							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
 							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-							String patternAzionePrefix = ".*";
-							String patternAzioneSuffix = "/([^/|^?]*).*";
-							// se identificazione urlbased procedo con i
-							// controlli
+							String patternAzionePrefix = ".*/";
+							String patternAzioneSuffix1 = "/([^/|^?]*).*";
+							// se identificazione urlbased procedo con i controlli
 							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-								if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix)) {
+								if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+									// caso1
 									int startidx = patternAzionePrefix.length();
-									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix);
-									String tmp = patterAzione.substring(startidx, endidx);
-									// a questo punto ottengo una
-									// stringa del tipo
+									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+									String tmpPat = patterAzione.substring(startidx, endidx);
+									// a questo punto ottengo una stringa del tipo
 									// (fruitore)/(erogatore)/(servizio)
-									// se rispetta la regex allora vuol
-									// dire che il pattern azione e'
-									// quello di default
+									// se rispetta la regex allora vuol dire che il
+									// pattern azione e' quello di default
 									// e devo effettuare i cambiamenti
-									if (tmp.matches(regex)) {
-										// il nuovo pattern sara' come
-										// quello della location di
-										// default
-										String newPatternAzione = patternAzionePrefix + newLocation + patternAzioneSuffix;
-										pdAzione.setPattern(newPatternAzione);
-										tmpPorta.setAzione(pdAzione);
+									String regex = "(.*)\\/(.*)\\/(.*)\\/(.*)";
+									if (tmpPat.matches(regex)) {
+										String[] val = tmpPat.split("/");
+										String partFruitore = val[0];
+										String partErogatore = val[1];
+										String partServizio = val[2];
+										String partVersione = val[3];
+										String rimanenteRegExp = "";
+										int lengthParteRimanenteRegExp = (partFruitore+"/"+partErogatore+"/"+partServizio+"/"+partVersione).length();
+										if(tmpPat.length()>lengthParteRimanenteRegExp){
+											rimanenteRegExp = tmpPat.substring(lengthParteRimanenteRegExp);
+										}	
+										
+										boolean matchURL = false;
+										String partOld = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
+										String partNew = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
+										
+										// vedo se matcha il fruitore
+										if (partServizio.equals(partOld)) {
+											partServizio = partNew;
+											matchURL = true;
+										}
+										
+										// vedo se matcha anche erogatore (loopback)
+										if (partVersione.equals((asps.getOldIDServizioForUpdate().getVersione().intValue()+""))) {
+											partVersione = asps.getVersione().intValue()+"";
+											matchURL = true;
+										}
 
+										if(matchURL){
+											String newPatternAzione = patternAzionePrefix + partFruitore + "/" + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1;
+											pdAzione.setPattern(newPatternAzione);
+											tmpPorta.setAzione(pdAzione);
+										}
+										
 									}
 								}
 							}// fine controllo azione
-
-							listaPD.add(tmpPorta);
-
-						}
-					}
-				}
-				// recupero le porte delegate per id servizio
-				// aggiorno il tipo e il nome servizio
-				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(asps.getId());
-				for (PortaDelegata tmpPorta : tmpListPD) {
-					Long idPorta = tmpPorta.getId();
-					// se la porta non e' gia in lista
-					if (!idListPD.contains(idPorta)) {
-						idListPD.add(idPorta);
-						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
-						oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
-						tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-						PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-						servizioPD.setTipo(asps.getTipo());
-						servizioPD.setNome(asps.getNome());
-						servizioPD.setVersione(asps.getVersione());
-						tmpPorta.setServizio(servizioPD);
-						
-						String nomeGeneratoAutomaticamente = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
-								asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + "/" + 
-								asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
-						String nomeAttuale = tmpPorta.getNome();
-						if(nomeAttuale.startsWith(nomeGeneratoAutomaticamente+"/")){					
-							// La PD è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
-							// in tal caso viene effettuato lo switch del nome.
-							String rimanente = "";
-							int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
-							if(nomeAttuale.length()>lengthParteRimanente){
-								rimanente = nomeAttuale.substring(lengthParteRimanente);
-							}						
-							String newNome = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
-									asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-									asps.getTipo() + asps.getNome()+"/"+rimanente;
-							oldIDPortaDelegataForUpdate.setNome(nomeAttuale);
-							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-							tmpPorta.setNome(newNome);
 							
-							PortaDelegataAzione pdAzione = tmpPorta.getAzione();
-							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-							// se identificazione urlbased procedo con i
-							// controlli
-							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-								if (patterAzione.contains(nomeAttuale)) {
-									String newPatternAzione = patterAzione.replace(nomeAttuale, newNome);
-									pdAzione.setPattern(newPatternAzione);
-								}
-							}// fine controllo azione
+							
 						}
 						
-						listaPD.add(tmpPorta);
+						listaPD.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
 					}
 				}
-
-				// recupero le porte delegate per tipo e nome servizio
-				// aggiorno il tipo e il nome servizio
-				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(Long.valueOf(0),
-						asps.getOldIDServizioForUpdate().getTipo(), asps.getOldIDServizioForUpdate().getNome(), asps.getOldIDServizioForUpdate().getVersione(), 
-						soggettoErogatore.getId(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
-				for (PortaDelegata tmpPorta : tmpListPD) {
-					Long idPorta = tmpPorta.getId();
-					if (!idListPD.contains(idPorta)) {
-						idListPD.add(idPorta);
-						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
-						oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
-						tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-						PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-						servizioPD.setTipo(asps.getTipo());
-						servizioPD.setNome(asps.getNome());
-						servizioPD.setVersione(asps.getVersione());
-						tmpPorta.setServizio(servizioPD);
+				
+				
+				
+				
+				// check PA
+				FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+				filtroPA.setTipoSoggetto(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo());
+				filtroPA.setNomeSoggetto(asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome());
+				filtroPA.setTipoServizio(asps.getOldIDServizioForUpdate().getTipo());
+				filtroPA.setNomeServizio(asps.getOldIDServizioForUpdate().getNome());
+				filtroPA.setVersioneServizio(asps.getOldIDServizioForUpdate().getVersione());
+				List<IDPortaApplicativa> listIdsPorteApplicative = porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
+				if(listIdsPorteApplicative!=null && !listIdsPorteApplicative.isEmpty()) {
+					
+					String locationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome() +
+							"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
+					
+					String newLocationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getTipo() + "_" + asps.getNome() +
+							"/" + asps.getVersione().intValue();
+					
+					for (IDPortaApplicativa idPortaApplicativa : listIdsPorteApplicative) {
+						PortaApplicativa tmpPorta = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);	
 						
-						String nomeGeneratoAutomaticamente = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
-								asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + "/" + 
-								asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
-						String nomeAttuale = tmpPorta.getNome();
-						if(nomeAttuale.startsWith(nomeGeneratoAutomaticamente+"/")){					
-							// La PD è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
-							// in tal caso viene effettuato lo switch del nome.
-							String rimanente = "";
-							int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
-							if(nomeAttuale.length()>lengthParteRimanente){
-								rimanente = nomeAttuale.substring(lengthParteRimanente);
-							}						
-							String newNome = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
-									asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-									asps.getTipo() + asps.getNome()+"/"+rimanente;
-							oldIDPortaDelegataForUpdate.setNome(nomeAttuale);
-							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-							tmpPorta.setNome(newNome);
-							
-							PortaDelegataAzione pdAzione = tmpPorta.getAzione();
-							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-							// se identificazione urlbased procedo con i
-							// controlli
-							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-								if (patterAzione.contains(nomeAttuale)) {
-									String newPatternAzione = patterAzione.replace(nomeAttuale, newNome);
-									pdAzione.setPattern(newPatternAzione);
-								}
-							}// fine controllo azione
+						// aggiorno dati servizio
+						tmpPorta.getServizio().setTipo(asps.getTipo());
+						tmpPorta.getServizio().setNome(asps.getNome());
+						tmpPorta.getServizio().setVersione(asps.getVersione());
+						
+						String check1 = locationSuffix;
+						String check2 = "__"+locationSuffix;
+						String parteRimanente = "";
+						String nuovoNome = null;
+						boolean match = false;
+						if(tmpPorta.getNome().equals(check1)) {
+							match = true;	
+							nuovoNome = newLocationSuffix;
+						}
+						else if(tmpPorta.getNome().startsWith(check2)) {
+							match = true;	
+							parteRimanente = tmpPorta.getNome().substring(check2.length());
+							nuovoNome = "__"+newLocationSuffix+parteRimanente;
 						}
 						
-						listaPD.add(tmpPorta);
-					}
-
-				}
-
-				// recupero le porte applicative per id
-				List<PortaApplicativa> tmpListPA = porteApplicativeCore.porteAppWithIdServizio(asps.getId());
-				for (PortaApplicativa portaApplicativa : tmpListPA) {
-					Long idPA = portaApplicativa.getId();
-					if (!idListPA.contains(idPA)) {
-						
-						idListPA.add(idPA);
-						
-						PortaApplicativaServizio paServizio = portaApplicativa.getServizio();
-						paServizio.setNome(asps.getNome());
-						paServizio.setTipo(asps.getTipo());
-						paServizio.setVersione(asps.getVersione());
-						portaApplicativa.setServizio(paServizio);
-						
-						String nomePA = portaApplicativa.getNome();
-						// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio)
-						String regex = "(.*)\\/(.*)\\/(.*)";
-						if (nomePA.matches(regex)) {
-
-							// Check che siamo nel caso di nome generato automaticamente
-							String nomeGeneratoAutomaticamente = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-									asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
-							if(nomeGeneratoAutomaticamente.equals(nomePA)){
-								String newNome = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-										asps.getTipo() + asps.getNome();
-								
-								portaApplicativa.setNome(newNome);
-								IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-								oldIDPortaApplicativaForUpdate.setNome(nomePA);
-								portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-								
-								// modifica della descrizione
-								String descrizionePA = portaApplicativa.getDescrizione();
-								if (descrizionePA != null && !descrizionePA.equals("")) {
-
-									// caso 1
-									// pattern descrizione: Invocazione
-									// servizio(.*)erogato da(.*) (pat1)
-									String descrRegex = "Servizio(.*)erogato da(.*)";
-									if (descrizionePA.matches(descrRegex)) {
-										descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()), 
-												(asps.getTipo() + asps.getNome()));
-									}
-
-									portaApplicativa.setDescrizione(descrizionePA);
-								}
-							}
-							else if(nomePA.startsWith(nomeGeneratoAutomaticamente+"/")){
-								
-								// La PA è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
-								// in tal caso viene effettuato lo switch del nome.
-								
-								String rimanente = "";
-								int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
-								if(nomePA.length()>lengthParteRimanente){
-									rimanente = nomePA.substring(lengthParteRimanente);
-								}
-								
-								String newNome = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-										asps.getTipo() + asps.getNome()+"/"+rimanente;
-								
-								portaApplicativa.setNome(newNome);
-								IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-								oldIDPortaApplicativaForUpdate.setNome(nomePA);
-								portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-								
-							}
+						IDPortaApplicativa oldIDPortaApplicativaForUpdate = null;
+						if(match) {
+							oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+							oldIDPortaApplicativaForUpdate.setNome(tmpPorta.getNome());
+							tmpPorta.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+							tmpPorta.setNome(nuovoNome);
 							
-						}// fine controllo nome
-						
-						listaPA.add(portaApplicativa);
-					}
-				}
-				// recupero porte applicative per tipo/nome servizio
-				tmpListPA = porteApplicativeCore.porteAppWithServizio(soggettoErogatore.getId(), 
-						asps.getOldIDServizioForUpdate().getTipo(),
-						asps.getOldIDServizioForUpdate().getNome(),
-						asps.getOldIDServizioForUpdate().getVersione());
-				for (PortaApplicativa portaApplicativa : tmpListPA) {
-					Long idPA = portaApplicativa.getId();
-					if (!idListPA.contains(idPA)) {
-						
-						idListPA.add(idPA);
-												
-						PortaApplicativaServizio paServizio = portaApplicativa.getServizio();
-						paServizio.setNome(asps.getNome());
-						paServizio.setTipo(asps.getTipo());
-						paServizio.setVersione(asps.getVersione());
-						portaApplicativa.setServizio(paServizio);
-						
-						String nomePA = portaApplicativa.getNome();
-						// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio)
-						String regex = "(.*)\\/(.*)\\/(.*)";
-						if (nomePA.matches(regex)) {
-
-							String[] val = nomePA.split("\\/");
-							String pat1 = val[0];
-							String pat2 = val[1];
-							String pat3= val[2];
-
-							// servizio
-							if (pat2.equals(asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome())) {
-								pat2 = asps.getTipo() + asps.getNome();
-							}
-							
-							// versioneServizio
-							if(pat3.equals(asps.getOldIDServizioForUpdate().getVersione().intValue()+"")){
-								pat3 = asps.getVersione().intValue()+"";
-							}
-
-							String newNome = pat1 + "/" + pat2 + "/" + pat3;
-							
-							portaApplicativa.setNome(newNome);
-							IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-							oldIDPortaApplicativaForUpdate.setNome(nomePA);
-							portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-
 							// modifica della descrizione
-							String descrizionePA = portaApplicativa.getDescrizione();
+							String descrizionePA = tmpPorta.getDescrizione();
 							if (descrizionePA != null && !descrizionePA.equals("")) {
 
-								// caso 1
-								// pattern descrizione: Invocazione
-								// servizio(.*)erogato da(.*) (pat1)
-								String descrRegex = "Servizio(.*)erogato da(.*)";
-								if (descrizionePA.matches(descrRegex)) {
-									descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
-											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
+								// Caso 1: subscription default
+								// Service implementation gw/ENTE:gw/TEST:1
+								String match_caso = ":"+asps.getOldIDServizioForUpdate().getTipo()+"/"+asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								if(descrizionePA.endsWith(match_caso)) {
+									String replace_caso = ":"+asps.getTipo()+"/"+asps.getNome()+":"+asps.getVersione().intValue();
+									descrizionePA = descrizionePA.replace(match_caso, replace_caso);
 								}
+							
+								// Caso 2: altra subscription
+								// Internal Implementation 'Specific1' for gw_ENTE/gw_TEST/1
+								String match_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								if(descrizionePA.contains(match_caso2)) {
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue();
+									descrizionePA = descrizionePA.replace(match_caso2, replace_caso2);
+								}
+								
+								tmpPorta.setDescrizione(descrizionePA);
 
-								portaApplicativa.setDescrizione(descrizionePA);
 							}
-						}// fine controllo nome
+							
+							// regex del pattern azione
+							// .*(erogatore)/(servizio)/([^/|^?]*).*
+							PortaApplicativaAzione paAzione = tmpPorta.getAzione();
+							PortaApplicativaAzioneIdentificazione identificazione = paAzione != null ? paAzione.getIdentificazione() : null;
+							String patterAzione = paAzione != null ? (paAzione.getPattern() != null ? paAzione.getPattern() : "") : "";
+							String patternAzionePrefix = ".*/";
+							String patternAzioneSuffix1 = "/([^/|^?]*).*";
+							// se identificazione urlbased procedo con i controlli
+							if (PortaApplicativaAzioneIdentificazione.URL_BASED.equals(identificazione)) {
+								if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+									// caso1
+									int startidx = patternAzionePrefix.length();
+									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+									String tmpPat = patterAzione.substring(startidx, endidx);
+									// a questo punto ottengo una stringa del tipo
+									// (fruitore)/(erogatore)/(servizio)
+									// se rispetta la regex allora vuol dire che il
+									// pattern azione e' quello di default
+									// e devo effettuare i cambiamenti
+									String regex = "(.*)\\/(.*)\\/(.*)";
+									if (tmpPat.matches(regex)) {
+										String[] val = tmpPat.split("/");
+										String partErogatore = val[0];
+										String partServizio = val[1];
+										String partVersione = val[2];
+										String rimanenteRegExp = "";
+										int lengthParteRimanenteRegExp = (partErogatore+"/"+partServizio+"/"+partVersione).length();
+										if(tmpPat.length()>lengthParteRimanenteRegExp){
+											rimanenteRegExp = tmpPat.substring(lengthParteRimanenteRegExp);
+										}	
+										
+										boolean matchURL = false;
+										String partOld = "(?:"+asps.getOldIDServizioForUpdate().getTipo()+"_)?"+asps.getOldIDServizioForUpdate().getNome()+"";
+										String partNew = "(?:"+asps.getTipo()+"_)?"+asps.getNome()+"";
+										
+										// vedo se matcha il fruitore
+										if (partServizio.equals(partOld)) {
+											partServizio = partNew;
+											matchURL = true;
+										}
+										
+										// vedo se matcha anche erogatore (loopback)
+										if (partVersione.equals((asps.getOldIDServizioForUpdate().getVersione().intValue()+""))) {
+											partVersione = asps.getVersione().intValue()+"";
+											matchURL = true;
+										}
+
+										if(matchURL){
+											String newPatternAzione = patternAzionePrefix + partErogatore+ "/" + partServizio+ "/" + partVersione + rimanenteRegExp + patternAzioneSuffix1;
+											paAzione.setPattern(newPatternAzione);
+											tmpPorta.setAzione(paAzione);
+										}
+										
+									}
+								}
+							}// fine controllo azione
+							
+							
+						}
 						
-						listaPA.add(portaApplicativa);
+						listaPA.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
+						
+						
+						// modifica nome Servizi Applicativi che riflette il nome della PA
+						if(oldIDPortaApplicativaForUpdate!=null && tmpPorta.sizeServizioApplicativoList()>0) {
+							for (PortaApplicativaServizioApplicativo portaApplicativaSA : tmpPorta.getServizioApplicativoList()) {
+								if(portaApplicativaSA.getNome().equals(oldIDPortaApplicativaForUpdate.getNome())) {
+									// devo aggiornare il nome del SA
+									IDServizioApplicativo idSA = new IDServizioApplicativo();
+									idSA.setNome(oldIDPortaApplicativaForUpdate.getNome());
+									idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPorta.getTipoSoggettoProprietario(), tmpPorta.getNomeSoggettoProprietario()));
+									ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
+									
+									IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
+									oldIDServizioApplicativoForUpdate.setNome(sa.getNome());
+									oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(idSA.getIdSoggettoProprietario());
+									sa.setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
+									sa.setTipoSoggettoProprietario(tmpPorta.getTipoSoggettoProprietario());
+									sa.setNomeSoggettoProprietario(tmpPorta.getNomeSoggettoProprietario());
+									
+									// __gw_ENTE/gw_TEST/1__Specific2
+									// gw_ENTE/gw_TEST/1
+									String check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									if(sa.getNome().endsWith(check_nomeSA)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue()));
+									}
+									listaPA_SA.add(sa);
+									break;
+								}
+							}
+						}
+						// modifica nome Servizi Applicativi che riflette il nome della PA
 					}
 				}
+				
 			}
 
 			List<Object> oggettiDaAggiornare = new ArrayList<Object>();
@@ -1928,6 +1916,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// aggiorno le eventuali porte applicative
 			for (PortaApplicativa portaApplicativa : listaPA) {
 				oggettiDaAggiornare.add(portaApplicativa);
+			}
+			
+			// aggiorno gli eventuali servizi applicativi
+			for (ServizioApplicativo sa : listaPA_SA) {
+				oggettiDaAggiornare.add(sa);
 			}
 
 			// Se ho cambiato i dati significativi del servizio devo effettuare anche l'update degli accordi di servizio

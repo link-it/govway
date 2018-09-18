@@ -731,7 +731,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						nomeservizioApplicativo, idsil, null, null, null, null,
+						nomeservizioApplicativo, idsil, idAsps, idPorta, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,

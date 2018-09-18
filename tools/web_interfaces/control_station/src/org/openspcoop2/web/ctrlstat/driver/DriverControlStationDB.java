@@ -36,7 +36,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
@@ -69,6 +69,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -1776,7 +1777,7 @@ public class DriverControlStationDB  {
 
 	
 	
-	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isAccordoInUso";
 
 		Connection con = null;
@@ -1795,7 +1796,43 @@ public class DriverControlStationDB  {
 		}
 
 		try {
-			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, this.idAccordoFactory.getIDAccordoFromAccordo(as), whereIsInUso);
+			return DBOggettiInUsoUtils.isAccordoServizioParteComuneInUso(con, this.tipoDB, this.idAccordoFactory.getIDAccordoFromAccordo(as), whereIsInUso, normalizeObjectIds);
+
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+	}
+	
+	public boolean isAccordoCooperazioneInUso(AccordoCooperazione as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		String nomeMetodo = "isAccordoCooperazioneInUso";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+			return DBOggettiInUsoUtils.isAccordoCooperazioneInUso(con, this.tipoDB, this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(as), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1812,7 +1849,7 @@ public class DriverControlStationDB  {
 		
 	}
 
-	public boolean isPddInUso(PdDControlStation pdd, List<String> whereIsInUso) throws DriverControlStationException {
+	public boolean isPddInUso(PdDControlStation pdd, List<String> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "pddInUso";
 
 		Connection con = null;
@@ -1832,7 +1869,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBOggettiInUsoUtils.isPddInUso(con, this.tipoDB, pdd.getNome(), whereIsInUso);
+			return DBOggettiInUsoUtils.isPddInUso(con, this.tipoDB, pdd.getNome(), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1848,13 +1885,13 @@ public class DriverControlStationDB  {
 		}
 	}
 
-	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
-		return isSoggettoInUso(soggettoConfig,null,whereIsInUso);
+	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		return isSoggettoInUso(soggettoConfig,null,whereIsInUso, normalizeObjectIds);
 	}
-	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
-		return isSoggettoInUso(null,soggettoRegistro,whereIsInUso);
+	public boolean isSoggettoInUso(Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
+		return isSoggettoInUso(null,soggettoRegistro,whereIsInUso, normalizeObjectIds);
 	}
-	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	private boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggettoConfig, Soggetto soggettoRegistro, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isSoggettoInUso";
 
 		Connection con = null;
@@ -1888,12 +1925,12 @@ public class DriverControlStationDB  {
 			
 			if(soggettoRegistro!=null){
 				
-				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso);
+				return DBOggettiInUsoUtils.isSoggettoRegistryInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds);
 			
 			}
 			else{
 				
-				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso);
+				return DBOggettiInUsoUtils.isSoggettoConfigInUso(con, this.tipoDB, idSoggetto, true, whereIsInUso, normalizeObjectIds);
 				
 			}
 
@@ -1911,7 +1948,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public boolean isRuoloInUso(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isRuoloInUso(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isRuoloInUso";
 
 		Connection con = null;
@@ -1932,7 +1969,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBOggettiInUsoUtils.isRuoloInUso(con, this.tipoDB, idRuolo, whereIsInUso);
+			return DBOggettiInUsoUtils.isRuoloInUso(con, this.tipoDB, idRuolo, whereIsInUso, normalizeObjectIds);
 			
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1948,7 +1985,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public boolean isRuoloConfigInUso(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isRuoloConfigInUso(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isRuoloConfigInUso";
 
 		Connection con = null;
@@ -1969,7 +2006,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBOggettiInUsoUtils.isRuoloConfigInUso(con, this.tipoDB, idRuolo, whereIsInUso);
+			return DBOggettiInUsoUtils.isRuoloConfigInUso(con, this.tipoDB, idRuolo, whereIsInUso, normalizeObjectIds);
 			
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -1986,7 +2023,7 @@ public class DriverControlStationDB  {
 	}
 
 	
-	public boolean isScopeInUso(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isScopeInUso(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isScopeInUso";
 
 		Connection con = null;
@@ -2007,7 +2044,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBOggettiInUsoUtils.isScopeInUso(con, this.tipoDB, idScope, whereIsInUso);
+			return DBOggettiInUsoUtils.isScopeInUso(con, this.tipoDB, idScope, whereIsInUso, normalizeObjectIds);
 			
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
@@ -2023,7 +2060,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public boolean isScopeConfigInUso(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isScopeConfigInUso(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		String nomeMetodo = "isScopeConfigInUso";
 
 		Connection con = null;
@@ -2044,7 +2081,7 @@ public class DriverControlStationDB  {
 
 		try {
 
-			return DBOggettiInUsoUtils.isScopeConfigInUso(con, this.tipoDB, idScope, whereIsInUso);
+			return DBOggettiInUsoUtils.isScopeConfigInUso(con, this.tipoDB, idScope, whereIsInUso, normalizeObjectIds);
 			
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);

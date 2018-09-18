@@ -515,7 +515,7 @@ public class SoggettiCore extends ControlStationCore {
 	}
 	
 	
-	public boolean isSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isSoggettoInUso(org.openspcoop2.core.registry.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 
 		Connection con = null;
 		String nomeMetodo = "isSoggettoInUso(Registro)";
@@ -527,7 +527,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isSoggettoInUso(soggetto, whereIsInUso);
+			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -538,7 +538,7 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverControlStationException {
+	public boolean isSoggettoInUso(org.openspcoop2.core.config.Soggetto soggetto, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 
 		Connection con = null;
 		String nomeMetodo = "isSoggettoInUso(Config)";
@@ -550,7 +550,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isSoggettoInUso(soggetto, whereIsInUso);
+			return driver.isSoggettoInUso(soggetto, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

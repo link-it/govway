@@ -35,7 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -105,9 +105,10 @@ public final class AccordiServizioParteComuneDel extends Action {
 				AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.parseLong(idsToRemove.get(i)));
 				IDAccordo idAccordo = idAccordoFactory.getIDAccordoFromAccordo(as);
 
-				if (apcCore.isAccordoInUso(as, whereIsInUso)) {// accordo in uso
+				boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+				if (apcCore.isAccordoInUso(as, whereIsInUso, normalizeObjectIds)) {// accordo in uso
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idAccordo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += DBOggettiInUsoUtils.toString(idAccordo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					apcCore.performDeleteOperation(userLogin, apcHelper.smista(), as);

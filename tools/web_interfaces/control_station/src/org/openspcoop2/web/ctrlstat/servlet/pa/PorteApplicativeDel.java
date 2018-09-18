@@ -36,6 +36,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -46,6 +48,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -97,6 +100,7 @@ public final class PorteApplicativeDel extends Action {
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino le porte applicative dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -140,6 +144,7 @@ public final class PorteApplicativeDel extends Action {
 					}
 				}
 				
+				// cancellazione del mapping
 				MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
 				IDSoggetto soggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(),pa.getNomeSoggettoProprietario());
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
@@ -151,6 +156,13 @@ public final class PorteApplicativeDel extends Action {
 					listPerformOperations.add(mappingErogazione);
 				}
 				
+				// cancello per policy associate alla porta se esistono
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, pa.getNome());
+				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+					listPerformOperations.addAll(listAttivazione);
+				}
+				
+				// cancellazione della porta
 				listPerformOperations.add(pa);
 			}
 			

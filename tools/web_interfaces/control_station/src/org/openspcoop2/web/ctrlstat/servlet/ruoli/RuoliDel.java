@@ -35,7 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.Ruolo;
@@ -96,7 +96,8 @@ public final class RuoliDel extends Action {
 				Ruolo ruolo = ruoliCore.getRuolo(idsToRemove.get(i));
 				
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				boolean ruoloInUso = ruoliCore.isRuoloInUso(ruolo.getNome(),whereIsInUso);
+				boolean normalizeObjectIds = !ruoliHelper.isModalitaCompleta();
+				boolean ruoloInUso = ruoliCore.isRuoloInUso(ruolo.getNome(),whereIsInUso,normalizeObjectIds);
 				
 				if (ruoloInUso) {
 					isInUso = true;

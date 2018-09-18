@@ -38,6 +38,8 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -49,6 +51,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -109,6 +112,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 
 			// Elimino le porte applicative del servizio dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -145,6 +149,12 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 					mappingErogazione.setIdServizio(idServizio);
 					mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
 					listaOggettiDaEliminare.add(mappingErogazione);
+					
+					// cancello per policy associate alla porta se esistono
+					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, tmpPA.getNome());
+					if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+						listaOggettiDaEliminare.addAll(listAttivazione);
+					}
 					
 					// cancello la porta associata
 					listaOggettiDaEliminare.add(tmpPA);

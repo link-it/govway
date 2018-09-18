@@ -111,6 +111,8 @@ public class SoggettiCostanti {
 	
 	public final static String PARAMETRO_SOGGETTO_RUOLO_ID = "ruoloId";
 	
+	public final static String PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO = "modificaDatiOperativo";
+	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO = "Dominio";

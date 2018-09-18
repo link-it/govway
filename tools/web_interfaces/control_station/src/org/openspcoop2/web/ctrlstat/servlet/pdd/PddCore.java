@@ -326,7 +326,7 @@ public class PddCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean isPddInUso(PdDControlStation pdd, List<String> whereIsInUso) throws DriverControlStationException {
+	public boolean isPddInUso(PdDControlStation pdd, List<String> whereIsInUso, boolean normalizeObjectIds) throws DriverControlStationException {
 		Connection con = null;
 		String nomeMetodo = "isPddInUso";
 		DriverControlStationDB driver = null;
@@ -337,7 +337,7 @@ public class PddCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isPddInUso(pdd, whereIsInUso);
+			return driver.isPddInUso(pdd, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

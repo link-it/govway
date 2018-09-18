@@ -36,7 +36,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -131,11 +131,12 @@ public final class ServiziApplicativiDel extends Action {
 				
 				// Controllo che il sil non sia in uso
 				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
-				boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale());
+				boolean normalizeObjectIds = !saHelper.isModalitaCompleta();
+				boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale(), normalizeObjectIds);
 				
 				if (saInUso) {
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,normalizeObjectIds);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
 				} else {

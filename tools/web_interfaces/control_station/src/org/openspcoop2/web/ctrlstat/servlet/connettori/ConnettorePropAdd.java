@@ -51,6 +51,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -112,6 +113,19 @@ public final class ConnettorePropAdd extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 			
+			String idPorta = connettoriHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA);
+			if(idPorta == null)
+				idPorta = "";
+			
+			String accessoDaAPSParametro = connettoriHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			if(accessoDaAPSParametro == null)
+				accessoDaAPSParametro = "";
+			
+			String azioneConnettoreIdPorta = connettoriHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
+			if(azioneConnettoreIdPorta==null) {
+				azioneConnettoreIdPorta="";
+			}
+			
 			ConnettoriCore connettoriCore = new ConnettoriCore();
 			SoggettiCore soggettiCore = new SoggettiCore(connettoriCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(connettoriCore);
@@ -126,7 +140,7 @@ public final class ConnettorePropAdd extends Action {
 				
 				// setto la barra del titolo
 				connettoriHelper.setTitleProprietaConnettoriCustom(pd, TipoOperazione.ADD, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, 
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,idPorta);
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -134,7 +148,7 @@ public final class ConnettorePropAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
 				
 				pd.setDati(dati);
 
@@ -149,7 +163,7 @@ public final class ConnettorePropAdd extends Action {
 				
 				// setto la barra del titolo
 				connettoriHelper.setTitleProprietaConnettoriCustom(pd, TipoOperazione.ADD, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, 
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,idPorta);
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -157,7 +171,7 @@ public final class ConnettorePropAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
-						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
+						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider,accessoDaAPSParametro, idPorta, azioneConnettoreIdPorta);
 				
 				pd.setDati(dati);
 

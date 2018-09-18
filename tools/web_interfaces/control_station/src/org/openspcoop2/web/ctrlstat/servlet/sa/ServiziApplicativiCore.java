@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -368,7 +368,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 	
 	public boolean isServizioApplicativoInUso(IDServizioApplicativo idServizioApplicativo,
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+			Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean isRegistroServiziLocale, boolean normalizeObjectIds) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "isServizioApplicativoInUso";
 		
@@ -376,7 +376,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 
-			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale);
+			return DBOggettiInUsoUtils.isServizioApplicativoInUso(con, this.tipoDB, idServizioApplicativo, whereIsInUso, isRegistroServiziLocale, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

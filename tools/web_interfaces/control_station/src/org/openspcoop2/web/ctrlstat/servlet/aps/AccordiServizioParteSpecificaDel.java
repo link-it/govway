@@ -35,12 +35,14 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -60,6 +62,7 @@ import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -110,6 +113,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -212,14 +216,27 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
+				boolean normalizeObjectIds = !apsHelper.isModalitaCompleta();
 				boolean inUso = false;
 				if(!gestioneFruitori) {
-					inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente);
+					inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente, normalizeObjectIds);
 				}
 				
 				if (inUso) {// accordo in uso
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idServizio, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					String tipo = null;
+					if(gestioneFruitori) {
+						tipo = "Fruizione del Servizio";
+					}
+					else {
+						if(apsHelper.isModalitaCompleta()) {
+							tipo = "Servizio";
+						}
+						else {
+							tipo = "Erogazione del Servizio";
+						}
+					}
+					msg += DBOggettiInUsoUtils.toString(idServizio, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,normalizeObjectIds,tipo);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					
@@ -248,6 +265,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 								}
 							}
 							
+							// cancellazione del mapping
 							MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
 							IDSoggetto soggettoErogatore = new IDSoggetto(paGenerataAutomcaticamente.getTipoSoggettoProprietario(),paGenerataAutomcaticamente.getNomeSoggettoProprietario());
 							IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
@@ -260,8 +278,16 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 								listaOggettiDaEliminare.add(mappingErogazione);
 							}
 							
+							// cancello per policy associate alla porta se esistono
+							List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, paGenerataAutomcaticamente.getNome());
+							if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+								listaOggettiDaEliminare.addAll(listAttivazione);
+							}
+							
+							// cancellazione della porta
 							listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 							
+							// cancellazione degli applicativi generati automaticamente
 							for (PortaApplicativaServizioApplicativo paSA : paGenerataAutomcaticamente.getServizioApplicativoList()) {
 								if(paSA.getNome().equals(paGenerataAutomcaticamente.getNome())) {
 									IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -298,6 +324,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 								}
 							}
 							
+							// cancellazione del mapping
 							MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
 							mappingFruizione.setIdFruitore(idSoggettoFruitore);
 							mappingFruizione.setIdServizio(idServizio);
@@ -308,6 +335,13 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 								listaOggettiDaEliminare.add(mappingFruizione);
 							}
 							
+							// cancello per policy associate alla porta se esistono
+							List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, pdGenerataAutomcaticamente.getNome());
+							if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+								listaOggettiDaEliminare.addAll(listAttivazione);
+							}
+							
+							// cancellazione della porta
 							listaOggettiDaEliminare.add(pdGenerataAutomcaticamente);
 							
 						}

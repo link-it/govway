@@ -35,7 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -122,17 +122,18 @@ public final class SoggettiDel extends Action {
 					idSoggetto = new IDSoggetto(soggettoConfig.getTipo(), soggettoConfig.getNome());
 				}
 				boolean soggettoInUso = false;
+				boolean normalizeObjectIds = !soggettiHelper.isModalitaCompleta();
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				if(soggettiCore.isRegistroServiziLocale()){
-					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso);
+					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso, normalizeObjectIds);
 				}else{
-					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso);
+					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso, normalizeObjectIds);
 				}
 
 
 				if (soggettoInUso) {
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
 				} else {

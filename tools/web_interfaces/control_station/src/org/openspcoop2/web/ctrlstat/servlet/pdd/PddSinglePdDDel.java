@@ -34,7 +34,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -104,7 +104,8 @@ public final class PddSinglePdDDel extends Action {
 				}
 				else{
 					ArrayList<String> infos = new ArrayList<String>();
-					if (pddCore.isPddInUso(pddControlStation, infos)) {
+					boolean normalizeObjectIds = !pddHelper.isModalitaCompleta();
+					if (pddCore.isPddInUso(pddControlStation, infos, normalizeObjectIds)) {
 						isInUso = true;
 						msg += DBOggettiInUsoUtils.toString(pdd.getNome(), infos, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 						msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;

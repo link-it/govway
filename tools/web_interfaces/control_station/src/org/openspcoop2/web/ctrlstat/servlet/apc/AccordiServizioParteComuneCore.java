@@ -267,7 +267,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant,List<String>> whereIsInUso) throws DriverRegistroServiziException {
+	public boolean isAccordoInUso(AccordoServizioParteComune as, Map<ErrorsHandlerCostant,List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAccordoInUso";
 		DriverControlStationDB driver = null;
@@ -278,7 +278,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isAccordoInUso(as, whereIsInUso);
+			return driver.isAccordoInUso(as, whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

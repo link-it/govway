@@ -3310,7 +3310,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,idSoggettoLong+""),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,idSoggetto.getNome()),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,idSoggetto.getTipo()));
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,idSoggetto.getTipo()),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO,"true"));
 				dati.addElement(de);
 			}
 		}

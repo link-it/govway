@@ -30,7 +30,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
@@ -376,7 +376,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 		
 	public boolean isAccordoServizioParteSpecificaInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,
-			List<IDPortaApplicativa> nomePAGenerateAutomaticamente) throws DriverRegistroServiziException {
+			List<IDPortaApplicativa> nomePAGenerateAutomaticamente, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAccordoServizioPArteSpecificaInUso";
 		try {
@@ -384,7 +384,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
-			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerateAutomaticamente);			
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerateAutomaticamente, normalizeObjectIds);			
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
@@ -393,25 +393,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean isServizioInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, String> whereIsInUso) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "isServizioInUso";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().isServizioInUso(as, whereIsInUso);
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
 	
 	public void validaStatoAccordoServizioParteSpecifica(AccordoServizioParteSpecifica serv, boolean gestioneWsdlImplementativo, boolean checkConnettore) throws DriverRegistroServiziException,ValidazioneStatoPackageException{
 		Connection con = null;

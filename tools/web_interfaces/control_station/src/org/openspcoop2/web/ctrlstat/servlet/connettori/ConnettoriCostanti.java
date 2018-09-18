@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 import java.util.Vector;
 
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TransferLengthModes;
 
@@ -171,6 +172,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA = "proprietaConnettoreCustom";
 	public final static String PARAMETRO_CONNETTORE_MODALITA = "modCon";
+	public final static String PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
 	
 	
 	/* LABEL PARAMETRI */

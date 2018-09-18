@@ -36,6 +36,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -50,6 +52,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -120,6 +123,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
 			String nomeservizio = asps.getNome();
@@ -163,7 +167,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 				
 				if(myidpds!=null && myidpds.size()>0){
 					
-					List<Object> listPerformOperations = new ArrayList<Object>();
+					List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 					
 					for (IDPortaDelegata myidpd : myidpds) {
 						
@@ -183,24 +187,32 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 									wrapper.setExtendedServlet(extendedServlet);
 									wrapper.setOriginalBean(mypd);
 									wrapper.setManageOriginalBean(false);		
-									listPerformOperations.add(wrapper);
+									listaOggettiDaEliminare.add(wrapper);
 								}
 							}
 						}
 						
+						//cancello il mapping
 						MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
 						mappingFruizione.setIdFruitore(idSoggettoFruitore);
 						mappingFruizione.setIdServizio(idServizioObject);
 						mappingFruizione.setIdPortaDelegata(myidpd);
 						if(porteDelegateCore.existsMappingFruizionePortaDelegata(mappingFruizione)) {
-							listPerformOperations.add(mappingFruizione);
+							listaOggettiDaEliminare.add(mappingFruizione);
 						}
 						
-						listPerformOperations.add(mypd);
+						// cancello per policy associate alla porta se esistono
+						List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, mypd.getNome());
+						if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+							listaOggettiDaEliminare.addAll(listAttivazione);
+						}
+						
+						// cancello la porta
+						listaOggettiDaEliminare.add(mypd);
 						
 					}
 					
-					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listPerformOperations.toArray(new Object[1]) );
+					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]) );
 					
 				}
 			}

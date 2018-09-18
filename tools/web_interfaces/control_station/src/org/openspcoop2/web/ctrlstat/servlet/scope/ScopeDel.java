@@ -35,7 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
@@ -95,7 +95,8 @@ public final class ScopeDel extends Action {
 				Scope scope = scopeCore.getScope(idsToRemove.get(i));
 				
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				boolean scopeInUso = scopeCore.isScopeInUso(scope.getNome(),whereIsInUso);
+				boolean normalizeObjectIds = !scopeHelper.isModalitaCompleta();
+				boolean scopeInUso = scopeCore.isScopeInUso(scope.getNome(),whereIsInUso,normalizeObjectIds);
 				
 				if (scopeInUso) {
 					isInUso = true;

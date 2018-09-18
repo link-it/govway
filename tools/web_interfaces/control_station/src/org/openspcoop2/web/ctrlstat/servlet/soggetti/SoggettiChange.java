@@ -65,6 +65,7 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -75,6 +76,7 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -114,6 +116,8 @@ public final class SoggettiChange extends Action {
 	private String passwordSoggetto = null;
 	private String subjectSoggetto = null;
 	private String principalSoggetto = null;
+	
+	private String modificaOperativo = null;
 	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -163,6 +167,8 @@ public final class SoggettiChange extends Action {
 			this.passwordSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			this.subjectSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 			this.principalSoggetto = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			this.modificaOperativo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO);
 	
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -454,6 +460,15 @@ public final class SoggettiChange extends Action {
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
+				// aggiunta opzione per modifica soggetto da configurazione
+				if(this.modificaOperativo!=null && !"".equals(this.modificaOperativo)) {
+					DataElement de = new DataElement();
+					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_MODIFICA_OPERATIVO);
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(this.modificaOperativo);
+					dati.addElement(de);
+				}
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -800,29 +815,50 @@ public final class SoggettiChange extends Action {
 			
 			// preparo lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+			
+			if(this.modificaOperativo!=null && !"".equals(this.modificaOperativo)) {
+				
+				Vector<DataElement> dati = new Vector<DataElement>();
+				
+				pd.setDati(dati);
+				
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SOGGETTO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
-			if(soggettiCore.isRegistroServiziLocale()){
-				List<Soggetto> listaSoggetti = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					listaSoggetti = soggettiCore.soggettiRegistroList(null, ricerca);
-				}else{
-					listaSoggetti = soggettiCore.soggettiRegistroList(userLogin, ricerca);
-				}
-				soggettiHelper.prepareSoggettiList(listaSoggetti, ricerca);
+				pd.disableEditMode();
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
+						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
+						ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE);
+				
 			}
-			else{
-				List<org.openspcoop2.core.config.Soggetto> listaSoggetti = null;
-				if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-					listaSoggetti = soggettiCore.soggettiList(null, ricerca);
-				}else{
-					listaSoggetti = soggettiCore.soggettiList(userLogin, ricerca);
+			else {
+			
+				if(soggettiCore.isRegistroServiziLocale()){
+					List<Soggetto> listaSoggetti = null;
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						listaSoggetti = soggettiCore.soggettiRegistroList(null, ricerca);
+					}else{
+						listaSoggetti = soggettiCore.soggettiRegistroList(userLogin, ricerca);
+					}
+					soggettiHelper.prepareSoggettiList(listaSoggetti, ricerca);
 				}
-				soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
+				else{
+					List<org.openspcoop2.core.config.Soggetto> listaSoggetti = null;
+					if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
+						listaSoggetti = soggettiCore.soggettiList(null, ricerca);
+					}else{
+						listaSoggetti = soggettiCore.soggettiList(userLogin, ricerca);
+					}
+					soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
+				}
+
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
+				
 			}
-
-			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 

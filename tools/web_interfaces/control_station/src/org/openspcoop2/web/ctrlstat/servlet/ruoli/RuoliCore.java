@@ -138,7 +138,7 @@ public class RuoliCore extends ControlStationCore {
 
 	}
 	
-	public boolean isRuoloInUso(String ruolo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+	public boolean isRuoloInUso(String ruolo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isRuoloInUso";
 		DriverControlStationDB driver = null;
@@ -149,7 +149,7 @@ public class RuoliCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isRuoloInUso(new IDRuolo(ruolo), whereIsInUso);
+			return driver.isRuoloInUso(new IDRuolo(ruolo), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -160,7 +160,7 @@ public class RuoliCore extends ControlStationCore {
 
 	}
 	
-	public boolean isRuoloConfigInUso(String ruolo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverConfigurazioneException {
+	public boolean isRuoloConfigInUso(String ruolo, HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean normalizeObjectIds) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "isRuoloConfigInUso";
 		DriverControlStationDB driver = null;
@@ -171,7 +171,7 @@ public class RuoliCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.isRuoloConfigInUso(new IDRuolo(ruolo), whereIsInUso);
+			return driver.isRuoloConfigInUso(new IDRuolo(ruolo), whereIsInUso, normalizeObjectIds);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

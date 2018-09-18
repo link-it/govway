@@ -36,6 +36,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -47,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -97,6 +100,7 @@ public final class PorteDelegateDel extends Action {
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			// Elimino le porte delegate dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
@@ -140,6 +144,7 @@ public final class PorteDelegateDel extends Action {
 					}
 				}
 				
+				// cancellazione del mapping
 				if(pde.getSoggettoErogatore()!=null && pde.getSoggettoErogatore().getNome()!=null && !"".equals(pde.getSoggettoErogatore().getNome()) &&
 						pde.getServizio()!=null && pde.getServizio().getNome()!=null && !"".equals(pde.getServizio().getNome())) {
 					MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
@@ -156,6 +161,13 @@ public final class PorteDelegateDel extends Action {
 					
 				}
 				
+				// cancello per policy associate alla porta se esistono
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, pde.getNome());
+				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+					listPerformOperations.addAll(listAttivazione);
+				}
+				
+				// cancellazione della porta
 				listPerformOperations.add(pde);
 			}
 			

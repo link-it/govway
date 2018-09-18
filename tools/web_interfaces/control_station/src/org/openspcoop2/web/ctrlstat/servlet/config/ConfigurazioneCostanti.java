@@ -1010,6 +1010,7 @@ public class ConfigurazioneCostanti {
 			+" modificata con successo"+org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti.RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO = "Configurazione "+LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO
 			+" modificata con successo";
+	public final static String LABEL_CONFIGURAZIONE_SOGGETTO_CON_SUCCESSO = "Configurazione del soggetto modificata con successo";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_SOGLIA = "Max Richieste Simultanee";

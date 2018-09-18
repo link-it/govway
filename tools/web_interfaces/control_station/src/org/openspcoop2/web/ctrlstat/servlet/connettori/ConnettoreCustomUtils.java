@@ -23,6 +23,8 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 
@@ -39,7 +41,7 @@ public class ConnettoreCustomUtils {
 			String nome, String valore,
 			String servlet, String id, String nomeprov, String tipoprov,String nomeservizio,String tiposervizio, String versioneservizio,
 			String myId, String correlato, String idSoggErogatore, String nomeservizioApplicativo,String idsil,String tipoAccordo,
-			String provider)  {
+			String provider, String accessoDaAPSParametro, String idPorta, String azioneConnettoreIdPorta)  {
 
 		DataElement de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME);
@@ -149,6 +151,23 @@ public class ConnettoreCustomUtils {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PROVIDER);
 		dati.addElement(de);
 		
+		de = new DataElement();
+		de.setValue(accessoDaAPSParametro);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(idPorta);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(azioneConnettoreIdPorta);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA);
+		dati.addElement(de);
 	}
 	
 }

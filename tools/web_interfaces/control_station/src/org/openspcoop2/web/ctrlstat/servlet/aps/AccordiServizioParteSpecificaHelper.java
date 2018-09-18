@@ -2274,6 +2274,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				e.addElement(de);
 				
 				if(gestioneConfigurazioni && mapping.isDefault() && allActionRedefined) {
+					int numEntries = ricerca.getNumEntries(idLista);
+					ricerca.setNumEntries(idLista, numEntries -1); 
+					this.pd.setNumEntries(numEntries -1);
 					continue; // non faccio vedere la riga "disconnessa"
 				}
 				
@@ -3556,6 +3559,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 //				e.addElement(de);
 				
 				if(gestioneConfigurazioni && mapping.isDefault() && allActionRedefined) {
+					int numEntries = ricerca.getNumEntries(idLista);
+					ricerca.setNumEntries(idLista, numEntries -1); 
+					this.pd.setNumEntries(numEntries -1);
 					continue; // non faccio vedere la riga "disconnessa"
 				}
 				
@@ -4430,12 +4436,27 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		boolean modificaAbilitataOrOperazioneAdd = tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata;
 		
-		boolean showSceltaNomeServizioDisabilitata = !isModalitaAvanzata && 
-				(
-						TipoOperazione.ADD.equals(tipoOp) || 
-						(ServiceBinding.SOAP.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(portType)) ||
-						(ServiceBinding.REST.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(idAccordoParteComune.getNome()))
-				);
+		boolean showSceltaNomeServizioDisabilitata =false;
+		if(TipoOperazione.ADD.equals(tipoOp)) {
+			if(!isModalitaAvanzata) {
+				showSceltaNomeServizioDisabilitata = true;
+			}
+		}
+		else {
+			// change
+			if(gestioneErogatori || gestioneFruitori) {
+				showSceltaNomeServizioDisabilitata = false; // lo vogliamo poter modificare sempre
+			}
+			else {
+				if(!isModalitaAvanzata) {
+					if((ServiceBinding.SOAP.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(portType)) ||
+						(ServiceBinding.REST.equals(serviceBinding) && nomeServizio!=null && nomeServizio.equals(idAccordoParteComune.getNome()))) {
+						showSceltaNomeServizioDisabilitata = true;
+					}
+				}
+			}
+		}
+		
 		
 		boolean showFlagPrivato = this.core.isShowFlagPrivato() &&  (tipoOp.equals(TipoOperazione.ADD) || 
 				modificaAbilitata) && isModalitaAvanzata;
@@ -4467,7 +4488,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
-		if(isModalitaAvanzata){
+		if(isModalitaAvanzata || gestioneErogatori || gestioneFruitori){
 			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
