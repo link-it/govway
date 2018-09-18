@@ -23,7 +23,6 @@
 	<target name="checkgit" >
 		<fileset dir="${required_lib}" id="jgit.jar">
 			<include name="git/*.jar"/>
-			<include name="log/*.jar" />
 		</fileset>
 		<pathconvert pathsep=" " property="jgit.jar.list" refid="jgit.jar">
 			<map from="${basedir}/${required_lib}/" to="lib/"/>

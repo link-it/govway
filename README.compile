@@ -34,6 +34,10 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
     Esempio:
 	ant
 
+    NOTA: Il processo di build richiede memoria (soprattutto per quanto riguarda il PermGen space).
+    Se si ottiene un out of memory regolare la memoria fornita ad ant impostando la seguente variabile di ambiente:
+	export ANT_OPTS="-Xmx1024m -XX:MaxMetaspaceSize=1024m"
+
 3. Installazione dei Binari prodotti
 
 3.1 Tutti i jar compilati saranno disponibili al termine della compilazione nella sottodirectory dist della directory di lavoro
