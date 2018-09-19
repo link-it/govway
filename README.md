@@ -14,7 +14,7 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 
 ## Contatti
 
-- Mailing list: [Utenti GovWay](http://www.gov4j.it/mailman/listinfo/utenti-govway)
+- Mailing list: [Utenti GovWay](https://govway.org/mailing)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
 
 # Le funzionalità principali
