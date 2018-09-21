@@ -4,13 +4,13 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 
 1.1. Scaricare la versione binaria di GovWay, disponibile alla URL:
 
-  http://www.govway.org/govway/download/govway-installer-<versione>.tgz
-  (es.   http://www.govway.org/govway/download/govway-installer-3.0.0.tgz)
+  http://www.govway.org/download/govway-installer-<versione>.tgz
+  (es.   http://www.govway.org/download/govway-installer-3.0.0.tgz)
   
 1.2. Scaricare le librerie esterne relative alla versione sorgente da compilare, disponibili alla URL: 
 
-  http://www.govway.org/govway/download/govway-external-lib-<versione>.tgz
-  (es. http://www.govway.org/govway/download/govway-external-lib-3.0.0.tgz)
+  http://www.govway.org/download/govway-external-lib-<versione>.tgz
+  (es. http://www.govway.org/download/govway-external-lib-3.0.0.tgz)
 
 1.3. Scaricare i sorgenti del software, disponibili all'indirizzo:
 
