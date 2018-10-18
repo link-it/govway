@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Dump;
@@ -56,6 +57,9 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
+import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
@@ -67,6 +71,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
@@ -157,6 +163,11 @@ public final class ConfigurazioneGenerale extends Action {
 			String idlecache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN);
 			String lifecache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN);
 			
+			String multitenantStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
+			boolean multitenantEnabled = CostantiConfigurazione.ABILITATO.getValue().equals(multitenantStatoTmp);
+			String multitenantSoggettiFruizioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+			String multitenantSoggettiErogazioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+			
 			Boolean confPersB = ServletUtils.getConfigurazioniPersonalizzateFromSession(session); 
 			String confPers = confPersB ? "true" : "false";
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
@@ -227,7 +238,9 @@ public final class ConfigurazioneGenerale extends Action {
 					dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-							configurazione.getProtocolli());
+							configurazione.getProtocolli(),
+							multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
+							true);
 
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -445,6 +458,52 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiGestioneToken().setCache(null);
 				}
 				
+				newConfigurazione.setMultitenant(new ConfigurazioneMultitenant());
+				newConfigurazione.getMultitenant().setStato(multitenantEnabled ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				
+				MultitenantSoggettiFruizioni multitenantSoggettiFruizioniEnum = null;
+				if(multitenantSoggettiFruizioni!=null && !"".equals(multitenantSoggettiFruizioni)) {
+					multitenantSoggettiFruizioniEnum = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni);
+				}
+				if(multitenantSoggettiFruizioniEnum!=null) {
+					switch (multitenantSoggettiFruizioniEnum) {
+					case SOLO_SOGGETTI_ESTERNI:
+						newConfigurazione.getMultitenant().setFruizioneSceltaSoggettiErogatori(PortaDelegataSoggettiErogatori.SOGGETTI_ESTERNI);
+						break;
+					case ESCLUDI_SOGGETTO_FRUITORE:
+						newConfigurazione.getMultitenant().setFruizioneSceltaSoggettiErogatori(PortaDelegataSoggettiErogatori.ESCLUDI_SOGGETTO_FRUITORE);
+						break;
+					case TUTTI:
+						newConfigurazione.getMultitenant().setFruizioneSceltaSoggettiErogatori(PortaDelegataSoggettiErogatori.TUTTI);
+						break;
+					}
+				}
+				else {
+					newConfigurazione.getMultitenant().setFruizioneSceltaSoggettiErogatori(PortaDelegataSoggettiErogatori.SOGGETTI_ESTERNI); // default
+				}
+				
+
+				MultitenantSoggettiErogazioni multitenantSoggettiErogazioniEnum = null;
+				if(multitenantSoggettiErogazioni!=null && !"".equals(multitenantSoggettiErogazioni)) {
+					multitenantSoggettiErogazioniEnum = MultitenantSoggettiErogazioni.valueOf(multitenantSoggettiErogazioni);
+				}
+				if(multitenantSoggettiErogazioniEnum!=null) {
+					switch (multitenantSoggettiErogazioniEnum) {
+					case SOLO_SOGGETTI_ESTERNI:
+						newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI);
+						break;
+					case ESCLUDI_SOGGETTO_EROGATORE:
+						newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.ESCLUDI_SOGGETTO_EROGATORE);
+						break;
+					case TUTTI:
+						newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.TUTTI);
+						break;
+					}
+				}
+				else {
+					newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI); // default
+				}
+				
 				newConfigurazione.setProtocolli(null); // aggiorno i protocolli
 				
 				ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
@@ -473,6 +532,7 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 				
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+				
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
 						if(ei.extended && !ei.extendedToNewWindow){
@@ -491,7 +551,9 @@ public final class ConfigurazioneGenerale extends Action {
 				dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-						configurazione.getProtocolli());
+						configurazione.getProtocolli(),
+						multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
+						false);
 
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -536,9 +598,17 @@ public final class ConfigurazioneGenerale extends Action {
 
 				pd.setDati(dati);
 
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				if(confHelper.isModalitaStandard()) {
+					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO_SOLO_DATI_CONSOLE, Costanti.MESSAGE_TYPE_INFO);
+				}
+				else {
+					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				}
 
 				pd.disableEditMode();
+				
+				generalHelper = new GeneralHelper(session);
+				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -649,7 +719,37 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					statocache_token = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
-				
+				if(configurazione.getMultitenant()!=null) {
+					if(configurazione.getMultitenant().getStato()!=null) {
+						multitenantEnabled = StatoFunzionalita.ABILITATO.equals(configurazione.getMultitenant().getStato());
+					}
+					if(configurazione.getMultitenant().getFruizioneSceltaSoggettiErogatori()!=null) {
+						switch (configurazione.getMultitenant().getFruizioneSceltaSoggettiErogatori()) {
+						case SOGGETTI_ESTERNI:
+							multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.name();
+							break;
+						case ESCLUDI_SOGGETTO_FRUITORE:
+							multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.ESCLUDI_SOGGETTO_FRUITORE.name();
+							break;
+						case TUTTI:
+							multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.TUTTI.name();
+							break;
+						}
+					}
+					if(configurazione.getMultitenant().getErogazioneSceltaSoggettiFruitori()!=null) {
+						switch (configurazione.getMultitenant().getErogazioneSceltaSoggettiFruitori()) {
+						case SOGGETTI_ESTERNI:
+							multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.name();
+							break;
+						case ESCLUDI_SOGGETTO_EROGATORE:
+							multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.ESCLUDI_SOGGETTO_EROGATORE.name();
+							break;
+						case TUTTI:
+							multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.TUTTI.name();
+							break;
+						}
+					}
+				}
 			}
 
 			// preparo i campi
@@ -660,7 +760,9 @@ public final class ConfigurazioneGenerale extends Action {
 			dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
-					configurazione.getProtocolli());
+					configurazione.getProtocolli(),
+					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
+					true);
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,

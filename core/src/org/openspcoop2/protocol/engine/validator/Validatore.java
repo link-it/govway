@@ -32,6 +32,7 @@ import java.util.List;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -408,7 +409,7 @@ public class Validatore  {
 		return true;	
 	}
 	
-	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuffer errore) {
+	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuffer errore, TempiElaborazione tempiElaborazione) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
@@ -416,7 +417,7 @@ public class Validatore  {
 			/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
 			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
 				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
-				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.ctx) == false){  
+				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.ctx, tempiElaborazione) == false){  
 					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
 					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();

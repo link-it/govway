@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -109,6 +110,9 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			String tracciamentoEsitiSelezionePersonalizzataFallite = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 			String tracciamentoEsitiSelezionePersonalizzataMax = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
 			
+			String transazioniTempiElaborazione = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI);
+			String transazioniToken = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN);
+			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, null));
@@ -130,6 +134,14 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						dumpPA = oldConfigurazione.getDump().getDumpBinarioPortaApplicativa().toString();
 					if(oldConfigurazione.getTracciamento().getStato()!=null)
 						registrazioneTracce = oldConfigurazione.getTracciamento().getStato().toString();
+					if(oldConfigurazione.getTransazioni()!=null) {
+						if(oldConfigurazione.getTransazioni().getTempiElaborazione()!=null) {
+							transazioniTempiElaborazione = oldConfigurazione.getTransazioni().getTempiElaborazione().toString();
+						}
+						if(oldConfigurazione.getTransazioni().getToken()!=null) {
+							transazioniToken = oldConfigurazione.getTransazioni().getToken().toString();
+						}
+					}
 				}
 				
 				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
@@ -196,6 +208,9 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
 				
+				confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
+						transazioniTempiElaborazione, transazioniToken); 
+				
 				// Set First is false
 				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 				
@@ -225,6 +240,9 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, nuovaConfigurazioneEsiti, 
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+				
+				confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
+						transazioniTempiElaborazione, transazioniToken); 
 				
 				confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
 
@@ -281,6 +299,12 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				newConfigurazione.getDump().setConfigurazione(null);
 			}
 			
+			if(newConfigurazione.getTransazioni()==null) {
+				newConfigurazione.setTransazioni( new Transazioni() );
+			}
+			newConfigurazione.getTransazioni().setTempiElaborazione(StatoFunzionalita.toEnumConstant(transazioniTempiElaborazione));
+			newConfigurazione.getTransazioni().setToken(StatoFunzionalita.toEnumConstant(transazioniToken));
+			
 			confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
 
 			// Preparo la lista
@@ -306,11 +330,21 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				dumpPA = newConfigurazione.getDump().getDumpBinarioPortaApplicativa().toString();
 			if(newConfigurazione.getTracciamento().getStato()!=null)
 				registrazioneTracce = newConfigurazione.getTracciamento().getStato().toString();
-			
+			if(newConfigurazione.getTransazioni()!=null) {
+				if(newConfigurazione.getTransazioni().getTempiElaborazione()!=null) {
+					transazioniTempiElaborazione = newConfigurazione.getTransazioni().getTempiElaborazione().toString();
+				}
+				if(newConfigurazione.getTransazioni().getToken()!=null) {
+					transazioniToken = newConfigurazione.getTransazioni().getToken().toString();
+				}
+			}
 			
 			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, null, newConfigurazione.getTracciamento().getEsiti(), 
 					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
 					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+			
+			confHelper.addToDatiRegistrazioneTransazione(dati, tipoOperazione, 
+					transazioniTempiElaborazione, transazioniToken); 
 			
 			confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, newConfigurazione, dati, contaListe);
 

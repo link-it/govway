@@ -1,0 +1,1 @@
+../../../../tools/web_interfaces/lib/users/deploy/sql/patch/hsql/2018-09-24-patch.sql

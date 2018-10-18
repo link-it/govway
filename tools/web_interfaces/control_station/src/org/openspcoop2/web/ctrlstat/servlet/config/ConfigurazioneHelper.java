@@ -23,9 +23,11 @@ package org.openspcoop2.web.ctrlstat.servlet.config;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,6 +111,8 @@ import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -2901,7 +2905,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String connessione, String utilizzo, String validman,
 			String gestman, String registrazioneTracce, String dumpPD, String dumpPA,
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
-			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli) throws Exception {
+			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli,
+			boolean multitenantEnabled, String multitenantSoggettiFruizioni, String multitenantSoggettiErogazioni,
+			boolean editModeEnabled
+			) throws Exception {
 		DataElement de = new DataElement();
 
 		if (this.isModalitaStandard()) {
@@ -3210,6 +3217,127 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		boolean existsMoreThanOneSoggettoOperativoPerProtocollo = false;
+		List<org.openspcoop2.core.registry.Soggetto> l = this.soggettiCore.getSoggettiOperativi();
+		Map<String, Integer> countSoggettoOperativiByProtocol = new HashMap<>();
+		if(l!=null && !l.isEmpty()) {
+			for (org.openspcoop2.core.registry.Soggetto soggetto : l) {
+				String protocol = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+				int count = 0;
+				if(countSoggettoOperativiByProtocol.containsKey(protocol)) {
+					count = countSoggettoOperativiByProtocol.remove(protocol);
+				}
+				count ++;
+				if(count>1) {
+					existsMoreThanOneSoggettoOperativoPerProtocollo = true;
+					break;
+				}
+				countSoggettoOperativiByProtocol.put(protocol, count);
+			}
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
+		if(!existsMoreThanOneSoggettoOperativoPerProtocollo) {
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+			de.setValues(ConfigurazioneCostanti.STATI);
+			de.setSelected(multitenantEnabled ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
+		}
+		else {
+			de.setType(DataElementType.TEXT);
+		}
+		de.setValue(multitenantEnabled ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
+		dati.addElement(de);
+		
+		if(multitenantEnabled) {
+			
+			boolean linkSoggettiFiltroDominioImpostato = false; // confonde
+			if(linkSoggettiFiltroDominioImpostato) {
+				de = new DataElement();
+				de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_SOGGETTI);
+				de.setType(DataElementType.LINK);
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_FILTER_DOMINIO_INTERNO,"true"));
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+			if(editModeEnabled) {
+				de.setType(DataElementType.SELECT);
+				String [] values = MultitenantSoggettiFruizioni.toEnumNameArray();
+				String [] labels = MultitenantSoggettiFruizioni.toArray();
+				de.setValues(values);
+				de.setLabels(labels);
+				de.setSelected(multitenantSoggettiFruizioni);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(multitenantSoggettiFruizioni);
+			dati.addElement(de);
+			
+			if(!editModeEnabled) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE+"__LABEL");
+				String multi = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI.getValue();
+				try {
+					multi = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni).getValue();
+				}catch(Exception e) {}
+				de.setValue(multi);
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+			if(editModeEnabled) {
+				de.setType(DataElementType.SELECT);
+				String [] values = MultitenantSoggettiErogazioni.toEnumNameArray();
+				String [] labels = MultitenantSoggettiErogazioni.toArray();
+				de.setValues(values);
+				de.setLabels(labels);
+				de.setSelected(multitenantSoggettiErogazioni);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setValue(multitenantSoggettiErogazioni);
+			dati.addElement(de);
+			
+			if(!editModeEnabled) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI+"__LABEL");
+				String multi = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI.getValue();
+				try {
+					multi = MultitenantSoggettiErogazioni.valueOf(multitenantSoggettiErogazioni).getValue();
+				}catch(Exception e) {}
+				de.setValue(multi);
+				dati.addElement(de);
+			}
+		}
+		
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_URL_INVOCAZIONE);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -3238,7 +3366,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			User user = ServletUtils.getUserFromSession(this.session);
-			boolean multiTenant = user.isPermitMultiTenant();
 			String userLogin = user.getLogin();
 			
 			String nameP = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
@@ -3293,8 +3420,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(urlInvocazionePD);
 			dati.addElement(de);
 					
-			if(!multiTenant) {
-				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativo(userLogin, protocollo);
+			if(!multitenantEnabled) {
+				IDSoggetto idSoggetto = this.soggettiCore.getSoggettoOperativoDefault(userLogin, protocollo);
 				long idSoggettoLong = this.soggettiCore.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo());
 						
 				de = new DataElement();
@@ -6335,8 +6462,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			
 			// setto le label delle colonne
 			String[] labels = { 
+					"",//ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO,
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_IDENTIFICATIVO,
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN
@@ -6367,23 +6494,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID, policy.getId() + ""); 
 
 					DataElement de = new DataElement();
-					if(ruoloPorta!=null) {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
-					}
-					else {
-						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
-					}
-					
-					if(StringUtils.isNotEmpty(policy.getAlias()))
-						de.setValue(policy.getIdPolicy());
-					else 
-						de.setValue(policy.getIdActivePolicy());
-					
-					de.setIdToRemove(""+policy.getId());
-					de.setToolTip(nDesr); 
-					e.addElement(de);
-					
-					de = new DataElement();
+					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					if(policy.isEnabled()){
 						if(policy.isWarningOnly()){
@@ -6402,8 +6513,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO_DISABILITATO);
 						de.setSelected(CheckboxStatusType.DISABILITATO);
 					}
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
 					e.addElement(de);
 					
+					de = new DataElement();
+					if(ruoloPorta!=null) {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId, parRuoloPorta, parNomePorta);
+					}
+					else {
+						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_CHANGE, pPolicyId);
+					}
+					
+					if(StringUtils.isNotEmpty(policy.getAlias()))
+						de.setValue(policy.getIdPolicy());
+					else 
+						de.setValue(policy.getIdActivePolicy());
+					
+					de.setIdToRemove(""+policy.getId());
+					de.setToolTip(nDesr); 
+					e.addElement(de);
+										
 					de = new DataElement();
 					if(policy.isEnabled()){
 						de.setValue("Visualizza");
@@ -10114,7 +10248,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
-		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+		boolean multitenant = this.confCore.isMultitenant();
 		
 		// Elaboro valori con dipendenze
 		

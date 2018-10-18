@@ -90,6 +90,11 @@ public class LoginHelper extends ConsoleHelper {
 					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
 					return false;
 				}
+				
+				if(!u.isConfigurazioneValidaAbilitazioni()) {
+					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO,MessageType.ERROR_SINTETICO);
+					return false;
+				}
 			}
 
 			// setto l utente in sessione

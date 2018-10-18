@@ -35,8 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
@@ -157,8 +159,20 @@ public final class AuthorisationFilter implements Filter {
 									return;
 								}
 							}
-							
 							ControlStationCore.logDebug("Autorizzazione permessa all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
+							
+							// Check Reset delle ricerche
+							String resetSearch = request.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
+							if(ServletUtils.isCheckBoxEnabled(resetSearch)) {
+								Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
+								if(ricerca!=null) {
+									ricerca.reset();
+									for (int i = 0; i < Liste.getTotaleListe(); i++) {
+										loginHelper.initializeFilter(ricerca, i);
+									}
+									ControlStationCore.logDebug("Effettuato reset della ricerca");					
+								}
+							}					
 							
 							if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
 								response.sendRedirect(getRedirectToMessageServlet());

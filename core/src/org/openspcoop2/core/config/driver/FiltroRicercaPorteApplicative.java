@@ -29,6 +29,7 @@ import java.io.Serializable;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 
 /**
@@ -82,6 +83,9 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Autorizzazione Soggetto */
 	private IDSoggetto idSoggettoAutorizzato;
 	
+	/** Autorizzazione Servizio Applicativo */
+	private IDServizioApplicativo idServizioApplicativoAutorizzato;
+	
 	/** Stato */
 	private StatoFunzionalita stato;
 	
@@ -115,6 +119,8 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 			bf.append(" [ruolo:"+this.idScope+"]");
 		if(this.idSoggettoAutorizzato!=null)
 			bf.append(" [ruolo:"+this.idSoggettoAutorizzato+"]");
+		if(this.idServizioApplicativoAutorizzato!=null)
+			bf.append(" [ruolo:"+this.idServizioApplicativoAutorizzato+"]");
 		if(this.stato!=null)
 			bf.append(" [stato:"+this.stato+"]");
 		if(this.nomePortaDelegante!=null)
@@ -236,5 +242,13 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	public void setIdSoggettoAutorizzato(IDSoggetto idSoggettoAutorizzato) {
 		this.idSoggettoAutorizzato = idSoggettoAutorizzato;
+	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoAutorizzato() {
+		return this.idServizioApplicativoAutorizzato;
+	}
+
+	public void setIdServizioApplicativoAutorizzato(IDServizioApplicativo idServizioApplicativoAutorizzato) {
+		this.idServizioApplicativoAutorizzato = idServizioApplicativoAutorizzato;
 	}
 }

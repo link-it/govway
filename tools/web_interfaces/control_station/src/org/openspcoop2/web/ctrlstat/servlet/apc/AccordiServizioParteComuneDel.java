@@ -44,6 +44,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -78,7 +80,8 @@ public final class AccordiServizioParteComuneDel extends Action {
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		
 		try {
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+			ApiHelper apcHelper = new ApiHelper(request, pd, session);
 			
 			String objToRemove = apcHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
@@ -128,6 +131,13 @@ public final class AccordiServizioParteComuneDel extends Action {
 
 			// preparo la lista
 			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+			
+			if(isModalitaVistaApiCustom) {
+				apcHelper.prepareApiList(lista, ricerca, tipoAccordo); 
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForward(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.DEL());
+			}
+			
 			apcHelper.prepareAccordiList(lista, ricerca, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

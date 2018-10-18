@@ -362,6 +362,12 @@ a.titleLinkRight:hover {
 	width: 160px;
 }
 
+.labelAllineataDxFixedWidth270 {
+        text-align: right;
+        padding: 0px 10px;
+        width: 270px;
+}
+
 .labelAllineataSx {
 	padding: 0px 10px;
 }

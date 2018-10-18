@@ -6,9 +6,10 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it"
     xmlns:c="http://java.sun.com/jstl/core">
+     <f:loadBundle var="msg" basename="messages" />
     
     <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
-    	<link:prop label="Servizio" required="true">
+    	<link:prop label="#{msg['stats.search.servizio']}" required="true">
      	 	<h:inputText id="servizioCombo" value="#{sf_labelServizio}" styleClass="inputLinkLong"/>
 			<rich:suggestionbox
 						id="servizioComboSuggestion" 
@@ -31,10 +32,10 @@
     </c:if>
     
    	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
-   		<link:prop label="Servizio" required="true">
+   		<link:prop label="#{msg['stats.search.servizio']}" required="true">
 			<rich:comboBox value="#{sf_servizio}" listWidth="#{sf_mbean.serviziSelectItemsWidth}" id="servizioCombo2"
-				defaultLabel="Selezione Servizio" directInputSuggestions="true" converter="selectItemConverter"
-				width="416" require="true" label="Servizio" enableManualInput="false" >
+				defaultLabel="#{msg['stats.search.servizio.defaultLabel']}" directInputSuggestions="true" converter="selectItemConverter"
+				width="416" require="true" label="#{msg['stats.search.servizio']}" enableManualInput="false" >
 				<f:selectItem itemValue="--" itemLabel="--" />
 				<f:selectItems value="#{sf_servizi}" />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>

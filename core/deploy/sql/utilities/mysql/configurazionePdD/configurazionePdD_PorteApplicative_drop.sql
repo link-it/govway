@@ -4,6 +4,7 @@
 -- DROP INDEX index_pa_scope_1 ON pa_scope ;
 -- DROP INDEX index_pa_ruoli_1 ON pa_ruoli ;
 -- DROP INDEX index_porte_applicative_1 ON porte_applicative ;
+-- DROP INDEX INDEX_PA_SA_AUTH ON porte_applicative_sa_auth ;
 -- DROP INDEX INDEX_PA_WSSRES ON pa_security_response ;
 -- DROP INDEX INDEX_PA_WSSREQ ON pa_security_request ;
 -- DROP INDEX INDEX_PA_MTOMTRES ON pa_mtom_response ;
@@ -11,6 +12,7 @@
 -- DROP INDEX INDEX_PA_PROP ON pa_properties ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
 DROP TABLE pa_azioni;
+DROP TABLE porte_applicative_sa_auth;
 DROP TABLE pa_soggetti;
 DROP TABLE pa_scope;
 DROP TABLE pa_ruoli;

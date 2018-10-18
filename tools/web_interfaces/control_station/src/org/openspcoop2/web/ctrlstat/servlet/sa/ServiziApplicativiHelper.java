@@ -47,8 +47,10 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -237,7 +239,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 		}
 		
-		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+		boolean multitenant = this.saCore.isMultitenant();
 		
 		boolean configurazioneStandardNonApplicabile = false;
 		
@@ -259,7 +261,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 
 		DataElement de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+		if(this.isModalitaCompleta()) {
+			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+		}
+		else {
+			de.setLabel(ServiziApplicativiCostanti.LABEL_APPLICATIVO);
+		}
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
@@ -268,7 +275,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
 	
-			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+			boolean showProtocolli = TipoOperazione.CHANGE.equals(tipoOperazione) && (this.core.countProtocolli(this.session)>1);
+			
+			if( (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) || showProtocolli){
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 					
 					DataElement deLABEL = new DataElement();
@@ -298,6 +307,107 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}
+		
+		
+		
+		ServizioApplicativo sa = null;
+		String nomePdd = null;
+		// se operazione change visualizzo i link per invocazione servizio,
+		// risposta asincrona
+		// e ruoli
+		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
+
+			sa = this.saCore.getServizioApplicativo(idSA);
+			String tipoSoggetto = null;
+			String nomeSoggetto = null;
+			if(this.core.isRegistroServiziLocale()){
+				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
+				tipoSoggetto = soggetto.getTipo();
+				nomeSoggetto = soggetto.getNome();
+				nomePdd = soggetto.getPortaDominio();
+			}
+			else{
+				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
+				tipoSoggetto = soggetto.getTipo();
+				nomeSoggetto = soggetto.getNome();
+			}
+
+			// soggetto proprietario
+			de = new DataElement();
+			if(multitenant && !this.isSoggettoMultitenantSelezionato()) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setValue(tipoENomeSoggetto);
+			dati.addElement(de);
+			
+			if(this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER);
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
+						);
+				dati.addElement(de);
+			}
+
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
+			de.setValue(provider);
+			dati.addElement(de);
+			
+		}else{
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
+			// Aggiunta di un servizio applicativo passando dal menu' 
+			if(!useIdSogg){
+				
+				if(multitenant && !this.isSoggettoMultitenantSelezionato()) {
+					de.setType(DataElementType.SELECT);
+					de.setPostBack(true);
+				
+					de.setValues(soggettiList);
+					de.setLabels(soggettiListLabel);
+					// selezion il provider (se)/che era stato precedentemente
+					// selezionato
+					// fix 2866
+					if ((provider != null) && !provider.equals("")) {
+						de.setSelected(provider);
+					}
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(provider);
+				}
+								
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(provider);
+				dati.addElement(de);
+
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+
+				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
+				org.openspcoop2.core.config.Soggetto sog = this.soggettiCore.getSoggetto(Integer.parseInt(provider));
+				
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, sog.getTipo(), sog.getNome()));
+				de.setSize(this.getSize());
+
+			}
+			dati.addElement(de);
+
+		}
+		
+		
 		
 				
 		de = new DataElement();
@@ -398,102 +508,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		
 		
-		ServizioApplicativo sa = null;
-		String nomePdd = null;
-		// se operazione change visualizzo i link per invocazione servizio,
-		// risposta asincrona
-		// e ruoli
-		if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
 
-			sa = this.saCore.getServizioApplicativo(idSA);
-			String tipoSoggetto = null;
-			String nomeSoggetto = null;
-			if(this.core.isRegistroServiziLocale()){
-				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
-				tipoSoggetto = soggetto.getTipo();
-				nomeSoggetto = soggetto.getNome();
-				nomePdd = soggetto.getPortaDominio();
-			}
-			else{
-				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
-				tipoSoggetto = soggetto.getTipo();
-				nomeSoggetto = soggetto.getNome();
-			}
-
-			// soggetto proprietario
-			de = new DataElement();
-			if(multitenant) {
-				de.setType(DataElementType.TEXT);
-			}
-			else {
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-			de.setValue(tipoENomeSoggetto);
-			dati.addElement(de);
-			
-			if(multitenant) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setValue(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_VISUALIZZA_DATI_PROVIDER);
-				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getIdSoggetto()+""),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SOGGETTO, tipoSoggetto),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SOGGETTO, nomeSoggetto)
-						);
-				dati.addElement(de);
-			}
-
-			de = new DataElement();
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
-			de.setValue(provider);
-			dati.addElement(de);
-			
-		}else{
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);				
-			// Aggiunta di un servizio applicativo passando dal menu' 
-			if(!useIdSogg){
-				
-				if(multitenant) {
-					de.setType(DataElementType.SELECT);
-					de.setPostBack(true);
-				
-					de.setValues(soggettiList);
-					de.setLabels(soggettiListLabel);
-					// selezion il provider (se)/che era stato precedentemente
-					// selezionato
-					// fix 2866
-					if ((provider != null) && !provider.equals("")) {
-						de.setSelected(provider);
-					}
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(provider);
-				}
-								
-			} else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(provider);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
-
-				// Aggiunta di un servizio applicativo passando dalla schermata soggetti
-				org.openspcoop2.core.config.Soggetto sog = this.soggettiCore.getSoggetto(Integer.parseInt(provider));
-				
-				de.setType(DataElementType.TEXT);
-				de.setValue(this.getLabelNomeSoggetto(tipoProtocollo, sog.getTipo(), sog.getNome()));
-				de.setSize(this.getSize());
-
-			}
-			dati.addElement(de);
-
-		}
 		
 		
 		
@@ -559,8 +574,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
 				}
 				else{
-					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+					if(this.isModalitaCompleta()) {
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));	
+					}
+					else {
+						// Imposto Accesso da Change!
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE,Costanti.CHECK_BOX_ENABLED));
+					}
 				}
 				if (contaListe) {
 					// BugFix OP-674
@@ -1006,10 +1029,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// providers disponibili
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				boolean trovatoProv = false;
-				for (int i = 0; i < soggettiList.length; i++) {
-					String tmpSogg = soggettiList[i];
-					if (tmpSogg.equals(provider)) {
-						trovatoProv = true;
+				if(soggettiList!=null) {
+					for (int i = 0; i < soggettiList.length; i++) {
+						String tmpSogg = soggettiList[i];
+						if (tmpSogg.equals(provider)) {
+							trovatoProv = true;
+						}
 					}
 				}
 				if (!trovatoProv) {
@@ -1072,10 +1097,23 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					List<IDPortaDelegata> list = this.porteDelegateCore.getAllIdPorteDelegate(filtro);
 					if(list!=null && list.size()>0) {
 						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
-								list.size()+" configurazioni di fruizione di servizio");
+								list.size()+" fruizion"+(list.size()>1?"i":"e"));
+						return false;
+					}
+					
+					FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+					IDServizioApplicativo idServizioApplicativoAutorizzato = new IDServizioApplicativo();
+					idServizioApplicativoAutorizzato.setIdSoggettoProprietario(new IDSoggetto(idSA.getIdSoggettoProprietario().getTipo(), idSA.getIdSoggettoProprietario().getNome()));
+					idServizioApplicativoAutorizzato.setNome(idSA.getNome());
+					filtroPA.setIdServizioApplicativoAutorizzato(idServizioApplicativoAutorizzato);
+					List<IDPortaApplicativa> listPA = this.porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
+					if(listPA!=null && listPA.size()>0) {
+						this.pd.setMessage("Non &egrave; possibile modificare il tipo di credenziali poich&egrave; l'applicativo viene utilizzato all'interno del controllo degli accessi di "+
+								list.size()+" erogazion"+(listPA.size()>1?"i":"e"));
 						return false;
 					}
 				}
+				
 				
 			}
 			
@@ -1332,7 +1370,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		try {
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
-			boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+			boolean multitenant = this.saCore.isMultitenant();
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
@@ -1449,7 +1487,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			List<String> labels = new ArrayList<String>();
 			labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-			if(!useIdSogg && multitenant) {
+			if(!useIdSogg && (multitenant && !this.isSoggettoMultitenantSelezionato())) {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			}
 			if( showProtocolli ) {
@@ -1494,12 +1532,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setIdToRemove(sa.getId().toString());
 					e.addElement(de);
 
-					if(!useIdSogg && multitenant) {
+					if(!useIdSogg && (multitenant && !this.isSoggettoMultitenantSelezionato())) {
 						de = new DataElement();
-						de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sa.getIdSoggetto()+""),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sa.getNomeSoggettoProprietario()),
-								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sa.getTipoSoggettoProprietario()));
+						if(this.isModalitaCompleta()) {
+							de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, sa.getIdSoggetto()+""),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME, sa.getNomeSoggettoProprietario()),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, sa.getTipoSoggettoProprietario()));
+						}
 						de.setValue(this.getLabelNomeSoggetto(protocollo, sa.getTipoSoggettoProprietario() , sa.getNomeSoggettoProprietario()));
 						e.addElement(de);
 					}
@@ -1879,7 +1919,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}
 		
 		
-		if(!this.isModalitaStandard()) {
+		boolean integrationManagerEnabled = !this.isModalitaStandard() && this.core.isIntegrationManagerEnabled();
+		
+		if(integrationManagerEnabled) {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
 			de.setType(DataElementType.TITLE);
@@ -1891,7 +1933,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 		
-		if(!this.isModalitaStandard()) {
+		if(integrationManagerEnabled) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoGM);
 			if(getmsg==null){
@@ -1976,6 +2018,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		try {
 			String idsil = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			String idProvider = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			String accessDaChangeTmp = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE);
+			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, this.session);
@@ -1988,7 +2032,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
 				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
 			}else 
-				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA);
+				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 			
 			int idLista = Liste.SERVIZIO_APPLICATIVO_RUOLI;
 			int limit = ricerca.getPageSize(idLista);
@@ -2020,6 +2065,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 		
 			// setto la barra del titolo
+			
 			List<Parameter> listSA = new ArrayList<>();
 			listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, idsil));
 			listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, idsil));
@@ -2034,46 +2080,59 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_APPLICATIVI_DI;
 			}
 			
-			if(!useIdSogg){
-				if (search.equals("")) {
-					this.pd.setSearchDescription("");
-					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(labelApplicativi,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-									listSA));
-				}
-				else{
-					ServletUtils.setPageDataTitle(this.pd, 
-							new Parameter(labelApplicativi,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
-							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
-									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-									listSA),
-							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
-				}
-			} else {
-				List<Parameter> lstParam = new ArrayList<Parameter>();
-
-				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-				lstParam.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
-						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,idProvider)));
-
-				if(search.equals("")){
-					this.pd.setSearchDescription("");
-					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-							listSA));
-				}else{
-					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-							listSA));
-					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
-				}
-
-				ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			if(accessDaChange) {
+				ServletUtils.setPageDataTitle_ServletFirst(this.pd, labelApplicativi, 
+						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
+				ServletUtils.appendPageDataTitle(this.pd, 
+						new Parameter(nomeservizioApplicativo, 
+								ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, 
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"")));
+				ServletUtils.appendPageDataTitle(this.pd, 
+						new Parameter(RuoliCostanti.LABEL_RUOLI, null));
 			}
-			
+			else {
+				
+				if(!useIdSogg){
+					if (search.equals("")) {
+						this.pd.setSearchDescription("");
+						ServletUtils.setPageDataTitle(this.pd, 
+								new Parameter(labelApplicativi,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+								new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+										ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+										listSA));
+					}
+					else{
+						ServletUtils.setPageDataTitle(this.pd, 
+								new Parameter(labelApplicativi,ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+								new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+										ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+										listSA),
+								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
+					}
+				} else {
+					List<Parameter> lstParam = new ArrayList<Parameter>();
+	
+					lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+					lstParam.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,idProvider)));
+	
+					if(search.equals("")){
+						this.pd.setSearchDescription("");
+						lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+								ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+								listSA));
+					}else{
+						lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+								ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+								listSA));
+						lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+					}
+	
+					ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+				}
+			}
 		
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);

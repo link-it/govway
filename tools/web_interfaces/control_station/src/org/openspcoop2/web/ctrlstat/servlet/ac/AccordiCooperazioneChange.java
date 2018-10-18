@@ -356,7 +356,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 				pd.setDati(dati);
 
-				if(acCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
+				if(acHelper.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
 					pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 				}
 
@@ -524,7 +524,7 @@ public final class AccordiCooperazioneChange extends Action {
 
 
 			//  Check stato
-			if(acCore.isShowGestioneWorkflowStatoDocumenti()){
+			if(acHelper.isShowGestioneWorkflowStatoDocumenti()){
 
 				try{
 					acCore.validaStatoAccordoCooperazione(ac);

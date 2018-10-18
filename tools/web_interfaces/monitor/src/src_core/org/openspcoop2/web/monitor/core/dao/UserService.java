@@ -21,11 +21,9 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
@@ -103,22 +101,6 @@ public class UserService implements IUserService {
 	@Override
 	public void deleteAll() throws Exception {
 		throw new NotImplementedException("Operazione non disponibile");
-	}
-
-	@Override
-	public List<String> getTipiNomiSoggettiAssociati(User utente) {
-		List<String> lst = null;
-		if (utente != null) {
-			lst = new ArrayList<String>();
-			for (IDSoggetto idsog : utente.getSoggetti()) {
-				if (idsog.getTipo() != null && idsog.getNome() != null) {
-					lst.add(idsog.getTipo() + "/" + idsog.getNome());
-				}
-			}
-		}
-
-		return lst;
-
 	}
 
 	@Override

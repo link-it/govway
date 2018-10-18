@@ -84,12 +84,12 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 			apcHelper.makeMenu();
 
 			// Prendo l'id della risorsa
-			long idRisorsa = 0;
+			Resource risorsa = null;
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
 			for (int i = 0; i < as.sizeResourceList(); i++) {
 				Resource res = as.getResource(i);
 				if (nomeRisorsa.equals(res.getNome())) {
-					idRisorsa = res.getId();
+					risorsa = res;
 					break;
 				}
 			}
@@ -101,9 +101,9 @@ public final class AccordiServizioParteComuneResourcesRisposteList extends Actio
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
 			
-			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(idRisorsa, ricerca);
+			List<ResourceResponse> lista = apcCore.accordiResourceResponseList(risorsa.getId(), ricerca);
 
-			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, nomeRisorsa);
+			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, risorsa);
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

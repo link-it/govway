@@ -45,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -87,6 +88,8 @@ public final class SoggettiRuoliAdd extends Action {
 			
 			String nome = soggettiHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO);
 
+			String accessDaChangeTmp = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE);
+			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 
@@ -114,12 +117,35 @@ public final class SoggettiRuoliAdd extends Action {
 			if (soggettiHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<>();
-				lstParm.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-				lstParm.add(new Parameter("Ruoli di " + tmpTitle, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+"")));
-				lstParm.add(ServletUtils.getParameterAggiungi());
-				ServletUtils.setPageDataTitle(pd,lstParm); 
+				if(accessDaChange) {
+					ServletUtils.setPageDataTitle_ServletFirst(pd, SoggettiCostanti.LABEL_SOGGETTI, 
+							SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
+					ServletUtils.appendPageDataTitle(pd, 
+							new Parameter(tmpTitle, 
+									SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,soggettoRegistry.getNome()),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,soggettoRegistry.getTipo())));
+					ServletUtils.appendPageDataTitle(pd, 
+							new Parameter(RuoliCostanti.LABEL_RUOLI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
+									new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE,accessDaChangeTmp)
+									)
+							);
+					ServletUtils.appendPageDataTitle(pd, 
+							ServletUtils.getParameterAggiungi());
+				}
+				else {
+					List<Parameter> lstParm = new ArrayList<>();
+					lstParm.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+					lstParm.add(new Parameter("Ruoli di " + tmpTitle, SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE,accessDaChangeTmp)
+							)
+					);
+					lstParm.add(ServletUtils.getParameterAggiungi());
+					ServletUtils.setPageDataTitle(pd,lstParm); 
+				}
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -131,7 +157,7 @@ public final class SoggettiRuoliAdd extends Action {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
-				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
+				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp);
 				
 				pd.setDati(dati);
 
@@ -163,7 +189,7 @@ public final class SoggettiRuoliAdd extends Action {
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 				
-				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
+				dati = soggettiHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp);
 
 				pd.setDati(dati);
 

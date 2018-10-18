@@ -69,6 +69,8 @@ import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -207,6 +209,20 @@ public class InoltroRisposte extends GenericLib{
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e);
 			return esito;
+		}
+		
+		
+		// Transaction
+		Transaction transactionNullable = null;
+		try{
+			transactionNullable = TransactionContext.getTransaction(idTransazione);
+		}catch(Exception e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+//			msgDiag.logErroreGenerico(e, "getTransaction"); 
+//			openspcoopstate.releaseResource();
+//			esito.setEsitoInvocazione(false); 
+//			esito.setStatoInvocazioneErroreNonGestito(e);
+//			return esito;
 		}
 		
 		msgDiag.setPddContext(pddContext, protocolFactory);	
@@ -719,7 +735,8 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setPddErogatore(registroServiziManager.getIdPortaDominio(idServizio.getSoggettoErogatore(), null));
 						messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(securityConfig.getFlowParameters());
-						if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext()) == false){
+						if(messageSecurityContext.processOutgoing(responseMessage,pddContext.getContext(),
+								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgDiag.logErroreGenerico(messageSecurityContext.getMsgErrore(), "Costruzione header MessageSecurity");
 							String motivazioneErrore = "Applicazione MessageSecurity non riuscita:"+messageSecurityContext.getMsgErrore();
 							ejbUtils.rollbackMessage(motivazioneErrore, esito);

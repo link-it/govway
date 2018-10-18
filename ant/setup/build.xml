@@ -55,6 +55,13 @@
 	<!-- 
 		Impostazione variabili prelevate da SETUP antinstaller, esempio:
 		
+		ModalitàInstallazione
+			antinstaller_modalita_installazione
+
+		Aggiornamento
+			antinstaller_versione_attuale
+			antinstaller_versione_precedente
+
 		Informazioni preliminari
 			antinstaller_directory_lavoro_openspcoop=/var/govway
 			antinstaller_directory_log_openspcoop=/var/govway/log
@@ -639,12 +646,22 @@
 		</if>
 	</target>
 	
-	<target name="setup_sql" depends="_setup_sql"/>
-	<target name="_setup_sql">
+	<target name="setup_sql" >
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<then>
+				<antcall target="_setup_sql_nuova_installazione"/>
+			</then>
+			<else>
+				<antcall target="_setup_sql_aggiornamento"/>
+			</else>
+		</if>
+	</target>
+	<target name="_setup_sql_nuova_installazione">
 		
 		<copy todir="${tmp_sql}">
 			<fileset dir="${deploy_sql}/${antinstaller_tipo_database}">
-		    	<include name="govway_*drop.sql"/>
+		    		<include name="govway_*drop.sql"/>
 				<include name="govway_*delete.sql"/>
 			</fileset>
 		</copy>
@@ -793,7 +810,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<classpath>
 				<path id="classpath_run">
 					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-			   </path>				
+			   	</path>				
 			</classpath>
 		</java>
 		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" tofile="${tmp_sql}/init_utenzaPddConsole.sql" overwrite="true"/>
@@ -804,7 +821,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<classpath>
 				<path id="classpath_run">
 					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-			   </path>				
+			   	</path>				
 			</classpath>
 		</java>
 		<copy file="${deploy_sql}/init_utenzaPddMonitor.sql" tofile="${tmp_sql}/init_utenzaPddMonitor.sql" overwrite="true"/>
@@ -813,9 +830,62 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<antcall target="sql_settings_users">
 		    <param name="file" value="${tmp_sql}/GovWay.sql"/>
 		</antcall>
+
+		<!-- Effettuo split DDL e DML -->
+		<mkdir dir="${tmp_sql}/ORIG"/>
+		<move file="${tmp_sql}/GovWay.sql" todir="${tmp_sql}/ORIG"/>
+		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
+			<arg value="${tmp_sql}/ORIG" />
+			<arg value="${tmp_sql}" />
+			<arg value="${antinstaller_modalita_installazione}" />
+			<arg value="${antinstaller_versione_precedente}" />
+			<arg value="${antinstaller_versione_attuale}" />
+			<arg value="${antinstaller_tipo_database}" />
+			<classpath>
+				<path id="classpath_run">
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_core_*.jar"/>
+			   	</path>				
+			</classpath>
+		</java>
+		<delete dir="${tmp_sql}/ORIG"/>
+		<if>
+			<not>
+				<equals arg1="${_output_sql_ddl}" arg2=""/>
+			</not>
+			<then>
+				<fail message="Generazione sql DDL fallita: ${_output_sql_ddl}"/>	
+			</then>
+		</if>
 		
 	</target>
 	
+	<target name="_setup_sql_aggiornamento">
+		<!-- SQL di Aggiornamento -->
+		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
+			<arg value="${deploy_sql}/sql_upgrade" />
+			<arg value="${tmp_sql}" />
+			<arg value="${antinstaller_modalita_installazione}" />
+			<arg value="${antinstaller_versione_precedente}" />
+			<arg value="${antinstaller_versione_attuale}" />
+			<arg value="${antinstaller_tipo_database}" />
+			<classpath>
+				<path id="classpath_run">
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_core_*.jar"/>
+			   	</path>				
+			</classpath>
+		</java>
+		<if>
+			<not>
+				<equals arg1="${_output_sql_ddl}" arg2=""/>
+			</not>
+			<then>
+				<fail message="Generazione sql di aggiornamento: ${_output_sql_ddl}"/>	
+			</then>
+		</if>
+	</target>
+
 	<target name="setup_datasource" depends="_setup_datasource"/>
 	<target name="_setup_datasource">
 		<if>

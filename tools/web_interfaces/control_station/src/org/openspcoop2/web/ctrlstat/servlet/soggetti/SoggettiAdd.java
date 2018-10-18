@@ -63,7 +63,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
-import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -71,7 +70,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * soggettiAdd
@@ -165,6 +163,7 @@ public final class SoggettiAdd extends Action {
 
 			// Prendo la lista di pdd e la metto in un array
 			String[] pddList = null;
+			String[] pddEsterneList = null;
 			List<String> tipiSoggetti = null;
 			int totPdd = 1;
 			String nomePddGestioneLocale = null;
@@ -172,7 +171,6 @@ public final class SoggettiAdd extends Action {
 
 			SoggettiCore soggettiCore = new SoggettiCore();
 			PddCore pddCore = new PddCore(soggettiCore);
-			UtentiCore utentiCore = new UtentiCore(soggettiCore);
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli(session);
@@ -201,13 +199,19 @@ public final class SoggettiAdd extends Action {
 				pddList = new String[lista.size()];
 
 				int i = 0;
+				List<String> pddEsterne = new ArrayList<>();
+				pddEsterne.add("-");
 				for (PdDControlStation pddTmp : lista) {
 					pddList[i] = pddTmp.getNome();
 					i++;
 					if(this.singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
 						nomePddGestioneLocale = pddTmp.getNome();
 					}
+					if(this.singlePdD && PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
+						pddEsterne.add(pddTmp.getNome());
+					}
 				}
+				pddEsterneList = pddEsterne.toArray(new String[1]);
 				
 				// Gestione pdd
 				if(soggettiCore.isGestionePddAbilitata(soggettiHelper)==false) {
@@ -327,7 +331,7 @@ public final class SoggettiAdd extends Action {
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,nomePddGestioneLocale, this.pdd, 
+						pddList,pddEsterneList,nomePddGestioneLocale, this.pdd, 
 						listaTipiProtocollo, this.protocollo ,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
 						isPddEsterna,this.tipologia,this.dominio);
@@ -406,7 +410,7 @@ public final class SoggettiAdd extends Action {
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,nomePddGestioneLocale, this.pdd,  
+						pddList,pddEsterneList,nomePddGestioneLocale, this.pdd,  
 						listaTipiProtocollo, this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
 						isPddEsterna,this.tipologia,this.dominio);
@@ -536,39 +540,7 @@ public final class SoggettiAdd extends Action {
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			// eseguo le operazioni
 			soggettiCore.performCreateOperation(userLogin, soggettiHelper.smista(), sog);
-			
-			// Check Utenza per multi-tenant
-			if(this.singlePdD) {
-				
-				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-				
-				boolean operativo = !pddCore.isPddEsterna(this.pdd);
-				if(operativo) {
-					// check utenze che hanno il protocollo
-					
-					User userPerCheck = new User();
-					userPerCheck.addProtocolloSupportato(this.protocollo);
-					boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
-					if(forceEnableMultitenant) {
-						List<String> usersList = utentiCore.getUsersByProtocolloSupportato(this.protocollo, true);
-						if(usersList!=null && usersList.size()>0) {
-							for (String user : usersList) {
-								User u = utentiCore.getUser(user);
-								if(u.isPermitMultiTenant()==false) {
-									u.setPermitMultiTenant(true);
-									listaOggettiDaModificare.add(u);
-								}
-							}
-						}
-					}
-					
-				}
-				
-				if(listaOggettiDaModificare.size()>0) {
-					soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), listaOggettiDaModificare.toArray());
-				}
-			}
-			
+
 			// cancello file temporanei
 			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties); 
 
@@ -601,6 +573,10 @@ public final class SoggettiAdd extends Action {
 				soggettiHelper.prepareSoggettiConfigList(listaSoggettiConfig, ricerca);
 			}
 
+			if(!pddCore.isPddEsterna(this.pdd)) {
+				generalHelper = new GeneralHelper(session);
+				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
+			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

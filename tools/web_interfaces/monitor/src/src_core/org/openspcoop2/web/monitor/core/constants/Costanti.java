@@ -32,6 +32,12 @@ package org.openspcoop2.web.monitor.core.constants;
 public class Costanti {
 
 	public static final String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
+	public static final String LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM = "Soggetto: {0}";
+	
+	public final static String LABEL_PARAMETRO_SOGGETTI_OPERATIVI = "Soggetti Operativi";
+	public final static String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";
+	public final static String LABEL_PARAMETRO_SOGGETTO_COMPACT = "Soggetto Operativo";
+	public final static String LABEL_PARAMETRO_SOGGETTI_COMPACT = "Soggetti Operativi";
 	
 	public static final String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";
 	public static final String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";
@@ -74,4 +80,25 @@ public class Costanti {
 	public static final String LABEL_STORICO_ID_APPLICATIVO = "Identificativo Applicativo";
 	public static final String LABEL_STORICO_ID_MESSAGGIO = "Identificativo Messaggio";
 	public static final String LABEL_STORICO_ID_TRANSAZIONE = "Identificativo Transazione";
+	
+	
+	
+	/* costanti properties file messages_it.properties*/ 
+	
+	public static final String DATA_LABEL_KEY = "commons.data.label";
+	public static final String AZIONE_LABEL_KEY = "commons.azione.label";
+	public static final String SERVIZIO_APPLICATIVO_LABEL_KEY = "commons.applicativo.label";
+	public static final String SERVIZIO_LABEL_KEY = "commons.servizio.label";
+	public static final String SOGGETTO_LABEL_KEY = "commons.soggetto.label";
+	public static final String SOGGETTO_LOCALE_LABEL_KEY = "commons.soggettoLocale.label";
+	public static final String SOGGETTO_REMOTO_LABEL_KEY = "commons.soggettoRemoto.label";
+	public static final String NOME_LABEL_KEY = "commons.nome.label";
+	public static final String RICHIESTA_LABEL_KEY = "commons.richiesta.label";
+	public static final String EROGATORE_LABEL_KEY = "commons.erogatore.label";
+	public static final String FRUITORE_LABEL_KEY = "commons.fruitore.label";
+	
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_KEY = "commons.search.applicativo.defaultLabel";
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_LOCALE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoLocal";
+	public static final String SEARCH_APPLICATIVO_DEFAULT_LABEL_NO_SOGGETTO_FRUITORE_KEY = "commons.search.applicativo.defaultLabelNoSoggettoFruitore";
+	
 }

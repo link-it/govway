@@ -1,3 +1,34 @@
+2018-10-16  Andrea Poli <apoli@link.it>
+
+	Aggiunta configurazione per personalizzare le informazioni salvate in una transazione.
+	Allo stato attuale e' possibile indicare il salvataggio:
+	- tempi di attraversamento delle funzionalità dell'API Gateway
+	- informazione del token
+	ALTER TABLE configurazione ADD COLUMN transazioni_tempi VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN transazioni_token VARCHAR(255);
+
+	Aggiunta colonna nella tabella transazioni che conserva i tempi di attraversamento 
+	delle funzionalità dell'API Gateway
+	ALTER TABLE transazioni ADD COLUMN tempi_elaborazione VARCHAR(4000);
+
+2018-09-24  Andrea Poli <apoli@link.it>
+
+	Aggiunta indicazione sul dominio di default per protocollo sul soggetto:
+	ALTER TABLE soggetti ADD COLUMN INT DEFAULT 0;
+
+	Aggiunta gestione multitenant nella configurazione:
+	ALTER TABLE configurazione ADD COLUMN multitenant_stato VARCHAR(255); 
+	ALTER TABLE configurazione ADD COLUMN multitenant_fruizioni VARCHAR(255);
+	ALTER TABLE configurazione ADD COLUMN multitenant_erogazioni VARCHAR(255);
+
+	Aggiunta funzionalità di autorizzazione degli applicativi nelle porte applicative:
+	CREATE TABLE porte_applicative_sa_auth
+	(
+	       id_porta BIGINT NOT NULL,
+	       id_servizio_applicativo BIGINT NOT NULL,
+	       ...
+	);
+
 2017-11-28  Andrea Poli <apoli@link.it>
 
 	Creato file ChangeLog

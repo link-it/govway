@@ -130,6 +130,9 @@ public class Dump {
 	private IState statoRichiesta;
 	private IState statoRisposta;
 	
+	/** Transaction */
+	private Transaction transactionNullable = null;
+	
 	/**
 	 * Costruttore. 
 	 *
@@ -189,6 +192,15 @@ public class Dump {
 		if(this.dominio==null){
 			this.dominio=OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocol);
 		}
+		
+		try{
+			if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+				String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				this.transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}
+		}catch(Exception e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+		}
 	}
 
 	private Connection getConnectionFromState(boolean richiesta){
@@ -223,46 +235,146 @@ public class Dump {
 	/** ----------------- METODI DI LOGGING  ---------------- */
 
 	public void dumpBinarioRichiestaIngresso(byte[] msg, URLProtocolContext protocolContext) throws DumpException {
-		dump(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaIngresso();
+		}
+		try {
+			dump(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpBinarioRichiestaIngresso();
+			}
+		}
 	}
 	
 	public void dumpRichiestaIngresso(OpenSPCoop2Message msg, URLProtocolContext protocolContext) throws DumpException {
-		dump(TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
+		}
+		try {
+			dump(TipoMessaggio.RICHIESTA_INGRESSO,msg,null,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpRichiestaIngresso();
+			}
+		}
 	}
 	public void dumpRichiestaIngressoByIntegrationManagerError(byte[] msg, URLProtocolContext protocolContext) throws DumpException {
-		dump(TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpRichiestaIngresso();
+		}
+		try {
+			dump(TipoMessaggio.RICHIESTA_INGRESSO,null,msg,protocolContext.getSource(),protocolContext.getParametersTrasporto());
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpRichiestaIngresso();
+			}
+		}
 	}
 	
 
 	public void dumpBinarioRichiestaUscita(byte[] msg, InfoConnettoreUscita infoConnettore) throws DumpException {
-		dump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpBinarioRichiestaUscita();
+		}
+		try {
+			dump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpBinarioRichiestaUscita();
+			}
+		}
 	}
 	public void dumpRichiestaUscita(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore) throws DumpException {
-		dump(TipoMessaggio.RICHIESTA_USCITA,msg,null,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpRichiestaUscita();
+		}
+		try {
+			dump(TipoMessaggio.RICHIESTA_USCITA,msg,null,infoConnettore.getLocation(),infoConnettore.getPropertiesTrasporto());
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpRichiestaUscita();
+			}
+		}
 	}
 
 	
 	public void dumpBinarioRispostaIngresso(byte[] msg, InfoConnettoreUscita infoConnettore, java.util.Properties transportHeaderRisposta) throws DumpException {
-		dump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),transportHeaderRisposta);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
+		}
+		try {
+			dump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO,null,msg,infoConnettore.getLocation(),transportHeaderRisposta);
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpBinarioRispostaIngresso();
+			}
+		}
 	}
 	
 	public void dumpRispostaIngresso(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore, java.util.Properties transportHeaderRisposta) throws DumpException {
-		dump(TipoMessaggio.RISPOSTA_INGRESSO,msg,null,infoConnettore.getLocation(),transportHeaderRisposta);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
+		}
+		try {
+			dump(TipoMessaggio.RISPOSTA_INGRESSO,msg,null,infoConnettore.getLocation(),transportHeaderRisposta);
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpRispostaIngresso();
+			}
+		}
 	}
 	
 
 	
 	public void dumpBinarioRispostaUscita(byte[] msg, URLProtocolContext protocolContext, java.util.Properties transportHeaderRisposta) throws DumpException {
-		dump(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext.getSource(),transportHeaderRisposta);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
+		}
+		try {
+			dump(TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO,null,msg,protocolContext.getSource(),transportHeaderRisposta);
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpBinarioRispostaUscita();
+			}
+		}
 	}
 	
 	public void dumpRispostaUscita(OpenSPCoop2Message msg, URLProtocolContext protocolContext, java.util.Properties transportHeaderRisposta) throws DumpException {
-		dump(TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext.getSource(),transportHeaderRisposta);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpRispostaUscita();
+		}
+		try {
+			dump(TipoMessaggio.RISPOSTA_USCITA,msg,null,protocolContext.getSource(),transportHeaderRisposta);
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpRispostaUscita();
+			}
+		}
 	}
 	
 
 	public void dumpIntegrationManagerGetMessage(OpenSPCoop2Message msg) throws DumpException {
-		dump(TipoMessaggio.INTEGRATION_MANAGER,msg,null,"IntegrationManager.getMessage()",null);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startDumpIntegrationManager();
+		}
+		try {
+			dump(TipoMessaggio.INTEGRATION_MANAGER,msg,null,"IntegrationManager.getMessage()",null);
+		}
+		finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endDumpIntegrationManager();
+			}
+		}
 	}
 	
 	/**

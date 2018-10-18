@@ -266,7 +266,7 @@ public final class AccordiCooperazioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				if(acCore.isShowGestioneWorkflowStatoDocumenti()){
+				if(acHelper.isShowGestioneWorkflowStatoDocumenti()){
 					if(this.statoPackage==null)
 						this.statoPackage=StatiAccordo.bozza.toString();
 				}else{
@@ -395,7 +395,7 @@ public final class AccordiCooperazioneAdd extends Action {
 			ac.setStatoPackage(this.statoPackage);
 
 			// Check stato
-			if(acCore.isShowGestioneWorkflowStatoDocumenti()){
+			if(acHelper.isShowGestioneWorkflowStatoDocumenti()){
 
 				try{
 					acCore.validaStatoAccordoCooperazione(ac);

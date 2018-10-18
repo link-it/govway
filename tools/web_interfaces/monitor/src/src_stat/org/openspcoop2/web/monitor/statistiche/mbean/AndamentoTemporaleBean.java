@@ -46,9 +46,11 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
@@ -172,36 +174,21 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
 		if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
-			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_ESITI_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		}
 		else{
-			sb.append(CostantiGrafici.ANDAMENTO_TEMPORALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		}
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
-//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
-//			}
-//			else{
-//				sb.append(CostantiGrafici.GIORNALIERO_LABEL).append(CostantiGrafici.WHITE_SPACE;
-//			}
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
-//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
 			sb.append(CostantiGrafici.ORARIA_LABEL).append(CostantiGrafici.WHITE_SPACE);
-//			}
-//			else{
-//				sb.append(CostantiGrafici.ORARIO_LABEL).append(CostantiGrafici.WHITE_SPACE;
-//			}
 		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.MENSILE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.SETTIMANALE_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else {
-//			if(((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti()){
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
-//			}
-//			else{
-//				sb.append(CostantiGrafici.GIORNALIERO_LABEL).append(CostantiGrafici.WHITE_SPACE); 
-//			}
 		}
 		return sb.toString();
 	}
@@ -209,14 +196,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 
-		StringBuffer caption = new StringBuffer(
-				captionText);
-		//		if (StringUtils.isNotBlank(this.search.getNomeServizio())) {
-		//			caption.append("per il Servizio " + this.search.getNomeServizio());
-		//		}
-		//		if (StringUtils.isNotBlank(this.search.getNomeAzione())) {
-		//			caption.append(", azione " + this.search.getNomeAzione());
-		//		}
+		StringBuffer caption = new StringBuffer(captionText);
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if (StatisticType.ORARIA.equals(this.getTempo()) || this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
@@ -237,13 +217,6 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		ValueExpression valueExp = elFactory.createValueExpression(elContext,
 				"#{andamentoTemporaleBean}", AndamentoTemporaleBean.class);
 		AndamentoTemporaleBean ab = new AndamentoTemporaleBean();
-		// ab.setSoggettiDao(this.soggettiDao);
-		// ab.setAzioniDao(this.azioniDao);
-		// ab.setConfigDao(this.configDao);
-		// ab.setServiziDao(this.serviziDao);
-		// ab.setGiornalieroDao(this.giornalieroDao);
-		// ab.setOrarioDao(this.orarioDao);
-
 		valueExp.setValue(elContext, ab);
 	}
 
@@ -355,7 +328,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false);
 			
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 
 			if(useFaceContext){
@@ -451,7 +424,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 			response.flushBuffer();
 
@@ -548,7 +521,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti(), true);
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda,tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),null,
 					((StatsSearchForm)this.search).isAndamentoTemporalePerEsiti());
 
 			if(useFaceContext){

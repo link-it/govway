@@ -137,6 +137,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String autenticazioneTokenUsername = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 			
+			String autorizzazione_token = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 			String autorizzazione_tokenOptions = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
@@ -172,6 +173,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 			Search searchForCount = new Search(true,1);
 			porteApplicativeCore.porteAppSoggettoList(idInt, searchForCount);
 			int sizeSoggettiPA = searchForCount.getNumEntries(Liste.PORTE_APPLICATIVE_SOGGETTO);
+			
+			Search searchForCountSAAutorizzati = new Search(true,1);
+			porteApplicativeCore.porteAppServiziApplicativiAutorizzatiList(idInt, searchForCountSAAutorizzati);
+			int numErogazioneApplicativiAutenticati = searchForCountSAAutorizzati.getNumEntries(Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO);
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
@@ -213,7 +218,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 			Parameter urlAutorizzazioneAutenticatiParam= new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST, urlParmsAutorizzazioneAutenticati);
 			String urlAutorizzazioneAutenticati = urlAutorizzazioneAutenticatiParam.getValue();
 			
-			
+			Parameter[] urlParmsAutorizzazioneErogazioneApplicativiAutenticati = { 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
+			Parameter urlAutorizzazioneErogazioneApplicativiAutenticatiParam= new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST, urlParmsAutorizzazioneErogazioneApplicativiAutenticati);
+			String urlAutorizzazioneErogazioneApplicativiAutenticati = urlAutorizzazioneErogazioneApplicativiAutenticatiParam.getValue();
 
 			Parameter[] urlParmsAutorizzazioneRuoli = { 
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
@@ -334,6 +344,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 						}
 						
 						autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
+						if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
+							autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
+						}
+						else {
+							autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
+						}
 						
 						if(pa.getGestioneToken().getAutenticazione() != null) {
 							
@@ -431,7 +447,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -451,7 +468,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch, 
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
-					autorizzazione_tokenOptions,
+					autorizzazione_token,autorizzazione_tokenOptions,
 					autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 					autorizzazioneContenuti,
 					protocollo);
@@ -476,7 +493,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneRuoliTipologia, ruoloMatch,
 						confPers, isSupportatoAutenticazione, contaListe, false, false,
 						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-						gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
+						gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+						urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -784,7 +802,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazione, contaListe, false, false
 					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
+					gestioneToken, gestioneTokenPolicy, autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					urlAutorizzazioneErogazioneApplicativiAutenticati, numErogazioneApplicativiAutenticati);
 			
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			

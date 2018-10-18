@@ -48,9 +48,11 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -117,9 +119,13 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 			
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
+			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 					gestioneFruitori = true;
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
 				}
 			}
 						
@@ -168,8 +174,13 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				IDSoggetto idSoggettoFruitore = null;
 				
 				String uri = idsToRemove.get(i);
+				if(gestioneFruitori && uri.contains("@")) {
+					String tipoNomeFruitore = uri.split("@")[1];
+					uri = uri.split("@")[0];
+					idSoggettoFruitore = new IDSoggetto(tipoNomeFruitore.split("/")[0], tipoNomeFruitore.split("/")[1]);
+				}
+				
 				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uri);
-
 				AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio);
 				
 				// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
@@ -185,14 +196,19 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 					if(gestioneFruitori) {
 						
 						// Verifico se esiste il mapping con la fruizione
-						idSoggettoFruitore = new IDSoggetto(asps.getFruitore(0).getTipo(),asps.getFruitore(0).getNome());
 						idPDGenerateAutomaticamente = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idSoggettoFruitore);
 						if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
-							for (IDPortaDelegata idPortaDeleggata : idPDGenerateAutomaticamente) {
+							for (IDPortaDelegata idPortaDelegata : idPDGenerateAutomaticamente) {
+								if(idPortaDelegata.getIdentificativiFruizione()==null) {
+									idPortaDelegata.setIdentificativiFruizione(new IdentificativiFruizione());
+								}
+								if(idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore()==null) {
+									idPortaDelegata.getIdentificativiFruizione().setSoggettoFruitore(idSoggettoFruitore);
+								}
 								if(pdGenerateAutomcaticamente==null) {
 									pdGenerateAutomcaticamente=new ArrayList<>();
 								}
-								pdGenerateAutomcaticamente.add(porteDelegateCore.getPortaDelegata(idPortaDeleggata));
+								pdGenerateAutomcaticamente.add(porteDelegateCore.getPortaDelegata(idPortaDelegata));
 							}
 						}
 						
@@ -217,9 +233,69 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 				
 				boolean normalizeObjectIds = !apsHelper.isModalitaCompleta();
+				
+				// Prima verifico che l'aps non sia associato ad altre fruizioni od erogazioni
+				boolean apsEliminabile = true;
+				List<IDPortaDelegata> idPDGenerateAutomaticamenteCheckInUso = new ArrayList<>();
+				List<IDPortaApplicativa> idPAGenerateAutomaticamenteCheckInUso = new ArrayList<>();
+				if(gestioneErogatori) {
+					if(idPAGenerateAutomaticamente!=null && idPAGenerateAutomaticamente.size()>0){
+						idPAGenerateAutomaticamenteCheckInUso.addAll(idPAGenerateAutomaticamente);
+					}
+					
+					// verifico che non sia utilizzato in altre fruizioni
+					if(asps.sizeFruitoreList()>0) {
+						for (Fruitore fruitore : asps.getFruitoreList()) {
+							IDSoggetto idSoggettoFruitoreCheck = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+							Soggetto soggettoCheck = soggettiCore.getSoggettoRegistro(idSoggettoFruitoreCheck );
+							if(!pddCore.isPddEsterna(soggettoCheck.getPortaDominio())){
+								List<IDPortaDelegata> idPDGenerateAutomaticamenteTmp = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idSoggettoFruitoreCheck);
+								if(idPDGenerateAutomaticamenteTmp!=null && !idPDGenerateAutomaticamenteTmp.isEmpty()) {
+									apsEliminabile = false;
+									break;
+								}
+							}	
+								
+						}
+					}
+				}
+				else if(gestioneFruitori) {
+					
+					if(idPDGenerateAutomaticamente!=null && idPDGenerateAutomaticamente.size()>0){
+						idPDGenerateAutomaticamenteCheckInUso.addAll(idPDGenerateAutomaticamente);
+					}
+					
+					// verifico che non sia utilizzato in una erogazione
+					List<IDPortaApplicativa> idPAGenerateAutomaticamenteTmp = porteApplicativeCore.getIDPorteApplicativeAssociate(idServizio);
+					if(idPAGenerateAutomaticamenteTmp!=null && !idPAGenerateAutomaticamenteTmp.isEmpty()) {
+						apsEliminabile = false;
+					}
+					
+					if(apsEliminabile) {
+						// verifico che non sia utilizzato in altre fruizioni diverse da quella che sto osservando
+						if(asps.sizeFruitoreList()>0) {
+							for (Fruitore fruitore : asps.getFruitoreList()) {
+								IDSoggetto idSoggettoFruitoreCheck = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+								if(!idSoggettoFruitoreCheck.equals(idSoggettoFruitore)) {
+									Soggetto soggettoCheck = soggettiCore.getSoggettoRegistro(idSoggettoFruitoreCheck );
+									if(!pddCore.isPddEsterna(soggettoCheck.getPortaDominio())){
+										List<IDPortaDelegata> idPDGenerateAutomaticamenteTmp = porteDelegateCore.getIDPorteDelegateAssociate(idServizio, idSoggettoFruitore);
+										if(idPDGenerateAutomaticamenteTmp!=null && !idPDGenerateAutomaticamenteTmp.isEmpty()) {
+											apsEliminabile = false;
+											break;
+										}
+									}	
+								}
+							}
+						}
+					}
+				}
+				
+				
 				boolean inUso = false;
-				if(!gestioneFruitori) {
-					inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, idPAGenerateAutomaticamente, normalizeObjectIds);
+				if(apsEliminabile) {
+					inUso = apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, 
+							idPDGenerateAutomaticamente, idPAGenerateAutomaticamente, normalizeObjectIds);
 				}
 				
 				if (inUso) {// accordo in uso
@@ -348,9 +424,29 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						
 					}
 					
-					listaOggettiDaEliminare.add(asps);
+					boolean updateAPS = false;
+					if(apsEliminabile) {
+						listaOggettiDaEliminare.add(asps);
+					}
+					else if(gestioneFruitori) {
+						// elimino fruitore
+						if(asps.sizeFruitoreList()>0) {
+							for (int j = 0; j < asps.sizeFruitoreList(); j++) {
+								Fruitore fruitore = asps.getFruitore(j);
+								IDSoggetto idSoggettoFruitoreCheck = new IDSoggetto(fruitore.getTipo(), fruitore.getNome());
+								if(idSoggettoFruitoreCheck.equals(idSoggettoFruitore)) {
+									asps.removeFruitore(j);
+									updateAPS = true;
+									break;
+								}
+							}
+						}
+					}
 					
 					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray());
+					if(updateAPS) {
+						apsCore.performUpdateOperation(superUser, apsHelper.smista(), asps);
+					}
 
 				}
 			}// chiudo for

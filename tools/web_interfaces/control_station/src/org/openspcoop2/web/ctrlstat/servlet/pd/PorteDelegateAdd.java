@@ -145,6 +145,7 @@ public final class PorteDelegateAdd extends Action {
 			String azione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
 			String stateless = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 			String localForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
+			String paLocalForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
 			String gestBody = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
 			String gestManifest = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
 			String ricsim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
@@ -174,6 +175,7 @@ public final class PorteDelegateAdd extends Action {
 			String autenticazioneTokenUsername = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 			
+			String autorizzazione_token = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 			String autorizzazione_tokenOptions = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
@@ -529,7 +531,7 @@ public final class PorteDelegateAdd extends Action {
 						sp, tiposp, sp, servid, serviziList,
 						serviziListLabel, servizio, tiposervizio, versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
-						azione, numAzioni,  stateless, localForward, ricsim, ricasim,
+						azione, numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,idsogg,protocollo,
@@ -543,7 +545,7 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
@@ -582,7 +584,7 @@ public final class PorteDelegateAdd extends Action {
 						sp, tiposp, sp, servid, serviziList,
 						serviziListLabel, servizio, tiposervizio,versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
-						azione, numAzioni, stateless, localForward, ricsim, ricasim,
+						azione, numAzioni, stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti ,idsogg,protocollo,
@@ -596,7 +598,7 @@ public final class PorteDelegateAdd extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
@@ -729,6 +731,7 @@ public final class PorteDelegateAdd extends Action {
 			if(localForward!=null){
 				portaDelegata.setLocalForward(new PortaDelegataLocalForward());
 				portaDelegata.getLocalForward().setStato(StatoFunzionalita.toEnumConstant(localForward));
+				portaDelegata.getLocalForward().setPortaApplicativa(paLocalForward);
 			}
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();

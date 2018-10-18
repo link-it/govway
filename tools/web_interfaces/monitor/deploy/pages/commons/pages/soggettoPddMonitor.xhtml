@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
+	<ui:param value="Passaggio al #{applicationBean.labelSoggettoDi} selezionato effettuato con successo." name="title" />
+	<ui:define name="navbar">
+		<ul>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<style>
+			#crumbs {display: none;}
+		</style>
+		<table style="width:100%;">
+			<tbody>
+				<tr>
+					<td style="width: 50%;">
+						<div class="messages-info">
+				  			<div class="messages-title">
+				  				<h:outputText value="&#160;&#160;" id="modalitaInfoTitleIcon" styleClass="messages-info-title-icon"/>
+				  				<span class="messages-title-text">Passaggio al #{applicationBean.labelSoggettoDi} selezionato effettuato con successo.</span>
+				  			</div>
+							<div class="messages-info-text">
+								<span>
+									<p>#{applicationBean.labelRisultatoSelezioneSoggetto}</p>
+								</span>
+							</div>
+						</div>
+					</td>
+			  		<td style="width: 50%;">
+			  			<h:outputText value="&#160;&#160;"/>
+			  		</td>
+				</tr>
+			</tbody>
+		</table>
+	</ui:define>
+
+</ui:composition>

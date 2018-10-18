@@ -761,7 +761,7 @@ public class TimerGestoreMessaggiLib  {
 
 
 			//	CorrelazioniApplicative da eliminare
-			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(),this.logTimer,null);
+			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(),this.logTimer,null,null);
 
 
 			// -- Scadute (Correlazioni per cui era stata impostata una scadenza) --

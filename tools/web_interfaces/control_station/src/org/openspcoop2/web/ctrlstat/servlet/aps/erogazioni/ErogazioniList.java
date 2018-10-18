@@ -87,7 +87,24 @@ public final class ErogazioniList extends Action {
 			ricerca = erogazioniHelper.checkSearchParameters(idLista, ricerca);
 			
 			String tipologiaParameterName = AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE;
-			boolean gestioneFruitori = erogazioniHelper.checkGestioneFruitori(session, ricerca, idLista, tipologiaParameterName,true);
+			String tipologia = erogazioniHelper.getParameter(tipologiaParameterName);
+			if(tipologia==null) {
+				// guardo se sto entrando da altri link fuori dal menu di sinistra
+				// in tal caso e' gia' impostato
+				tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+			}
+			boolean gestioneFruitori = false;
+			boolean gestioneErogatori = false;
+			if(tipologia!=null) {
+				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+					gestioneFruitori = true;
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
+				}
+			}
+			
+			erogazioniHelper.checkGestione(session, ricerca, idLista, tipologiaParameterName,true);
 			
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
@@ -98,9 +115,9 @@ public final class ErogazioniList extends Action {
 			
 			List<AccordoServizioParteSpecifica> lista = null;
 			if(apsCore.isVisioneOggettiGlobale(superUser)){
-				lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+				lista = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 			}else{
-				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori);
+				lista = apsCore.soggettiServizioList(superUser, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 			}
 
 			erogazioniHelper.prepareErogazioniList(ricerca, lista);

@@ -76,6 +76,8 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SOGGETTO = "porteApplicativeSoggetto";
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = "porteApplicativeServizioApplicativoAutorizzato";
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = "porteApplicativeValidazioneContenuti";
 	public final static ForwardParams TIPO_OPERAZIONE_VALIDAZIONE_CONTENUTI = ForwardParams.OTHER("");
 	
@@ -270,6 +272,17 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SOGGETTO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SOGGETTO_LIST);
 	}
 	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = new Vector<String>();
+	
+	static{
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_ADD);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_DELETE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO_LIST);
+	}
+	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI+".do";
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE +".do";
@@ -357,6 +370,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE = "modeCreazioneConnettore";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MAPPING = "mapping";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_SOGGETTO = CostantiControlStation.PARAMETRO_SOGGETTO;
+	public final static String PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO = CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE = "modeaz";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID = "azid";
@@ -422,6 +436,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_CONFIG = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG_DI = "Soggetti di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG = "Soggetti";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG_DI = "Applicativi di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_APPLICATIVI_CONFIG = "Applicativi";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG_DI = "Scope di ";
@@ -603,6 +619,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Soggetto ''{0}'' &egrave; gi&agrave; stato associato alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SOGGETTO = "Dati incompleti. &Egrave; necessario indicare un Soggetto";
+	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_APPLICATIVO = "Dati incompleti. &Egrave; necessario indicare un Applicativo";
 	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_XX_E_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Servizio Applicativo {0} &egrave; gi&agrave; stato associato alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_IL_SERVIZIO_APPLICATIVO_DEV_ESSERE_SCELTO_TRA_QUELLI_DEFINITI_NEL_PANNELLO_SERVIZI_APPLICATIVI_ED_ASSOCIATI_AL_SOGGETTO_XX = "Il Servizio Applicativo dev''essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto {0}";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UN_SERVIZIO_APPLICATIVO = "Dati incompleti. &Egrave; necessario indicare un Servizio Applicativo";

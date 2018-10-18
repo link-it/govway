@@ -93,6 +93,7 @@ public class LoginCostanti {
 	public final static String LABEL_MENU_UTENTE_LOGOUT = "Logout";
 	
 	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
+	public final static String LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM = "Soggetto: {0}";
 	
 	/* PARAMETRI */
 	
@@ -110,4 +111,5 @@ public class LoginCostanti {
 	public final static String LOGIN_JS_FUNCTION = "CheckDati();return false;";
 
 	public static final String MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE = "L'utente non &egrave; abilitato ad utilizzare la console"; 
+	public static final String MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO = "L'utente non &egrave; abilitato ad utilizzare la console: configurazione incompleta"; 
 }

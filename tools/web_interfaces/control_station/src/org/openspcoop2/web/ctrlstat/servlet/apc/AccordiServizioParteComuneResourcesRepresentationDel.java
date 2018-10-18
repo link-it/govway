@@ -206,7 +206,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 
 			List<ResourceRepresentation> lista = apcCore.accordiResourceRepresentationsList(idResource, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesRepresentationsList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idResource, resourceRequest, resourceResponse);
+			apcHelper.prepareAccordiResourcesRepresentationsList(id, as, lista, ricerca, tipoAccordo, isRequest, risorsa, resourceRequest, resourceResponse);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

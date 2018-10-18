@@ -321,6 +321,6 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	}
 
 	public boolean isShowFiltroSoggetti() {
-		return Utility.getLoggedUtente().isPermitMultiTenant();
+		return Utility.isMultitenantAbilitato();
 	}
 }

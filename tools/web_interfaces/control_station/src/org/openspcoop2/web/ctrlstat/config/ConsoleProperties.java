@@ -298,6 +298,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "auditing.registrazioneElementiBinari");
 	}
 	
+	public boolean isIntegrationManagerEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "integrationManager.enabled");
+	}
+	
+	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	
@@ -806,6 +814,10 @@ public class ConsoleProperties {
 		return this.readIntegerProperty(true, "menu.porte.correlazioneApplicativa.maxLength");
 	}
 	
+	public Boolean isMenuPortaDelegataLocalForward() throws UtilsException{
+		return this.readBooleanProperty(true, "menu.porte.localForward");
+	}
+	
 	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
 		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
 		String tmp = this.readProperty(false, p);
@@ -845,7 +857,14 @@ public class ConsoleProperties {
 	public Boolean isEnableServiziVisualizzaModalitaElenco() throws UtilsException{
 		return this.readBooleanProperty(true, "console.servizi.visualizzaModalitaElenco");
 	}
-
+	
+	public Integer getNumeroMassimoSoggettiOperativiMenuUtente() throws UtilsException{
+		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.numeroMassimoSoggettiVisualizzati");
+	}
+	
+	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() throws Exception{
+		return this.readIntegerProperty(true, "console.selectListSoggettiOperativi.lunghezzaMassimaLabel");
+	}
 	
 	/* ---------------- Gestione govwayConsole centralizzata ----------------------- */
 
@@ -1198,5 +1217,37 @@ public class ConsoleProperties {
 		
 		return config;
 
+	}
+	
+	// propertiy per la gestione del console.font
+	private String consoleFontName = null;
+	private String consoleFontFamilyName = null;
+	private int consoleFontStyle = -1;
+	
+	public String getConsoleFont() throws Exception{
+		return this.readProperty(true,"console.font");
+	}
+	
+	public String getConsoleFontName() {
+		return this.consoleFontName;
+	}
+
+	public void setConsoleFontName(String consoleFontName) {
+		this.consoleFontName = consoleFontName;
+	}
+	public String getConsoleFontFamilyName() {
+		return this.consoleFontFamilyName;
+	}
+
+	public void setConsoleFontFamilyName(String consoleFontFamilyName) {
+		this.consoleFontFamilyName = consoleFontFamilyName;
+	}
+
+	public int getConsoleFontStyle() {
+		return this.consoleFontStyle;
+	}
+
+	public void setConsoleFontStyle(int consoleFontStyle) {
+		this.consoleFontStyle = consoleFontStyle;
 	}
 }

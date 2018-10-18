@@ -394,6 +394,7 @@ public final class PorteApplicativeChange extends Action {
 			String autenticazioneTokenEMail = null;
 			
 			String autorizzazione_tokenOptions = null;
+			String autorizzazione_token = null;
 			
 			if(pa.getGestioneToken() != null) {
 				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
@@ -440,6 +441,12 @@ public final class PorteApplicativeChange extends Action {
 				}
 				
 				autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
+				if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
+					autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
+				}
+				else {
+					autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
+				}
 				
 				if(pa.getGestioneToken().getAutenticazione() != null) {
 					
@@ -950,7 +957,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
@@ -1121,7 +1128,7 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				pd.setDati(dati);
@@ -1285,7 +1292,7 @@ public final class PorteApplicativeChange extends Action {
 				if(datiInvocazione) {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
-						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}

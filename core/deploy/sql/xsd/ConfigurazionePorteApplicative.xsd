@@ -31,6 +31,7 @@
                                 <linkit:sql-table object-name="porte-applicative-ruoli" object-type="porte-applicative-ruoli"/>
                                 <linkit:sql-table object-name="porte-applicative-scope" object-type="porte-applicative-scope"/>
                                 <linkit:sql-table object-name="porte-applicative-soggetti" object-type="porte-applicative-soggetti"/>
+                                <linkit:sql-table object-name="porte-applicative-sa-autenticati" object-type="porte-applicative-sa-autenticati"/>
                                 <linkit:sql-table object-name="porte-applicative-azioni" object-type="porte-applicative-azioni"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
@@ -1480,6 +1481,63 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
         </xsd:complexType>
     </xsd:element>
     
+    
+    <xsd:element name="porte-applicative-sa-autenticati">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="porte_applicative_sa_auth" 
+                        comment="Elenco di servizi applicativi che sono autorizzati a fruire della porta applicativa, se nella porta è stata impostata una autorizzazione 'authenticated' (vedi colonna 'autorizzazione')">
+                        <linkit:sql-table-constraint unique="uniq_pa_sa_auth" index="idx_pa_sa_auth"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="servizi_applicativi">
+                            <linkit:sql-table-fk-field name="id_servizio_applicativo"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_porta"/>
+                            <linkit:sql-table-unique-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_PA_SA_AUTH">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio_applicativo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo associato alla porta [FK verso tabella servizi_applicativi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     
     
     

@@ -30,6 +30,8 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ImbustamentoErrore;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -164,13 +166,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
+			Transaction transactionNullable = null;
+			try{
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// puo' non essere presente in comunicazioni stateful
+			}
+			
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
 					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1);		
+					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1,
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -192,13 +202,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
+			Transaction transactionNullable = null;
+			try{
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// puo' non essere presente in comunicazioni stateful
+			}
+			
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1);		
+					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1,
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -220,13 +238,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
+			Transaction transactionNullable = null;
+			try{
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// puo' non essere presente in comunicazioni stateful
+			}
+			
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreIntegrazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1);		
+					eProcessamento, msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1,
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -247,13 +273,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
+			Transaction transactionNullable = null;
+			try{
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// puo' non essere presente in comunicazioni stateful
+			}
+			
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
 					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1);		
+					msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1,
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -277,13 +311,21 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
+			Transaction transactionNullable = null;
+			try{
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(Exception e){
+				// puo' non essere presente in comunicazioni stateful
+			}
+			
 			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
 					attesaAttiva, checkInterval, profiloGestione,
 					tipoTempo, generazioneListaTrasmissioni,
-					msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1);		
+					msgTypeErrorResponse, this.forceSoapPrefixCompatibilitOpenSPCoopV1,
+					transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;

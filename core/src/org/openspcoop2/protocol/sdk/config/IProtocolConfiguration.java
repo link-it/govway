@@ -191,6 +191,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoAutenticazioneSoggetti();
 	
 	/**
+	 * Ritorna l'indicazione se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
+	 * 
+	 * @return True se se l'autenticazione degli applicativi sulle erogazioni viene supportato dal protocollo
+	 */
+	public boolean isSupportoAutenticazioneApplicativiErogazioni();
+	
+	/**
 	 * Ritorna l'indicazione se il codice IPA viene supportato dal protocollo
 	 * 
 	 * @return True se il codice IPA viene supportato dal protocollo

@@ -82,11 +82,12 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_FRUITORE ="Fruitore";
 	public final static String LABEL_EROGATORE ="Erogatore";
 	public final static String LABEL_APPLICATIVI = "Applicativi";
+	public final static String LABEL_APPLICATIVO = "Applicativo";
 	public final static String LABEL_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO ="Autenticazione";
 	public final static String LABEL_CREDENZIALI_ACCESSO_SERVIZIO_APPLICATIVO_HTTP ="Autenticazione Http";
-	public final static String LABEL_CREDENZIALI_ACCESSO_PORTA ="Modalit&agrave; di Accesso alla Porta";
+	public final static String LABEL_CREDENZIALI_ACCESSO_PORTA ="Modalit&agrave; di Accesso"; // alla Porta";
 	public final static String LABEL_CREDENZIALE_ACCESSO ="Modalit&agrave; di Accesso";
 	public final static String LABEL_TIPO_CREDENZIALE ="Tipo";
 	public final static String LABEL_ERRORE_APPLICATIVO = "Errore Applicativo generato della Porta";
@@ -115,6 +116,7 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_ID_PROVIDER_SERVIZIO_APPLICATIVO = "idprovidersa";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "sbustamento";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX = "getmsg";
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE = CostantiControlStation.PARAMETRO_ACCESSO_DA_CHANGE;
 	
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA = "sbustamentoInformazioniProtocolloRichiesta";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA = "sbustamentoInformazioniProtocolloRisposta";

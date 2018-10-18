@@ -6,6 +6,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" />
 		
 	<ui:define name="navbar">
 		<a4j:outputPanel id="transazioniCrumbsCtr" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">	
@@ -567,7 +568,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 							</rich:column>
 							<rich:column id="colServLive">
 								<f:facet name="header">
-									<h:outputText id="outServLive1" value="Servizio" />
+									<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
 								</f:facet>
 								<h:outputText id="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
 								<rich:toolTip for="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>

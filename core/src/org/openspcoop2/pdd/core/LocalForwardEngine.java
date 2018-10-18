@@ -52,6 +52,8 @@ import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
@@ -225,7 +227,16 @@ public class LocalForwardEngine {
 		this.localForwardParameter = localForwardParameter;
 	}
 	
-	
+	private Transaction getTransactionNullable() {
+		String idTransazione = (String) this.localForwardParameter.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+		Transaction transactionNullable = null;
+		try{
+			transactionNullable = TransactionContext.getTransaction(idTransazione);
+		}catch(Exception e){
+			// puo' non essere presente in comunicazioni stateful
+		}
+		return transactionNullable;
+	}
 	
 	
 	
@@ -344,7 +355,8 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
-						if(messageSecurityContext.processOutgoing(requestMessage,this.localForwardParameter.getPddContext().getContext()) == false){
+						if(messageSecurityContext.processOutgoing(requestMessage,this.localForwardParameter.getPddContext().getContext(),
+								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 							
@@ -565,7 +577,8 @@ public class LocalForwardEngine {
 					String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
-					if(messageSecurityContext.processIncoming(requestMessage,this.busta,this.localForwardParameter.getPddContext().getContext()) == false){  
+					if(messageSecurityContext.processIncoming(requestMessage,this.busta,this.localForwardParameter.getPddContext().getContext(),
+							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){  
 						if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 							List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
 							for (Iterator<?> iterator = subCodiciErrore.iterator(); iterator.hasNext();) {
@@ -855,7 +868,8 @@ public class LocalForwardEngine {
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 					messageSecurityApply = true;
-					if(messageSecurityContext.processOutgoing(responseMessage,this.localForwardParameter.getPddContext().getContext()) == false){
+					if(messageSecurityContext.processOutgoing(responseMessage,this.localForwardParameter.getPddContext().getContext(),
+							getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 						msgErrore = messageSecurityContext.getMsgErrore();
 						codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );
@@ -1026,7 +1040,8 @@ public class LocalForwardEngine {
 						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
-						if(messageSecurityContext.processIncoming(responseMessage,this.busta,this.localForwardParameter.getPddContext().getContext()) == false){
+						if(messageSecurityContext.processIncoming(responseMessage,this.busta,this.localForwardParameter.getPddContext().getContext(),
+								getTransactionNullable()!=null ? getTransactionNullable().getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 							this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "["+codiceErroreCooperazione+"] "+msgErrore );

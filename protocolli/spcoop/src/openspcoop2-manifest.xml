@@ -112,7 +112,7 @@
 
     <registry>
 
-        <organization authentication="false" codeDomain="true" codeIPA="true">
+        <organization authentication="false" inboundApplicativeAuthentication="false" codeDomain="true" codeIPA="true">
             <types>
             	<type name="spc" protocol="SPC"/>
             	<type name="test" protocol="TEST"/>

@@ -24,8 +24,10 @@
 
 package org.openspcoop2.pdd.core.autenticazione.pa;
 
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -78,6 +80,31 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			return esito;
 		}
 		
+		IDServizioApplicativo idServizioApplicativo = null;
+		try {
+			if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+				idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
+						getIdServizioApplicativoByCredenzialiPrincipal(principal);
+				if(idServizioApplicativo!=null) {
+					if(idSoggetto==null) {
+						idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
+					}
+					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggetto)==false) {
+						throw new Exception("Identificato sia un soggetto che un applicativo. Il soggetto ["+idSoggetto+
+								"] identificato è differente dal proprietario dell'applicativo identificato ["+idServizioApplicativo.getIdSoggettoProprietario()+"]");
+					}
+				}
+			}
+		}
+		catch(Exception e){
+			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic (Applicativi) non riuscita",e);
+			esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+			esito.setClientAuthenticated(false);
+			esito.setClientIdentified(false);
+			esito.setEccezioneProcessamento(e);
+			return esito;
+		}
+		
 		if(idSoggetto == null){
 			// L'identificazione in ssl non e' obbligatoria
 			//esito.setErroreCooperazione(ErroriCooperazione.AUTENTICAZIONE_FALLITA_CREDENZIALI_FORNITE_NON_CORRETTE.getErroreCooperazione());
@@ -87,6 +114,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		else {
 			esito.setClientIdentified(true);
 			esito.setIdSoggetto(idSoggetto);
+			esito.setIdServizioApplicativo(idServizioApplicativo);
 		}
 		
 		return esito;

@@ -8,6 +8,8 @@ CREATE TABLE soggetti
 	tipo_soggetto VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	identificativo_porta VARCHAR(255),
+	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
+	is_default INT DEFAULT 0,
 	-- 1/0 (true/false) svolge attivita di router
 	is_router INT DEFAULT 0,
 	superuser VARCHAR(255),

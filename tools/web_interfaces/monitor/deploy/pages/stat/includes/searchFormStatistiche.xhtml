@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" /> 
 	
 	<a4j:outputPanel id="searchPnl" ajaxRendered="false">
 		
@@ -91,15 +92,13 @@
 			<a4j:outputPanel id="filtriRicercaServizio" layout="block">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiServizio" value="Filtro Dati Servizio" styleClass="subtitle"/>
+					<h:outputText id="idDatiServizio" value="#{msg['stats.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
 				</div>
 			
 				<link:prop label="Tipologia" rendered="#{sf_showTipologia}">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-						<f:selectItem itemLabel="Erogazione" itemValue="ingresso" />
-						<f:selectItem itemLabel="Fruizione" itemValue="uscita" />
-						<f:selectItem itemLabel="Erogazione/Fruizione" itemValue="all" />
+						<f:selectItems value="#{sf_bean.tipologieRicerca}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,filtriRicercaDatiMittente" actionListener="#{sf_bean.tipologiaRicercaListener}" />
 					</rich:comboBox>
 				</link:prop>
@@ -180,10 +179,10 @@
 				
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoPnl" rendered="#{not empty sf_bean.riconoscimento}">
 					
-					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_tipologiaRicerca != 'ingresso' and sf_bean.riconoscimento == 'applicativo'}">
+					<a4j:outputPanel layout="block" id="saComboCtr" rendered="#{sf_bean.riconoscimento == 'applicativo'}">
 						<link:prop label="Applicativo" required="true">
 							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
-										defaultLabel="Selezione Applicativo" 
+										defaultLabel="#{sf_bean.defaultLabelServizioApplicativo}"
 										directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
 										width="416" enableManualInput="false">
 								<f:selectItem itemValue="--"/>

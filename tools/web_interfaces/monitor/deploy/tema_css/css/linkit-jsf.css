@@ -67,8 +67,21 @@
 }
 
 .stileTitolo {
-	padding: 16px 20px 16px 20px;
+/* 	padding: 16px 20px 16px 20px; */
 	background: ${page.header.background.color};
+}
+
+.tdTitolo {
+	padding: 16px 20px 16px 20px;
+}
+
+.tdTitoloNoPaddingLeft {
+	padding: 16px 20px 16px 4px;
+}
+
+.tdTitoloStatusPdd{
+	padding: 16px 16px 16px 16px; 
+	width: 16px;
 }
 
 .appTitle{
@@ -407,25 +420,28 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 
 .rich-ddmenu-label-unselect {
 	padding: 0px;
+	border: none;
 }
 
 .rich-ddmenu-label-select {
 	color: ${page.header.text.color};
-	background: none;
+	background-color: ${menu.header.background.color};
 	border: none;
 	padding: 0px;
 }
 
 .rich-label-text-decor {
 	font-family: 'Roboto';
-	font-size: 14px;
+	font-size: 18px;
 	font-weight: bold;
 	text-align: right;
+	white-space: nowrap;
+	padding: 20px 12px 21px 12px;
 }
 
 span.nomeUtente {
-	padding-left: 4px;
-    padding-right: 4px;
+/* 	padding-left: 4px; */
+/*     padding-right: 4px; */
     font-size: 14px;
 }
 
@@ -437,52 +453,50 @@ span.nomeUtenteImg {
 	background-position: center center;
 	width: 20px;
     height: 20px;
-    padding: 6px 12px 2px 12px;
+    padding: 4px 12px 6px 12px;
 }
 
 #menuUtente {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-/* 	min-width: 140px; */
-	padding-right: 16px;
 	cursor: pointer;
+	margin-right: 16px;
+	height: 60px;
 }
 
 #menuUtente.rich-ddmenu-label-select {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
-/* 	min-width: 140px; */
+	background-color: ${menu.header.background.color};
+	border-color: ${menu.header.background.color};
 }
 
 #menuUtente_menu {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
-	min-width: 154px;
+	background-color: ${menu.background.color};
+	border: none;
 	color: ${page.header.text.color};
-	padding-bottom: 4px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 }
 
 #menuUtente_menu div.rich-menu-list-bg {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
+	background-color: ${menu.background.color};
+	border: none;
 	background-image: none;
 	color: ${page.header.text.color};
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item {
 	color: ${page.header.text.color};
-	padding: 8px 0px 8px 12px; 
+	padding: 8px 8px 8px 16px; 
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
-	padding: 12px;
+	padding: 12px 12px 12px 16px;
 	font-size: 14px;
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
 	margin: 0px;
+	display: none;
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon img {
@@ -492,14 +506,18 @@ span.nomeUtenteImg {
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item-hover {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
-	background-color: ${page.header.background.color};
-	padding: 8px 0px 8px 12px; 
+	background-color: ${page.header.background.hover.color};
 	border: none;
+	font-weight: 600;
+	border-left: 12px solid ${menu.element.hover.border.color};
+    padding-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 span.modalita {
-	padding-left: 4px;
-    padding-right: 4px;
+/* 	padding-left: 4px; */
+/*     padding-right: 4px; */
     font-size: 16px;
 }
 
@@ -518,55 +536,163 @@ span.modalitaImg {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 184px;
-	padding-right: 4px;
 }
 
 #menuModalita.rich-ddmenu-label-select {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
-	min-width: 184px;
+	background-color: ${menu.header.background.color};
+	border-color: ${menu.header.background.color};
 }
 
 #menuModalita_menu {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
-	min-width: 184px;
-	padding-bottom: 4px;
+	background-color: ${menu.background.color};
+	border: none;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 }
 
 #menuModalita_menu div.rich-menu-list-bg {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
+	background-color: ${menu.background.color};
+	border: none;
 	background-image: none;
 	color: ${page.header.text.color};
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item {
 	color: ${page.header.text.color};
-	padding: 8px 0px 8px 12px; 
+	padding: 8px 8px 8px 16px;
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
-	padding: 8px;
+	padding: 12px 12px 12px 16px;
 	font-size: 14px;
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
 	margin: 0px;
+	display: none;
 }
 
 #menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon img {
 /* 	display: none; */
 }
 
-#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item-hover {
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled {
+	color: ${page.header.text.color};
+	font-weight: 600;
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item-hover,
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled:hover  {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
-	background-color: ${page.header.background.color};
-	padding: 8px 0px 8px 12px; 
+	background-color: ${page.header.background.hover.color};
 	border: none;
+	font-weight: 600;
+	border-left: 12px solid ${menu.element.hover.border.color};
+    padding-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* Menu soggetto */
+
+span.soggetto {
+/* 	padding-left: 4px; */
+/*     padding-right: 4px; */
+    font-size: 16px;
+}
+
+span.soggettoImg {
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: url(../images/tema_link/down_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 8px;
+}
+
+#menuSoggetto {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	color: ${page.header.text.color};
+}
+
+#menuSoggetto.rich-ddmenu-label-select {
+	background-color: ${menu.header.background.color};
+	border-color: ${menu.header.background.color};
+}
+
+#menuSoggetto_menu {
+	background-color: ${menu.background.color};
+	border: none;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg {
+	background-color: ${menu.background.color};
+	border: none;
+	background-image: none;
+	color: ${page.header.text.color};
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item {
+	color: ${page.header.text.color};
+	padding: 8px 8px 8px 16px;
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
+	padding: 12px 12px 12px 16px;
+	font-size: 14px;
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
+	margin: 0px;
+	display: none;
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon img {
+/* 	display: none; */
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled {
+	color: ${page.header.text.color};
+	font-weight: 600;
+}
+
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item-hover,
+#menuSoggetto_menu div.rich-menu-list-bg div.rich-menu-item.rich-menu-item-disabled:hover {
+	text-decoration: ${page.header.text.hover.decoration};
+	color: ${page.header.text.hover.color};
+	background-color: ${page.header.background.hover.color};
+	border: none;
+	font-weight: 600;
+	border-left: 12px solid ${menu.element.hover.border.color};
+    padding-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.rich-menu-item-label-inner {
+	
+}
+
+.itemMultiline span.rich-menu-item-label{
+	padding: 0px !important;
+}
+
+.rich-menu-item-label-inner p{
+    margin: 0px;
+    color: ${page.header.text.color};
+    padding-left: 16px;
+}
+
+/* Menu status pdd*/
+#statusPdd {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	color: ${page.header.text.color};
+    cursor: pointer;
 }
 
 /* slider*/
@@ -822,6 +948,7 @@ span.modalitaImg {
 }
 
 .rich-tool-tip {
+	font-weight: normal;
 	background-color: ${tooltip.background.color};
 	border: 1px solid ${tooltip.border.color};
 	color: ${tooltip.color};

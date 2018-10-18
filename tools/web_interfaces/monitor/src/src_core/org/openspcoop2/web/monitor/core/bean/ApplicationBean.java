@@ -22,6 +22,7 @@
 package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +32,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
@@ -1018,5 +1021,20 @@ public class ApplicationBean implements Serializable {
 	public String getLabelProfiliCompact() {
 		return org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLI_COMPACT;
 	}
-
+	public String getLabelSoggettoDi() {
+		return org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO;
+	}
+	public String getLabelSoggettoCompact() {
+		return org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_PARAMETRO_SOGGETTO_COMPACT;
+	}
+	public String getLabelSoggettiCompact() {
+		return org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_PARAMETRO_SOGGETTI_COMPACT;
+	}
+	public String getLabelRisultatoSelezioneSoggetto() throws ProtocolException {
+		if(this.loginBean.getSoggettoPddMonitor() == null || this.loginBean.getSoggettoPddMonitor().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			return MessageFormat.format("{0} disponibili: {1}", getLabelSoggettiCompact(), this.loginBean.getLabelSoggettoSenzaPrefisso());
+		} else {
+			return MessageFormat.format("{0} attuale: {1}",getLabelSoggettoCompact(), this.loginBean.getLabelSoggettoSenzaPrefisso());
+		}
+	}
 }

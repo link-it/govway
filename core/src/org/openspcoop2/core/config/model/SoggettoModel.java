@@ -51,6 +51,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.NOME = new Field("nome",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new Field("identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"soggetto",Soggetto.class);
+		this.DOMINIO_DEFAULT = new Field("dominio-default",boolean.class,"soggetto",Soggetto.class);
 		this.ROUTER = new Field("router",boolean.class,"soggetto",Soggetto.class);
 		this.PD_URL_PREFIX_REWRITER = new Field("pd-url-prefix-rewriter",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PA_URL_PREFIX_REWRITER = new Field("pa-url-prefix-rewriter",java.lang.String.class,"soggetto",Soggetto.class);
@@ -71,6 +72,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"soggetto",Soggetto.class);
 		this.IDENTIFICATIVO_PORTA = new ComplexField(father,"identificativo-porta",java.lang.String.class,"soggetto",Soggetto.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"soggetto",Soggetto.class);
+		this.DOMINIO_DEFAULT = new ComplexField(father,"dominio-default",boolean.class,"soggetto",Soggetto.class);
 		this.ROUTER = new ComplexField(father,"router",boolean.class,"soggetto",Soggetto.class);
 		this.PD_URL_PREFIX_REWRITER = new ComplexField(father,"pd-url-prefix-rewriter",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PA_URL_PREFIX_REWRITER = new ComplexField(father,"pa-url-prefix-rewriter",java.lang.String.class,"soggetto",Soggetto.class);
@@ -97,6 +99,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	public IField IDENTIFICATIVO_PORTA = null;
 	 
 	public IField DESCRIZIONE = null;
+	 
+	public IField DOMINIO_DEFAULT = null;
 	 
 	public IField ROUTER = null;
 	 

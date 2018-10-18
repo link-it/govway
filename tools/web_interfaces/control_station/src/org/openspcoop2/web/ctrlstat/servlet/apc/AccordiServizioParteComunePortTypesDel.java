@@ -219,6 +219,9 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			if(modificaAS_effettuata)
 				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
+			// Verifico stato
+			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 

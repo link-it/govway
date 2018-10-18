@@ -30,6 +30,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -75,7 +76,15 @@ public final class ErogazioniChange extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idInt);
 			
-			apsHelper.prepareErogazioneChange(tipoOp, asps);
+			String tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+			String nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
+			IDSoggetto idSoggettoFruitore = null;
+			if(tipoSoggettoFruitore!=null && !"".equals(tipoSoggettoFruitore) &&
+					nomeSoggettoFruitore!=null && !"".equals(nomeSoggettoFruitore)) {
+				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+			}
+			
+			apsHelper.prepareErogazioneChange(tipoOp, asps, idSoggettoFruitore);
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

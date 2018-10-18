@@ -23,14 +23,22 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
+import java.awt.Font;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
@@ -215,6 +223,9 @@ public class GeneralHelper {
 
 			if(!u.hasOnlyPermessiUtenti())  
 				gd.setModalitaLinks(this.caricaMenuProtocolliUtente(u));
+			
+			if(!u.hasOnlyPermessiUtenti())  // si e' deciso di farlo vedere sempre, sarà senza tendina: && this.core.isMultitenant())  
+				gd.setSoggettiLinks(this.caricaMenuSoggetti(u));
 		}
 
 		return gd;
@@ -271,49 +282,191 @@ public class GeneralHelper {
 		try {
 			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
 
-			if(protocolliDispondibili != null && protocolliDispondibili.size() > 1) {
+			if(protocolliDispondibili != null && protocolliDispondibili.size() > 0) {
 				// prelevo l'eventuale protocollo selezionato
 				String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
+				if(protocolliDispondibili.size()==1) {
+					protocolloSelezionato = protocolliDispondibili.get(0); // forzo
+				}
 				
 				GeneralLink glModalitaCorrente = new GeneralLink();
  				String labelSelezionato = protocolloSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(protocolloSelezionato);
-				glModalitaCorrente.setLabel(MessageFormat.format(LoginCostanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato)); 
+				String labelSelezionatoCompleta = MessageFormat.format(LoginCostanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato);
+				glModalitaCorrente.setLabel(labelSelezionatoCompleta); 
 				glModalitaCorrente.setUrl("");
+				glModalitaCorrente.setLabelWidth(this.core.getFontWidth(labelSelezionatoCompleta,  Font.BOLD, 16)); 
 				link.addElement(glModalitaCorrente);
 
-				// popolo la tendina con i protocolli disponibili
-				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
-					GeneralLink glProt = new GeneralLink();
-					
-					String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
-					glProt.setLabel(labelProt);
-					String iconProt = protocolloSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(protocolloSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-					glProt.setIcon(iconProt);
-					glProt.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, protocolloDisponibile),
+				if(protocolliDispondibili.size()>1) {
+					// popolo la tendina con i protocolli disponibili
+					for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
+						GeneralLink glProt = new GeneralLink();
+						
+						String labelProt = ConsoleHelper._getLabelProtocollo(protocolloDisponibile);
+						glProt.setLabel(labelProt);
+	//					String iconProt = protocolloSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(protocolloSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+	//					glProt.setIcon(iconProt);
+						if(protocolloSelezionato != null && protocolloSelezionato.equals(protocolloDisponibile)) {
+							glProt.setUrl("");
+						} else {
+							glProt.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, protocolloDisponibile),
+								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA,Costanti.CHECK_BOX_ENABLED)
+								);
+						}
+
+						glProt.setLabelWidth(this.core.getFontWidth(glProt.getLabel(), 14)); 
+						link.addElement(glProt);
+					}
+				
+					// seleziona tutti 
+					GeneralLink glAll = new GeneralLink();
+					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+	//				glAll.setIcon((protocolloSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+					if((protocolloSelezionato == null)) {
+						glAll.setUrl("");
+					} else {
+						glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
 							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA,Costanti.CHECK_BOX_ENABLED)
 							);
-					
-					link.addElement(glProt);
+					}
+					glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
+					link.addElement(glAll);
 				}
-
-				// seleziona tutti 
-				GeneralLink glAll = new GeneralLink();
-				glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
-				glAll.setIcon((protocolloSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-				glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-						new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
-						new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-						new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA,Costanti.CHECK_BOX_ENABLED)
-						);
-				link.addElement(glAll);
+				
 			}
 		} catch (Exception e) {
+			ControlStationLogger.getPddConsoleCoreLogger().error(e.getMessage(),e);
 		}
 
 		return link;
 	}
 
+	public Vector<GeneralLink> caricaMenuSoggetti(User u){
+		Vector<GeneralLink> link = new Vector<GeneralLink>();
 
+		try {
+			// prelevo l'eventuale protocollo selezionato
+			List<String> protocolliDispondibili = this.core.getProtocolli(this.session,true);
+			String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
+			if(protocolliDispondibili.size()==1) {
+				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
+			}
+			
+			// prelevo il soggetto selezionato
+			String soggettoOperativoSelezionato = u.getSoggettoSelezionatoPddConsole();
+			
+			List<IDSoggetto> idSoggettiOperativi = this.soggettiCore.getIdSoggettiOperativi(protocolloSelezionato);
+			// Si e' deciso che i soggetti associati valgono solo per govwayMonitor
+//			if(u.getSoggetti()!=null && !u.getSoggetti().isEmpty()) {
+//				idSoggettiOperativi = u.getSoggetti();
+//			}
+			
+			// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
+			if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
+					idSoggettiOperativi != null && !idSoggettiOperativi.isEmpty()) {
+				
+				if(soggettoOperativoSelezionato==null && idSoggettiOperativi.size()==1) {
+					IDSoggetto idSoggetto = idSoggettiOperativi.get(0);
+					soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
+				}
+				
+				GeneralLink glSoggettoCorrente = new GeneralLink();
+				IDSoggetto idSoggettoOperativo = null;
+				if(soggettoOperativoSelezionato!=null) {
+					idSoggettoOperativo = this.soggettiCore.convertSoggettoSelezionatoToID(soggettoOperativoSelezionato);
+				}
+ 				String labelSelezionato = soggettoOperativoSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelNomeSoggetto(idSoggettoOperativo);
+				String labelSelezionatoCompleta = MessageFormat.format(LoginCostanti.LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM, labelSelezionato);
+				glSoggettoCorrente.setLabel(labelSelezionatoCompleta); 
+				
+				if(labelSelezionatoCompleta.length() > this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()) {
+					glSoggettoCorrente.setLabel(ConsoleHelper.normalizeLabel(labelSelezionatoCompleta, this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()));
+				}
+				
+				glSoggettoCorrente.setUrl("");
+				glSoggettoCorrente.setLabelWidth(this.core.getFontWidth(glSoggettoCorrente.getLabel(),  Font.BOLD, 16)); 
+				link.addElement(glSoggettoCorrente);
+				
+				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = this.core.getNumeroMassimoSoggettiSelectListSoggettiOperatiti();
+				
+				if(idSoggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
+					
+					if(idSoggettiOperativi.size()>1) {
+						List<String> listaLabel = new ArrayList<>();
+						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+						for (IDSoggetto idSoggetto : idSoggettiOperativi) {
+							String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+							if(!listaLabel.contains(labelSoggetto)) {
+								listaLabel.add(labelSoggetto);
+								mapLabelIds.put(labelSoggetto, idSoggetto);
+							}
+						}
+						
+						// Per ordinare in maniera case insensistive
+						Collections.sort(listaLabel, new Comparator<String>() {
+							 @Override
+							public int compare(String o1, String o2) {
+						           return o1.toLowerCase().compareTo(o2.toLowerCase());
+						        }
+							});
+						
+						for (String label : listaLabel) {
+							GeneralLink glSoggetto = new GeneralLink();
+							
+							glSoggetto.setLabel(label);
+	//						String iconProt = labelSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED :
+	//							(label.equals(labelSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+	//						glSoggetto.setIcon(iconProt);
+							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString())) {
+								glSoggetto.setUrl("");
+							} else {
+								glSoggetto.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+										new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, NamingUtils.getSoggettoFromLabel(protocolloSelezionato, label).toString()),
+										new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+										new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO,Costanti.CHECK_BOX_ENABLED)
+										);
+							}
+							
+							if(label.length() > this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()) {
+								glSoggetto.setLabel(ConsoleHelper.normalizeLabel(label, this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()));
+								glSoggetto.setTooltip(label); 
+							}
+							
+							glSoggetto.setLabelWidth(this.core.getFontWidth(glSoggetto.getLabel(), 14)); 
+							link.addElement(glSoggetto);
+						}
+					
+					
+						// seleziona tutti 
+						GeneralLink glAll = new GeneralLink();
+						glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+	//					glAll.setIcon((labelSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+						if((soggettoOperativoSelezionato == null)) {
+							glAll.setUrl("");
+						} else {
+							glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+									new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
+									new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+									new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO,Costanti.CHECK_BOX_ENABLED)
+									);
+						}
+						glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
+						link.addElement(glAll);
+					}
+					
+				} else {
+					// TODO
+					glSoggettoCorrente.setUrl("urlModifica");
+				}
+			}
+		} catch (Exception e) {
+			ControlStationLogger.getPddConsoleCoreLogger().error(e.getMessage(),e);
+		}
+
+		return link;
+	}
 }

@@ -147,6 +147,7 @@ CREATE TABLE transazioni
 	token_username VARCHAR2(20),
 	token_mail VARCHAR2(20),
 	token_info CLOB,
+	tempi_elaborazione VARCHAR2(4000),
 	-- filtro duplicati (0=originale,-1=duplicata,N=quanti duplicati esistono)
 	duplicati_richiesta NUMBER,
 	duplicati_risposta NUMBER,

@@ -278,6 +278,18 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_REPRESENTATION_DEFINIZIONE = "Definizione";
 	public final static String LABEL_PARAMETERS = "Parametri";
 	public final static String LABEL_PARAMETER = "Parametro";
+	
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE = "Completare la configurazione dell'API appena creata ";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE = "Completare la configurazione dell'API appena modificata ";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_REST_CREATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE+"definendo almeno una risorsa";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_REST_UPDATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE+"definendo almeno una risorsa";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_CREATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE+"definendo almeno un servizio";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_UPDATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE+"definendo almeno un servizio";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_CREATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE+"definendo almeno un'azione per il servizio";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZIO_UPDATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE+"definendo almeno un'azione per il servizio";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_CREATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_CREATE+"definendo almeno un'azione nei servizi che non la possiedono";
+	public final static String LABEL_CONFIGURAZIONE_INCOMPLETA_SOAP_AZIONE_SERVIZI_UPDATE = LABEL_CONFIGURAZIONE_INCOMPLETA_PREFIX_UPDATE+"definendo almeno un'azione nei servizi che non la possiedono";
+	
 
 	/* PARAMETRI */
 
@@ -426,12 +438,11 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_REQUIRED = "requiredResParam";
 	public final static String PARAMETRO_APC_RESOURCES_PARAMETER_TIPO = "tipoResParam";
 	
-	
 	/* LABEL PARAMETRI */
 
 	public final static String LABEL_PARAMETRO_APC_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_APC_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_APC_REFERENTE = "Soggetto referente";
+	public final static String LABEL_PARAMETRO_APC_REFERENTE = "Soggetto Referente";
 	public final static String LABEL_PARAMETRO_APC_VERSIONE = "Versione";
 	public final static String LABEL_PARAMETRO_APC_PRIVATO = "Privato";
 	public final static String LABEL_PARAMETRO_APC_PRIVATO_INFORMATIVA_VISIBILITA = "Visibilità accordo";

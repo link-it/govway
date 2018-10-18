@@ -48,9 +48,11 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
@@ -189,7 +191,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 	public String getCaption(){
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
@@ -203,10 +205,10 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
 		if(((StatsSearchForm)this.search).isDistribuzionePerSoggettoRemota()){
-			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		}
 		else{
-			sb.append(CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		}
 		return sb.toString();
 	}

@@ -42,6 +42,8 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 String logoImage = gd.getLogoHeaderImage();
 String logoLink = gd.getLogoHeaderLink();
 String logoTitolo = gd.getLogoHeaderTitolo();
+
+// <span class="item-icon \<\%=icon \%\>"></span>
 %>
 <% if(StringUtils.isNotEmpty(logoImage)){ %>
 <!-- TR Logo -->
@@ -80,76 +82,178 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 				 			<tbody>
 				 				<tr>
 				 					<%
+										Vector<GeneralLink> soggetti = gd.getSoggettiLinks();
+							 			if(soggetti!= null && soggetti.size() > 0) {
+							 				GeneralLink soggettoTitoloLink = soggetti.get(0);
+									 		%>
+									 		<td>
+										 		<div id="menuSoggetto" class="ddmenu-label">
+													<div class="text-decor"> 
+														<% if(soggettoTitoloLink.getUrl().equals("")){%>
+															<span class="soggetto"><%=soggettoTitoloLink.getLabel() %></span>
+															<% if(soggetti.size() > 1){%>
+																<span class="soggettoImg"></span>
+															<%
+																}
+															}else {%>
+															<span class="soggetto">
+																<a class="td2PageHeader" href="<%= soggettoTitoloLink.getUrl() %>"><%= soggettoTitoloLink.getLabel() %></a>
+															 </span>
+														<% }%>
+													</div>
+													<% if(soggetti.size() > 1){%>
+														<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
+															<div id="menuSoggetto_menu">
+											 				<% 
+													  		GeneralLink l;
+													  		for (int i = 1; i < soggetti.size(); i++) {
+																l = (GeneralLink) soggetti.elementAt(i);
+	// 															String icon = l.getIcon();
+																String spanLabelClass= "item-label";
+																String itemClass= "menu-item-no-icon";
+	// 															if(icon!= null && icon.length() > 0){
+	// 																icon = "icon-" + icon;	
+	// 																spanLabelClass = "item-label-with-icon";
+	// 																itemClass ="menu-item-with-icon";
+	// 															}
+	
+																String toolTip = " ";
+																if(!l.getTooltip().equals("")){
+																	toolTip = " title=\"" + l.getTooltip() + "\"";
+														  		}
+																
+																if(l.getUrl().equals("")){
+																	itemClass += " menu-no-pointer";
+																}
+																
+																if (!l.getLabel().equals("")) {							
+													  				%>
+													    			<div class="<%=itemClass %>">
+													    				<span class="<%=spanLabelClass %>">
+																    		<% 
+																    		if (!l.getUrl().equals("")) {
+																      			if (!l.getTarget().equals("")) {
+																        		//url+target
+																					if (l.getTarget().equals("_blank")) {
+																          			%>
+																          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
+																          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a>
+																          			<%
+																					}else if("new".equals(l.getTarget())){
+																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																					}else {
+																          			%><a class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																					}
+																      			} else {
+																        		//solo url
+																        		%><a class="td2PageHeader" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																      			}
+																			} else {
+																      			if (!l.getOnClick().equals("")) {
+																        		//onClick
+																        		%><a class="td2PageHeader" href="" onClick="<%= l.getOnClick() %>; return false;" <%= toolTip %> ><%= l.getLabel() %></a><%
+																      			} else {
+																				//solo stringa
+																        		%><span class="td2PageHeader" <%= toolTip %> ><%= l.getLabel() %></span><%
+																      			}
+																    		}
+																    		%>
+															    		</span>					    					    
+														    		</div>
+															    	<%
+																}
+													  		}
+													    	%>
+											 				</div>
+													  	</div>
+												  	<% } %>
+												</div>
+									 		</td>
+				 						<%
+							 			}
+										%>
+				 				
+				 					<%
 										Vector<GeneralLink> modalita = gd.getModalitaLinks();
-							 			if(modalita!= null && modalita.size() > 1) {
+							 			if(modalita!= null && modalita.size() > 0) {
 							 				GeneralLink modalitaTitoloLink = modalita.get(0);
 									 		%>
 									 		<td>
 										 		<div id="menuModalita" class="ddmenu-label">
-													<div class="text-decor"> 
-														<span class="modalita"><%=modalitaTitoloLink.getLabel() %></span>
-														<span class="modalitaImg"></span>
+													<div class="text-decor">
+														<% if(modalitaTitoloLink.getUrl().equals("")){%>
+															<span class="modalita"><%=modalitaTitoloLink.getLabel() %></span>
+															<% if(modalita.size() > 1){%>
+																<span class="modalitaImg"></span>
+															<%
+																}
+															}else {%>
+															<span class="modalita">
+																<a class="td2PageHeader" href="<%= modalitaTitoloLink.getUrl() %>"><%= modalitaTitoloLink.getLabel() %></a>
+															 </span>
+														<% }%>
 													</div>
-													<div style="margin: 0px; padding: 0px; border: 0px; position: absolute; z-index: 100;">
-														<div id="menuModalita_menu">
-										 				<% 
-												  		GeneralLink l;
-												  		for (int i = 1; i < modalita.size(); i++) {
-															l = (GeneralLink) modalita.elementAt(i);
-															String icon = l.getIcon();
-															String spanLabelClass= "item-label";
-															String itemClass= "menu-item";
-															if(icon!= null && icon.length() > 0){
-																icon = "icon-" + icon;	
-																spanLabelClass = "item-label-with-icon";
-																itemClass ="menu-item-with-icon";
-															}
-															
-															if(l.getUrl().equals("")){
-																itemClass += " menu-no-pointer";
-															}
-															
-															if (!l.getLabel().equals("")) {							
-												  				%>
-												    			<div class="<%=itemClass %>">
-												    				<span class="item-icon <%=icon %>"></span>
-												    				<span class="<%=spanLabelClass %>">
-															    		<% 
-															    		if (!l.getUrl().equals("")) {
-															      			if (!l.getTarget().equals("")) {
-															        		//url+target
-																				if (l.getTarget().equals("_blank")) {
-															          			%>
-															          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
-															          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
-															          			<%
-																				}else if("new".equals(l.getTarget())){
-																				%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
-																				}else {
-															          			%><a class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
-																				}
-															      			} else {
-															        		//solo url
-															        		%><a class="td2PageHeader" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
-															      			}
-																		} else {
-															      			if (!l.getOnClick().equals("")) {
-															        		//onClick
-															        		%><a class="td2PageHeader" href="" onClick="<%= l.getOnClick() %>; return false;"><%= l.getLabel() %></a><%
-															      			} else {
-																			//solo stringa
-															        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%
-															      			}
-															    		}
-															    		%>
-														    		</span>					    					    
-													    		</div>
-														    	<%
-															}
-												  		}
-												    	%>
-										 				</div>
-												  	</div>
+													<% if(modalita.size() > 1){%>
+														<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
+															<div id="menuModalita_menu">
+											 				<% 
+													  		GeneralLink l;
+													  		for (int i = 1; i < modalita.size(); i++) {
+																l = (GeneralLink) modalita.elementAt(i);
+	// 															String icon = l.getIcon();
+																String spanLabelClass= "item-label";
+																String itemClass= "menu-item-no-icon";
+	// 															if(icon!= null && icon.length() > 0){
+	// 																icon = "icon-" + icon;	
+	// 																spanLabelClass = "item-label-with-icon";
+	// 																itemClass ="menu-item-with-icon";
+	// 															}
+																
+																if(l.getUrl().equals("")){
+																	itemClass += " menu-no-pointer";
+																}
+																
+																if (!l.getLabel().equals("")) {							
+													  				%>
+													    			<div class="<%=itemClass %>">
+													    				<span class="<%=spanLabelClass %>">
+																    		<% 
+																    		if (!l.getUrl().equals("")) {
+																      			if (!l.getTarget().equals("")) {
+																        		//url+target
+																					if (l.getTarget().equals("_blank")) {
+																          			%>
+																          				<a class="td2PageHeader" onClick="var win = window.open('<%= l.getUrl() %>', '<%= l.getLabel().replace(' ', '_') %>', 'width=900,height=700,resizable=yes,scrollbars=yes');win.focus();return false;" 
+																          					target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a>
+																          			<%
+																					}else if("new".equals(l.getTarget())){
+																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																					}else {
+																          			%><a class="td2PageHeader" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																					}
+																      			} else {
+																        		//solo url
+																        		%><a class="td2PageHeader" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																      			}
+																			} else {
+																      			if (!l.getOnClick().equals("")) {
+																        		//onClick
+																        		%><a class="td2PageHeader" href="" onClick="<%= l.getOnClick() %>; return false;"><%= l.getLabel() %></a><%
+																      			} else {
+																				//solo stringa
+																        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%
+																      			}
+																    		}
+																    		%>
+															    		</span>					    					    
+														    		</div>
+															    	<%
+																}
+													  		}
+													    	%>
+											 				</div>
+													  	</div>
+												  	<% }%>
 												</div>
 									 		</td>
 				 						<%
@@ -167,7 +271,7 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 													
 													</span>
 												</div>
-												<div style="margin: 0px; padding: 0px; border: 0px; position: absolute; z-index: 100;">
+												<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
 													<div id="menuUtente_menu">
 												  		<% 
 												  		GeneralLink l;

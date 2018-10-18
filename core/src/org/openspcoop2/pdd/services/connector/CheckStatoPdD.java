@@ -72,15 +72,15 @@ public class CheckStatoPdD extends HttpServlet {
 		
 		
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		boolean checkReadEnabled = false;
-		if(properties!=null && properties.isCheckReadJMXResourcesEnabled() ){
-			checkReadEnabled = true;
-		}
 			
 		// verifico se l'invocazione richiede una lettura di una risorsa jmx
 		String resourceName = req.getParameter(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME);
 		if(resourceName!=null && !"".equals(resourceName)){
-			
+
+			boolean checkReadEnabled = false;
+			if(properties!=null && properties.isCheckReadJMXResourcesEnabled() ){
+				checkReadEnabled = true;
+			}
 			if(checkReadEnabled==false){
 				String msg = "Servizio non abilitato";
 				log.error("[CheckStatoPdD] "+msg);
@@ -181,6 +181,19 @@ public class CheckStatoPdD extends HttpServlet {
 			
 		}
 			
+		
+		boolean checkEnabled = false;
+		if(properties!=null && properties.isCheckEnabled() ){
+			checkEnabled = true;
+		}
+		if(checkEnabled==false){
+			String msg = "Servizio non abilitato";
+			log.error("[CheckStatoPdD] "+msg);
+			res.setStatus(500);
+			res.getOutputStream().write(msg.getBytes());
+			return;
+		}
+		
 						
 		if( OpenSPCoop2Startup.initialize == false){
 			String msg = "Porta di dominio OpenSPCoop non inzializzata";

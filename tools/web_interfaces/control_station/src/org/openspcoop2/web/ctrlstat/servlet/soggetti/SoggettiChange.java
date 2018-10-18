@@ -43,7 +43,6 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
-import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
@@ -82,7 +81,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * soggettiChange
@@ -174,7 +172,7 @@ public final class SoggettiChange extends Action {
 			soggettiHelper.makeMenu();
 
 			// Prendo i vecchi nome e tipo
-			String oldnomeprov = "", oldtipoprov = "";
+			String oldnomeprov = "", oldtipoprov = "", oldpdd = null;
 
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
@@ -184,6 +182,7 @@ public final class SoggettiChange extends Action {
 			List<String> tipiSoggetti = null;
 			int numPA = 0, numPD = 0,numSA = 0;
 			String[] pddList = null;
+			String[] pddEsterneList = null;
 			List<String> versioniProtocollo = null;
 
 			SoggettiCore soggettiCore = new SoggettiCore();
@@ -212,6 +211,7 @@ public final class SoggettiChange extends Action {
 			if(soggettiCore.isRegistroServiziLocale()){
 				oldnomeprov = soggettoRegistry.getNome();
 				oldtipoprov = soggettoRegistry.getTipo();
+				oldpdd = soggettoRegistry.getPortaDominio();
 			}
 			else{
 				oldnomeprov = soggettoConfig.getNome();
@@ -276,24 +276,34 @@ public final class SoggettiChange extends Action {
 						pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
 					}
 
-					List<PortaDominio> lista = new ArrayList<PortaDominio>();
+					List<PdDControlStation> lista = new ArrayList<PdDControlStation>();
 					if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
+						
+						List<String> pddEsterne = new ArrayList<>();
+						pddEsterne.add("-");
+						
 						// aggiungo un elemento di comodo
-						PortaDominio tmp = new PortaDominio();
+						PdDControlStation tmp = new PdDControlStation();
 						tmp.setNome("-");
 						lista.add(tmp);
 						// aggiungo gli altri elementi
 						if(soggettiCore.isVisioneOggettiGlobale(userLogin)){
-							lista.addAll(pddCore.porteDominioList(null, new Search(true)));
+							lista.addAll(pddCore.pddList(null, new Search(true)));
 						}else{
-							lista.addAll(pddCore.porteDominioList(userLogin, new Search(true)));
+							lista.addAll(pddCore.pddList(userLogin, new Search(true)));
 						}
 						pddList = new String[lista.size()];
 						int i = 0;
-						for (PortaDominio pddTmp : lista) {
+						for (PdDControlStation pddTmp : lista) {
 							pddList[i] = pddTmp.getNome();
 							i++;
+							
+							if(PddTipologia.ESTERNO.toString().equals(pddTmp.getTipo())){
+								pddEsterne.add(pddTmp.getNome());
+							}
 						}
+						
+						pddEsterneList = pddEsterne.toArray(new String[1]);
 					}
 					else{
 						// non posso modificare la pdd. Lascio solo quella operativa
@@ -452,7 +462,7 @@ public final class SoggettiChange extends Action {
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						pddList,pddEsterneList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
 						isPddEsterna,null,this.dominio);
@@ -483,7 +493,7 @@ public final class SoggettiChange extends Action {
 
 			if(isOk){
 				// check change tipo/nome con gestione workflow abilitata
-				if(soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowGestioneWorkflowStatoDocumenti()){
+				if(soggettiCore.isRegistroServiziLocale() && soggettiHelper.isShowGestioneWorkflowStatoDocumenti()){
 					if( (oldnomeprov.equals(this.nomeprov)==false) || (oldtipoprov.equals(this.tipoprov)==false) ){
 						HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
 						if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoRegistry, whereIsInUso)) {
@@ -603,7 +613,7 @@ public final class SoggettiChange extends Action {
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-						pddList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						pddList,pddEsterneList,nomePddGestioneLocale,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
 						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
 						isPddEsterna,null,this.dominio);
@@ -776,41 +786,19 @@ public final class SoggettiChange extends Action {
 
 			// Fruitori nei servizi 
 			soggettoUpdateUtilities.checkFruitori();
-
+			
 			// eseguo l'aggiornamento
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoUpdateUtilities.getOggettiDaAggiornare().toArray());
 
-			// NOTA: volutamente dopo avere effettuato l'update sopra, faccio la verifica delle utenze. Altrimenti il soggetto non e' ancora modificato
-			// Check Utenza per multi-tenant
-			if(soggettiCore.isSinglePdD()) {
-				
-				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-				
-				boolean operativo = !pddCore.isPddEsterna(this.pdd);
-				if(operativo) {
-					// check utenze che hanno il protocollo
-					
-					User userPerCheck = new User();
-					userPerCheck.addProtocolloSupportato(this.protocollo);
-					boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
-					if(forceEnableMultitenant) {
-						List<String> usersList = utentiCore.getUsersByProtocolloSupportato(this.protocollo, true);
-						if(usersList!=null && usersList.size()>0) {
-							for (String user : usersList) {
-								User u = utentiCore.getUser(user);
-								if(u.isPermitMultiTenant()==false) {
-									u.setPermitMultiTenant(true);
-									listaOggettiDaModificare.add(u);
-								}
-							}
-						}
-					}
-					
-				}
-				
-				if(listaOggettiDaModificare.size()>0) {
-					soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), listaOggettiDaModificare.toArray());
-				}
+			// sistemo utenze dopo l'aggiornamento
+			// se la pdd è diventata esterna o se sono cambiati i dati identificativi
+			IDSoggetto idSoggettoSelezionato = new IDSoggetto(oldtipoprov, oldnomeprov);
+			if(oldpdd!=null && !oldpdd.equals(this.pdd) && pddCore.isPddEsterna(this.pdd)) {
+				utentiCore.modificaSoggettoUtilizzatoConsole(idSoggettoSelezionato.toString(), null); // annullo selezione
+			}
+			else if(!this.tipoprov.equals(oldtipoprov) || !this.nomeprov.equals(oldnomeprov)) {
+				IDSoggetto idNuovoSoggettoSelezionato = new IDSoggetto(this.tipoprov, this.nomeprov);
+				utentiCore.modificaSoggettoUtilizzatoConsole(idSoggettoSelezionato.toString(), idNuovoSoggettoSelezionato.toString()); // modifico i dati
 			}
 			
 			// preparo lista
@@ -825,6 +813,12 @@ public final class SoggettiChange extends Action {
 				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SOGGETTO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
 				pd.disableEditMode();
+				
+				//if(!pddCore.isPddEsterna(this.pdd)) {
+				// sempre, anche quando passo da operativo ad esterno
+				generalHelper = new GeneralHelper(session);
+				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
+				//}
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
@@ -854,6 +848,12 @@ public final class SoggettiChange extends Action {
 					soggettiHelper.prepareSoggettiConfigList(listaSoggetti, ricerca);
 				}
 
+				//if(!pddCore.isPddEsterna(this.pdd)) {
+				// sempre, anche quando passo da operativo ad esterno
+				generalHelper = new GeneralHelper(session);
+				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
+				//}
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());

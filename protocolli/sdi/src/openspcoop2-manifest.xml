@@ -94,7 +94,7 @@
 
     <registry>
 
-        <organization authentication="true">
+        <organization authentication="true" inboundApplicativeAuthentication="false">
             <types>
             	<type name="sdi"/>
             </types>

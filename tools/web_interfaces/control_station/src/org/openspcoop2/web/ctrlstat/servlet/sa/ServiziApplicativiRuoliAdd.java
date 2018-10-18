@@ -45,6 +45,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -96,6 +97,9 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 
+			String accessDaChangeTmp = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE);
+			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
+			
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 
@@ -147,18 +151,44 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			if (saHelper.isEditModeInProgress()) {
 				
 				// setto la barra del titolo
-				List<Parameter> lstParm = new ArrayList<>();
-				if(useIdSogg){
-					lstParm.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
-					lstParm.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
-							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
-				}else {
-					lstParm.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+				if(accessDaChange) {
+					ServletUtils.setPageDataTitle_ServletFirst(pd, labelApplicativi, 
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST);
+					ServletUtils.appendPageDataTitle(pd, 
+							new Parameter(nomeservizioApplicativo, 
+									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE, 
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+"")));
+					ServletUtils.appendPageDataTitle(pd, 
+							new Parameter(RuoliCostanti.LABEL_RUOLI, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE,accessDaChangeTmp)
+									)
+							);
+					ServletUtils.appendPageDataTitle(pd, 
+							ServletUtils.getParameterAggiungi());
 				}
-				lstParm.add(new Parameter( "Ruoli di " + nomeservizioApplicativo, null));
-				lstParm.add(ServletUtils.getParameterAggiungi());
-				ServletUtils.setPageDataTitle(pd,lstParm); 
+				else {
+					List<Parameter> lstParm = new ArrayList<>();
+					if(useIdSogg){
+						lstParm.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+						lstParm.add(new Parameter(labelApplicativiDi + tipoENomeSoggetto,
+								ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,provider)));
+					}else {
+						lstParm.add(new Parameter(labelApplicativi, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST));
+					}
+					if(useIdSogg) {
+						lstParm.add(new Parameter( "Ruoli di " + nomeservizioApplicativo, null));
+					}
+					else {
+						lstParm.add(new Parameter( "Ruoli di " + nomeservizioApplicativo, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACCESSO_DA_CHANGE,accessDaChangeTmp)));
+					}
+					lstParm.add(ServletUtils.getParameterAggiungi());
+					ServletUtils.setPageDataTitle(pd,lstParm); 
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -178,7 +208,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 					dati.addElement(de);
 				}
 				
-				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
+				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp);
 				
 				pd.setDati(dati);
 
@@ -224,7 +254,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 					dati.addElement(de);
 				}
 				
-				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true);
+				dati = saHelper.addRuoliToDati(TipoOperazione.ADD, dati, false, filtroRuoli, nome, ruoli, false, true, true, accessDaChangeTmp);
 
 				pd.setDati(dati);
 

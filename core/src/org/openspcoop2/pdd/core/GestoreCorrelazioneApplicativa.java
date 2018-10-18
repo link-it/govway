@@ -48,6 +48,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -115,6 +116,8 @@ public class GestoreCorrelazioneApplicativa {
 	private boolean riusoIdentificativo = false;
 	/** ProtocolFactory */
 	private IProtocolFactory<?> protocolFactory = null;
+	/** Transaction */
+	private Transaction transaction;
 	
 	private int maxLengthCorrelazioneApplicativa = 255;
 
@@ -128,7 +131,8 @@ public class GestoreCorrelazioneApplicativa {
 	 *
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,
-			String servizioApplicativo,IProtocolFactory<?> protocolFactory){
+			String servizioApplicativo,IProtocolFactory<?> protocolFactory,
+			Transaction transaction){
 		this.state = state;
 		if(alog!=null){
 			this.log = alog;
@@ -140,13 +144,16 @@ public class GestoreCorrelazioneApplicativa {
 		this.servizioApplicativo = servizioApplicativo;
 		this.protocolFactory = protocolFactory;
 		this.maxLengthCorrelazioneApplicativa = OpenSPCoop2Properties.getInstance().getMaxLengthCorrelazioneApplicativa();
+		this.transaction = transaction;
 	}
 	/**
 	 * Costruttore. 
 	 *
 	 */
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IProtocolFactory<?> protocolFactory){
-		this(state,alog,null,null,null,protocolFactory);
+	public GestoreCorrelazioneApplicativa(IState state,Logger alog,
+			IProtocolFactory<?> protocolFactory,
+			Transaction transaction){
+		this(state,alog,null,null,null,protocolFactory,transaction);
 	}
 
 
@@ -155,9 +162,23 @@ public class GestoreCorrelazioneApplicativa {
 	
 	
 	
-	/* *********** GESTIONE CORRELAZIONE APPLICATIVA (PORTA DELEGATA) ************ */
+	/* *********** GESTIONE CORRELAZIONE APPLICATIVA (RICHIESTA) ************ */
 
 	public boolean verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
+			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
+		if(this.transaction!=null) {
+			this.transaction.getTempiElaborazione().startCorrelazioneApplicativaRichiesta();
+		}
+		try {
+			return this._verificaCorrelazione(correlazioneApplicativa, urlProtocolContext, message, headerIntegrazione, readFirstHeaderIntegrazione);
+		}
+		finally {
+			if(this.transaction!=null) {
+				this.transaction.getTempiElaborazione().endCorrelazioneApplicativaRichiesta();
+			}
+		}
+	}
+	private boolean _verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
 			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
@@ -601,9 +622,23 @@ public class GestoreCorrelazioneApplicativa {
 	
 	
 	
-	/* *********** GESTIONE CORRELAZIONE APPLICATIVA RISPOSTA (PORTA APPLICATIVA) ************ */
+	/* *********** GESTIONE CORRELAZIONE APPLICATIVA RISPOSTA (RISPOSTA) ************ */
 	
 	public void verificaCorrelazioneRisposta(CorrelazioneApplicativaRisposta correlazioneApplicativa,
+			OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
+		if(this.transaction!=null) {
+			this.transaction.getTempiElaborazione().startCorrelazioneApplicativaRisposta();
+		}
+		try {
+			this._verificaCorrelazioneRisposta(correlazioneApplicativa, message, headerIntegrazione, readFirstHeaderIntegrazione);
+		}
+		finally {
+			if(this.transaction!=null) {
+				this.transaction.getTempiElaborazione().endCorrelazioneApplicativaRisposta();
+			}
+		}
+	}
+	private void _verificaCorrelazioneRisposta(CorrelazioneApplicativaRisposta correlazioneApplicativa,
 			OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){

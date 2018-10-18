@@ -142,6 +142,7 @@ public final class PorteDelegateChange extends Action {
 			String integrazione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			String stateless = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
 			String localForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD );
+			String paLocalForward = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
 			String gestBody = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
 			String gestManifest = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
 			String ricsim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
@@ -385,6 +386,7 @@ public final class PorteDelegateChange extends Action {
 			String autenticazioneTokenUsername = null;
 			String autenticazioneTokenEMail = null;
 			
+			String autorizzazione_token = null;
 			String autorizzazione_tokenOptions = null;
 			
 			if(pde.getGestioneToken() != null) {
@@ -432,6 +434,12 @@ public final class PorteDelegateChange extends Action {
 				}
 				
 				autorizzazione_tokenOptions = pde.getGestioneToken().getOptions();
+				if((autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
+					autorizzazione_token = Costanti.CHECK_BOX_ENABLED;
+				}
+				else {
+					autorizzazione_token = Costanti.CHECK_BOX_DISABLED;
+				}
 				
 				if(pde.getGestioneToken().getAutenticazione() != null) {
 					
@@ -636,6 +644,9 @@ public final class PorteDelegateChange extends Action {
 					}
 					if (localForward == null) {
 						localForward = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_DISABILITATO;
+					}
+					if(pde.getLocalForward()!=null && pde.getLocalForward().getPortaApplicativa()!=null) {
+						paLocalForward = pde.getLocalForward().getPortaApplicativa();
 					}
 				}
 				if (gestBody == null) {
@@ -905,7 +916,7 @@ public final class PorteDelegateChange extends Action {
 						serviziListLabel, servizio, tiposervizio, versioneServizio,
 						patternServizio, modeaz, azid, azioniListLabel,
 						azioniList, azione, patternAzione, numAzioni,
-						stateless, localForward, ricsim, ricasim, statoValidazione,
+						stateless, localForward, paLocalForward, ricsim, ricasim, statoValidazione,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
@@ -920,10 +931,11 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				pd.setDati(dati);
 
@@ -1067,7 +1079,7 @@ public final class PorteDelegateChange extends Action {
 						serviziList, serviziListLabel, servizio,
 						tiposervizio, servizio, versioneServizio, modeaz, azid,
 						azioniListLabel, azioniList, azione, azione,
-						numAzioni,  stateless, localForward, ricsim, ricasim,
+						numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
@@ -1081,10 +1093,11 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenPolicy,gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -1151,6 +1164,7 @@ public final class PorteDelegateChange extends Action {
 			if(localForward!=null){
 				portaDelegata.setLocalForward(new PortaDelegataLocalForward());
 				portaDelegata.getLocalForward().setStato(StatoFunzionalita.toEnumConstant(localForward));
+				portaDelegata.getLocalForward().setPortaApplicativa(paLocalForward);
 			}
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
@@ -1177,6 +1191,7 @@ public final class PorteDelegateChange extends Action {
 			}
 			pdServizio.setNome(servizio);
 			pdServizio.setTipo(tiposervizio);
+			pdServizio.setVersione(Integer.parseInt(versioneServizio));
 
 			portaDelegata.setServizio(pdServizio);
 
@@ -1298,7 +1313,8 @@ public final class PorteDelegateChange extends Action {
 				if(datiInvocazione) {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
-						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, 
+								new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario()));
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}
@@ -1325,9 +1341,9 @@ public final class PorteDelegateChange extends Action {
 						permessi[1] = pu.isAccordiCooperazione();
 						List<AccordoServizioParteSpecifica> lista2 = null;
 						if(apsCore.isVisioneOggettiGlobale(superUser)){
-							lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+							lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, false);
 						}else{
-							lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori);
+							lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori, false);
 						}
 
 						apsHelper.prepareServiziList(ricerca, lista2);
@@ -1348,7 +1364,7 @@ public final class PorteDelegateChange extends Action {
 					ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 					
 					List<MappingFruizionePortaDelegata> listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
-					apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
+					apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idSoggettoFruitore, idFruizione, ricerca); 
 				}
 				
 				break;

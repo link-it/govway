@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.0.0" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.0.1" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,7 +8,7 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.0.0">
+    <page type="input" name="intro" displayText="Installer GovWay v3.0.1">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -21,7 +21,25 @@
         <hidden property="antinstaller_conf_avanzata_enabled" value=""/>
     </page>
 
-    <page name="preinstallazione2" type="input" displayText="Informazioni preliminari">
+    <page name="modalitaInstallazione" type="input" displayText="Modalità Installazione">
+	<large-select defaultValue="nuova" property="antinstaller_modalita_installazione" displayText="">
+            <option value="nuova" text="Nuova Installazione"/>
+            <option value="aggiornamento" text="Aggiornamento"/>
+        </large-select>	
+    </page>
+
+    <page name="aggiornamentoSceltaVersione" type="input" displayText="Informazioni Prodotto"
+	  ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
+
+	<hidden property="antinstaller_versione_attuale" value="3.0.1"/>
+
+	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
+	    <option value="3.0.0" text="3.0.0"/>
+        </large-select>
+    </page>
+
+    <page name="informazioniPreliminari_nuovaInstallazione" type="input" displayText="Informazioni Preliminari"
+	ifProperty="${antinstaller_modalita_installazione}==nuova">
                        
         <!-- <comment displayText="Directory di lavoro" bold="true"/>  sotto come display c'era path -->
         <directory defaultValue="/var/govway" defaultValueWin="C:\govway" displayText="Directory di lavoro"
@@ -32,21 +50,7 @@
         <!-- <comment displayText="Directory di log" bold="true"/>  sotto come display c'era path -->
         <directory defaultValue="/var/govway/log" defaultValueWin="C:\govway\log" displayText="Directory di log"
             property="antinstaller_directory_log_openspcoop" checkExists="false" />
-        
-        <comment displayText=""/>
-        
-        <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
-            <option value="postgresql" text="PostgreSQL"/>
-            <option value="mysql" text="MySQL"/>
-	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
-  	    <!-- <option value="mysql" text="MariaDB"/> -->
-            <option value="oracle" text="Oracle"/>
-            <option value="hsql" text="HyperSQL"/>
-            <option value="sqlserver" text="SQLServer"/>
-            <option value="db2" text="IBM DB2"/>
-        </large-select>
-        
+
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
@@ -84,7 +88,90 @@
 		-->
         </large-select>
         
-     </page> 
+        <comment displayText=""/>
+        
+        <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
+        <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
+            <option value="postgresql" text="PostgreSQL"/>
+            <option value="mysql" text="MySQL"/>
+	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
+  	    <!-- <option value="mysql" text="MariaDB"/> -->
+            <option value="oracle" text="Oracle"/>
+            <option value="hsql" text="HyperSQL"/>
+            <option value="sqlserver" text="SQLServer"/>
+            <option value="db2" text="IBM DB2"/>
+        </large-select>
+                
+    </page> 
+
+    <page name="informazioniPreliminari_aggiornamento" type="input" displayText="Informazioni Preliminari"
+	ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
+                       
+        <!-- <comment displayText="Directory di lavoro" bold="true"/>  sotto come display c'era path -->
+        <directory defaultValue="/var/govway" defaultValueWin="C:\govway" displayText="Directory di lavoro"
+            property="antinstaller_directory_lavoro_openspcoop" checkExists="false" />
+        
+        <comment displayText=""/>
+
+        <!-- <comment displayText="Directory di log" bold="true"/>  sotto come display c'era path -->
+        <directory defaultValue="/var/govway/log" defaultValueWin="C:\govway\log" displayText="Directory di log"
+            property="antinstaller_directory_log_openspcoop" checkExists="false" />
+        
+        <comment displayText=""/>
+        
+        <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
+        <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
+      
+		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
+		<option value="wildfly10" text="WildFly 14.x"/>
+		<option value="wildfly10" text="WildFly 13.x"/>
+		<option value="wildfly10" text="WildFly 12.x"/> 
+		<option value="wildfly10" text="WildFly 11.x"/> 
+		<option value="wildfly10" text="WildFly 10.x"/>
+		<!--
+			Deprecati
+			<option value="wildfly9" text="WildFly 9.x"/>
+			<option value="wildfly8" text="WildFly 8.x"/>
+		-->
+		<!--
+			Deprecati 
+			<option value="jboss7" text="JBoss 7.x"/>
+			<option value="jboss6" text="JBoss 6.x"/>
+			<option value="jboss5" text="JBoss 5.x"/>
+	    		<option value="jboss4" text="JBoss 4.x"/>
+		-->
+           
+		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
+            	<!-- il valore tomcat8 supporta 8.x e 9.x -->
+		<option value="tomcat8" text="Apache Tomcat 9.x"/>
+            	<option value="tomcat8" text="Apache Tomcat 8.x"/>
+		<!-- il valore tomcat7 supporta solamente il 7.x -->
+            	<option value="tomcat7" text="Apache Tomcat 7.x"/>
+            	<!-- 
+			Deprecati
+			<option value="tomcat6" text="Apache Tomcat 6.x"/>
+			<option value="tomcat5" text="Apache Tomcat 5.x"/> 
+		-->
+        </large-select>
+
+        <comment displayText=""/>
+
+	<comment bold="true" displayText="Attenzione:"/>
+	<comment displayText="In fase di aggiornamento indicare lo stesso DBMS della precedente installazione"/>
+        
+        <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
+        <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">
+            <option value="postgresql" text="PostgreSQL"/>
+            <option value="mysql" text="MySQL"/>
+	    <!-- <option value="mariadb" text="MariaDB"/> TODO -->
+  	    <!-- <option value="mysql" text="MariaDB"/> -->
+            <option value="oracle" text="Oracle"/>
+            <option value="hsql" text="HyperSQL"/>
+            <option value="sqlserver" text="SQLServer"/>
+            <option value="db2" text="IBM DB2"/>
+        </large-select>
+                
+    </page> 
 
     <page name="infoDB_oracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}==oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
@@ -111,7 +198,7 @@
          <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
     </page>
 
- <page name="infoDB_notOracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}!=oracle">
+    <page name="infoDB_notOracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}!=oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
@@ -154,7 +241,8 @@
          <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
     </page>
 
- 	<page name="utenzeConsole" type="input" displayText="Configurazione Utenze">
+    <page name="utenzeConsole" type="input" displayText="Configurazione Utenze"
+	ifProperty="${antinstaller_modalita_installazione}==nuova">
 
 		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore (govwayConsole)" regex="^[0-9A-Za-z]+$"/>
 		<validated property="antinstaller_pddconsole_password" displayText="Password Amministratore" regex="^[^ ]+$" />
@@ -173,7 +261,38 @@
 
     </page>
 
-    <page name="preinstallazione4" type="input" displayText="Profili di Interoperabilità">
+    <page name="profili_nuovaInstallazione" type="input" displayText="Profili di Interoperabilità"
+	ifProperty="${antinstaller_modalita_installazione}==nuova">
+
+        <comment displayText="Profilo" bold="true"/>
+        <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
+        <checkbox defaultValue="false" property="antinstaller_protocollo_spcoop" value="spcoop" displayText="SPCoop"/>
+	<checkbox defaultValue="false" property="antinstaller_protocollo_as4" value="as4" displayText="eDelivery"/>
+        <checkbox defaultValue="false" property="antinstaller_protocollo_sdi" value="sdi" displayText="Fatturazione Elettronica"/>
+         
+
+		<comment displayText=""/>	
+        <!-- <comment displayText="Soggetto della PdD" bold="true"/> -->
+        <hidden property="antinstaller_tiposoggetto_trasparente" value="gw"/>
+        <hidden property="antinstaller_tiposoggetto_as4" value="as4"/>
+        <hidden property="antinstaller_tiposoggetto_spcoop" value="spc"/>
+        <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
+        <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
+        
+        <!--
+        <comment displayText=""/>
+         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
+         -->
+
+    </page>
+
+    <page name="profili_aggiornamento" type="input" displayText="Profili di Interoperabilità"
+	ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
+
+	<hidden property="antinstaller_pddconsole_username" value=""/>
+        <hidden property="antinstaller_pddconsole_password" value=""/>
+        <hidden property="antinstaller_pddmonitor_username" value=""/>
+        <hidden property="antinstaller_pddmonitor_password" value=""/>
 
         <comment displayText="Profilo" bold="true"/>
         <checkbox defaultValue="true" property="antinstaller_protocollo_trasparente" value="trasparente" displayText="API Gateway"/>
@@ -226,8 +345,8 @@
     <page name="preinstallazioneEDelivery" type="input" displayText="Configurazione eDelivery" ifProperty="${antinstaller_protocollo_as4}==true">
 
 	<comment displayText="HTTP Endpoint" bold="true"/>
-	<validated defaultValue="http://127.0.0.1:8080/domibus/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
-	<validated defaultValue="http://127.0.0.1:8080/domibus/services/backend" property="antinstaller_as4_backend" displayText="Domibus Backend WS URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+	<validated defaultValue="http://localhost:8080/domibus/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+	<validated defaultValue="http://localhost:8080/domibus/services/backend" property="antinstaller_as4_backend" displayText="Domibus Backend WS URL" regex="http(s?):\/\/(.+)\/(.*)"/>
 
 	<comment displayText="Broker JMS" bold="true"/>
 	<validated defaultValue="tcp://127.0.0.1:61616" property="antinstaller_as4_jms_url" displayText="Provider URL" regex="(.+):\/\/(.+)"/>
@@ -306,7 +425,7 @@
     </page>
 -->
 
-    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
+   <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
         target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_backward_compatibility,setup_finished"/>
 
 </installer>

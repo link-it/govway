@@ -398,6 +398,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_INDIRIZZO_TELEMATICO = "Indirizzo Telematico";
 	public final static String LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS = "Manifest Attachments";
 	public final static String LABEL_CONFIGURAZIONE_URL_INVOCAZIONE = "Modalit&agrave;"; //"URL di Invocazione dei Servizi";
+	public final static String LABEL_CONFIGURAZIONE_MULTITENANT = "Multi-Tenant";
+	public final static String LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI = "Fruizioni";
+	public final static String LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI = "Erogazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
@@ -442,6 +445,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
+	
+	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE = "Informazioni Transazione";
+	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TEMPI_ELABORAZIONE = "Tempi Elaborazione";
+	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TOKEN = "Token";
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO = "Controllo del Traffico";
@@ -637,6 +644,9 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI = "TransazioneRecTempi";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN = "TransazioneRecToken";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_JMX_STATE = "CTViewJmxState";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME = "CTFirstTime";
@@ -777,6 +787,10 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO = "tipo";
 	public final static String PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA = "tipologia";
 	public final static String PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID = "idPolicy";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO = "ConfMTStato";
+	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE = "ConfMTFruSoggEro";
+	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI = "ConfMTEroSoggFru";
 		
 	/* LABEL PARAMETRI */
 	
@@ -902,7 +916,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_EROGATORE = "Ruolo Erogatore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_EROGATORE = "Applicativo Erogatore";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO = "Servizio";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SERVIZIO = "API";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED = "Filtro per Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO = "Tipologia";
@@ -921,7 +935,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE = "Applicativo Fruitore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_EROGATORE = "Applicativo Erogatore";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO = "Servizio";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SERVIZIO = "API";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL = "Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE = "Raggruppamento per Chiave";
@@ -999,6 +1013,7 @@ public class ConfigurazioneCostanti {
 	public final static String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio di GovWay";
 	public final static String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio di GovWay";
 	public final static String PERSISTENTI = "<BR><b>Attenzione:</b> La modifica effettuata rimarrà persistente anche dopo un riavvio di GovWay";
+	public final static String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO_SOLO_DATI_CONSOLE = "Configurazione modificata con successo";
 	public final static String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO = "Configurazione Generale modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_ACCESSO_REGISTRO_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_REGISTRO+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING+" modificata con successo"+RIAVVIO;
@@ -1052,6 +1067,10 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA = "Tipologia";
 	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_SOGGETTI = "Soggetti";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE = "Soggetto Erogatore";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI = "Soggetti Fruitori";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML = "xml";

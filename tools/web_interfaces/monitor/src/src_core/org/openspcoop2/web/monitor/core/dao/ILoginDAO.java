@@ -28,6 +28,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
@@ -50,5 +51,9 @@ public interface ILoginDAO extends Serializable{
 	
 	public void salvaModalita(User user) throws NotFoundException, ServiceException;
 	
+	public void salvaSoggettoPddMonitor(User user) throws NotFoundException, ServiceException;
+	
 	public UserDetailsBean loadUserByUsername(String username) throws NotFoundException, ServiceException, UserInvalidException;
+	
+	public Configurazione readConfigurazioneGenerale() throws ServiceException;
 }

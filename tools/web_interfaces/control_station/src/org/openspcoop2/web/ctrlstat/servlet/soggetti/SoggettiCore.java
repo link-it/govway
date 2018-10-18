@@ -756,6 +756,18 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean isSupportatoAutenticazioneApplicativiErogazione(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoAutenticazioneApplicativiErogazione";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 	public String getCodiceIPADefault(String protocollo,IDSoggetto soggetto,boolean createURI) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getCodiceIPADefault";
 		try{

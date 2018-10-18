@@ -14128,10 +14128,17 @@ IDriverWS ,IMonitoraggioRisorsa{
 			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
 		}
 		
+		String filterSoggettoDefaultTmp = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_SOGGETTO_DEFAULT);
+		boolean filterSoggettoDefault = false;
+		if(filterSoggettoDefaultTmp!=null) {
+			filterSoggettoDefault = "true".equalsIgnoreCase(filterSoggettoDefaultTmp.trim());
+		}
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterDominio : " + filterDominio);
+		this.log.debug("filterSoggettoDefault : " + filterSoggettoDefault);
 		
 		Connection con = null;
 		boolean error = false;
@@ -14176,6 +14183,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 				sqlQueryObject.addSelectCountField("*", "cont");
+				if(filterSoggettoDefault) {
+					sqlQueryObject.addWhereCondition("is_default = ?");
+				}
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null){
@@ -14205,6 +14215,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 				sqlQueryObject.addSelectCountField("*", "cont");
+				if(filterSoggettoDefault) {
+					sqlQueryObject.addWhereCondition("is_default = ?");
+				}
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
@@ -14226,6 +14239,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
+			if(filterSoggettoDefault) {
+				stmt.setInt(index++, 1);
+			}
 			if (superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
@@ -14261,6 +14277,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				if(filterSoggettoDefault) {
+					sqlQueryObject.addWhereCondition("is_default = ?");
+				}
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null){
@@ -14303,6 +14322,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("server");
 				sqlQueryObject.addSelectField("id_connettore");
 				sqlQueryObject.addSelectField("codice_ipa");
+				if(filterSoggettoDefault) {
+					sqlQueryObject.addWhereCondition("is_default = ?");
+				}
 				if (superuser!=null && (!superuser.equals("")))
 					sqlQueryObject.addWhereCondition("superuser = ?");
 				if(tipoSoggetto!=null)
@@ -14329,6 +14351,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			index = 1;
+			if(filterSoggettoDefault) {
+				stmt.setInt(index++, 1);
+			}
 			if (superuser!=null && (!superuser.equals(""))){
 				stmt.setString(index++, superuser);
 			}
@@ -18376,7 +18401,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @return lista di accordi di servizio parte specifica
 	 * @throws DriverRegistroServiziException
 	 */
-	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, boolean gestioneFruitori) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, 
+			boolean gestioneFruitori, boolean gestioneErogatori) throws DriverRegistroServiziException {
 		String nomeMetodo = "soggettiServizioList";
 		int idLista = Liste.SERVIZI;
 		int offset;
@@ -18415,12 +18441,22 @@ IDriverWS ,IMonitoraggioRisorsa{
 		
 		String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 		
+		String filterSoggettoTipoNome = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_SOGGETTO);
+		String filterSoggettoTipo = null;
+		String filterSoggettoNome = null;
+		if(filterSoggettoTipoNome!=null && !"".equals(filterSoggettoTipoNome)) {
+			filterSoggettoTipo = filterSoggettoTipoNome.split("/")[0];
+			filterSoggettoNome = filterSoggettoTipoNome.split("/")[1];
+		}
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterTipoAPI : " + filterTipoAPI);
 		this.log.debug("filterDominio : " + filterDominio);
 		this.log.debug("filterStatoAccordo : " + filterStatoAccordo);
+		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
+		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
 		
 		
 		if (this.atomica) {
@@ -18475,7 +18511,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
 			}
-			
+						
 			if (!search.equals("")) {
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -18486,13 +18522,31 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
 				if(gestioneFruitori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default=1");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
 				}
+				if(gestioneErogatori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+					if(gestioneFruitori) {
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".nome_soggetto=?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+					}
+				}
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
@@ -18543,13 +18597,31 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
 				if(gestioneFruitori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default=1");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
 				}
+				if(gestioneErogatori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
+				}
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+					if(gestioneFruitori) {
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".nome_soggetto=?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+					}
+				}
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
@@ -18588,6 +18660,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			stmt = con.prepareStatement(queryString);
 			int index = 1;
+			if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+				stmt.setString(index++, filterSoggettoTipo);
+				stmt.setString(index++, filterSoggettoNome);
+			}
 			if(superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
@@ -18617,10 +18693,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
 				if(gestioneFruitori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default=1");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+				}
+				if(gestioneErogatori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
 				sqlQueryObject.addSelectField("nome_servizio");
@@ -18641,6 +18725,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addSelectAliasField(aliasSoggettiFruitori+".tipo_soggetto","tipoSoggettoFruitore");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+					if(gestioneFruitori) {
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".nome_soggetto=?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+					}
+				}
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
@@ -18706,10 +18800,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
 				if(gestioneFruitori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione="+CostantiDB.SERVIZI_FRUITORI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".is_default=1");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio="+CostantiDB.SERVIZI+".id");
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto="+aliasSoggettiFruitori+".id");
+				}
+				if(gestioneErogatori) {
+					sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione="+CostantiDB.SERVIZI+".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".is_default=1");
 				}
 				sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".id");
 				sqlQueryObject.addSelectField("nome_servizio");
@@ -18730,6 +18832,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addSelectAliasField(aliasSoggettiFruitori+".tipo_soggetto","tipoSoggettoFruitore");
 				}
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+					if(gestioneFruitori) {
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(aliasSoggettiFruitori+".nome_soggetto=?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+					}
+				}
 				if(superuser!=null && (!"".equals(superuser)))
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 				
@@ -18785,6 +18897,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			stmt = con.prepareStatement(queryString);
 			index = 1;
+			if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
+				stmt.setString(index++, filterSoggettoTipo);
+				stmt.setString(index++, filterSoggettoNome);
+			}
 			if(superuser!=null && (!"".equals(superuser)))
 				stmt.setString(index++, superuser);
 			if(filterTipoAPI!=null && !filterTipoAPI.equals("")) {
@@ -21274,91 +21390,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public List<String> fruzioniWithClientAuthAbilitato(String nomePdD)throws DriverRegistroServiziException {
-		String nomeMetodo = "fruzioniWithClientAuthAbilitato";
-		String queryString;
-
-		Connection con = null;
-		boolean error = false;
-		PreparedStatement stmt=null;
-		ResultSet risultato=null;
-		ArrayList<String> lista = new ArrayList<String>();
-
-		if (this.atomica) {
-			try {
-				con = this.getConnectionFromDatasource("fruzioniWithClientAuthAbilitato");
-				con.setAutoCommit(false);
-			} catch (Exception e) {
-				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-
-			ISQLQueryObject sqlQueryObjectInner = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObjectInner.addFromTable(this.tabellaSoggetti);
-			sqlQueryObjectInner.addSelectField("id");
-			sqlQueryObjectInner.addWhereCondition("server=?");
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-			sqlQueryObject.addWhereCondition("client_auth=?");
-			sqlQueryObject.addWhereINSelectSQLCondition(false, "id_soggetto", sqlQueryObjectInner);
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			this.log.debug("QUERY ["+queryString+"] 1["+CostantiRegistroServizi.ABILITATO+"] 2["+nomePdD+"]");
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, DriverRegistroServiziDB_LIB.getValue(CostantiRegistroServizi.ABILITATO));
-			stmt.setString(2, nomePdD);
-			risultato = stmt.executeQuery();
-
-			while (risultato.next()) {
-
-				Soggetto fruitore = this.getSoggetto(risultato.getLong("id_soggetto"));
-				AccordoServizioParteSpecifica servizio = this.getAccordoServizioParteSpecifica(risultato.getLong("id_servizio"));
-				String uriAPS = this.idServizioFactory.getUriFromAccordo(servizio);
-				lista.add("Fruizione da parte del soggetto "+fruitore.getTipo()+"/"+fruitore.getNome()+" verso l'accordo di servizio parte specifica "+uriAPS);
-			}
-
-			return lista;
-
-		} catch (Exception qe) {
-			error = true;
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
-		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-			try {
-				if (error && this.atomica) {
-					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.atomica) {
-					this.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
+	
 
 
 	

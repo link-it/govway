@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.core.autenticazione.pd;
 
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
@@ -47,6 +48,8 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
     	
+    	IDSoggetto soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	    	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
     	String subject = credenziali.getSubject();
@@ -82,6 +85,12 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 			// L'identificazione in ssl non e' obbligatoria
 			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("credenziali fornite non corrette",subject));
 			esito.setClientIdentified(false);
+		}
+		else if(idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
+			// L'identificazione in ssl non e' obbligatoria
+			//esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaSsl("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",subject));
+			esito.setClientIdentified(false);
+			return esito;
 		}
 		else {
 			esito.setClientIdentified(true);

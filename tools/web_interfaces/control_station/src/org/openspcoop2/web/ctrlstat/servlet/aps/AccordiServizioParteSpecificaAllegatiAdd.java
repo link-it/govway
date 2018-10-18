@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -94,6 +95,8 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			String ruolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RUOLO  );
 			String tipoFile = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_FILE  );
 
+			String modificaAPI = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API);
+					
 			FormFile ff = fileUpload.getTheFile();
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
@@ -112,7 +115,24 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			// Prendo il nome
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idServizioInt));
 
-			String tmpTitle = apsHelper.getLabelIdServizio(asps);
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			IDSoggetto idSoggettoFruitore = null;
+			if(gestioneFruitori) {
+				tipoSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE);
+				nomeSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE);
+				idSoggettoFruitore = new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore);
+			}
+			
+			String tipoProtocollo = apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
+			
+			String tmpTitle = null;
+			if(gestioneFruitori) {
+				tmpTitle = apsHelper.getLabelServizioFruizione(tipoProtocollo, idSoggettoFruitore, asps);
+			}
+			else {
+				tmpTitle = apsHelper.getLabelServizioErogazione(tipoProtocollo, asps);
+			}
 
 			String[] ruoli = {RuoliDocumento.allegato.toString(),RuoliDocumento.specificaSemiformale.toString(),RuoliDocumento.specificaSicurezza.toString(),RuoliDocumento.specificaLivelloServizio.toString()};
 
@@ -149,15 +169,32 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				} else {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_EROGAZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
 				}
+				List<Parameter> listErogazioniChange = new ArrayList<>();
 				Parameter pIdServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId()+ "");
 				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
-				lstParam.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+				listErogazioniChange.add(pIdServizio);
+				listErogazioniChange.add(pNomeServizio);
+				listErogazioniChange.add(pTipoServizio);
+				if(gestioneFruitori) {
+					Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
+					Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
+					listErogazioniChange.add(pNomeSoggettoFruitore);
+					listErogazioniChange.add(pTipoSoggettoFruitore);
+				}
+				if(modificaAPI!=null) {
+					Parameter pModificaAPI = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MODIFICA_API, modificaAPI);
+					listErogazioniChange.add(pModificaAPI);
+				}
 				
-				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio, pNomeServizio, pTipoServizio));
+				lstParam.add(new Parameter(tmpTitle, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, 
+						listErogazioniChange.toArray(new Parameter[1])));
+				
+				lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_INFO_GENERALI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, 
+						listErogazioniChange.toArray(new Parameter[1])));
 				
 				lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_ALLEGATI,AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ALLEGATI_LIST, 
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio)));
+						listErogazioniChange.toArray(new Parameter[1])));
 			} else {
 				if(gestioneFruitori) {
 					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
@@ -184,10 +221,10 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, dati);
+				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, null, null, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati);
+						tipiAmmessiLabel, dati, modificaAPI);
 
 				pd.setDati(dati);
 
@@ -232,7 +269,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, null, null, dati);
 
 				dati = apsHelper. addTipiAllegatiToDati(TipoOperazione.ADD, idServizio, ruolo, ruoli, tipiAmmessi,
-						tipiAmmessiLabel, dati);
+						tipiAmmessiLabel, dati, modificaAPI);
 
 				pd.setDati(dati);
 

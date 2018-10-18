@@ -23,6 +23,7 @@ package org.openspcoop2.web.monitor.core.report;
 
 import java.util.Date;
 
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 
@@ -36,5 +37,5 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
  */
 public interface ILiveReport {
 
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String contesto, String protocollo);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String contesto, String protocollo, TipologiaRicerca tipologiaRicerca);
 }

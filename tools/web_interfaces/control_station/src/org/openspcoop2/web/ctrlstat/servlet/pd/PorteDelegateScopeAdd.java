@@ -166,7 +166,8 @@ public final class PorteDelegateScopeAdd extends Action {
 
 				dati = porteDelegateHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -190,7 +191,8 @@ public final class PorteDelegateScopeAdd extends Action {
 				
 				dati = porteDelegateHelper.addScopeToDati(TipoOperazione.ADD, dati, false, filtroScope, nome, scopes, false, true, true);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
  
 				pd.setDati(dati);
 

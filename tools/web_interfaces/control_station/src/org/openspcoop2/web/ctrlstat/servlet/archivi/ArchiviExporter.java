@@ -266,6 +266,11 @@ public class ArchiviExporter extends HttpServlet {
 			}
 			exporterUtils.filterByProtocol(tipiSoggetti,tipiServizi,archive);
 			
+			// Filtro per il soggetto selezionato
+			if(archiviHelper.isSoggettoMultitenantSelezionato()) {
+				IDSoggetto idSoggettoSelezionato = archiviCore.convertSoggettoSelezionatoToID(archiviHelper.getSoggettoMultitenantSelezionato());
+				exporterUtils.filterBySoggettoSelezionato(idSoggettoSelezionato, archive);
+			}
 			
 			// extension
 			MappingModeTypesExtensions mappingModeTypeExt = archiveFactory.getExportMappingTypesExtensions(archive, exportModeObject,

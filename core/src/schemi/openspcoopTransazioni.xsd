@@ -157,6 +157,9 @@
 				<xsd:element name="token-mail" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="token-info" type="xsd:string" minOccurs="0"/>
 			    
+				<!-- Tempi Elaborazione -->
+				<xsd:element name="tempi-elaborazione" type="xsd:string" minOccurs="0"/>
+				
 				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
 				<xsd:element name="duplicati-richiesta" type="xsd:int" minOccurs="0" default="0"/>
 				<xsd:element name="duplicati-risposta" type="xsd:int" minOccurs="0" default="0"/>

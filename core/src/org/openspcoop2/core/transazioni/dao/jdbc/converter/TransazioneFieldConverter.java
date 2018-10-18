@@ -635,6 +635,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "token_info";
 			}
 		}
+		if(field.equals(Transazione.model().TEMPI_ELABORAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tempi_elaborazione";
+			}else{
+				return "tempi_elaborazione";
+			}
+		}
 		if(field.equals(Transazione.model().DUPLICATI_RICHIESTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".duplicati_richiesta";
@@ -1183,6 +1190,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().TOKEN_INFO)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TEMPI_ELABORAZIONE)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().DUPLICATI_RICHIESTA)){

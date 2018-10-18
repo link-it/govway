@@ -39,11 +39,13 @@ import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
@@ -179,15 +181,51 @@ public class StatsSearchForm extends BaseSearchForm{
 	public List<SelectItem> getListaTipiRiconoscimento(){
 		List<SelectItem> lst = new ArrayList<>();
 		
-		lst.add(new SelectItem("--", "--"));  
+		lst.add(new SelectItem("--", "--"));
+		
+		boolean searchModeByApplicativo = !TipologiaRicerca.ingresso.equals(this.getTipologiaRicercaEnum()) || isProtocolloSupportaApplicativoInErogazione(); 
 
-		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) || !this.getTipologiaRicerca().equals("ingresso")) {
-			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));  
+		if(searchModeByApplicativo) {
+			lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO, "Applicativo"));
 		}
 		lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO, "Identificativo Autenticato"));  
 		lst.add(new SelectItem(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO, "Token Info"));  
 		
 		return lst;
+	}
+
+	private boolean isProtocolloSupportaApplicativoInErogazione() {
+		String protocolloSelezionato = this.getProtocollo(); 
+		boolean protocolloSupportaApplicativoinErogazione = false;
+		try{
+			protocolloSupportaApplicativoinErogazione = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloSelezionato).createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni();
+		}catch(Exception e) {}
+		return protocolloSupportaApplicativoinErogazione;
+	}
+	
+	@Override
+	public boolean isShowTipologia() {
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
+			if(this.getRiconoscimento() != null && this.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				return isProtocolloSupportaApplicativoInErogazione();
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	@Override
+	public void setRiconoscimento(String riconoscimento) {
+		super.setRiconoscimento(riconoscimento);
+		
+		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
+			if(this.getRiconoscimento() != null && this.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if(!isProtocolloSupportaApplicativoInErogazione()) {
+					this.setTipologiaRicerca(TipologiaRicerca.uscita);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -267,7 +305,11 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.periodoDellaRicerca = this.getPeriodo();
 		
 		if(this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
-			
+			if(this.getRiconoscimento() != null && this.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if(!isProtocolloSupportaApplicativoInErogazione()) {
+					this.setTipologiaRicerca(TipologiaRicerca.uscita);
+				}
+			}
 		}
 	}
 

@@ -33,6 +33,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="dominio-default" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -67,6 +68,7 @@ import java.util.Date;
     "nome",
     "identificativoPorta",
     "descrizione",
+    "dominioDefault",
     "router",
     "pdUrlPrefixRewriter",
     "paUrlPrefixRewriter",
@@ -130,6 +132,19 @@ public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean i
 	
 	public String getDescrizione(){
 		return this.descrizione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="dominio-default",required=false,nillable=false)
+	private Boolean dominioDefault;
+	
+	public void setDominioDefault(Boolean dominioDefault){
+		this.dominioDefault = dominioDefault;
+	}
+	
+	public Boolean getDominioDefault(){
+		return this.dominioDefault;
 	}
 	
 	

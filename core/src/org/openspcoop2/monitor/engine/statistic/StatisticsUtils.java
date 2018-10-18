@@ -145,21 +145,22 @@ public class StatisticsUtils {
 			setCondition(expr, azione, Transazione.model().AZIONE);
 			
 			
-			if(TipoPdD.DELEGATA.equals(tipoPdD)){
-				if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
-					expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
-				}
-				else{
-					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,stat.getServizioApplicativo());
-				}
-			}else{
-				if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
-					expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
-				}
-				else{
-					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE,stat.getServizioApplicativo());
-				}
+//			if(TipoPdD.DELEGATA.equals(tipoPdD)){
+			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+			if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
+				expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
 			}
+			else{
+				expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,stat.getServizioApplicativo());
+			}
+//			}else{
+//				if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
+//					expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
+//				}
+//				else{
+//					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE,stat.getServizioApplicativo());
+//				}
+//			}
 			
 			String trasportoMittente = stat.getTrasportoMittente();
 			setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
@@ -225,11 +226,12 @@ public class StatisticsUtils {
 		expr.addGroupBy(Transazione.model().NOME_SERVIZIO);
 		expr.addGroupBy(Transazione.model().VERSIONE_SERVIZIO);
 		expr.addGroupBy(Transazione.model().AZIONE);
-		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
-		}else{
-			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
-		}
+		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+//		if(TipoPdD.DELEGATA.equals(tipoPdD)){
+		expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
+//		}else{
+//			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
+//		}
 		expr.addGroupBy(Transazione.model().TRASPORTO_MITTENTE);
 		expr.addGroupBy(Transazione.model().TOKEN_ISSUER);
 		expr.addGroupBy(Transazione.model().TOKEN_CLIENT_ID);
@@ -339,15 +341,18 @@ public class StatisticsUtils {
 		
 		stat.setIdPorta(getValueFromMap(Transazione.model().PDD_CODICE,row));
 		String TipoPortaS = (String) row.get(Transazione.model().PDD_RUOLO.getFieldName());
-		String sa= null;
 		TipoPdD tipo = TipoPdD.toTipoPdD(TipoPortaS);
 		stat.setTipoPorta(tipo);
+		
+		/*
+		String sa= null;
 		Object saObject = null;
-		if(tipo.equals(TipoPdD.DELEGATA)){
-			saObject = row.get(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE.getFieldName());
-		}else{
-			saObject = row.get(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldName());
-		}
+		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+//		if(tipo.equals(TipoPdD.DELEGATA)){
+		saObject = row.get(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE.getFieldName());
+//		}else{
+//			saObject = row.get(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldName());
+//		}
 		if(saObject!=null){
 			if(saObject instanceof org.apache.commons.lang.ObjectUtils.Null){
 				sa = null;
@@ -357,7 +362,14 @@ public class StatisticsUtils {
 			}
 		}
 		stat.setServizioApplicativo(sa != null ? sa : Costanti.SERVIZIO_APPLICATIVO_ANONIMO);
-				
+		*/
+		// Registrare nelle statistiche il valore 'Anonimo' porta ad avere informazioni non corrette nella distribuzione per applicativo sulle erogazioni.
+		// L'errore avviene poichè è richiesto il group by sul nomeApplicativo, tipoSoggettoProprietario, nomeSoggettoProprietario
+		// poichè un applicativo viene identificato univocamente se si considera sia il nome dell'applicativo che il soggetto proprietario.
+		// Il group by sulle fruizioni, se si usa l'informazione anonima, non porta problemi perchè l'entry anonima sarà 1 sempre, essendo il soggetto fruitore uno solo (Soggetto locale impostato).
+		// Il group by sulle erogazioni produrrà invece più entry anonime se si hanno più soggetto che la invocano senza un applicativo specifico.
+		stat.setServizioApplicativo(getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row));
+						
 		stat.setTrasportoMittente(getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row));
 		
 		stat.setTokenIssuer(getValueFromMap(Transazione.model().TOKEN_ISSUER,row));

@@ -33,6 +33,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -97,11 +98,8 @@ public final class ServiziApplicativiList extends Action {
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			
-
-			
-
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			
+						
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 
 			List<ServizioApplicativo> lista = null;
@@ -109,6 +107,9 @@ public final class ServiziApplicativiList extends Action {
 			if(!useIdSogg){
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
+				if(saHelper.isSoggettoMultitenantSelezionato()) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
+				}
 				if(saCore.isVisioneOggettiGlobale(userLogin)){
 					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
 				}else{

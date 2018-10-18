@@ -5,7 +5,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it"
-	 xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="msg" basename="messages" />
 
 	<a4j:outputPanel id="gridCtr" layout="block" styleClass="panelLista" rendered="#{value.executeQuery}">
 
@@ -214,9 +215,9 @@
 					<h:outputText id="outErogatore2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}" />
 					<rich:toolTip for="outErogatore2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
 				</rich:column>
-				<rich:column id="colServ" sortable="false" label="Servizio" width="128px">
+				<rich:column id="colServ" sortable="false" label="#{msg['commons.servizio.label']}" width="128px">
 					<f:facet name="header">
-						<h:outputText id="outServ1" value="Servizio" />
+						<h:outputText id="outServ1" value="#{msg['commons.servizio.label']}" />
 					</f:facet>
 					<h:outputText id="outServ2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
 					<rich:toolTip for="outServ2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
@@ -300,8 +301,8 @@
 					</f:facet>
 					<h:outputText id="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 					<rich:toolTip for="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
-						<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
-					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+					<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 				</rich:column>
 				<rich:column id="colCodiceRispostaIngresso" sortable="false" label="Codice Risposta Ingresso" visible="false">
 					<f:facet name="header">

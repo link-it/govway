@@ -23,6 +23,10 @@
 
 package org.openspcoop2.web.ctrlstat.core;
 
+import java.awt.Font;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -48,6 +52,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -62,6 +67,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -127,6 +133,8 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
+import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
 import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -243,6 +251,9 @@ public class ControlStationCore {
 	private String logoHeaderImage = null;
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
+	private transient AffineTransform affineTransform = null;
+	private transient FontRenderContext fontRenderContext = null;
+	private transient Font defaultFont = null;
 	
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
@@ -492,6 +503,18 @@ public class ControlStationCore {
 	public boolean isAuditingRegistrazioneElementiBinari() {
 		return this.isAuditingRegistrazioneElementiBinari;
 	}
+	
+	/** IntegrationManager */
+	private boolean isIntegrationManagerEnabled;
+	public boolean isIntegrationManagerEnabled() {
+		return this.isIntegrationManagerEnabled;
+	}
+	
+	/** Accordi di Cooperazione */
+	private boolean isAccordiCooperazioneEnabled;
+	public boolean isAccordiCooperazioneEnabled() {
+		return this.isAccordiCooperazioneEnabled;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -535,11 +558,14 @@ public class ControlStationCore {
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private int portaCorrelazioneApplicativaMaxLength = 255;
+	private boolean showPortaDelegataLocalForward = false;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
 	private boolean showServiziVisualizzaModalitaElenco = false;
+	private Integer selectListSoggettiOperativi_numeroMassimoSoggetti = null;
+	private Integer selectListSoggettiOperativi_dimensioneMassimaLabel = null;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -577,8 +603,8 @@ public class ControlStationCore {
 	public boolean isShowGestioneSoggettiVirtuali() {
 		return this.showGestioneSoggettiVirtuali;
 	}
-	public boolean isShowGestioneWorkflowStatoDocumenti() {
-		return this.showGestioneWorkflowStatoDocumenti;
+	public boolean isShowGestioneWorkflowStatoDocumenti(ConsoleHelper consoleHelper) {
+		return this.showGestioneWorkflowStatoDocumenti && consoleHelper.isModalitaCompleta();
 	}
 	public boolean isGestioneWorkflowStatoDocumenti_visualizzaStatoLista() {
 		return this.gestioneWorkflowStatoDocumenti_visualizzaStatoLista;
@@ -604,6 +630,9 @@ public class ControlStationCore {
 	public int getPortaCorrelazioneApplicativaMaxLength() {
 		return this.portaCorrelazioneApplicativaMaxLength;
 	}
+	public boolean isShowPortaDelegataLocalForward() {
+		return this.showPortaDelegataLocalForward;
+	}
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 	}
@@ -618,6 +647,15 @@ public class ControlStationCore {
 	}
 	public boolean isShowServiziVisualizzaModalitaElenco() {
 		return this.showServiziVisualizzaModalitaElenco;
+	}
+	public Integer getNumeroMassimoSoggettiSelectListSoggettiOperatiti() {
+		return this.selectListSoggettiOperativi_numeroMassimoSoggetti;
+	}
+	public Integer getLunghezzaMassimaLabelSoggettiOperativiMenuUtente() {
+		return this.selectListSoggettiOperativi_dimensioneMassimaLabel;
+	}
+	public boolean showCodaMessage() {
+		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
 	}
 
 	/** Motori di Sincronizzazione */
@@ -672,6 +710,20 @@ public class ControlStationCore {
 		return this.exportArchive_servizi_standard;
 	}
 
+	/** Multitenant */
+	private boolean multitenant = false;
+	private MultitenantSoggettiErogazioni multitenantSoggettiErogazioni = null;
+	private MultitenantSoggettiFruizioni multitenantSoggettiFruizioni = null;
+	public boolean isMultitenant() {
+		return this.multitenant;
+	}
+	public MultitenantSoggettiErogazioni getMultitenantSoggettiErogazioni() {
+		return this.multitenantSoggettiErogazioni;
+	}
+	public MultitenantSoggettiFruizioni getMultitenantSoggettiFruizioni() {
+		return this.multitenantSoggettiFruizioni;
+	}
+	
 	/** Altro */
 	private String suffissoConnettoreAutomatico;
 	private boolean enabledToken_generazioneAutomaticaPorteDelegate;
@@ -1331,6 +1383,47 @@ public class ControlStationCore {
 				this.protocolloDefault = this.protocolFactoryManager.getDefaultProtocolFactory().getProtocol();
 			}
 
+			// Leggo configurazione multitenant
+			ConfigurazioneMultitenant confMultitenant = this.getConfigurazioneGenerale().getMultitenant();
+			if(confMultitenant!=null) {
+				
+				this.multitenant = StatoFunzionalita.ABILITATO.equals(confMultitenant.getStato());
+				
+				if(confMultitenant.getErogazioneSceltaSoggettiFruitori()!=null) {
+					switch (confMultitenant.getErogazioneSceltaSoggettiFruitori()) {
+					case SOGGETTI_ESTERNI:
+						this.multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI;
+						break;
+					case ESCLUDI_SOGGETTO_EROGATORE:
+						this.multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.ESCLUDI_SOGGETTO_EROGATORE;
+						break;
+					case TUTTI:
+						this.multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.TUTTI;
+						break;
+					}
+				}
+				else {
+					this.multitenantSoggettiErogazioni = MultitenantSoggettiErogazioni.SOLO_SOGGETTI_ESTERNI; // default
+				}
+				
+				if(confMultitenant.getFruizioneSceltaSoggettiErogatori()!=null) {
+					switch (confMultitenant.getFruizioneSceltaSoggettiErogatori()) {
+					case SOGGETTI_ESTERNI:
+						this.multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI;
+						break;
+					case ESCLUDI_SOGGETTO_FRUITORE:
+						this.multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.ESCLUDI_SOGGETTO_FRUITORE;
+						break;
+					case TUTTI:
+						this.multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.TUTTI;
+						break;
+					}
+				}
+				else {
+					this.multitenantSoggettiFruizioni = MultitenantSoggettiFruizioni.SOLO_SOGGETTI_ESTERNI; // default
+				}
+			}
+			
 		}catch(Exception e){
 			ControlStationCore.logError("Errore di inizializzazione: "+e.getMessage(), e);
 			throw e;
@@ -1349,6 +1442,9 @@ public class ControlStationCore {
 		this.logoHeaderImage = core.logoHeaderImage;
 		this.logoHeaderLink = core.logoHeaderLink;
 		this.logoHeaderTitolo = core.logoHeaderTitolo;
+		this.defaultFont = core.defaultFont;
+		this.affineTransform = core.affineTransform;
+		this.fontRenderContext = core.fontRenderContext;
 
 		/** Tipo del Database */
 		this.tipoDB = core.tipoDB;
@@ -1419,6 +1515,12 @@ public class ControlStationCore {
 		/** Auditing */
 		this.isAuditingRegistrazioneElementiBinari = core.isAuditingRegistrazioneElementiBinari;
 		
+		/** IntegrationManager */
+		this.isIntegrationManagerEnabled = core.isIntegrationManagerEnabled;
+		
+		/** Accordi di Cooperazione */
+		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1447,11 +1549,14 @@ public class ControlStationCore {
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.portaCorrelazioneApplicativaMaxLength = core.portaCorrelazioneApplicativaMaxLength;
+		this.showPortaDelegataLocalForward = core.showPortaDelegataLocalForward;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
 		this.showServiziVisualizzaModalitaElenco = core.showServiziVisualizzaModalitaElenco;
+		this.selectListSoggettiOperativi_numeroMassimoSoggetti = core.selectListSoggettiOperativi_numeroMassimoSoggetti;
+		this.selectListSoggettiOperativi_dimensioneMassimaLabel = core.selectListSoggettiOperativi_dimensioneMassimaLabel;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -1468,6 +1573,11 @@ public class ControlStationCore {
 		this.importArchivi_tipoPdD = core.importArchivi_tipoPdD;
 		this.exportArchive_configurazione_soloDumpCompleto = core.exportArchive_configurazione_soloDumpCompleto;
 		this.exportArchive_servizi_standard = core.exportArchive_servizi_standard;
+		
+		/** Multitenant */
+		this.multitenant = core.multitenant;
+		this.multitenantSoggettiErogazioni = core.multitenantSoggettiErogazioni;
+		this.multitenantSoggettiFruizioni = core.multitenantSoggettiFruizioni;
 		
 		/** Altro */
 		this.suffissoConnettoreAutomatico = core.suffissoConnettoreAutomatico;
@@ -1672,6 +1782,8 @@ public class ControlStationCore {
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
+			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
+			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -1683,6 +1795,9 @@ public class ControlStationCore {
 			this.logoHeaderImage = consoleProperties.getLogoHeaderImage();
 			this.logoHeaderLink = consoleProperties.getLogoHeaderLink();
 			this.logoHeaderTitolo = consoleProperties.getLogoHeaderTitolo();
+			String fontName = consoleProperties.getConsoleFontFamilyName();
+			int fontStyle = consoleProperties.getConsoleFontStyle();
+			this.defaultFont = new Font(fontName,fontStyle, 14);
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
@@ -1711,11 +1826,14 @@ public class ControlStationCore {
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.portaCorrelazioneApplicativaMaxLength = consoleProperties.getPortaCorrelazioneApplicativaMaxLength();
+			this.showPortaDelegataLocalForward = consoleProperties.isMenuPortaDelegataLocalForward();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
 			this.showServiziVisualizzaModalitaElenco = consoleProperties.isEnableServiziVisualizzaModalitaElenco();
+			this.selectListSoggettiOperativi_numeroMassimoSoggetti = consoleProperties.getNumeroMassimoSoggettiOperativiMenuUtente();
+			this.selectListSoggettiOperativi_dimensioneMassimaLabel = consoleProperties.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente();
 			
 			// Gestione govwayConsole centralizzata
 			if(this.singlePdD == false){
@@ -1760,6 +1878,9 @@ public class ControlStationCore {
 			this.importArchivi_tipoPdD = consoleProperties.getImportArchive_tipoPdD();
 			this.exportArchive_configurazione_soloDumpCompleto = consoleProperties.isExportArchive_configurazione_soloDumpCompleto();
 			this.exportArchive_servizi_standard = consoleProperties.isExportArchive_servizi_standard();
+			
+			// Multitenant
+			// Inizializzato dopo aver attivato il Database, per leggere la configurazione su DB
 			
 			// Gestione Visibilità utenti
 			this.visioneOggettiGlobale = consoleProperties.isVisibilitaOggettiGlobale();
@@ -4841,6 +4962,10 @@ public class ControlStationCore {
 		return this.getProtocolli(session, false);
 	}
 	public List<String> getProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato) throws  DriverRegistroServiziException {
+		return this.getProtocolli(session, ignoreProtocolloSelezionato, false);
+	}
+	public List<String> getProtocolli(HttpSession session, boolean ignoreProtocolloSelezionato, 
+			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws  DriverRegistroServiziException {
 		String getProtocolli = "getProtocolli";
 		try{
 
@@ -4851,6 +4976,14 @@ public class ControlStationCore {
 			if(!ignoreProtocolloSelezionato) {
 				if(u.getProtocolloSelezionatoPddConsole()!=null) {
 					protocolliList.add(u.getProtocolloSelezionatoPddConsole());
+					return protocolliList;
+				}
+				else if(consideraProtocolliCompatibiliSoggettoSelezionato &&
+						u.getSoggettoSelezionatoPddConsole()!=null && !"".equals(u.getSoggettoSelezionatoPddConsole())) {
+					String tipoSoggetto = u.getSoggettoSelezionatoPddConsole().split("/")[0];
+					SoggettiCore soggettiCore = new SoggettiCore(this);
+					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto); 
+					protocolliList.add(protocollo);
 					return protocolliList;
 				}
 			}
@@ -4896,8 +5029,15 @@ public class ControlStationCore {
 	}
 	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
 			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti) throws  DriverRegistroServiziException {
+		return this.getProtocolliByFilter(session, filtraSoggettiEsistenti, dominio, 
+				filtraAccordiEsistenti, filtraAccordiCooperazioneEsistenti, 
+				false);
+	}
+	public List<String> getProtocolliByFilter(HttpSession session, boolean filtraSoggettiEsistenti, PddTipologia dominio, 
+			boolean filtraAccordiEsistenti, boolean filtraAccordiCooperazioneEsistenti, 
+			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws  DriverRegistroServiziException {
 		
-		List<String> _listaTipiProtocollo = this.getProtocolli(session);
+		List<String> _listaTipiProtocollo = this.getProtocolli(session, false, consideraProtocolliCompatibiliSoggettoSelezionato);
 		
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		
@@ -4999,11 +5139,12 @@ public class ControlStationCore {
 		}
 	}
 
-	public IDSoggetto getSoggettoOperativo(String userLogin, String protocollo) throws DriverRegistroServiziException{
+	public IDSoggetto getSoggettoOperativoDefault(String userLogin, String protocollo) throws DriverRegistroServiziException{
 		Search s = new Search();
 		s.setPageSize(Liste.SOGGETTI, 1); // serve solo per il count
 		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
 		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_SOGGETTO_DEFAULT, "true"); // imposto indicazione di volere il soggetto operativo di default
 		List<org.openspcoop2.core.registry.Soggetto> lista = null;
 		if(this.isVisioneOggettiGlobale(userLogin)){
 			lista = this.soggettiRegistroList(null, s);
@@ -5016,6 +5157,36 @@ public class ControlStationCore {
 		else {
 			return null;
 		}
+	}
+	
+	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiOperativi() throws DriverRegistroServiziException{
+		return this.getSoggettiOperativi(null);
+	}
+	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiOperativi(String protocollo) throws DriverRegistroServiziException{
+		Search s = new Search(true);
+		if(protocollo!=null) {
+			s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_PROTOCOLLO, protocollo); // imposto protocollo
+		}
+		s.addFilter(Liste.SOGGETTI, Filtri.FILTRO_DOMINIO, PddTipologia.OPERATIVO.toString()); // imposto dominio
+		return this.soggettiRegistroList(null, s);
+	}
+	
+	public List<IDSoggetto> getIdSoggettiOperativi() throws DriverRegistroServiziException{
+		return this.getIdSoggettiOperativi(null);
+	}
+	public List<IDSoggetto> getIdSoggettiOperativi(String protocollo) throws DriverRegistroServiziException{
+		List<org.openspcoop2.core.registry.Soggetto> list = this.getSoggettiOperativi(protocollo);
+		List<IDSoggetto> l = new ArrayList<>();
+		if(list!=null && !list.isEmpty()) {
+			for (org.openspcoop2.core.registry.Soggetto soggetto : list) {
+				l.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
+			}
+		}
+		return l;
+	}
+	
+	public IDSoggetto convertSoggettoSelezionatoToID(String soggettoOperativoSelezionato) {
+		return new IDSoggetto(soggettoOperativoSelezionato.split("/")[0], soggettoOperativoSelezionato.split("/")[1]);
 	}
 	
 	public List<org.openspcoop2.core.registry.Soggetto> soggettiRegistroList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
@@ -5664,4 +5835,52 @@ public class ControlStationCore {
 	public IExtendedListServlet getExtendedServletPortaApplicativa(){
 		return this.pluginPortaApplicativa;
 	}
+	
+	/***
+	 * utilizzo Lucida sans come font di dafault poiche' e' generalmente presente nella jdk
+	 * 
+	 * @return Font di defualt dell'applicazione
+	 */
+	public Font getDefaultFont() {
+		if(this.defaultFont == null)
+			this.defaultFont = new Font("Lucida Sans", Font.PLAIN , 14);
+
+		return this.defaultFont;
+	}
+	public void setDefaultFont(Font defaultFont) {
+		this.defaultFont = defaultFont;
+	}
+	
+	// UTILITIES misurazione dimensione text
+	public Integer getFontWidth(String text){
+		return getFontWidth(text, this.getDefaultFont());
+	} 
+	
+	public Integer getFontWidth(String text, int fontSize){
+		Font defaultFont2 = this.getDefaultFont();
+		return getFontWidth(text, defaultFont2.getFontName(), defaultFont2.getStyle(), fontSize);
+	} 
+	
+	public Integer getFontWidth(String text, int fontStyle, int fontSize){
+		Font defaultFont2 = this.getDefaultFont();
+		return getFontWidth(text, defaultFont2.getFontName(), fontStyle, fontSize);
+	} 
+
+	public Integer getFontWidth(String text, String fontName, int fontStyle, int fontSize){
+		Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
+		return getFontWidth(text, fontToCheck);
+	} 
+
+
+	public Integer getFontWidth(String text, Font fontToCheck){
+		if(this.fontRenderContext == null){
+			if(this.affineTransform == null)
+				this.affineTransform = new AffineTransform();
+
+			this.fontRenderContext = new FontRenderContext(this.affineTransform,true,true);
+		}
+
+		Rectangle2D rectangle2d = fontToCheck.getStringBounds(text, this.fontRenderContext);
+		return (int) rectangle2d.getWidth(); 
+	}	
 }

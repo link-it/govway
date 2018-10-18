@@ -88,6 +88,9 @@ CREATE TABLE configurazione
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR2(255),
 	tracciamento_esiti VARCHAR2(255),
+	-- Transazione
+	transazioni_tempi VARCHAR2(255),
+	transazioni_token VARCHAR2(255),
 	-- Dump
 	dump VARCHAR2(255),
 	dump_bin_pd VARCHAR2(255),
@@ -139,6 +142,10 @@ CREATE TABLE configurazione
 	id_ge_cooperazione NUMBER,
 	-- FOREIGN KEY (id_ge_integrazione) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore di default durante l'utilizzo di un connettore
 	id_ge_integrazione NUMBER,
+	-- Gestione MultiTenant
+	multitenant_stato VARCHAR2(255),
+	multitenant_fruizioni VARCHAR2(255),
+	multitenant_erogazioni VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

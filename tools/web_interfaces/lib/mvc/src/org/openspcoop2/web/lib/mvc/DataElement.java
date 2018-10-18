@@ -25,6 +25,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class DataElement {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, labelRight, value, type, url, target, name, onClick, onChange, selected,toolTip;
+	String label, labelRight, value, type, name, onClick, onChange, selected;
 	String [] values = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -99,6 +100,8 @@ public class DataElement {
 	private String width = null;
 	
 	private Integer minValue = null, maxValue= null;
+	
+	private List<String> icon, url,toolTip, target = null;
 
 	public String getIdToRemove() {
 		return this.idToRemove;
@@ -113,13 +116,14 @@ public class DataElement {
 		this.label = "";
 		this.value = "";
 		this.type = "text";
-		this.url = "";
-		this.target = "";
+		this.url = new ArrayList<>();
+		this.target = new ArrayList<>();
 		this.name = "";
 		this.onClick = "";
 		this.onChange = "";
 		this.selected = "";
-		this.toolTip="";
+		this.toolTip = new ArrayList<>();
+		this.icon = new ArrayList<>();
 		this.size = DataElement.DATA_ELEMENT_SIZE;
 		this.cols = DataElement.DATA_ELEMENT_COLS;
 		this.rows = DataElement.DATA_ELEMENT_ROWS;
@@ -204,29 +208,65 @@ public class DataElement {
 	}
 
 	public void setUrl(String s) {
-		this.url = s;
+		this.url.clear();
+		this.url.add(s);
+	}
+	public void addUrl(String s) {
+		this.url.add(s);
 	}
 	public void setUrl(String servletName,Parameter ... parameter) {
-		this.url = servletName;
-		if(parameter!=null && parameter.length>0){
-			this.url = this.url + "?";
-			for (int i = 0; i < parameter.length; i++) {
-				if(i>0){
-					this.url = this.url + "&";
-				}
-				this.url = this.url + parameter[i].toString();
-			}
-		}
-	}
-	public String getUrl() {
-		return DataElement.checkNull(this.url);
+		String urValue = _getUrlValue(servletName, parameter);
+		this.url.clear();
+		this.url.add(urValue);
+		
 	}
 
-	public void setTarget(String s) {
-		this.target = s;
+	private String _getUrlValue(String servletName, Parameter... parameter) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(servletName);
+		if(parameter!=null && parameter.length>0){
+			sb.append("?");
+			for (int i = 0; i < parameter.length; i++) {
+				if(i>0){
+					sb.append("&");
+				}
+				sb.append(parameter[i].toString());
+			}
+		}
+		
+		String urValue = sb.toString();
+		return urValue;
+	}
+	
+	public void addUrl(String servletName,Parameter ... parameter) {
+		String urValue = _getUrlValue(servletName, parameter);
+		this.url.add(urValue);
+	}
+	public String getUrl() {
+		if(this.url.isEmpty())
+			return "";
+		return this.url.get(0);
+	}
+	
+	public List<String> getListaUrl() {
+		return this.url;
+	}
+
+	public void setTarget(TargetType s) {
+		this.target.clear();
+		this.target.add(s.toString());
+	}
+	public void addTarget(TargetType s) {
+		this.target.add(s.toString());
 	}
 	public String getTarget() {
-		return DataElement.checkNull(this.target);
+		if(this.target.isEmpty())
+			return "";
+		return this.target.get(0);
+	}
+	
+	public List<String> getListaTarget() {
+		return this.target;
 	}
 
 	public void setName(String s) {
@@ -350,6 +390,11 @@ public class DataElement {
 	}
 
 	public String getToolTip() {
+		if(this.toolTip.isEmpty())
+			return "";
+		return this.toolTip.get(0);
+	}
+	public List<String> getListaToolTip() {
 		return this.toolTip;
 	}
 	/**
@@ -360,7 +405,11 @@ public class DataElement {
 	 * @param toolTip
 	 */
 	public void setToolTip(String toolTip) {
-		this.toolTip = toolTip;
+		this.toolTip.clear();
+		this.toolTip.add(toolTip);
+	}
+	public void addToolTip(String s) {
+		this.toolTip.add(s);
 	}
 	
 	public boolean isBold() {
@@ -574,5 +623,23 @@ public class DataElement {
 
 	public void setLabelRight(String labelRight) {
 		this.labelRight = labelRight;
+	}
+
+	public String getIcon() {
+		if(this.icon.isEmpty())
+			return "";
+		return this.icon.get(0);
+	}
+	public List<String> getListaIcon() {
+		return this.icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon.clear();
+		this.icon.add(icon);
+	}
+	
+	public void addIcon(String icon) {
+		this.icon.add(icon);
 	}
 }

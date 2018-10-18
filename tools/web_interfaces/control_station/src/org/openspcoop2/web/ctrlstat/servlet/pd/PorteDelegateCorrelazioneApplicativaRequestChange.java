@@ -196,7 +196,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd,  
 						elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString, protocollo);
@@ -221,7 +222,8 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				dati = porteDelegateHelper.addPorteDelegateCorrelazioneApplicativaRequestToDati(TipoOperazione.CHANGE, pd, 
 						elemxmlOrig, mode, pattern, gif, riusoIdMessaggio, dati, idcorrString, protocollo);

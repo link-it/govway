@@ -1,3 +1,14 @@
+2018-10-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità OP-764
+	- Gestione semplificata del Multi-Tenant. L'ente in gestione può essere scelto in maniera simile alla modalità di utilizzo.
+	- I mittenti di una erogazione, identificati, possono non più essere solamente i soggetti ma anche gli applicativi del dominio interno.
+	- L'autorizzazione puntuale sull'erogazione contiene adesso l'elenco degli applicativi oltre che dei soggetti.
+	- Rivista grafica del menù a tendina nella testata al fine di allinearla con il menù a sinistra.
+	- Rivista grafica di presentazione delle API Registrate sulla govwayConsole.
+	- Attuate migliorie varie sulle console sia grafiche che di naming.
+
 2018-09-18  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.0

@@ -145,7 +145,8 @@ public final class PorteDelegateWSResponseAdd extends Action {
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, "", "",false);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -168,7 +169,8 @@ public final class PorteDelegateWSResponseAdd extends Action {
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.ADD,dati, nome, valore,false);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 

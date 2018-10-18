@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -149,7 +150,7 @@ public class ConnettoreJMSUtils {
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
 			String stato,
-			ControlStationCore core,int pageSize){
+			ControlStationCore core,ConsoleHelper consoleHelper,int pageSize){
 		
 		
 		DataElement de = new DataElement();
@@ -160,7 +161,7 @@ public class ConnettoreJMSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 		de.setValue(nome);
-		if(!core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);	
 		}else{
@@ -197,7 +198,7 @@ public class ConnettoreJMSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
 		de.setValue(connfact);
-		if(!core.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
+		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setRequired(true);	
 		}else{

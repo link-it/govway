@@ -313,6 +313,20 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			esito.setStatoInvocazioneErroreNonGestito(e);
 			return esito;
 		}
+		
+		// Transaction
+		Transaction transactionNullable = null;
+		try{
+			transactionNullable = TransactionContext.getTransaction(idTransazione);
+		}catch(Exception e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+//			msgDiag.logErroreGenerico(e, "getTransaction"); 
+//			openspcoopstate.releaseResource();
+//			esito.setEsitoInvocazione(false); 
+//			esito.setStatoInvocazioneErroreNonGestito(e);
+//			return esito;
+		}
+		
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		/* ID e tipo di implementazione PdD con cui interoperare */
 		String idMessaggioConsegna = openspcoopstate.getIDMessaggioSessione();
@@ -2515,6 +2529,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
 								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
 
+							if(transactionNullable!=null) {
+								transactionNullable.getTempiElaborazione().startValidazioneRisposta();
+							}
 							ByteArrayInputStream binXSD = null;
 							try{
 								boolean hasContent = false;
@@ -2666,6 +2683,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									return esito;
 								}
 							}finally{
+								if(transactionNullable!=null) {
+									transactionNullable.getTempiElaborazione().endValidazioneRisposta();
+								}
 								if(binXSD!=null){
 									try{
 										binXSD.close();
@@ -2732,15 +2752,17 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								
 								gestoreCorrelazione = 
 										new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
-												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory);
+												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory,
+												transactionNullable);
 								
 								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 								
 								idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
 								
 								if(idCorrelazioneApplicativaRisposta!=null) {
-									Transaction tr = TransactionContext.getTransaction(idTransazione);
-									tr.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+									if(transactionNullable!=null) {
+										transactionNullable.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+									}
 								}
 								
 								if(richiestaApplicativa!=null)

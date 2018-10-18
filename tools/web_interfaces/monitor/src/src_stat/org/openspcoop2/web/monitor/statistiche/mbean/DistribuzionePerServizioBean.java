@@ -43,15 +43,18 @@ import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
@@ -192,7 +195,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
@@ -204,7 +207,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		} else {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE); 
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE); 
 		return sb.toString();
 	}
 
@@ -328,7 +331,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
@@ -424,7 +427,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
@@ -520,7 +523,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();

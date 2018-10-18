@@ -65,6 +65,7 @@ import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -80,8 +81,10 @@ import org.openspcoop2.web.monitor.core.report.ILiveReport;
 import org.openspcoop2.web.monitor.core.report.ReportFactory;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.slf4j.Logger;
 
@@ -134,6 +137,11 @@ public class SummaryBean implements Serializable{
 	
 	private boolean soggettiAssociatiSelectItemsWidthCheck = false;
 	private boolean soggettiSelectItemsWidthCheck = false;
+	
+	private boolean showTipologiaRicerca;
+	private boolean tipologiaRicercaEntrambiEnabled;
+	private TipologiaRicerca defaultTipologiaRicerca;
+	private TipologiaRicerca tipologiaRicerca;	
 	
 	private Integer maxSelectItemsWidth = 900;
 
@@ -224,10 +232,17 @@ public class SummaryBean implements Serializable{
 			}
 			
 			this.protocollo = protocolFactory.getProtocol();
+			
+			this.showTipologiaRicerca = govwayMonitorProperties.isVisualizzaFiltroRuoloSummary();
+			if(this.showTipologiaRicerca) {
+				this.tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuoloSummary();
+				this.tipologiaRicerca = this.getDefaultTipologiaRicercaEnum();
+			}
+			
 		} catch (Exception e) {
 			SummaryBean.log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e); 
 		}
-
+		
 		try {
 			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log, this.protocollo);
 		} catch (Exception e) {
@@ -266,6 +281,76 @@ public class SummaryBean implements Serializable{
 	public void setEsitoContesto(String esitoContesto) {
 		this.esitoContesto = esitoContesto;
 	}
+	
+	public boolean isShowTipologiaRicerca() {
+		return this.showTipologiaRicerca;
+	}
+	public void setShowTipologiaRicerca(boolean showTipologiaRicerca) {
+		this.showTipologiaRicerca = showTipologiaRicerca;
+	}
+
+	public String getTipologiaRicerca() {
+		return this.getTipologiaRicercaEnum() != null ? this.getTipologiaRicercaEnum().toString() : "";
+	}
+
+	public void setTipologiaRicerca(String tipologiaRicerca) {
+		if (StringUtils.isEmpty(tipologiaRicerca) || "--".equals(tipologiaRicerca))
+			this.tipologiaRicerca = null;
+		else 
+			this.setTipologiaRicerca(TipologiaRicerca.valueOf(tipologiaRicerca));
+		
+	}
+
+	public TipologiaRicerca getTipologiaRicercaEnum() {
+		return this.tipologiaRicerca;
+	}
+
+	public void setTipologiaRicerca(TipologiaRicerca tipologiaRicerca) {
+		this.tipologiaRicerca = tipologiaRicerca;
+	}
+	
+	public String getDefaultTipologiaRicerca() {
+		return this.getDefaultTipologiaRicercaEnum() != null ? this.getDefaultTipologiaRicercaEnum().toString() : "";
+	}
+	
+	public TipologiaRicerca getDefaultTipologiaRicercaEnum() {
+		if(this.defaultTipologiaRicerca != null) {
+			return this.defaultTipologiaRicerca;
+		} else {
+			if(this.tipologiaRicercaEntrambiEnabled) 
+				return TipologiaRicerca.all;
+			else 
+				return TipologiaRicerca.ingresso;
+		}
+	}
+	
+	public void setDefaultTipologiaRicerca(TipologiaRicerca defaultTipologiaRicerca) {
+		this.defaultTipologiaRicerca = defaultTipologiaRicerca;
+	}
+
+	public void setDefaultTipologiaRicerca(String defaultTipologiaRicerca) {
+		if (StringUtils.isEmpty(defaultTipologiaRicerca) || "--".equals(defaultTipologiaRicerca))
+			this.defaultTipologiaRicerca = null;
+		else 
+			this.setDefaultTipologiaRicerca(TipologiaRicerca.valueOf(defaultTipologiaRicerca));
+	}
+	
+	public List<SelectItem> getTipologieRicerca() throws Exception {
+		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
+		
+		listaTipologie.add(new SelectItem(TipologiaRicerca.ingresso.toString(),"Erogazione"));
+		listaTipologie.add(new SelectItem(TipologiaRicerca.uscita.toString(),"Fruizione"));
+		if(this.tipologiaRicercaEntrambiEnabled)
+			listaTipologie.add(new SelectItem(TipologiaRicerca.all.toString(),"Erogazione/Fruizione"));
+		
+		return listaTipologie;
+	}
+	
+	public void tipologiaRicercaListener(ActionEvent ae) {
+		// se cambia la tipologia di ricerca devo azzerare le scelte precedenti
+		this.soggettoLocale = null;
+	}
+
 	
 	private Date startDateForLabel;
 	private Date endDateForLabel;
@@ -408,7 +493,7 @@ public class SummaryBean implements Serializable{
 			ResLive r = null;
 			try{
 				// L'xml del Summary Bean viene generato dal report selezionato all'avvio del bean.
-				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
+				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo, this.tipologiaRicerca);
 			} catch (CoreException er) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 				SummaryBean.log.error(er.getMessage(), er);
@@ -602,7 +687,7 @@ public class SummaryBean implements Serializable{
 
 					ResLive r = null;
 					try{
-						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
+						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo, this.tipologiaRicerca);
 					} catch (CoreException er) {
 						MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 						SummaryBean.log.error(er.getMessage(),er);
@@ -665,18 +750,24 @@ public class SummaryBean implements Serializable{
 	@SuppressWarnings("deprecation")
 	private PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException{
 		UserDetailsBean loggedUser = Utility.getLoggedUser();
-		User u =  Utility.getLoggedUtente();
+		String loggedUtenteSoggettoPddMonitor = Utility.getLoggedUtenteSoggettoPddMonitor();
+		String forceSoggettoLocale= null;
+		if(!(this.isShowFiltroSoggettoLocale() && Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteSoggettoPddMonitor))) {
+			forceSoggettoLocale = loggedUtenteSoggettoPddMonitor;
+		}
 		
-		int foundSoggetti = u.getSoggetti() != null ? u.getSoggetti().size() : 0;
-		int foundServizi = u.getServizi() != null ? u.getServizi().size() : 0;
+		String tipoProtocollo = this.getProtocollo();
+		
+		int foundSoggetti = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo).size() : 0;
+		int foundServizi = loggedUser.getUtenteServizioProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteServizioProtocolliMap().get(tipoProtocollo).size() : 0;
 		
 		if((foundServizi + foundSoggetti) == 1) {
 			IDServizio idServizio =  null;
 			if(foundServizi == 1) {
-				idServizio = u.getServizi().get(0);
+				idServizio = loggedUser.getUtenteServizioProtocolliMap().get(tipoProtocollo).get(0);
 			} else {
 				idServizio = new IDServizio();
-				idServizio.setSoggettoErogatore(u.getSoggetti().get(0));
+				idServizio.setSoggettoErogatore(loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo).get(0));
 			}
 			this.soggettoLocale = Utility.convertToSoggettoServizio(idServizio);
 		}
@@ -686,8 +777,15 @@ public class SummaryBean implements Serializable{
 		String tipoServizio = null;
 		String nomeServizio = null;
 		Integer versioneServizio = null;
+		
+		IDServizio idServizio = null;
 		if(this.soggettoLocale!=null && !StringUtils.isEmpty(this.soggettoLocale) && !"--".equals(this.soggettoLocale)){
-			IDServizio idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
+			idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
+		} else {
+			if(!Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteSoggettoPddMonitor))
+				idServizio = Utility.parseSoggettoServizio(forceSoggettoLocale);
+		}
+		if(idServizio != null) {
 			tipoSoggettoLocale = idServizio.getSoggettoErogatore().getTipo();
 			nomeSoggettoLocale = idServizio.getSoggettoErogatore().getNome();
 			versioneServizio = idServizio.getVersione();
@@ -695,10 +793,7 @@ public class SummaryBean implements Serializable{
 			nomeServizio = idServizio.getNome(); // possono essere null
 		}
 		
-		return PermessiUtenteOperatore.getPermessiUtenteOperatore(loggedUser, 
-				tipoSoggettoLocale,nomeSoggettoLocale, 
-				tipoServizio, nomeServizio,versioneServizio);
-		
+		return PermessiUtenteOperatore.getPermessiUtenteOperatore(loggedUser, tipoSoggettoLocale, nomeSoggettoLocale, tipoServizio, nomeServizio,versioneServizio);
 	}
 
 
@@ -1019,9 +1114,6 @@ public class SummaryBean implements Serializable{
 	
 	@SuppressWarnings("deprecation")
 	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
-		if(this.soggettiAssociati == null)
-			this.soggettiAssociati = new ArrayList<SelectItem>();
-		
 		if(!this.soggettiAssociatiSelectItemsWidthCheck){
 			this.soggettiAssociati = new ArrayList<SelectItem>();
 
@@ -1032,31 +1124,28 @@ public class SummaryBean implements Serializable{
 				String tipoProtocollo = this.getProtocollo();
 				Map<String,String> mapInternal = new HashMap<String,String>();
 				
-				List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
-				List<IDServizio> tipiNomiServiziAssociati = loggedUser.getUtenteServizioList();
 				if(tipoProtocollo != null) {
+					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
+					List<IDServizio> tipiNomiServiziAssociati = loggedUser.getUtenteServizioProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteServizioProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
+					
 					// se ho selezionato un protocollo devo filtrare per protocollo
 					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0) {
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-							if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
-								boolean add = true;
-								if(soloOperativi) {
-									String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
-									add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
-								}
+							boolean add = true;
+							if(soloOperativi) {
+								String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
+								add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+							}
 
-								if(add) {
-									lstSoggTmp.add(utenteSoggetto);
-								}
+							if(add) {
+								lstSoggTmp.add(utenteSoggetto);
 							}
 						}
 					}
 					
 					if(tipiNomiServiziAssociati !=null && tipiNomiServiziAssociati.size() > 0) {
 						for (IDServizio utenteServizio : tipiNomiServiziAssociati) {
-							if(this.dynamicUtils.isTipoServizioCompatibileConProtocollo(utenteServizio.getTipo(), tipoProtocollo)){
-								lstServTmp.add(utenteServizio);
-							}
+							lstServTmp.add(utenteServizio);
 						}
 					}
 				}
@@ -1143,22 +1232,35 @@ public class SummaryBean implements Serializable{
 		String tipoProtocollo = this.getProtocollo();
 		
 		if(val!=null && !StringUtils.isEmpty((String)val)){
-			
+			String tipoSoggetto = null;
+			String nomeSoggetto = null;
 			
 			Map<String,String> mapInternal = new HashMap<String,String>();
 			
-			List<Soggetto> listSoggetti = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
-			if(listSoggetti!=null && listSoggetti.size()>0){
-				for (Soggetto soggetto : listSoggetti) {
-					IDServizio idServizio = new IDServizio();
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
-					idServizio.setSoggettoErogatore(idSoggetto);
-					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-					mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
+			// se non ho fissato un soggetto posso cercare anche per soggetto
+			if(this.isShowFiltroSoggettoLocale()) {
+				List<Soggetto> listSoggetti = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
+				if(listSoggetti!=null && listSoggetti.size()>0){
+					for (Soggetto soggetto : listSoggetti) {
+						IDServizio idServizio = new IDServizio();
+						IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+						idServizio.setSoggettoErogatore(idSoggetto);
+						String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
+					}
+				}
+			} else {
+				// devo filtra i servizi per il soggetto locale
+				if(this.tipologiaRicerca!=null && TipologiaRicerca.ingresso.equals(this.tipologiaRicerca)) {
+					String loggedUtenteSoggettoPddMonitor = Utility.getLoggedUtenteSoggettoPddMonitor();
+					if(!Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteSoggettoPddMonitor)) {
+						tipoSoggetto = Utility.parseTipoSoggetto(loggedUtenteSoggettoPddMonitor);
+						nomeSoggetto = Utility.parseNomeSoggetto(loggedUtenteSoggettoPddMonitor);
+					}	
 				}
 			}
 			
-			List<AccordoServizioParteSpecifica> listServizi = this.dynamicUtilsService.getServizi(tipoProtocollo, null, null, null,(String)val,false);
+			List<AccordoServizioParteSpecifica> listServizi = this.dynamicUtilsService.getServizi(tipoProtocollo, null, tipoSoggetto, nomeSoggetto,(String)val,false);
 			if(listServizi!=null && listServizi.size()>0){
 				for (AccordoServizioParteSpecifica asps : listServizi) {
 					IDServizio idServizio = new IDServizio();
@@ -1373,11 +1475,10 @@ public class SummaryBean implements Serializable{
 		this.protocolli = new ArrayList<SelectItem>();
 //		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
 		try {
-			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 			User utente = Utility.getLoggedUtente();
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(utente, listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
 
 			for (String protocolKey : listaNomiProtocolli) {
 				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
@@ -1416,8 +1517,7 @@ public class SummaryBean implements Serializable{
 				return false;
 			}
 
-			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(utente,listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
 
 			numeroProtocolli = listaNomiProtocolli.size();
 
@@ -1425,7 +1525,7 @@ public class SummaryBean implements Serializable{
 			if(numeroProtocolli == 1)
 				return false;
 
-		} catch (ProtocolException e) {
+		} catch (Exception e) {
 			SummaryBean.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}  
 
@@ -1442,5 +1542,31 @@ public class SummaryBean implements Serializable{
 	public void protocolloSelected(ActionEvent ae) {
 		this.soggettoLocale = null;
 		this.labelSoggettoLocale = null;
+	}
+	
+	public String getLabelServizio() {
+		return !this.isShowFiltroSoggettoLocale() ? 
+				MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY) :
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY);
+	}
+	
+	public boolean isShowFiltroSoggettoLocale(){
+		return Utility.getLoginBean().isShowFiltroSoggettoLocale();
+	}
+	
+	public String getLabelTipiNomiSoggettiServiziAssociati(){
+		User utente = Utility.getLoggedUtente();
+		boolean foundSoggetti = utente.getSoggetti() != null && utente.getSoggetti().size() > 0;
+		boolean foundServizi = utente.getServizi() !=  null && utente.getServizi().size() > 0;
+
+		if(foundSoggetti && foundServizi){
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY);
+		}
+		else if(foundServizi){
+			return MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+		}
+		else{
+			return MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LOCALE_LABEL_KEY);
+		}
 	}
 }

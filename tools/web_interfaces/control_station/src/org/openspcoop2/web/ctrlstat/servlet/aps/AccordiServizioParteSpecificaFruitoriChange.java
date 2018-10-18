@@ -159,7 +159,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
 		
 		try {
-			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			
 			// prendo i dati hidden del pdold e li metto nel pd attuale
@@ -167,6 +166,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			pd.setHidden(pdOld.getHidden());
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			
+			boolean isModalitaCompleta = apsHelper.isModalitaCompleta();
+			
 			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apsHelper); 
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
@@ -282,9 +284,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
+			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
 				if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 					gestioneFruitori = true;
+				}
+				else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+					gestioneErogatori = true;
 				}
 			}
 			//boolean connettoreOnly = gestioneFruitori;
@@ -515,7 +521,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								
 				String labelPerPorta = null;
 				if(accessoDaListaAPS) {
-					if(!multitenant) {
+					if(!isModalitaCompleta) {
 						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_DELEGATE_MODIFICA_CONNETTORE;
 						} else {
@@ -844,7 +850,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
-							null,
+							null,null,
 							null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
@@ -854,7 +860,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,
-							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -879,7 +885,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					pd.setDati(dati);
 
-					if(apsCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(servFru.getStatoPackage())){
+					if(apsHelper.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(servFru.getStatoPackage())){
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
 
@@ -957,7 +963,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 						azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 						null,null,null,null,null,
-						null,
+						null,null,
 						null,null,null,null);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
@@ -966,7 +972,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 				dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-						(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+						null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -1022,7 +1028,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
-							null,
+							null,null,
 							null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
@@ -1031,7 +1037,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
@@ -1201,7 +1207,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			fruitore.setStatoPackage(statoPackage);
 
 			// Check stato
-			if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
+			if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
 
 				try{
 					apsCore.validaStatoFruitoreAccordoServizioParteSpecifica(fruitore, serviziosp);
@@ -1232,7 +1238,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							azioneConnettore, azioneConnettoreIdPorta, accessoDaAPSParametro, parentPD,null,null,null,null,null,null,null,null,null,
 							null,null,null,null,null,
-							null,
+							null,null,
 							null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, dati, 
@@ -1241,7 +1247,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					//if (apsHelper.isModalitaAvanzata() || connettoreOnly) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
-							(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
+							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url,
 							nome, tipo, user, password, initcont, urlpgk,
 							provurl, connfact, sendas,
@@ -1292,7 +1298,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 					asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-					erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+					erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 					return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 				}
@@ -1309,9 +1315,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				permessi[1] = pu.isAccordiCooperazione();
 				List<AccordoServizioParteSpecifica> lista2 = null;
 				if(apsCore.isVisioneOggettiGlobale(superUser)){
-					lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+					lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, gestioneErogatori);
 				}else{
-					lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori);
+					lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori, gestioneErogatori);
 				}
 
 				apsHelper.prepareServiziList(ricerca, lista2);
@@ -1336,7 +1342,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				idSoggettoFruitoreObj.setTipo(tipoSoggettoFruitore);
 				idSoggettoFruitoreObj.setNome(nomeSoggettoFruitore);
 				List<MappingFruizionePortaDelegata> lista = apsCore.serviziFruitoriMappingList(idServizioFruitoreInt, idSoggettoFruitoreObj , idServizioFromAccordo, ricerca);
-				apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggettoFruitore, idServizioFruitore, ricerca);
+				apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggettoFruitore, idSoggettoFruitoreObj, idServizioFruitore, ricerca);
 			} 
 			else{
 				int idLista = Liste.SERVIZI_FRUITORI;

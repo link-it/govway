@@ -110,7 +110,6 @@ public class CostantiGrafici {
 	public static final String DATA_LABEL = "Data";
 	public static final String AZIONE_LABEL = "Azione";
 	public static final String SERVIZIO_APPLICATIVO_LABEL = "Applicativo";
-	public static final String SERVIZIO_LABEL = "Servizio";
 	public static final String SOGGETTO_LABEL = "Soggetto";
 	public static final String NOME_LABEL = "Nome";
 	public static final String RICHIESTA_LABEL = "Richiesta";
@@ -131,29 +130,6 @@ public class CostantiGrafici {
 	public static final String ORA_LABEL = "Ora";
 	public static final String GIORNO_LABEL = "Giorno";
 	public static final String IERI_LABEL = "Ieri";
-	public static final String DISTRIBUZIONE_PER_ESITI_LABEL = "Distribuzione per Esiti";
-	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL = "Distribuzione per Azione";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL = "Distribuzione per Servizio";
-	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";
-	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
-	public static final String ANDAMENTO_TEMPORALE_LABEL = "Distribuzione Temporale";
-	
-	public static final String DISTRIBUZIONE_PREFIX = "Distribuzione";
-	public static final String DISTRIBUZIONE_PER_MITTENTE_LABEL_SUFFIX = "per Mittente";
-	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX = "per Azione";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "Applicativo";
-	public static final String DISTRIBUZIONE_PER_IDENTIFICATIVO_AUTENTICATO_LABEL_SUFFIX = "Identificativo Autenticato";
-	public static final String DISTRIBUZIONE_PER_TOKEN_INFO_LABEL_SUFFIX = "Token Info";
-	public static final String DISTRIBUZIONE_PER_TOKEN_ISSUER_LABEL_SUFFIX = "Token Issuer";
-	public static final String DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX = "Token Client ID";
-	public static final String DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX = "Token Subject";
-	public static final String DISTRIBUZIONE_PER_TOKEN_USERNAME_LABEL_SUFFIX = "Token Username";
-	public static final String DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX = "Token eMail";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX = "per Servizio";
-	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX = "per Soggetto Locale";
-	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX = "per Soggetto Remoto";
-
 	
 	public static final String ORARIA_LABEL = "Oraria";
 	public static final String ORARIO_LABEL = "Orario";
@@ -165,8 +141,15 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_TEMPORALE_FILE_NAME = "distribuzione_temporale";
 	public static final String DISTRIBUZIONE_ESITI_FILE_NAME = "distribuzione_esiti";
 	public static final String DISTRIBUZIONE_AZIONE_FILE_NAME = "distribuzione_azione";
+	public static final String DISTRIBUZIONE_SA_APPLICATIVO_FILE_NAME = "distribuzione_mittente_applicativo";
 	public static final String DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME = "distribuzione_servizio_applicativo";
-	public static final String DISTRIBUZIONE_SERVIZIO_FILE_NAME = "distribuzione_servizio";
+	public static final String DISTRIBUZIONE_SA_IDENTIFICATIVO_AUTENTICATO_FILE_NAME = "distribuzione_mittente_identificativo_autenticato";
+	public static final String DISTRIBUZIONE_SA_TOKEN_CLIENTID_FILE_NAME = "distribuzione_mittente_token_clientid";
+	public static final String DISTRIBUZIONE_SA_TOKEN_EMAIL_FILE_NAME = "distribuzione_mittente_token_email";
+	public static final String DISTRIBUZIONE_SA_TOKEN_SUBJECT_FILE_NAME = "distribuzione_mittente_token_subject";
+	public static final String DISTRIBUZIONE_SA_TOKEN_USERNAME_FILE_NAME = "distribuzione_mittente_token_username";
+	public static final String DISTRIBUZIONE_SA_TOKEN_ISSUER_FILE_NAME = "distribuzione_mittente_token_issuer";
+	public static final String DISTRIBUZIONE_SERVIZIO_FILE_NAME = "distribuzione_api";
 	public static final String DISTRIBUZIONE_SOGGETTO_LOCALE_FILE_NAME = "distribuzione_soggetto_locale";
 	public static final String DISTRIBUZIONE_SOGGETTO_REMOTO_FILE_NAME = "distribuzione_soggetto_remoto";
 	public static final String DISTRIBUZIONE_PERSONALIZZATA_FILE_NAME = "distribuzione_personalizzata";
@@ -190,15 +173,6 @@ public class CostantiGrafici {
 	public static final String OCCUPAZIONE_BANDA_LABEL = "Occupazione Banda";
 	public static final String DIMENSIONE_LABEL = "Dimensione";
 	public static final String TEMPO_MEDIO_RISPOSTA_LABEL = "Tempo Medio Risposta";
-	
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SERVIZIO_NOSVG_PATTERN = "{0}: {1}\\{br\\}Servizio: {2}\\{br\\}Erogatore: {3}";
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SERVIZIO_SVG_PATTERN = "{0}: {1}<br/>Servizio: {2}<br/>Erogatore: {3}";
-	
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_AZIONE_NOSVG_PATTERN = "{0}: {1}\\{br\\}Azione: {2}\\{br\\}Servizio: {3}\\{br\\}Erogatore: {4}";
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_AZIONE_SVG_PATTERN = "{0}: {1}<br/>Azione: {2}<br/>Servizio: {3}<br/>Erogatore: {4}";
-	
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_NOSVG_PATTERN = "{0}: {1}\\{br\\}Soggetto: {2}";  //\\{br\\}Ruolo: {3}";
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_SVG_PATTERN = "{0}: {1}<br/>Applicativo: {2}<br/>Soggetto: {3}"; //<br/>Ruolo: {4}";
 	
 	// chiavi del json per il pie chart che rispettano la libreria d3pie
 	public static final String HEADER_KEY= "header";
@@ -270,18 +244,6 @@ public class CostantiGrafici {
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE = "soggetto_locale";
 	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA = "personalizzata";
 	
-	public static final String TIPO_DISTRIBUZIONE_TEMPORALE_LABEL = "Distribuzione Temporale";
-	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL = "Distribuzione per Esiti";
-	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL = "Distribuzione per Azione";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
-	public static final String TIPO_DISTRIBUZIONE_IDENTIFICATIVO_AUTENTICATO_LABEL = "Distribuzione per Identificativo Autenticato";
-	public static final String TIPO_DISTRIBUZIONE_TOKEN_INFO_LABEL = "Distribuzione per Token Info";
-	public static final String TIPO_DISTRIBUZIONE_MITTENTE_LABEL = "Distribuzione per Mittente";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL = "Distribuzione per Servizio";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";
-	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL = "Distribuzione Personalizzata";
-	
 	public static final String MBEAN_DISTRIBUZIONE_TEMPORALE = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_ESITI = "andamentoTemporaleBean";
 	public static final String MBEAN_DISTRIBUZIONE_AZIONE = "distribuzionePerAzioneBean";
@@ -306,17 +268,6 @@ public class CostantiGrafici {
 	public static final String ICONA_PIE_CHART = "pie_chart"; // "&#xE3C9;";
 	public static final String ICONA_TABELLA = "view_quilt"; // "&#xE3C9;";
 	
-	
-	public static final String TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_SHORT = "Temporale";
-	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL_SHORT= "Per esiti";
-	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL_SHORT = "Per azione";
-	public static final String TIPO_DISTRIBUZIONE_MITTENTE_SERVIZIO_APPLICATIVO_LABEL_SHORT = "Per applicativo";
-	public static final String TIPO_DISTRIBUZIONE_MITTENTE_IDENTIFICATIVO_AUTENTICATO_SHORT = "Per identificativo autenticato";
-	public static final String TIPO_DISTRIBUZIONE_MITTENTE_TOKEN_INFO_SHORT = "Per token info";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SHORT = "Per servizio";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL_SHORT = "Per soggetto remoto";
-	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL_SHORT = "Per soggetto locale";
-	public static final String TIPO_DISTRIBUZIONE_PERSONALIZZATA_LABEL_SHORT = "Personalizzata";
 	public static final String PAGINA_REPORT_LABEL = "Report";
 	
 	
@@ -325,5 +276,5 @@ public class CostantiGrafici {
 	public static final String TIPO_REPORT_PIE_CHART = "Pie chart";
 	public static final String TIPO_REPORT_TABELLA = "Tabella";
 	public static final String TIPO_REPORT_ANDAMENTO_TEMPORALE = "Andamento Temporale";
-	
+
 }

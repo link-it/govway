@@ -1413,6 +1413,9 @@ public class OpenSPCoop2Properties {
 			// DefaultProtocol
 			this.getDefaultProtocolName();
 			
+			// IntegrationManager
+			this.isIntegrationManagerEnabled();
+			
 			// Informazioni generazione errori
 			this.isGenerazioneErroreProtocolloNonSupportato();
 			this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled();
@@ -1427,6 +1430,7 @@ public class OpenSPCoop2Properties {
 			this.isGenerazioneWsdlIntegrationManagerEnabled();
 			
 			// Check
+			this.isCheckEnabled();
 			this.isCheckReadJMXResourcesEnabled();
 			this.getCheckReadJMXResourcesUsername();
 			this.getCheckReadJMXResourcesPassword();
@@ -1593,7 +1597,6 @@ public class OpenSPCoop2Properties {
 					this.getTransazioniStatefulTimerIntervalSeconds();
 				}
 				
-				this.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled();
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.isTransazioniRegistrazioneTracceDigestEnabled();
@@ -13143,6 +13146,29 @@ public class OpenSPCoop2Properties {
 
 	
 	
+	/* ------------- Integration Manager ---------------------*/
+	
+	private static Boolean isIntegrationManagerEnabled = null;
+	public boolean isIntegrationManagerEnabled() {	
+		if(OpenSPCoop2Properties.isIntegrationManagerEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isIntegrationManagerEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isIntegrationManagerEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isIntegrationManagerEnabled;
+	}
+	
 	
 	
 	/* ------------- Generazione Errore Protocol non supportato ---------------------*/
@@ -13350,6 +13376,27 @@ public class OpenSPCoop2Properties {
 	
 	
 	/* ------------- Check Reader Risorse JMX ---------------------*/
+	
+	private static Boolean isCheckEnabled = null;
+	public boolean isCheckEnabled() {	
+		if(OpenSPCoop2Properties.isCheckEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.check.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isCheckEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled': "+e.getMessage());
+				OpenSPCoop2Properties.isCheckEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isCheckEnabled;
+	}
 	
 	private static Boolean isCheckReadJMXResourcesEnabled = null;
 	public boolean isCheckReadJMXResourcesEnabled() {	
@@ -15449,27 +15496,6 @@ public class OpenSPCoop2Properties {
 	
 	
 	// Salvataggio
-	
-	private static Boolean isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled = null;
-	public boolean isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled() {	
-		if(OpenSPCoop2Properties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.token.informazioniNormalizzate.enabled");
-				if(name==null){
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.token.informazioniNormalizzate.enabled' non impostata, viene utilizzato il default=false");
-					name="false";
-				}
-				name = name.trim();
-				OpenSPCoop2Properties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled = Boolean.parseBoolean(name);
-			} catch(java.lang.Exception e) {
-				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.token.informazioniNormalizzate.enabled', viene utilizzato il default=false : "+e.getMessage());
-				OpenSPCoop2Properties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled = false;
-			}    
-		}
-
-		return OpenSPCoop2Properties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled;
-	}
 	
 	private static Boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = null;
 	public boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled() {	

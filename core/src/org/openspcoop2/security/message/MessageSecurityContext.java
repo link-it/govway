@@ -48,7 +48,9 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reference.Reference;
@@ -163,8 +165,52 @@ public abstract class MessageSecurityContext{
 	
 	
     /** Process */
-	public abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx);
-	public abstract boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx);
+	
+	// incoming
+	protected abstract boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx);
+	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+		MessageRole messageRole = message.getMessageRole();
+		if(MessageRole.REQUEST.equals(messageRole)) {
+			tempiElaborazione.startSicurezzaMessaggioRichiesta();
+		}
+		else {
+			tempiElaborazione.startSicurezzaMessaggioRisposta();
+		}
+		try {
+			return this.processIncoming(message, busta, ctx);
+		}
+		finally {
+			if(MessageRole.REQUEST.equals(messageRole)) {
+				tempiElaborazione.endSicurezzaMessaggioRichiesta();
+			}
+			else {
+				tempiElaborazione.endSicurezzaMessaggioRisposta();
+			}
+		}
+	}
+
+	// outcoming
+	protected abstract boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx);
+	public boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
+		MessageRole messageRole = message.getMessageRole();
+		if(MessageRole.REQUEST.equals(messageRole)) {
+			tempiElaborazione.startSicurezzaMessaggioRichiesta();
+		}
+		else {
+			tempiElaborazione.startSicurezzaMessaggioRisposta();
+		}
+		try {
+			return this.processOutgoing(message, ctx);
+		}
+		finally {
+			if(MessageRole.REQUEST.equals(messageRole)) {
+				tempiElaborazione.endSicurezzaMessaggioRichiesta();
+			}
+			else {
+				tempiElaborazione.endSicurezzaMessaggioRisposta();
+			}
+		}
+	}
 	
 
 	/** Function As Client */

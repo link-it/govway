@@ -25,6 +25,7 @@
 	<property name="deploy_jms" location="deploy/jms" />
 	<property name="deploy_resources" location="deploy/resources" />
 	<property name="code_jms_pdd" location="../../core/deploy/code_jms" />
+	<property name="sql_update" location="../../resources/sql_upgrade" />
 
 	<target name="prepare_software" depends="clean_prepare,init_prepare">
 		<antcall target="prepare_shared_jar_setup" />
@@ -99,12 +100,25 @@
 		<copy file="${deploy_sql}/init_soggetto.sql" todir="." />
 		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" todir="." />
 		<copy file="${deploy_sql}/init_utenzaPddMonitor.sql" todir="." />
+		<mkdir dir="./as" />
+		<copy todir="./as">
+			<fileset dir="${deploy_sql}/as"/>
+		</copy>
 		<delete dir="${deploy_sql}" />
 		<mkdir dir="${deploy_sql}" />
 		<move file="./init.sql" todir="${deploy_sql}" />
 		<move file="./init_soggetto.sql" todir="${deploy_sql}" />
 		<move file="./init_utenzaPddConsole.sql" todir="${deploy_sql}" />
 		<move file="./init_utenzaPddMonitor.sql" todir="${deploy_sql}" />
+		<mkdir dir="${deploy_sql}/as" />
+		<move todir="${deploy_sql}/as">
+			<fileset dir="./as"/>
+		</move>
+		<delete dir="./as"/>
+		<copy todir="${deploy_sql}/sql_upgrade">
+			<fileset dir="${sql_update}"/>
+		</copy>
+
 	</target>
 
 	

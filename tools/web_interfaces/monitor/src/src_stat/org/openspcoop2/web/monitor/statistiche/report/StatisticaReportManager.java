@@ -23,6 +23,7 @@ package org.openspcoop2.web.monitor.statistiche.report;
 
 import java.util.Date;
 
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -56,7 +57,7 @@ public class StatisticaReportManager implements ILiveReport {
 	}
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo, String esitoContesto,String protocollo) {
-		return  this.statService.getEsiti(permessiUtente, min, max,periodo,esitoContesto,protocollo);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
+		return  this.statService.getEsiti(permessiUtente, min, max,periodo,esitoContesto,protocollo, tipologiaRicerca);
 	}
 }

@@ -36,6 +36,7 @@ import javax.xml.soap.SOAPFault;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -598,11 +599,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,Exception eProcessamento, 
-			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
 				modulo, busta, integrazione, idTransazione, null, errori, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+				tempiElaborazione);
 	}
 
 	/**
@@ -614,11 +617,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
+			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
 				modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+				tempiElaborazione);
 	}
 	
 	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
@@ -627,11 +632,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni,
-			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){ 
+			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){ 
 		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
 				modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
-				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+				eProcessamento, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+				tempiElaborazione);
 	}
 
 	/**
@@ -644,7 +651,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			Exception eProcessamento, MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){
 
 
 
@@ -749,11 +757,12 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,ctx) == false){
+					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
 						return this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx, 
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
-								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+								tempiElaborazione);
 					}
 				}
 			}
@@ -777,11 +786,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext,long attesaAttiva,int checkInterval,String profiloGestione,
 			TipoOraRegistrazione tipoTempo,boolean generazioneListaTrasmissioni, 
-			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx,
 				modulo, busta, integrazione, idTransazione, null, errori,
 				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
-				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+				tempiElaborazione);
 	}
 
 	/**
@@ -799,11 +810,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			int checkInterval, 
 			String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){
 		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx,
 				modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
-				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+				tempiElaborazione);
 	}
 
 	/**
@@ -816,7 +829,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
 			MessageSecurityContext messageSecurityContext, long attesaAttiva, int checkInterval, String profiloGestione,
 			TipoOraRegistrazione tipoTempo, boolean generazioneListaTrasmissioni, 
-			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
+			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+			TempiElaborazione tempiElaborazione){
 
 		try{
 
@@ -902,11 +916,12 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,ctx) == false){
+					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
 						return this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,ctx,
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
-								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
+								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1,
+								tempiElaborazione);
 					}
 				}
 			}

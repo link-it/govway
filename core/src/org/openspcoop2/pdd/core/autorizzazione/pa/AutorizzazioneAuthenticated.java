@@ -69,8 +69,13 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
     		IDServizio idServizio = datiInvocazione.getIdServizio();
     		
+    		boolean autorizzazioneSoggettiMittenti = config.autorizzazione(datiInvocazione.getPa(), idSoggetto);
+    		boolean autorizzazioneApplicativiMittenti = false;
+    		if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+    			autorizzazioneApplicativiMittenti = config.autorizzazione(datiInvocazione.getPa(), datiInvocazione.getIdentitaServizioApplicativoFruitore());
+    		}
     		
-    		if(config.autorizzazione(datiInvocazione.getPa(), idSoggetto)==false) {
+    		if(!autorizzazioneSoggettiMittenti && !autorizzazioneApplicativiMittenti) {
     			String errore = this.getErrorString(idSoggetto, idServizio);
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);

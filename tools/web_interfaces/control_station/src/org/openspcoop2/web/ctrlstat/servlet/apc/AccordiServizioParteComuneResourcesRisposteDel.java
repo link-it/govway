@@ -143,7 +143,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 			// manca l'id dei port-type
 			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 
-			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, nomeRisorsa);
+			apcHelper.prepareAccordiResourcesResponseList(ricerca, lista, id, as, tipoAccordo, risorsa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

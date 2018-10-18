@@ -267,6 +267,9 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);
 
+			// Verifico stato
+			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 					

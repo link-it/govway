@@ -48,10 +48,12 @@ import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
@@ -195,7 +197,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
@@ -207,20 +209,13 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		} else {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_AZIONE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		return sb.toString();
 	}
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 		StringBuffer caption = new StringBuffer(captionText);
-//		if (StringUtils.isNotBlank(this.search.getNomeServizio())) {
-//			caption.append("per il Servizio " + this.search.getNomeServizio());
-//		}
-//		if (StringUtils.isNotBlank(this.search.getNomeAzione())) {
-//			caption.append(", azione " + this.search.getNomeAzione());
-//		}
-
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
 				caption.append(MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, this.formatDate(this.search.getDataInizio(),true), this.formatDate(this.search.getDataFine(),true)));

@@ -125,6 +125,10 @@
 			<from-outcome>modalita</from-outcome>
 			<to-view-id>/commons/pages/modalita.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>soggettoPddMonitor</from-outcome>
+			<to-view-id>/commons/pages/soggettoPddMonitor.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/public/login.xhtml</from-view-id>

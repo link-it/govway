@@ -8,6 +8,7 @@
 	xmlns:link="http://www.link.it"
 	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
 	<ui:define name="navbar">
 		<ul>
 			<li>
@@ -83,13 +84,13 @@
 							enableDelete="false">
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Servizio" />
+									<h:outputText value="#{msg['commons.servizio.label']}" />
 								</f:facet>
 								<h:outputText value="#{item.risultato}"/>
 							</rich:column>
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Erogatore" />
+									<h:outputText value="#{msg['commons.erogatore.label']}" />
 								</f:facet>
 								<h:outputText value="#{item.parentMap['0']}"/>
 							</rich:column>

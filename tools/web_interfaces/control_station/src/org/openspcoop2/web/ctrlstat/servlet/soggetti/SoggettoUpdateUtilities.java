@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -958,6 +959,18 @@ public class SoggettoUpdateUtilities {
 						}
 					}
 					// fine controlloSoggetti Autorizzati	
+					
+					// controlloServiziApplicativi Autorizzati
+					if(portaApplicativa.getServiziApplicativiAutorizzati()!=null && portaApplicativa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+						for (PortaApplicativaAutorizzazioneServizioApplicativo portaApplicativaAuthSa : portaApplicativa.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
+							if (this.oldtipoprov.equals(portaApplicativaAuthSa.getTipoSoggettoProprietario()) && 
+									this.oldnomeprov.equals(portaApplicativaAuthSa.getNomeSoggettoProprietario())) {
+								portaApplicativaAuthSa.setTipoSoggettoProprietario(this.tipoprov);
+								portaApplicativaAuthSa.setNomeSoggettoProprietario(this.nomeprov);
+							}
+						}
+					}
+					// fine controlloSoggetti Autorizzati
 										
 					portaApplicativa.setTipoSoggettoProprietario(this.tipoprov);
 					portaApplicativa.setNomeSoggettoProprietario(this.nomeprov);

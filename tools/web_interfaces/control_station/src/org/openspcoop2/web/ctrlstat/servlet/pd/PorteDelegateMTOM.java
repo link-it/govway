@@ -215,7 +215,8 @@ public class PorteDelegateMTOM extends Action {
 								isMTOMAbilitatoRes ? url2.getValue() : null,
 										contaListe, numMTOMreq, numMTOMres);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -239,7 +240,8 @@ public class PorteDelegateMTOM extends Action {
 								isMTOMAbilitatoRes ? url2.getValue() : null,
 										contaListe, numMTOMreq, numMTOMres);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -324,7 +326,8 @@ public class PorteDelegateMTOM extends Action {
 							isMTOMAbilitatoRes ? url2.getValue() : null,
 									contaListe, numMTOMreq, numMTOMres);
 
-			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
+			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, 
+					idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 			pd.setDati(dati);
 			

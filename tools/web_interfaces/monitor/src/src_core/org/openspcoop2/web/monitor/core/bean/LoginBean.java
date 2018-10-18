@@ -23,7 +23,11 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -33,6 +37,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -49,6 +55,7 @@ import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.slf4j.Logger;
 
@@ -83,8 +90,17 @@ public class LoginBean extends AbstractLoginBean {
 
 	private String modalita = null;
 	private Boolean visualizzaMenuModalita = null;
+	private Boolean visualizzaSezioneModalita = null;
 	private List<MenuModalitaItem> vociMenuModalita = null;
-
+	
+	private String soggettoPddMonitor = null;
+	private Boolean visualizzaMenuSoggetto = null;
+	private Boolean visualizzaSezioneSoggetto = null;
+	private List<MenuModalitaItem> vociMenuSoggetto = null;
+	private Boolean visualizzaLinkSelezioneSoggetto = null;
+	
+	private Configurazione configurazioneGenerale = null;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -139,6 +155,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
 					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
+					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
 				}else{
@@ -159,6 +176,7 @@ public class LoginBean extends AbstractLoginBean {
 				if(this.getLoggedUser() != null){
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
 					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor()); 
+					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.setLoggedIn(true);
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
@@ -260,17 +278,17 @@ public class LoginBean extends AbstractLoginBean {
 
 	public int getColonneUserInfo() {
 		if(this.colonneUserInfo == null) {
-			boolean admin = this.getLoggedUser().isAdmin();
-			boolean operatore = this.getLoggedUser().isOperatore();
-
-			// visualizzazione icona stato
-			int v1 = (admin || operatore) ? 1 : 0;
+			// visualizzazione icona stato (spostata a sx)
+			int v1 = 0; //(admin || operatore) ? 1 : 0;
 
 			//2 visualizzazione modalita'
-			int v2 = this.isVisualizzaMenuModalita() ? 1 : 0;
+			int v2 = this.isVisualizzaSezioneModalita() ? 1 : 0;
+			
+			//3 visualizzazione tendina selezione soggetto'
+			int v3 = this.isVisualizzaSezioneSoggetto() ? 1 : 0;
 
-			// numero colonne = profiloutente+modalita+statopdd
-			this.colonneUserInfo = 1 + v1 + v2;
+			// numero colonne = profiloutente+modalita+statopdd+soggetto
+			this.colonneUserInfo = 1 + v1 + v2 + v3;
 		}
 		return this.colonneUserInfo;
 	}
@@ -320,8 +338,19 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public String getModalita() {
-		if(this.modalita == null)
+		if(this.modalita == null) {
+			try {
+				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
+
+				if(listaNomiProtocolli.size() == 1) {
+					return listaNomiProtocolli.get(0); 
+				}
+			}catch(Exception e) {
+				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+			}
+			
 			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+		}
 		
 		return this.modalita;
 	}
@@ -331,6 +360,20 @@ public class LoginBean extends AbstractLoginBean {
 		
 		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.modalita))
 			this.modalita = null;
+	}
+	
+	public boolean isVisualizzaSezioneModalita()  {
+		if(this.visualizzaSezioneModalita == null) {
+			try {
+				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
+
+				this.visualizzaSezioneModalita = listaNomiProtocolli.size() > 0;
+
+			}catch(Exception e) {
+				this.visualizzaSezioneModalita = false;
+			}
+		}
+		return this.visualizzaSezioneModalita;
 	}
 
 	public boolean isVisualizzaMenuModalita()  {
@@ -347,18 +390,10 @@ public class LoginBean extends AbstractLoginBean {
 		return this.visualizzaMenuModalita;
 	}
 
-	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws ProtocolException {
-		String tipoNomeSoggettoLocale = null;
-		if (this.getUtente().getSoggetti().size() == 1) {
-			IDSoggetto s = this.getUtente().getSoggetti().get(0);
-			tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
-		}
-		List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
-
+	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws Exception {
 		ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-
-		List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUtente(),listaSoggettiGestione, pfManager, protocolFactories);
+		List<String> listaNomiProtocolli = Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
 		return listaNomiProtocolli;
 	}
 
@@ -368,7 +403,6 @@ public class LoginBean extends AbstractLoginBean {
 
 	public String cambiaModalita() {
 		this.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(this.modalita);
-		
 		try {
 			this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
 		} catch (NotFoundException | ServiceException e) {
@@ -377,6 +411,12 @@ public class LoginBean extends AbstractLoginBean {
 			MessageUtils.addErrorMsg(errorMessage);
 		}
 		
+		// cambio della modalita' provoca il reset del soggetto
+		this.colonneUserInfo = null;
+		this.setSoggettoPddMonitor(null);
+		this.cambiaSoggetto();
+		
+		
 		return "modalita";
 	}
 
@@ -384,11 +424,26 @@ public class LoginBean extends AbstractLoginBean {
 		// prelevo l'eventuale protocollo selezionato
 		String labelSelezionato = "";
 		try {
-			labelSelezionato = this.modalita == null ? Costanti.LABEL_PARAMETRO_MODALITA_ALL : NamingUtils.getLabelProtocollo(this.modalita);
+			if(this.modalita == null) {
+				try {
+					List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
+
+					if(listaNomiProtocolli.size() == 1) {
+						labelSelezionato = NamingUtils.getLabelProtocollo(listaNomiProtocolli.get(0));  
+					} else {
+						labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+					}
+				}catch(Exception e) {
+					labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+				}
+				
+			} else {
+				labelSelezionato = NamingUtils.getLabelProtocollo(this.modalita);
+			}
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
-		return MessageFormat.format(Costanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato); 
+		return MessageFormat.format(Costanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato);
 	}
 
 	public void setLabelModalita(String labelModalita) {
@@ -397,38 +452,63 @@ public class LoginBean extends AbstractLoginBean {
 	public List<MenuModalitaItem> getVociMenuModalita() {
 		this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 		try {
-			String tipoNomeSoggettoLocale = null;
-			if (this.getUtente().getSoggetti().size() == 1) {
-				IDSoggetto s = this.getUtente().getSoggetti().get(0);
-				tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
-			}
-			List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
-
 			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-			List<String> listaNomiProtocolli = Utility.getListaProtocolli(this.getUtente(),listaSoggettiGestione, pfManager, protocolFactories);
-
+			List<String> listaNomiProtocolli = Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
+			
 			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
+				// prelevo l'eventuale protocollo selezionato
+				String protocolloSelezionato = this.getUtente().getProtocolloSelezionatoPddMonitor();
+				if(listaNomiProtocolli.size()==1) {
+					protocolloSelezionato = listaNomiProtocolli.get(0); // forzo
+				}
+				
 				// prelevo l'eventuale protocollo selezionato
 				// popolo la tendina con i protocolli disponibili
 				for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(listaNomiProtocolli) ) {
-					String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+					// String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
 					
-					MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, NamingUtils.getLabelProtocollo(protocolloDisponibile), iconProt); 
+					String labelProtocollo = NamingUtils.getLabelProtocollo(protocolloDisponibile); 
+					Integer labelProtocolloWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelProtocollo); 
+					MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, labelProtocollo, null); 
+					menuItem.setLabelWidth(labelProtocolloWidth); 
+					if(protocolloSelezionato != null && protocolloSelezionato.equals(protocolloDisponibile))
+						menuItem.setDisabled(true); 
 					this.vociMenuModalita.add(menuItem);
 				}
 
 				// seleziona tutti
-				MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+				// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
+				String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+				Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
+				MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
+				menuItem.setLabelWidth(labelTuttiWidth); 
+				if((protocolloSelezionato == null)) 
+					menuItem.setDisabled(true);
+				
 				this.vociMenuModalita.add(menuItem);
 			}
 
-		}catch(Exception e) {
+		}catch(Throwable e) {
 			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 		}
 		
 		return this.vociMenuModalita;
+	}
+	
+	public int getWidthVociMenuModalita() {
+		if(this.vociMenuModalita.isEmpty())
+			return 0;
+
+		int max = 0;
+		for (MenuModalitaItem menuModalitaItem : this.vociMenuModalita) {
+			if(menuModalitaItem.getLabelWidth() > max)
+				max = menuModalitaItem.getLabelWidth();
+				 
+		}
+		
+		return 44 + max;
 	}
 
 	public void setVociMenuModalita(List<MenuModalitaItem> vociMenuModalita) {
@@ -476,7 +556,7 @@ public class LoginBean extends AbstractLoginBean {
 				
 				listaInformazioniProtocollo.add(informazioniProtocollo);
 			}catch (Exception e) {
-				this.log.error("Impossibilie caricare le informazioni del protocollo ["+protocollo+"]: " + e.getMessage(),e);
+				this.log.error("Impossibile caricare le informazioni del protocollo ["+protocollo+"]: " + e.getMessage(),e);
 			}
 		}
 				
@@ -486,4 +566,343 @@ public class LoginBean extends AbstractLoginBean {
 	public void setListaInformazioniProtocollo(List<InformazioniProtocollo> listaInformazioniProtocollo) {
 	}
 
+	public Configurazione getConfigurazioneGenerale(){
+		if(this.configurazioneGenerale == null) {
+			try {
+				this.configurazioneGenerale = this.loginDao.readConfigurazioneGenerale();
+			} catch (ServiceException e) {
+				this.log.error("Impossibile caricare la configurazione generale: " + e.getMessage(),e);
+			}
+		}
+		return this.configurazioneGenerale;
+	}
+	
+	public String getSoggettoPddMonitor() {
+		if(this.soggettoPddMonitor == null) {
+			try {
+				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+				if(listaSoggetti.size() == 1) {
+					IDSoggetto idSoggetto = new IDSoggetto(listaSoggetti.get(0).getTipoSoggetto(), listaSoggetti.get(0).getNomeSoggetto()); 
+					return  idSoggetto.toString();
+				}
+			}catch(Exception e) {
+				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+			}
+			
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
+		}
+		
+		return this.soggettoPddMonitor;
+	}
+
+	public void setSoggettoPddMonitor(String modalita) {
+		this.soggettoPddMonitor = modalita;
+		
+		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.soggettoPddMonitor))
+			this.soggettoPddMonitor = null;
+	}
+	
+	public boolean isVisualizzaSezioneSoggetto()  {
+		if(this.visualizzaSezioneSoggetto == null) {
+			try {
+				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+				this.visualizzaSezioneSoggetto = listaSoggetti.size() > 0;
+
+			}catch(Exception e) {
+				this.visualizzaSezioneSoggetto = false;
+			}
+		}
+		return this.visualizzaSezioneSoggetto;
+	}
+
+	public boolean isVisualizzaMenuSoggetto()  {
+		if(this.visualizzaMenuSoggetto == null) {
+			try {
+				List<Soggetto> listaNomiProtocolli = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+				this.visualizzaMenuSoggetto = listaNomiProtocolli.size() > 1;
+
+			}catch(Exception e) {
+				this.visualizzaMenuSoggetto = false;
+			}
+		}
+		return this.visualizzaMenuSoggetto;
+	}
+
+	public void setVisualizzaMenuSoggetto(boolean visualizzaMenuSoggetto) {
+		this.visualizzaMenuSoggetto = visualizzaMenuSoggetto;
+	}
+	
+	public Boolean getVisualizzaLinkSelezioneSoggetto() {
+		if(this.visualizzaLinkSelezioneSoggetto == null) {
+			try {
+				List<Soggetto> listaNomiProtocolli = this.listaSoggettiDisponibilePerUtentePddMonitor();
+				
+				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
+
+				this.visualizzaLinkSelezioneSoggetto = listaNomiProtocolli.size() > numeroMassimoSoggettiSelectListSoggettiOperatiti;
+
+			}catch(Exception e) {
+				this.visualizzaLinkSelezioneSoggetto = false;
+			}
+		}
+		return this.visualizzaLinkSelezioneSoggetto;
+	}
+
+	public void setVisualizzaLinkSelezioneSoggetto(Boolean visualizzaLinkSelezioneSoggetto) {
+		this.visualizzaLinkSelezioneSoggetto = visualizzaLinkSelezioneSoggetto;
+	}
+
+	public String cambiaSoggetto() {
+		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
+		
+		try {
+			this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+		} catch (NotFoundException | ServiceException e) {
+			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
+			this.log.error(e.getMessage(),e);
+			MessageUtils.addErrorMsg(errorMessage);
+		}
+		
+		this.visualizzaSezioneSoggetto = null;
+		this.visualizzaMenuSoggetto = null;	
+		this.visualizzaLinkSelezioneSoggetto = null;
+		
+		return "soggettoPddMonitor";
+	}
+	
+	public String getLabelSoggettoNormalized() throws Exception {
+		String label = _getLabelSoggetto(true);
+		
+//		if(label.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente()) {
+//			return Utility.normalizeLabel(label, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente());
+//		}
+		
+		if(label.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
+			return Utility.normalizeLabel(label, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente());
+		}
+		
+		return null;
+	}
+
+	public String getLabelSoggetto() throws ProtocolException {
+		return _getLabelSoggetto(true);
+	}
+	
+	public String getLabelSoggettoSenzaPrefisso() throws ProtocolException {
+		return _getLabelSoggetto(false);
+	}
+
+	private String _getLabelSoggetto(boolean addPrefix) {
+		// prelevo l'eventuale protocollo selezionato
+		String labelSelezionato = "";
+		try {
+			if(this.soggettoPddMonitor == null) {
+				try {
+					List<Soggetto> listaNomiProtocolli = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+					if(listaNomiProtocolli.size() == 1) {
+						IDSoggetto idSoggetto = new IDSoggetto(listaNomiProtocolli.get(0).getTipoSoggetto(), listaNomiProtocolli.get(0).getNomeSoggetto()); 
+						labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
+					} else {
+						labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+					}
+				}catch(Exception e) {
+					labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+				}
+				
+			} else {
+				String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(this.soggettoPddMonitor);
+				String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(this.soggettoPddMonitor);
+				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
+				labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);
+			}
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+		return addPrefix ? MessageFormat.format(Costanti.LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM, labelSelezionato) : labelSelezionato;
+	}
+
+	public void setLabelSoggetto(String labelSoggetto) {
+	}
+	
+	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
+		User utente = this.getUtente();
+		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+		List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+		String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
+		if(protocolliDispondibili.size()==1) {
+			protocolloSelezionato = protocolliDispondibili.get(0); // forzo
+		}
+		List<Soggetto> soggettiOperativiDisponibiliUtente = new ArrayList<>();
+		List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(this.log).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
+		
+		if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) && soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
+			List<Soggetto> soggettiAssociatiUtente = Utility.getSoggettiOperativiAssociatiAlProfilo(this.getLoggedUser(), protocolloSelezionato);  
+			
+			if(soggettiAssociatiUtente.isEmpty())
+				return soggettiOperativi;
+			else 
+				return soggettiAssociatiUtente;
+		}
+		return soggettiOperativiDisponibiliUtente;
+	}
+
+	public List<MenuModalitaItem> getVociMenuSoggetto() {
+		this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+		try {
+			User utente = this.getUtente();
+			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
+			if(protocolliDispondibili.size()==1) {
+				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
+			}
+			
+			// prelevo il soggetto selezionato
+			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
+			IDSoggetto idSoggettoOperativo = null;
+			if(soggettoOperativoSelezionato!=null) {
+				String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(soggettoOperativoSelezionato);
+				String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggettoOperativoSelezionato);
+				idSoggettoOperativo = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
+			}
+			
+			List<Soggetto> soggettiOperativi = listaSoggettiDisponibilePerUtentePddMonitor();
+			
+			// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
+			if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
+					soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
+				
+				if(soggettoOperativoSelezionato==null && soggettiOperativi.size()==1) {
+					Soggetto soggetto = soggettiOperativi.get(0);
+					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+					soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
+				}
+
+				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
+				
+				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
+					
+					if(soggettiOperativi.size()>1) {
+						List<String> listaLabel = new ArrayList<>();
+						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+						for (Soggetto soggetto : soggettiOperativi) {
+							IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+							String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
+							if(!listaLabel.contains(labelSoggetto)) {
+								listaLabel.add(labelSoggetto);
+								mapLabelIds.put(labelSoggetto, idSoggetto);
+							}
+						}
+						
+						// Per ordinare in maniera case insensistive
+						Collections.sort(listaLabel, new Comparator<String>() {
+							 @Override
+							public int compare(String o1, String o2) {
+						           return o1.toLowerCase().compareTo(o2.toLowerCase());
+						        }
+							});
+						
+						int i = 1;
+						for (String label : listaLabel) {
+							String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
+							MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
+							
+							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
+								menuItem.setDisabled(true);
+							
+							Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
+							if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
+								menuItem.setTooltip(labelSoggetto);
+								menuItem.setLabel(Utility.normalizeLabel(labelSoggetto, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()));
+								// per misurare la dimensione utilizzo solo la prima linea
+								labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
+										PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
+							}
+							
+							menuItem.setLabelWidth(labelSoggettoWidth); 
+							
+							menuItem.setId("voceSoggetto_"+ (i++));
+							
+							this.vociMenuSoggetto.add(menuItem);
+						}
+						
+						// seleziona tutti
+						// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
+						String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+						Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
+						MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
+						menuItem.setLabelWidth(labelTuttiWidth); 
+						if((soggettoOperativoSelezionato == null)) 
+							menuItem.setDisabled(true);
+						
+						menuItem.setId("voceSoggetto_"+ (i++));
+						
+						this.vociMenuSoggetto.add(menuItem);
+					}
+				} 		
+			}
+
+		}catch(Throwable e) {
+			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+		}
+		
+		return this.vociMenuSoggetto;
+	}
+	
+	public int getWidthVociMenuSoggetto() {
+		if(this.vociMenuSoggetto.isEmpty())
+			return 0;
+
+		int max = 0;
+		for (MenuModalitaItem menuModalitaItem : this.vociMenuSoggetto) {
+			if(menuModalitaItem.getLabelWidth() > max)
+				max = menuModalitaItem.getLabelWidth();
+				 
+		}
+		
+		return 44 + max;
+	}
+
+	public void setVociMenuSoggetto(List<MenuModalitaItem> vociMenuModalita) {
+	}
+	
+	public boolean isShowFiltroSoggettoLocale(){
+		try {
+			User utente = Utility.getLoggedUtente();
+			
+			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
+			// utente ha selezionato un soggetto
+			if(soggettoOperativoSelezionato != null) {
+				return false;
+			}
+			
+			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
+			if(protocolliDispondibili.size()==1) {
+				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
+			}
+			
+			int numeroSoggettiDisponibili = Utility.getLoggedUser().getUtenteSoggettoProtocolliMap().containsKey(protocolloSelezionato) ? Utility.getLoggedUser().getUtenteSoggettoProtocolliMap().get(protocolloSelezionato).size() : 0;
+			
+			if(numeroSoggettiDisponibili == 1)
+				return false;
+						
+			List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(this.log).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
+			numeroSoggettiDisponibili = soggettiOperativi != null ? soggettiOperativi.size() : 0;
+			
+			if(numeroSoggettiDisponibili == 1)
+				return false;
+		} catch (Exception e) {
+			this.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+		} 
+		return true;
+	}
 }

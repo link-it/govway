@@ -42,15 +42,18 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoStatistica;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
+import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
 import org.openspcoop2.web.monitor.statistiche.utils.ExportUtils;
 import org.openspcoop2.web.monitor.statistiche.utils.JsonStatsUtils;
@@ -96,7 +99,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			return null;
 		}
 
-		list = calcolaLabels(list, this.search.getProtocollo());
+		list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
 		switch (tipoReport) {
@@ -128,7 +131,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			return null;
 		}
 
-		list = calcolaLabels(list, this.search.getProtocollo());
+		list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 
 		switch (tipoReport) {
@@ -149,20 +152,24 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		log.debug(json); 
 		return json ;
 	}
-	
-	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo){
-		if(list!=null  && list.size()>0){
-			for (ResDistribuzione res : list) {
-				String tipoNomeSoggetto = res.getParentMap().get("0");
-				
-				String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
-				String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
-				
-				try {
-					res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
-				} catch (Exception e) {				
+
+	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo, StatsSearchForm form){
+		if(form.getTipoStatistica().equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO)){
+			if(form.getRiconoscimento() != null && form.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				if(list!=null  && list.size()>0){
+					for (ResDistribuzione res : list) {
+						String tipoNomeSoggetto = res.getParentMap().get("0");
+
+						String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+						String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
+
+						try {
+							res.getParentMap().put("0", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+						} catch (Exception e) {				
+						}
+
+					}
 				}
-				
 			}
 		}
 		return list;
@@ -178,7 +185,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PREFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_DISTRIBUZIONE_LABEL_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
@@ -190,7 +197,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		} else {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
-		sb.append(CostantiGrafici.DISTRIBUZIONE_PER_MITTENTE_LABEL_SUFFIX).append(CostantiGrafici.WHITE_SPACE);
+		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
 		sb.append("(").append(getTipoFiltroDatiMittente()).append(")").append(CostantiGrafici.WHITE_SPACE);
 		return sb.toString();
 	}
@@ -198,24 +205,24 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	private String getTipoFiltroDatiMittente() {
 		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
 			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
-				return CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX;
+				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_SERVIZIO_APPLICATIVO_LABEL_SUFFIX_KEY);
 			}  else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
-				return CostantiGrafici.DISTRIBUZIONE_PER_IDENTIFICATIVO_AUTENTICATO_LABEL_SUFFIX;
+				return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_IDENTIFICATIVO_AUTENTICATO_SUFFIX_KEY);
 			} else { // token
 				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
 					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
-					
+
 					switch (tcm) {
 					case token_clientId:
-						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_CLIENT_IDLABEL_SUFFIX;
+						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENT_ID_LABEL_KEY);
 					case token_eMail:
-						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_EMAIL_LABEL_SUFFIX;
+						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY);
 					case token_issuer:
-						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_ISSUER_LABEL_SUFFIX;
+						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_ISSUER_LABEL_KEY);
 					case token_subject:
-						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_SUBJECT_LABEL_SUFFIX;
+						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_SUBJECT_LABEL_KEY);
 					case token_username:
-						return CostantiGrafici.DISTRIBUZIONE_PER_TOKEN_USERNAME_LABEL_SUFFIX;
+						return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY);
 					case trasporto:
 					default:
 						// caso impossibile
@@ -224,9 +231,9 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				} 
 			}
 		}
-		
-		
-		return CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX;
+
+
+		return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY);
 	}
 
 	public String getSubCaption() {
@@ -313,7 +320,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
-			list = calcolaLabels(list, this.search.getProtocollo());
+			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -349,18 +356,19 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
+			String headerLabel = this.getTipoFiltroDatiMittente(); 
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
+			String tipoRiconoscimento = this.search.getRiconoscimento(); 
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaCsv(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -409,7 +417,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
-			list = calcolaLabels(list, this.search.getProtocollo());
+			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -445,18 +453,19 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
+			String headerLabel = this.getTipoFiltroDatiMittente();
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
+			String tipoRiconoscimento = this.search.getRiconoscimento(); 
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), false); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, false); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -505,7 +514,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
-			list = calcolaLabels(list, this.search.getProtocollo());
+			list = calcolaLabels(list, this.search.getProtocollo(),(StatsSearchForm)this.search);
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -541,18 +550,19 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
+			String headerLabel = this.getTipoFiltroDatiMittente();
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
 			List<TipoLatenza> tipiLatenza = new ArrayList<TipoLatenza>();
 			tipiLatenza.add(((StatsSearchForm)this.search).getTipoLatenza());
+			String tipoRiconoscimento = this.search.getRiconoscimento(); 
 			// creazione del report con Dynamic Report
-			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), true); 
+			JasperReportBuilder report = ExportUtils.creaReportDistribuzione(list, titoloReport, log, tipoVisualizzazione, tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(), tipoRiconoscimento, true); 
 
 			// scrittura del report sullo stream
-			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
+			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica(),tipoRiconoscimento);
 
 			if(useFaceContext){
 				context.responseComplete();
@@ -575,6 +585,35 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	@Override
 	public String getExportFilename() {
+		if(StringUtils.isNotEmpty(this.search.getRiconoscimento())) {
+			if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+				return CostantiGrafici.DISTRIBUZIONE_SA_APPLICATIVO_FILE_NAME;
+			}  else if(this.search.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
+				return CostantiGrafici.DISTRIBUZIONE_SA_IDENTIFICATIVO_AUTENTICATO_FILE_NAME;
+			} else { // token
+				if (StringUtils.isNotEmpty(this.search.getTokenClaim())) {
+					org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.valueOf(this.search.getTokenClaim());
+
+					switch (tcm) {
+					case token_clientId:
+						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_CLIENTID_FILE_NAME;
+					case token_eMail:
+						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_EMAIL_FILE_NAME;
+					case token_issuer:
+						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_ISSUER_FILE_NAME;
+					case token_subject:
+						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_SUBJECT_FILE_NAME;
+					case token_username:
+						return CostantiGrafici.DISTRIBUZIONE_SA_TOKEN_USERNAME_FILE_NAME;
+					case trasporto:
+					default:
+						// caso impossibile
+						break; 
+					}
+				} 
+			}
+		}
+
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME;
 	}
 }

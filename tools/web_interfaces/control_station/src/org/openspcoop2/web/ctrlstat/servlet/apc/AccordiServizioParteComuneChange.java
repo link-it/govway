@@ -79,6 +79,8 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -92,6 +94,7 @@ import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
@@ -153,7 +156,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		TipoOperazione tipoOp = TipoOperazione.CHANGE;
 		List<ProtocolProperty> oldProtocolPropertyList = null;
 
-		AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+		ApiHelper apcHelper = new ApiHelper(request, pd, session);
 		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apcHelper); 
 
 		this.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
@@ -213,6 +216,38 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 
+		String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
+		Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+		
+		@SuppressWarnings("unused")
+		boolean gestioneInformazioniGenerali = false;
+		boolean gestioneSoggettoReferente = false;
+		boolean gestioneDescrizione = false;
+		boolean gestioneSpecificaInterfacce = false;
+		boolean gestioneInformazioniProtocollo = false;
+		if(isModalitaVistaApiCustom!=null && isModalitaVistaApiCustom) {
+			if(ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(apiGestioneParziale)) {
+				gestioneInformazioniGenerali = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE.equals(apiGestioneParziale)) {
+				gestioneSoggettoReferente = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE.equals(apiGestioneParziale)) {
+				gestioneDescrizione = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE.equals(apiGestioneParziale)) {
+				gestioneSpecificaInterfacce = true;
+			}
+			else if(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(apiGestioneParziale)) {
+				gestioneInformazioniProtocollo = true;
+			}
+		}
+		
+		boolean addPropertiesHidden = false;
+		if(gestioneSoggettoReferente || gestioneDescrizione || gestioneSpecificaInterfacce || gestioneInformazioniProtocollo) {
+			addPropertiesHidden = true;
+		}
+		
 		if(ServletUtils.isEditModeInProgress(this.editMode) ){
 
 			// primo accesso alla servlet
@@ -237,12 +272,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
-		String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
-
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 		AccordoServizioParteComune as = apcCore.getAccordoServizio(idAcc);
-		boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
+		boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
 
 		String[] providersList = null;
 		String[] providersListLabel = null;
@@ -251,8 +284,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		List<String> listaTipiProtocollo = null;
 
 		boolean used = false;
-
-
+		
 		IDAccordo idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
 
 		try {
@@ -371,6 +403,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE + "?" + request.getQueryString(), "UTF-8"));
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, this.tipoProtocollo);
 		propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
+		
+		List<Parameter> listaParams = apcHelper.getTitoloApc(tipoOp, as, this.tipoAccordo, labelASTitle, null, true); 
 
 		// Se idhid = null, devo visualizzare la pagina per la modifica dati
 		if(ServletUtils.isEditModeInProgress(this.editMode)){
@@ -378,11 +412,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 			try {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
-						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								labelASTitle);
+				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				if(this.descr==null){
 					//inizializzazione default
@@ -558,11 +588,15 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
+				if(addPropertiesHidden) {
+					dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}else {
+					dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}
+					
 				pd.setDati(dati);
 
-				if(apcCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
+				if(apcHelper.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
 					pd.disableEditMode();
 				}
 
@@ -618,11 +652,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		if (!isOk) {
 
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
-					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-							labelASTitle);
+			ServletUtils.setPageDataTitle(pd, listaParams);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
@@ -647,8 +677,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 			// aggiunta campi custom
-			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
+			if(addPropertiesHidden) {
+				dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+			}else {
+				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+			}
+			
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -661,11 +695,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		if( this.actionConfirm == null){
 			if(used || this.backToStato != null){
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
-						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								labelASTitle);
+				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -706,12 +736,17 @@ public final class AccordiServizioParteComuneChange extends Action {
 					dati.addElement(de);
 				}
 				
+				
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				if(addPropertiesHidden) {
+					dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}else {
+					dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				
-				// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
-				dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-				
+					// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
+					dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}
+					
 				pd.setDati(dati);
 
 				String uriAccordo = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
@@ -802,7 +837,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		as.setStatoPackage(this.statoPackage);
 
 		// Check stato
-		if(apcCore.isShowGestioneWorkflowStatoDocumenti()){
+		if(apcHelper.isShowGestioneWorkflowStatoDocumenti()){
 
 			try{
 				boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
@@ -813,11 +848,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				pd.setMessage(validazioneException.toString());
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
-						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-								labelASTitle);
+				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -842,8 +873,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
+				if(addPropertiesHidden) {
+					dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}else {
+					dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				}
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -920,12 +955,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 							pd.setMessage(MessageFormat.format(msg, oldProfiloCollaborazione, newProfiloCollaborazione));
 
 							// setto la barra del titolo
-							ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
-									AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
-											labelASTitle);
-
+							ServletUtils.setPageDataTitle(pd, listaParams);
+							
 							// preparo i campi
 							Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -950,8 +981,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.serviceBinding,this.messageType,this.interfaceType);
 
 							// aggiunta campi custom
-							dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
+							if(addPropertiesHidden) {
+								dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+							}else {
+								dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+							}
+								
 							pd.setDati(dati);
 
 							ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -992,11 +1027,13 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			// preparo lista
 			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
-			//			if(apcCore.isVisioneOggettiGlobale(userLogin)){
-			//				lista = apcCore.accordiServizioParteComuneList(null, ricerca);
-			//			}else{
-			//				lista = apcCore.accordiServizioParteComuneList(userLogin, ricerca);
-			//			}
+			
+			if(isModalitaVistaApiCustom) {
+				apcHelper.prepareApiChange(tipoOp, as); 
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
+			}
+			
 			apcHelper.prepareAccordiList(lista, ricerca, this.tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

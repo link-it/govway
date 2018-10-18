@@ -426,12 +426,36 @@
 			</then>
 		</if>
 		
-		<!-- OTHER -->
+		<!-- INTEGRATION MANAGER DISABLED -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.pdd.server"/>
-			<param name="value" value="web"/>
+			<param name="token" value="org.openspcoop2.pdd.integrationManager.enabled"/>
+			<param name="value" value="false"/>
 		</antcall>
+
+		<!-- OTHER -->
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+				<equals arg1="${antinstaller_stateful}" arg2="false" />
+				<equals arg1="${antinstaller_stateful}" arg2="" />
+				<equals arg1="${antinstaller_stateful}" arg2="$${antinstaller_stateful}" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.server"/>
+					<param name="value" value="web"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.server"/>
+					<param name="value" value="j2ee"/>
+				</antcall>
+			</else>
+		</if>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.stateless.default.oneway"/>

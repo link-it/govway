@@ -51,6 +51,7 @@ import java.util.List;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="dominio-default" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -236,6 +237,18 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
+  }
+
+  public boolean isDominioDefault() {
+    return this.dominioDefault;
+  }
+
+  public boolean getDominioDefault() {
+    return this.dominioDefault;
+  }
+
+  public void setDominioDefault(boolean dominioDefault) {
+    this.dominioDefault = dominioDefault;
   }
 
   public boolean isRouter() {
@@ -434,6 +447,10 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="dominio-default",required=false)
+  protected boolean dominioDefault = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="router",required=false)

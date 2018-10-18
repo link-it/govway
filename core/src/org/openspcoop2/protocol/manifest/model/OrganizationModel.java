@@ -44,6 +44,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.OrganizationTypesModel(new Field("types",org.openspcoop2.protocol.manifest.OrganizationTypes.class,"Organization",Organization.class));
 		this.AUTHENTICATION = new Field("authentication",boolean.class,"Organization",Organization.class);
+		this.INBOUND_APPLICATIVE_AUTHENTICATION = new Field("inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.CODE_DOMAIN = new Field("codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new Field("codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new Field("replyToAddress",boolean.class,"Organization",Organization.class);
@@ -56,6 +57,7 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	
 		this.TYPES = new org.openspcoop2.protocol.manifest.model.OrganizationTypesModel(new ComplexField(father,"types",org.openspcoop2.protocol.manifest.OrganizationTypes.class,"Organization",Organization.class));
 		this.AUTHENTICATION = new ComplexField(father,"authentication",boolean.class,"Organization",Organization.class);
+		this.INBOUND_APPLICATIVE_AUTHENTICATION = new ComplexField(father,"inboundApplicativeAuthentication",boolean.class,"Organization",Organization.class);
 		this.CODE_DOMAIN = new ComplexField(father,"codeDomain",boolean.class,"Organization",Organization.class);
 		this.CODE_IPA = new ComplexField(father,"codeIPA",boolean.class,"Organization",Organization.class);
 		this.REPLY_TO_ADDRESS = new ComplexField(father,"replyToAddress",boolean.class,"Organization",Organization.class);
@@ -67,6 +69,8 @@ public class OrganizationModel extends AbstractModel<Organization> {
 	public org.openspcoop2.protocol.manifest.model.OrganizationTypesModel TYPES = null;
 	 
 	public IField AUTHENTICATION = null;
+	 
+	public IField INBOUND_APPLICATIVE_AUTHENTICATION = null;
 	 
 	public IField CODE_DOMAIN = null;
 	 

@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<h:panelGroup layout="block" id="headerContentParent">
+		<h:panelGroup layout="block" id="headerLogo" styleClass="stileLogo" rendered="#{not empty loginBean.logoHeaderImage}">
+			<table style="width:100%;">
+				<tbody>
+					<tr class="stileLogo"> 
+						<td colspan="2" align="left">
+							<h:outputLink value="#{loginBean.logoHeaderLink}" target="_blank" rendered="#{not empty loginBean.logoHeaderLink}">
+								<h:graphicImage value="#{loginBean.logoHeaderImage}" title="#{loginBean.logoHeaderTitolo}" alt="#{loginBean.logoHeaderTitolo}" rendered="#{not empty loginBean.logoHeaderLink}" />
+							</h:outputLink>
+							
+							<h:graphicImage value="#{loginBean.logoHeaderImage}" title="#{loginBean.logoHeaderTitolo}" alt="#{loginBean.logoHeaderTitolo}" rendered="#{empty loginBean.logoHeaderLink}" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</h:panelGroup>
+		<h:panelGroup layout="block" id="headerTitolo" styleClass="stileTitolo">
+	      	<a4j:region id="headerPaginaLive" renderRegionOnly="true">
+	      		<a4j:form prependId="false" >
+	      			<h:inputHidden value="true" id="ps_usaSVG"/> 
+	           		<table style="width:100%;">
+	            		<tbody>
+		            		<tr>
+		            			<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
+			            			<td class="tdTitoloStatusPdd">
+										<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd" styleClass="">
+											<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
+												<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" style="vertical-align: bottom;" >
+													<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
+												</h:graphicImage>
+											</a>
+										</a4j:outputPanel>
+		            				</td>
+								</c:if>
+				                <td class="#{(applicationBean.amministratore or applicationBean.operatore) ? 'tdTitoloNoPaddingLeft' : 'tdTitolo'}">
+			                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
+										<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
+									</a>
+				                </td>
+				                <td align="right" class="titleRight">
+				                	<c:if test="#{applicationBean.user}">
+										<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">		                	
+						                	<c:if test="#{statusBean.enable}">
+						                		<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="startCounterStatoPdd()" rendered="#{statusBean.enable}">
+						                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
+						                		</a4j:jsFunction>
+						                		<script type="text/javascript">
+													var cdifp_stPdd = #{statusBean.intervalloRefresh};
+													var t_stPdd;
+													var cdt_stPdd;
+													var timer_is_on_stPdd=0;
+													var cd_stPdd = cdifp_stPdd;
+												
+													function updateCountDownStatoPdd(){
+														if(cd_stPdd>0){
+															cd_stPdd--;
+															jQuery("[id='cdLabel_stPdd']").text("Prossimo Aggiornamento dello stato tra "+cd_stPdd+" secondi");
+															cdt_stPdd = setTimeout("updateCountDownStatoPdd()", 1000);
+														}
+													}
+												
+													function startCounterStatoPdd()
+													{
+														cd_stPdd=cdifp_stPdd;
+														t_stPdd=setTimeout("pollStatoPdd()",cd_stPdd*1000);
+														//updateCountDownStatoPdd();
+													}
+												
+													function stopCounterStatoPdd(){
+														timer_is_on_stPdd = 0;
+														clearTimeout(t_stPdd);
+													}					
+												
+													function doTimerStatoPdd()
+													{
+														if (!timer_is_on_stPdd){
+														  timer_is_on_stPdd=1;
+														  startCounterStatoPdd();
+													 	}
+													}
+												
+													jQuery(document).ready(function(){
+														doTimerStatoPdd();
+													});
+													
+												</script>
+											</c:if>
+										</c:if>
+										
+										<h:panelGroup id="pgTitleDx" layout="block">
+											<h:outputLabel id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
+											<h:panelGrid columns="#{loginBean.colonneUserInfo}">
+												<c:if test="#{loginBean.visualizzaSezioneSoggetto}">
+													<c:if test="#{loginBean.visualizzaMenuSoggetto}">
+														<rich:dropDownMenu id="menuSoggetto" direction="bottom-right" jointPoint="br" horizontalOffset="#{-(loginBean.widthVociMenuSoggetto + 8)}" popupWidth="#{loginBean.widthVociMenuSoggetto}">
+											                <f:facet name="label"> 
+											                    <h:panelGroup>
+											                        <h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto" id="labelSoggetto"/>
+											                        <h:outputText styleClass="soggettoImg" value=""/>
+											                    </h:panelGroup>
+											                </f:facet>
+											                <c:forEach items="#{loginBean.vociMenuSoggetto}" var="voce">
+											                	<rich:menuItem submitMode="server" value="#{voce.label}" action="#{loginBean.cambiaSoggetto}" disabled="#{voce.disabled}" id="#{voce.id}">
+											                		<f:setPropertyActionListener value="#{voce.value}" target="#{loginBean.soggettoPddMonitor}"></f:setPropertyActionListener>
+											                		<rich:toolTip id="toolLabel_#{voce.id}" for="#{voce.id}" mode="client" value="#{voce.tooltip}" rendered="#{not empty voce.tooltip}"/>
+											              	  	</rich:menuItem>
+											                </c:forEach>
+											            </rich:dropDownMenu>
+										            </c:if>
+										            <c:if test="#{not loginBean.visualizzaMenuSoggetto}">
+										            	<c:if test="#{not loginBean.visualizzaLinkSelezioneSoggetto}">
+												            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label" style="cursor: default;">
+												            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
+												            		<h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto"/>
+												            	</a4j:outputPanel>
+												            </a4j:outputPanel>
+											            </c:if>
+											            <c:if test="#{loginBean.visualizzaLinkSelezioneSoggetto}">
+												            <a4j:outputPanel layout="block" id="menuSoggetto" styleClass="ddmenu-label" style="cursor: default;">
+												            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
+												            		<a4j:htmlCommandLink action="soggettoOperativoPddMonitor" >
+												            			<h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto"/>
+												            		</a4j:htmlCommandLink>
+												            	</a4j:outputPanel>
+												            </a4j:outputPanel>
+											            </c:if>
+										            </c:if>
+									            </c:if>
+									            
+												<c:if test="#{loginBean.visualizzaSezioneModalita}">
+													<c:if test="#{loginBean.visualizzaMenuModalita}">
+														<rich:dropDownMenu id="menuModalita" direction="bottom-right" jointPoint="br" horizontalOffset="#{-(loginBean.widthVociMenuModalita + 8)}" popupWidth="#{loginBean.widthVociMenuModalita}">
+											                <f:facet name="label"> 
+											                    <h:panelGroup>
+											                        <h:outputText value="#{loginBean.labelModalita}" styleClass="modalita" id="labelModalita"/>
+											                        <h:outputText styleClass="modalitaImg" value=""/>
+											                    </h:panelGroup>
+											                </f:facet>
+											                <c:forEach items="#{loginBean.vociMenuModalita}" var="voce">
+											                	<rich:menuItem submitMode="server" value="#{voce.label}" action="#{loginBean.cambiaModalita}" disabled="#{voce.disabled}">
+											                		<f:setPropertyActionListener value="#{voce.value}" target="#{loginBean.modalita}"></f:setPropertyActionListener>
+											              	  	</rich:menuItem>
+											                </c:forEach>
+											            </rich:dropDownMenu>
+										            </c:if>
+										            <c:if test="#{not loginBean.visualizzaMenuModalita}">
+											            <a4j:outputPanel layout="block" id="menuModalita" styleClass="ddmenu-label" style="cursor: default;">
+											            	<a4j:outputPanel layout="block" styleClass="rich-label-text-decor">
+											            		<h:outputText value="#{loginBean.labelModalita}" styleClass="modalita"/>
+											            	</a4j:outputPanel>
+											            </a4j:outputPanel>
+										            </c:if>
+									            </c:if>
+									            
+												<rich:dropDownMenu id="menuUtente" direction="bottom-right" jointPoint="br" horizontalOffset="-136" popupWidth="136">
+									                <f:facet name="label"> 
+									                    <h:panelGroup>
+									                        <h:outputText styleClass="nomeUtenteImg" value=""/>
+									                    </h:panelGroup>
+									                </f:facet>
+									                <c:if test="#{loginBean.showExtendedInfo}">
+									                	<rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" />
+								                	</c:if>
+								                	<c:if test="#{!loginBean.showExtendedInfo}">
+										                	<rich:menuItem submitMode="server" value="Informazioni" action="about" />
+										                </c:if>
+									                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
+									                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
+									                </rich:menuItem>
+									                <rich:menuItem submitMode="server" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>
+									            </rich:dropDownMenu>
+											</h:panelGrid>
+										</h:panelGroup>
+									</c:if>
+				               	 </td>
+	            			</tr>
+	            		</tbody>
+	           		 </table>
+	            </a4j:form>
+            </a4j:region>
+        </h:panelGroup>
+  	</h:panelGroup>
+	
+</ui:composition>

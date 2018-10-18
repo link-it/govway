@@ -90,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -150,13 +151,29 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setType(DataElementType.TEXT);
 		de.setLabel(org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO);
+		boolean tutti_protocolli = false;
 		if(protocolliSelectList.size()<=1){
 			de.setValue(this.getLabelProtocollo(protocollo));
 		}
 		else {
 			de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+			tutti_protocolli = true;
 		}
 		dati.addElement(de);
+		
+		if(!tutti_protocolli && this.archiviCore.isMultitenant()) {
+			de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(SoggettiCostanti.LABEL_SOGGETTO);
+			if(this.isSoggettoMultitenantSelezionato()){
+				IDSoggetto idSoggettoSelezionato = this.soggettiCore.convertSoggettoSelezionatoToID(this.getSoggettoMultitenantSelezionato());
+				de.setValue(this.getLabelNomeSoggetto(idSoggettoSelezionato));
+			}
+			else {
+				de.setValue(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+			}
+			dati.addElement(de);
+		}
 
 		de = new DataElement();
 		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO);

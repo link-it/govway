@@ -6,11 +6,12 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it"
     xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
 
    	<c:if test="#{applicationBean.user}">
 		<c:if test="#{!applicationBean.amministratore}">
-				<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
-					<rich:comboBox width="416" id="sogAssociatoSuggestion" value="#{sf_bean.tipoNomeSoggettoLocale}" defaultLabel="Selezione Soggetto" 
+				<link:prop label="#{msg['configurazioniGenerali.search.soggetto']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
+					<rich:comboBox width="416" id="sogAssociatoSuggestion" value="#{sf_bean.tipoNomeSoggettoLocale}" defaultLabel="#{msg['configurazioniGenerali.search.soggetto.defaultLabel']}" 
 							directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="false" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
@@ -24,7 +25,7 @@
 	<c:if test="#{sf_mbean.showFiltroSoggetti}">
 	    <c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
 			<c:if test="#{applicationBean.amministratore}">
-				<link:prop label="Soggetto" rendered="#{true}">
+				<link:prop label="#{msg['configurazioniGenerali.search.soggetto']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 					<h:inputText id="sogErogCombo" value="#{sf_bean.labelTipoNomeSoggettoLocale}" styleClass="inputLinkLong" />
 					<rich:suggestionbox id="sogErogSuggestion" width="416"
 						for="sogErogCombo" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
@@ -46,9 +47,9 @@
 	    
 	   	<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
 			<c:if test="#{applicationBean.amministratore}">
-				<link:prop label="Soggetto" rendered="#{true}">
+				<link:prop label="#{msg['configurazioniGenerali.search.soggetto']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 					<rich:comboBox id="sogErogCombo" value="#{sf_bean.tipoNomeSoggettoLocale}" converter="selectItemConverter"
-						defaultLabel="Selezione Soggetto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						defaultLabel="#{msg['configurazioniGenerali.search.soggetto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 						width="416"   enableManualInput="false">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.soggetti}"  />

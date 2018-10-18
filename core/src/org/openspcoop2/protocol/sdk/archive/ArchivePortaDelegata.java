@@ -24,6 +24,8 @@ package org.openspcoop2.protocol.sdk.archive;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
@@ -136,6 +138,50 @@ public class ArchivePortaDelegata implements IArchiveObject {
 			
 			this.idPortaDelegata = new IDPortaDelegata();
 			this.idPortaDelegata.setNome(this.portaDelegata.getNome());
+			
+			IdentificativiFruizione identificativiFruizione = new IdentificativiFruizione();
+			identificativiFruizione.setSoggettoFruitore(this.idSoggettoProprietario);
+
+			String tipoSoggettoErogatore = null;
+			String nomeSoggettoErogatore = null;
+			if(this.portaDelegata.getSoggettoErogatore()==null) {
+				throw new ProtocolException("PortaDelegata.soggettoErogatore non definito");
+			}
+			if(this.portaDelegata.getSoggettoErogatore().getTipo()==null) {
+				throw new ProtocolException("PortaDelegata.soggettoErogatore.tipo non definito");
+			}
+			tipoSoggettoErogatore = this.portaDelegata.getSoggettoErogatore().getTipo();
+			if(this.portaDelegata.getSoggettoErogatore().getNome()==null) {
+				throw new ProtocolException("PortaDelegata.soggettoErogatore.nome non definito");
+			}
+			nomeSoggettoErogatore = this.portaDelegata.getSoggettoErogatore().getNome();
+
+			String tipoServizio = null;
+			String nomeServizio = null;
+			Integer versioneServizio = null;
+			if(this.portaDelegata.getServizio()==null) {
+				throw new ProtocolException("PortaDelegata.servizio non definito");
+			}
+			if(this.portaDelegata.getServizio().getTipo()==null) {
+				throw new ProtocolException("PortaDelegata.servizio.tipo non definito");
+			}
+			tipoServizio = this.portaDelegata.getServizio().getTipo();
+			if(this.portaDelegata.getServizio().getNome()==null) {
+				throw new ProtocolException("PortaDelegata.servizio.nome non definito");
+			}
+			nomeServizio = this.portaDelegata.getServizio().getNome();
+			if(this.portaDelegata.getServizio().getVersione()==null) {
+				throw new ProtocolException("PortaDelegata.servizio.versione non definito");
+			}
+			versioneServizio = this.portaDelegata.getServizio().getVersione();
+			
+			try {
+				identificativiFruizione.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, 
+						tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio));
+			}catch(Exception e) {
+				throw new ProtocolException("PortaDelegata.idServizio non definito");
+			}
+			this.idPortaDelegata.setIdentificativiFruizione(identificativiFruizione);
 			
 		}
 	}

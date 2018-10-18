@@ -54,15 +54,18 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -113,7 +116,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String servizio, String tiposervizio,String versioneServizio, String patternServizio,
 			String modeaz, String azid, String[] azioniListLabel,
 			String[] azioniList, String azione, String patternAzione,
-			long totAzioni,  String stateless, String localForward, String ricsim,
+			long totAzioni,  String stateless, String localForward, String paLocalForward, String ricsim,
 			String ricasim, String statoValidazione, String tipoValidazione,
 			int numCorrApp, String scadcorr, String gestBody,
 			String gestManifest, String integrazione, String autenticazioneOpzionale, String autenticazioneCustom,
@@ -127,10 +130,10 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String gestioneTokenPolicy, String gestioneTokenOpzionale, 
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
-			String autorizzazione_tokenOptions,
+			String autorizzazione_token, String autorizzazione_tokenOptions,
 			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy) throws Exception {
 
-		boolean multitenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant(); 
+		boolean multitenant = this.pddCore.isMultitenant();
 
 //		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -165,13 +168,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 		int alternativeSize = 80;
 		
+		@SuppressWarnings("unused")
 		Parameter pIdSogg = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+		@SuppressWarnings("unused")
 		Parameter pIdPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, idPorta);
 		String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 		if(idAsps == null) idAsps = "";
+		@SuppressWarnings("unused")
 		Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 		String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 		if(idFruizione == null) idFruizione = "";
+		@SuppressWarnings("unused")
 		Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
 		
 		DataElement de = null;
@@ -404,6 +411,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 		}
 		
+		boolean disableSaveButtonForDatiInvocazione = true;
+		
 		if(!isConfigurazione || datiInvocazione) {
 			de = new DataElement();
 			if(datiInvocazione) {
@@ -467,6 +476,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de.setLabels(tipoModeAzioneLabel); 
 				de.setSelected(modeaz);
 				de.setPostBack(true);
+				
+				disableSaveButtonForDatiInvocazione = false;
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -504,6 +515,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setLabels(azioniListLabel);
 					de.setSelected(azid);
 					dati.addElement(de);
+					
+					disableSaveButtonForDatiInvocazione = false;
+					
 				} else {
 		
 					de = new DataElement();
@@ -539,6 +553,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 							else {
 								de.setType(DataElementType.TEXT_EDIT);
 							}
+							disableSaveButtonForDatiInvocazione = false;
 						}
 					}else
 						de.setType(DataElementType.HIDDEN);
@@ -572,6 +587,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
 							de.setSelected(true);
 						}
+						disableSaveButtonForDatiInvocazione = false;
 					}
 				}
 				else{
@@ -711,7 +727,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 		}
 		
-		
+		if(datiInvocazione && disableSaveButtonForDatiInvocazione) {
+			this.pd.disableEditMode();
+		}
 		
 		
 		
@@ -724,14 +742,17 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		// Pintori 11/12/2017 Gestione Accessi spostata nella servlet PorteDelegateControlloAccessi,  in ADD devo mostrare comunque la form.
 		if(!tipoOp.equals(TipoOperazione.ADD)) {
 			if(!isConfigurazione) {
-				this.controlloAccessi(dati);
-				// controllo accessi
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
-				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
-				dati.addElement(de);
+				
+				// Il link richiede ulteriori parametri.
+				
+//				this.controlloAccessi(dati);
+//				// controllo accessi
+//				de = new DataElement();
+//				de.setType(DataElementType.LINK);
+//				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+//				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+//				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
+//				dati.addElement(de);
 			}
 		}else {
 			
@@ -756,7 +777,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
 					autorizzazioneRuoliTipologia, ruoloMatch,
 					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,
-					gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions,allegatoXacmlPolicy);
+					gestioneToken, gestioneTokenPolicy, 
+					autorizzazione_token, autorizzazione_tokenOptions,allegatoXacmlPolicy,
+					null, 0);
 			
 				
 			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
@@ -770,17 +793,20 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(!tipoOp.equals(TipoOperazione.ADD)) {
 			if(!isConfigurazione) {
-				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
-				dati.addElement(de);
 				
-				// validazione contenuti
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, statoValidazione);
-				dati.addElement(de);
+				// Il link richiede ulteriori parametri.
+			
+//				de = new DataElement();
+//				de.setType(DataElementType.TITLE);
+//				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+//				dati.addElement(de);
+//				
+//				// validazione contenuti
+//				de = new DataElement();
+//				de.setType(DataElementType.LINK);
+//				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
+//				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, statoValidazione);
+//				dati.addElement(de);
 			}
 		} else {
 				this.validazioneContenuti(tipoOp, dati, true, statoValidazione, tipoValidazione, applicaMTOM,
@@ -864,24 +890,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 //				}
 			}
 		}			
-		String[] tipoLocalForward = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_ABILITATO,
-				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_DISABILITATO };
-		de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
-		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
-		de.setSize(alternativeSize);
-		if (this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltro)) {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(localForward);
-			dati.addElement(de);
-		}else{
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoLocalForward);
-			de.setSelected(localForward);
-			deIntegrazione.addElement(de);
-		}
 		
-
 		if(deIntegrazione.size()>0){
 			
 			if(!isConfigurazione || datiAltro) {
@@ -897,6 +906,43 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 		
 		
+		boolean localForwardDisable = !this.porteDelegateCore.isShowPortaDelegataLocalForward() || this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltro);
+		
+		if(!localForwardDisable) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD);
+		de.setSize(alternativeSize);
+		if (localForwardDisable) {
+			de.setType(DataElementType.HIDDEN);
+		}else{
+			String[] tipoLocalForward = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_ABILITATO,
+					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_DISABILITATO };
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoLocalForward);
+			de.setSelected(localForward);
+			de.setPostBack(true);
+		}
+		de.setValue(localForward);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA);
+		de.setValue(paLocalForward);
+		if (localForwardDisable || !PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_ABILITATO.equals(localForward)) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.TEXT_EDIT);
+		}
+		dati.addElement(de);
 		
 		
 		
@@ -970,41 +1016,44 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		if (!idsogg.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID) 
 				&& !idPorta.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID)) {
 			if(!isConfigurazione) {
-				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGGIO);
-				dati.addElement(de);
 				
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA +"?" + 
-						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta+ "&"
-						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME + "=" + nomePorta);
-				String statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
-				if(numCorrelazioneReq>0 || numCorrelazioneRes>0){
-					statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA;
-				}
-				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, statoCorrelazioneApplicativa);
-				dati.addElement(de);
+				// Il link richiede ulteriori parametri.
 				
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY +"?" + 
-						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
-				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY, statoMessageSecurity);
-				dati.addElement(de);
-	
-				//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM +"?" + 
-						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
-						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
-				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM, statoMTOM);
-				dati.addElement(de);
-				//}
+//				de = new DataElement();
+//				de.setType(DataElementType.TITLE);
+//				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGGIO);
+//				dati.addElement(de);
+//				
+//				de = new DataElement();
+//				de.setType(DataElementType.LINK);
+//				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA +"?" + 
+//						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+//						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta+ "&"
+//						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME + "=" + nomePorta);
+//				String statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA;
+//				if(numCorrelazioneReq>0 || numCorrelazioneRes>0){
+//					statoCorrelazioneApplicativa = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_ABILITATA;
+//				}
+//				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA, statoCorrelazioneApplicativa);
+//				dati.addElement(de);
+//				
+//				de = new DataElement();
+//				de.setType(DataElementType.LINK);
+//				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY +"?" + 
+//						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+//						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
+//				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY, statoMessageSecurity);
+//				dati.addElement(de);
+//	
+//				//if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
+//				de = new DataElement();
+//				de.setType(DataElementType.LINK);
+//				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM +"?" + 
+//						PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO + "=" + idsogg + "&"
+//						+ PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID + "=" + idPorta);
+//				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM, statoMTOM);
+//				dati.addElement(de);
+//				//}
 			}	
 		}
 		
@@ -1013,7 +1062,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		
-		if (this.isModalitaStandard() || !supportoAsincroni) {
+		if (this.isModalitaStandard() || !supportoAsincroni || datiInvocazione) {
 
 			de = new DataElement();
 			de.setType(DataElementType.HIDDEN);
@@ -1594,6 +1643,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				String autorizzazione_token = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 				String autorizzazione_tokenOptions = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
@@ -1612,7 +1662,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						autorizzazioneRuoliTipologia, ruoloMatch, 
 						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
-						autorizzazione_tokenOptions,
+						autorizzazione_token,autorizzazione_tokenOptions,
 						autorizzazioneScope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
 						autorizzazioneContenuti,
 						protocollo)==false){
@@ -1975,6 +2025,25 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					Parameter pNomePD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, pd.getNome());
 					Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pd.getIdSoggetto() + "");
 					
+					IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+							pd.getServizio().getVersione());
+					AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizioObject);
+					
+					Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, asps.getId()+"");
+					@SuppressWarnings("unused")
+					Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, asps.getIdSoggetto()+"");
+					
+					long idFruzione = -1;
+					for (Fruitore fruitore : asps.getFruitoreList()) {
+						if(fruitore.getTipo().equals(pd.getTipoSoggettoProprietario()) &&
+								fruitore.getNome().equals(pd.getNomeSoggettoProprietario())) {
+							idFruzione = fruitore.getId();
+							break;
+						}
+					}
+					Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
+					
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(pd.getTipoSoggettoProprietario());
 					
 					Vector<DataElement> e = new Vector<DataElement>();
@@ -2009,7 +2078,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					
 					// Controllo Accessi
 					de = new DataElement();
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD);
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 					
 					String gestioneToken = null;
 					if(pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null &&
@@ -2051,7 +2120,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setUrl( 
 							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
+							pIdAsps, pIdFruitore
 							);
 					de.setValue(pd.getStatoMessageSecurity());
 					e.addElement(de);
@@ -2061,7 +2131,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setUrl( 
 							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId())
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
+							pIdAsps, pIdFruitore
 							);
 
 					boolean isMTOMAbilitatoReq = false;
@@ -2095,7 +2166,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setUrl(
 							PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA,
 							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()) );
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
+							pIdAsps, pIdFruitore );
 					
 					boolean isCorrelazioneApplicativaAbilitataReq = false;
 					boolean isCorrelazioneApplicativaAbilitataRes = false;
@@ -2116,7 +2188,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					if(this.isModalitaAvanzata()){
 						de = new DataElement();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pIdSoggPD, pIdPD);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pIdSoggPD, pIdPD,
+								pIdAsps, pIdFruitore);
 						if (contaListe) {
 							int numProp = pd.sizeProprietaList();
 							ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
@@ -2130,7 +2203,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST,
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, "" + pd.getIdSoggetto()),
 								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, ""+pd.getId()),
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome())
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,pd.getNome(),
+								pIdAsps, pIdFruitore)
 								);
 						if (contaListe) {
 							int numExtended = extendedServletList.sizeList(pd);
@@ -2271,9 +2345,11 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
-					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
-							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""),
-							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PROVIDER, idsogg));
+					if(this.isModalitaCompleta()) {
+						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId() + ""),
+								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PROVIDER, idsogg));
+					}
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getNome());
 					e.addElement(de);
@@ -3321,7 +3397,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE:
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			String servizioTmpTile = this.getLabelIdServizio(asps);
+			String servizioTmpTile = this.getLabelServizioFruizione(protocollo, new IDSoggetto(tipoSoggettoFruitore, nomeSoggettoFruitore), asps);
 			
 			String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -3336,12 +3412,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			Parameter pIdSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO, idSoggettoFruitore);
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+			Parameter pTipoSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE, tipoSoggettoFruitore);
+			Parameter pNomeSoggettoFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SOGGETTO_FRUITORE, nomeSoggettoFruitore);
 			
 			if(gestioneFruitori) {
 				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					lstParam.add(new Parameter(ErogazioniCostanti.LABEL_ASPS_FRUIZIONI, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST));
-					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
+					lstParam.add(new Parameter(servizioTmpTile, ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_CHANGE, 
+							pIdServizio,pNomeServizio, pTipoServizio, pTipoSoggettoFruitore, pNomeSoggettoFruitore));
 					boolean gestioneGruppi = true;
 					String paramGestioneGruppi = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_GESTIONE_GRUPPI);
 					if(paramGestioneGruppi!=null && !"".equals(paramGestioneGruppi)) {
@@ -3359,13 +3438,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
 						(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
 					
-					lstParam.add(new Parameter(labelConfigurazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,pIdFruizione,pIdServizio,pIdSoggettoFruitore));
+					lstParam.add(new Parameter(labelConfigurazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,
+							pIdFruizione,pIdServizio,pIdSoggettoFruitore, pTipoSoggettoFruitore, pNomeSoggettoFruitore));
 					
 				}else {
 					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
 					//	lstParam.add(new Parameter(servizioTmpTile, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, pIdServizio,pNomeServizio, pTipoServizio));
 					lstParam.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_CONFIGURAZIONI_DI + servizioTmpTile, 
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,pIdFruizione,pIdServizio,pIdSoggettoFruitore));
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,
+							pIdFruizione,pIdServizio,pIdSoggettoFruitore, pTipoSoggettoFruitore, pNomeSoggettoFruitore));
 				}
 			}
 			else {

@@ -165,7 +165,8 @@ public class PorteDelegateWSRequestPropertiesConfig  extends Action {
 
 				dati = porteDelegateHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				// Set First Time == false
 				porteDelegateHelper.addToDatiFirstTimeDisabled(dati,CostantiControlStation.PARAMETRO_CONTROLLO_FIRST_TIME);
@@ -191,7 +192,8 @@ public class PorteDelegateWSRequestPropertiesConfig  extends Action {
 
 				dati = porteDelegateHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 				
 				// Set First Time == false
 				porteDelegateHelper.addToDatiFirstTimeDisabled(dati,CostantiControlStation.PARAMETRO_CONTROLLO_FIRST_TIME);
@@ -239,7 +241,8 @@ public class PorteDelegateWSRequestPropertiesConfig  extends Action {
 
 			dati = porteDelegateHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
-			dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, idFruizione, dati);
+			dati = porteDelegateHelper.addHiddenFieldsToDati(tipoOperazione, id, idsogg, null, idAsps, 
+					idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 			
 			// Set First Time == false
 			porteDelegateHelper.addToDatiFirstTimeDisabled(dati,CostantiControlStation.PARAMETRO_CONTROLLO_FIRST_TIME);

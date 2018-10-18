@@ -104,7 +104,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			this.dynamicUtilsService = new DynamicUtilsService();
 			String fontName = PddMonitorProperties.getInstance(log).getConsoleFontFamilyName();
 			int fontStyle = PddMonitorProperties.getInstance(log).getConsoleFontStyle();
-			this.defaultFont = new Font(fontName,fontStyle, 12);
+			this.defaultFont = new Font(fontName,fontStyle, 14);
 			this.log.debug("Init Dynamic Utils in completato.");
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante la init: " + e.getMessage(),e);
@@ -688,7 +688,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 */
 	public Font getDefaultFont() {
 		if(this.defaultFont == null)
-			this.defaultFont = new Font("Lucida Sans", Font.PLAIN , 11);
+			this.defaultFont = new Font("Lucida Sans", Font.PLAIN , 14);
 
 		return this.defaultFont;
 	}

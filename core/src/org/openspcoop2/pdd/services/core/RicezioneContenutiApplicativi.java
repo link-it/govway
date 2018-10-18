@@ -989,6 +989,19 @@ public class RicezioneContenutiApplicativi {
 			}
 		}
 		
+		Transaction transaction = null;
+		try{
+			transaction = TransactionContext.getTransaction(idTransazione);
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e,"getTransaction");
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),e,null)));
+			}
+			return;
+		}
+		
 		
 		
 
@@ -1493,335 +1506,340 @@ public class RicezioneContenutiApplicativi {
 			
 		} else {
 
-			ErroreIntegrazione errore = null;
-			Exception eGestioneToken = null;
-			OpenSPCoop2Message errorMessageGestioneToken = null;
-			String wwwAuthenticateErrorHeader = null;
-			boolean fineGestione = false;
+			transaction.getTempiElaborazione().startToken();
 			try {
-				
-				PolicyGestioneToken policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(portaDelegata);
-				
-				pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM,
-						policyGestioneToken.getRealm());
-				pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY,
-						policyGestioneToken.isMessageErrorGenerateEmptyMessage());
-				pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE,
-						policyGestioneToken.isMessageErrorGenerateGenericMessage());
-				
-				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_GESTIONE, tipoGestioneToken);
-				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_AZIONI, policyGestioneToken.getLabelAzioniGestioneToken());
-				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_TIPO, policyGestioneToken.getLabelTipoToken());
-				msgDiag.logPersonalizzato("gestioneTokenInCorso");
-				
-				org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata();
-				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
-				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
-				datiInvocazione.setMessage(requestMessage);
-				datiInvocazione.setIdPD(identificativoPortaDelegata);
-				datiInvocazione.setPd(portaDelegata);		
-				datiInvocazione.setPolicyGestioneToken(policyGestioneToken);
-				
-				GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
-				
-				GestioneToken gestioneTokenEngine = new GestioneToken(logCore, idTransazione, pddContext, protocolFactory);
-				
-				// cerco token
-				
-				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POSIZIONE, policyGestioneToken.getLabelPosizioneToken());
-				msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken");
-				
-				EsitoPresenzaTokenPortaDelegata esitoPresenzaToken = gestioneTokenEngine.verificaPresenzaToken(datiInvocazione);
-				EsitoGestioneTokenPortaDelegata esitoValidazioneToken = null;
-				EsitoGestioneTokenPortaDelegata esitoIntrospectionToken = null;
-				EsitoGestioneTokenPortaDelegata esitoUserInfoToken = null;
-				if(esitoPresenzaToken.isPresente()) {
-					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN, esitoPresenzaToken.getToken());
-					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.trovato"); // stampa del token info
+			
+				ErroreIntegrazione errore = null;
+				Exception eGestioneToken = null;
+				OpenSPCoop2Message errorMessageGestioneToken = null;
+				String wwwAuthenticateErrorHeader = null;
+				boolean fineGestione = false;
+				try {
 					
-					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POSIZIONE, esitoPresenzaToken);
+					PolicyGestioneToken policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(portaDelegata);
 					
-					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
-
+					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM,
+							policyGestioneToken.getRealm());
+					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY,
+							policyGestioneToken.isMessageErrorGenerateEmptyMessage());
+					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE,
+							policyGestioneToken.isMessageErrorGenerateGenericMessage());
 					
-					// validazione jwt
-					if(!fineGestione) {
-						
-						if(policyGestioneToken.isValidazioneJWT()) {
-						
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
-							
-							esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
-							if(esitoValidazioneToken.isValido()) {
-								
-								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoValidazioneToken.getInformazioniToken().getRawResponse());
-								
-								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE, esitoValidazioneToken);
-								
-								if(esitoValidazioneToken.isInCache()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.inCache");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.validato");
-								}
-							}
-							else {
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoValidazioneToken.getDetails());
-								if(policyGestioneToken.isValidazioneJWT_warningOnly()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.warningOnly.fallita");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.fallita");
-									fineGestione = true;
-								}
-								
-								String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (validazione JWT) fallito: " + esitoValidazioneToken.getDetails();
-								if(esitoValidazioneToken.getEccezioneProcessamento()!=null) {
-									logCore.error(msgErrore,esitoValidazioneToken.getEccezioneProcessamento());
-								}
-								else {
-									logCore.error(msgErrore);
-								}
-							
-								errore = esitoValidazioneToken.getErroreIntegrazione();
-								eGestioneToken = esitoValidazioneToken.getEccezioneProcessamento();
-								errorMessageGestioneToken = esitoValidazioneToken.getErrorMessage();
-								wwwAuthenticateErrorHeader = esitoValidazioneToken.getWwwAuthenticateErrorHeader();
-								
-							}
-						}
-						else {
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.disabilitata");
-						}
-						
-					}
+					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_GESTIONE, tipoGestioneToken);
+					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_AZIONI, policyGestioneToken.getLabelAzioniGestioneToken());
+					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_TIPO, policyGestioneToken.getLabelTipoToken());
+					msgDiag.logPersonalizzato("gestioneTokenInCorso");
 					
+					org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata();
+					datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+					datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+					datiInvocazione.setMessage(requestMessage);
+					datiInvocazione.setIdPD(identificativoPortaDelegata);
+					datiInvocazione.setPd(portaDelegata);		
+					datiInvocazione.setPolicyGestioneToken(policyGestioneToken);
 					
-					// introspection
-					if(!fineGestione) {
-						
-						if(policyGestioneToken.isIntrospection()) {
-						
-							msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, policyGestioneToken.getIntrospection_endpoint());
-							
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
-							
-							esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
-							if(esitoIntrospectionToken.isValido()) {
-								
-								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoIntrospectionToken.getInformazioniToken().getRawResponse());
-								
-								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION, esitoIntrospectionToken);
-								
-								if(esitoIntrospectionToken.isInCache()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.inCache");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.validato");
-								}
-							}
-							else {
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoIntrospectionToken.getDetails());
-								if(policyGestioneToken.isIntrospection_warningOnly()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.warningOnly.fallita");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.fallita");
-									fineGestione = true;
-								}
-								
-								String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (Introspection) fallito: " + esitoIntrospectionToken.getDetails();
-								if(esitoIntrospectionToken.getEccezioneProcessamento()!=null) {
-									logCore.error(msgErrore,esitoIntrospectionToken.getEccezioneProcessamento());
-								}
-								else {
-									logCore.error(msgErrore);
-								}
-							
-								errore = esitoIntrospectionToken.getErroreIntegrazione();
-								eGestioneToken = esitoIntrospectionToken.getEccezioneProcessamento();
-								errorMessageGestioneToken = esitoIntrospectionToken.getErrorMessage();
-								wwwAuthenticateErrorHeader = esitoIntrospectionToken.getWwwAuthenticateErrorHeader();
-								
-							}
-						}
-						else {
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.disabilitata");
-						}
-						
-					}
+					GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
 					
-					// userInfo
-					if(!fineGestione) {
-						
-						if(policyGestioneToken.isUserInfo()) {
-						
-							msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, policyGestioneToken.getUserInfo_endpoint());
-							
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
-							
-							esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
-							if(esitoUserInfoToken.isValido()) {
-								
-								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoUserInfoToken.getInformazioniToken().getRawResponse());
-								
-								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_USER_INFO, esitoUserInfoToken);
-								
-								if(esitoUserInfoToken.isInCache()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.inCache");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.validato");
-								}
-							}
-							else {
-								
-								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoUserInfoToken.getDetails());
-								if(policyGestioneToken.isIntrospection_warningOnly()) {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.warningOnly.fallita");
-								}
-								else {
-									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.fallita");
-									fineGestione = true;
-								}
-								
-								String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (UserInfo) fallito: " + esitoUserInfoToken.getDetails();
-								if(esitoUserInfoToken.getEccezioneProcessamento()!=null) {
-									logCore.error(msgErrore,esitoUserInfoToken.getEccezioneProcessamento());
-								}
-								else {
-									logCore.error(msgErrore);
-								}
-							
-								errore = esitoUserInfoToken.getErroreIntegrazione();
-								eGestioneToken = esitoUserInfoToken.getEccezioneProcessamento();
-								errorMessageGestioneToken = esitoUserInfoToken.getErrorMessage();
-								wwwAuthenticateErrorHeader = esitoUserInfoToken.getWwwAuthenticateErrorHeader();
-								
-							}
-						}
-						else {
-							msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.disabilitata");
-						}
-						
-					}
+					GestioneToken gestioneTokenEngine = new GestioneToken(logCore, idTransazione, pddContext, protocolFactory);
 					
+					// cerco token
 					
-				}
-				else {
+					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POSIZIONE, policyGestioneToken.getLabelPosizioneToken());
+					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken");
 					
-					if(policyGestioneToken.isTokenOpzionale()==false) {
-					
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoPresenzaToken.getDetails());
-						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.fallita");
-						
-						fineGestione = true;
-						
-						String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] fallito: " + esitoPresenzaToken.getDetails();
-						if(esitoPresenzaToken.getEccezioneProcessamento()!=null) {
-							logCore.error(msgErrore,esitoPresenzaToken.getEccezioneProcessamento());
-						}
-						else {
-							logCore.error(msgErrore);
-						}
-				
-						errore = esitoPresenzaToken.getErroreIntegrazione();
-						eGestioneToken = esitoPresenzaToken.getEccezioneProcessamento();
-						errorMessageGestioneToken = esitoPresenzaToken.getErrorMessage();
-						wwwAuthenticateErrorHeader = esitoPresenzaToken.getWwwAuthenticateErrorHeader();
-					
-					}
-					
-				}
-		
-				if(fineGestione) {
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
-					msgDiag.logPersonalizzato("gestioneTokenFallita");
-				}
-				else {
+					EsitoPresenzaTokenPortaDelegata esitoPresenzaToken = gestioneTokenEngine.verificaPresenzaToken(datiInvocazione);
+					EsitoGestioneTokenPortaDelegata esitoValidazioneToken = null;
+					EsitoGestioneTokenPortaDelegata esitoIntrospectionToken = null;
+					EsitoGestioneTokenPortaDelegata esitoUserInfoToken = null;
 					if(esitoPresenzaToken.isPresente()) {
-						List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
-						InformazioniToken informazioniTokenNormalizzate = null;
-						if(listaEsiti!=null && listaEsiti.size()>0) {
-							informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
-							informazioniTokenNormalizzate.setValid(true);
-						}
-						if(informazioniTokenNormalizzate!=null) {
-							pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
-							
-							Transaction tr = TransactionContext.getTransaction(idTransazione);
-							tr.setInformazioniToken(informazioniTokenNormalizzate);
-						}
-											
-						msgDiag.mediumDebug("Gestione forward token ...");
-						gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
-								esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
-								informazioniTokenNormalizzate);
-						msgDiag.mediumDebug("Gestione forward token completata");
+						msgDiag.addKeyword(CostantiPdD.KEY_TOKEN, esitoPresenzaToken.getToken());
+						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.trovato"); // stampa del token info
 						
-						msgDiag.logPersonalizzato("gestioneTokenCompletataConSuccesso");
-					}
-					else {
-						msgDiag.logPersonalizzato("gestioneTokenCompletataSenzaRilevazioneToken");
-					}				
-				}
-				
-			} catch (Exception e) {
-				
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
-				msgDiag.logPersonalizzato("gestioneTokenFallita.erroreGenerico");
-				logCore.error("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),e);
-				
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),
-								CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN);
-				eGestioneToken = e;
-				
-				fineGestione = true;
-				
-			}
-			if (fineGestione) {
-				
-				openspcoopstate.releaseResource();
+						pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POSIZIONE, esitoPresenzaToken);
+						
+						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
 	
-				if (this.msgContext.isGestioneRisposta()) {
-					if(errorMessageGestioneToken!=null) {
-						this.msgContext.setMessageResponse(errorMessageGestioneToken);
+						
+						// validazione jwt
+						if(!fineGestione) {
+							
+							if(policyGestioneToken.isValidazioneJWT()) {
+							
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
+								
+								esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
+								if(esitoValidazioneToken.isValido()) {
+									
+									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoValidazioneToken.getInformazioniToken().getRawResponse());
+									
+									pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE, esitoValidazioneToken);
+									
+									if(esitoValidazioneToken.isInCache()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.inCache");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.validato");
+									}
+								}
+								else {
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoValidazioneToken.getDetails());
+									if(policyGestioneToken.isValidazioneJWT_warningOnly()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.warningOnly.fallita");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.fallita");
+										fineGestione = true;
+									}
+									
+									String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (validazione JWT) fallito: " + esitoValidazioneToken.getDetails();
+									if(esitoValidazioneToken.getEccezioneProcessamento()!=null) {
+										logCore.error(msgErrore,esitoValidazioneToken.getEccezioneProcessamento());
+									}
+									else {
+										logCore.error(msgErrore);
+									}
+								
+									errore = esitoValidazioneToken.getErroreIntegrazione();
+									eGestioneToken = esitoValidazioneToken.getEccezioneProcessamento();
+									errorMessageGestioneToken = esitoValidazioneToken.getErrorMessage();
+									wwwAuthenticateErrorHeader = esitoValidazioneToken.getWwwAuthenticateErrorHeader();
+									
+								}
+							}
+							else {
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.disabilitata");
+							}
+							
+						}
+						
+						
+						// introspection
+						if(!fineGestione) {
+							
+							if(policyGestioneToken.isIntrospection()) {
+							
+								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION, policyGestioneToken.getIntrospection_endpoint());
+								
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
+								
+								esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
+								if(esitoIntrospectionToken.isValido()) {
+									
+									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoIntrospectionToken.getInformazioniToken().getRawResponse());
+									
+									pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION, esitoIntrospectionToken);
+									
+									if(esitoIntrospectionToken.isInCache()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.inCache");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.validato");
+									}
+								}
+								else {
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoIntrospectionToken.getDetails());
+									if(policyGestioneToken.isIntrospection_warningOnly()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.warningOnly.fallita");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.fallita");
+										fineGestione = true;
+									}
+									
+									String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (Introspection) fallito: " + esitoIntrospectionToken.getDetails();
+									if(esitoIntrospectionToken.getEccezioneProcessamento()!=null) {
+										logCore.error(msgErrore,esitoIntrospectionToken.getEccezioneProcessamento());
+									}
+									else {
+										logCore.error(msgErrore);
+									}
+								
+									errore = esitoIntrospectionToken.getErroreIntegrazione();
+									eGestioneToken = esitoIntrospectionToken.getEccezioneProcessamento();
+									errorMessageGestioneToken = esitoIntrospectionToken.getErrorMessage();
+									wwwAuthenticateErrorHeader = esitoIntrospectionToken.getWwwAuthenticateErrorHeader();
+									
+								}
+							}
+							else {
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.disabilitata");
+							}
+							
+						}
+						
+						// userInfo
+						if(!fineGestione) {
+							
+							if(policyGestioneToken.isUserInfo()) {
+							
+								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO, policyGestioneToken.getUserInfo_endpoint());
+								
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
+								
+								esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
+								if(esitoUserInfoToken.isValido()) {
+									
+									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoUserInfoToken.getInformazioniToken().getRawResponse());
+									
+									pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_USER_INFO, esitoUserInfoToken);
+									
+									if(esitoUserInfoToken.isInCache()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.inCache");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.validato");
+									}
+								}
+								else {
+									
+									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoUserInfoToken.getDetails());
+									if(policyGestioneToken.isIntrospection_warningOnly()) {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.warningOnly.fallita");
+									}
+									else {
+										msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.fallita");
+										fineGestione = true;
+									}
+									
+									String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] (UserInfo) fallito: " + esitoUserInfoToken.getDetails();
+									if(esitoUserInfoToken.getEccezioneProcessamento()!=null) {
+										logCore.error(msgErrore,esitoUserInfoToken.getEccezioneProcessamento());
+									}
+									else {
+										logCore.error(msgErrore);
+									}
+								
+									errore = esitoUserInfoToken.getErroreIntegrazione();
+									eGestioneToken = esitoUserInfoToken.getEccezioneProcessamento();
+									errorMessageGestioneToken = esitoUserInfoToken.getErrorMessage();
+									wwwAuthenticateErrorHeader = esitoUserInfoToken.getWwwAuthenticateErrorHeader();
+									
+								}
+							}
+							else {
+								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.disabilitata");
+							}
+							
+						}
+						
+						
 					}
 					else {
-						IntegrationError integrationError = null;
-						if(CodiceErroreIntegrazione.CODICE_443_TOKEN_NON_PRESENTE.equals(errore.getCodiceErrore())){
-							integrationError = IntegrationError.BAD_REQUEST; // per generare 400 in REST
-						}
-						else if(CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO.equals(errore.getCodiceErrore())){
-							integrationError = IntegrationError.AUTHENTICATION; // per generare 401 in REST
-						}
-						else{
-							integrationError = IntegrationError.INTERNAL_ERROR;
+						
+						if(policyGestioneToken.isTokenOpzionale()==false) {
+						
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoPresenzaToken.getDetails());
+							msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.fallita");
+							
+							fineGestione = true;
+							
+							String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] fallito: " + esitoPresenzaToken.getDetails();
+							if(esitoPresenzaToken.getEccezioneProcessamento()!=null) {
+								logCore.error(msgErrore,esitoPresenzaToken.getEccezioneProcessamento());
+							}
+							else {
+								logCore.error(msgErrore);
+							}
+					
+							errore = esitoPresenzaToken.getErroreIntegrazione();
+							eGestioneToken = esitoPresenzaToken.getEccezioneProcessamento();
+							errorMessageGestioneToken = esitoPresenzaToken.getErrorMessage();
+							wwwAuthenticateErrorHeader = esitoPresenzaToken.getWwwAuthenticateErrorHeader();
+						
 						}
 						
-						OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
-								eGestioneToken,null));
-						
-						if(wwwAuthenticateErrorHeader!=null) {
-							errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
-						}
-						
-						this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
 					}
+			
+					if(fineGestione) {
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
+						msgDiag.logPersonalizzato("gestioneTokenFallita");
+					}
+					else {
+						if(esitoPresenzaToken.isPresente()) {
+							List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
+							InformazioniToken informazioniTokenNormalizzate = null;
+							if(listaEsiti!=null && listaEsiti.size()>0) {
+								informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
+								informazioniTokenNormalizzate.setValid(true);
+							}
+							if(informazioniTokenNormalizzate!=null) {
+								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
+								
+								transaction.setInformazioniToken(informazioniTokenNormalizzate);
+							}
+												
+							msgDiag.mediumDebug("Gestione forward token ...");
+							gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
+									esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
+									informazioniTokenNormalizzate);
+							msgDiag.mediumDebug("Gestione forward token completata");
+							
+							msgDiag.logPersonalizzato("gestioneTokenCompletataConSuccesso");
+						}
+						else {
+							msgDiag.logPersonalizzato("gestioneTokenCompletataSenzaRilevazioneToken");
+						}				
+					}
+					
+				} catch (Exception e) {
+					
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					msgDiag.logPersonalizzato("gestioneTokenFallita.erroreGenerico");
+					logCore.error("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),e);
+					
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),
+									CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN);
+					eGestioneToken = e;
+					
+					fineGestione = true;
+					
 				}
-				return;
-				
+				if (fineGestione) {
+					
+					openspcoopstate.releaseResource();
+		
+					if (this.msgContext.isGestioneRisposta()) {
+						if(errorMessageGestioneToken!=null) {
+							this.msgContext.setMessageResponse(errorMessageGestioneToken);
+						}
+						else {
+							IntegrationError integrationError = null;
+							if(CodiceErroreIntegrazione.CODICE_443_TOKEN_NON_PRESENTE.equals(errore.getCodiceErrore())){
+								integrationError = IntegrationError.BAD_REQUEST; // per generare 400 in REST
+							}
+							else if(CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO.equals(errore.getCodiceErrore())){
+								integrationError = IntegrationError.AUTHENTICATION; // per generare 401 in REST
+							}
+							else{
+								integrationError = IntegrationError.INTERNAL_ERROR;
+							}
+							
+							OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
+									eGestioneToken,null));
+							
+							if(wwwAuthenticateErrorHeader!=null) {
+								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+							}
+							
+							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+						}
+					}
+					
+					return;
+					
+				}
+			}finally {
+				transaction.getTempiElaborazione().endToken();
 			}
-
 		}
 		
 		
@@ -1888,127 +1906,134 @@ public class RicezioneContenutiApplicativi {
 
 		} else {
 
-			msgDiag.logPersonalizzato("autenticazioneInCorso");
+			transaction.getTempiElaborazione().startAutenticazione();
+			try {
 			
-			ErroreIntegrazione errore = null;
-			Exception eAutenticazione = null;
-			OpenSPCoop2Message errorMessageAutenticazione = null;
-			String wwwAuthenticateErrorHeader = null;
-			try {						
-					
-				EsitoAutenticazionePortaDelegata esito = 
-						GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
-				if(esito.getDetails()==null){
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-				}else{
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
-				}
-				credenzialeTrasporto = esito.getCredential();
+				msgDiag.logPersonalizzato("autenticazioneInCorso");
 				
-				if(esito.isClientAuthenticated() == false) {
-					errore = esito.getErroreIntegrazione();
-					eAutenticazione = esito.getEccezioneProcessamento();
-					errorMessageAutenticazione = esito.getErrorMessage();
-					wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
-					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
-				}
-				else {
-					if(esito.isClientIdentified()) {
-						servizioApplicativo = esito.getIdServizioApplicativo().getNome();
-						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+				ErroreIntegrazione errore = null;
+				Exception eAutenticazione = null;
+				OpenSPCoop2Message errorMessageAutenticazione = null;
+				String wwwAuthenticateErrorHeader = null;
+				try {						
+						
+					EsitoAutenticazionePortaDelegata esito = 
+							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
+					if(esito.getDetails()==null){
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}else{
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
-					else {
-						// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
+					credenzialeTrasporto = esito.getCredential();
+					
+					if(esito.isClientAuthenticated() == false) {
 						errore = esito.getErroreIntegrazione();
 						eAutenticazione = esito.getEccezioneProcessamento();
 						errorMessageAutenticazione = esito.getErrorMessage();
 						wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
 					}
-				}
-				
-				if(errore!=null) {
-					if(autenticazioneOpzionale==false){
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
-					}
-				}
-				else {
-					msgDiag.logPersonalizzato("autenticazioneEffettuata");
-				}
-				
-			} catch (Exception e) {
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento("processo di autenticazione ["
-								+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
-				eAutenticazione = e;
-				logCore.error("processo di autenticazione ["
-						+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
-			}
-			if (errore != null) {
-				String descrizioneErrore = null;
-				try{
-					descrizioneErrore = errore.getDescrizione(protocolFactory);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
-				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
-				}
-				String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
-				if(autenticazioneOpzionale){
-					msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita.opzionale");
-					if(eAutenticazione!=null){
-						logCore.debug(errorMsg,eAutenticazione);
-					}
-					else{
-						logCore.debug(errorMsg);
-					}
-				}
-				else{
-					msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita");
-					if(eAutenticazione!=null){
-						logCore.error(errorMsg,eAutenticazione);
-					}
-					else{
-						logCore.error(errorMsg);
-					}
-				}
-				if(!autenticazioneOpzionale){
-					openspcoopstate.releaseResource();
-	
-					if (this.msgContext.isGestioneRisposta()) {
-						
-						if(errorMessageAutenticazione!=null) {
-							this.msgContext.setMessageResponse(errorMessageAutenticazione);
+					else {
+						if(esito.isClientIdentified()) {
+							servizioApplicativo = esito.getIdServizioApplicativo().getNome();
+							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 						}
 						else {
-							IntegrationError integrationError = null;
-							if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(errore.getCodiceErrore())){
-								integrationError = IntegrationError.AUTHENTICATION;
-							}else{
-								integrationError = IntegrationError.INTERNAL_ERROR;
-							}
-							
-							OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
-									eAutenticazione,null));
-							
-							if(wwwAuthenticateErrorHeader!=null) {
-								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
-							}
-							
-//							if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
-//								if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
-//										ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
-//									try {
-//										errorOpenSPCoopMsg.castAsRest().updateContent(null);
-//									}catch(Throwable e) {}
-//								}
-//							}
-							
-							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+							// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
+							errore = esito.getErroreIntegrazione();
+							eAutenticazione = esito.getEccezioneProcessamento();
+							errorMessageAutenticazione = esito.getErrorMessage();
+							wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
 						}
 					}
-					return;
+					
+					if(errore!=null) {
+						if(autenticazioneOpzionale==false){
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+						}
+					}
+					else {
+						msgDiag.logPersonalizzato("autenticazioneEffettuata");
+					}
+					
+				} catch (Exception e) {
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("processo di autenticazione ["
+									+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+					eAutenticazione = e;
+					logCore.error("processo di autenticazione ["
+							+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
+				}
+				if (errore != null) {
+					String descrizioneErrore = null;
+					try{
+						descrizioneErrore = errore.getDescrizione(protocolFactory);
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+					}catch(Exception e){
+						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					}
+					String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
+					if(autenticazioneOpzionale){
+						msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita.opzionale");
+						if(eAutenticazione!=null){
+							logCore.debug(errorMsg,eAutenticazione);
+						}
+						else{
+							logCore.debug(errorMsg);
+						}
+					}
+					else{
+						msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita");
+						if(eAutenticazione!=null){
+							logCore.error(errorMsg,eAutenticazione);
+						}
+						else{
+							logCore.error(errorMsg);
+						}
+					}
+					if(!autenticazioneOpzionale){
+						openspcoopstate.releaseResource();
+		
+						if (this.msgContext.isGestioneRisposta()) {
+							
+							if(errorMessageAutenticazione!=null) {
+								this.msgContext.setMessageResponse(errorMessageAutenticazione);
+							}
+							else {
+								IntegrationError integrationError = null;
+								if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(errore.getCodiceErrore())){
+									integrationError = IntegrationError.AUTHENTICATION;
+								}else{
+									integrationError = IntegrationError.INTERNAL_ERROR;
+								}
+								
+								OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
+										eAutenticazione,null));
+								
+								if(wwwAuthenticateErrorHeader!=null) {
+									errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+								}
+								
+	//							if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+	//								if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+	//										ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+	//									try {
+	//										errorOpenSPCoopMsg.castAsRest().updateContent(null);
+	//									}catch(Throwable e) {}
+	//								}
+	//							}
+								
+								this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+							}
+						}
+						
+						return;
+					}
 				}
 			}
-
+			finally {
+				transaction.getTempiElaborazione().endAutenticazione();
+			}
 		}
 		
 
@@ -2018,99 +2043,105 @@ public class RicezioneContenutiApplicativi {
 		}
 		if(autenticazioneToken) {
 			
-			String checkAuthnToken = GestoreAutenticazione.getLabel(gestioneTokenAutenticazione);
-			msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
-			msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
-			
-			ErroreIntegrazione erroreIntegrazione = null;
-			Exception eAutenticazione = null;
-			OpenSPCoop2Message errorMessageAutenticazione = null;
-			String wwwAuthenticateErrorHeader = null;
-			String errorMessage = null;
+			transaction.getTempiElaborazione().startAutenticazioneToken();
 			try {
-				EsitoAutenticazionePortaDelegata esito = 
-						GestoreAutenticazione.verificaAutenticazioneTokenPortaDelegata(gestioneTokenAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage);
-
-				if(esito.isClientAuthenticated() == false) {
-					erroreIntegrazione = esito.getErroreIntegrazione();
-					eAutenticazione = esito.getEccezioneProcessamento();
-					errorMessageAutenticazione = esito.getErrorMessage();
-					wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();					
-					errorMessage = esito.getDetails();
-				}
+			
+				String checkAuthnToken = GestoreAutenticazione.getLabel(gestioneTokenAutenticazione);
+				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
+				msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
 				
-				if (erroreIntegrazione != null) {
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
-				}
-				else {
-					msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
-				}
-				
-			} catch (Exception e) {
-				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione token ["
-								+ checkAuthnToken + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
-				eAutenticazione = e;
-				logCore.error("processo di autenticazione token ["
-						+ checkAuthnToken + "] fallito, " + e.getMessage(),e);
-			}
-			if (erroreIntegrazione != null) {
-				String descrizioneErrore = null;
-				try{
-					if(errorMessage!=null) {
-						descrizioneErrore = errorMessage;
+				ErroreIntegrazione erroreIntegrazione = null;
+				Exception eAutenticazione = null;
+				OpenSPCoop2Message errorMessageAutenticazione = null;
+				String wwwAuthenticateErrorHeader = null;
+				String errorMessage = null;
+				try {
+					EsitoAutenticazionePortaDelegata esito = 
+							GestoreAutenticazione.verificaAutenticazioneTokenPortaDelegata(gestioneTokenAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage);
+	
+					if(esito.isClientAuthenticated() == false) {
+						erroreIntegrazione = esito.getErroreIntegrazione();
+						eAutenticazione = esito.getEccezioneProcessamento();
+						errorMessageAutenticazione = esito.getErrorMessage();
+						wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();					
+						errorMessage = esito.getDetails();
 					}
-					else {
-						descrizioneErrore = erroreIntegrazione.getDescrizione(protocolFactory);
-					}
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
-				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
-				}
-				String errorMsg =  "Riscontrato errore durante il processo di Autenticazione Token per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
-				msgDiag.logPersonalizzato("autenticazioneTokenFallita");
-				if(eAutenticazione!=null){
-					logCore.error(errorMsg,eAutenticazione);
-				}
-				else{
-					logCore.error(errorMsg);
-				}
-				
-				openspcoopstate.releaseResource();
-				
-				if (this.msgContext.isGestioneRisposta()) {
 					
-					if(errorMessageAutenticazione!=null) {
-						this.msgContext.setMessageResponse(errorMessageAutenticazione);
+					if (erroreIntegrazione != null) {
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 					}
 					else {
-						IntegrationError integrationError = null;
-						if(CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA.equals(erroreIntegrazione.getCodiceErrore())){
-							integrationError = IntegrationError.AUTHENTICATION;
-						}else{
-							integrationError = IntegrationError.INTERNAL_ERROR;
-						}
-						OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,erroreIntegrazione,
-								eAutenticazione,null));
-						
-						if(wwwAuthenticateErrorHeader!=null) {
-							errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
-						}
-						
-//						if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
-//							if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
-//									ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
-//								try {
-//									errorOpenSPCoopMsg.castAsRest().updateContent(null);
-//								}catch(Throwable e) {}
-//							}
-//						}
-						
-						this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+						msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
 					}
+					
+				} catch (Exception e) {
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione token ["
+									+ checkAuthnToken + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+					eAutenticazione = e;
+					logCore.error("processo di autenticazione token ["
+							+ checkAuthnToken + "] fallito, " + e.getMessage(),e);
 				}
-				return;
-				
+				if (erroreIntegrazione != null) {
+					String descrizioneErrore = null;
+					try{
+						if(errorMessage!=null) {
+							descrizioneErrore = errorMessage;
+						}
+						else {
+							descrizioneErrore = erroreIntegrazione.getDescrizione(protocolFactory);
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+					}catch(Exception e){
+						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					}
+					String errorMsg =  "Riscontrato errore durante il processo di Autenticazione Token per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
+					msgDiag.logPersonalizzato("autenticazioneTokenFallita");
+					if(eAutenticazione!=null){
+						logCore.error(errorMsg,eAutenticazione);
+					}
+					else{
+						logCore.error(errorMsg);
+					}
+					
+					openspcoopstate.releaseResource();
+					
+					if (this.msgContext.isGestioneRisposta()) {
+						
+						if(errorMessageAutenticazione!=null) {
+							this.msgContext.setMessageResponse(errorMessageAutenticazione);
+						}
+						else {
+							IntegrationError integrationError = null;
+							if(CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA.equals(erroreIntegrazione.getCodiceErrore())){
+								integrationError = IntegrationError.AUTHENTICATION;
+							}else{
+								integrationError = IntegrationError.INTERNAL_ERROR;
+							}
+							OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,erroreIntegrazione,
+									eAutenticazione,null));
+							
+							if(wwwAuthenticateErrorHeader!=null) {
+								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+							}
+							
+	//						if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+	//							if(wwwAuthenticateErrorHeader!=null && wwwAuthenticateErrorHeader.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC) && 
+	//									ServiceBinding.REST.equals(errorOpenSPCoopMsg.getServiceBinding())) {
+	//								try {
+	//									errorOpenSPCoopMsg.castAsRest().updateContent(null);
+	//								}catch(Throwable e) {}
+	//							}
+	//						}
+							
+							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+						}
+					}
+					return;
+					
+				}
+			}finally {
+				transaction.getTempiElaborazione().endAutenticazioneToken();
 			}
 		}
 		else {
@@ -2139,8 +2170,7 @@ public class RicezioneContenutiApplicativi {
 					GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente);
 				}
 				
-				Transaction tr = TransactionContext.getTransaction(idTransazione);
-				tr.setCredenzialiMittente(credenzialiMittente);
+				transaction.setCredenzialiMittente(credenzialiMittente);
 							
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento Credenziali Fallito");
@@ -2363,7 +2393,8 @@ public class RicezioneContenutiApplicativi {
 		}
 		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
 			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getIdSoggettoFruitore(),
-					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory);
+					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory,
+					transaction);
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
 		if (correlazionePD != null) {
@@ -2597,84 +2628,90 @@ public class RicezioneContenutiApplicativi {
 		}
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione) == false) {
 			
-			msgDiag.logPersonalizzato("autorizzazioneInCorso");
+			transaction.getTempiElaborazione().startAutorizzazione();
+			try {
 			
-			ErroreIntegrazione errore = null;
-			Exception eAutorizzazione = null;
-			OpenSPCoop2Message errorMessageAutorizzazione = null;
-			String wwwAuthenticateErrorHeader = null;
-			try {						
-				EsitoAutorizzazionePortaDelegata esito = 
-						GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
-				if(esito.getDetails()==null){
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-				}else{
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
-				}
-				if (esito.isAutorizzato() == false) {
-					errore = esito.getErroreIntegrazione();
-					eAutorizzazione = esito.getEccezioneProcessamento();
-					errorMessageAutorizzazione = esito.getErrorMessage();
-					wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
-				}
-				else{
-					msgDiag.logPersonalizzato("autorizzazioneEffettuata");
-				}
+				msgDiag.logPersonalizzato("autorizzazioneInCorso");
 				
-			} catch (Exception e) {
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento("processo di autorizzazione ["
-								+ tipoAutorizzazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE);
-				eAutorizzazione = e;
-				logCore.error("processo di autorizzazione ["
-						+ tipoAutorizzazione + "] fallito, " + e.getMessage(),e);
-			}
-			if (errore != null) {
-				String descrizioneErrore = null;
-				try{
-					descrizioneErrore = errore.getDescrizione(protocolFactory);
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
-				}catch(Exception e){
-					logCore.error("getDescrizione Error:"+e.getMessage(),e);
-				}
-				msgDiag.logPersonalizzato("servizioApplicativoFruitore.nonAutorizzato");
-				String errorMsg =  "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+idMessageRequest+"]: "+descrizioneErrore;
-				if(eAutorizzazione!=null){
-					logCore.error(errorMsg,eAutorizzazione);
-				}
-				else{
-					logCore.error(errorMsg);
-				}
-				openspcoopstate.releaseResource();
-
-				if (this.msgContext.isGestioneRisposta()) {
-					
-					if(errorMessageAutorizzazione!=null) {
-						this.msgContext.setMessageResponse(errorMessageAutorizzazione);
+				ErroreIntegrazione errore = null;
+				Exception eAutorizzazione = null;
+				OpenSPCoop2Message errorMessageAutorizzazione = null;
+				String wwwAuthenticateErrorHeader = null;
+				try {						
+					EsitoAutorizzazionePortaDelegata esito = 
+							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
+					if(esito.getDetails()==null){
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}else{
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
-					else {
-					
-						IntegrationError integrationError = null;
-						if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore()) ||
-								CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore())){
-							integrationError = IntegrationError.AUTHORIZATION;
-						}else{
-							integrationError = IntegrationError.INTERNAL_ERROR;
-						}
-						
-						OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
-								eAutorizzazione,null));
-
-						if(wwwAuthenticateErrorHeader!=null) {
-							errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
-						}
-						
-						this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
-						
+					if (esito.isAutorizzato() == false) {
+						errore = esito.getErroreIntegrazione();
+						eAutorizzazione = esito.getEccezioneProcessamento();
+						errorMessageAutorizzazione = esito.getErrorMessage();
+						wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 					}
+					else{
+						msgDiag.logPersonalizzato("autorizzazioneEffettuata");
+					}
+					
+				} catch (Exception e) {
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("processo di autorizzazione ["
+									+ tipoAutorizzazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE);
+					eAutorizzazione = e;
+					logCore.error("processo di autorizzazione ["
+							+ tipoAutorizzazione + "] fallito, " + e.getMessage(),e);
 				}
-				return;
+				if (errore != null) {
+					String descrizioneErrore = null;
+					try{
+						descrizioneErrore = errore.getDescrizione(protocolFactory);
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+					}catch(Exception e){
+						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					}
+					msgDiag.logPersonalizzato("servizioApplicativoFruitore.nonAutorizzato");
+					String errorMsg =  "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+idMessageRequest+"]: "+descrizioneErrore;
+					if(eAutorizzazione!=null){
+						logCore.error(errorMsg,eAutorizzazione);
+					}
+					else{
+						logCore.error(errorMsg);
+					}
+					openspcoopstate.releaseResource();
+	
+					if (this.msgContext.isGestioneRisposta()) {
+						
+						if(errorMessageAutorizzazione!=null) {
+							this.msgContext.setMessageResponse(errorMessageAutorizzazione);
+						}
+						else {
+						
+							IntegrationError integrationError = null;
+							if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore()) ||
+									CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore())){
+								integrationError = IntegrationError.AUTHORIZATION;
+							}else{
+								integrationError = IntegrationError.INTERNAL_ERROR;
+							}
+							
+							OpenSPCoop2Message errorOpenSPCoopMsg = (this.generatoreErrore.build(integrationError,errore,
+									eAutorizzazione,null));
+	
+							if(wwwAuthenticateErrorHeader!=null) {
+								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+							}
+							
+							this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
+							
+						}
+					}
+					return;
+				}
+			}finally {
+				transaction.getTempiElaborazione().endAutorizzazione();
 			}
 		}
 		else{
@@ -3193,6 +3230,7 @@ public class RicezioneContenutiApplicativi {
 		if (CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())
 				|| CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
 
+			transaction.getTempiElaborazione().startValidazioneRichiesta();
 			ByteArrayInputStream binXSD = null;
 			try {
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaInCorso");
@@ -3310,6 +3348,7 @@ public class RicezioneContenutiApplicativi {
 					return;
 				}
 			} finally {
+				transaction.getTempiElaborazione().endValidazioneRichiesta();
 				if (binXSD != null) {
 					try {
 						binXSD.close();
@@ -3342,81 +3381,87 @@ public class RicezioneContenutiApplicativi {
 		}
 		if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazioneContenuto) == false) {
 			
-			msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiInCorso");
-			
-			ErroreIntegrazione errore = null;
-			Exception eAutorizzazione = null;
+			transaction.getTempiElaborazione().startAutorizzazioneContenuti();
 			try {
-//				if (RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.containsKey(tipoAutorizzazioneContenuto) == false)
-//					RicezioneContenutiApplicativi.aggiornaListaGestoreAutorizzazioneContenuto(
-//							tipoAutorizzazioneContenuto, className,propertiesReader, logCore);
-//				IAutorizzazioneContenuto auth = RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.get(tipoAutorizzazioneContenuto);
+			
+				msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiInCorso");
 				
-				// Inizializzo IGestoreAutorizzazione new Type
-				String classType = null;
-				IAutorizzazioneContenutoPortaDelegata auth = null;
+				ErroreIntegrazione errore = null;
+				Exception eAutorizzazione = null;
 				try {
-					classType = className.getAutorizzazioneContenutoPortaDelegata(tipoAutorizzazioneContenuto);
-					auth = ((IAutorizzazioneContenutoPortaDelegata) loader.newInstance(classType));
-					AbstractCore.init(auth, pddContext, protocolFactory);
-				} catch (Exception e) {
-					throw new Exception(
-							"Riscontrato errore durante il caricamento della classe ["+ classType
-									+ "] da utilizzare per la gestione dell'autorizzazione contenuto di tipo ["+ tipoAutorizzazioneContenuto + "]: " + e.getMessage());
-				}
-				
-				if (auth != null) {
+	//				if (RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.containsKey(tipoAutorizzazioneContenuto) == false)
+	//					RicezioneContenutiApplicativi.aggiornaListaGestoreAutorizzazioneContenuto(
+	//							tipoAutorizzazioneContenuto, className,propertiesReader, logCore);
+	//				IAutorizzazioneContenuto auth = RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.get(tipoAutorizzazioneContenuto);
+					
+					// Inizializzo IGestoreAutorizzazione new Type
+					String classType = null;
+					IAutorizzazioneContenutoPortaDelegata auth = null;
 					try {
-						// Controllo Autorizzazione
-						EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione,requestMessage);
-						if(esito.getDetails()==null){
-							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-						}else{
-							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
-						}
-						if (esito.isAutorizzato() == false) {
-							errore = esito.getErroreIntegrazione();
-							eAutorizzazione = esito.getEccezioneProcessamento();
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
-						}
-						else{
-							msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
-						}
-					}finally {
-			    		if(requestMessage!=null) {
-			    			auth.cleanPostAuth(requestMessage);
-			    		}
-			    	}
-				} else {
-					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento("gestore ["
-									+ tipoAutorizzazioneContenuto + "] non inizializzato", CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO);
-				}
-			} catch (Exception e) {
-				String msgErroreAutorizzazione = "processo di autorizzazione ["
-						+ tipoAutorizzazioneContenuto + "] fallito, " + e.getMessage();
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msgErroreAutorizzazione, CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO);
-				eAutorizzazione = e;
-				logCore.error(msgErroreAutorizzazione,e);
-			}
-			if (errore != null) {
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore.getDescrizione(protocolFactory));
-				msgDiag.logPersonalizzato("servizioApplicativoFruitore.contenuto.nonAutorizzato");
-				openspcoopstate.releaseResource();
-
-				if (this.msgContext.isGestioneRisposta()) {
-					IntegrationError integrationError = null;
-					if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore()) || 
-							CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.equals(errore.getCodiceErrore())){
-						integrationError = IntegrationError.AUTHORIZATION;
-					}else{
-						integrationError = IntegrationError.INTERNAL_ERROR;
+						classType = className.getAutorizzazioneContenutoPortaDelegata(tipoAutorizzazioneContenuto);
+						auth = ((IAutorizzazioneContenutoPortaDelegata) loader.newInstance(classType));
+						AbstractCore.init(auth, pddContext, protocolFactory);
+					} catch (Exception e) {
+						throw new Exception(
+								"Riscontrato errore durante il caricamento della classe ["+ classType
+										+ "] da utilizzare per la gestione dell'autorizzazione contenuto di tipo ["+ tipoAutorizzazioneContenuto + "]: " + e.getMessage());
 					}
-					this.msgContext.setMessageResponse((this.generatoreErrore.build(integrationError,errore,
-							eAutorizzazione,null)));
+					
+					if (auth != null) {
+						try {
+							// Controllo Autorizzazione
+							EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione,requestMessage);
+							if(esito.getDetails()==null){
+								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+							}else{
+								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+							}
+							if (esito.isAutorizzato() == false) {
+								errore = esito.getErroreIntegrazione();
+								eAutorizzazione = esito.getEccezioneProcessamento();
+								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+							}
+							else{
+								msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
+							}
+						}finally {
+				    		if(requestMessage!=null) {
+				    			auth.cleanPostAuth(requestMessage);
+				    		}
+				    	}
+					} else {
+						errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento("gestore ["
+										+ tipoAutorizzazioneContenuto + "] non inizializzato", CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO);
+					}
+				} catch (Exception e) {
+					String msgErroreAutorizzazione = "processo di autorizzazione ["
+							+ tipoAutorizzazioneContenuto + "] fallito, " + e.getMessage();
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(msgErroreAutorizzazione, CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO);
+					eAutorizzazione = e;
+					logCore.error(msgErroreAutorizzazione,e);
 				}
-				return;
+				if (errore != null) {
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, errore.getDescrizione(protocolFactory));
+					msgDiag.logPersonalizzato("servizioApplicativoFruitore.contenuto.nonAutorizzato");
+					openspcoopstate.releaseResource();
+	
+					if (this.msgContext.isGestioneRisposta()) {
+						IntegrationError integrationError = null;
+						if(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(errore.getCodiceErrore()) || 
+								CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.equals(errore.getCodiceErrore())){
+							integrationError = IntegrationError.AUTHORIZATION;
+						}else{
+							integrationError = IntegrationError.INTERNAL_ERROR;
+						}
+						this.msgContext.setMessageResponse((this.generatoreErrore.build(integrationError,errore,
+								eAutorizzazione,null)));
+					}
+					return;
+				}
+			}finally {
+				transaction.getTempiElaborazione().endAutorizzazioneContenuti();
 			}
 		}
 		else{

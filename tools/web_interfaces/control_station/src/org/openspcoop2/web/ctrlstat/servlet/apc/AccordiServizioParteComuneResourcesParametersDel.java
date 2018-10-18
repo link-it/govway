@@ -211,7 +211,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 
 			List<ResourceParameter> lista = apcCore.accordiResourceParametersList(idResource, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idResource, resourceRequest, resourceResponse);
+			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, risorsa, resourceRequest, resourceResponse);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

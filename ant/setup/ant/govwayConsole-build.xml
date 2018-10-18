@@ -155,7 +155,14 @@
 				</antcall>
 			</else>
 		</if>
-				
+			
+		<!-- INTEGRATION MANAGER DISABLED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="integrationManager.enabled"/>
+			<param name="value" value="false"/>
+		</antcall>
+	
 		<!-- OTHER -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
@@ -166,6 +173,8 @@
 			<or>
 				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 				<equals arg1="${antinstaller_stateful}" arg2="false" />
+				<equals arg1="${antinstaller_stateful}" arg2="" />
+				<equals arg1="${antinstaller_stateful}" arg2="$${antinstaller_stateful}" />
 			</or>
 			<then>
 				<antcall target="set_property">

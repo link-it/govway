@@ -93,6 +93,18 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="is_default" type="xsd:int" minOccurs="0" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="is_default"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se il soggetto svolge è quello di default per il protocollo (1=true, 0=false)]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="is_router" type="xsd:int" minOccurs="0" default="0">
                     <xsd:annotation>
                         <xsd:appinfo>

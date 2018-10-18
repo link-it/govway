@@ -165,7 +165,8 @@ public class PorteDelegateConfigurazioneChange extends Action {
 
 				porteDelegateHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
+						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -186,7 +187,8 @@ public class PorteDelegateConfigurazioneChange extends Action {
 				
 				porteDelegateHelper.configurazioneCambiaNome(dati, TipoOperazione.OTHER, nomeGruppo,isPortaDelegata);
 				
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, 
+						idFruizione, portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -233,9 +235,9 @@ public class PorteDelegateConfigurazioneChange extends Action {
 						permessi[1] = pu.isAccordiCooperazione();
 						List<AccordoServizioParteSpecifica> lista2 = null;
 						if(apsCore.isVisioneOggettiGlobale(superUser)){
-							lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori);
+							lista2 = apsCore.soggettiServizioList(null, ricerca,permessi, gestioneFruitori, false);
 						}else{
-							lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori);
+							lista2 = apsCore.soggettiServizioList(superUser, ricerca, permessi, gestioneFruitori, false);
 						}
 
 						apsHelper.prepareServiziList(ricerca, lista2);
@@ -256,7 +258,7 @@ public class PorteDelegateConfigurazioneChange extends Action {
 					ricerca = porteDelegateHelper.checkSearchParameters(idLista, ricerca);
 					
 					listaMapping = apsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
-					apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idSoggFruitore, idFruizione, ricerca); 
+					apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idSoggFruitore, idSoggettoFruitore, idFruizione, ricerca); 
 				}
 				
 				break;

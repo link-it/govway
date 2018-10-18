@@ -39,6 +39,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -109,8 +110,20 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			}
 			
 			PddTipologia pddTipologiaSoggettoAutenticati = null;
+			boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
 			if(gestioneErogatori) {
-				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
+				if(apsCore.isMultitenant() && apsCore.getMultitenantSoggettiErogazioni()!=null) {
+					switch (apsCore.getMultitenantSoggettiErogazioni()) {
+					case SOLO_SOGGETTI_ESTERNI:
+						pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
+						break;
+					case ESCLUDI_SOGGETTO_EROGATORE:
+						gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = true;
+						break;
+					case TUTTI:
+						break;
+					}
+				}
 			}
 			
 			// Preparo il menu
@@ -163,8 +176,17 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 			}else{
 				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 			}
+			if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
+				for (int i = 0; i < list.size(); i++) {
+					Soggetto soggettoCheck = list.get(i);
+					if(soggettoCheck.getTipo().equals(pa.getTipoSoggettoProprietario()) && soggettoCheck.getNome().equals(pa.getNomeSoggettoProprietario())) {
+						list.remove(i);
+						break;
+					}
+				}
+			}
 
-			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
+			boolean multiTenant = porteApplicativeCore.isMultitenant();
 			
 			PortaApplicativaAutorizzazioneSoggetti soggetti = pa.getSoggetti(); 
 			List<PortaApplicativaAutorizzazioneSoggetto> soggettoList = soggetti != null ? soggetti.getSoggettoList() : new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
@@ -193,8 +215,10 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 						soggettiListLabelTmp.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
 					}
 				}
-				soggettiList = soggettiListTmp.toArray(new String[1]);
-				soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
+				if(soggettiListTmp!=null && soggettiListTmp.size()>0) {
+					soggettiList = soggettiListTmp.toArray(new String[1]);
+					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
+				}
 			}
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);

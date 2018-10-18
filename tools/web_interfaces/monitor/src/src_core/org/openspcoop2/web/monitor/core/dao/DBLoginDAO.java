@@ -21,10 +21,17 @@
  */
 package org.openspcoop2.web.monitor.core.dao;
 
+import java.util.Properties;
+
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -61,6 +68,8 @@ public class DBLoginDAO implements ILoginDAO {
 	private ISoggettoServiceSearch soggettoDAO;
 
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	
+	private transient DriverConfigurazioneDB driverConfigDB = null;
 
 	public DBLoginDAO() {
 		try {	
@@ -71,6 +80,13 @@ public class DBLoginDAO implements ILoginDAO {
 			// init Service Manager utils
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(DBLoginDAO.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
+			
+			
+			String tipoDatabase = DAOFactoryProperties.getInstance(DBLoginDAO.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(DBLoginDAO.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(DBLoginDAO.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+
+			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, DBLoginDAO.log, tipoDatabase);
 
 		} catch (ServiceException e) {
 
@@ -158,6 +174,21 @@ public class DBLoginDAO implements ILoginDAO {
 	}
 	
 	@Override
+	public void salvaSoggettoPddMonitor(User user) throws NotFoundException, ServiceException {
+		try {
+			boolean existsUser = this.utenteDAO.existsUser(user.getLogin());
+
+			if(!existsUser)
+				throw new NotFoundException("Utente ["+user.getLogin()+"] non registrato");
+
+			this.utenteDAO.saveSoggettoUtilizzatoPddMonitor(user.getLogin(), user.getSoggettoSelezionatoPddMonitor());
+		} catch (DriverUsersDBException e) {
+			DBLoginDAO.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		}
+	}
+	
+	@Override
 	public UserDetailsBean loadUserByUsername(String username)
 			throws NotFoundException, ServiceException, UserInvalidException {
 
@@ -190,6 +221,16 @@ public class DBLoginDAO implements ILoginDAO {
 			log.error(e.getMessage(), e);
 			throw  e; 
 		} catch (DriverUsersDBException e) {
+			log.error(e.getMessage(), e);
+			throw new ServiceException(e); 
+		}
+	}
+	
+	@Override
+	public Configurazione readConfigurazioneGenerale() throws ServiceException {
+		try {
+			return this.driverConfigDB.getConfigurazioneGenerale();
+		} catch (DriverConfigurazioneException | DriverConfigurazioneNotFound e) {
 			log.error(e.getMessage(), e);
 			throw new ServiceException(e); 
 		}

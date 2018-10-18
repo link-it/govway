@@ -648,7 +648,8 @@ public final class Importer extends Action {
 			}else{
 				esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
 						userLogin, archiviHelper.smista(), 
-						this.updateEnabled, nomePddOperativa);
+						this.updateEnabled, nomePddOperativa,
+						archiviHelper);
 			}
 									
 			dati.addElement(modalitaDataElement);

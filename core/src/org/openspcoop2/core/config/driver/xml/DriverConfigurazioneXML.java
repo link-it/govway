@@ -1304,6 +1304,34 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By ServizioApplicativoAutorizzato (ricerca puntuale)
+					if(filtroRicerca.getIdServizioApplicativoAutorizzato()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzato().getNome()!=null &&
+							filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario()!=null &&
+							filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null &&
+							filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null
+							){
+						if(pa.getServiziApplicativiAutorizzati()==null || pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()<=0) {
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); z++) {
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzato().getNome().equals(pa.getServiziApplicativiAutorizzati().getServizioApplicativo(z).getNome())){
+								continue;
+							}
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getTipo().equals(pa.getServiziApplicativiAutorizzati().getServizioApplicativo(z).getTipoSoggettoProprietario())){
+								continue;
+							}	
+							if(!filtroRicerca.getIdServizioApplicativoAutorizzato().getIdSoggettoProprietario().getNome().equals(pa.getServiziApplicativiAutorizzati().getServizioApplicativo(z).getNomeSoggettoProprietario())){
+								continue;
+							}
+							contains = true;
+							break;
+						}
+						if(!contains){
+							continue;
+						}
+					}
 					// Filtro By Stato
 					if(filtroRicerca.getStato()!=null){
 						if(pa.getStato()==null){

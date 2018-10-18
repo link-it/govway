@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.core.autenticazione.pd;
 
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -55,6 +56,8 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
     	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
+    	IDSoggetto soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	
 		String user = credenziali.getUsername();
 		String password = credenziali.getPassword();
 
@@ -94,6 +97,15 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		if(idServizioApplicativo == null){
 			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("credenziali fornite non corrette",user,password));
+			esito.setClientAuthenticated(false);
+			esito.setClientIdentified(false);
+			if(realm!=null) {
+				esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildBasicHeaderValue(realm));
+			}
+			return esito;
+		}
+		else if(idServizioApplicativo.getIdSoggettoProprietario().equals(soggettoFruitore)==false) {
+			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_402_AUTENTICAZIONE_FALLITA.getErrore402_AutenticazioneFallitaBasic("soggetto proprietario dell'applicativo identificato differente dal soggetto proprietario della porta invocata",user,password));
 			esito.setClientAuthenticated(false);
 			esito.setClientIdentified(false);
 			if(realm!=null) {

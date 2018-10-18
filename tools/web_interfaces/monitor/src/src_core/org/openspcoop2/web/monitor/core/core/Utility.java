@@ -42,6 +42,10 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
+import org.openspcoop2.core.config.constants.PortaDelegataSoggettiErogatori;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -52,7 +56,9 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.slf4j.Logger;
 
@@ -101,7 +107,7 @@ public class Utility {
 		return null;
 		//		return Utility.loginBean;
 	}
-	
+
 	public static LoginBean getLoginBeanFromSession(HttpSession sessione) {
 		if(sessione!= null){
 			LoginBean lb = (LoginBean)sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
@@ -320,7 +326,7 @@ public class Utility {
 
 		return null;
 	}
-	
+
 	public static String getLoggedUtenteModalita() {
 		LoginBean lb = getLoginBean();
 
@@ -329,6 +335,151 @@ public class Utility {
 		}
 
 		return null;
+	}
+	
+	public static String getLoggedUtenteSoggettoPddMonitor() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getSoggettoPddMonitor();
+		}
+
+		return null;
+	}
+
+	public static Configurazione getConfigurazioneGenerale() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getConfigurazioneGenerale();
+		}
+
+		return null;
+	}
+
+	public static boolean isFiltroDominioAbilitato() {
+		if(isMultitenantAbilitato()) {
+			User utente = Utility.getLoggedUtente();
+			
+			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
+			// utente ha selezionato un soggetto
+			if(soggettoOperativoSelezionato != null) {
+				return true;
+			}
+			
+			// uso il filtro solamente se cmq ho piu' di un soggetto locale
+			return getLoginBean().isShowFiltroSoggettoLocale();
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public static boolean isMultitenantAbilitato() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
+
+			if(configurazioneGenerale.getMultitenant() != null) {
+				if(configurazioneGenerale.getMultitenant().getStato()!=null) {
+					return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getMultitenant().getStato());
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	public static PortaDelegataSoggettiErogatori getMultitenantAbilitato_fruizione_sceltaSoggettiErogatori() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
+
+			if(configurazioneGenerale.getMultitenant() != null) {
+				return configurazioneGenerale.getMultitenant().getFruizioneSceltaSoggettiErogatori();
+			}
+		}
+
+		return null;
+	}
+	
+	public static PortaApplicativaSoggettiFruitori getMultitenantAbilitato_erogazione_sceltaSoggettiFruitori() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
+
+			if(configurazioneGenerale.getMultitenant() != null) {
+				return configurazioneGenerale.getMultitenant().getErogazioneSceltaSoggettiFruitori();
+			}
+		}
+
+		return null;
+	}
+	
+	public static ConfigurazioneSoggettiVisualizzatiSearchForm getMultitenantAbilitato_soggettiConfig(TipologiaRicerca ricercaParam) {
+		boolean multiTenant = Utility.isMultitenantAbilitato();
+		boolean includiSoloOperativi = false;
+		boolean includiSoloEsterni = false;
+		boolean escludiSoggettoSelezionato = false;
+		TipologiaRicerca ricerca = ricercaParam;
+		if(ricerca==null) {
+			ricerca = TipologiaRicerca.all;
+		}
+		switch (ricerca) {
+		case all:
+			break;
+		case uscita:
+			if(multiTenant) {
+				PortaDelegataSoggettiErogatori scelta = Utility.getMultitenantAbilitato_fruizione_sceltaSoggettiErogatori();
+				if(scelta==null) {
+					scelta = PortaDelegataSoggettiErogatori.SOGGETTI_ESTERNI;
+				}
+				switch (scelta) {
+				case SOGGETTI_ESTERNI:
+					includiSoloEsterni = true;
+					break;
+				case ESCLUDI_SOGGETTO_FRUITORE:
+					escludiSoggettoSelezionato = true;
+					break;
+				case TUTTI:
+					break;
+				}
+			}
+			else {
+				includiSoloEsterni = true;
+			}
+			break;
+		case ingresso:
+			if(multiTenant) {
+				PortaApplicativaSoggettiFruitori scelta = Utility.getMultitenantAbilitato_erogazione_sceltaSoggettiFruitori();
+				if(scelta==null) {
+					scelta = PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI;
+				}
+				switch (scelta) {
+				case SOGGETTI_ESTERNI:
+					includiSoloEsterni = true;
+					break;
+				case ESCLUDI_SOGGETTO_EROGATORE:
+					escludiSoggettoSelezionato = true;
+					break;
+				case TUTTI:
+					break;
+				}
+			}
+			else {
+				includiSoloEsterni = true;
+			}
+			break;
+		}
+		
+		ConfigurazioneSoggettiVisualizzatiSearchForm config = new ConfigurazioneSoggettiVisualizzatiSearchForm();
+		config.setIncludiSoloOperativi(includiSoloOperativi);
+		config.setIncludiSoloEsterni(includiSoloEsterni);
+		config.setEscludiSoggettoSelezionato(escludiSoggettoSelezionato);
+		return config;
 	}
 
 	public static String fileSizeConverter(Number bytes) {
@@ -418,7 +569,7 @@ public class Utility {
 
 	public static org.openspcoop2.core.commons.search.Soggetto getSoggetto(IdSoggetto idSog) {
 		LoginBean lb = getLoginBean();
-		
+
 		if(lb!= null && lb.isLoggedIn()){
 			return lb.getSoggetto(idSog);
 		}
@@ -427,7 +578,7 @@ public class Utility {
 			lb = new LoginBean(true);
 			return lb.getSoggetto(idSog);
 		}
-		
+
 		return null;
 	}
 
@@ -490,7 +641,7 @@ public class Utility {
 			}
 		}
 	}
-	
+
 	public static List<String> getListaProtocolli(User utente, List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
 		List<String> listaNomiProtocolli = new  ArrayList<String>();
 
@@ -526,8 +677,27 @@ public class Utility {
 				}
 			}
 		}
-		
+
 		return ProtocolUtils.orderProtocolli(listaNomiProtocolli);
+	}
+	public static List<Soggetto> getSoggettiOperativiAssociatiAlProfilo(UserDetailsBean u, String profiloSelezionato) throws Exception {
+		List<Soggetto> soggetti = new ArrayList<Soggetto>();
+		
+		if(u.getUtenteSoggettoProtocolliMap().containsKey(profiloSelezionato)) {
+			for (IDSoggetto idSog : u.getUtenteSoggettoProtocolliMap().get(profiloSelezionato)) {
+				IdSoggetto idsog2 = new IdSoggetto();
+				idsog2.setNome(idSog.getNome());
+				idsog2.setTipo(idSog.getTipo());
+				Soggetto soggetto = Utility.getSoggetto(idsog2);
+				soggetti.add(soggetto);
+			}
+		}
+			
+		return soggetti;
+	}
+	
+	public static boolean isTipoSoggettoCompatibileConProtocollo(String tipoSoggetto, String tipoProtocollo)  throws Exception{
+		return DynamicPdDBeanUtils.getInstance(log).isTipoSoggettoCompatibileConProtocollo(tipoSoggetto, tipoProtocollo);
 	}
 	
 	public static List<Soggetto> getSoggettiGestione(User u, String tipoNomeSoggettoLocale) {
@@ -545,7 +715,7 @@ public class Utility {
 				if (idSog.getTipo().equals(tipo)
 						&& idSog.getNome().equals(nome)) {
 					IdSoggetto idsog2 = new IdSoggetto();
-//					idsog2.setId(idSog.getId());
+					//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 					Soggetto soggetto = Utility.getSoggetto(idsog2);
@@ -562,7 +732,7 @@ public class Utility {
 				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
 				if(checkUnique.contains(tipoNome)==false){
 					IdSoggetto idsog2 = new IdSoggetto();
-//					idsog2.setId(idSog.getId());
+					//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 
@@ -575,5 +745,106 @@ public class Utility {
 			}
 			return soggetti;
 		}
+	}
+	
+	public static List<String> getProtocolli(User utente) throws Exception {
+		return getProtocolli(utente, false);
+	}
+
+	public static List<String> getProtocolli(User utente, boolean ignoreProtocolloSelezionato) throws Exception {
+		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato);
+	}
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories) throws Exception {
+		return getProtocolli(utente, pfManager, protocolFactories, false);
+	}
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato) throws  Exception {
+		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato, false);
+	}
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato, 
+			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws Exception {
+		List<String> protocolliList = new ArrayList<String>();
+
+		if(!ignoreProtocolloSelezionato) {
+			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
+				protocolliList.add(utente.getProtocolloSelezionatoPddMonitor());
+				return protocolliList;
+			}
+			else if(consideraProtocolliCompatibiliSoggettoSelezionato && utente.getProtocolloSelezionatoPddMonitor()!=null && !"".equals(utente.getProtocolloSelezionatoPddMonitor())) {
+				String tipoSoggetto = utente.getProtocolloSelezionatoPddMonitor().split("/")[0];
+				String protocollo = pfManager.getProtocolByOrganizationType(tipoSoggetto);
+				protocolliList.add(protocollo);
+				return protocolliList;
+			}
+		}
+
+		if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
+			return ProtocolUtils.orderProtocolli(utente.getProtocolliSupportati());
+		}
+
+		return getProtocolli(protocolFactories); // ordinato dentro il metodo
+
+	}
+
+	public static List<String> getProtocolli(MapReader<String, IProtocolFactory<?>> protocolFactories){
+
+		List<String> protocolliList = new ArrayList<String>();
+
+		Enumeration<String> protocolli = protocolFactories.keys();
+		while (protocolli.hasMoreElements()) {
+
+			String protocollo = protocolli.nextElement();
+			protocolliList.add(protocollo);
+		}
+
+		return ProtocolUtils.orderProtocolli(protocolliList);
+	}
+	
+	public static String normalizeLabel(String label, int maxWidth) {
+		return normalizeLabel(label, maxWidth, false,false);
+	}
+	
+	public static String normalizeLabel(String label, int maxWidth, boolean multiline, boolean soloTestoPrimaLinea) {
+		if(label.length() > maxWidth) {
+			if(multiline) {
+				StringBuilder sb = new StringBuilder();
+				
+				int startToken = 0;
+				int endToken = startToken + maxWidth;
+				
+				if(!soloTestoPrimaLinea) {
+					sb.append("<p>");
+					sb.append(label.substring(startToken, endToken)).append("-");
+					sb.append("</p>");
+					do {
+						startToken += maxWidth;
+						endToken = startToken + maxWidth;
+						if(endToken >= label.length()) {
+							endToken = label.length();
+						}
+						
+						if(startToken < label.length()) {
+							sb.append("<p>");
+							
+							sb.append(label.substring(startToken, endToken));
+							
+							if(endToken < label.length())
+								sb.append("-");
+							
+							sb.append("</p>");
+						}
+					} while(endToken < label.length());
+				} else {
+					sb.append(label.substring(startToken, endToken)).append("-");
+				}
+								
+				return sb.toString();
+			} else {
+				return label.substring(0, maxWidth - 3) + "...";
+			}
+		}
+		
+		return label;
 	}
 }

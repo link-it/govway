@@ -185,9 +185,9 @@ public class CostantiExport {
 	public static final String LABEL_COL_PROFILO_COLLABORAZIONE_OP2 = "Profilo Collaborazione Op2";
 	public static final String LABEL_COL_PROFILO_COLLABORAZIONE_PROT = "Profilo Collaborazione";
 	public static final String LABEL_COL_ID_COLLABORAZIONE = "ID Collaborazione";
-	public static final String LABEL_COL_URI_ACCORDO_SERVIZIO = "Uri Accordo Servizio";
-	public static final String LABEL_COL_SERVIZIO = "Servizio";
-	public static final String LABEL_COL_VERSIONE_SERVIZIO = "Versione Servizio";
+	public static final String LABEL_COL_URI_ACCORDO_SERVIZIO = "Uri API";
+	public static final String LABEL_COL_SERVIZIO = "API";
+	public static final String LABEL_COL_VERSIONE_SERVIZIO = "Versione API";
 	public static final String LABEL_COL_AZIONE = "Azione";
 	public static final String LABEL_COL_ID_ASINCRONO = "Id Asincrono";
 	public static final String LABEL_COL_SERVIZIO_CORRELATO = "Servizio Correlato";

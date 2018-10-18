@@ -1,3 +1,17 @@
+2018-09-24  Andrea Poli <apoli@link.it>
+
+	Eliminata la gestione 'multitenant' associata ad un'utenza.
+	ALTER TABLE users DROP COLUMN multi_tenant;
+
+	Aggiunta l'informazione sulla scelta puntuale di soggetto operativo, 
+	nel caso la gestione multitenant sia attiva.
+	ALTER TABLE users ADD COLUMN soggetto_pddconsole VARCHAR(255);
+	ALTER TABLE users ADD COLUMN soggetto_pddmonitor VARCHAR(255);
+
+	Aggiunta l'informazioni sui soggetti e servizi gestibili dall'utente:
+	ALTER TABLE users ADD COLUMN soggetti_all INT;
+	ALTER TABLE users ADD COLUMN servizi_all INT;
+
 2017-11-28  Andrea Poli <apoli@link.it>
 
 	Creato file ChangeLog

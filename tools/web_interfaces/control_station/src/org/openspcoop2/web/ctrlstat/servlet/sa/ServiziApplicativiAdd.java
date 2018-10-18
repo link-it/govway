@@ -35,6 +35,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
@@ -51,10 +52,13 @@ import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -330,6 +334,11 @@ public final class ServiziApplicativiAdd extends Action {
 					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
 				}
 				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
+				
+				soggettiList = new String[1];
+				soggettiList[0] = soggetto.getId().toString();
+				soggettiListLabel = new String[1];
+				soggettiListLabel[0] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
 			}
 			else {
 				tipoProtocollo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
@@ -345,12 +354,20 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				if(saCore.isRegistroServiziLocale()){
 					List<Soggetto> list = null;
-					if(saCore.isVisioneOggettiGlobale(superUser)){
-						list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
-					}else{
-						list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
+					if(saHelper.isSoggettoMultitenantSelezionato()) {
+						IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
+						list = new ArrayList<>();
+						try {
+							list.add(soggettiCore.getSoggettoRegistro(idSoggettoSelezionato));
+						}catch(DriverRegistroServiziNotFound notFound) {}
 					}
-					
+					else {
+						if(saCore.isVisioneOggettiGlobale(superUser)){
+							list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
+						}else{
+							list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
+						}
+					}
 					
 					// Filtro per pdd esterne
 					if(singlePdD){
@@ -386,10 +403,19 @@ public final class ServiziApplicativiAdd extends Action {
 				}
 				else{
 					List<org.openspcoop2.core.config.Soggetto> list = null;
-					if(saCore.isVisioneOggettiGlobale(superUser)){
-						list = soggettiCore.soggettiList(null,searchSoggetti);
-					}else{
-						list = soggettiCore.soggettiList(superUser,searchSoggetti); 
+					if(saHelper.isSoggettoMultitenantSelezionato()) {
+						IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
+						list = new ArrayList<>();
+						try {
+							list.add(soggettiCore.getSoggetto(idSoggettoSelezionato));
+						}catch(DriverConfigurazioneNotFound notFound) {}
+					}
+					else {
+						if(saCore.isVisioneOggettiGlobale(superUser)){
+							list = soggettiCore.soggettiList(null,searchSoggetti);
+						}else{
+							list = soggettiCore.soggettiList(superUser,searchSoggetti); 
+						}
 					}
 					
 					List<org.openspcoop2.core.config.Soggetto> listFiltrataCompatibileProtocollo =  new ArrayList<org.openspcoop2.core.config.Soggetto>();
@@ -754,7 +780,9 @@ public final class ServiziApplicativiAdd extends Action {
 			if(!useIdSogg){
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				
+				if(saHelper.isSoggettoMultitenantSelezionato()) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
+				}
 				if(saCore.isVisioneOggettiGlobale(superUser)){
 					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
 				}else{

@@ -58,6 +58,7 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.PropertiesSerializator;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
@@ -78,17 +79,20 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	private boolean transazioniRegistrazioneTracceDigestEnabled;
 	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate;
+	private boolean transazioniRegistrazioneTempiElaborazione;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
 			boolean transazioniRegistrazioneTracceHeaderRawEnabled,
 			boolean transazioniRegistrazioneTracceDigestEnabled,
 			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled,
-			boolean transazioniRegistrazioneTokenInformazioniNormalizzate){
+			boolean transazioniRegistrazioneTokenInformazioniNormalizzate,
+			boolean transazioniRegistrazioneTempiElaborazione){
 		this.logger = log;
 		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
 		this.transazioniRegistrazioneTracceDigestEnabled = transazioniRegistrazioneTracceDigestEnabled;
 		this.transazioniRegistrazioneTracceProtocolPropertiesEnabled = transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 		this.transazioniRegistrazioneTokenInformazioniNormalizzate = transazioniRegistrazioneTokenInformazioniNormalizzate;
+		this.transazioniRegistrazioneTempiElaborazione = transazioniRegistrazioneTempiElaborazione;
 	}
 	
 	public Transazione fillTransaction(PostOutResponseContext context,
@@ -786,6 +790,15 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// token info
 			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
 				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+			}
+			
+			// tempi elaborazione
+			if(this.transazioniRegistrazioneTempiElaborazione && transaction.getTempiElaborazione()!=null) {
+				try {
+					transactionDTO.setTempiElaborazione(TempiElaborazioneUtils.convertToDBValue(transaction.getTempiElaborazione()));
+				}catch(Exception e) {
+					this.logger.error("TempiElaborazioneUtils.convertToDBValue failed: "+e.getMessage(),e);
+				}
 			}
 			
 			// ** Indirizzo IP **

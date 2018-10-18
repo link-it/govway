@@ -12,7 +12,10 @@ CREATE TABLE users
 	protocolli CLOB,
 	protocollo_pddconsole VARCHAR2(255),
 	protocollo_pddmonitor VARCHAR2(255),
-	multi_tenant NUMBER,
+	soggetto_pddconsole VARCHAR2(255),
+	soggetto_pddmonitor VARCHAR2(255),
+	soggetti_all NUMBER,
+	servizi_all NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

@@ -121,6 +121,7 @@ import java.util.List;
  * 			&lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="token-info" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tempi-elaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="duplicati-richiesta" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
  * 			&lt;element name="duplicati-risposta" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
  * 			&lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -223,6 +224,7 @@ import java.util.List;
   	"tokenUsername",
   	"tokenMail",
   	"tokenInfo",
+  	"tempiElaborazione",
   	"duplicatiRichiesta",
   	"duplicatiRisposta",
   	"clusterId",
@@ -914,6 +916,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
     this.tokenInfo = tokenInfo;
   }
 
+  public java.lang.String getTempiElaborazione() {
+    return this.tempiElaborazione;
+  }
+
+  public void setTempiElaborazione(java.lang.String tempiElaborazione) {
+    this.tempiElaborazione = tempiElaborazione;
+  }
+
   public int getDuplicatiRichiesta() {
     return this.duplicatiRichiesta;
   }
@@ -1362,6 +1372,10 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-info",required=false,nillable=false)
   protected java.lang.String tokenInfo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tempi-elaborazione",required=false,nillable=false)
+  protected java.lang.String tempiElaborazione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="duplicati-richiesta",required=false,nillable=false,defaultValue="0")

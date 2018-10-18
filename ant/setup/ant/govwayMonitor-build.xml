@@ -126,7 +126,14 @@
 				</antcall>
 			</else>
 		</if>
-				
+		
+		<!-- INTEGRATION MANAGER DISABLED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="transazioni_im_enabled"/>
+			<param name="value" value="false"/>
+		</antcall>
+		
 		<!-- OTHER -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

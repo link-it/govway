@@ -45,6 +45,7 @@ import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.xml.XMLUtils;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -1198,15 +1199,18 @@ public class UtilityTransazioni {
 					.setTipologiaTransazioni(TipologiaTransazioniType.INTEGRATION_MANAGER);
 
 		// tipologia ricerca
-		if ("all".equals(searchForm.getTipologiaRicerca()))
-			transazione
-					.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE_FRUIZIONE);
-		else if ("ingresso".equals(searchForm.getTipologiaRicerca()))
-			transazione
-					.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE);
-		else
-			transazione
-					.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.FRUIZIONE);
+		switch (searchForm.getTipologiaRicercaEnum()) {
+		case ingresso:
+			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE);
+			break;
+		case uscita:
+			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.FRUIZIONE);
+			break;
+		case all:
+		default:
+			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE_FRUIZIONE);
+			break;
+		}
 
 		// periodo
 		// data inizio data fine
@@ -1232,8 +1236,7 @@ public class UtilityTransazioni {
 		}
 
 		// soggetto remoto se selezionata tipologia erogazione/fruizione
-		if ("all".equals(searchForm.getTipologiaRicerca())
-				&& StringUtils.isNotEmpty(searchForm.getTrafficoPerSoggetto())) {
+		if (TipologiaRicerca.all.equals(searchForm.getTipologiaRicercaEnum()) && StringUtils.isNotEmpty(searchForm.getTrafficoPerSoggetto())) {
 			SoggettoRemoto soggettoRemoto = new SoggettoRemoto();
 
 			soggettoRemoto.setTipo(searchForm.getTipoTrafficoPerSoggetto());
@@ -1243,8 +1246,7 @@ public class UtilityTransazioni {
 			transazione.setSoggettoRemoto(soggettoRemoto);
 		}
 		// soggetto mittente se selezionata tipologia erogazione
-		if ("ingresso".equals(searchForm.getTipologiaRicerca())
-				&& StringUtils.isNotEmpty(searchForm.getNomeMittente())) {
+		if (TipologiaRicerca.ingresso.equals(searchForm.getTipologiaRicercaEnum()) && StringUtils.isNotEmpty(searchForm.getNomeMittente())) {
 			SoggettoMittente soggettoMittente = new SoggettoMittente();
 
 			soggettoMittente.setTipo(searchForm.getTipoMittente());
@@ -1254,8 +1256,7 @@ public class UtilityTransazioni {
 			transazione.setSoggettoMittente(soggettoMittente);
 		}
 		// soggetto destinatario se selezionata tipologia fruizione
-		if ("uscita".equals(searchForm.getTipologiaRicerca())
-				&& StringUtils.isNotEmpty(searchForm.getNomeDestinatario())) {
+		if (TipologiaRicerca.uscita.equals(searchForm.getTipologiaRicercaEnum()) && StringUtils.isNotEmpty(searchForm.getNomeDestinatario())) {
 			SoggettoDestinatario soggettoDestinatario = new SoggettoDestinatario();
 
 			soggettoDestinatario.setTipo(searchForm.getTipoDestinatario());

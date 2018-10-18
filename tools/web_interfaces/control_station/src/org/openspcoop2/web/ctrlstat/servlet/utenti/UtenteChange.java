@@ -34,6 +34,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -75,6 +76,7 @@ public final class UtenteChange extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 		String modalitaGatewayDisponibili = "";
+		String soggettiDisponibili = "";
 
 		try {
 			UtentiHelper utentiHelper = new UtentiHelper(request, pd, session);
@@ -85,22 +87,12 @@ public final class UtenteChange extends Action {
 			String changepw = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_PASSWORD);
 			String changeModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_MODALITA);
 			String tipoModalita = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
-			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
+			String changeSoggetto = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO);
+			String idSoggetto = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO);
 			
-			String first = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
-
 			UtentiCore utentiCore = new UtentiCore();
 			
 			User user = ServletUtils.getUserFromSession(session);
-			
-			if(multiTenant==null && first==null) {
-				if(user.isPermitMultiTenant()) {
-					multiTenant = Costanti.CHECK_BOX_ENABLED;
-				}
-				else {
-					multiTenant = Costanti.CHECK_BOX_DISABLED;
-				}
-			}
 			
 			InterfaceType interfaceType = null;
 			if(tipogui==null) {
@@ -110,27 +102,41 @@ public final class UtenteChange extends Action {
 				interfaceType = InterfaceType.convert(tipogui, true);
 			}
 			
+			String soggettoSelezionatoUtente = null;
+			
+			if(idSoggetto == null) {
+				// prelevo il vecchio valore del protocollo
+				soggettoSelezionatoUtente = user.getSoggettoSelezionatoPddConsole();
+			} else {
+				// il caso all viene gestito impostando il valore del soggetto selezionato = null;
+				if(!idSoggetto.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
+					soggettoSelezionatoUtente  = idSoggetto;
+			}
+			
 			String protocolloSelezionatoUtente = null;
+			String oldProtocolloSelezionatoUtente = user.getProtocolloSelezionatoPddConsole();
+			boolean updateSoggetto = false;
 			
 			if(tipoModalita == null) {
 				// prelevo il vecchio valore del protocollo
-				protocolloSelezionatoUtente = user.getProtocolloSelezionatoPddConsole();
+				protocolloSelezionatoUtente = oldProtocolloSelezionatoUtente;
 			} else {
 				// il caso all viene gestito impostando il valore del protocollo selezionato = null;
-				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
+				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) 
 					protocolloSelezionatoUtente  = tipoModalita;
-			}
-						
-			// Check multitenant
-			boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(user, true);
-			if(forceEnableMultitenant) {
-				multiTenant = Costanti.CHECK_BOX_ENABLED;
-			}
 
-			if(!forceEnableMultitenant && interfaceType.equals(InterfaceType.COMPLETA)) {
-				forceEnableMultitenant = true;
+				// 	reset soggetto scelto se cambia il protocollo
+				// 1. se ho messo tutti oppure se ho cambiato modalita'
+				if((protocolloSelezionatoUtente == null) || !(protocolloSelezionatoUtente.equals(oldProtocolloSelezionatoUtente))) {
+					soggettoSelezionatoUtente = null;
+					updateSoggetto = true;
+				}
+//				else {
+//					soggettoSelezionatoUtente = null;
+//					updateSoggetto = true;
+//				}
 			}
-
+			
 			// Preparo il menu
 			utentiHelper.makeMenu();
 			
@@ -144,9 +150,10 @@ public final class UtenteChange extends Action {
 			}
 			
 			modalitaGatewayDisponibili = sb.toString();
+			soggettiDisponibili = soggettoSelezionatoUtente != null ? soggettoSelezionatoUtente : UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL;
 
 			// setto la barra del titolo
-			if(changeGui == null && changeModalita==null) {
+			if(changeGui == null && changeModalita==null && changeSoggetto == null) {
 				ServletUtils.setPageDataTitle(pd, 
 					new Parameter(UtentiCostanti.LABEL_UTENTE, null));
 			}
@@ -167,7 +174,7 @@ public final class UtenteChange extends Action {
 
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant, forceEnableMultitenant);
+						utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili,soggettiDisponibili);
 
 						pd.setDati(dati);
 
@@ -202,15 +209,21 @@ public final class UtenteChange extends Action {
 				
 				if(changeGui != null) {
 					myS.setInterfaceType(interfaceType);
-					myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 				} else if(changeModalita != null) {
 					myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
 					utentiCore.salvaModalitaUserPddConsole(myS.getLogin(), protocolloSelezionatoUtente);
+					if(updateSoggetto) {
+						myS.setSoggettoSelezionatoPddConsole(soggettoSelezionatoUtente);
+						utentiCore.salvaSoggettoOperativoUserPddConsole(myS.getLogin(), soggettoSelezionatoUtente);
+					}
+				}  else if(changeSoggetto != null) {
+					myS.setSoggettoSelezionatoPddConsole(soggettoSelezionatoUtente);
+					utentiCore.salvaSoggettoOperativoUserPddConsole(myS.getLogin(), soggettoSelezionatoUtente);
 				} else {
 					myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
+					myS.setSoggettoSelezionatoPddConsole(soggettoSelezionatoUtente);
 					myS.setInterfaceType(interfaceType);
-					myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 				}
 				
@@ -282,14 +295,32 @@ public final class UtenteChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-			} else {
+			} else if(changeSoggetto != null) { // clic sul link cambia soggetto
+				
+				String pdMsg = "";
+				String pdMsgTitle= "Passaggio al "+UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_OPERATIVO+" selezionato effettuato con successo.";
+				if(soggettoSelezionatoUtente == null) {
+					pdMsg = "<p>"+UtentiCostanti.LABEL_PARAMETRO_SOGGETTI_COMPACT+" disponibili: " + "Tutti";
+				} else {
+					IDSoggetto idSoggettoOperativo = utentiCore.convertSoggettoSelezionatoToID(soggettoSelezionatoUtente);
+					pdMsg = "<p>"+UtentiCostanti.LABEL_PARAMETRO_SOGGETTO_COMPACT+" attuale: " + utentiHelper.getLabelNomeSoggetto(idSoggettoOperativo);
+				}
+				
+				pd.setMessage(pdMsg, pdMsgTitle, Costanti.MESSAGE_TYPE_INFO);
+				
+				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
+
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			}else {
 				// provengo dalla maschera di modifica utente
 				// preparo i campio
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili, multiTenant, forceEnableMultitenant);
+				utentiHelper.addUtenteChangeToDati(dati, interfaceType, changepw, userLogin, modalitaGatewayDisponibili,soggettiDisponibili);
 
 				pd.setDati(dati);
 			}

@@ -57,6 +57,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -120,6 +121,9 @@ public final class UtentiChange extends Action {
 			String singleSuAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE);
 			String changepwd = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PASSWORD);
 
+			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
+			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
+			
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
@@ -129,9 +133,7 @@ public final class UtentiChange extends Action {
 				String protocolloName = protocolliRegistratiConsole.get(i);
 				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			}
-
-			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
-						
+			
 			// Prendo l'utente
 			User user = utentiCore.getUser(nomesu);
 			//Prendo i vecchi dati dell'utente
@@ -163,40 +165,10 @@ public final class UtentiChange extends Action {
 				protocolliSupportati  = oldProtocolliSupportati;
 				first = true;
 			}
-			
-			if(multiTenant==null && first) {
-				if(user.isPermitMultiTenant()) {
-					multiTenant = Costanti.CHECK_BOX_ENABLED;
-				}
-				else {
-					multiTenant = Costanti.CHECK_BOX_DISABLED;
-				}
-			}
-			
-			boolean forceEnableMultitenant = false;
-			if(!first) {
-				User userPerCheck = new User();
-				for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
-					String protocolloName = protocolliRegistratiConsole.get(i);
-					if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
-						userPerCheck.addProtocolloSupportato(protocolloName);
-					} 
-				}
-				forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
-			}
-			else {
-				forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(user, true);
-			}
-			if(forceEnableMultitenant) {
-				multiTenant = Costanti.CHECK_BOX_ENABLED;
-			}
+
 			
 //			tipoGui = (tipoGui==null) ? user.getInterfaceType().toString() : tipoGui;
 			InterfaceType interfaceType = InterfaceType.convert(tipoGui, true);
-			
-			if(!forceEnableMultitenant && interfaceType.equals(InterfaceType.COMPLETA)) {
-				forceEnableMultitenant = true;
-			}
 			
 			// Preparo il menu
 			utentiHelper.makeMenu();
@@ -225,6 +197,9 @@ public final class UtentiChange extends Action {
 				isAuditing = (isAuditing==null) ? (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAuditing;
 				isAccordiCooperazione = (isAccordiCooperazione==null) ? (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isAccordiCooperazione;
 				
+				isSoggettiAll = (isSoggettiAll==null) ? (user.isPermitAllSoggetti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isSoggettiAll;
+				isServiziAll = (isServiziAll==null) ? (user.isPermitAllServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isServiziAll;
+								
 				if(first) {
 					for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
 						String protocolloName = protocolliRegistratiConsole.get(i);
@@ -245,10 +220,21 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user);
 
 				pd.setDati(dati);
 
+				if(first) {
+					if(!user.isConfigurazioneValidaAbilitazioni()) {
+						if(!user.isConfigurazioneValidaSoggettiAbilitati()) {
+							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
+						}
+						else if(!user.isConfigurazioneValidaServiziAbilitati()) {
+							pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE,MessageType.INFO);
+						}
+					}
+				}
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.CHANGE());
@@ -276,7 +262,7 @@ public final class UtentiChange extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
+						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user);
 
 				pd.setDati(dati);
 
@@ -437,8 +423,6 @@ public final class UtentiChange extends Action {
 					pwsu = procToCall.cryptPw(pwsu);
 				}
 
-				user.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
-				
 				// Modifico i dati dell'utente
 				user.setInterfaceType(InterfaceType.valueOf(tipoGui));
 				if(cpwd && !"".equals(pwsu))
@@ -515,6 +499,11 @@ public final class UtentiChange extends Action {
 						if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionatoPddConsole()))
 							user.setProtocolloSelezionatoPddConsole(null); 
 					}
+				}
+				
+				if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
+					user.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
+					user.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
 				}
 
 				// Se singleSu != null, devo recuperare gli oggetti
@@ -656,6 +645,13 @@ public final class UtentiChange extends Action {
 
 				} else {
 
+					if(user.isConfigurazioneValidaSoggettiAbilitati()==false) {
+						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
+					}
+					else if(user.isConfigurazioneValidaServiziAbilitati()==false) {
+						pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE, MessageType.INFO);
+					}
+					
 					// Preparo la lista
 					int idLista = Liste.SU;
 

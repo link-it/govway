@@ -25,6 +25,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
@@ -162,6 +163,9 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 				this.idServizio.setAzione(portaApplicativa.getAzione().getNome());
 			}
 		
+			IdentificativiErogazione identificativiErogazione = new IdentificativiErogazione();
+			identificativiErogazione.setIdServizio(this.idServizio);
+			this.idPortaApplicativa.setIdentificativiErogazione(identificativiErogazione);
 		}
 	}
 	

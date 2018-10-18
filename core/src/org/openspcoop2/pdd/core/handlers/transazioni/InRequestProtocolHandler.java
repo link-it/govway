@@ -77,9 +77,14 @@ public class InRequestProtocolHandler extends FirstPositionHandler implements  o
 			}
 			
 			if(op2Properties.isControlloTrafficoEnabled()){
-				InRequestProtocolHandler_GestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
-						new InRequestProtocolHandler_GestioneControlloTraffico();
-				inRequestProtocolHandler_gestioneControlloTraffico.process(context, tr);
+				tr.getTempiElaborazione().startControlloTraffico_rateLimiting();
+				try {
+					InRequestProtocolHandler_GestioneControlloTraffico inRequestProtocolHandler_gestioneControlloTraffico = 
+							new InRequestProtocolHandler_GestioneControlloTraffico();
+					inRequestProtocolHandler_gestioneControlloTraffico.process(context, tr);
+				}finally {
+					tr.getTempiElaborazione().endControlloTraffico_rateLimiting();
+				}
 			}
 			
 			

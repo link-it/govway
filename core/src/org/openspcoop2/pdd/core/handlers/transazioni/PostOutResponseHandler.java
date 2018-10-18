@@ -34,6 +34,8 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -111,6 +113,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTracceHeaderRawEnabled = false;
 	private boolean transazioniRegistrazioneTracceDigestEnabled = false;
 	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate = false;
+	private boolean transazioniRegistrazioneTempiElaborazione = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
 
@@ -270,7 +273,11 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				this.transazioniRegistrazioneTracceProtocolPropertiesEnabled =  this.openspcoopProperties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.transazioniRegistrazioneTracceHeaderRawEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.transazioniRegistrazioneTracceDigestEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceDigestEnabled();
-				this.transazioniRegistrazioneTokenInformazioniNormalizzate = this.openspcoopProperties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled();
+				
+				// Configurazione
+				Transazioni configTransazioni = this.configPdDManager.getTransazioniConfigurazione();
+				this.transazioniRegistrazioneTempiElaborazione = StatoFunzionalita.ABILITATO.equals(configTransazioni.getTempiElaborazione());
+				this.transazioniRegistrazioneTokenInformazioniNormalizzate = StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken());
 				
 				// salvataggio
 				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
@@ -491,7 +498,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 						this.transazioniRegistrazioneTracceHeaderRawEnabled,
 						this.transazioniRegistrazioneTracceDigestEnabled,
 						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled,
-						this.transazioniRegistrazioneTokenInformazioniNormalizzate);
+						this.transazioniRegistrazioneTokenInformazioniNormalizzate,
+						this.transazioniRegistrazioneTempiElaborazione);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 							
 			}catch (Throwable e) {

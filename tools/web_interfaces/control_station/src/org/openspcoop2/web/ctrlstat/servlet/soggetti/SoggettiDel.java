@@ -44,6 +44,8 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -104,9 +106,13 @@ public final class SoggettiDel extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 	
 			SoggettiCore soggettiCore = new SoggettiCore();
+			PddCore pddCore = new PddCore(soggettiCore);
+			UtentiCore utentiCore = new UtentiCore(soggettiCore);
 
 			String msg = "";
 
+			boolean deleteOperativo = false;
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				Soggetto soggettoRegistro = null;
@@ -136,9 +142,26 @@ public final class SoggettiDel extends Action {
 					msg += DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 
-				} else {
+				} 
+				else if(soggettoConfig.isDominioDefault()) {
+					isInUso = true;
+					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
+					msg += "Il Soggetto '"+soggettiHelper.getLabelNomeSoggetto(protocollo, idSoggetto)+"',  essendo il soggeto predefinito per il profilo '"+
+							soggettiHelper.getLabelProtocollo(protocollo)+"', non è eliminabile";
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
+				}
+				else {
 					SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 					soggettiCore.performDeleteOperation(userLogin, soggettiHelper.smista(), sog);
+					if(soggettoRegistro!=null && !pddCore.isPddEsterna(soggettoRegistro.getPortaDominio())) {
+						
+						// sistemo utenze dopo l'aggiornamento
+						IDSoggetto idSoggettoSelezionato = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
+						utentiCore.modificaSoggettoUtilizzatoConsole(idSoggettoSelezionato.toString(), null); // annullo selezione
+						
+						deleteOperativo = true;
+					}
 				}
 			}// chiudo for
 
@@ -168,6 +191,11 @@ public final class SoggettiDel extends Action {
 				soggettiHelper.prepareSoggettiConfigList(lista, ricerca);
 			}
 
+			if(deleteOperativo) {
+				generalHelper = new GeneralHelper(session);
+				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			return ServletUtils.getStrutsForward(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.DEL());

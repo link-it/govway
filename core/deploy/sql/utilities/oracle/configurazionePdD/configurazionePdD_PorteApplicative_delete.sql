@@ -1,4 +1,5 @@
 DELETE FROM pa_azioni;
+DELETE FROM porte_applicative_sa_auth;
 DELETE FROM pa_soggetti;
 DELETE FROM pa_scope;
 DELETE FROM pa_ruoli;

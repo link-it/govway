@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
+import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -606,6 +607,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.autorizzazione(pa, soggetto);
 	}
 	
+	public boolean autorizzazione(PortaApplicativa pa, IDServizioApplicativo servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.autorizzazione(pa, servizioApplicativo);
+	}
+	
 	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -836,6 +841,10 @@ public class ConfigurazionePdDManager {
 	
 	public Tracciamento getOpenSPCoopAppender_Tracciamento(){
 		return this.configurazionePdDReader.getOpenSPCoopAppender_Tracciamento(this.getConnection());
+	}
+	
+	public Transazioni getTransazioniConfigurazione() {
+		return this.configurazionePdDReader.getTransazioniConfigurazione(this.getConnection());
 	}
 	
 	public DumpConfigurazione getDumpConfigurazione() {

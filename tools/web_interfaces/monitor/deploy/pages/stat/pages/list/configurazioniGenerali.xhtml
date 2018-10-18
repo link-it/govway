@@ -8,6 +8,7 @@
 	xmlns:link="http://www.link.it"
 	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" />
 
 	<ui:define name="body">
 		<style>
@@ -15,7 +16,7 @@
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
 			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
-				label="Configurazione Servizi" opened="true">
+				label="#{msg['configurazioniGenerali.nomeSezione']}" opened="true">
 				<f:facet name="openMarker">
 					<span class="icon-search-box">
 						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
@@ -31,7 +32,7 @@
 				<div class="form-container noborder">
 					<h:form prependId="false">
 						<div class="subtitle">
-							<h:outputText id="idTemporale" value="Filtro Dati Servizio" styleClass="subtitle"/>
+							<h:outputText id="idTemporale" value="#{msg['configurazioniGenerali.search.sezioneFiltroDatiServizio.label']}" styleClass="subtitle"/>
 						</div>
 						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
 						
@@ -39,8 +40,7 @@
 								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
 										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
 										width="416" enableManualInput="false">
-									<f:selectItem itemLabel="Erogazione" itemValue="applicativa" />
-									<f:selectItem itemLabel="Fruizione" itemValue="delegata" />
+									<f:selectItems value="#{configurazioniGeneraliSearchForm.tipologieRicerca}"/>
 									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,servizioComboCtr" actionListener="#{configurazioniGeneraliSearchForm.tipologiaTransazioniListener}" />
 								</rich:comboBox>
 							</link:prop>
@@ -173,7 +173,7 @@
 						
 						<rich:column>
 							<f:facet name="header">
-								<h:outputText value="Servizio"  id="outServizio"/>
+								<h:outputText value="#{msg['commons.servizio.label']}"  id="outServizio"/>
 							</f:facet>
 							<h:outputText value="#{item.servizio}" />
 						</rich:column>

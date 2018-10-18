@@ -74,7 +74,7 @@ public class EsitoAutenticazionePortaDelegata extends EsitoAutenticazione {
 		if(this.idServizioApplicativo!=null){
 			bf.append(" IDServizioApplicativo");
 			if(this.idServizioApplicativo.getIdSoggettoProprietario()!=null){
-				bf.append(" IDServizioApplicativo(");
+				bf.append(" IDSoggetto(");
 				bf.append(this.idServizioApplicativo.getIdSoggettoProprietario().toString());
 				bf.append(")");
 			}

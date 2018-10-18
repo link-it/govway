@@ -93,7 +93,7 @@ public class DistribuzioneSADM extends BaseDataModel<String, ResDistribuzione, I
 					DistribuzioneSADM.log.error(e.getMessage(), e);
 				}
 				
-				list = DistribuzionePerSABean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribSaSearch().getProtocollo());
+				list = DistribuzionePerSABean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribSaSearch().getProtocollo(),((StatisticheGiornaliereService) this.getDataProvider()).getDistribSaSearch());
 				
 				for (ResDistribuzione r : list) {
 					this.wrappedData.put(r.getRisultato(), r);

@@ -137,7 +137,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_DOWNLOAD = "Download";
 	public final static String LABEL_APS_INFO_GENERALI = "Informazioni Generali";
 	public final static String LABEL_APS_SERVIZIO = "Servizio";
-	public final static String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio/Soggetto";
+	public final static String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio / Soggetto";
+	public final static String LABEL_APS_RICERCA_API_SOGGETTO = "API / Soggetto Erogatore";
 	public final static String LABEL_APS_ALLEGATI = "Allegati";
 	public final static String LABEL_APS_ALLEGATO = "Allegato";
 	public final static String LABEL_APS_CONFIGURAZIONI = "Configurazioni";
@@ -186,7 +187,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_TIPO_EROGAZIONE = "tipologiaErogazione";
 	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE = "erogazione";
 	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE = "fruizione";
-	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_MULTI_TENANT = "multiTenant";
+	public final static String PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_COMPLETA = "completa";
 	
 	public final static String PARAMETRO_APS_ID = CostantiControlStation.PARAMETRO_ID;
 	public final static String PARAMETRO_APS_MY_ID = CostantiControlStation.PARAMETRO_ID_FRUIZIONE;
@@ -234,7 +235,9 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_PRIVATO_LABEL = "privatoLabel";
 	public final static String PARAMETRO_APS_PROFILO = "profilo";
 	public final static String PARAMETRO_APS_NOME_SOGGETTO = "nomeSogg";
-	public final static String PARAMETRO_APS_TIPO_SOGGETTO = "tipoSogg";	
+	public final static String PARAMETRO_APS_TIPO_SOGGETTO = "tipoSogg";
+	public final static String PARAMETRO_APS_NOME_SOGGETTO_FRUITORE = "nomeSoggFru";
+	public final static String PARAMETRO_APS_TIPO_SOGGETTO_FRUITORE = "tipoSoggFru";
 	public final static String PARAMETRO_APS_CORRELATO = "correlato";	
 	public final static String PARAMETRO_APS_ID_SERVIZIO = "idServ";
 	public final static String PARAMETRO_APS_STATO = "stato";
@@ -255,6 +258,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_PROTOCOLLO = CostantiControlStation.PARAMETRO_PROTOCOLLO;
 	public final static String PARAMETRO_APS_GESTIONE_GRUPPI = "gestioneGruppi";
 	public final static String PARAMETRO_APS_GESTIONE_CONFIGURAZIONI = "gestioneConfigurazioni";
+	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
+	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
 	
 	/* ATTRIBUTI SESSIONE */
 	
@@ -341,7 +346,13 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI = 
 			"Esiste gi&agrave; una erogazione del servizio {0} erogato dal Soggetto {1}";
 	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI_FRUIZIONE = 
-			"Esiste gi&agrave; una fruizione del servizio {0} erogato dal Soggetto {1}";
+			"Esiste gi&agrave; una fruizione, da parte del Soggetto {0}, del servizio {1} erogato dal Soggetto {2}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_API_DIFFERENTE = 
+			"Esiste gi&agrave; una fruizione o erogazione del servizio {0} erogato dal Soggetto {1} che implementa una API differente: {2}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_VERSIONE_PROTOCOLLO_DIFFERENTE = 
+			"Esiste gi&agrave; una fruizione o erogazione del servizio {0} erogato dal Soggetto {1} configurata con una versione di protocollo differente: {2}";
+	public static final String MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PORT_TYPE_DIFFERENTE = 
+			"Esiste gi&agrave; una fruizione o erogazione del servizio {0} erogato dal Soggetto {1} che implementa un servizio differente: {2}";
 	public static final String MESSAGGIO_ERRORE_ID_ACCORDO_SERVIZIO_NON_DEFINITO = "id Accordo Servizio non definito";
 	public static final String MESSAGGIO_ERRORE_ID_SOGGETTO_EROGATORE_NON_DEFINITO = "id Soggetto erogatore non definito";
 	public static final String MESSAGGIO_ERRORE_IL_CONNETTORE_SUL_SERVIZIO_NON_PUO_ESSERE_DISABILITATO_POICHE_NON_E_STATO_DEFINITO_UN_CONNETTORE_SUL_SOGGETTO_EROGATORE_ED_ESISTONO_FRUIZIONI_DEL_SERVIZIO_DA_PARTE_DI_SOGGETTI_OPERATIVI_CHE_NON_HANNO_UN_CONNETTORE_DEFINITO = "Il connettore sul servizio non può essere disabilitato poichè non è stato definito un connettore sul soggetto erogatore ed esistono fruizioni del servizio, da parte di soggetti operativi, che non hanno un connettore definito";

@@ -60,9 +60,23 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		
 		String idTransazione = (String) context.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
 		
+		// Get Transazione
+		Transaction tr =  null;
+		try{
+			tr = TransactionContext.getTransaction(idTransazione);
+		}catch(TransactionNotExistsException e){
+			throw new HandlerException(e);
+			// Non dovrebbe avvenire in questo handler
+		}
+		
 		if(op2Properties.isControlloTrafficoEnabled()){
-			PreInRequestHandler_GestioneControlloTraffico preInRequestHandler_gestioneControlloTraffico = new PreInRequestHandler_GestioneControlloTraffico();
-			preInRequestHandler_gestioneControlloTraffico.process(context);
+			tr.getTempiElaborazione().startControlloTraffico_maxRequests();
+			try {
+				PreInRequestHandler_GestioneControlloTraffico preInRequestHandler_gestioneControlloTraffico = new PreInRequestHandler_GestioneControlloTraffico();
+				preInRequestHandler_gestioneControlloTraffico.process(context);
+			}finally {
+				tr.getTempiElaborazione().endControlloTraffico_maxRequests();
+			}
 		}
 		
 		/* ---- Analisi Remote IP ----- */
@@ -75,16 +89,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		if(req!=null){
 			readClientAddress(context.getLogCore(), req, context.getPddContext());
 		}
-				
-		// Creo Transazione
-		Transaction tr =  null;
-		try{
-			tr = TransactionContext.getTransaction(idTransazione);
-		}catch(TransactionNotExistsException e){
-			throw new HandlerException(e);
-			// Non dovrebbe avvenire in questo handler
-		}
-		
+						
 		/* ---- Analisi RequestInfo ----- */
 		RequestInfo requestInfo = null;
 		try{

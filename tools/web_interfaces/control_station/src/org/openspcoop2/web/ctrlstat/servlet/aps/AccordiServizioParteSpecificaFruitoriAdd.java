@@ -230,6 +230,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String autenticazioneTokenUsername = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
 			String autenticazioneTokenEMail = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
 			
+			String autorizzazione_token = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
 			String autorizzazione_tokenOptions = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
 			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
 			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
@@ -607,7 +608,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.httpspwdprivatekey = "";
 						this.httpsalgoritmokey = "";
 
-						if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
+						if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
 							if(this.statoPackage==null || "".equals(this.statoPackage)){
 								//if(serviziFruitoriAdd.generazioneAutomaticaPorteDelegate){
 								this.statoPackage=StatiAccordo.bozza.toString();
@@ -713,7 +714,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenPolicy, gestioneTokenOpzionale,
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-							autorizzazione_tokenOptions,
+							autorizzazione_token, autorizzazione_tokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
@@ -844,7 +845,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions,
+						autorizzazione_token, autorizzazione_tokenOptions,
 						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, 
@@ -948,7 +949,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			//			}
 
 			// Check stato
-			if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
+			if(apsHelper.isShowGestioneWorkflowStatoDocumenti()){
 
 				try{
 					apsCore.validaStatoFruitoreAccordoServizioParteSpecifica(fruitore, servsp);
@@ -993,7 +994,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							gestioneTokenPolicy, gestioneTokenOpzionale,
 							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
 							autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-							autorizzazione_tokenOptions,
+							autorizzazione_token, autorizzazione_tokenOptions,
 							autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null

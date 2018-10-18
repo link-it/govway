@@ -5,6 +5,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="msg" basename="messages" />
 	<c:if test="#{applicationBean.user}">
 		<a4j:outputPanel>
 			<script type="text/javascript">
@@ -28,23 +29,23 @@
 				<a4j:form id="transazioniForm">
 					<h:inputHidden value="true" id="tf_usaSVG"/> 
 					<rich:panelMenu expandMode="none" mode="server">
-						<rich:panelMenuGroup label="Monitoraggio" expanded="true" id="monitoraggioMenuGroup"
+						<rich:panelMenuGroup label="#{msg['menu.monitoraggio.label']}" expanded="true" id="monitoraggioMenuGroup"
 							rendered="#{applicationBean.showTransazioniBase}">
-							<rich:panelMenuItem id="transazioniMenuLink" label="Storico" action="transazioniStart" actionListener="#{transazioniBean.search.initSearchListener}" />
+							<rich:panelMenuItem id="transazioniMenuLink" label="#{msg['menu.monitoraggio.storico']}" action="transazioniStart" actionListener="#{transazioniBean.search.initSearchListener}" />
 							
-							<rich:panelMenuItem label="Live" id="live" action="#{transazioniBean.submit}" actionListener="#{transazioniBean.search.initSearchListener}" 
+							<rich:panelMenuItem label="#{msg['menu.monitoraggio.live']}" id="live" action="#{transazioniBean.submit}" actionListener="#{transazioniBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showTransazioniLive}">
 								<f:setPropertyActionListener value="Live" target="#{searchFormTransazioni.periodo}" />
 							</rich:panelMenuItem>
 							
-							<rich:panelMenuItem label="Esiti Live" action="esitiLive" id="esiti_live"
+							<rich:panelMenuItem label="#{msg['menu.monitoraggio.esitiLive']}" action="esitiLive" id="esiti_live"
 								rendered="#{applicationBean.showEsitiLive}" />
 					 
-					 		<rich:panelMenuItem label="Eventi" action="eventi" 
+					 		<rich:panelMenuItem label="#{msg['menu.monitoraggio.eventi']}" action="eventi" 
 								rendered="#{applicationBean.showEventi}"
 								actionListener="#{eventiBean.search.initSearchListener}"/>
 					 
-							<rich:panelMenuItem label="Allarmi" action="allarmi" id="statoAllarmiLnk"
+							<rich:panelMenuItem label="#{msg['menu.monitoraggio.allarmi']}" action="allarmi" id="statoAllarmiLnk"
 								rendered="#{applicationBean.showAllarmi}"
 								actionListener="#{allarmiBean.search.menuClickSearchListener}"
 								/>
@@ -54,30 +55,22 @@
 								rendered="#{applicationBean.showSonde}"/>
 							-->
 							 
-							<rich:panelMenuItem id="processiMenuLink" label="Processi"
+							<rich:panelMenuItem id="processiMenuLink" label="#{msg['menu.monitoraggio.processi']}"
 								action="processi" rendered="#{applicationBean.showProcessi}"
 								actionListener="#{searchFormProcessi.initSearchListener}" />
-							<rich:panelMenuGroup label="Statistiche" expanded="false"
-								iconCollapsed="triangle" iconExpanded="triangleDown"
-								rendered="false">
-								<rich:panelMenuItem label="Stat Processi A" />
-								<rich:panelMenuItem label="Stat Processi B" />
-								<rich:panelMenuItem label="Stat Processi C" />
-							</rich:panelMenuGroup>
-							
 						</rich:panelMenuGroup>
 						<!-- iconExpanded="triangleDown" -->
-						<rich:panelMenuGroup iconCollapsed="triangle" label="Reportistica" id="reportisticaMenuGroup"
+						<rich:panelMenuGroup iconCollapsed="triangle" label="#{msg['menu.reportistica.label']}" id="reportisticaMenuGroup"
 							expanded="true" rendered="#{applicationBean.showStatisticheBase}">
-							<rich:panelMenuItem label="Analisi Statistica" action="analisiStatisticaStart" 
+							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart" 
 								actionListener="#{analisiStatisticaBean.menuActionListener}"
 								/>
 							<rich:panelMenuItem
-								label="Analisi Log" rendered="#{applicationBean.showReport}"
+								label="#{msg['menu.reportistica.analisiLog']}" rendered="#{applicationBean.showReport}"
 								action="#{reportBean.submit}"
 								actionListener="#{reportBean.search.initSearchListener}" />
 							<rich:panelMenuItem
-								label="Configurazione Servizi" rendered="#{applicationBean.showStatisticheConfigurazioniGenerali}"
+								label="#{msg['menu.reportistica.configurazioniGenerali']}" rendered="#{applicationBean.showStatisticheConfigurazioniGenerali}"
 								action="#{configurazioniGeneraliBean.submit}"
 								actionListener="#{configurazioniGeneraliBean.search.initSearchListener}" />
 						</rich:panelMenuGroup>
@@ -85,22 +78,22 @@
 				</a4j:form>
 				<a4j:form>
 					<rich:panelMenu expandMode="none" mode="server">
-						<rich:panelMenuGroup label="Configurazione" expanded="true" id="configurazioneMenuGroup"
+						<rich:panelMenuGroup label="#{msg['menu.configurazione.label']}" expanded="true" id="configurazioneMenuGroup"
 							rendered="#{applicationBean.showSezioneConfigurazione}">
 							
-								<rich:panelMenuItem label="Allarmi" action="configurazioneAllarmi" id="confAllarmiLnk"
+								<rich:panelMenuItem label="#{msg['menu.configurazione.allarmi']}" action="configurazioneAllarmi" id="confAllarmiLnk"
 									actionListener="#{allarmiBean.search.menuClickSearchListener}"
 									rendered="#{applicationBean.showConfigurazioneAllarmi}"/>
 									
-								<rich:panelMenuItem label="Sonde Applicative" action="sonde"
+								<rich:panelMenuItem label="#{msg['menu.configurazione.sondeApplicative']}" action="sonde"
 									actionListener="#{sondeBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showConfigurazioneSonde}" />
 									
-								<rich:panelMenuItem label="Analisi Dati" action="configurazioneServizi"
+								<rich:panelMenuItem label="#{msg['menu.configurazione.analisiDati']}" action="configurazioneServizi"
 									rendered="#{applicationBean.showConfigurazioneLibreria}"
 									actionListener="#{configurazioneServiziBean.search.initSearchListener}" />
 									
-								<rich:panelMenuItem label="Processi" action="configProcessi"
+								<rich:panelMenuItem label="#{msg['menu.configurazione.processi']}" action="configProcessi"
 									rendered="#{applicationBean.showConfigurazioneProcessi}" />
 						
 						</rich:panelMenuGroup>	

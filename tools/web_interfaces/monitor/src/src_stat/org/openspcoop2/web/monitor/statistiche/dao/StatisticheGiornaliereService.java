@@ -83,6 +83,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -1018,8 +1019,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 
-			this.andamentoTemporaleSearch.getSoggettoLocale();
-
 			List<Soggetto> listaSoggettiGestione = this.andamentoTemporaleSearch
 					.getSoggettiGestione();
 
@@ -1039,7 +1038,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// protocollo e' impostato anche scegliendo la modalita'
 			if (this.andamentoTemporaleSearch.isSetFiltroProtocollo()) {
 				protocollo = this.andamentoTemporaleSearch.getProtocollo();
-				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.andamentoTemporaleSearch.getTipologiaRicercaEnum());
 			}
 
 			// permessi utente operatore
@@ -1051,7 +1050,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.andamentoTemporaleSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.andamentoTemporaleSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.andamentoTemporaleSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.andamentoTemporaleSearch.getSoggettoLocale()) && 
 					!"--".equals(this.andamentoTemporaleSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.andamentoTemporaleSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.andamentoTemporaleSearch.getSoggettoLocale();
@@ -1098,18 +1097,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// imposto il soggetto (loggato) come mittente o destinatario in
 			// base
 			// alla tipologia di ricerca selezionata
-			if ("all".equals(this.andamentoTemporaleSearch
-					.getTipologiaRicerca())
-					|| StringUtils.isEmpty(this.andamentoTemporaleSearch
-							.getTipologiaRicerca())) {
+			if (this.andamentoTemporaleSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.andamentoTemporaleSearch.getTipologiaRicercaEnum())) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome
 				// del
 				// soggetto selezionato va messo come complementare
 
-				boolean trafficoSoggetto = StringUtils
-						.isNotBlank(this.andamentoTemporaleSearch
-								.getTrafficoPerSoggetto());
+				boolean trafficoSoggetto = StringUtils.isNotBlank(this.andamentoTemporaleSearch.getTrafficoPerSoggetto());
 				boolean soggetto = listaSoggettiGestione.size() > 0;
 				String tipoTrafficoSoggetto = null;
 				String nomeTrafficoSoggetto = null;
@@ -1217,8 +1211,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// nessun filtro da impostare
 				}
 
-			} else if ("ingresso".equals(this.andamentoTemporaleSearch
-					.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.andamentoTemporaleSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				expr.and().equals(model.TIPO_PORTA, "applicativa");
 
@@ -1324,7 +1317,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	// ********** ESITI LIVE ******************
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,String protocollo) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
 
 		// StringBuffer pezzoIdPorta = new StringBuffer();
 		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1378,6 +1371,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				exprOk.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprOk, model.ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprOk.and().equals(model.TIPO_PORTA, "applicativa");
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprOk.and().equals(model.TIPO_PORTA, "delegata");
+				}
+			}
 			exprOk.addGroupBy(model.DATA);
 
 			// fault
@@ -1391,6 +1392,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				exprFault.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprFault, model.ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprFault.and().equals(model.TIPO_PORTA, "applicativa");
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprFault.and().equals(model.TIPO_PORTA, "delegata");
+				}
+			}
 			exprFault.addGroupBy(model.DATA);
 
 			// ko
@@ -1404,11 +1413,19 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				exprKo.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprKo, model.ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprKo.and().equals(model.TIPO_PORTA, "applicativa");
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprKo.and().equals(model.TIPO_PORTA, "delegata");
+				}
+			}
 			exprKo.addGroupBy(model.DATA);
 
-			impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocollo);
-			impostaTipiCompatibiliConProtocollo(dao, model, exprFault, protocollo);
-			impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocollo);
+			impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocollo, null);
+			impostaTipiCompatibiliConProtocollo(dao, model, exprFault, protocollo, null);
+			impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocollo, null);
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
 				for (Index index : forceIndexes) {
@@ -1512,7 +1529,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public int countAllDistribuzioneSoggetto() throws ServiceException{
 
 		try {
-			this.distribSoggettoSearch.getSoggettoLocale();
+
 			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -1548,7 +1565,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto() throws ServiceException{
 		try {
-			this.distribSoggettoSearch.getSoggettoLocale();
+
 			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -1598,7 +1615,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto(int start,int limit)  throws ServiceException{
 		try {
-			this.distribSoggettoSearch.getSoggettoLocale();
+
 			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
 			StatisticaModel model = null;
 			IServiceSearchWithoutId<?> dao = null;
@@ -1666,9 +1683,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// ho 3 diversi tipi di query in base alla tipologia di ricerca
-			if ("all".equals(this.distribSoggettoSearch.getTipologiaRicerca())
-					|| StringUtils.isEmpty(this.distribSoggettoSearch
-							.getTipologiaRicerca())) {
+			if (this.distribSoggettoSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
 				// erogazione/fruizione
 
 				// MITTENTE
@@ -1694,7 +1709,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -1707,7 +1722,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 
 				// soggetto locale
-				if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+				if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 						!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -1784,7 +1799,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -1797,7 +1812,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				// soggetto locale
-				if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+				if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 						!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -1897,8 +1912,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				NonNegativeNumber nnn = dao.unionCount(union, mitUnionExpr, destUnionExpr); 
 				return nnn != null ? nnn.longValue() : 0L;
 
-			} else if ("ingresso".equals(this.distribSoggettoSearch
-					.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				// il destinatario e' l'utente loggato (sempre presente se non
 				// sono
@@ -1919,7 +1933,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -1935,7 +1949,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				// soggetto locale
-				if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+				if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 						!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -2045,7 +2059,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 				}
 
@@ -2061,7 +2075,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				// soggetto locale
-				if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+				if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 						!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -2205,9 +2219,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		List<Soggetto> listaSoggettiGestione = this.distribSoggettoSearch
 				.getSoggettiGestione();
 		// ho 3 diversi tipi di query in base alla tipologia di ricerca
-		if ("all".equals(this.distribSoggettoSearch.getTipologiaRicerca())
-				|| StringUtils.isEmpty(this.distribSoggettoSearch
-						.getTipologiaRicerca())) {
+		if (this.distribSoggettoSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
 			// erogazione/fruizione
 
 			// EROGAZIONE
@@ -2231,7 +2243,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -2244,7 +2256,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -2326,7 +2338,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -2339,7 +2351,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -2604,8 +2616,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			}
 
-		} else if ("ingresso".equals(this.distribSoggettoSearch
-				.getTipologiaRicerca())) {
+		} else if (TipologiaRicerca.ingresso.equals(this.distribSoggettoSearch.getTipologiaRicercaEnum())) {
 			// EROGAZIONE
 			// il destinatario e' l'utente loggato (sempre presente se non
 			// sono
@@ -2626,7 +2637,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -2642,7 +2653,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -2904,7 +2915,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo, this.distribSoggettoSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -2919,7 +2930,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribSoggettoSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSoggettoSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribSoggettoSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
@@ -3494,8 +3505,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribServizioSearch.getProtocollo());
 			
-			this.distribServizioSearch.getSoggettoLocale();
-
 			expr = dao.newExpression();
 			// Data
 			expr.between(model.DATA,
@@ -3511,7 +3520,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribServizioSearch.getProtocollo());
 				protocollo = this.distribServizioSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.distribServizioSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -3524,7 +3533,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribServizioSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribServizioSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribServizioSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribServizioSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribServizioSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribServizioSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribServizioSearch.getSoggettoLocale();
@@ -3546,9 +3555,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// imposto il soggetto (loggato) come mittente o destinatario in
 			// base
 			// alla tipologia di ricerca selezionata
-			if ("all".equals(this.distribServizioSearch.getTipologiaRicerca())
-					|| StringUtils.isEmpty(this.distribServizioSearch
-							.getTipologiaRicerca())) {
+			if (this.distribServizioSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribServizioSearch.getTipologiaRicercaEnum())) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome
 				// del
@@ -3673,8 +3680,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// nessun filtro da impostare
 				}
 
-			} else if ("ingresso".equals(this.distribServizioSearch
-					.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.distribServizioSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
@@ -3863,8 +3869,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 
 			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribAzioneSearch.getProtocollo());
-			
-			this.distribAzioneSearch.getSoggettoLocale();
 
 			expr = dao.newExpression();
 			// Data
@@ -3881,7 +3885,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribAzioneSearch.getProtocollo());
 				protocollo = this.distribAzioneSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.distribAzioneSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -3894,7 +3898,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribAzioneSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribAzioneSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribAzioneSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribAzioneSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribAzioneSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribAzioneSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribAzioneSearch.getSoggettoLocale();
@@ -3916,9 +3920,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// imposto il soggetto (loggato) come mittente o destinatario in
 			// base
 			// alla tipologia di ricerca selezionata
-			if ("all".equals(this.distribAzioneSearch.getTipologiaRicerca())
-					|| StringUtils.isEmpty(this.distribAzioneSearch
-							.getTipologiaRicerca())) {
+			if (this.distribAzioneSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribAzioneSearch.getTipologiaRicercaEnum())) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome
 				// del
@@ -4043,8 +4045,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// nessun filtro da impostare
 				}
 
-			} else if ("ingresso".equals(this.distribAzioneSearch
-					.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.distribAzioneSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
@@ -4450,14 +4451,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
 			boolean forceFruizione = false;
-			if (  
-				"all".equals(this.distribSaSearch.getTipologiaRicerca()) 
-				|| 
-				StringUtils.isEmpty(this.distribSaSearch.getTipologiaRicerca())
-				) {
+			if (this.distribSaSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSaSearch.getTipologiaRicercaEnum())) {
 				forceErogazione = true;
 				forceFruizione = true;
-			} else if ( "ingresso".equals(this.distribSaSearch.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.distribSaSearch.getTipologiaRicercaEnum())) {
 				forceErogazione = true;
 			} else {
 				forceFruizione = true;
@@ -4572,14 +4569,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
 			boolean forceFruizione = false;
-			if (  
-				"all".equals(this.distribSaSearch.getTipologiaRicerca()) 
-				|| 
-				StringUtils.isEmpty(this.distribSaSearch.getTipologiaRicerca())
-				) {
+			if (this.distribSaSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSaSearch.getTipologiaRicercaEnum())) {
 				forceErogazione = true;
 				forceFruizione = true;
-			} else if ( "ingresso".equals(this.distribSaSearch.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.distribSaSearch.getTipologiaRicercaEnum())) {
 				forceErogazione = true;
 			} else {
 				forceFruizione = true;
@@ -4603,8 +4596,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							forceErogazione,false);	
 					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
+					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+//					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+//					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
+					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
+							gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+						}
+					}
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4616,8 +4616,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							false,forceFruizione);	
 					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(credenzialeFieldGroupBy);
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
+							gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
+						}
+					}
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4651,15 +4655,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				if(forceErogazione){
 					unionExprErogatore = new UnionExpression(gByExprErogazione);
 					unionExprErogatore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
-					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
-					unionExprErogatore.addSelectField(model.DESTINATARIO, aliasFieldSoggetto);
+					// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+//					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
+//					unionExprErogatore.addSelectField(model.DESTINATARIO, aliasFieldSoggetto);
+					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							unionExprErogatore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
+							unionExprErogatore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+						}
+					}
 //					unionExprErogatore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Erogatore", String.class),aliasFieldRuoloSoggetto);
 				}
 				if(forceFruizione){
 					unionExprFruitore = new UnionExpression(gByExprFruizione);
 					unionExprFruitore.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
-					unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
-					unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
+							unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
+						}
+					}
 //					unionExprFruitore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, "Fruitore", String.class),	aliasFieldRuoloSoggetto);
 				}
 				if(unionExprErogatore==null || unionExprFruitore==null){
@@ -4669,12 +4684,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
 							aliasFieldCredenzialeMittente);
-					unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
-							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
-							aliasFieldTipoSoggetto);
-					unionExprFake.addSelectField(new ConstantField(aliasFieldSoggetto, 
-							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
-							aliasFieldSoggetto);
+					if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+						if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+							unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
+									StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
+									aliasFieldTipoSoggetto);
+							unionExprFake.addSelectField(new ConstantField(aliasFieldSoggetto, 
+									StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
+									aliasFieldSoggetto);
+						}
+					}
 //					unionExprFake.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class),	aliasFieldRuoloSoggetto);
 				}
 			}
@@ -4697,15 +4716,23 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.setUnionAll(true);
 			union.addField(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
-				union.addField(aliasFieldTipoSoggetto);
-				union.addField(aliasFieldSoggetto);
-//				union.addField(aliasFieldRuoloSoggetto);
+				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+					if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+						union.addField(aliasFieldTipoSoggetto);
+						union.addField(aliasFieldSoggetto);
+		//				union.addField(aliasFieldRuoloSoggetto);
+					}
+				}
 			}
 			union.addGroupBy(aliasFieldCredenzialeMittente);
 			if(forceErogazione || forceFruizione){
-				union.addGroupBy(aliasFieldTipoSoggetto);
-				union.addGroupBy(aliasFieldSoggetto);
-//				union.addGroupBy(aliasFieldRuoloSoggetto);
+				if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+					if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+						union.addGroupBy(aliasFieldTipoSoggetto);
+						union.addGroupBy(aliasFieldSoggetto);
+		//				union.addGroupBy(aliasFieldRuoloSoggetto);
+					}
+				}
 			}
 
 			UnionExpression [] uExpressions = new UnionExpression[2];
@@ -4939,7 +4966,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					r.setRisultato(risultato);
 					
 					if(forceErogazione || forceFruizione){
-						r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/" + ((String) row.get(aliasFieldSoggetto)));
+						if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+							if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+								r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/" + ((String) row.get(aliasFieldSoggetto)));
+							}
+						}
 						
 						//r.getParentMap().put("1",((String) row.get(aliasFieldRuoloSoggetto)));
 					}
@@ -4987,8 +5018,6 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			EsitoUtils esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log, this.distribSaSearch.getProtocollo());
 			
-			this.distribSaSearch.getSoggettoLocale();
-
 			expr = dao.newExpression();
 			// Data
 			expr.between(model.DATA, this.distribSaSearch.getDataInizio(),	this.distribSaSearch.getDataFine());
@@ -5002,7 +5031,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribSaSearch.getProtocollo());
 				protocollo = this.distribSaSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.distribSaSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -5015,7 +5044,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.distribSaSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSaSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.distribSaSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.distribSaSearch.getSoggettoLocale()) && 
 					!"--".equals(this.distribSaSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.distribSaSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSaSearch.getSoggettoLocale();
@@ -5059,7 +5088,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					&& 
 					!forceFruizione 
 					&&
-					("all".equals(this.distribSaSearch.getTipologiaRicerca()) || StringUtils.isEmpty(this.distribSaSearch.getTipologiaRicerca()))
+					(this.distribSaSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.distribSaSearch.getTipologiaRicercaEnum()))
 				) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome
@@ -5185,7 +5214,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// nessun filtro da impostare
 				}
 
-			} else if ( forceErogazione || "ingresso".equals(this.distribSaSearch.getTipologiaRicerca())) {
+			} else if ( forceErogazione || TipologiaRicerca.ingresso.equals(this.distribSaSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
@@ -5257,17 +5286,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			this.impostaGroupByFiltroDatiMittente(expr, this.distribSaSearch, model, isCount); 
 
-			if(forceErogazione){
-				expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.addGroupBy(model.TIPO_DESTINATARIO);
-				expr.addGroupBy(model.DESTINATARIO);
-			}
-			if(forceFruizione){
-				expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.addGroupBy(model.TIPO_MITTENTE);
-				expr.addGroupBy(model.MITTENTE);
+			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
+			// Poichè gli applicativi sono identificati univocamente insieme anche al soggetto proprietario, si aggiunge il soggetto nella group by
+			if(StringUtils.isNotEmpty(this.distribSaSearch.getRiconoscimento())) {
+				if(this.distribSaSearch.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO)) {
+					expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					expr.addGroupBy(model.TIPO_MITTENTE);
+					expr.addGroupBy(model.MITTENTE);
+				}
 			}
 			
 		} catch (ServiceException e) {
@@ -6106,7 +6133,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.statistichePersonalizzateSearch.getProtocollo());
 				protocollo = this.statistichePersonalizzateSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo, this.statistichePersonalizzateSearch.getTipologiaRicercaEnum());
 
 			}
 
@@ -6119,7 +6146,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			// soggetto locale
-			if(this.statistichePersonalizzateSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.statistichePersonalizzateSearch.getSoggettoLocale()) && 
+			if(Utility.isFiltroDominioAbilitato() && this.statistichePersonalizzateSearch.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.statistichePersonalizzateSearch.getSoggettoLocale()) && 
 					!"--".equals(this.statistichePersonalizzateSearch.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.statistichePersonalizzateSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.statistichePersonalizzateSearch.getSoggettoLocale();
@@ -6159,8 +6186,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// ho 3 diversi tipi di query in base alla tipologia di ricerca
 
 			// imposto il soggetto (loggato) come mittente o destinatario in base alla tipologia di ricerca selezionata
-			if ("all".equals(this.statistichePersonalizzateSearch.getTipologiaRicerca())
-					|| StringUtils.isEmpty(this.statistichePersonalizzateSearch.getTipologiaRicerca())) {
+			if (this.statistichePersonalizzateSearch.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.statistichePersonalizzateSearch.getTipologiaRicercaEnum())) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome
 				// del
@@ -6276,8 +6302,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// nessun filtro da impostare
 				}
 
-			} else if ("ingresso".equals(this.statistichePersonalizzateSearch
-					.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.statistichePersonalizzateSearch.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				expr.and().equals(model.TIPO_PORTA, "applicativa");
 
@@ -6454,7 +6479,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return valori;
 	}
 
-	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithoutId<?> dao, StatisticaModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {
+	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithoutId<?> dao, StatisticaModel model,	IExpression expr, String protocollo, TipologiaRicerca tipologiaRicercaParam) throws ExpressionNotImplementedException, ExpressionException {
 		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
 		IExpression expressionTipoServiziCompatibili = null;
 		try {
@@ -6472,7 +6497,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		IExpression expressionTipoSoggettiMittenteCompatibili = null;
 		try {
 			if(protocollo != null) {
-				expressionTipoSoggettiMittenteCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo);
+				if(tipologiaRicercaParam==null || TipologiaRicerca.all.equals(tipologiaRicercaParam) || TipologiaRicerca.ingresso.equals(tipologiaRicercaParam)) {
+					// devo prendere anche le transazioni in cui il mittente non e' definito poiche' e' possibile nelle porte applicative avere una autenticazione anonima.
+					expressionTipoSoggettiMittenteCompatibili = dao.newExpression();
+					expressionTipoSoggettiMittenteCompatibili.or();
+					expressionTipoSoggettiMittenteCompatibili.isNull(model.TIPO_MITTENTE);
+					expressionTipoSoggettiMittenteCompatibili.equals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+					expressionTipoSoggettiMittenteCompatibili.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo));
+				}
+				else {
+					expressionTipoSoggettiMittenteCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo);
+				}
 			}
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);

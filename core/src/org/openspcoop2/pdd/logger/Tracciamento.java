@@ -131,6 +131,9 @@ public class Tracciamento {
 	/** Generatore di date casuali*/
 	private GeneratoreCasualeDate generatoreDateCasuali = null;
 	
+	/** Transaction */
+	private Transaction transactionNullable = null;
+	
 	public static String createLocationString(boolean bustaRicevuta,String location){
 		if(bustaRicevuta)
 			return ConnettoreUtils.limitLocation255Character(CostantiPdD.TRACCIAMENTO_IN+HttpConstants.SEPARATOR_SOURCE+location);
@@ -170,6 +173,15 @@ public class Tracciamento {
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato()){
 			this.generatoreDateCasuali = GeneratoreCasualeDate.getGeneratoreCasualeDate();
+		}
+		
+		try{
+			if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+				String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+				this.transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}
+		}catch(Exception e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
 		}
 	}
 
@@ -235,75 +247,85 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			Busta busta,EsitoElaborazioneMessaggioTracciato esito,String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				busta.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(busta, msg,securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
-			
-			try{
+		
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+				String xml = null;
+				boolean erroreAppender = false;
 				
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
-				}
-
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, true);
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					busta.setOraRegistrazione(gdo);
 				}
 				
-				//	Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
-					}catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+				// Traccia
+				Traccia traccia = this.getTraccia(busta, msg,securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
+				
+				try{
+					
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
+	
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, true);
+					}
+					
+					//	Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
+						}catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRichiesta();
 			}
 		}
 	}
@@ -323,76 +345,85 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			byte[] busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito,String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				bustaObject.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
-			traccia.setBustaAsByteArray(busta);
-			
-			try{
-		
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+				String xml = null;
+				boolean erroreAppender = false;
+				
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					bustaObject.setOraRegistrazione(gdo);
 				}
 				
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, true);
-				}
+				// Traccia
+				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
+				traccia.setBustaAsByteArray(busta);
+				
+				try{
+			
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
 					
-				// Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
-					}catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, true);
+					}
+						
+					// Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
+						}catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRichiesta();
 			}
 		}
 	}
@@ -410,76 +441,85 @@ public class Tracciamento {
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()) {
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				bustaObject.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
-			traccia.setBustaAsRawContent(busta);
-			
-			try{
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRichiesta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()) {
+				String xml = null;
+				boolean erroreAppender = false;
 				
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					bustaObject.setOraRegistrazione(gdo);
 				}
+				
+				// Traccia
+				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
+				traccia.setBustaAsRawContent(busta);
+				
+				try{
 					
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, true);
-				}
-				
-				// Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
-					} catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
+						
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, true);
+					}
+					
+					// Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(true), traccia);
+						} catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRichiesta();
 			}
 		}
 	}
@@ -502,75 +542,84 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			Busta busta,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException {
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				busta.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(busta, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
-			
-			try{
-							
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
-				}
-					
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, false);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+				String xml = null;
+				boolean erroreAppender = false;
+				
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					busta.setOraRegistrazione(gdo);
 				}
 				
-				// Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
-					}catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+				// Traccia
+				Traccia traccia = this.getTraccia(busta, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+				
+				try{
+								
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
+						
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, false);
+					}
+					
+					// Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
+						}catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRisposta();
 			}
 		}
 	}
@@ -590,76 +639,85 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			byte[] busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException{
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				bustaObject.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
-			traccia.setBustaAsByteArray(busta);
-			
-			try{
-								
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+				String xml = null;
+				boolean erroreAppender = false;
+				
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					bustaObject.setOraRegistrazione(gdo);
 				}
 				
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, false);
-				}
+				// Traccia
+				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+				traccia.setBustaAsByteArray(busta);
+				
+				try{
+									
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
 					
-				// Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
-					}catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, false);
+					}
+						
+					// Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
+						}catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRisposta();
 			}
 		}
 	}
@@ -677,76 +735,85 @@ public class Tracciamento {
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
 			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException {
-		if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
-			String xml = null;
-			boolean erroreAppender = false;
-			
-			// Data
-			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-				bustaObject.setOraRegistrazione(gdo);
-			}
-			
-			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
-			traccia.setBustaAsRawContent(busta);
-			
-			try{
-			
-				// Miglioramento performance
-				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					if(xml==null)
-						throw new Exception("Traccia non costruita");
-					this.loggerTracciamento.info(xml);
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startTracciamentoRisposta();
+		}
+		try {
+			if(this.tracciamentoSupportatoProtocollo && this.configurazionePdDManager.tracciamentoBuste()){
+				String xml = null;
+				boolean erroreAppender = false;
+				
+				// Data
+				Date gdo = DateManager.getDate();
+				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+					bustaObject.setOraRegistrazione(gdo);
 				}
 				
-				// TransazioneContext
-				if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
-					this.logTracciaInTransactionContext(traccia, false);
-				}
+				// Traccia
+				Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+				traccia.setBustaAsRawContent(busta);
 				
-				// Tracciamento personalizzato
-				for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
-					}catch(Exception e){
-						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+				try{
+				
+					// Miglioramento performance
+					if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						if(xml==null)
+							throw new Exception("Traccia non costruita");
+						this.loggerTracciamento.info(xml);
+					}
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveTracceInUniqueTransaction()) {
+						this.logTracciaInTransactionContext(traccia, false);
+					}
+					
+					// Tracciamento personalizzato
+					for(int i=0; i<this.loggerTracciamentoOpenSPCoopAppender.size();i++){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
-						}catch(Exception eMsg){}
-						if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
-							erroreAppender = true;
-							throw e; // Rilancio
+							this.loggerTracciamentoOpenSPCoopAppender.get(i).log(getConnectionFromState(false), traccia);
+						}catch(Exception e){
+							logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita.openspcoopAppender");
+							}catch(Exception eMsg){}
+							if(this.openspcoopProperties.isTracciaturaFallita_BloccaCooperazioneInCorso()){
+								erroreAppender = true;
+								throw e; // Rilancio
+							}
 						}
 					}
-				}
-			}catch(Exception e){
-				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
-				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
-					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
-					}catch(Exception eBuild){}
-				}
-				if(xml==null){
-					logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
-				}else{
-					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
-					if(!erroreAppender){
+				}catch(Exception e){
+					// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
+					if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
-							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
-						}catch(Exception eMsg){}
+							xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
+						}catch(Exception eBuild){}
 					}
+					if(xml==null){
+						logError("Errore durante la costruzione della traccia: "+e.getMessage(),e);
+					}else{
+						logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
+						if(!erroreAppender){
+							try{
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
+								this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
+								this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
+							}catch(Exception eMsg){}
+						}
+					}
+					gestioneErroreTracciamento(e);
 				}
-				gestioneErroreTracciamento(e);
+			}
+		}finally {
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endTracciamentoRisposta();
 			}
 		}
 	}

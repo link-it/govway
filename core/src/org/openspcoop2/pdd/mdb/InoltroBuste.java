@@ -395,6 +395,19 @@ public class InoltroBuste extends GenericLib{
 			return esito;
 		}
 		
+		// Transaction
+		Transaction transactionNullable = null;
+		try{
+			transactionNullable = TransactionContext.getTransaction(idTransazione);
+		}catch(Exception e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+//			msgDiag.logErroreGenerico(e, "getTransaction"); 
+//			openspcoopstate.releaseResource();
+//			esito.setEsitoInvocazione(false); 
+//			esito.setStatoInvocazioneErroreNonGestito(e);
+//			return esito;
+		}
+		
 		msgDiag.setPddContext(pddContext, protocolFactory);	
 		
 		ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
@@ -1528,7 +1541,8 @@ public class InoltroBuste extends GenericLib{
 						}
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
-						if(messageSecurityContext.processOutgoing(requestMessage,pddContext.getContext()) == false){
+						if(messageSecurityContext.processOutgoing(requestMessage,pddContext.getContext(),
+								transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
 							codiceErroreCooperazione = messageSecurityContext.getCodiceErrore();
 							
@@ -2835,7 +2849,8 @@ public class InoltroBuste extends GenericLib{
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 							
 							StringBuffer bfErroreSecurity = new StringBuffer();
-							presenzaRispostaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity);
+							presenzaRispostaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
+									transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
 							
 							if(bfErroreSecurity.length()>0){
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , bfErroreSecurity.toString() );
@@ -3279,15 +3294,17 @@ public class InoltroBuste extends GenericLib{
 					
 					gestoreCorrelazione = 
 							new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
-									this.log,soggettoFruitore,idServizio, servizioApplicativoFruitore,protocolFactory);
+									this.log,soggettoFruitore,idServizio, servizioApplicativoFruitore,protocolFactory,
+									transactionNullable);
 
 					gestoreCorrelazione.verificaCorrelazioneRisposta(pd.getCorrelazioneApplicativaRisposta(), responseMessage, headerIntegrazioneRisposta, false);
 					
 					idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
 					
 					if(idCorrelazioneApplicativaRisposta!=null) {
-						Transaction tr = TransactionContext.getTransaction(idTransazione);
-						tr.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+						if(transactionNullable!=null) {
+							transactionNullable.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+						}
 					}
 					
 					msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
@@ -4094,6 +4111,9 @@ public class InoltroBuste extends GenericLib{
 						if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getStato())||
 								CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
 
+							if(transactionNullable!=null) {
+								transactionNullable.getTempiElaborazione().startValidazioneRisposta();
+							}
 							ByteArrayInputStream binXSD = null;
 							try{
 								boolean hasContent = false;
@@ -4252,6 +4272,9 @@ public class InoltroBuste extends GenericLib{
 									return esito;
 								}
 							}finally{
+								if(transactionNullable!=null) {
+									transactionNullable.getTempiElaborazione().endValidazioneRisposta();
+								}
 								if(binXSD!=null){
 									try{
 										binXSD.close();

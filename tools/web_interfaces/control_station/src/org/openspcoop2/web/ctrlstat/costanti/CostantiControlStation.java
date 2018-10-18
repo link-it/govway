@@ -172,11 +172,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME = "Username";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL = "eMail";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Stato";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Applicativi Autenticati";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Soggetti Autenticati";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Ruoli";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "Scope";
-	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE = "Token";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Autorizzazione Puntuale";//"Applicativi Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Autorizzazione Puntuale";//"Soggetti Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Autorizzazione per Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "Autorizzazione per Scope";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE = "Autorizzazione per Token Claims";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "Claims";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE = "Indicare per riga i claims richiesti (nome=valore); è possibile elencare più valori separandoli con la virgola";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Tipo";
@@ -327,6 +327,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_SERVIZIO_APPLICATIVO = "servizioApplicativo";
 	public final static String PARAMETRO_VALORE = "valore";
 	public final static String PARAMETRO_PROTOCOLLO = "protocollo";
+	public final static String PARAMETRO_ACCESSO_DA_CHANGE = "accessoDaChange";
 	public final static String PARAMETRO_MESSAGE_SECURITY = "messageSecurity";
 	public final static String PARAMETRO_MTOM_RICHIESTA = "mtomReq";
 	public final static String PARAMETRO_MTOM_RISPOSTA = "mtomRes";
@@ -360,12 +361,14 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE = "autorizzazioneAutenticazione";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "autorizzazioneRuoli";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "autorizzazioneScope";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN = "autorizzazioneToken";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS = "autorizzazioneTokenOptions";
 	public final static String PARAMETRO_PORTE_TRACCIAMENTO_ESITO = "portaEsiti";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
 	public final static String PARAMETRO_SOGGETTO = "soggt";
+	public final static String PARAMETRO_SERVIZIO_APPLICATIVO_AUTORIZZATO = "saAuthz";
 	public final static String PARAMETRO_PORTE_TIPO_VALIDAZIONE = "tipo_validazione";
 	public final static String PARAMETRO_PORTE_XSD = "xsd";
 	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
@@ -380,6 +383,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "gtTokenForward";
 	public final static String PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY = "docSicXacmlPol";
 	
+	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
@@ -603,5 +607,6 @@ public class CostantiControlStation {
 	public final static String MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN = "I claims in ogni riga devono essere indicati come coppia (nome=valore); non è stato riscontrato il carattere separatore '='";
 	public static final String MESSAGGIO_ERRORE_POLICY_OBBLIGATORIA_CON_LA_NUOVA_AUTORIZZAZIONE = "La policy &egrave; obbligatoria quando si seleziona l''autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE = "Il nome gruppo indicato &egrave; gi&agrave; utilizzato in un'altra configurazione";
+	public static final String MESSAGGIO_ERRORE_TOKEN_OPTIONS_NON_INDICATI = "Dati incompleti. Definire almeno un claim utilizzato per autorizzare la richiesta";
 	
 }

@@ -258,7 +258,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			addFilterProtocol(ricerca, idLista);
 			
-			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+			if(this.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					String filterStatoAccordo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_STATO_ACCORDO);
 					this.addFilterStatoAccordo(filterStatoAccordo,false);
@@ -296,7 +296,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			// setto le label delle colonne
 			int totEl = 3;
-			if(this.core.isShowGestioneWorkflowStatoDocumenti()) {
+			if(this.isShowGestioneWorkflowStatoDocumenti()) {
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					totEl++;
 				}
@@ -318,7 +318,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				index++;
 			}
 			
-			if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+			if(this.isShowGestioneWorkflowStatoDocumenti()){
 				if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 					labels[index] = AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO;
 					index++;
@@ -367,7 +367,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 					}
 					
 
-					if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+					if(this.isShowGestioneWorkflowStatoDocumenti()){
 						if(this.core.isGestioneWorkflowStatoDocumenti_visualizzaStatoLista()) {
 							de = new DataElement();
 							de.setValue(StatiAccordo.upper(accordoCooperazione.getStatoPackage()));
@@ -506,7 +506,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		boolean modificheAbilitate = false;
 		if( tipoOp.equals(TipoOperazione.ADD) ){
 			modificheAbilitate = true;
-		}else if(this.core.isShowGestioneWorkflowStatoDocumenti()==false){
+		}else if(this.isShowGestioneWorkflowStatoDocumenti()==false){
 			modificheAbilitate = true;
 		}else if(StatiAccordo.finale.toString().equals(oldStato)==false){
 			modificheAbilitate = true;
@@ -700,7 +700,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
-		if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+		if(this.isShowGestioneWorkflowStatoDocumenti()){
 			if( tipoOp.equals(TipoOperazione.ADD)){
 				
 				DataElement deLabel = new DataElement();
@@ -790,7 +790,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 //		boolean modificheAbilitate = false;
 //		if( tipoOp.equals(TipoOperazione.ADD) ){
 //			modificheAbilitate = true;
-//		}else if(this.core.isShowGestioneWorkflowStatoDocumenti()==false){
+//		}else if(this.isShowGestioneWorkflowStatoDocumenti()==false){
 //			modificheAbilitate = true;
 //		}else if(StatiAccordo.finale.toString().equals(oldStato)==false){
 //			modificheAbilitate = true;
@@ -900,7 +900,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
 
-		//		if(this.core.isShowGestioneWorkflowStatoDocumenti()){
+		//		if(this.isShowGestioneWorkflowStatoDocumenti()){
 //			String[] stati = StatiAccordo.toArray();
 //			if( tipoOp.equals(TipoOperazione.ADD)){
 //				de.setType(DataElementType.TEXT);
@@ -988,7 +988,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			this.pd.setDati(dati);
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
+			if(this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
 				this.pd.setSelect(false);
@@ -1116,7 +1116,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 			this.pd.setDati(dati);
 
-			if(this.core.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
+			if(this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(ac.getStatoPackage())){
 				this.pd.setAddButton(false);
 				this.pd.setRemoveButton(false);
 				this.pd.setSelect(false);
@@ -1212,7 +1212,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 
 		if(tipoOp.equals(TipoOperazione.CHANGE)){
 			if(editMode){
-				if(this.acCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(statoPackage)){
+				if(this.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(statoPackage)){
 					this.pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 				}
 				else{	

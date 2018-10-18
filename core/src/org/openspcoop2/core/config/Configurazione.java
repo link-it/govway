@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocolli" type="{http://www.openspcoop2.org/core/config}configurazione-protocolli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -55,6 +56,7 @@ import java.util.List;
  * 			&lt;element name="messaggi-diagnostici" type="{http://www.openspcoop2.org/core/config}messaggi-diagnostici" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}tracciamento" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="transazioni" type="{http://www.openspcoop2.org/core/config}transazioni" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}configurazione-gestione-errore" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}integration-manager" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/>
@@ -79,6 +81,7 @@ import java.util.List;
   	"accessoDatiAutorizzazione",
   	"accessoDatiAutenticazione",
   	"accessoDatiGestioneToken",
+  	"multitenant",
   	"protocolli",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
@@ -89,6 +92,7 @@ import java.util.List;
   	"messaggiDiagnostici",
   	"tracciamento",
   	"dump",
+  	"transazioni",
   	"gestioneErrore",
   	"integrationManager",
   	"statoServiziPdd",
@@ -189,6 +193,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     this.accessoDatiGestioneToken = accessoDatiGestioneToken;
   }
 
+  public ConfigurazioneMultitenant getMultitenant() {
+    return this.multitenant;
+  }
+
+  public void setMultitenant(ConfigurazioneMultitenant multitenant) {
+    this.multitenant = multitenant;
+  }
+
   public ConfigurazioneProtocolli getProtocolli() {
     return this.protocolli;
   }
@@ -267,6 +279,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setDump(Dump dump) {
     this.dump = dump;
+  }
+
+  public Transazioni getTransazioni() {
+    return this.transazioni;
+  }
+
+  public void setTransazioni(Transazioni transazioni) {
+    this.transazioni = transazioni;
   }
 
   public ConfigurazioneGestioneErrore getGestioneErrore() {
@@ -392,6 +412,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlElement(name="accesso-dati-gestione-token",required=false,nillable=false)
   protected AccessoDatiGestioneToken accessoDatiGestioneToken;
 
+  @XmlElement(name="multitenant",required=false,nillable=false)
+  protected ConfigurazioneMultitenant multitenant;
+
   @XmlElement(name="protocolli",required=false,nillable=false)
   protected ConfigurazioneProtocolli protocolli;
 
@@ -421,6 +444,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="dump",required=false,nillable=false)
   protected Dump dump;
+
+  @XmlElement(name="transazioni",required=false,nillable=false)
+  protected Transazioni transazioni;
 
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected ConfigurazioneGestioneErrore gestioneErrore;

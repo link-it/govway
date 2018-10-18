@@ -71,6 +71,8 @@ if (mime) {
 				<jsp:include page="/jsp/form/erogazione.jsp" flush="true"/>
 			<% } else if(customListViewName.equals("fruizione")){ %>
 				<jsp:include page="/jsp/form/fruizione.jsp" flush="true"/>
+			<% } else if(customListViewName.equals("api")){ %>
+				<jsp:include page="/jsp/form/api.jsp" flush="true"/>
 			<% } %>	
 		</table>
 	</form>

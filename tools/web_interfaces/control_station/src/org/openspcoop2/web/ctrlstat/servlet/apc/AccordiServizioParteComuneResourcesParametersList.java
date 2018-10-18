@@ -138,7 +138,7 @@ public final class AccordiServizioParteComuneResourcesParametersList extends Act
 
 			List<ResourceParameter> lista = apcCore.accordiResourceParametersList(idRisorsa, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idRisorsa, resourceRequest, resourceResponse);
+			apcHelper.prepareAccordiResourcesParametersList(id, as, lista, ricerca, tipoAccordo, isRequest, res, resourceRequest, resourceResponse);
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

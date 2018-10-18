@@ -40,10 +40,10 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -91,7 +91,8 @@ public final class UtentiAdd extends Action {
 			
 			InterfaceType interfaceType = null;
 			if(tipoGui==null) {
-				interfaceType = utentiHelper.getTipoInterfaccia();
+				//interfaceType = utentiHelper.getTipoInterfaccia();
+				interfaceType = InterfaceType.STANDARD;
 			}
 			else {
 				interfaceType = InterfaceType.convert(tipoGui, true);
@@ -105,7 +106,10 @@ public final class UtentiAdd extends Action {
 			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
 			String isAuditing = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_AUDITING);
 			String isAccordiCooperazione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE);
-	
+			
+			String isSoggettiAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
+			String isServiziAll = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL);
+			
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 			
 			List<String> protocolliRegistratiConsole = utentiCore.getProtocolli();
@@ -115,22 +119,7 @@ public final class UtentiAdd extends Action {
 				String protocolloName = protocolliRegistratiConsole.get(i);
 				modalitaScelte[i] = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_MODALITA_PREFIX + protocolloName);
 			}
-			
-			String multiTenant = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_MULTI_TENANT);
-			
-			// Check multitenant
-			User userPerCheck = new User();
-			for (int i = 0; i < protocolliRegistratiConsole.size() ; i++) {
-				String protocolloName = protocolliRegistratiConsole.get(i);
-				if(ServletUtils.isCheckBoxEnabled(modalitaScelte[i])) {
-					userPerCheck.addProtocolloSupportato(protocolloName);
-				} 
-			}
-			boolean forceEnableMultitenant = utentiCore.isForceEnableMultiTenant(userPerCheck, false);
-			if(forceEnableMultitenant) {
-				multiTenant = Costanti.CHECK_BOX_ENABLED;
-			}
-			
+						
 			// Preparo il menu
 			utentiHelper.makeMenu();
 	
@@ -162,7 +151,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, multiTenant, forceEnableMultitenant);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null);
 				
 				pd.setDati(dati);
 		
@@ -191,7 +180,7 @@ public final class UtentiAdd extends Action {
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
-						null,modalitaScelte, multiTenant, forceEnableMultitenant);
+						null,modalitaScelte, isSoggettiAll, isServiziAll, null);
 				
 				pd.setDati(dati);
 	
@@ -265,7 +254,16 @@ public final class UtentiAdd extends Action {
 				} 
 			}
 			
-			newU.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
+			if (ServletUtils.isCheckBoxEnabled(isDiagnostica) || ServletUtils.isCheckBoxEnabled(isReportistica)) {
+				if(utentiCore.isMultitenant()) {
+					newU.setPermitAllSoggetti(ServletUtils.isCheckBoxEnabled(isSoggettiAll));
+				}
+				else {
+					newU.setPermitAllSoggetti(true);
+				}
+				newU.setPermitAllServizi(ServletUtils.isCheckBoxEnabled(isServiziAll));
+			}
+			
 			
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	
@@ -280,6 +278,13 @@ public final class UtentiAdd extends Action {
 	
 			utentiHelper.prepareUtentiList(ricerca, lista, singlePdD);
 	
+			if(newU.isConfigurazioneValidaSoggettiAbilitati()==false) {
+				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
+			}
+			else if(newU.isConfigurazioneValidaServiziAbilitati()==false) {
+				pd.setMessage(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_CREATE_NOTE, MessageType.INFO);
+			}
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 	
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, UtentiCostanti.OBJECT_NAME_UTENTI, ForwardParams.ADD());

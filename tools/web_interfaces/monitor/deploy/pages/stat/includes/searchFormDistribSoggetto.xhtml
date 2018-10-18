@@ -25,13 +25,14 @@
 		<ui:param name="sf_serviziApplicativi" value="#{mBean.serviziApplicativi}" />
 		<ui:param name="sf_tipologiaRicerca" value="#{search.tipologiaRicerca}" />
 		<ui:param name="sf_tipoReport" value="#{search._value_tipoReport}" />
-		<ui:param value="#{search}" name="sf_bean" />
+		<ui:param name="sf_bean" value="#{search}" />
 		<ui:param name="sf_showSoggetti" value="#{sf_bean.distribuzionePerSoggettoRemota==false}" />
 		<ui:param name="sf_showServizi" value="#{true}" />
 		<ui:param name="sf_showAzioni" value="#{true}" />
-		<ui:param name="sf_showTipologia" value="#{true}" />
+		<ui:param name="sf_showTipologia" value="#{search.showTipologia}" />
 		<ui:param name="sf_showDatiMittente" value="#{true}" />
-		<ui:param value="#{mBean}" name="sf_mbean" />
+		<ui:param name="sf_mbean" value="#{mBean}" />
+		<ui:param name="sf_servizioApplicativo" value="#{search.servizioApplicativo}" />
 		<ui:param name="sf_labelSoggettoLocale" value="#{search.labelTipoNomeSoggettoLocale}" />
 		<ui:param name="sf_labelNomeMittente" value="#{search.labelTipoNomeMittente}" />
 		<ui:param name="sf_labelNomeDestinatario" value="#{search.labelTipoNomeDestinatario}" />

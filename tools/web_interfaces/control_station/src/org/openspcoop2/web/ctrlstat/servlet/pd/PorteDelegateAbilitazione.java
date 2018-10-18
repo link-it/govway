@@ -199,7 +199,7 @@ public final class PorteDelegateAbilitazione extends Action {
 				
 				List<MappingFruizionePortaDelegata> listaMapping = aspsCore.serviziFruitoriMappingList((long) Integer.parseInt(idFruizione), idSoggettoFruitore, idServizio2, ricerca);
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idFruizione, ricerca); 
+				apsHelper.serviziFruitoriMappingList(listaMapping, idAsps, idsogg, idSoggettoFruitore, idFruizione, ricerca); 
 				
 				break;
 			case PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_SOGGETTO:

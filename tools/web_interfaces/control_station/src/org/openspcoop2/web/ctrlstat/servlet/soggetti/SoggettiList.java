@@ -77,9 +77,15 @@ public final class SoggettiList extends Action {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			soggettiHelper.makeMenu();
 
+			String filterDominioInterno = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_FILTER_DOMINIO_INTERNO);
+			boolean forceFilterDominioInterno = false;
+			if("true".equalsIgnoreCase(filterDominioInterno)) {
+				forceFilterDominioInterno = true;
+			}
+			
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
-			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
+			boolean multiTenant = soggettiCore.isMultitenant();
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -87,8 +93,11 @@ public final class SoggettiList extends Action {
 			int idLista = Liste.SOGGETTI;
 			ricerca = soggettiHelper.checkSearchParameters(idLista, ricerca);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
-			if(!multiTenant && !soggettiHelper.isModalitaCompleta()) {
+		
+			if(forceFilterDominioInterno) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
+			}
+			else if(!multiTenant && !soggettiHelper.isModalitaCompleta()) {
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_ESTERNO_VALUE);
 			}
 			

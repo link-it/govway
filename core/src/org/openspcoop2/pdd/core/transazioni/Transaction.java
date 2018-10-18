@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.transazioni;
 
 
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.monitor.engine.config.TransactionResource;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
@@ -137,6 +138,8 @@ public class Transaction {
 	/** CredenzialiMittente */
 	private CredenzialiMittente credenzialiMittente;
 	
+	/** TempiElaborazione */
+	private TempiElaborazione tempiElaborazione = new TempiElaborazione();
 	
 
 	/** GET */
@@ -268,6 +271,11 @@ public class Transaction {
 	
 	public CredenzialiMittente getCredenzialiMittente() {
 		return this.credenzialiMittente;
+	}
+	
+	// NOTA: Per adesso la funzionalità dei tempi di elaborazione vale solamente in comunicazioni stateless
+	public TempiElaborazione getTempiElaborazione() {
+		return this.tempiElaborazione;
 	}
 	
 	

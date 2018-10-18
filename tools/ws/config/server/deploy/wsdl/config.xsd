@@ -38,6 +38,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="identificativo-porta" type="xsd:string"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute default="false" name="dominio-default" type="xsd:boolean"> <!-- non uso default poiche' e' una keyword riservata -->
+			
+		</xsd:attribute>
 		<xsd:attribute default="false" name="router" type="xsd:boolean">
 			
 		</xsd:attribute>
@@ -193,7 +196,8 @@
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
 			<xsd:element minOccurs="0" name="xacml-policy" type="xsd:string"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="soggetti" type="porta-applicativa-autorizzazione-soggetti"/>	
+			<xsd:element maxOccurs="1" minOccurs="0" name="soggetti" type="porta-applicativa-autorizzazione-soggetti"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="servizi-applicativi-autorizzati" type="porta-applicativa-autorizzazione-servizi-applicativi"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="scope" type="autorizzazione-scope"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-token" type="gestione-token"/>
@@ -304,6 +308,17 @@
 	</xsd:complexType>
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetto">
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- PortaApplicativa Autorizzazione per Servizi Applicativi -->
+	<xsd:complexType name="porta-applicativa-autorizzazione-servizi-applicativi">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="servizio-applicativo" type="porta-applicativa-autorizzazione-servizio-applicativo"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="porta-applicativa-autorizzazione-servizio-applicativo">
+		<xsd:attribute name="tipo-soggetto-proprietario" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome-soggetto-proprietario" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
@@ -671,6 +686,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="multitenant" type="configurazione-multitenant"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="protocolli" type="configurazione-protocolli"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
@@ -783,6 +799,13 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Configurazione Multitenant -->
+	<xsd:complexType name="configurazione-multitenant">
+		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute default="soggettiEsterni" name="fruizioneSceltaSoggettiErogatori" type="PortaDelegataSoggettiErogatori"/>
+		<xsd:attribute default="soggettiEsterni" name="erogazioneSceltaSoggettiFruitori" type="PortaApplicativaSoggettiFruitori"/>
 	</xsd:complexType>
 
 	<!-- Configurazione Protocolli -->
@@ -1015,6 +1038,7 @@
 	<xsd:simpleType name="CorrelazioneApplicativaRichiestaIdentificazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="urlBased"/>
+			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="disabilitato"/>
@@ -1022,6 +1046,7 @@
 	</xsd:simpleType>
 	<xsd:simpleType name="CorrelazioneApplicativaRispostaIdentificazione">
 		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="headerBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>
 			<xsd:enumeration value="disabilitato"/>
@@ -1142,6 +1167,20 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="all"/>
 			<xsd:enumeration value="any"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PortaDelegataSoggettiErogatori">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="soggettiEsterni"/>
+			<xsd:enumeration value="escludiSoggettoFruitore"/>
+			<xsd:enumeration value="tutti"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PortaApplicativaSoggettiFruitori">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="soggettiEsterni"/>
+			<xsd:enumeration value="escludiSoggettoErogatore"/>
+			<xsd:enumeration value="tutti"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

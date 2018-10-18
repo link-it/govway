@@ -80,14 +80,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
 			boolean isSupportatoCodiceIPA, boolean isSupportatoIdentificativoPorta,
-			String [] pddList,String nomePddGestioneLocale, String pdd, 
+			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale, String pdd, 
 			List<String> listaTipiProtocollo, String protocollo,
 			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
 			boolean isPddEsterna,String tipologia, String dominio) throws Exception  {
 		return addSoggettiToDati(tipoOp, dati, nomeprov, tipoprov, portadom, descr, 
 				isRouter, tipiSoggetti, profilo, privato, codiceIpa, versioni, 
 				isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
-				pddList, nomePddGestioneLocale, pdd,
+				pddList, pddEsterneList, nomePddGestioneLocale, pdd,
 				null,null,null,null,
 				-1,null,-1,null,listaTipiProtocollo,protocollo,
 				isSupportatoAutenticazioneSoggetti, utente, password, subject, principal, tipoauth,
@@ -96,14 +96,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, 
 			boolean isSupportatoCodiceIPA, boolean isSupportatoIdentificativoPorta,
-			String [] pddList,String nomePddGestioneLocale,String pdd, 
+			String [] pddList,String[] pddEsterneList,String nomePddGestioneLocale,String pdd, 
 			String id, String oldnomeprov, String oldtipoprov, org.openspcoop2.core.registry.Connettore connettore,
 			long numPD,String pd_url_prefix_rewriter,long numPA, String pa_url_prefix_rewriter, List<String> listaTipiProtocollo, String protocollo,
 			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
 			boolean isPddEsterna,String tipologia, String dominio) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-
+		
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 			DataElement de = new DataElement();
 			de.setLabel(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
@@ -126,7 +126,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		}
 		
-		boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+		boolean multiTenant = this.core.isMultitenant();
 		boolean hiddenDatiDominioInterno = false;
 		if(!multiTenant) {
 			if(!gestionePdd) {
@@ -135,6 +135,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		}
 		
 		if(gestionePdd) {
+			
 			if(TipoOperazione.ADD.equals(tipoOp)){
 				
 				if(this.core.isRegistroServiziLocale()){
@@ -142,7 +143,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 					de.setType(DataElementType.SELECT);
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
-					de.setValues(pddList);
+					if(this.soggettiCore.isMultitenant()) {
+						de.setValues(pddList);
+					}
+					else {
+						de.setValues(pddEsterneList);
+					}
 					de.setSelected(pdd);
 					de.setPostBack(isSupportatoAutenticazioneSoggetti);
 					if (this.core.isSinglePdD()) {
@@ -164,7 +170,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 						de.setLabel(PddCostanti.LABEL_PORTA_DI_DOMINIO);
 						de.setType(DataElementType.SELECT);
 						de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
-						de.setValues(pddList);
+						if(this.soggettiCore.isMultitenant()) {
+							de.setValues(pddList);
+						}
+						else {
+							de.setValues(pddEsterneList);
+						}
 						de.setSelected(pdd);
 						de.setPostBack(isSupportatoAutenticazioneSoggetti);
 						dati.addElement(de);
@@ -414,9 +425,10 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
-			boolean showConnettore = !this.isModalitaStandard() && 
-					this.core.isRegistroServiziLocale() &&
-					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
+//			boolean showConnettore = !this.isModalitaStandard() && 
+//					this.core.isRegistroServiziLocale() &&
+//					(this.isModalitaCompleta() || this.pddCore.isPddEsterna(pdd) || multiTenant );
+			boolean showConnettore = this.core.isRegistroServiziLocale() && this.isModalitaCompleta();
 				
 //			if(!showConnettore) {
 //				// guardo se fosse previsto un connettore static
@@ -488,7 +500,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 		}
 		
-		if(TipoOperazione.CHANGE.equals(tipoOp) && !hiddenDatiDominioInterno){
+		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
 			de = new DataElement();
 			de.setLabel(RuoliCostanti.LABEL_RUOLI);
@@ -497,8 +509,16 @@ public class SoggettiHelper extends ConnettoriHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
-			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
-					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""));
+			if(this.isModalitaCompleta()) {
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""));
+			}
+			else {
+				// Imposto Accesso da Change!
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE,Costanti.CHECK_BOX_ENABLED));
+			}
 			if (contaListe) {
 				// BugFix OP-674
 				//List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
@@ -841,7 +861,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI);
 
-			boolean multiTenant = ServletUtils.getUserFromSession(this.session).isPermitMultiTenant();
+			boolean multiTenant = this.core.isMultitenant();
 			
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 			int idLista = Liste.SOGGETTI;
@@ -883,7 +903,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				// pdd o dominio
 				totEl++;
 			}
-			if(multiTenant || this.isModalitaCompleta()) {
+			if(this.isModalitaCompleta()) {
 				totEl++; // connettore column
 			}
 			if(this.isModalitaCompleta()) {
@@ -901,7 +921,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			else if(multiTenant) {
 				labels[i++] = SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_DOMINIO;
 			}
-			if(multiTenant || this.isModalitaCompleta()) {
+			if(this.isModalitaCompleta()) {
 				labels[i++] = ConnettoriCostanti.LABEL_CONNETTORE;
 			}
 			labels[i++] = RuoliCostanti.LABEL_RUOLI;
@@ -955,7 +975,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
 				de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 				de.setIdToRemove(elem.getId().toString());
-				de.setToolTip(elem.getCodiceIpa());
+				de.setToolTip(de.getValue());
+				de.setSize(100);
 				e.addElement(de);
 
 				if(showProtocolli) {
@@ -996,7 +1017,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					e.addElement(de);
 				}
 
-				if(multiTenant || this.isModalitaCompleta()) {
+				if(this.isModalitaCompleta()) {
 					
 					boolean showConnettore = this.core.isRegistroServiziLocale() &&
 							(this.isModalitaCompleta() || this.pddCore.isPddEsterna(nomePdD) || multiTenant );
@@ -1387,10 +1408,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 					throws Exception {
 		try {
 			String id = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-
+			String accessDaChangeTmp = this.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE);
+			boolean accessDaChange = ServletUtils.isCheckBoxEnabled(accessDaChangeTmp);
 
 			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
-					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id));
+					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id),
+					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_RUOLI_ACCESSO_DA_CHANGE, accessDaChangeTmp));
 
 			int idLista = Liste.SOGGETTI_RUOLI;
 			int limit = ricerca.getPageSize(idLista);
@@ -1407,9 +1430,23 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle_ServletChange(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
-					SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
-			
+			if(accessDaChange) {
+				ServletUtils.setPageDataTitle_ServletFirst(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST);
+				ServletUtils.appendPageDataTitle(this.pd, 
+						new Parameter(tmpTitle, 
+								SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE, 
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,soggettoRegistry.getId()+""),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,soggettoRegistry.getNome()),
+								new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,soggettoRegistry.getTipo())));
+				ServletUtils.appendPageDataTitle(this.pd, 
+						new Parameter(RuoliCostanti.LABEL_RUOLI, null));
+			}
+			else {
+				ServletUtils.setPageDataTitle_ServletChange(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
+						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
+			}
+
 
 			// controllo eventuali risultati ricerca
 			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO);

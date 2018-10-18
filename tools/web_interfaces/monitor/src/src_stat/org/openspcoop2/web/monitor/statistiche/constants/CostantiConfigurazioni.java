@@ -49,12 +49,12 @@ public class CostantiConfigurazioni {
 	
 	public static final String LABEL_INFORMAZIONI_SERVIZI = "Informazioni Servizi";
 	public static final String LABEL_INFORMAZIONI_GENERALI = "Informazioni Generali";
-	public static final String LABEL_SERVIZI = "Servizi";
+	public static final String LABEL_SERVIZI = "API";
 	public static final String LABEL_SOGGETTI = "Soggetti";
 	public static final String LABEL_REGISTRO = "Registro";
 	
-	public static final String LABEL_INFORMAZIONI_SOGGETTO = "Servizi del Soggetto {0}";
-	public static final String LABEL_INFORMAZIONI_SERVIZIO = "Servizio {0}";
+	public static final String LABEL_INFORMAZIONI_SOGGETTO = "API del Soggetto {0}";
+	public static final String LABEL_INFORMAZIONI_SERVIZIO = "API {0}";
 	
 	// Label Informazioni generali
 
@@ -68,8 +68,8 @@ public class CostantiConfigurazioni {
 
 	public static final String CONF_AZIONI_LABEL = "Azioni";	
 	public static final String CONF_ASPC_LABEL = "API";
-	public static final String CONF_ASPS_LABEL = "Erogazioni di Servizio";
-	public static final String CONF_FRUIZIONI_SERVIZIO_LABEL = "Fruizioni di Servizio";
+	public static final String CONF_ASPS_LABEL = "Erogazioni";
+	public static final String CONF_FRUIZIONI_SERVIZIO_LABEL = "Fruizioni";
 
 	// Label Integrazione applicativi
 
@@ -87,7 +87,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_RUOLI_SOGGETTI_AUTORIZZATI = "Ruoli o Soggetti Autorizzati";
 	public static final String LABEL_RUOLI_ALL = "tutti";
 	public static final String LABEL_RUOLI_ANY = "almeno uno";
-	public static final String LABEL_SERVIZIO = "Servizio";
+	public static final String LABEL_SERVIZIO = "API";
 	public static final String LABEL_EROGATORE = "Erogatore";
 	public static final String LABEL_NOME_PORTA_APPLICATIVA = "Nome Porta Applicativa";
 	public static final String LABEL_EXPRESSIONE_REGOLARE = "Expressione Regolare";

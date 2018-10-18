@@ -153,6 +153,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_USERNAME,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_MAIL,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_INFO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TEMPI_ELABORAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RICHIESTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RISPOSTA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CLUSTER_ID,false),"?");
@@ -249,6 +250,7 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTokenUsername(),Transazione.model().TOKEN_USERNAME.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTokenMail(),Transazione.model().TOKEN_MAIL.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTokenInfo(),Transazione.model().TOKEN_INFO.getFieldType()) );
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTempiElaborazione(),Transazione.model().TEMPI_ELABORAZIONE.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getDuplicatiRichiesta(),Transazione.model().DUPLICATI_RICHIESTA.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getDuplicatiRisposta(),Transazione.model().DUPLICATI_RISPOSTA.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getClusterId(),Transazione.model().CLUSTER_ID.getFieldType()) );
@@ -446,6 +448,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		lstObjects_transazione.add(new JDBCObject(transazione.getTokenMail(), Transazione.model().TOKEN_MAIL.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_INFO,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getTokenInfo(), Transazione.model().TOKEN_INFO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TEMPI_ELABORAZIONE,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getTempiElaborazione(), Transazione.model().TEMPI_ELABORAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RICHIESTA,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getDuplicatiRichiesta(), Transazione.model().DUPLICATI_RICHIESTA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RISPOSTA,false), "?");

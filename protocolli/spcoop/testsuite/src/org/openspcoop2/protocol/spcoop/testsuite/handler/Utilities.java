@@ -200,7 +200,7 @@ public class Utilities {
 			if(Costanti.TEST_CONTEXT_SERVIZIO_APPLICATIVO_FRUITORE_VALUE_ANONIMO.equals(test.getServizioApplicativoFruitore())){
 				if(integrationContext.getServizioApplicativoFruitore()!=null){
 					throw new HandlerException("Servizio applicativo fruitore ritornato dalla Porta di Dominio ["+integrationContext.getServizioApplicativoFruitore()
-						+"] diverso da quello atteso per il test [S.A. Anonimo]");
+						+"] diverso da quello atteso per il test [Applicativo Anonimo]");
 				}
 			}else{
 				if(!test.getServizioApplicativoFruitore().equals(integrationContext.getServizioApplicativoFruitore())){

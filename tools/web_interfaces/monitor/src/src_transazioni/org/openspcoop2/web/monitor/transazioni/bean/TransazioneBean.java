@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
+import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -608,4 +610,19 @@ public class TransazioneBean extends Transazione{
 		this.tokenMailLabel = tokenMailLabel;
 	}
 
+	public TempiElaborazioneBean getTempiElaborazioneObject() {
+		String tempiElaborazione = this.getTempiElaborazione();
+		try {
+			TempiElaborazione tempi = TempiElaborazioneUtils.convertFromDBValue(tempiElaborazione);
+			if(tempi!=null) {
+				return new TempiElaborazioneBean(tempi);
+			}
+			else {
+				return null;
+			}
+		}catch(Exception e) {
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il processamento dei tempi di elaborazione ["+tempiElaborazione+"]");
+			return null;
+		}
+	}
 }

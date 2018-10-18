@@ -261,10 +261,10 @@ textarea.inputLinkLong {
 }
 
 .tdPageHeader {
-	padding: 16px 20px 16px 20px;
 } 
 
 .td1PageHeader {
+	padding: 16px 20px 16px 20px;
 } 
 
 .td2PageHeader {
@@ -814,12 +814,41 @@ span.modalitaImg {
     padding: 0px 8px;
 }
 
+span.soggetto {
+/* 	padding-left: 4px; */
+/*     padding-right: 4px; */
+    font-size: 16px;
+}
+
+span.soggettoImg {
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: url(../images/tema_link/down_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 8px;
+}
+
 .text-decor {
 	font-family: 'Roboto';
 	font-size: 18px;
 	font-weight: bold;
 /* 	padding: 4px 8px; */
 	text-align: right;
+	white-space: nowrap;
+	padding: 19px 12px 20px 12px;
+}
+
+.ddmenu-label.tastoMenuHover,
+#menuSoggetto.ddmenu-label.tastoMenuHover,
+#menuUtente.ddmenu-label.tastoMenuHover,
+#menuModalita.ddmenu-label.tastoMenuHover {
+   	background-color: ${menu.header.background.color};
+	border-color: ${menu.header.background.color};
+	color: ${menu.element.hover.color};
+	cursor: pointer;
 }
 
 .ddmenu-label {
@@ -831,43 +860,58 @@ span.modalitaImg {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-/* 	min-width: 140px; */
-	padding-right: 16px;
+	margin-right: 16px;
 	cursor: pointer;
 }  
 
 #menuUtente_menu {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
+	background-color: ${menu.background.color};
+	border-color: ${menu.background.color};
 	min-width: 170px;
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
-	top: 18px;
+	top: 0px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-	right: -36px;
+	right: 0px;
 } 
 
 #menuModalita {
    	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 260px;
-	padding-right: 16px;
+/* 	margin-right: 16px; */
 	cursor: pointer;
 }  
 
 #menuModalita_menu {
-	background-color: ${page.header.background.color};
-	border-color: ${page.header.background.color};
-	min-width: 200px;
+	background-color: ${menu.background.color};
+	border-color: ${menu.background.color};
 	display:none;
 	position:absolute;
 	color: ${page.header.text.color};
-	top: 18px;
+	top: 0px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
-	left: 68px;
+	right: 0px;
 } 
+
+#menuSoggetto {
+   	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	color: ${page.header.text.color};
+	cursor: pointer;
+}  
+
+#menuSoggetto_menu {
+	background-color: ${menu.background.color};
+	border-color: ${menu.background.color};
+	display:none;
+	position:absolute;
+	color: ${page.header.text.color};
+	top: 0px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+	right: 0px;
+}
 
 .menu-separator {
 	border-bottom: 1px solid ${page.header.border.bottom.color};
@@ -875,6 +919,22 @@ span.modalitaImg {
 
 .menu-no-pointer {
 	cursor: default;
+	font-weight: 600;
+}
+
+.menu-item-no-icon {
+	color: ${page.header.text.color};
+	padding: 8px 8px 8px 16px; 
+}
+
+.menu-item-no-icon:hover {
+	border-left: 12px solid ${menu.element.hover.border.color};
+    padding-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: ${menu.element.hover.background.color};
+	color: ${page.header.text.hover.color};
+    font-weight: 600;
 }
 
 .menu-item {
@@ -882,21 +942,40 @@ span.modalitaImg {
 	padding: 8px 0px 8px 24px; 
 }
 
+.menu-item:hover {
+	border-left: 12px solid ${menu.element.hover.border.color};
+	background: ${menu.element.hover.background.color};
+	color: ${page.header.text.hover.color};
+	padding-left: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+	font-weight: 600;
+}
+
 .menu-item-with-icon {
 	color: ${page.header.text.color};
 	padding: 8px 0px 8px 8px;
 }
 
-.menu-item a{
-	text-decoration: none;
+.menu-item-with-icon:hover {
+	border-left: 4px solid ${menu.element.hover.border.color};
+	background: ${menu.element.hover.background.color};
+	color: ${page.header.text.hover.color};
+	padding-left: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+	font-weight: 600;
 }
 
+.menu-item a,
+.menu-item-no-icon a,
 .menu-item-with-icon a{
 	text-decoration: none;
 }
 
 span.item-label {
-	padding: 12px 12px 12px 12px;
+	padding: 12px 12px 12px 16px;
+    white-space: nowrap;
 }
 
 span.item-label a{
@@ -1228,23 +1307,26 @@ div.prop-slider{
 }
 
 
-/* CLASSI VISTA CUSTOM EROGAZIONI */
+/* CLASSI VISTA CUSTOM EROGAZIONI, FRUIZIONI, API */
 
 .entryErogazione,
-.entryFruizione {
+.entryFruizione,
+.entryApi {
 	cursor: pointer;
 	padding: 16px;
 }
 
 .entryErogazione .titoloEntry,
-.entryFruizione .titoloEntry {
+.entryFruizione .titoloEntry,
+.entryApi .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
 }
 
 .entryErogazione .metadatiEntry,
-.entryFruizione .metadatiEntry {
+.entryFruizione .metadatiEntry,
+.entryApi .metadatiEntry {
 	padding: 4px 4px 4px 0px;
 	color: ${body.secondary.color};
 }
@@ -1450,6 +1532,7 @@ div.propRiepilogo label, span.spanLink{
 
 .edit-link {
 	float: right;
+	padding: 0px 0px 0px 4px;
 }
 
 .edit-link span.icon-box {

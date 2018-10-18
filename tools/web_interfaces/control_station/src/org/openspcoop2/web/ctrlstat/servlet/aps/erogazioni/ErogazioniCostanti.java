@@ -58,7 +58,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_ASPS_FRUIZIONI = "Fruizioni";
 	public final static String LABEL_ASPS_FRUIZIONE = "Fruizione";
 	public final static String LABEL_ASPS_RIEPILOGO = "Riepilogo";
-	public final static String LABEL_ASPS_MODIFICA_SERVIZIO = "Servizio";
+	public final static String LABEL_ASPS_MODIFICA_SERVIZIO_NOME = "Nome";
+	public final static String LABEL_ASPS_MODIFICA_SERVIZIO_INFO_GENERALI = AccordiServizioParteSpecificaCostanti.LABEL_APS_INFO_GENERALI;
 	public final static String LABEL_ASPS_PORTE_DELEGATE_MODIFICA_DATI_INVOCAZIONE = PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE;
 	public final static String LABEL_ASPS_PORTE_DELEGATE_MODIFICA_CONNETTORE = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE;
 	public final static String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_DATI_INVOCAZIONE = PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE;
@@ -84,7 +85,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_FRUIZIONE = "fruizione";
 	public final static String ASPS_EROGAZIONI_NOME_VISTA_CUSTOM_FORM_EROGAZIONE = "erogazione";
 	
-	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI = "API {0}: {1}";
+	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_EDIT = "{1} ({0})";
+	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_LIST = "API {0}: {1}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_CON_PROFILO = "API {0}: {1}, Profilo Interoperabilit&agrave;: {2}";
 	public final static String MESSAGE_METADATI_SERVIZIO_EROGAZIONI_PROFILO = "Profilo Interoperabilit&agrave;: {0}";
 	

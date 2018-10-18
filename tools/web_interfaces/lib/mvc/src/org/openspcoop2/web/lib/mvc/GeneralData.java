@@ -47,6 +47,7 @@ public class GeneralData {
 	String linkFoot;
 	Vector<GeneralLink> headerLinks;
 	Vector<GeneralLink> modalitaLinks;
+	Vector<GeneralLink> soggettiLinks;
 	private String contextName;
 	private String logoHeaderImage;
 	private String logoHeaderTitolo;
@@ -61,6 +62,7 @@ public class GeneralData {
 		this.linkFoot = linkFoot;
 		this.headerLinks = new Vector<GeneralLink>();
 		this.modalitaLinks = new Vector<GeneralLink>();
+		this.soggettiLinks = new Vector<GeneralLink>();
 		this.logoHeaderImage = "";
 		this.logoHeaderLink= "";
 		this.logoHeaderTitolo= "";
@@ -151,5 +153,11 @@ public class GeneralData {
 	}
 	public void setModalitaLinks(Vector<GeneralLink> modalitaLinks) {
 		this.modalitaLinks = modalitaLinks;
+	}
+	public Vector<GeneralLink> getSoggettiLinks() {
+		return this.soggettiLinks;
+	}
+	public void setSoggettiLinks(Vector<GeneralLink> soggettiLinks) {
+		this.soggettiLinks = soggettiLinks;
 	}
 }

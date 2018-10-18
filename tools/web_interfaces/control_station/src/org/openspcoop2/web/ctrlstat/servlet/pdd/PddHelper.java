@@ -287,9 +287,6 @@ public class PddHelper extends ConsoleHelper {
 		if (clientAuth != null && clientAuth.equals(CostantiRegistroServizi.ABILITATO)) {
 			de.setRequired(true);
 		}
-		else if(this.pddCore.fruzioniWithClientAuthAbilitato(nome).size() > 0 ){
-			de.setRequired(true);
-		}
 		//}  else {
 		//    de.setType(DataElementType.HIDDEN);
 		//    de.setValue("");
@@ -337,23 +334,6 @@ public class PddHelper extends ConsoleHelper {
 				if (subject == null || "".equals(subject)) {
 					this.pd.setMessage("E' necessario specificare il subject in caso di Client Auth abilitato.");
 					return false;
-				}
-			}
-			else{
-				List<String> listaFruzioni = this.pddCore.fruzioniWithClientAuthAbilitato(nome);
-				if(listaFruzioni.size() > 0 ){
-					if (subject == null || "".equals(subject)) {
-						StringBuffer bf = new StringBuffer();
-						bf.append("Un subject deve essere obbligatoriamente definito poichè esistono ");
-						bf.append("fruitori");
-						bf.append(" che richiedono l'autenticazione della PdD mittente (client-auth):");
-						for (int i = 0; i < listaFruzioni.size(); i++) {
-							bf.append("<BR> -");
-							bf.append(listaFruzioni.get(i));
-						}
-						this.pd.setMessage(bf.toString());
-						return false;
-					}
 				}
 			}
 

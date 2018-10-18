@@ -127,9 +127,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 		try {
-			boolean multitenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant(); 
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
+			
+			boolean isModalitaCompleta = saHelper.isModalitaCompleta();
 			
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -325,7 +326,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 				
 				if(accessoDaListaAPS) {
-					if(!multitenant) {
+					if(!isModalitaCompleta) {
 						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE;
 						} else {
@@ -934,7 +935,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						int idServizio = Integer.parseInt(idAsps);
 						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
 						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps);
+						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}

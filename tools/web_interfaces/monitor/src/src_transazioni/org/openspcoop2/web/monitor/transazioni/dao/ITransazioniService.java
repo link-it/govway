@@ -39,6 +39,7 @@ import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -68,7 +69,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * @param esitoContesto
 	 * @return esiti sul numero transazioni (ok,ko) nell'intervallo
 	 */
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto,String protocollo);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca);
 
 	/**
 	 * Recupera le informazioni per la live view

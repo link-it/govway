@@ -411,16 +411,10 @@ public class RegistroCore {
 					idSoggettoReferente.setTipo((String)tipoSoggettoReferenteAccordo);
 					idSoggettoReferente.setNome((String)nomeSoggettoReferenteAccordo);
 				}
-				String v = null;
-				if(versioneAccordo!=null && (versioneAccordo instanceof String)){
-					v = (String) versioneAccordo;
-				} 
 				Integer versione = null;
-				if(v != null) {
-					try {
-						versione = Integer.parseInt(v); 
-					}catch(Exception e) {}
-				}
+				if(versioneAccordo!=null && (versioneAccordo instanceof Integer)){
+					versione = (Integer) versioneAccordo;
+				} 
 				
 				String serviceBindingAccordo = (String) map.get(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.getBaseField().getFieldName()+
 						"."+AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING.getFieldName());

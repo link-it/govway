@@ -17,6 +17,7 @@
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="dominio-default" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="router" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="pd-url-prefix-rewriter" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="pa-url-prefix-rewriter" type="xsd:string" minOccurs="0" maxOccurs="1" />

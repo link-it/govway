@@ -40,6 +40,7 @@ import java.io.Serializable;
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
+ * 		&lt;attribute name="inboundApplicativeAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
@@ -83,6 +84,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
 
   public void setAuthentication(boolean authentication) {
     this.authentication = authentication;
+  }
+
+  public boolean isInboundApplicativeAuthentication() {
+    return this.inboundApplicativeAuthentication;
+  }
+
+  public boolean getInboundApplicativeAuthentication() {
+    return this.inboundApplicativeAuthentication;
+  }
+
+  public void setInboundApplicativeAuthentication(boolean inboundApplicativeAuthentication) {
+    this.inboundApplicativeAuthentication = inboundApplicativeAuthentication;
   }
 
   public boolean isCodeDomain() {
@@ -131,6 +144,10 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="authentication",required=false)
   protected boolean authentication = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="inboundApplicativeAuthentication",required=false)
+  protected boolean inboundApplicativeAuthentication = true;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="codeDomain",required=false)

@@ -224,6 +224,9 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 			// manca l'id dei port-type
 			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 
+			// Verifico stato
+			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);
+			
 			apcHelper.prepareAccordiResourcesList(id,as, lista, ricerca, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

@@ -58,6 +58,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/about.jsf",
 		"/commons/pages/statoPdd.jsf",
 		"/commons/pages/modalita.jsf",
+		"/commons/pages/soggettoPddMonitor.jsf",
 
 		// Transazioni
 		"/transazioni/pages/list/transazioni.jsf",
@@ -87,6 +88,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/welcome.jsf",	
 		"/commons/pages/about.jsf",
 		"/commons/pages/modalita.jsf",
+		"/commons/pages/soggettoPddMonitor.jsf",
 			
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
@@ -97,6 +99,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/statoPdd.jsf",
 		"/commons/pages/welcome.jsf",
 		"/commons/pages/modalita.jsf",
+		"/commons/pages/soggettoPddMonitor.jsf",
 			
 		// Monitoraggio
 		"/commons/pages/about.jsf",
@@ -148,6 +151,7 @@ public class ContentAuthorizationCostanti {
 		{"/commons/pages/about.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 		{"/commons/pages/welcome.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 		{"/commons/pages/modalita.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
+		{"/commons/pages/soggettoPddMonitor.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 
 		// Monitoraggio
 		{"/transazioni/pages/list/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},

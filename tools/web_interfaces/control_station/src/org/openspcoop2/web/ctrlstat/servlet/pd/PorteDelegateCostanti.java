@@ -434,6 +434,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_METADATI = "Metadati";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS = "Stateless";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = "Local Forward";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA = "Porta Inbound";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY = "Gestione Body";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST = "Gestione Manifest";

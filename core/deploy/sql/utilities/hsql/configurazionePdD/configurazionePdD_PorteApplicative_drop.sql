@@ -4,6 +4,7 @@
 -- DROP INDEX index_pa_scope_1;
 -- DROP INDEX index_pa_ruoli_1;
 -- DROP INDEX index_porte_applicative_1;
+-- DROP INDEX INDEX_PA_SA_AUTH;
 -- DROP INDEX INDEX_PA_WSSRES;
 -- DROP INDEX INDEX_PA_WSSREQ;
 -- DROP INDEX INDEX_PA_MTOMTRES;
@@ -12,6 +13,8 @@
 -- DROP INDEX INDEX_PA_SA;
 DROP TABLE pa_azioni_init_seq;
 DROP TABLE pa_azioni;
+DROP TABLE porte_applicative_sa_auth_init_seq;
+DROP TABLE porte_applicative_sa_auth;
 DROP TABLE pa_soggetti_init_seq;
 DROP TABLE pa_soggetti;
 DROP TABLE pa_scope_init_seq;
@@ -37,6 +40,7 @@ DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative_init_seq;
 DROP TABLE porte_applicative;
 DROP SEQUENCE seq_pa_azioni;
+DROP SEQUENCE seq_porte_applicative_sa_auth;
 DROP SEQUENCE seq_pa_soggetti;
 DROP SEQUENCE seq_pa_scope;
 DROP SEQUENCE seq_pa_ruoli;

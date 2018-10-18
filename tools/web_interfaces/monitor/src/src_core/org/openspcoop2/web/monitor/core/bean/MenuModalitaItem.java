@@ -41,6 +41,10 @@ public class MenuModalitaItem implements Serializable {
 	private String value = null;
 	private String label = null;
 	private String icon = null;
+	private Integer labelWidth = null;
+	private boolean disabled = false;
+	private String tooltip = null;
+	private String id = "voce_1";
 	
 	public MenuModalitaItem(String value, String label, String icon) {
 		this.setIcon(icon);
@@ -65,6 +69,30 @@ public class MenuModalitaItem implements Serializable {
 	}
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+	public Integer getLabelWidth() {
+		return this.labelWidth;
+	}
+	public void setLabelWidth(Integer labelWidth) {
+		this.labelWidth = labelWidth;
+	}
+	public boolean isDisabled() {
+		return this.disabled;
+	}
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+	public String getTooltip() {
+		return this.tooltip;
+	}
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+	}
+	public String getId() {
+		return this.id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 }
 

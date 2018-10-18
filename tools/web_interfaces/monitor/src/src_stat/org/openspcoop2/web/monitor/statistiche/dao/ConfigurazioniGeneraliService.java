@@ -79,7 +79,6 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.resources.MapReader;
-import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -990,10 +989,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 			ConfigurazioniGeneraliService.log.debug("------------ Fine Filtro Impostato ----------");
 
-			User loggedUtente = Utility.getLoggedUtente();
-						
 			// user no multitenant
-			if(!loggedUtente.isPermitMultiTenant()) {
+			if(!Utility.isMultitenantAbilitato()) {
 				lista.add(getSoggettiEsterni());
 			} else {
 			// user multi tenant

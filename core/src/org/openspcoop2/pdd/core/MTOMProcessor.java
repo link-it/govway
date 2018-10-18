@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -30,6 +31,9 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -49,6 +53,7 @@ public class MTOMProcessor {
 	private MsgDiagnostico msgDiag;
 	private Logger log;
 	private PdDContext pddContext;
+	private Transaction transactionNullable;
 	
 	public MTOMProcessor(MTOMProcessorConfig config, MessageSecurityConfig secConfig, TipoPdD tipoPdD, 
 			MsgDiagnostico msgDiag, Logger log, PdDContext pddContext){
@@ -58,6 +63,14 @@ public class MTOMProcessor {
 		this.msgDiag = msgDiag;
 		this.log = log;
 		this.pddContext = pddContext;
+		if(this.pddContext!=null && this.pddContext.containsKey(Costanti.ID_TRANSAZIONE)) {
+			String idTransazione = (String) this.pddContext.getObject(Costanti.ID_TRANSAZIONE);
+			try {
+				this.transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}catch(TransactionNotExistsException e) {
+				// Puo' succedere nelle comunicazioni stateful
+			}
+		}
 	}
 	
 	
@@ -83,37 +96,63 @@ public class MTOMProcessor {
 			
 			if(this.isMTOMBeforeSecurity(tipo)){
 				
-				this.setProcessorTypeIntoDiagnostic(tipo);
+				if(this.transactionNullable!=null) {
+					switch (tipo) {
+					case RICHIESTA:
+						this.transactionNullable.getTempiElaborazione().startGestioneAttachmentsRichiesta();
+						break;
+					case RISPOSTA:
+						this.transactionNullable.getTempiElaborazione().startGestioneAttachmentsRisposta();
+						break;
+					}
+				}
+				try {
 				
-				this.emitDiagnostic(tipo, 
-						"mtom.processamentoRichiestaInCorso",
-						"mtom.processamentoRispostaInCorso");
-				
-				try{
-					
-					this.mtomApply(msg.castAsSoap());
+					this.setProcessorTypeIntoDiagnostic(tipo);
 					
 					this.emitDiagnostic(tipo, 
-							"mtom.processamentoRichiestaEffettuato",
-							"mtom.processamentoRispostaEffettuato");
+							"mtom.processamentoRichiestaInCorso",
+							"mtom.processamentoRispostaInCorso");
 					
-				}catch(Exception e){
-					
-					if(MessageRole.REQUEST.equals(msg.getMessageRole())) {
-						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RICHIESTA, "true");
+					try{
+						
+						this.mtomApply(msg.castAsSoap());
+						
+						this.emitDiagnostic(tipo, 
+								"mtom.processamentoRichiestaEffettuato",
+								"mtom.processamentoRispostaEffettuato");
+						
+					}catch(Exception e){
+						
+						if(MessageRole.REQUEST.equals(msg.getMessageRole())) {
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RICHIESTA, "true");
+						}
+						else {
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA, "true");
+						}
+						
+						this.msgDiag.addKeywordErroreProcessamento(e);
+						this.log.error("[MTOM BeforeSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
+						
+						this.emitDiagnostic(tipo, 
+								"mtom.processamentoRichiestaInErrore",
+								"mtom.processamentoRispostaInErrore");
+						
+						throw e;
 					}
-					else {
-						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA, "true");
-					}
 					
-					this.msgDiag.addKeywordErroreProcessamento(e);
-					this.log.error("[MTOM BeforeSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
-					
-					this.emitDiagnostic(tipo, 
-							"mtom.processamentoRichiestaInErrore",
-							"mtom.processamentoRispostaInErrore");
-					
-					throw e;
+				}
+				finally {
+					if(this.transactionNullable!=null) {
+						switch (tipo) {
+						case RICHIESTA:
+							this.transactionNullable.getTempiElaborazione().endGestioneAttachmentsRichiesta();
+							break;
+						case RISPOSTA:
+							this.transactionNullable.getTempiElaborazione().endGestioneAttachmentsRisposta();
+							break;
+						}
+					}	
 				}
 				
 			}
@@ -149,32 +188,57 @@ public class MTOMProcessor {
 			
 			if(this.isMTOMBeforeSecurity(tipo)==false){
 				
-				this.setProcessorTypeIntoDiagnostic(tipo);
-				
-				this.emitDiagnostic(tipo, 
-						"mtom.processamentoRichiestaInCorso",
-						"mtom.processamentoRispostaInCorso");
-				
-				try{
-					
-					this.mtomApply(msg.castAsSoap());
-					
-					this.emitDiagnostic(tipo, 
-							"mtom.processamentoRichiestaEffettuato",
-							"mtom.processamentoRispostaEffettuato");
-					
-				}catch(Exception e){
-					
-					this.msgDiag.addKeywordErroreProcessamento(e);
-					this.log.error("[MTOM AfterSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
-					
-					this.emitDiagnostic(tipo, 
-							"mtom.processamentoRichiestaInErrore",
-							"mtom.processamentoRispostaInErrore");
-					
-					throw e;
+				if(this.transactionNullable!=null) {
+					switch (tipo) {
+					case RICHIESTA:
+						this.transactionNullable.getTempiElaborazione().startGestioneAttachmentsRichiesta();
+						break;
+					case RISPOSTA:
+						this.transactionNullable.getTempiElaborazione().startGestioneAttachmentsRisposta();
+						break;
+					}
 				}
+				try {
+					
+					this.setProcessorTypeIntoDiagnostic(tipo);
+					
+					this.emitDiagnostic(tipo, 
+							"mtom.processamentoRichiestaInCorso",
+							"mtom.processamentoRispostaInCorso");
+					
+					try{
+						
+						this.mtomApply(msg.castAsSoap());
+						
+						this.emitDiagnostic(tipo, 
+								"mtom.processamentoRichiestaEffettuato",
+								"mtom.processamentoRispostaEffettuato");
+						
+					}catch(Exception e){
+						
+						this.msgDiag.addKeywordErroreProcessamento(e);
+						this.log.error("[MTOM AfterSecurity "+tipo.getTipo()+"] "+e.getMessage(),e);
+						
+						this.emitDiagnostic(tipo, 
+								"mtom.processamentoRichiestaInErrore",
+								"mtom.processamentoRispostaInErrore");
+						
+						throw e;
+					}
 				
+				}
+				finally {
+					if(this.transactionNullable!=null) {
+						switch (tipo) {
+						case RICHIESTA:
+							this.transactionNullable.getTempiElaborazione().endGestioneAttachmentsRichiesta();
+							break;
+						case RISPOSTA:
+							this.transactionNullable.getTempiElaborazione().endGestioneAttachmentsRisposta();
+							break;
+						}
+					}	
+				}
 			}
 			else{
 				emitDiagDisabled = true;

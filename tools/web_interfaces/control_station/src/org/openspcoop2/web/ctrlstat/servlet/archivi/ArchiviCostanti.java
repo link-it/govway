@@ -151,6 +151,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
 	public final static String PARAMETRO_ARCHIVI_UPDATE_ENABLED = "updateEnabled";
 	public final static String PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "tipologiaArchivio";
+	
 	public final static String PARAMETRO_ARCHIVI_TIPO = "tipoArchivio";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID ="importInformationMissingObjectId";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION ="importInformationMissingObjectIdDescription";

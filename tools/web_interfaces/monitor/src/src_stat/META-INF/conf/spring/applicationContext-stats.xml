@@ -37,7 +37,6 @@
 	<bean id="distribuzioneSASearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
 		<property name="_value_tipoStatistica" value="distribuzioneSA"/>
 		<property name="action" value="distribSAGrafico"/>
-		<property name="defaultTipologiaRicerca" value="uscita"/>
 	</bean>
 	
 	<!-- Search Form Statistiche Personalizzate -->

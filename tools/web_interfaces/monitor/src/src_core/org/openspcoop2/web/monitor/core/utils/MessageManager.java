@@ -21,13 +21,16 @@
  */
 package org.openspcoop2.web.monitor.core.utils;
 
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.application.Application;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 /**
@@ -40,45 +43,34 @@ import javax.faces.context.FacesContext;
  */
 public class MessageManager {
 	
-	private static PddMonitorProperties props;
-		
-	public String getMessage(String key) throws Exception {
+	private static MessageManager instance = null;
+
+	public static MessageManager getInstance(){
+
+		if(MessageManager.instance == null)
+			init();
+
+
+		return MessageManager.instance;
+	}
+
+	private synchronized static void init(){
+		if(MessageManager.instance == null)
+			MessageManager.instance = new MessageManager();
+	}
+
+	public String getMessage(String key) {
 
 		// use standard JSF Resource Bundle mechanism
 		//return getMessageFromJSFBundle(key);
 
 		// use the default Java ResourceBund;e mechanism
-		 return getMessageFromResourceBundle(key);
+		return getMessageFromResourceBundle(key);
 	}
-
-	
-	
-	/**
-	 * Inizializza la mappa delle property
-	 * legge il default resource bundle 
-	 * dopodiche effettua l'ovverride delle properties eventualmente definite all'esterno dell'applicazione
-	 * utilizzando lo stesso algoritmo di lookup di openspcoop
-	 * @throws Exception 
-	 */
-	private static void init() throws Exception{
-		MessageManager.props = PddMonitorProperties.getInstance( LoggerManager.getPddMonitorCoreLogger());
-	}
-	
-	private String getMessageFromResourceBundle(String key) throws Exception {
-		String message = "";
-		if(MessageManager.props==null) 
-			MessageManager.init();
-		
-		message = MessageManager.props.getProperty(key,false,false);
-		
-		return message;
-
-	}
-
 
 	@SuppressWarnings("unused")
 	private String getMessageFromJSFBundle(String key) {
-		return (String)MessageManager.resolveExpression("#{msgbundle['" + key + "']}");
+		return (String)MessageManager.resolveExpression("#{msg['" + key + "']}");
 	}
 
 	public static ClassLoader getCurrentLoader(Object fallbackClass) {
@@ -95,8 +87,89 @@ public class MessageManager {
 		ExpressionFactory elFactory = app.getExpressionFactory();
 		ELContext elContext = facesContext.getELContext();
 		ValueExpression valueExp =
-			elFactory.createValueExpression(elContext, expression,
-					Object.class);
+				elFactory.createValueExpression(elContext, expression,
+						Object.class);
 		return valueExp.getValue(elContext);
+	}
+
+	public String getMessageFromResourceBundle(String bundleName, String key, Object params[], Locale locale){
+
+		String text = null;
+		try{
+			ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale, getCurrentClassLoader(params));
+			text = bundle.getString(key);
+		} catch(MissingResourceException e){
+			text = "?? key " + key + " not found ??";
+		}
+		if(params != null){
+			MessageFormat mf = new MessageFormat(text, locale);
+			text = mf.format(params, new StringBuffer(), null).toString();
+		}
+		return text;
+	}
+
+	public  ClassLoader getCurrentClassLoader(Object defaultObject){
+
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+		if(loader == null){
+			loader = defaultObject.getClass().getClassLoader();
+		}
+
+		return loader;
+	}
+	
+	public Locale getLocale() {
+		Locale locale = null;
+
+		try{
+			FacesContext currentInstance = FacesContext.getCurrentInstance();
+			if(currentInstance != null){
+				UIViewRoot viewRoot = currentInstance.getViewRoot();
+				if(viewRoot != null)
+					locale = viewRoot.getLocale();
+			}
+		}catch(Exception e){}
+
+		if(locale == null){
+			locale = Locale.ITALY;
+		}
+
+		return locale;
+	}
+	
+	public String getMessageFromResourceBundle(String key) {
+		Locale locale = getLocale();
+		return getMessageFromResourceBundle("messages", key, null, locale);
+	}
+
+	public   String getMessageWithParamsFromResourceBundle(String key, Object ... params) {
+		Locale locale = getLocale();
+		return getMessageFromResourceBundle("messages", key, params, locale);
+	}
+
+
+	public   String getMessageFromResourceBundle(String key,Locale locale){
+		return getMessageFromResourceBundle("messages", key, null, locale);
+	}
+
+	public   String getMessageFromResourceBundle(String key, String bundleName){
+		Locale locale = getLocale();
+
+		if(bundleName == null)
+			bundleName = "messages";
+
+		return getMessageFromResourceBundle(bundleName, key, null, locale);
+	}
+
+	public   String getMessageFromResourceBundle(String key, String bundleName, Locale locale){
+		if(locale == null){
+			locale = getLocale();
+		}
+
+		if(bundleName == null)
+			bundleName = "messages";
+
+		return getMessageFromResourceBundle(bundleName, key, null, locale);
 	}
 }

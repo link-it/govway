@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 
 /**
  * ArchiviCore
@@ -189,7 +190,8 @@ public class ArchiviCore extends ControlStationCore {
 	}
 	
 	public String importArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
-			boolean updateAbilitato, String nomePddOperativa) throws Exception,ImportInformationMissingException{
+			boolean updateAbilitato, String nomePddOperativa,
+			ConsoleHelper consoleHelper) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
 		DriverControlStationDB driver = null;
@@ -207,7 +209,7 @@ public class ArchiviCore extends ControlStationCore {
 			
 			ImporterArchiveUtils importerArchiveUtils = 
 					new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, this.getImportArchivi_tipoPdD(), 
-							this.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato);
+							consoleHelper.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato);
 			
 			ArchiveEsitoImport esito = importerArchiveUtils.importArchive(archive, userLogin, 
 					this.isShowAccordiColonnaAzioni(),

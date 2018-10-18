@@ -695,87 +695,143 @@
 
 	<target name="runTestConditions">
         <if>
-                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
-                <then>
-                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietÃ  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
-                </then>
+            <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+            <then>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
+            </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.condition.TestConditions" fork="true">
-		        <classpath>
-					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
-					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
-		        	<path refid="classpath_run_dist" />
-		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
-		        </classpath>
+	        <classpath>
+				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+	        	<path refid="classpath_run_dist" />
+	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
+	        </classpath>
 		</java>
 	</target>
 
 	<!-- Esecuzione processo di generazione delle transazioni -->
 	<target name="runTransactionProcessor">
 		<if>
-                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
-                <then>
-                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietÃ  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
-                </then>
+            <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+            <then>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+            </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.transaction.TransactionProcessor" fork="true"> 
 			<classpath>
-					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
-					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
-		        	<path refid="classpath_run_dist" />
-		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
-		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
-		        </classpath>
+				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+	        	<path refid="classpath_run_dist" />
+	        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
+	        </classpath>
 		</java>
 	</target>
 	
 	<!-- Esecuzione processo di generazione delle statistiche -->
 	<target name="runStatisticProcessor">
 		<if>
-                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
-                <then>
-                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietÃ  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
-                </then>
+            <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+            <then>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+            </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.statistic.StatisticProcessor" fork="true"> 
 			<classpath>
-					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
-					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
-		        	<path refid="classpath_run_dist" />
-		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
-		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
-		        </classpath>
+				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+	        	<path refid="classpath_run_dist" />
+	        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
+	        </classpath>
 		</java>
 	</target>
 	
 	<!-- Esecuzione processo di recovery da file system -->
 	<target name="runFileSystemRecoveryProcessor">
 		<if>
-                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
-                <then>
-                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietÃ  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
-                </then>
+            <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+            <then>
+                    <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+            </then>
         </if>
 		<java classname="org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryProcessor" fork="true"> 
 			<classpath>
-					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
-					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
-		        	<path refid="classpath_run_dist" />
-		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
-		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
-		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
-		        </classpath>
+				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+	        	<path refid="classpath_run_dist" />
+	        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+	        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+	        	<fileset dir="${required_lib}" includes="security/xmlsec-2.1.2.jar"/>
+	        </classpath>
+		</java>
+	</target>
+	
+	<!-- Esecuzione Tool per Generazione SQL -->
+	<target name="runSQLScriptBuilder">
+		<if>
+                <equals arg1="${sqlSourceDir}" arg2="$${sqlSourceDir}"/>
+                <then>
+                        <fail message="Parametro sqlSourceDir non fornito, la proprietà deve contenere una directory con i sql sorgenti"/>
+                </then>
+        </if>
+		<if>
+                <equals arg1="${sqlDestDir}" arg2="$${sqlDestDir}"/>
+                <then>
+                        <fail message="Parametro sqlDestDir non fornito, la proprietà deve contenere una directory dove vengono generati i files"/>
+                </then>
+        </if>
+		<if>
+                <equals arg1="${modalitaInstallazione}" arg2="$${modalitaInstallazione}"/>
+                <then>
+                        <fail message="Parametro modalitaInstallazione non fornito, modalità di installazione tra nuova e aggiornamento"/>
+                </then>
+        </if>
+		<if>
+			<equals arg1="${modalitaInstallazione}" arg2="aggiornamento"/>
+			<then>
+				<if>
+			            <equals arg1="${versionePrecedente}" arg2="$${versionePrecedente}"/>
+			            <then>
+			                    <fail message="Parametro versionePrecedente non fornito, la proprietà deve indicare la versione precedente all'aggiornamento"/>
+			            </then>
+			    </if>
+				<if>
+			            <equals arg1="${versioneAttuale}" arg2="$${versioneAttuale}"/>
+			            <then>
+			                    <fail message="Parametro versioneAttuale non fornito, la proprietà indica la versione attuale del prodotto"/>
+			            </then>
+			    </if>
+				<if>
+			            <equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			            <then>
+			                    <fail message="Parametro tipoDatabase non fornito, la proprietà indica la versione attuale del prodotto"/>
+			            </then>
+			    </if>
+			</then>
+		</if>
+		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true"> 
+			<arg value="${sqlSourceDir}" />
+	        <arg value="${sqlDestDir}" />
+		 	<arg value="${modalitaInstallazione}" />
+	        <arg value="${versionePrecedente}" />
+			<arg value="${versioneAttuale}" />
+			<arg value="${tipoDatabase}" />
+			<classpath>
+	        	<path refid="classpath_run_dist" />
+	        </classpath>
 		</java>
 	</target>
 

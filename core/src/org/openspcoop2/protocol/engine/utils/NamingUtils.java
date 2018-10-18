@@ -116,7 +116,7 @@ public class NamingUtils {
 		if(labelSoggetto.contains("/")) {
 			String [] tmp = labelSoggetto.split("/");
 			tipo = tmp[0];
-			tipo = tmp[1];
+			nome = tmp[1];
 		}
 		else {
 			tipo = tipoSoggettoDefault;
@@ -142,22 +142,26 @@ public class NamingUtils {
 		return getLabelAccordoServizioParteComune(protocollo, idAccordo);
 	}
 	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo) throws Exception{
+		return getLabelAccordoServizioParteComune(protocollo, idAccordo, true);
+	}
+	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo, boolean addSoggettoReferente) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(idAccordo.getNome());
 		bf.append(":");
 		bf.append(idAccordo.getVersione());
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		boolean supportatoSoggettoReferente = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
-		if(supportatoSoggettoReferente) {
-			if(idAccordo.getSoggettoReferente()!=null){
-				bf.append(" (");
-				bf.append(getLabelSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
-				bf.append(")");
+		if(addSoggettoReferente) {
+			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			boolean supportatoSoggettoReferente = protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune();
+			if(supportatoSoggettoReferente) {
+				if(idAccordo.getSoggettoReferente()!=null){
+					bf.append(" (");
+					bf.append(getLabelSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
+					bf.append(")");
+				}
 			}
 		}
 		return bf.toString();
 	}
-	
 	
 	// SERVIZI
 	
@@ -198,7 +202,10 @@ public class NamingUtils {
 	}
 	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(IDServizio idServizio) throws Exception{
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		String protocollo = protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
+		String protocollo = protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
+		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio);
+	}
+	public static String getLabelAccordoServizioParteSpecificaSenzaErogatore(String protocollo, IDServizio idServizio) throws Exception{
 		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 	}
 	public static String getLabelAccordoServizioParteSpecifica(String protocollo, IDServizio idServizio) throws Exception{

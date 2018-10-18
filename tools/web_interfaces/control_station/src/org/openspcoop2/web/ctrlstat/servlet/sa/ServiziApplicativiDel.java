@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -160,9 +161,10 @@ public final class ServiziApplicativiDel extends Action {
 			
 			if(!useIdSogg){
 				int idLista = Liste.SERVIZIO_APPLICATIVO;
-
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				
+				if(saHelper.isSoggettoMultitenantSelezionato()) {
+					ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, saHelper.getSoggettoMultitenantSelezionato());
+				}
 				if(saCore.isVisioneOggettiGlobale(userLogin)){
 					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
 				}else{

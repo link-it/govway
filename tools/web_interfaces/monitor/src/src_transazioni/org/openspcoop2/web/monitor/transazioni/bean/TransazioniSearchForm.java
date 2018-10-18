@@ -776,17 +776,16 @@ Context, Cloneable {
 
 	@Override
 	public SearchType getTipoRicerca() {
-
-		if ("all".equals(this.getTipologiaRicerca())) {
-			return SearchType.ALL;
-		}
-		if ("ingresso".equals(this.getTipologiaRicerca())) {
-			return SearchType.EROGAZIONE;
-		}
-		if ("uscita".equals(this.getTipologiaRicerca())) {
-			return SearchType.FRUIZIONE;
-		}
-
+		if(this.getTipologiaRicercaEnum() != null)
+			switch (this.getTipologiaRicercaEnum()) {
+			case ingresso:
+				return SearchType.EROGAZIONE;
+			case uscita:
+				return SearchType.FRUIZIONE;
+			case all:
+			default:
+				return SearchType.ALL;
+			}
 		return SearchType.ALL;
 	}
 

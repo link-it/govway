@@ -570,7 +570,7 @@ public abstract class AbstractArchiveEngine {
 		Connection con = null;
 		try{
 			con = this.driverRegistroServizi.getConnection("archive.isAccordoServizioParteSpecificaInUso");
-			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idServizio, whereIsInUso, null, normalizeObjectIds);
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idServizio, whereIsInUso, null, null, normalizeObjectIds);
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);

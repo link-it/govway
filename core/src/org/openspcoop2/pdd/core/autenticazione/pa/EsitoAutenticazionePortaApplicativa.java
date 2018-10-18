@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.autenticazione.pa;
 
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autenticazione.EsitoAutenticazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
@@ -54,6 +55,17 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 
 	public void setIdSoggetto(IDSoggetto idSoggetto) {
 		this.idSoggetto = idSoggetto;
+	}
+	
+	/** IDServizioApplicativo */
+	private IDServizioApplicativo idServizioApplicativo;
+	
+	public IDServizioApplicativo getIdServizioApplicativo() {
+		return this.idServizioApplicativo;
+	}
+
+	public void setIdServizioApplicativo(IDServizioApplicativo idServizioApplicativo) {
+		this.idServizioApplicativo = idServizioApplicativo;
 	}
 
 	
@@ -87,6 +99,16 @@ public class EsitoAutenticazionePortaApplicativa extends EsitoAutenticazione {
 		if(this.idSoggetto!=null){
 			bf.append(" IDSoggetto");
 			bf.append(this.idSoggetto.toString());
+		}
+		if(this.idServizioApplicativo!=null){
+			bf.append(" IDServizioApplicativo");
+			if(this.idServizioApplicativo.getIdSoggettoProprietario()!=null && this.idSoggetto==null){
+				bf.append(" IDSoggetto(");
+				bf.append(this.idServizioApplicativo.getIdSoggettoProprietario().toString());
+				bf.append(")");
+			}
+			bf.append(":");
+			bf.append(this.idServizioApplicativo.getNome());
 		}
 		if(this.erroreCooperazione!=null){
 			bf.append(" ErroreCooperazione(");

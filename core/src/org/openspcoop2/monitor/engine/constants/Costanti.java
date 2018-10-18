@@ -47,7 +47,7 @@ public class Costanti {
 	public static final String EVENTO_FILE_SYSTEM_RECOVERY = "RecoveredFileSystem";
 	
 	
-	public static final String SERVIZIO_APPLICATIVO_ANONIMO = "S.A. Anonimo";
+	public static final String SERVIZIO_APPLICATIVO_ANONIMO = "Applicativo Anonimo";
 	public static final String INFORMAZIONE_NON_DISPONIBILE = "-";
 	public static final Integer INFORMAZIONE_VERSIONE_NON_DISPONIBILE = 0;
 	public static final String TRANSAZIONE_SENZA_STATO = "Senza Stato";

@@ -331,7 +331,11 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								<jsp:include page="/jsp/list/fruizioni.jsp" flush="true">
 									<jsp:param name="numeroEntry" value="<%=i %>"/>
 								</jsp:include>
-							<% } %>						
+							<% } else if(customListViewName.equals("api")){ %>
+								<jsp:include page="/jsp/list/api.jsp" flush="true">
+									<jsp:param name="numeroEntry" value="<%=i %>"/>
+								</jsp:include>
+							<% } %>					
 					 	 </tr><%
 					}
 					

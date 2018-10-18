@@ -48,6 +48,7 @@ import java.util.List;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizi-applicativi-autorizzati" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-servizi-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
@@ -101,6 +102,7 @@ import java.util.List;
   	"servizioApplicativo",
   	"xacmlPolicy",
   	"soggetti",
+  	"serviziApplicativiAutorizzati",
   	"ruoli",
   	"scope",
   	"gestioneToken",
@@ -229,6 +231,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setSoggetti(PortaApplicativaAutorizzazioneSoggetti soggetti) {
     this.soggetti = soggetti;
+  }
+
+  public PortaApplicativaAutorizzazioneServiziApplicativi getServiziApplicativiAutorizzati() {
+    return this.serviziApplicativiAutorizzati;
+  }
+
+  public void setServiziApplicativiAutorizzati(PortaApplicativaAutorizzazioneServiziApplicativi serviziApplicativiAutorizzati) {
+    this.serviziApplicativiAutorizzati = serviziApplicativiAutorizzati;
   }
 
   public AutorizzazioneRuoli getRuoli() {
@@ -724,6 +734,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlElement(name="soggetti",required=false,nillable=false)
   protected PortaApplicativaAutorizzazioneSoggetti soggetti;
+
+  @XmlElement(name="servizi-applicativi-autorizzati",required=false,nillable=false)
+  protected PortaApplicativaAutorizzazioneServiziApplicativi serviziApplicativiAutorizzati;
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;

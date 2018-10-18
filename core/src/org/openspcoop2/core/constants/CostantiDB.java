@@ -97,6 +97,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_RUOLI = "pa_ruoli";
     public static final String PORTE_APPLICATIVE_SCOPE = "pa_scope";
     public static final String PORTE_APPLICATIVE_SOGGETTI = "pa_soggetti";
+    public static final String PORTE_APPLICATIVE_SA_AUTORIZZATI = "porte_applicative_sa_auth";
     public static final String PORTE_APPLICATIVE_AZIONI = "pa_azioni";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";

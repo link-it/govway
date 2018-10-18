@@ -376,7 +376,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 		
 	public boolean isAccordoServizioParteSpecificaInUso(AccordoServizioParteSpecifica as, Map<ErrorsHandlerCostant, List<String>> whereIsInUso,
-			List<IDPortaApplicativa> nomePAGenerateAutomaticamente, boolean normalizeObjectIds) throws DriverRegistroServiziException {
+			List<IDPortaDelegata> nomePDGenerateAutomaticamente, List<IDPortaApplicativa> nomePAGenerateAutomaticamente, boolean normalizeObjectIds) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAccordoServizioPArteSpecificaInUso";
 		try {
@@ -384,7 +384,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
-			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerateAutomaticamente, normalizeObjectIds);			
+			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePDGenerateAutomaticamente, nomePAGenerateAutomaticamente, normalizeObjectIds);			
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
@@ -842,16 +842,21 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, HttpSession session) throws DriverRegistroServiziException {
 		boolean gestioneFruitori = false;
+		boolean gestioneErogatori = false;
 		String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		if(tipologia!=null) {
 			if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
 				gestioneFruitori = true;
 			}
+			else if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
+				gestioneErogatori = true;
+			}
 		}
-		return soggettiServizioList(superuser, ricerca, permessiUtente, gestioneFruitori);
+		return soggettiServizioList(superuser, ricerca, permessiUtente, gestioneFruitori, gestioneErogatori);
 
 	}
-	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, boolean gestioneFruitori) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente, 
+			boolean gestioneFruitori, boolean gestioneErogatori) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioList";
 		DriverControlStationDB driver = null;
@@ -862,7 +867,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().soggettiServizioList(superuser, ricerca,permessiUtente, gestioneFruitori);
+			return driver.getDriverRegistroServiziDB().soggettiServizioList(superuser, ricerca,permessiUtente, 
+					gestioneFruitori, gestioneErogatori);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

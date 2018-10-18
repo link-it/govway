@@ -48,6 +48,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new Field("accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new Field("accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new Field("accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new Field("multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new Field("protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new Field("validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
@@ -58,6 +59,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.MESSAGGI_DIAGNOSTICI = new org.openspcoop2.core.config.model.MessaggiDiagnosticiModel(new Field("messaggi-diagnostici",org.openspcoop2.core.config.MessaggiDiagnostici.class,"configurazione",Configurazione.class));
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.TracciamentoModel(new Field("tracciamento",org.openspcoop2.core.config.Tracciamento.class,"configurazione",Configurazione.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpModel(new Field("dump",org.openspcoop2.core.config.Dump.class,"configurazione",Configurazione.class));
+		this.TRANSAZIONI = new org.openspcoop2.core.config.model.TransazioniModel(new Field("transazioni",org.openspcoop2.core.config.Transazioni.class,"configurazione",Configurazione.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.ConfigurazioneGestioneErroreModel(new Field("gestione-errore",org.openspcoop2.core.config.ConfigurazioneGestioneErrore.class,"configurazione",Configurazione.class));
 		this.INTEGRATION_MANAGER = new org.openspcoop2.core.config.model.IntegrationManagerModel(new Field("integration-manager",org.openspcoop2.core.config.IntegrationManager.class,"configurazione",Configurazione.class));
 		this.STATO_SERVIZI_PDD = new org.openspcoop2.core.config.model.StatoServiziPddModel(new Field("stato-servizi-pdd",org.openspcoop2.core.config.StatoServiziPdd.class,"configurazione",Configurazione.class));
@@ -76,6 +78,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new ComplexField(father,"accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new ComplexField(father,"accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new ComplexField(father,"accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
+		this.MULTITENANT = new org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel(new ComplexField(father,"multitenant",org.openspcoop2.core.config.ConfigurazioneMultitenant.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new ComplexField(father,"protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new ComplexField(father,"validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
@@ -86,6 +89,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.MESSAGGI_DIAGNOSTICI = new org.openspcoop2.core.config.model.MessaggiDiagnosticiModel(new ComplexField(father,"messaggi-diagnostici",org.openspcoop2.core.config.MessaggiDiagnostici.class,"configurazione",Configurazione.class));
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.TracciamentoModel(new ComplexField(father,"tracciamento",org.openspcoop2.core.config.Tracciamento.class,"configurazione",Configurazione.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpModel(new ComplexField(father,"dump",org.openspcoop2.core.config.Dump.class,"configurazione",Configurazione.class));
+		this.TRANSAZIONI = new org.openspcoop2.core.config.model.TransazioniModel(new ComplexField(father,"transazioni",org.openspcoop2.core.config.Transazioni.class,"configurazione",Configurazione.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.ConfigurazioneGestioneErroreModel(new ComplexField(father,"gestione-errore",org.openspcoop2.core.config.ConfigurazioneGestioneErrore.class,"configurazione",Configurazione.class));
 		this.INTEGRATION_MANAGER = new org.openspcoop2.core.config.model.IntegrationManagerModel(new ComplexField(father,"integration-manager",org.openspcoop2.core.config.IntegrationManager.class,"configurazione",Configurazione.class));
 		this.STATO_SERVIZI_PDD = new org.openspcoop2.core.config.model.StatoServiziPddModel(new ComplexField(father,"stato-servizi-pdd",org.openspcoop2.core.config.StatoServiziPdd.class,"configurazione",Configurazione.class));
@@ -108,6 +112,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	 
 	public org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel ACCESSO_DATI_GESTIONE_TOKEN = null;
 	 
+	public org.openspcoop2.core.config.model.ConfigurazioneMultitenantModel MULTITENANT = null;
+	 
 	public org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel PROTOCOLLI = null;
 	 
 	public org.openspcoop2.core.config.model.ValidazioneBusteModel VALIDAZIONE_BUSTE = null;
@@ -127,6 +133,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.TracciamentoModel TRACCIAMENTO = null;
 	 
 	public org.openspcoop2.core.config.model.DumpModel DUMP = null;
+	 
+	public org.openspcoop2.core.config.model.TransazioniModel TRANSAZIONI = null;
 	 
 	public org.openspcoop2.core.config.model.ConfigurazioneGestioneErroreModel GESTIONE_ERRORE = null;
 	 

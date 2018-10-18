@@ -58,6 +58,10 @@ public class Search implements Serializable, ISearch {
 	//private String FILTER_DEFAULT = org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED;
 
 	public Search() {
+		this.reset();
+	}
+	
+	public void reset() {
 		this.pageSize = new HashMap<Integer, Integer>();
 		this.indexIniziale = new HashMap<Integer, Integer>();
 		this.searchString = new HashMap<Integer, String>();

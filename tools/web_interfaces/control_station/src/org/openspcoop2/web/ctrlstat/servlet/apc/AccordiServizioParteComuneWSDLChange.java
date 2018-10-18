@@ -24,6 +24,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -69,6 +70,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -77,6 +80,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -134,7 +138,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
 		
 		try {
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
+			ApiHelper apcHelper = new ApiHelper(request, pd, session);
 			this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(apcHelper); 
 
 			boolean isModalitaAvanzata = apcHelper.isModalitaAvanzata();
@@ -181,6 +185,12 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				idAcc = Integer.parseInt(this.id);
 			} catch (Exception e) {
 			}
+			
+			String apiGestioneParziale = apcHelper.getParameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE);
+			if(apiGestioneParziale == null) {
+				apiGestioneParziale = "";
+			}
+			boolean isGestioneAllegati = apiGestioneParziale.equals(ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE);
 
 			// Preparo il menu
 			apcHelper.makeMenu();
@@ -196,7 +206,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAcc));
-			boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
+			boolean asWithAllegati = apcHelper.asWithAllegatiXsd(as);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
@@ -232,17 +242,17 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean facilityUnicoWSDL_interfacciaStandard = false;
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				wsdlbyte = as.getByteWsdlDefinitorio();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_DEFINITORIO;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
 				wsdlbyte = as.getByteWsdlConcettuale();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
 				
 				switch (serviceBinding) {
 				case REST:
-					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica) +" di " + labelASTitle;
+					label = apcHelper.getLabelWSDLFromFormatoSpecifica(formatoSpecifica);
 					break;
 				case SOAP:
 				default:
@@ -255,33 +265,33 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				wsdlbyte = as.getByteWsdlLogicoErogatore();
 				if(isModalitaAvanzata){
 					if(isSupportoProfiloAsincrono)
-						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE+" di " + labelASTitle;
+						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE;
 					else 
-						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO+" di " + labelASTitle;
+						label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO;
 				} else {
-					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL+" di " + labelASTitle;
+					label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL;
 					facilityUnicoWSDL_interfacciaStandard = true;
 				}
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
 				wsdlbyte = as.getByteWsdlLogicoFruitore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_FRUITORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneConcettuale();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_CONCETTUALE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneErogatore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_EROGATORE;
 			}
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
 				wsdlbyte = as.getByteSpecificaConversazioneFruitore();
-				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+" di " + labelASTitle;
+				label = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE;
 				tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_SPECIFICA_CONVERSAZIONE_LOGICO_FRUITORE;
 			}
 			if (wsdlbyte != null) {
@@ -289,9 +299,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			boolean used = true;
-
+			
+			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
+			if(!isModalitaVistaApiCustom) {
+				label = MessageFormat.format("{0} di {1}", label, labelASTitle);
+			}
 
 			IDAccordo idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
+			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, this.id+"");
+			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome());
+			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo);
 
 			String tipoProtocollo = null;
 			// controllo se l'accordo e' utilizzato da qualche asps
@@ -307,25 +324,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}
 
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
+			String servletNameApcChange = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE;
+			Parameter parameterApcChange = new Parameter(labelASTitle, servletNameApcChange, pIdAccordo, pNomeAccordo, pTipoAccordo);
 
-			Parameter parameterApcChange = new Parameter(labelASTitle,
-					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
-							AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
-							AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
-					);
+			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, this.tipoAccordo, labelASTitle, AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, isGestioneAllegati); 
+			listaParams.add(new Parameter(label,null));
+			
 			if(apcHelper.isEditModeInProgress() && ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo				
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-										parameterApcChange,
-												new Parameter(label,null)
-						);
+				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -348,14 +356,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			if (!isOk) {
 
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-										parameterApcChange,
-												new Parameter(label,null)
-						);
+				ServletUtils.setPageDataTitle(pd, listaParams);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -399,14 +400,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							ServletUtils.setObjectIntoSession(session, this.wsdl, AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 
 							// setto la barra del titolo
-							ServletUtils.setPageDataTitle(pd, 
-									new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
-											AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-													parameterApcChange,
-															new Parameter(label,null)
-									);
+							ServletUtils.setPageDataTitle(pd, listaParams);
 
 							// preparo i campi
 							Vector<DataElement> dati = new Vector<DataElement>();
@@ -600,17 +594,19 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+			
+			//se sono in modalita' standard
+			if(apcHelper.isModalitaStandard()) {
+				apcHelper.prepareApiChange(TipoOperazione.OTHER, as); 
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ApiCostanti.OBJECT_NAME_APC_API, ForwardParams.CHANGE());
+			}
+			
 
 			// visualizzo il form di modifica accordo come in accordiChange
 			// setto la barra del titolo
-			ServletUtils.setPageDataTitle(pd, 
-					new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo),
-							AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-									new Parameter(uriAS,null)
-					);
-
+			listaParams = apcHelper.getTitoloApc(TipoOperazione.OTHER, as, this.tipoAccordo, labelASTitle, null, isGestioneAllegati); 
+			ServletUtils.setPageDataTitle(pd, listaParams);
 
 			String descr = as.getDescrizione();
 			// controllo profilo collaborazione
@@ -747,8 +743,6 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
-
-			
 			pd.setDati(dati);
 
 			// setto la baseurl per il redirect (alla servlet accordiChange)

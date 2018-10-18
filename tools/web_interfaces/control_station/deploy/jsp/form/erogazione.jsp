@@ -182,22 +182,32 @@
 						                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
-													<% if(!de.getUrl().equals("")){
-					                					String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-					                					String classLink = "";
-					                					String deTarget = " ";
-												  		if (!de.getTarget().equals("")) {
-												  			deTarget = " target=\""+ de.getTarget() +"\"";
-												  		}
-												  		String deIconName = de.getLabelRight();
-					                					%>
-					                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
-					                						<span class="icon-box">
-																<i class="material-icons md-18"><%= deIconName %></i>
-															</span>
-					                					</a>
-					                				<%
-							                		} // end edit-link
+													<% 
+														if(!de.getListaUrl().isEmpty()){
+															boolean addTooltip = !de.getListaToolTip().isEmpty();
+															boolean addTarget = !de.getListaTarget().isEmpty();
+															boolean addIcon = !de.getListaIcon().isEmpty();
+															
+															for(int idxLink =0; idxLink < de.getListaUrl().size() ; idxLink ++ ){
+																String classLink = "";
+																String deIconName = addIcon ? de.getListaIcon().get(idxLink) : ""; 
+					                					
+																String deTip = (addTooltip && !de.getListaToolTip().get(idxLink).equals("")) ? " title=\"" + de.getListaToolTip().get(idxLink) + "\"" : "";
+					                							
+					                							String deTarget = " ";
+														  		if (addTarget && !de.getListaTarget().get(idxLink).equals("")) {
+														  			deTarget = " target=\""+ de.getListaTarget().get(idxLink) +"\"";
+														  		}
+													  			
+						                					%>
+						                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getListaUrl().get(idxLink) %>" type="button">
+						                						<span class="icon-box">
+																	<i class="material-icons md-18"><%= deIconName %></i>
+																</span>
+						                					</a>
+						                				<%
+															}// end for-edit-link
+														} // end edit-link
 													%>
 													</div>
 												</td>

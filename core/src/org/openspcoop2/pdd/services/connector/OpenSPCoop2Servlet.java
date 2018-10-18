@@ -221,6 +221,10 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
 				
+				if(op2Properties.isIntegrationManagerEnabled()==false) {
+					throw new Exception("Service ["+function+"] not active");
+				}
+				
 				boolean wsdl = false;
 				if(HttpRequestMethod.GET.equals(method)){
 					Enumeration<?> parameters = req.getParameterNames();

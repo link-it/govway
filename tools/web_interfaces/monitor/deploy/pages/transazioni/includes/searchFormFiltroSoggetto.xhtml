@@ -6,13 +6,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:link="http://www.link.it"
     xmlns:c="http://java.sun.com/jstl/core">
+     <f:loadBundle var="msg" basename="messages" /> 
     
    	<c:if test="#{applicationBean.user}">
 		<c:if test="#{!applicationBean.amministratore}">
-			<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+			<link:prop label="#{msg['transazioni.search.soggettoLocale']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 				<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
 								value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
-								defaultLabel="Selezione Soggetto Locale" directInputSuggestions="true"
+								defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true"
 								enableManualInput="false">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
@@ -29,7 +30,7 @@
 		
 	<c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
 		<c:if test="#{applicationBean.amministratore}">
-				<link:prop label="Soggetto Locale">
+				<link:prop label="#{msg['transazioni.search.soggettoLocale']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 					<h:inputText id="sogLocaleInput" value="#{sf_labelSoggettoLocale}" styleClass="inputLinkLong"/>
 					<rich:suggestionbox id="sogLocaleSuggestion" width="416"
 						for="sogLocaleInput" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
@@ -47,7 +48,7 @@
 				</link:prop>
 		</c:if>
 		
-		<link:prop label="Soggetto Destinatario" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
+		<link:prop label="#{msg['transazioni.search.soggettoDestinatario']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
 				<h:inputText id="sogDestCombo" value="#{sf_labelNomeDestinatario}" styleClass="inputLinkLong" />
 				<rich:suggestionbox
 							id="sogDestSuggestion" 
@@ -69,7 +70,7 @@
 		</link:prop>
 		
 
-		<link:prop label="Soggetto Mittente" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
+		<link:prop label="#{msg['transazioni.search.soggettoMittente']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
 				<h:inputText id="sogMitCombo" value="#{sf_labelNomeMittente}"  styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogMitSuggestion" 
@@ -90,7 +91,7 @@
 				<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
 		</link:prop>
 		
-		<link:prop label="Soggetto Remoto" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
+		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
 				<h:inputText id="sogCombo" value="#{sf_labelTrafficoPerSoggetto}" styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogRemotoSuggestion" 
@@ -114,9 +115,9 @@
     
    	<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
 		<c:if test="#{applicationBean.amministratore}">
-			<link:prop label="Soggetto Locale">
+			<link:prop label="#{msg['transazioni.search.soggettoLocale']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 				<rich:comboBox id="sogLocaleCombo" value="#{sf_soggettoLocale}" converter="selectItemConverter"
-					defaultLabel="Selezione Soggetto Locale" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
+					defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
 					width="416"   enableManualInput="false">
 					<f:selectItem itemValue="--" itemLabel="--"/>
 					<f:selectItems value="#{sf_soggettiLocale}"  />
@@ -126,9 +127,9 @@
 			</link:prop>
 		</c:if>
 		
-		<link:prop label="Soggetto Destinatario" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
+		<link:prop label="#{msg['transazioni.search.soggettoDestinatario']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
 			<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
-					defaultLabel="Selezione Soggetto Destinatario" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+					defaultLabel="#{msg['transazioni.search.soggettoDestinatario.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
@@ -137,9 +138,9 @@
 			<rich:toolTip rendered="#{not empty sf_nomeDestinatario}" direction="top-right" for="sogDestCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeDestinatarioTooltip}"/>
 		</link:prop>
 
-		<link:prop label="Soggetto Mittente" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
+		<link:prop label="#{msg['transazioni.search.soggettoMittente']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
 			<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
-					defaultLabel="Selezione Soggetto Mittente" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+					defaultLabel="#{msg['transazioni.search.soggettoMittente.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
@@ -148,9 +149,9 @@
 			<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeMittenteTooltip}"/>
 		</link:prop>
 		
-		<link:prop label="Soggetto Remoto" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
+		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
 			<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
-					defaultLabel="Selezione Soggetto Remoto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+					defaultLabel="#{msg['transazioni.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 					width="416"   enableManualInput="false">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />

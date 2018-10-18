@@ -105,10 +105,20 @@ public class UtentiCostanti {
 	public final static String LABEL_CAMBIA_IDENTITA = "Cambia identità";
 	public final static String LABEL_ACCEDI = "Accedi";
 	public final static String LABEL_MODIFICA = "Modifica";
-	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO_REPORTISTICA = "Monitoraggio/Reportistica";
-	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO = "Monitoraggio";
-	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_REPORTISTICA = "Reportistica";
-	public final static String LABEL_UTENTI_SERVIZI = "Servizi";
+	public final static String LABEL_ATTENZIONE = "Attenzione";
+	public final static String LABEL_VISIBILITA_DATI_GOVWAY_MONITOR = "Visibilità dati tramite govwayMonitor";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_CREATE_NOTE = "Attenzione: procedere con la registrazione dei soggetti visibili tramite govwayMonitor per l'utente appena creato";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_DEFINIZIONE_UPDATE_NOTE = "Per completare la configurazione dell'utente definire i soggetti visibili tramite govwayMonitor";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_CREATE_NOTE = "Attenzione: procedere con la registrazione delle API visibili tramite govwayMonitor per l'utente appena creato";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_DEFINIZIONE_UPDATE_NOTE = "Per completare la configurazione dell'utente definire le API visibili tramite govwayMonitor";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_TUTTI = "Tutti";
+	public final static String LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_TUTTI = "Tutte";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO_REPORTISTICA = "L'utente è abilitato al Monitoraggio e alla Reportistica";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO = "L'utente è abilitato al Monitoraggio";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_REPORTISTICA = "L'utente è abilitato alla Reportistica";
+	public final static String LABEL_SUFFIX_RESTRIZIONE_SOGGETTI = " dei seguenti soggetti:";
+	public final static String LABEL_SUFFIX_RESTRIZIONE_API = " delle seguenti API:";
+	public final static String LABEL_UTENTI_SERVIZI = "API";
 	public final static String LABEL_UTENTI_SOGGETTI = "Soggetti";
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI = "Non esistono altri soggetti associabili all'utente";
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti del "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE.toLowerCase()+" {0} associabili all''utente";
@@ -135,6 +145,8 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE = "singleSuAC";
 	public final static String PARAMETRO_UTENTI_MODALITA_PREFIX = "mod_";
 	public final static String PARAMETRO_UTENTI_PROTOCOLLO = "protocollo";
+	public final static String PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL = "isSoggettiAll";
+	public final static String PARAMETRO_UTENTI_ABILITAZIONI_SERVIZI_ALL = "isServiziAll";
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
 	public final static String PARAMETRO_UTENTE_PASSWORD = "password";
@@ -149,9 +161,11 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_TIPO_MODALITA = "tipo_mod";
 	public final static String PARAMETRO_UTENTE_TIPO_MODALITA_LIST = "tipo_mod_list";
 	public final static String PARAMETRO_UTENTE_CHANGE_MODALITA = "change_mod";
-	public final static String PARAMETRO_UTENTE_MULTI_TENANT = "multi_tenant";
 	public final static String PARAMETRO_UTENTI_SOGGETTO = "soggetto";
 	public final static String PARAMETRO_UTENTI_SERVIZIO = "servizio";
+	public final static String PARAMETRO_UTENTE_CHANGE_SOGGETTO = "change_sog";
+	public final static String PARAMETRO_UTENTE_ID_SOGGETTO = "id_sog";
+	public final static String PARAMETRO_UTENTE_ID_SOGGETTO_LIST = "label_id_list";
 	
 	/* LABEL PARAMETRI */
 	
@@ -160,14 +174,20 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD = "Conferma Password";
 	public final static String LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD = "Nuova Password";
 	public final static String LABEL_PARAMETRO_UTENTI_TIPO_GUI =  "Tipo";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_SERVIZI = "Servizi [S]";
+	public final static String LABEL_PARAMETRO_UTENTI_REGISTRO_SUBSECTION = "Registro";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_SERVIZI = "Gestione API [S]";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE = "Accordi Cooperazione [P]";
+	public final static String LABEL_PARAMETRO_UTENTI_STRUMENTI_SUBSECTION = "Strumenti";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_MESSAGGI = "Coda Messaggi [M]";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_AUDITING = "Auditing [A]";
+	public final static String LABEL_PARAMETRO_UTENTI_CONFIGURAZIONE_SUBSECTION = "Configurazione";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_SISTEMA = "Configurazione Generale [C]";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_UTENTI = "Utenti [U]";
+	public final static String LABEL_PARAMETRO_UTENTI_GOVWAY_MONITOR_SUBSECTION = "GovWay Monitor";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA = "Monitoraggio [D]";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA = "Reportistica [R]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_SISTEMA = "Sistema [C]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_MESSAGGI = "Coda Messaggi [M]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_UTENTI = "Utenti [U]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_AUDITING = "Auditing [A]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE = "Accordi Cooperazione [P]";
+
+	
 
 	public final static String LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD = "Vecchia";
 	public final static String LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD = "Conferma Nuova";
@@ -183,9 +203,12 @@ public class UtentiCostanti {
 	public final static String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
 	public final static String LABEL_UTENTE_PERMESSI_ACCORDI_COOPERAZIONE_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_ACCORDI_COOPERAZIONE+"'";
 	
-	public final static String LABEL_PARAMETRO_UTENTE_MULTI_TENANT = "Multi-Tenant";
-	
 	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Tutti";//CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String LABEL_PARAMETRO_SOGGETTI_OPERATIVI = "Soggetti Operativi";
+	public final static String LABEL_PARAMETRO_SOGGETTO_OPERATIVO = "Soggetto Operativo";
+	public final static String LABEL_PARAMETRO_SOGGETTO_COMPACT = "Soggetto Operativo";
+	public final static String LABEL_PARAMETRO_SOGGETTI_COMPACT = "Soggetti Operativi";
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";

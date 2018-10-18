@@ -93,6 +93,7 @@ import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -1483,7 +1484,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, String protocollo) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, String protocollo, TipologiaRicerca tipologiaRicerca) {
 		// StringBuffer pezzoIdPorta = new StringBuffer();
 
 		this.log.debug("Get Esiti [permessiUtenti: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1506,6 +1507,14 @@ public class TransazioniService implements ITransazioniService {
 				exprOk.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprOk, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprOk.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.APPLICATIVA);
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprOk.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.DELEGATA);
+				}
+			}
 			
 			// Fault
 			IExpression exprFault = this.transazioniSearchDAO.newExpression();
@@ -1518,6 +1527,14 @@ public class TransazioniService implements ITransazioniService {
 				exprFault.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprFault, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprFault.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.APPLICATIVA);
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprFault.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.DELEGATA);
+				}
+			}
 			
 			// Ko
 			IExpression exprKo = this.transazioniSearchDAO.newExpression();
@@ -1530,6 +1547,14 @@ public class TransazioniService implements ITransazioniService {
 				exprKo.and(permessi);
 			}
 			esitoUtils.setExpressionContesto(exprKo, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			if(tipologiaRicerca!=null) {
+				if (TipologiaRicerca.ingresso.equals(tipologiaRicerca)) {
+					exprKo.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.APPLICATIVA);
+				}
+				else if (TipologiaRicerca.uscita.equals(tipologiaRicerca)) {
+					exprKo.and().equals(Transazione.model().PDD_RUOLO, PddRuolo.DELEGATA);
+				}
+			}
 			
 			exprOk.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
 			exprFault.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
@@ -2146,9 +2171,9 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			// TODO Decommentare appena risolto bug delle enumeration
-			if ("all".equals(this.searchForm.getTipologiaRicerca())	|| StringUtils.isEmpty(this.searchForm.getTipologiaRicerca())) {
+			if (this.searchForm.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// devo prendere tutte le transazioni
-			} else if ("ingresso".equals(this.searchForm.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				// sb.append(" AND t.tipoPorta <> 'delegata' ");
 				if (addAnd)
@@ -2185,13 +2210,13 @@ public class TransazioniService implements ITransazioniService {
 			}
 
 			// TODO Decommentare appena risolto bug delle enumeration
-			if ("all".equals(this.searchForm.getTipologiaRicerca())	|| StringUtils.isEmpty(this.searchForm.getTipologiaRicerca())) {
+			if (this.searchForm.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// devo prendere tutte le transazioni che sono diverse da
 				// integration manager
 				// sb.append(" AND t.tipoPorta <> 'integration_manager' ");
 
 				filter.notEquals(Transazione.model().PDD_RUOLO,	PddRuolo.INTEGRATION_MANAGER);
-			} else if ("ingresso".equals(this.searchForm.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 				// sb.append(" AND t.tipoPorta = 'applicativa' ");
 				if (addAnd)
@@ -2230,7 +2255,7 @@ public class TransazioniService implements ITransazioniService {
 		// tipoRicercaSPCoop=true
 		if (this.searchForm.getTipologiaTransazioneSPCoop() == null	|| this.searchForm.getTipologiaTransazioneSPCoop()) {
 
-			if(this.searchForm.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.searchForm.getSoggettoLocale()) && !"--".equals(this.searchForm.getSoggettoLocale())){
+			if(Utility.isFiltroDominioAbilitato() && this.searchForm.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.searchForm.getSoggettoLocale()) && !"--".equals(this.searchForm.getSoggettoLocale())){
 				String tipoSoggettoLocale = this.searchForm.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.searchForm.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
@@ -2320,13 +2345,12 @@ public class TransazioniService implements ITransazioniService {
 
 			// imposto il soggetto (loggato) come mittente o destinatario in
 			// base alla tipologia di ricerca selezionata
-			if ("all".equals(this.searchForm.getTipologiaRicerca()) || StringUtils.isEmpty(this.searchForm.getTipologiaRicerca())) {
+			if (this.searchForm.getTipologiaRicercaEnum() == null || TipologiaRicerca.all.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// il soggetto loggato puo essere mittente o destinatario
 				// se e' selezionato "trafficoPerSoggetto" allora il nome del
 				// soggetto selezionato va messo come complementare
 
-				boolean trafficoSoggetto = StringUtils
-						.isNotBlank(this.searchForm.getTrafficoPerSoggetto());
+				boolean trafficoSoggetto = StringUtils.isNotBlank(this.searchForm.getTrafficoPerSoggetto());
 
 				if (trafficoSoggetto) {
 					// il mio soggetto non e' stato impostato (soggetto in gestione, puo succedero solo in caso admin)
@@ -2354,7 +2378,7 @@ public class TransazioniService implements ITransazioniService {
 					// nessun filtro da impostare
 				}
 
-			} else if ("ingresso".equals(this.searchForm.getTipologiaRicerca())) {
+			} else if (TipologiaRicerca.ingresso.equals(this.searchForm.getTipologiaRicercaEnum())) {
 				// EROGAZIONE
 
 				// il mittente puo non essere specifica
@@ -2423,8 +2447,8 @@ public class TransazioniService implements ITransazioniService {
 					// sb.append("AND t.servizioApplicativo = :servizio_applicativo ");
 					IExpression saOr = transazioniSearchDAO.newExpression();
 					saOr.equals(model.SERVIZIO_APPLICATIVO_FRUITORE,	searchForm.getServizioApplicativo());
-					saOr.or();
-					saOr.equals(model.SERVIZIO_APPLICATIVO_EROGATORE,	searchForm.getServizioApplicativo());
+//					saOr.or();
+//					saOr.equals(model.SERVIZIO_APPLICATIVO_EROGATORE,	searchForm.getServizioApplicativo());
 					filter.and(saOr);
 				}
 			} else {

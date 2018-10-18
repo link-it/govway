@@ -241,7 +241,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 			List<MappingFruizionePortaDelegata> lista =
 					apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizioFromAccordo, ricerca);
 	
-			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idFruizione, ricerca);
+			apsHelper.serviziFruitoriMappingList(lista, idServizio, idSoggFruitoreDelServizio, idSoggettoFruitore, idFruizione, ricerca);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

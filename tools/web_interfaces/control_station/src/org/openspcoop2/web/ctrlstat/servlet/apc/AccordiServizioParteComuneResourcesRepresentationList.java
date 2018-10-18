@@ -138,7 +138,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationList extends
 
 			List<ResourceRepresentation> lista = apcCore.accordiResourceRepresentationsList(idRisorsa, isRequest, idResponse, ricerca);
 
-			apcHelper.prepareAccordiResourcesRepresentationsList(id, as, lista, ricerca, tipoAccordo, isRequest, nomeRisorsa, idRisorsa, resourceRequest, resourceResponse);
+			apcHelper.prepareAccordiResourcesRepresentationsList(id, as, lista, ricerca, tipoAccordo, isRequest, res, resourceRequest, resourceResponse);
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

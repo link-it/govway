@@ -24,6 +24,7 @@ package org.openspcoop2.web.monitor.transazioni.report;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -62,7 +63,7 @@ public class TransazioniReportManager implements ILiveReport,Serializable {
 	}
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto,String protocollo) {
-		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto,protocollo);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
+		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto,protocollo, tipologiaRicerca);
 	}
 }

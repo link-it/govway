@@ -23,16 +23,18 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 
 /****
  * UserDetailsBean
@@ -59,6 +61,8 @@ public class UserDetailsBean implements Serializable {
 	private List<RuoloBean> authorities;
 	private List<IDSoggetto> utenteSoggettoList;
 	private List<IDServizio> utenteServizioList;
+	private Map<String,List<IDSoggetto>> utenteSoggettoProtocolliMap;
+	private Map<String,List<IDServizio>> utenteServizioProtocolliMap;
 
 	private User utente;
 	private boolean ruoloConfiguratoreEnabled = false;
@@ -72,6 +76,8 @@ public class UserDetailsBean implements Serializable {
 		}catch(Exception e) {
 			
 		}
+		this.utenteSoggettoProtocolliMap = new HashMap<>();
+		this.utenteServizioProtocolliMap = new HashMap<>();
 	}
 
 	public void setUtente(User u) throws UserInvalidException{
@@ -103,7 +109,40 @@ public class UserDetailsBean implements Serializable {
 			throw new UserInvalidException("Utente non dispone di alcun ruolo necessario per accedere alla console");
 		}
 		
+		if(!u.isConfigurazioneValidaAbilitazioni()) {
+			throw new UserInvalidException("L'utente non è abilitato ad utilizzare la console: configurazione incompleta");
+		}
+		
 		this.utente = u;
+		
+		try {
+			List<String> protocolli = Utility.getProtocolli(this.utente,true);
+			
+			if(foundServizi > 0) {
+				for (String protocollo : protocolli) {
+					List<IDServizio> idServizioProtocollo = new ArrayList<>();
+					for (IDServizio idServizio : this.utenteServizioList) {
+						if(Utility.isTipoSoggettoCompatibileConProtocollo(idServizio.getSoggettoErogatore().getTipo(), protocollo))
+							idServizioProtocollo.add(idServizio);
+					}
+					this.utenteServizioProtocolliMap.put(protocollo, idServizioProtocollo);
+				}
+			}
+			
+			if(foundSoggetti > 0) {
+				for (String protocollo : protocolli) {
+					List<IDSoggetto> idSoggettoProtocollo = new ArrayList<>();
+					for (IDSoggetto idSoggetto : this.utenteSoggettoList) {
+						if(Utility.isTipoSoggettoCompatibileConProtocollo(idSoggetto.getTipo(), protocollo))
+							idSoggettoProtocollo.add(idSoggetto);
+					}
+					this.utenteSoggettoProtocolliMap.put(protocollo, idSoggettoProtocollo);
+				}
+			}
+		} catch (Exception e) {
+			throw new UserInvalidException("L'utente non è abilitato ad utilizzare la console: impossibile calcolare i diritti utente associati");
+		}
+		
 	}
 	public User getUtente(){
 		return this.utente;
@@ -146,80 +185,6 @@ public class UserDetailsBean implements Serializable {
 		return this.utenteServizioList!=null ? this.utenteServizioList.size() : 0;
 	}
 	
-	public String getLabelUnicoSoggettoServizioAssociato(){
-		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
-		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
-		
-		if(foundSoggetti){
-			return "Soggetto Locale: ";
-		}
-		else if(foundServizi){
-			return "Servizio: ";
-		}
-		else{
-			return null;
-		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	public String getValueUnicoSoggettoServizioAssociato(){
-		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
-		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
-		
-		if(foundSoggetti){
-			IDServizio idServizio = new IDServizio();
-			idServizio.setSoggettoErogatore(new IDSoggetto(this.utenteServizioList.get(0).getTipo(), this.utenteSoggettoList.get(0).getNome())); 
-			return ParseUtility.convertToSoggettoServizio(idServizio);
-		}
-		else if(foundServizi){
-			return ParseUtility.convertToSoggettoServizio(this.utenteServizioList.get(0));
-		}
-		else{
-			return null;
-		}
-	}
-
-	public List<String> getTipiNomiSoggettiAssociati(){
-		List<String> lst = new ArrayList<String>();
-		for (IDSoggetto utenteSoggetto : this.utenteSoggettoList) {
-			String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
-			if(lst.contains(tipoNome)==false){
-				lst.add(tipoNome);
-			}
-		}
-		return lst;
-	}
-	
-	public String getLabelTipiNomiSoggettiServiziAssociati(){
-		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
-		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
-
-		if(foundSoggetti && foundServizi){
-			return "Soggetto Locale / Servizio";
-		}
-		else if(foundServizi){
-			return "Servizio";
-		}
-		else{
-			return "Soggetto Locale";
-		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	public List<String> getTipiNomiSoggettiServiziAssociati(){
-		List<String> lst = new ArrayList<String>();
-		for (IDSoggetto utenteSoggetto : this.utenteSoggettoList) {
-			IDServizio idServizio = new IDServizio();
-			idServizio.setSoggettoErogatore(new IDSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome())); 
-			lst.add(ParseUtility.convertToSoggettoServizio(idServizio));
-		}
-		for (IDServizio idServizio : this.utenteServizioList) {
-			lst.add(ParseUtility.convertToSoggettoServizio(idServizio));
-		}
-		return lst;
-	}
-
-
 	public String getPassword() {
 		return this.password;
 	}
@@ -258,5 +223,13 @@ public class UserDetailsBean implements Serializable {
 			return this.authority;
 		}
 
+	}
+
+	public Map<String, List<IDSoggetto>> getUtenteSoggettoProtocolliMap() {
+		return this.utenteSoggettoProtocolliMap;
+	}
+
+	public Map<String, List<IDServizio>> getUtenteServizioProtocolliMap() {
+		return this.utenteServizioProtocolliMap;
 	}
 }

@@ -79,30 +79,6 @@ public class PddCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	
-	public List<String> fruzioniWithClientAuthAbilitato(String nomePdD) throws DriverRegistroServiziException{
-		Connection con = null;
-		String nomeMetodo = "fruzioniWithClientAuthAbilitato";
-		DriverRegistroServiziDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverRegistroServiziDB(con, ControlStationCore.log, this.tipoDB);
-
-			return driver.fruzioniWithClientAuthAbilitato(nomePdD);
-			
-		} catch (DriverRegistroServiziException e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] DriverRegistroServiziException :" + e.getMessage(), e);
-			throw e;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
 
 	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;

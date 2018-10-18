@@ -156,7 +156,8 @@ public final class PorteDelegateWSRequestChange extends Action {
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 
@@ -179,7 +180,8 @@ public final class PorteDelegateWSRequestChange extends Action {
 
 				dati = porteDelegateHelper.addNomeValoreToDati(TipoOperazione.CHANGE,dati, nome, valore,false);
 
-				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, idFruizione, dati);
+				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, id, idsogg, null, idAsps, 
+						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
 
 				pd.setDati(dati);
 

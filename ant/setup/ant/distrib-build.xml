@@ -135,14 +135,31 @@
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>
-		<copy file="${tmp_sql}/GovWay.sql" todir="${dist}/sql"/>
-		<mkdir dir="${dist}/sql/utilities"/>
-		<copy todir="${dist}/sql/utilities">
+		<copy todir="${dist}/sql">
 			<fileset dir="${tmp_sql}">
-		    	<include name="govway_*drop.sql"/>
-				<include name="govway_*delete.sql"/>
-			</fileset>
+		                <include name="GovWay*.sql"/>
+		        </fileset>
 		</copy>
+		<mkdir dir="${dist}/sql/utilities"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<then>
+				<copy todir="${dist}/sql/utilities">
+					<fileset dir="${tmp_sql}">
+				    		<include name="govway_*drop.sql"/>
+						<include name="govway_*delete.sql"/>
+					</fileset>
+				</copy>
+			</then>
+			<else>
+				<mkdir dir="${dist}/sql/utilities/as"/>
+				<copy todir="${dist}/sql/utilities/as">
+					<fileset dir="${deploy_sql}/as">
+					    	<include name="*.sql"/>
+					</fileset>
+				</copy>
+			</else>
+		</if>
 		
 		<!-- Archivio -->
 		<mkdir dir="${dist}/archivi"/>
