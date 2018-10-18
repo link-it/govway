@@ -1,3 +1,9 @@
+2018-10-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-768, OP-769, OP-770
+	Corretti problemi che si presentavano con l'utilizzo della console in modalità 'completa'
+
 2018-10-18  Andrea Poli <apoli@link.it>, Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]
