@@ -10,7 +10,7 @@ CREATE TABLE audit_conf
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_audit_conf PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -39,7 +39,7 @@ CREATE TABLE audit_filters
 	CONSTRAINT chk_audit_filters_2 CHECK (stato IN ('requesting','error','completed')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_audit_filters PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -54,7 +54,7 @@ CREATE TABLE audit_appender
 	CONSTRAINT unique_audit_appender_1 UNIQUE (name),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_audit_appender PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -69,7 +69,7 @@ CREATE TABLE audit_appender_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_audit_appender_prop_1 FOREIGN KEY (id_audit_appender) REFERENCES audit_appender(id),
 	CONSTRAINT pk_audit_appender_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 

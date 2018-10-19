@@ -66,6 +66,7 @@
 					</linkit:interface>
 					<linkit:sql-table-mapping name="credenziale_mittente" sequence-cycle="true"
 						comment="Contiene le principali informazioni di un mittente non identificato sulla porta">
+						<!-- NOTA: La sommatoria delle colonne per mysql deve essere <=3000 -->
 						<linkit:sql-table-unique create-index="true" >
 							<linkit:sql-table-unique-field name="tipo"/>
 							<linkit:sql-table-unique-field name="credenziale"/>
@@ -92,7 +93,7 @@
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="credenziale" varchar="4000"/>
+								<linkit:sql-column-mapping name="credenziale" varchar="2900"/>
 								<linkit:sql-ddl-column-comment>Credenziale del mittente</linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1195,7 +1196,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			    		<xsd:appinfo>
 			    			<linkit:generator
 			    				xmlns:linkit="http://www.link.it/project_generator">
-			    				<linkit:sql-column-mapping varchar="4000" />
+			    				<linkit:sql-column-mapping varchar="2000" />
 			    				<linkit:sql-ddl-column-comment><![CDATA[Nome della Porta Invocata]]></linkit:sql-ddl-column-comment>
 			    			</linkit:generator>
 			    		</xsd:appinfo>
@@ -1879,7 +1880,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping varchar="4000"/>
+								<linkit:sql-column-mapping varchar="2000"/>
 								<linkit:sql-ddl-column-comment>Nome della porta delegata o applicativa se la configurazione utilizzata era definita nella porta, oppure null se e' la configurazione utilizzata era quella di default (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
 							</linkit:generator>

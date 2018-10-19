@@ -17,7 +17,7 @@ CREATE TABLE operations
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_operations PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX operations_superuser ON operations (superuser);
@@ -36,7 +36,7 @@ CREATE TABLE parameters
 	-- fk/pk keys constraints
 	CONSTRAINT fk_parameters_1 FOREIGN KEY (id_operations) REFERENCES operations(id),
 	CONSTRAINT pk_parameters PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX parameters_index ON parameters (name,value);

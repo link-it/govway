@@ -4543,8 +4543,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nome.indexOf(" ") != -1) || (scadenza.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo 'nome' e 'scadenza'");
+			if ((nome.indexOf(" ") != -1)) {
+				this.pd.setMessage("Non inserire spazi nel campo di testo 'nome'");
+				return false;
+			}
+			if ((scadenza.indexOf(" ") != -1)) {
+				this.pd.setMessage("Non inserire spazi nel campo di testo 'scadenza'");
 				return false;
 			}
 

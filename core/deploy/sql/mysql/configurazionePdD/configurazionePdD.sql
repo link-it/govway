@@ -13,7 +13,7 @@ CREATE TABLE registri
 	CONSTRAINT unique_registri_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_registri PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -33,7 +33,7 @@ CREATE TABLE routing
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_routing PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -122,7 +122,7 @@ CREATE TABLE configurazione
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_configurazione PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -140,7 +140,7 @@ CREATE TABLE config_protocolli
 	CONSTRAINT unique_config_protocolli_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_config_protocolli PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_config_protocolli_1 ON config_protocolli (nome);
@@ -156,7 +156,7 @@ CREATE TABLE msgdiag_appender
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_msgdiag_appender PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -173,7 +173,7 @@ CREATE TABLE msgdiag_appender_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_msgdiag_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES msgdiag_appender(id),
 	CONSTRAINT pk_msgdiag_appender_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -187,7 +187,7 @@ CREATE TABLE tracce_appender
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_tracce_appender PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -204,7 +204,7 @@ CREATE TABLE tracce_appender_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES tracce_appender(id),
 	CONSTRAINT pk_tracce_appender_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -224,7 +224,7 @@ CREATE TABLE dump_config
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_config PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -238,7 +238,7 @@ CREATE TABLE dump_config_regola
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_config_regola PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -250,7 +250,7 @@ CREATE TABLE dump_appender
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_appender PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -267,7 +267,7 @@ CREATE TABLE dump_appender_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES dump_appender(id),
 	CONSTRAINT pk_dump_appender_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -285,7 +285,7 @@ CREATE TABLE msgdiag_ds
 	CONSTRAINT unique_msgdiag_ds_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_msgdiag_ds PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -302,7 +302,7 @@ CREATE TABLE msgdiag_ds_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_msgdiag_ds_prop_1 FOREIGN KEY (id_prop) REFERENCES msgdiag_ds(id),
 	CONSTRAINT pk_msgdiag_ds_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -320,7 +320,7 @@ CREATE TABLE tracce_ds
 	CONSTRAINT unique_tracce_ds_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_tracce_ds PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -337,7 +337,7 @@ CREATE TABLE tracce_ds_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_ds_prop_1 FOREIGN KEY (id_prop) REFERENCES tracce_ds(id),
 	CONSTRAINT pk_tracce_ds_prop PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -355,7 +355,7 @@ CREATE TABLE servizi_pdd
 	CONSTRAINT unique_servizi_pdd_1 UNIQUE (componente),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_servizi_pdd PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
@@ -383,7 +383,7 @@ CREATE TABLE servizi_pdd_filtri
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_pdd_filtri_1 FOREIGN KEY (id_servizio_pdd) REFERENCES servizi_pdd(id),
 	CONSTRAINT pk_servizi_pdd_filtri PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -400,7 +400,7 @@ CREATE TABLE pdd_sys_props
 	CONSTRAINT unique_pdd_sys_props_1 UNIQUE (nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_pdd_sys_props PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
@@ -421,7 +421,7 @@ CREATE TABLE generic_properties
 	CONSTRAINT unique_generic_properties_1 UNIQUE (tipologia,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_generic_properties_1 ON generic_properties (tipologia,nome);
@@ -436,11 +436,11 @@ CREATE TABLE generic_property
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
-	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome,valore),
+	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_generic_property_1 FOREIGN KEY (id_props) REFERENCES generic_properties(id),
 	CONSTRAINT pk_generic_property PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 

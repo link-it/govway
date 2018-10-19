@@ -33,7 +33,7 @@
 							</linkit:sql-table-list>
 						</linkit:sql-script>
 						<linkit:sql-mapping single-table-mapping="false"
-							on-delete-cascade="true" check-tables-order-list="false" />
+							on-delete-cascade="false" check-tables-order-list="false" />
 					</linkit:sql>
 				</linkit:dao>
 			</linkit:generator>

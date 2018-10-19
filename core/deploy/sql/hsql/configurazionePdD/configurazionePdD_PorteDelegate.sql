@@ -4,7 +4,7 @@ CREATE SEQUENCE seq_porte_delegate AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (S
 
 CREATE TABLE porte_delegate
 (
-	nome_porta VARCHAR(4000) NOT NULL,
+	nome_porta VARCHAR(2000) NOT NULL,
 	descrizione VARCHAR(255),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static

@@ -2161,7 +2161,7 @@ public class RicezioneContenutiApplicativi {
 			CredenzialiMittente credenzialiMittente = new CredenzialiMittente();
 			
 			try{
-			
+
 				if(credenzialeTrasporto!=null) {
 					GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente);
 				}

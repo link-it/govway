@@ -1597,6 +1597,7 @@ public class OpenSPCoop2Properties {
 					this.getTransazioniStatefulTimerIntervalSeconds();
 				}
 				
+				this.getTransazioniCredenzialiMittenteMaxLength();
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.isTransazioniRegistrazioneTracceDigestEnabled();
@@ -15496,6 +15497,26 @@ public class OpenSPCoop2Properties {
 	
 	
 	// Salvataggio
+	
+	private static Integer getTransazioniCredenzialiMittenteMaxLength = null;
+	public int getTransazioniCredenzialiMittenteMaxLength() throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniCredenzialiMittenteMaxLength==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTransazioniCredenzialiMittenteMaxLength = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniCredenzialiMittenteMaxLength;
+	}
 	
 	private static Boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = null;
 	public boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled() {	

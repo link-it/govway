@@ -2,7 +2,7 @@
 
 CREATE TABLE porte_delegate
 (
-	nome_porta VARCHAR(4000) NOT NULL,
+	nome_porta VARCHAR(2000) NOT NULL,
 	descrizione VARCHAR(255),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
@@ -112,7 +112,7 @@ CREATE TABLE porte_delegate
 	-- fk/pk keys constraints
 	CONSTRAINT fk_porte_delegate_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT pk_porte_delegate PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (nome_porta);
@@ -131,7 +131,7 @@ CREATE TABLE porte_delegate_sa
 	CONSTRAINT fk_porte_delegate_sa_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
 	CONSTRAINT fk_porte_delegate_sa_2 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_porte_delegate_sa PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_SA ON porte_delegate_sa (id_porta);
@@ -150,7 +150,7 @@ CREATE TABLE pd_properties
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_properties PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_PROP ON pd_properties (id_porta);
@@ -169,7 +169,7 @@ CREATE TABLE pd_mtom_request
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_mtom_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_mtom_request PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_MTOMTREQ ON pd_mtom_request (id_porta);
@@ -188,7 +188,7 @@ CREATE TABLE pd_mtom_response
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_mtom_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_mtom_response PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_MTOMTRES ON pd_mtom_response (id_porta);
@@ -205,7 +205,7 @@ CREATE TABLE pd_security_request
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_security_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_security_request PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_WSSREQ ON pd_security_request (id_porta);
@@ -222,7 +222,7 @@ CREATE TABLE pd_security_response
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_security_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_security_response PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_PD_WSSRES ON pd_security_response (id_porta);
@@ -246,7 +246,7 @@ CREATE TABLE pd_correlazione
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_correlazione_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_correlazione PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -266,7 +266,7 @@ CREATE TABLE pd_correlazione_risposta
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_correlazione_risposta_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_correlazione_risposta PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -282,7 +282,7 @@ CREATE TABLE pd_ruoli
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_pd_ruoli_1 ON pd_ruoli (id_porta,ruolo);
@@ -300,7 +300,7 @@ CREATE TABLE pd_scope
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_scope PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_pd_scope_1 ON pd_scope (id_porta,scope);
@@ -318,7 +318,7 @@ CREATE TABLE pd_azioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_azioni_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_pd_azioni_1 ON pd_azioni (id_porta,azione);

@@ -3,7 +3,7 @@
 CREATE TABLE credenziale_mittente
 (
 	tipo VARCHAR(20) NOT NULL,
-	credenziale VARCHAR(4000) NOT NULL,
+	credenziale VARCHAR(2900) NOT NULL,
 	ora_registrazione DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
@@ -122,7 +122,7 @@ CREATE TABLE transazioni
 	operazione_im VARCHAR(255),
 	location_richiesta VARCHAR(255),
 	location_risposta VARCHAR(255),
-	nome_porta VARCHAR(4000),
+	nome_porta VARCHAR(2000),
 	credenziali VARCHAR(255),
 	location_connettore VARCHAR(max),
 	url_invocazione VARCHAR(max),
@@ -221,7 +221,7 @@ CREATE TABLE dump_messaggi
 	post_process_header VARCHAR(max),
 	post_process_filename VARCHAR(255),
 	post_process_content VARBINARY(MAX),
-	post_process_config_id VARCHAR(4000),
+	post_process_config_id VARCHAR(2000),
 	post_process_timestamp DATETIME2,
 	post_processed INT DEFAULT 1,
 	-- fk/pk columns

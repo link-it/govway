@@ -24,7 +24,7 @@ CREATE TABLE documenti
 	CONSTRAINT unique_documenti_1 UNIQUE (ruolo,tipo,nome,id_proprietario,tipo_proprietario),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_documenti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
@@ -75,7 +75,7 @@ CREATE TABLE accordi
 	CONSTRAINT unique_accordi_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_accordi PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
@@ -103,7 +103,7 @@ CREATE TABLE accordi_azioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_accordi_azioni_1 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
 	CONSTRAINT pk_accordi_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
@@ -134,7 +134,7 @@ CREATE TABLE port_type
 	-- fk/pk keys constraints
 	CONSTRAINT fk_port_type_1 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
 	CONSTRAINT pk_port_type PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_port_type_1 ON port_type (id_accordo,nome);
@@ -174,7 +174,7 @@ CREATE TABLE port_type_azioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_port_type_azioni_1 FOREIGN KEY (id_port_type) REFERENCES port_type(id),
 	CONSTRAINT pk_port_type_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
@@ -196,7 +196,7 @@ CREATE TABLE operation_messages
 	-- fk/pk keys constraints
 	CONSTRAINT fk_operation_messages_1 FOREIGN KEY (id_port_type_azione) REFERENCES port_type_azioni(id),
 	CONSTRAINT pk_operation_messages PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_OP_MESSAGES ON operation_messages (id_port_type_azione,input_message);
@@ -229,7 +229,7 @@ CREATE TABLE api_resources
 	-- fk/pk keys constraints
 	CONSTRAINT fk_api_resources_1 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
 	CONSTRAINT pk_api_resources PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_api_resources_1 ON api_resources (id_accordo,nome);
@@ -249,7 +249,7 @@ CREATE TABLE api_resources_response
 	-- fk/pk keys constraints
 	CONSTRAINT fk_api_resources_response_1 FOREIGN KEY (id_resource) REFERENCES api_resources(id),
 	CONSTRAINT pk_api_resources_response PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_api_resp_1 ON api_resources_response (id_resource,status);
@@ -275,7 +275,7 @@ CREATE TABLE api_resources_media
 	CONSTRAINT fk_api_resources_media_1 FOREIGN KEY (id_resource_response_media) REFERENCES api_resources_response(id),
 	CONSTRAINT fk_api_resources_media_2 FOREIGN KEY (id_resource_media) REFERENCES api_resources(id),
 	CONSTRAINT pk_api_resources_media PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -295,7 +295,7 @@ CREATE TABLE api_resources_parameter
 	CONSTRAINT fk_api_resources_parameter_1 FOREIGN KEY (id_resource_response_par) REFERENCES api_resources_response(id),
 	CONSTRAINT fk_api_resources_parameter_2 FOREIGN KEY (id_resource_parameter) REFERENCES api_resources(id),
 	CONSTRAINT pk_api_resources_parameter PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -323,7 +323,7 @@ CREATE TABLE accordi_cooperazione
 	CONSTRAINT unique_accordi_cooperazione_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_accordi_cooperazione PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,id_referente,versione);
@@ -342,7 +342,7 @@ CREATE TABLE accordi_coop_partecipanti
 	CONSTRAINT fk_accordi_coop_partecipanti_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT fk_accordi_coop_partecipanti_2 FOREIGN KEY (id_accordo_cooperazione) REFERENCES accordi_cooperazione(id),
 	CONSTRAINT pk_accordi_coop_partecipanti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_AC_COOP_PAR ON accordi_coop_partecipanti (id_accordo_cooperazione);
@@ -383,7 +383,7 @@ CREATE TABLE servizi
 	CONSTRAINT fk_servizi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT fk_servizi_3 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
 	CONSTRAINT pk_servizi PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_servizi_1 ON servizi (id_soggetto,tipo_servizio,nome_servizio,versione_servizio);
@@ -400,7 +400,7 @@ CREATE TABLE servizi_azioni
 	CONSTRAINT fk_servizi_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_azioni_2 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
 	CONSTRAINT pk_servizi_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_servizi_azioni_1 ON servizi_azioni (id_servizio);
@@ -418,7 +418,7 @@ CREATE TABLE servizi_azione
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_azione_1 FOREIGN KEY (id_servizio_azioni) REFERENCES servizi_azioni(id),
 	CONSTRAINT pk_servizi_azione PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_servizi_azione_1 ON servizi_azione (nome_azione,id_servizio_azioni);
@@ -446,7 +446,7 @@ CREATE TABLE servizi_fruitori
 	CONSTRAINT fk_servizi_fruitori_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT fk_servizi_fruitori_3 FOREIGN KEY (id_servizio) REFERENCES servizi(id),
 	CONSTRAINT pk_servizi_fruitori PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
@@ -463,7 +463,7 @@ CREATE TABLE servizi_fruitori_azioni
 	CONSTRAINT fk_servizi_fruitori_azioni_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_fruitori_azioni_2 FOREIGN KEY (id_fruizione) REFERENCES servizi_fruitori(id),
 	CONSTRAINT pk_servizi_fruitori_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_serv_fru_azioni_1 ON servizi_fruitori_azioni (id_fruizione);
@@ -481,7 +481,7 @@ CREATE TABLE servizi_fruitori_azione
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_fruitori_azione_1 FOREIGN KEY (id_fruizione_azioni) REFERENCES servizi_fruitori_azioni(id),
 	CONSTRAINT pk_servizi_fruitori_azione PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_serv_fru_azione_1 ON servizi_fruitori_azione (nome_azione,id_fruizione_azioni);
@@ -502,7 +502,7 @@ CREATE TABLE acc_serv_composti
 	CONSTRAINT fk_acc_serv_composti_1 FOREIGN KEY (id_accordo_cooperazione) REFERENCES accordi_cooperazione(id),
 	CONSTRAINT fk_acc_serv_composti_2 FOREIGN KEY (id_accordo) REFERENCES accordi(id),
 	CONSTRAINT pk_acc_serv_composti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
@@ -521,7 +521,7 @@ CREATE TABLE acc_serv_componenti
 	CONSTRAINT fk_acc_serv_componenti_1 FOREIGN KEY (id_servizio_composto) REFERENCES acc_serv_composti(id),
 	CONSTRAINT fk_acc_serv_componenti_2 FOREIGN KEY (id_servizio_componente) REFERENCES servizi(id),
 	CONSTRAINT pk_acc_serv_componenti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_AC_SC_SC ON acc_serv_componenti (id_servizio_composto);

@@ -7,7 +7,7 @@ CREATE TABLE db_info
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_db_info PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 

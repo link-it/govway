@@ -158,7 +158,7 @@ CREATE TABLE ct_active_policy
 	filtro_enabled NUMBER NOT NULL,
 	filtro_protocollo VARCHAR2(255),
 	filtro_ruolo VARCHAR2(255),
-	filtro_porta VARCHAR2(4000),
+	filtro_porta VARCHAR2(2000),
 	filtro_tipo_fruitore VARCHAR2(255),
 	filtro_nome_fruitore VARCHAR2(255),
 	filtro_ruolo_fruitore VARCHAR2(255),

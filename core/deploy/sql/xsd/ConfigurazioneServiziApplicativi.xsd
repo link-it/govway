@@ -67,7 +67,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="nome" varchar="4000"/>
+                                <linkit:sql-column-mapping name="nome" varchar="2000"/>
                                 <linkit:sql-ddl-column-comment>Identificativo dell'applicativo</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>

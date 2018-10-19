@@ -19,7 +19,7 @@ CREATE TABLE ruoli
 	CONSTRAINT unique_ruoli_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_ruoli PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_ruoli_1 ON ruoli (nome);

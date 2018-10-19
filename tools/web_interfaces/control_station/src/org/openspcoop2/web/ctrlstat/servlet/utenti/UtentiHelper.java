@@ -693,12 +693,13 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_SOGGETTI_OPERATIVI);
-		if(utente.hasOnlyPermessiUtenti()) {
-			de.setType(DataElementType.HIDDEN);
-		}
-		else {
-			de.setType(DataElementType.TEXT);
-		}
+		// Il sottoinsieme sui soggetti vale solo per la govwayMonitor
+		//if(utente.hasOnlyPermessiUtenti() || !this.utentiCore.isMultitenant()) {
+		de.setType(DataElementType.HIDDEN);
+//		}
+//		else {
+//			de.setType(DataElementType.TEXT);
+//		}
 		de.setName(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO_LIST);
 		de.setValue(soggettiDisponibili);
 		dati.addElement(de);

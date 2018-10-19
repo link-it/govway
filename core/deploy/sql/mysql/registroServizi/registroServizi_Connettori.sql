@@ -4,7 +4,7 @@ CREATE TABLE connettori
 (
 	-- (disabilitato,http,jms)
 	endpointtype VARCHAR(255) NOT NULL,
-	nome_connettore VARCHAR(4000) NOT NULL,
+	nome_connettore VARCHAR(2000) NOT NULL,
 	-- url nel caso http
 	url VARCHAR(255),
 	-- nel caso di http indicazione se usare chunking
@@ -54,7 +54,7 @@ CREATE TABLE connettori
 	CONSTRAINT unique_connettori_1 UNIQUE (nome_connettore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_connettori PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_connettori_1 ON connettori (nome_connettore);
@@ -73,7 +73,7 @@ CREATE TABLE connettori_custom
 	-- fk/pk keys constraints
 	CONSTRAINT fk_connettori_custom_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT pk_connettori_custom PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -90,7 +90,7 @@ CREATE TABLE connettori_properties
 	CONSTRAINT unique_connettori_properties_1 UNIQUE (nome_connettore),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_connettori_properties PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);

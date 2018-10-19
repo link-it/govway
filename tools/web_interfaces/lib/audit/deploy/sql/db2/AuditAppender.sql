@@ -6,8 +6,8 @@ CREATE TABLE audit_operations
 	-- non definito in caso di LOGIN/LOGOUT
 	tipo VARCHAR(255),
 	-- non definito in caso di LOGIN/LOGOUT
-	object_id VARCHAR(4000),
-	object_old_id VARCHAR(4000),
+	object_id VARCHAR(2000),
+	object_old_id VARCHAR(2000),
 	utente VARCHAR(255) NOT NULL,
 	stato VARCHAR(255) NOT NULL,
 	-- Dettaglio oggetto in gestione (Rappresentazione tramite JSON o XML format)

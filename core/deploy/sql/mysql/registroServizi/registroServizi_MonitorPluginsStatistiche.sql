@@ -16,7 +16,7 @@ CREATE TABLE stat_personalizzate
 	CONSTRAINT fk_stat_personalizzate_1 FOREIGN KEY (id_configurazione) REFERENCES plugins_conf_azioni(id) ON DELETE CASCADE,
 	CONSTRAINT fk_stat_personalizzate_2 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
 	CONSTRAINT pk_stat_personalizzate PRIMARY KEY (pid)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX idx_stat_pers_1 ON stat_personalizzate (id_configurazione,id);

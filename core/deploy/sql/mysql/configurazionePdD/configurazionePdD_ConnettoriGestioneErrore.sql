@@ -12,7 +12,7 @@ CREATE TABLE gestione_errore
 	CONSTRAINT unique_gestione_errore_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_gestione_errore PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -30,7 +30,7 @@ CREATE TABLE gestione_errore_trasporto
 	-- fk/pk keys constraints
 	CONSTRAINT fk_gestione_errore_trasporto_1 FOREIGN KEY (id_gestione_errore) REFERENCES gestione_errore(id),
 	CONSTRAINT pk_gestione_errore_trasporto PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -49,7 +49,7 @@ CREATE TABLE gestione_errore_soap
 	-- fk/pk keys constraints
 	CONSTRAINT fk_gestione_errore_soap_1 FOREIGN KEY (id_gestione_errore) REFERENCES gestione_errore(id),
 	CONSTRAINT pk_gestione_errore_soap PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 

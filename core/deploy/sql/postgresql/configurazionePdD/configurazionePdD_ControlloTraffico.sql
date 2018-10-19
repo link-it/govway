@@ -118,7 +118,7 @@ CREATE TABLE ct_active_policy
 	filtro_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
-	filtro_porta VARCHAR(4000),
+	filtro_porta VARCHAR(2000),
 	filtro_tipo_fruitore VARCHAR(255),
 	filtro_nome_fruitore VARCHAR(255),
 	filtro_ruolo_fruitore VARCHAR(255),

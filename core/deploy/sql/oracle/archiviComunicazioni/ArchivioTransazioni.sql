@@ -5,7 +5,7 @@ CREATE SEQUENCE seq_credenziale_mittente MINVALUE 1 MAXVALUE 9223372036854775807
 CREATE TABLE credenziale_mittente
 (
 	tipo VARCHAR2(20) NOT NULL,
-	credenziale VARCHAR2(4000) NOT NULL,
+	credenziale VARCHAR2(2900) NOT NULL,
 	ora_registrazione TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE transazioni
 	operazione_im VARCHAR2(255),
 	location_richiesta VARCHAR2(255),
 	location_risposta VARCHAR2(255),
-	nome_porta VARCHAR2(4000),
+	nome_porta VARCHAR2(2000),
 	credenziali VARCHAR2(255),
 	location_connettore CLOB,
 	url_invocazione CLOB,
@@ -254,7 +254,7 @@ CREATE TABLE dump_messaggi
 	post_process_header CLOB,
 	post_process_filename VARCHAR2(255),
 	post_process_content BLOB,
-	post_process_config_id VARCHAR2(4000),
+	post_process_config_id VARCHAR2(2000),
 	post_process_timestamp TIMESTAMP,
 	post_processed NUMBER,
 	-- fk/pk columns

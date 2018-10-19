@@ -8,6 +8,8 @@ CREATE TABLE soggetti
 	tipo_soggetto VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
 	identificativo_porta VARCHAR(255),
+	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
+	is_default INT,
 	-- 1/0 (true/false) svolge attivita di router
 	is_router INT,
 	id_connettore BIGINT NOT NULL,
@@ -38,6 +40,7 @@ CREATE TABLE soggetti
 CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 CREATE UNIQUE INDEX index_soggetti_2 ON soggetti (codice_ipa);
 
+ALTER TABLE soggetti ALTER COLUMN is_default SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN is_router SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN privato SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;

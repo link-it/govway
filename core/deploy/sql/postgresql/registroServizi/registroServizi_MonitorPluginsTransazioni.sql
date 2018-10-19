@@ -11,7 +11,7 @@ CREATE TABLE config_transazioni
 	-- unique constraints
 	CONSTRAINT uniq_trans_pers_1 UNIQUE (id_conf_servizio_azione),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_config_transazioni_1 FOREIGN KEY (id_conf_servizio_azione) REFERENCES plugins_conf_azioni(id) ON DELETE CASCADE,
+	CONSTRAINT fk_config_transazioni_1 FOREIGN KEY (id_conf_servizio_azione) REFERENCES plugins_conf_azioni(id),
 	CONSTRAINT pk_config_transazioni PRIMARY KEY (id)
 );
 
@@ -32,8 +32,8 @@ CREATE TABLE config_tran_plugins
 	CONSTRAINT uniq_conf_trans_plug_1 UNIQUE (id_configurazione_transazione,id_conf_trans_plugin),
 	CONSTRAINT uniq_conf_trans_plug_2 UNIQUE (id_configurazione_transazione,id_plugin),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_config_tran_plugins_1 FOREIGN KEY (id_configurazione_transazione) REFERENCES config_transazioni(id) ON DELETE CASCADE,
-	CONSTRAINT fk_config_tran_plugins_2 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
+	CONSTRAINT fk_config_tran_plugins_1 FOREIGN KEY (id_configurazione_transazione) REFERENCES config_transazioni(id),
+	CONSTRAINT fk_config_tran_plugins_2 FOREIGN KEY (id_plugin) REFERENCES plugins(id),
 	CONSTRAINT pk_config_tran_plugins PRIMARY KEY (id)
 );
 
@@ -59,7 +59,7 @@ CREATE TABLE configurazione_stati
 	-- unique constraints
 	CONSTRAINT uniq_trans_pers_stati_1 UNIQUE (id_configurazione_transazione,nome),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_configurazione_stati_1 FOREIGN KEY (id_configurazione_transazione) REFERENCES config_transazioni(id) ON DELETE CASCADE,
+	CONSTRAINT fk_configurazione_stati_1 FOREIGN KEY (id_configurazione_transazione) REFERENCES config_transazioni(id),
 	CONSTRAINT pk_configurazione_stati PRIMARY KEY (id)
 );
 
@@ -94,8 +94,8 @@ CREATE TABLE conf_risorse_contenuti
 	-- unique constraints
 	CONSTRAINT uniq_trans_pers_risorse_1 UNIQUE (id_conf_transazione,nome),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_conf_risorse_contenuti_1 FOREIGN KEY (id_conf_transazione) REFERENCES config_transazioni(id) ON DELETE CASCADE,
-	CONSTRAINT fk_conf_risorse_contenuti_2 FOREIGN KEY (id_configurazione_stato) REFERENCES configurazione_stati(id) ON DELETE CASCADE,
+	CONSTRAINT fk_conf_risorse_contenuti_1 FOREIGN KEY (id_conf_transazione) REFERENCES config_transazioni(id),
+	CONSTRAINT fk_conf_risorse_contenuti_2 FOREIGN KEY (id_configurazione_stato) REFERENCES configurazione_stati(id),
 	CONSTRAINT pk_conf_risorse_contenuti PRIMARY KEY (id)
 );
 

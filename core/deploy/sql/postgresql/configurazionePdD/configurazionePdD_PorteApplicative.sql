@@ -4,7 +4,7 @@ CREATE SEQUENCE seq_porte_applicative start 1 increment 1 maxvalue 9223372036854
 
 CREATE TABLE porte_applicative
 (
-	nome_porta VARCHAR(4000) NOT NULL,
+	nome_porta VARCHAR(2000) NOT NULL,
 	descrizione VARCHAR(255),
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,

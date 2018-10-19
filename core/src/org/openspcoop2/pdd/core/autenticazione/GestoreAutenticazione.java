@@ -743,7 +743,7 @@ public class GestoreAutenticazione {
     }
     
     private static CredenzialeMittente getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
-    		TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credential) throws Exception{
+    		TipoCredenzialeMittente tipoCredenziale, String tipoAutenticazione, String credentialParam) throws Exception{
       	
     	if(dominio==null)
 			throw new AutenticazioneException("(Parametri) dominio non definito");
@@ -755,9 +755,16 @@ public class GestoreAutenticazione {
 			throw new AutenticazioneException("(Parametri) tipoCredenziale non definito");
     	if(tipoAutenticazione==null && TipoCredenzialeMittente.trasporto.equals(tipoCredenziale))
 			throw new AutenticazioneException("(Parametri) tipoAutenticazione non definito");
-		if(credential==null)
+		if(credentialParam==null)
 			throw new AutenticazioneException("(Parametri) credenziali non definite");
 		      	
+		String credential = credentialParam;
+		int maxLengthCredenziali = OpenSPCoop2Properties.getInstance().getTransazioniCredenzialiMittenteMaxLength();
+		if(credential.length()>maxLengthCredenziali) {
+			logger.error("Attenzione: credenziale '"+tipoCredenziale+"' ricevuta supera la dimensione massima consentita '"+maxLengthCredenziali+"'. Verrà salvata troncata a tale dimensione. Credenziale: '"+credential+"'");
+			credential = credentialParam.substring(0,maxLengthCredenziali);
+		}
+		
     	if(GestoreAutenticazione.cacheAutenticazione==null){
     		return _getCredenzialeMittente(dominio, modulo, idTransazione, tipoCredenziale, tipoAutenticazione, credential);
 		}

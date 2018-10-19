@@ -6,8 +6,8 @@ CREATE TABLE audit_operations
 	-- non definito in caso di LOGIN/LOGOUT
 	tipo VARCHAR(255),
 	-- non definito in caso di LOGIN/LOGOUT
-	object_id VARCHAR(4000),
-	object_old_id VARCHAR(4000),
+	object_id VARCHAR(2000),
+	object_old_id VARCHAR(2000),
 	utente VARCHAR(255) NOT NULL,
 	stato VARCHAR(255) NOT NULL,
 	-- Dettaglio oggetto in gestione (Rappresentazione tramite JSON o XML format)
@@ -28,7 +28,7 @@ CREATE TABLE audit_operations
 	CONSTRAINT chk_audit_operations_2 CHECK (stato IN ('requesting','error','completed')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_audit_operations PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX audit_filter_time ON audit_operations (time_request DESC);
@@ -52,7 +52,7 @@ CREATE TABLE audit_binaries
 	-- fk/pk keys constraints
 	CONSTRAINT fk_audit_binaries_1 FOREIGN KEY (id_audit_operation) REFERENCES audit_operations(id),
 	CONSTRAINT pk_audit_binaries PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_audit_binaries_1 ON audit_binaries (binary_id,id_audit_operation);

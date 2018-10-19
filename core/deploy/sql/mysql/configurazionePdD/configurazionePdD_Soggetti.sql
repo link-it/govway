@@ -21,7 +21,7 @@ CREATE TABLE soggetti
 	CONSTRAINT unique_soggetti_1 UNIQUE (nome_soggetto,tipo_soggetto),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_soggetti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);

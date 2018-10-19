@@ -8,6 +8,8 @@ CREATE TABLE soggetti
 	tipo_soggetto VARCHAR2(255) NOT NULL,
 	descrizione VARCHAR2(255),
 	identificativo_porta VARCHAR2(255),
+	-- 1/0 (true/false) Indicazione se il soggetto svolge è quello di default per il protocollo
+	is_default NUMBER,
 	-- 1/0 (true/false) svolge attivita di router
 	is_router NUMBER,
 	id_connettore NUMBER NOT NULL,
@@ -35,6 +37,7 @@ CREATE TABLE soggetti
 );
 
 
+ALTER TABLE soggetti MODIFY is_default DEFAULT 0;
 ALTER TABLE soggetti MODIFY is_router DEFAULT 0;
 ALTER TABLE soggetti MODIFY privato DEFAULT 0;
 ALTER TABLE soggetti MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;

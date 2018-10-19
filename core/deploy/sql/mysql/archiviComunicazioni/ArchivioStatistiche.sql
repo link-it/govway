@@ -8,7 +8,7 @@ CREATE TABLE statistiche
 	CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili')),
 	-- unique constraints
 	CONSTRAINT unique_statistiche_1 UNIQUE (tipo)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 -- STATISTICHE ORARIE
@@ -54,7 +54,7 @@ CREATE TABLE statistiche_orarie
 	CONSTRAINT chk_statistiche_orarie_1 CHECK (tipo_porta IN ('delegata','applicativa','router','integration_manager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_statistiche_orarie PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
@@ -105,7 +105,7 @@ CREATE TABLE stat_orarie_contenuti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_stat_orarie_contenuti_1 FOREIGN KEY (id_stat) REFERENCES statistiche_orarie(id) ON DELETE CASCADE,
 	CONSTRAINT pk_stat_orarie_contenuti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX idx_stat_c_orarie_1 ON stat_orarie_contenuti (id_stat);
@@ -155,7 +155,7 @@ CREATE TABLE statistiche_giornaliere
 	CONSTRAINT chk_statistiche_giornaliere_1 CHECK (tipo_porta IN ('delegata','applicativa','router','integration_manager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_statistiche_giornaliere PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
@@ -206,7 +206,7 @@ CREATE TABLE stat_giorni_contenuti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_stat_giorni_contenuti_1 FOREIGN KEY (id_stat) REFERENCES statistiche_giornaliere(id) ON DELETE CASCADE,
 	CONSTRAINT pk_stat_giorni_contenuti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX idx_stat_c_giornaliere_1 ON stat_giorni_contenuti (id_stat);
@@ -256,7 +256,7 @@ CREATE TABLE statistiche_settimanali
 	CONSTRAINT chk_statistiche_settimanali_1 CHECK (tipo_porta IN ('delegata','applicativa','router','integration_manager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_statistiche_settimanali PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
@@ -307,7 +307,7 @@ CREATE TABLE stat_settimane_contenuti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_stat_settimane_contenuti_1 FOREIGN KEY (id_stat) REFERENCES statistiche_settimanali(id) ON DELETE CASCADE,
 	CONSTRAINT pk_stat_settimane_contenuti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX idx_stat_c_settimanali_1 ON stat_settimane_contenuti (id_stat);
@@ -357,7 +357,7 @@ CREATE TABLE statistiche_mensili
 	CONSTRAINT chk_statistiche_mensili_1 CHECK (tipo_porta IN ('delegata','applicativa','router','integration_manager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_statistiche_mensili PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_STAT_MONTH_ENTRY ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
@@ -408,7 +408,7 @@ CREATE TABLE stat_mensili_contenuti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_stat_mensili_contenuti_1 FOREIGN KEY (id_stat) REFERENCES statistiche_mensili(id) ON DELETE CASCADE,
 	CONSTRAINT pk_stat_mensili_contenuti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX idx_stat_c_mensili_1 ON stat_mensili_contenuti (id_stat);

@@ -23,7 +23,7 @@ CREATE TABLE msgdiagnostici
 	CONSTRAINT chk_msgdiagnostici_1 CHECK (severita IN (0,1,2,3,4,5,6,7)),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_msgdiagnostici PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX MSG_DIAG_TRANS ON msgdiagnostici (id_transazione);

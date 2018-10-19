@@ -85,24 +85,24 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="object_id" type="string-max-4000" minOccurs="0">
+                <xsd:element name="object_id" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="object_id" />
+                                <linkit:sql-column-mapping name="object_id" varchar="2000"/>
                                 <linkit:sql-ddl-column-comment>Identificativo dell'oggetto gestito dall'utente (non presente in caso di LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="object_old_id" type="string-max-4000" minOccurs="0">
+                <xsd:element name="object_old_id" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="object_old_id" />
+                                <linkit:sql-column-mapping name="object_old_id" varchar="2000"/>
                                 <linkit:sql-ddl-column-comment>Precedente identificativo dell'oggetto modificato dall'utente (non presente in caso di LOGIN/LOGOUT)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -284,12 +284,7 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
 
 
 
-    <!-- Vincoli per riuscire ad utilizzare indici -->
-    <xsd:simpleType name="string-max-4000">
-        <xsd:restriction base="xsd:string">
-            <xsd:maxLength value="4000" />
-        </xsd:restriction>
-    </xsd:simpleType>
+ 
 
 
 </xsd:schema>

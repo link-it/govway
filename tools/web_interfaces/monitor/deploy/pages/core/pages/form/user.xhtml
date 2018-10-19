@@ -36,11 +36,6 @@
 								<h:outputText value="#{utentiBean.modalitaDisponibiliUser}"  id="modalitaUtenteProfilo" styleClass="spanNoEdit"/>
 							</div>
 						</link:prop>
-						<link:prop label="Multi-Tenant" >
-							<div class="divNoEdit"> 
-								<h:outputText value="#{utentiBean.user.permitMultiTenant ? 'Si' : 'No'}"  id="multitenantUtenteProfilo" styleClass="spanNoEdit"/>
-							</div>
-						</link:prop>
 					</link:fieldset>
 					<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
 						<c:if test="#{not empty utentiBean.listaSoggettiAssociatiUtente}">

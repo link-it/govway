@@ -164,11 +164,16 @@ public final class AuthorisationFilter implements Filter {
 							// Check Reset delle ricerche
 							String resetSearch = request.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
 							if(ServletUtils.isCheckBoxEnabled(resetSearch)) {
+								boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(session);
 								Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 								if(ricerca!=null) {
 									ricerca.reset();
 									for (int i = 0; i < Liste.getTotaleListe(); i++) {
 										loginHelper.initializeFilter(ricerca, i);
+									}
+									if(!existsRicerca) {
+										// salvo in sessione le inizializzazioni
+										ServletUtils.setSearchObjectIntoSession(session, ricerca);
 									}
 									ControlStationCore.logDebug("Effettuato reset della ricerca");					
 								}

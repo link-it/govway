@@ -34,7 +34,7 @@ CREATE TABLE ct_config
 	CONSTRAINT chk_ct_config_1 CHECK (cache_algorithm IN ('LRU','MRU')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_ct_config PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -91,7 +91,7 @@ CREATE TABLE ct_config_policy
 	CONSTRAINT uniq_cong_gen_policy_1 UNIQUE (policy_id),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_ct_config_policy PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
@@ -115,7 +115,7 @@ CREATE TABLE ct_active_policy
 	filtro_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
-	filtro_porta VARCHAR(4000),
+	filtro_porta VARCHAR(2000),
 	filtro_tipo_fruitore VARCHAR(255),
 	filtro_nome_fruitore VARCHAR(255),
 	filtro_ruolo_fruitore VARCHAR(255),
@@ -155,7 +155,7 @@ CREATE TABLE ct_active_policy
 	CONSTRAINT uniq_cong_att_policy_1 UNIQUE (active_policy_id),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_ct_active_policy PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);

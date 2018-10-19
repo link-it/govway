@@ -12124,6 +12124,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
 		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
+		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;

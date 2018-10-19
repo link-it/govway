@@ -61,7 +61,7 @@ CREATE TABLE tracce
 	CONSTRAINT chk_tracce_3 CHECK (esito_elaborazione IN ('INVIATO','RICEVUTO','ERRORE')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_tracce PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_TRANS ON tracce (id_transazione,tipo_messaggio);
@@ -92,7 +92,7 @@ CREATE TABLE tracce_riscontri
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_riscontri_1 FOREIGN KEY (idtraccia) REFERENCES tracce(id) ON DELETE CASCADE,
 	CONSTRAINT pk_tracce_riscontri PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_RIS ON tracce_riscontri (idtraccia);
@@ -122,7 +122,7 @@ CREATE TABLE tracce_trasmissioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_trasmissioni_1 FOREIGN KEY (idtraccia) REFERENCES tracce(id) ON DELETE CASCADE,
 	CONSTRAINT pk_tracce_trasmissioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_TR ON tracce_trasmissioni (idtraccia);
@@ -148,7 +148,7 @@ CREATE TABLE tracce_eccezioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_eccezioni_1 FOREIGN KEY (idtraccia) REFERENCES tracce(id) ON DELETE CASCADE,
 	CONSTRAINT pk_tracce_eccezioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_ECC ON tracce_eccezioni (idtraccia);
@@ -170,7 +170,7 @@ CREATE TABLE tracce_allegati
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_allegati_1 FOREIGN KEY (idtraccia) REFERENCES tracce(id) ON DELETE CASCADE,
 	CONSTRAINT pk_tracce_allegati PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_ALLEGATI_INDEX ON tracce_allegati (idtraccia);
@@ -190,7 +190,7 @@ CREATE TABLE tracce_ext_protocol_info
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_ext_protocol_info_1 FOREIGN KEY (idtraccia) REFERENCES tracce(id) ON DELETE CASCADE,
 	CONSTRAINT pk_tracce_ext_protocol_info PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX TRACCE_EXT_INFO ON tracce_ext_protocol_info (idtraccia);

@@ -3,7 +3,7 @@
 CREATE TABLE credenziale_mittente
 (
 	tipo VARCHAR(20) NOT NULL,
-	credenziale VARCHAR(4000) NOT NULL,
+	credenziale VARCHAR(2900) NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 	-- fk/pk columns
@@ -12,7 +12,7 @@ CREATE TABLE credenziale_mittente
 	CONSTRAINT unique_credenziale_mittente_1 UNIQUE (tipo,credenziale),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_credenziale_mittente PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_credenziale_mittente_1 ON credenziale_mittente (tipo,credenziale);
@@ -131,7 +131,7 @@ CREATE TABLE transazioni
 	operazione_im VARCHAR(255),
 	location_richiesta VARCHAR(255),
 	location_risposta VARCHAR(255),
-	nome_porta VARCHAR(4000),
+	nome_porta VARCHAR(2000),
 	credenziali VARCHAR(255),
 	location_connettore TEXT,
 	url_invocazione TEXT,
@@ -159,7 +159,7 @@ CREATE TABLE transazioni
 	CONSTRAINT chk_transazioni_1 CHECK (pdd_ruolo IN ('delegata','applicativa','router','integrationManager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_transazioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX INDEX_TR_ENTRY ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio);
@@ -180,7 +180,7 @@ CREATE TABLE transazioni_info
 	-- fk/pk columns
 	-- unique constraints
 	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 CREATE TABLE transazioni_export
@@ -215,7 +215,7 @@ CREATE TABLE transazioni_export
 	CONSTRAINT unique_transazioni_export_1 UNIQUE (intervallo_inizio,intervallo_fine),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_transazioni_export PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -238,7 +238,7 @@ CREATE TABLE dump_messaggi
 	post_process_header MEDIUMTEXT,
 	post_process_filename VARCHAR(255),
 	post_process_content MEDIUMBLOB,
-	post_process_config_id VARCHAR(4000),
+	post_process_config_id VARCHAR(2000),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	post_process_timestamp TIMESTAMP(3) DEFAULT 0,
 	post_processed INT DEFAULT 1,
@@ -248,7 +248,7 @@ CREATE TABLE dump_messaggi
 	CONSTRAINT chk_dump_messaggi_1 CHECK (tipo_messaggio IN ('RichiestaIngresso','RichiestaUscita','RispostaIngresso','RispostaUscita','RichiestaIngressoDumpBinario','RichiestaUscitaDumpBinario','RispostaIngressoDumpBinario','RispostaUscitaDumpBinario','IntegrationManager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_messaggi PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_messaggi_1 ON dump_messaggi (id_transazione);
@@ -271,7 +271,7 @@ CREATE TABLE dump_multipart_header
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_multipart_header_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_multipart_header PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_multipart_header_1 ON dump_multipart_header (id_messaggio);
@@ -292,7 +292,7 @@ CREATE TABLE dump_header_trasporto
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_header_trasporto_1 ON dump_header_trasporto (id_messaggio);
@@ -313,7 +313,7 @@ CREATE TABLE dump_allegati
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_allegati_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_allegati PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_allegati_1 ON dump_allegati (id_messaggio);
@@ -334,7 +334,7 @@ CREATE TABLE dump_header_allegato
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_header_allegato_1 FOREIGN KEY (id_allegato) REFERENCES dump_allegati(id),
 	CONSTRAINT pk_dump_header_allegato PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_header_allegato_1 ON dump_header_allegato (id_allegato);
@@ -356,7 +356,7 @@ CREATE TABLE dump_contenuti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_contenuti_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
 	CONSTRAINT pk_dump_contenuti PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX index_dump_contenuti_1 ON dump_contenuti (id_messaggio);

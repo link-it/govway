@@ -693,7 +693,7 @@ CREATE TABLE generic_property
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome,valore),
+	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_generic_property_1 FOREIGN KEY (id_props) REFERENCES generic_properties(id),
 	CONSTRAINT pk_generic_property PRIMARY KEY (id)

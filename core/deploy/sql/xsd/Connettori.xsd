@@ -67,7 +67,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="nome_connettore" varchar="4000"/>
+                                <linkit:sql-column-mapping name="nome_connettore" varchar="2000"/>
                                 <linkit:sql-ddl-column-comment>Identificativo del connettore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

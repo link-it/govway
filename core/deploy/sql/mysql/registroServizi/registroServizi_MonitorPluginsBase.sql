@@ -3,7 +3,7 @@
 CREATE TABLE plugin_info
 (
 	content MEDIUMBLOB NOT NULL
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 -- PLUGINS
@@ -23,7 +23,7 @@ CREATE TABLE plugins
 	CONSTRAINT unique_plugins_2 UNIQUE (tipo,label),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_plugins PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_plugins_1 ON plugins (tipo,class_name);
@@ -43,7 +43,7 @@ CREATE TABLE plugins_servizi_comp
 	-- fk/pk keys constraints
 	CONSTRAINT fk_plugins_servizi_comp_1 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
 	CONSTRAINT pk_plugins_servizi_comp PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -59,7 +59,7 @@ CREATE TABLE plugins_azioni_comp
 	-- fk/pk keys constraints
 	CONSTRAINT fk_plugins_azioni_comp_1 FOREIGN KEY (id_plugin_servizio_comp) REFERENCES plugins_servizi_comp(id) ON DELETE CASCADE,
 	CONSTRAINT pk_plugins_azioni_comp PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_plugins_azioni_comp_1 ON plugins_azioni_comp (id_plugin_servizio_comp,azione);
@@ -84,7 +84,7 @@ CREATE TABLE plugins_filtro_comp
 	-- fk/pk keys constraints
 	CONSTRAINT fk_plugins_filtro_comp_1 FOREIGN KEY (id_plugin) REFERENCES plugins(id) ON DELETE CASCADE,
 	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 
 
@@ -104,7 +104,7 @@ CREATE TABLE plugins_conf_servizi
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
 	CONSTRAINT pk_plugins_conf_servizi PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE INDEX idx_conf_servizi_1 ON plugins_conf_servizi (accordo,tipo_soggetto_referente,nome_soggetto_referente,versione,servizio);
@@ -122,7 +122,7 @@ CREATE TABLE plugins_conf_azioni
 	-- fk/pk keys constraints
 	CONSTRAINT fk_plugins_conf_azioni_1 FOREIGN KEY (id_config_servizio) REFERENCES plugins_conf_servizi(id) ON DELETE CASCADE,
 	CONSTRAINT pk_plugins_conf_azioni PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX index_plugins_conf_azioni_1 ON plugins_conf_azioni (id_config_servizio,azione);
@@ -153,7 +153,7 @@ CREATE TABLE plugins_conf_filtri
 	CONSTRAINT uniq_conf_filtri_1 UNIQUE (nome),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_plugins_conf_filtri PRIMARY KEY (id)
-)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
 -- index
 CREATE UNIQUE INDEX idx_conf_filtri_1 ON plugins_conf_filtri (nome);
