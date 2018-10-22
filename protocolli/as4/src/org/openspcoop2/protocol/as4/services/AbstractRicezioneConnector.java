@@ -98,7 +98,7 @@ public abstract class AbstractRicezioneConnector implements IRunnableInstance{
 				throw new JMSException("ExceptionJMSListener ha rilevato una connessione jms corrotta: " + this.exceptionListenerJMS.getException().getMessage());
 			}
 		
-			Message received = (Message) this.receiver.receive(1); // sblocco immediatamente se non e' presente un messsaggio
+			Message received = (Message) this.receiver.receive(1); // sblocco immediatamente se non e' presente un messaggio
 			if(received==null) {
 				this.log.debug("Non sono presenti messaggi in coda");
 				return;

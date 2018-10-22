@@ -1291,7 +1291,7 @@ public class GestoreToken {
 					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
 				}
 				String pattern = properties.getGestioneTokenFormatDate();
-				if(pattern!=null) {
+				if(pattern!=null && !"".equals(pattern)) {
 					sdf = new SimpleDateFormat(pattern);
 				}
 			}
@@ -1527,8 +1527,85 @@ public class GestoreToken {
 				if(!op2headers && add) {
 					jsonNode.set("userInfo", userInfoNode);
 				}
-			}		
+			}	
+			List<String> listCustomClaims = properties.getCustomClaimsKeys_gestioneTokenForward();
+			if(listCustomClaims!=null && !listCustomClaims.isEmpty()) {
+				
+				ArrayNode customClaimsNode = null;
+				if(!op2headers) {
+					customClaimsNode = jsonUtils.newArrayNode();
+				}
+				
+				boolean add = false;
+				
+				for (String claimKey : listCustomClaims) {
+				
+					String claimName = properties.getCustomClaimsName_gestioneTokenHeaderIntegrazione(claimKey);
+					
+					if(informazioniTokenNormalizzate.getClaims()!=null && informazioniTokenNormalizzate.getClaims().containsKey(claimName)) {
+						
+						String claimValue = informazioniTokenNormalizzate.getClaims().get(claimName);
+						String headerName = null;
+						if(claimValue!=null) {
+							boolean setCustomClaims = false;
+							if(op2headers) {
+								headerName = properties.getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+								if(portaDelegata) {
+									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+								}
+								else {
+									setCustomClaims = properties.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
+								}
+							}
+							else {
+								headerName = properties.getCustomClaimsJsonPropertyName_gestioneTokenHeaderIntegrazioneJson(claimKey);
+								if(portaDelegata) {
+									setCustomClaims = properties.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson(claimKey);
+								}
+								else {
+									setCustomClaims = properties.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson(claimKey);
+								}
+							}
+							
+							if(setCustomClaims) {
+								if(op2headers) {
+									tokenForward.getTrasporto().put(headerName, claimValue);
+								}
+								else {
+									ObjectNode propertyNode = jsonUtils.newObjectNode();
+									propertyNode.put("name", headerName);
+									propertyNode.put("value", claimValue);
+									customClaimsNode.add(propertyNode);
+									add = true;
+								}
+							}
+						}
+					}
+					
+				}
+				
+				if(!op2headers && add) {
+					jsonNode.set("claims", customClaimsNode);
+				}
+			}
 
+			Date processTime = DateManager.getDate();
+			if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME)) {
+				if(op2headers) {
+					String value = null;
+					if(sdf!=null) {
+						value = sdf.format(processTime);
+					}
+					else {
+						value = (processTime.getTime() / 1000) + "";
+					}
+					tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME), value);
+				}
+				else {
+					jsonNode.put("processTime", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getIat()));
+				}
+			}
+			
 			if(!op2headers) {
 				String json = jsonUtils.toString(jsonNode);
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(forwardInforRaccolteMode)) {

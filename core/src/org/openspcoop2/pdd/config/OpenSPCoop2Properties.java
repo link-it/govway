@@ -1560,6 +1560,19 @@ public class OpenSPCoop2Properties {
 			if(this.checkTipiIntegrazioneGestioneToken() == false) {
 				return false;
 			}
+			List<String> listCustomClaims = getCustomClaimsKeys_gestioneTokenForward();
+			if(listCustomClaims!=null && !listCustomClaims.isEmpty()) {
+				for (String claim : listCustomClaims) {
+					// in caso non siano presenti viene sollevata una eccezione
+					this.getCustomClaimsName_gestioneTokenHeaderIntegrazione(claim);
+					this.getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(claim);
+					this.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claim);
+					this.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(claim);
+					this.getCustomClaimsJsonPropertyName_gestioneTokenHeaderIntegrazioneJson(claim);
+					this.getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson(claim);
+					this.getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson(claim);
+				}
+			}
 			
 			// Trasporto REST / SOAP
 			
@@ -2258,6 +2271,7 @@ public class OpenSPCoop2Properties {
 
 	public List<String> getKeywordsIntegrazioneGestioneToken(){
 		List<String> keywords = new ArrayList<>();
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME);
@@ -14194,6 +14208,328 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA;
+	}
+	
+	private static List<String> getCustomClaimsKeys_gestioneTokenForward = null;
+	public List<String> getCustomClaimsKeys_gestioneTokenForward() throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaimsKeys_gestioneTokenForward==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				OpenSPCoop2Properties.getCustomClaimsKeys_gestioneTokenForward= new ArrayList<>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("name".equals(keySub)) {
+								String tmp = key.substring(0, key.indexOf("."));
+								if(tmp!=null) {
+									OpenSPCoop2Properties.getCustomClaimsKeys_gestioneTokenForward.add(tmp.trim());
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom.CLAIM_NAME.name': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaimsKeys_gestioneTokenForward;
+	}
+	
+	private static HashMap<String, String> getCustomClaims_name_gestioneTokenHeaderIntegrazione = null;
+	public String getCustomClaimsName_gestioneTokenHeaderIntegrazione(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_name_gestioneTokenHeaderIntegrazione==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_name_gestioneTokenHeaderIntegrazione = new HashMap<String, String>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("name".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									String claimNameTmp = key.substring(0, key.indexOf("."));
+									OpenSPCoop2Properties.getCustomClaims_name_gestioneTokenHeaderIntegrazione.put(claimNameTmp, tmp.trim());
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_name_gestioneTokenHeaderIntegrazione.get(claimName);
+	}
+	
+	private static HashMap<String, String> getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = null;
+	public String getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto = new HashMap<String, String>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("trasporto.name".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									String claimNameTmp = key.substring(0, key.indexOf("."));
+									OpenSPCoop2Properties.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto.put(claimNameTmp, tmp.trim());
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.name': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_headerName_gestioneTokenHeaderIntegrazioneTrasporto.get(claimName);
+	}
+	
+	private static HashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
+	public Boolean getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("trasporto.pd.set.enabled".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									try {
+										boolean b = Boolean.parseBoolean(tmp.trim());
+										String claimNameTmp = key.substring(0, key.indexOf("."));
+										OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD.put(claimNameTmp, b);
+									}catch(Exception e) {
+										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+									}
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pd.set.enabled': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD.get(claimName);
+	}
+
+	
+	private static HashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
+	public Boolean getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("trasporto.pa.set.enabled".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									try {
+										boolean b = Boolean.parseBoolean(tmp.trim());
+										String claimNameTmp = key.substring(0, key.indexOf("."));
+										OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.put(claimNameTmp, b);
+									}catch(Exception e) {
+										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+									}
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".trasporto.pa.set.enabled': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.get(claimName);
+	}
+	
+	private static HashMap<String, String> getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = null;
+	public String getCustomClaimsJsonPropertyName_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson = new HashMap<String, String>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("json.name".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									String claimNameTmp = key.substring(0, key.indexOf("."));
+									OpenSPCoop2Properties.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson.put(claimNameTmp, tmp.trim());
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.name': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_jsonPropertyName_gestioneTokenHeaderIntegrazioneJson.get(claimName);
+	}
+	
+	private static HashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
+	public Boolean getCustomClaimsKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("json.pd.set.enabled".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									try {
+										boolean b = Boolean.parseBoolean(tmp.trim());
+										String claimNameTmp = key.substring(0, key.indexOf("."));
+										OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD.put(claimNameTmp, b);
+									}catch(Exception e) {
+										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+									}
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pd.set.enabled': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPD.get(claimName);
+	}
+
+	
+	private static HashMap<String, Boolean> getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
+	public Boolean getCustomClaimsKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson(String claimName) throws Exception {	
+		if(OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.custom.");
+				if(prop!=null && !prop.isEmpty()) {
+					Enumeration<?> en = prop.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key.contains(".")) {
+							String keySub = key.substring(key.indexOf(".")+1); 
+							if("json.pa.set.enabled".equals(keySub)) {
+								String tmp = prop.getProperty(key);
+								if(tmp!=null) {
+									try {
+										boolean b = Boolean.parseBoolean(tmp.trim());
+										String claimNameTmp = key.substring(0, key.indexOf("."));
+										OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.put(claimNameTmp, b);
+									}catch(Exception e) {
+										throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.custom."+key+"' (atteso: true/false): "+e.getMessage(),e);
+									}
+								}
+								else {
+									throw new Exception("Proprietà non definita");
+								}
+							}
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.custom."+claimName+".json.pa.set.enabled': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.get(claimName);
 	}
 	
 	

@@ -129,7 +129,7 @@ public enum ErroriCooperazione {
 	AUTORIZZAZIONE_FALLITA("Il Mittente non è autorizzato a fruire del servizio richiesto",
 			null),
 			
-	ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO("E' occorso un errore durante il processamento del messsaggio",
+	ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO("E' occorso un errore durante il processamento del messaggio",
 			CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO),
 			
 	ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO("E' stato rilevata una violazione per quanto concerne le informazioni richieste del protocollo in gestione",

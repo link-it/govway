@@ -199,7 +199,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				boolean gestioneManifest = false;
 				// La gestione manifest non la devo fare a questo livello.
 				// Se mi arriva un messaggio senza manifest, vuol dire che era disabilitata e quindi anche nella risposta non ci deve essere
-				// In egual misura se arriva un messsaggio con manifest, significa che ci deve essere anche nella risposta
+				// In egual misura se arriva un messaggio con manifest, significa che ci deve essere anche nella risposta
 				// Poiche' la risposta e' esattamente uguale (nel body e negli allegati) alla richiesta, 
 				// venendo costruita dai bytes della richiesta 
 //				if(this.responseMsg.countAttachments()>0){

@@ -408,6 +408,9 @@
 			<param name="token" value="org.openspcoop2.protocol.as4.ack.trace.dataSource"/>
 			<param name="value" value="${datasource_pdd_name}"/>
 		</antcall>
+		<replace file="${tmp_cfg}/JAR_AS4/as4.properties" 
+			token="/var/govway/as4/" 
+			value="${work_dir}/as4/"/>
 		<antcall target="set_property">
 			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
 			<param name="token" value="org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"/>

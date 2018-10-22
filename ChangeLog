@@ -1,6 +1,13 @@
-2018-10-22  Andrea Poli <apoli@link.it>
+2018-10-23  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.1.rc1
+
+2018-10-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-777
+	Aggiunta la possibilità di effettuare il forward verso gli applicativi di claims aggiuntivi rispetto a quelli built-in previsti da GovWay.
+	Inoltre è stato aggiunto un header che contiene l'informazione temporale relativa al processamento del token.
 
 2018-10-19  Andrea Poli <apoli@link.it>
 

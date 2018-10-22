@@ -120,17 +120,17 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			}
 			
 			Object exp = getValue("exp", informazioniTokens); 
-			if(exp!=null && exp instanceof String) {
+			if(exp!=null && exp instanceof Date) {
 				this.exp = (Date) exp;
 			}
 			
 			Object iat = getValue("iat", informazioniTokens); 
-			if(iat!=null && iat instanceof String) {
+			if(iat!=null && iat instanceof Date) {
 				this.iat = (Date) iat;
 			}
 			
 			Object nbf = getValue("nbf", informazioniTokens); 
-			if(nbf!=null && nbf instanceof String) {
+			if(nbf!=null && nbf instanceof Date) {
 				this.nbf = (Date) nbf;
 			}
 			

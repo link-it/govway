@@ -3,6 +3,7 @@
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
 		<exclude-subsystems>
 			<subsystem name="webservices" />
+			<subsystem name="weld" />
 		</exclude-subsystems>	
 		<exclusions>
 			<module name="org.apache.cxf" />

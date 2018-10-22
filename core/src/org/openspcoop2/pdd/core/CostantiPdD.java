@@ -200,6 +200,7 @@ public class CostantiPdD {
 
     
     /** Costante che indica il valore dell'header di integrazione per i token*/
+    public final static String HEADER_INTEGRAZIONE_TOKEN_PROCESS_TIME = "processTime";
     public final static String HEADER_INTEGRAZIONE_TOKEN_ISSUER = "issuer";
     public final static String HEADER_INTEGRAZIONE_TOKEN_SUBJECT = "subject";
     public final static String HEADER_INTEGRAZIONE_TOKEN_USERNAME = "username";
