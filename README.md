@@ -12,6 +12,13 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 * [Manuale Utente](./resources/doc/pdf/GovWay-ManualeUtente.pdf)
 * [Manuale di Monitoraggio](./resources/doc/pdf/GovWay-ManualeMonitoraggio.pdf)
 
+## Govlet
+
+* [Fatturazione Attiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazioneAttiva.pdf)
+* [Fatturazione Passiva](./resources/doc/govlet/Fatturazione/Govlet_FatturaPA_FatturazionePassiva.pdf)
+* [PagoPA](./resources/doc/govlet/pagoPA/Govlet_pagoPA.pdf)
+* [SIOPE+](./resources/doc/govlet/SiopePlus/Govlet_SiopePlus.pdf)
+
 ## Contatti
 
 - Mailing list: [Utenti GovWay](https://govway.org/mailing)
