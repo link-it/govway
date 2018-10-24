@@ -4,13 +4,13 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 
 1.1. Scaricare la versione binaria di GovWay, disponibile alla URL:
 
-  http://www.govway.org/download/govway-installer-<versione>.tgz
-  (es.   http://www.govway.org/download/govway-installer-3.0.1.tgz)
+  https://github.com/link-it/GovWay/releases/download/<versione>/govway-installer-<versione>.tgz
+  (es.   https://github.com/link-it/GovWay/releases/download/3.0.0/govway-installer-3.0.0.tgz)
   
 1.2. Scaricare le librerie esterne relative alla versione sorgente da compilare, disponibili alla URL: 
 
-  http://www.govway.org/download/govway-external-lib-<versione>.tgz
-  (es. http://www.govway.org/download/govway-external-lib-3.0.1.tgz)
+  https://github.com/link-it/GovWay/releases/download/<versione>/govway-external-lib-<versione>.tgz
+  (es. https://github.com/link-it/GovWay/releases/download/3.0.0/govway-external-lib-3.0.0.tgz)
 
 1.3. Scaricare i sorgenti del software, disponibili all'indirizzo:
 
@@ -22,21 +22,18 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 
     Esempio:
 	cd GovWay
+	git checkout <versione>
 
 2.2 Copiare le librerie esterne all'interno della directory lib
 
     Esempio: 
-    	tar xzf govway-external-lib-3.0.1.tgz
-	cp govway-external-lib-3.0.1/lib/* lib/
+    	tar xzf govway-external-lib-3.0.0.tgz
+	cp -r govway-external-lib-3.0.0/lib/* lib/
 
 2.3 Compilare il Software tramite il comando ant
 
     Esempio:
 	ant
-
-    NOTA: Il processo di build richiede memoria (soprattutto per quanto riguarda il PermGen space).
-    Se si ottiene un out of memory regolare la memoria fornita ad ant impostando la seguente variabile di ambiente:
-	export ANT_OPTS="-Xmx1024m -XX:MaxMetaspaceSize=1024m"
 
 3. Installazione dei Binari prodotti
 
@@ -49,7 +46,7 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 
     - spacchettare la distribuzione binaria.
     Esempio:
-        tar xzf govway-installer-3.0.1.tgz
+        tar xzf govway-installer-3.0.0.tgz
 
     - copiare i nuovi jar generati nella directory GovWay/dist al posto di quelli preesistenti nella versione binaria 
       preservando il nome dell'archivio jar di destinazione.
@@ -64,12 +61,12 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 	govway-installer-<versione>/installer/setup/deploy/sw/
       !!Attenzione!!: Preservare il nome dell'archivio jar di destinazione presente nella versione binaria, rispetto a quello prodotto dalla versione sorgente.
       Esempio:
-	cp GovWay/dist/openspcoop2_pdd_RELEASE.jar govway-installer-<versione>/installer/setup/deploy/sw/jars/openspcoop2_pdd_3.0.1.RELEASE.jar
+	cp GovWay/dist/openspcoop2_pdd_RELEASE.jar govway-installer-<versione>/installer/setup/deploy/sw/jars/openspcoop2_pdd_3.0.0.RELEASE.jar
 
 3.3 Rieseguire il setup
 
     Esempio:
 
-    cd govway-installer-3.0.1
+    cd govway-installer-3.0.0
     ./install.sh o ./install.cmd
 

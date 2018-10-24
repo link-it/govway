@@ -262,6 +262,7 @@
 			<param name="src" value="${core.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="build_openspcoop2_all" >
@@ -270,6 +271,7 @@
 			<param name="src" value="${core.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 				
 		<antcall target="compile_spcoop_plugin" >
@@ -278,6 +280,7 @@
 			<param name="src_spcoop" value="${protocolli.spcoop.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_backwardCompatibility" >
@@ -286,6 +289,7 @@
 			<param name="src_backwardCompatibility" value="${protocolli.spcoop.backwardCompatibility.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 
 		<antcall target="compile_trasparente_plugin" >
@@ -294,6 +298,7 @@
 			<param name="src_trasparente" value="${protocolli.trasparente.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_sdi_plugin" >
@@ -302,6 +307,7 @@
 			<param name="src_sdi" value="${protocolli.sdi.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 
 		<antcall target="compile_as4_plugin" >
@@ -310,6 +316,7 @@
 			<param name="src_as4" value="${protocolli.as4.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_users" >
@@ -318,6 +325,7 @@
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_mvc" >
@@ -327,6 +335,7 @@
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_audit" >
@@ -337,6 +346,7 @@
 			<param name="src_users" value="${web.lib.users.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_queue" >
@@ -345,6 +355,7 @@
 			<param name="src_queue" value="${web.lib.queue.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_openspcoop2_govwayConsole" >
@@ -353,6 +364,7 @@
 			<param name="src_govwayConsole" value="${web.govwayConsole.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 
 		<antcall target="compile_openspcoop2_govwayMonitor" >
@@ -367,6 +379,7 @@
 			<param name="src_eventi_govwayMonitor" value="${web.govwayMonitor.dir}/src/src_eventi" />
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 		
 		<antcall target="compile_govway_loaderConsole" >
@@ -375,6 +388,7 @@
 			<param name="src_loaderConsole" value="${web.govwayLoader.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false"/>
 		</antcall>
 
 		<delete dir="${build}"/>		
