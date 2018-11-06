@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public interface ITokenParser {
 
-	public void init(String raw, Map<String,String> claims);
+	public void init(String raw, Map<String,Object> claims);
 	
 	// Controllo se il token e' un token atteso su cui leggere le informazioni
 	public void checkHttpTransaction(Integer httpResponseCode) throws Exception;
@@ -54,7 +54,7 @@ public interface ITokenParser {
 	
 	// Service-specific string identifier or list of string identifiers representing the intended audience for this token, 
 	// as defined in JWT [RFC7519].
-	public String getAudience();
+	public List<String> getAudience();
 	
 	// Integer timestamp, measured in the number of seconds since January 1 1970 UTC, 
 	// indicating when this token will expire, as defined in JWT [RFC7519].

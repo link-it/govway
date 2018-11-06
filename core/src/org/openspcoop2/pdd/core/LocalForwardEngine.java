@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.transform.dom.DOMSource;
 
@@ -81,6 +82,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Node;
 
 /**	
@@ -105,6 +107,7 @@ public class LocalForwardEngine {
 	private ServizioApplicativo sa = null;
 	private OpenSPCoop2Properties propertiesReader = null;
 	private RequestInfo requestInfo = null;
+	private IntegrationError integrationError = IntegrationError.INTERNAL_ERROR; // default
 	
 	
 	/* ***** COSTRUTTORE ******** */
@@ -225,6 +228,10 @@ public class LocalForwardEngine {
 	
 	public void updateLocalForwardParameter(LocalForwardParameter localForwardParameter) throws LocalForwardException{
 		this.localForwardParameter = localForwardParameter;
+	}
+	
+	public void setIntegrationError(IntegrationError integrationError) {
+		this.integrationError = integrationError;
 	}
 	
 	private Transaction getTransactionNullable() {
@@ -1152,7 +1159,23 @@ public class LocalForwardEngine {
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,errore,eErrore,parseException);
+					this.generatoreErrorePortaDelegata.build(this.integrationError,errore,eErrore,parseException);
+			
+			// Retry-After
+			if(this.integrationError!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationError)) {
+				boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed();
+				Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
+				Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
+				if(	isEnabled &&
+					retryAfterSeconds!=null && retryAfterSeconds>0) {
+					int seconds = retryAfterSeconds;
+					if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
+						seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+					}
+					responseMessageError.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+				}
+			}
+			
 			if(eErrore instanceof HandlerException){
 				HandlerException he = (HandlerException) eErrore;
 				he.customized(responseMessageError);

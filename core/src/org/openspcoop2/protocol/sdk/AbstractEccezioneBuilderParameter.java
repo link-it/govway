@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SOAPFaultCode;
@@ -54,6 +55,9 @@ public abstract class AbstractEccezioneBuilderParameter {
 	private TipoPdD tipoPorta;
 	private Date oraRegistrazione = DateManager.getDate();
 	private ParseException parseException;
+	private ConfigurationRFC7807 rfc7807;
+	private int httpStatus;
+	private String nomePorta;
 	
 	public ParseException getParseException() {
 		return this.parseException;
@@ -120,6 +124,24 @@ public abstract class AbstractEccezioneBuilderParameter {
 	}
 	public void setServizio(IDServizio servizio) {
 		this.servizio = servizio;
+	}
+	public ConfigurationRFC7807 getRfc7807() {
+		return this.rfc7807;
+	}
+	public void setRfc7807(ConfigurationRFC7807 rfc7807) {
+		this.rfc7807 = rfc7807;
+	}
+	public int getHttpStatus() {
+		return this.httpStatus;
+	}
+	public void setHttpStatus(int httpStatus) {
+		this.httpStatus = httpStatus;
+	}
+	public String getNomePorta() {
+		return this.nomePorta;
+	}
+	public void setNomePorta(String nomePorta) {
+		this.nomePorta = nomePorta;
 	}
 	public abstract SOAPFaultCode getSoapFaultCode();
 }

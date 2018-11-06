@@ -23,9 +23,11 @@ package org.openspcoop2.protocol.manifest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.protocol.manifest.constants.IntegrationErrorProblemType;
 import java.io.Serializable;
 
 
@@ -36,14 +38,18 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="IntegrationErrorCollection">
  * 		&lt;sequence>
+ * 			&lt;element name="rfc7807" type="{http://www.openspcoop2.org/protocol/manifest}RFC7807" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="authentication" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="authorization" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="notFound" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="badRequest" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tooManyRequests" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="internalError" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="serviceUnavailable" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationError" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}DefaultIntegrationError" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="problemType" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorProblemType" use="required"/>
+ * 		&lt;attribute name="useInternalFault" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -56,12 +62,14 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IntegrationErrorCollection", 
   propOrder = {
+  	"rfc7807",
   	"authentication",
   	"authorization",
   	"notFound",
   	"badRequest",
   	"tooManyRequests",
   	"internalError",
+  	"serviceUnavailable",
   	"_default"
   }
 )
@@ -70,6 +78,14 @@ import java.io.Serializable;
 
 public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationErrorCollection() {
+  }
+
+  public RFC7807 getRfc7807() {
+    return this.rfc7807;
+  }
+
+  public void setRfc7807(RFC7807 rfc7807) {
+    this.rfc7807 = rfc7807;
   }
 
   public IntegrationError getAuthentication() {
@@ -120,6 +136,14 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this.internalError = internalError;
   }
 
+  public IntegrationError getServiceUnavailable() {
+    return this.serviceUnavailable;
+  }
+
+  public void setServiceUnavailable(IntegrationError serviceUnavailable) {
+    this.serviceUnavailable = serviceUnavailable;
+  }
+
   public DefaultIntegrationError getDefault() {
     return this._default;
   }
@@ -128,9 +152,44 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
     this._default = _default;
   }
 
+  public void set_value_problemType(String value) {
+    this.problemType = (IntegrationErrorProblemType) IntegrationErrorProblemType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_problemType() {
+    if(this.problemType == null){
+    	return null;
+    }else{
+    	return this.problemType.toString();
+    }
+  }
+
+  public org.openspcoop2.protocol.manifest.constants.IntegrationErrorProblemType getProblemType() {
+    return this.problemType;
+  }
+
+  public void setProblemType(org.openspcoop2.protocol.manifest.constants.IntegrationErrorProblemType problemType) {
+    this.problemType = problemType;
+  }
+
+  public boolean isUseInternalFault() {
+    return this.useInternalFault;
+  }
+
+  public boolean getUseInternalFault() {
+    return this.useInternalFault;
+  }
+
+  public void setUseInternalFault(boolean useInternalFault) {
+    this.useInternalFault = useInternalFault;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="rfc7807",required=false,nillable=false)
+  protected RFC7807 rfc7807;
 
   @XmlElement(name="authentication",required=false,nillable=false)
   protected IntegrationError authentication;
@@ -150,7 +209,20 @@ public class IntegrationErrorCollection extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="internalError",required=false,nillable=false)
   protected IntegrationError internalError;
 
+  @XmlElement(name="serviceUnavailable",required=false,nillable=false)
+  protected IntegrationError serviceUnavailable;
+
   @XmlElement(name="default",required=true,nillable=false)
   protected DefaultIntegrationError _default;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_problemType;
+
+  @XmlAttribute(name="problemType",required=true)
+  protected IntegrationErrorProblemType problemType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="useInternalFault",required=false)
+  protected boolean useInternalFault = false;
 
 }

@@ -28,6 +28,7 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
@@ -74,11 +75,17 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 		this.proprietaErroreAppl.setDominio(this.identitaPdD.getCodicePorta());
 	}
 	
-	public ErroreApplicativoBuilder getErroreApplicativoBuilder(MessageType messageTypeError) throws ProtocolException{
+	public ErroreApplicativoBuilder getErroreApplicativoBuilderForAddDetailInSoapFault(MessageType messageTypeError) throws ProtocolException{
+		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR); 
+		int httpStatus = 500; // soapFault vuole 500
+		return this.getErroreApplicativoBuilder(messageTypeError, rfc7807, httpStatus);
+	}
+	public ErroreApplicativoBuilder getErroreApplicativoBuilder(MessageType messageTypeError, ConfigurationRFC7807 rfc7807, int httpStatus) throws ProtocolException{
 		ErroreApplicativoBuilder erroreApplicativoBuilder = new ErroreApplicativoBuilder(this.log, this.protocolFactory, 
 				this.identitaPdD, this.mittente, this.idServizio, 
 				this.idModulo, 
-				this.proprietaErroreAppl, messageTypeError, 
+				this.proprietaErroreAppl, 
+				messageTypeError, rfc7807, httpStatus, this.getInterfaceName(),
 				this.tipoPdD, this.servizioApplicativo);
 		return erroreApplicativoBuilder;
 	}
@@ -91,46 +98,52 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 	public OpenSPCoop2Message build(IntegrationError integrationError, Eccezione ecc, IDSoggetto idSoggettoProduceEccezione, DettaglioEccezione dettaglioEccezione, ParseException parseException) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
+		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
+		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse);
-			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(ecc,idSoggettoProduceEccezione,dettaglioEccezione,parseException);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(ecc,idSoggettoProduceEccezione,dettaglioEccezione,parseException);		
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, e);
+			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 		}
 	}
 	
 	public OpenSPCoop2Message build(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento, ParseException parseException) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
+		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
+		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse);
-			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(erroreIntegrazione,eProcessamento,parseException);		
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(erroreIntegrazione,eProcessamento,parseException);		
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, e);
+			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 		}
 	}
 	
 	public byte[] buildAsByteArray(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, List<Integer> returnCode) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
+		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
+		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse);
-			byte[] bytes = erroreApplicativoBuilder.toByteArray(erroreIntegrazione);
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			byte[] bytes = erroreApplicativoBuilder.toByteArray(erroreIntegrazione);
 			returnCode.add(httpReturnCode);
 			return bytes;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
 			try{
-				OpenSPCoop2Message msgError = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, e);
+				OpenSPCoop2Message msgError = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 				java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
 				msgError.writeTo(bout,true);
 				bout.flush();

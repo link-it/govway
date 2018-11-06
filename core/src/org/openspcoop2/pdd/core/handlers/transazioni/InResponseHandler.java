@@ -116,7 +116,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 					}
 					else {
 						OpenSPCoop2RestMessage<?> restMsg = context.getMessaggio().castAsRest();
-						if(restMsg.isProblemDetailsForHttpApis_RFC7808() || MessageRole.FAULT.equals(restMsg.getMessageRole())) {
+						if(restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(restMsg.getMessageRole())) {
 							switch (restMsg.getMessageType()) {
 							case XML:
 								

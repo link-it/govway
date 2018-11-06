@@ -50,12 +50,14 @@ public class IntegrationErrorCollection implements java.io.Serializable {
 
 	private IntegrationErrorMessageType defaultError;
 	
-	public void addIntegrationError(IntegrationError errorType, IntegrationErrorMessageType integrationErrorMessageType, Integer httpErrorCode){
+	public void addIntegrationError(ConfigurationRFC7807 rfc7807, IntegrationError errorType, 
+			IntegrationErrorMessageType integrationErrorMessageType, Integer httpErrorCode,
+			boolean useInternalFault){
 		if(this.map.containsKey(errorType.name())){
 			this.map.remove(errorType.name());
 		}
 		org.openspcoop2.message.config.IntegrationErrorConfiguration error = 
-				new org.openspcoop2.message.config.IntegrationErrorConfiguration(integrationErrorMessageType,httpErrorCode);
+				new org.openspcoop2.message.config.IntegrationErrorConfiguration(rfc7807, integrationErrorMessageType,httpErrorCode, useInternalFault);
 		this.map.put(errorType.name(), error);
 		if(IntegrationError.DEFAULT.equals(errorType)){
 			this.defaultError = integrationErrorMessageType;

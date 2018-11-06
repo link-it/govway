@@ -882,7 +882,7 @@ public class Tracciamento {
 					}
 				}
 				else {
-					if(msg.castAsRest().isProblemDetailsForHttpApis_RFC7808()) {
+					if(msg.castAsRest().isProblemDetailsForHttpApis_RFC7807()) {
 						found = true;
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						msg.writeTo(bout, false);

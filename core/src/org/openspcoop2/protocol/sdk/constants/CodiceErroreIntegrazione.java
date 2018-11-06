@@ -263,6 +263,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_444_TOKEN_NON_VALIDO(444),
     /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,445 */
     CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA(445),
+    /** String che contiene un codice di errore OpenSPCoop: Porta Sospesa,446 */
+    CODICE_446_SUSPEND(446),
     
     // errori spediti in buste errore
     
@@ -361,6 +363,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 443: return CodiceErroreIntegrazione.CODICE_443_TOKEN_NON_PRESENTE;
 				case 444: return CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO;
 				case 445: return CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA;
+				case 446: return CodiceErroreIntegrazione.CODICE_446_SUSPEND;
 				case 450: return CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE;
 				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;

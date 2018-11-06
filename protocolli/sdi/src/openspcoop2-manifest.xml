@@ -72,11 +72,13 @@
 	    		 </subscription>
     		</integration>
    			<integrationError>
-    			<internal>
-    				<default httpReturnCode="500" messageType="soap11" />
+    			<internal problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+	    			<default httpReturnCode="500" messageType="soap11" />
     			</internal>	
-    			<external>
-    				<default httpReturnCode="500" messageType="soap11" />
+    			<external problemType="rfc7807" useInternalFault="true">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+	    			<default httpReturnCode="500" messageType="soap11" />
     			</external>	
     		</integrationError>
     		<mediaTypeCollection>

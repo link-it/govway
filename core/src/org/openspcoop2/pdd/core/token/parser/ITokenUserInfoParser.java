@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public interface ITokenUserInfoParser {
 
-	public void init(String raw, Map<String,String> claims);
+	public void init(String raw, Map<String,Object> claims);
 		
 	//  End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences. 
 	public String getFullName();

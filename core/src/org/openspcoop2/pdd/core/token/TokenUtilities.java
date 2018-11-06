@@ -23,7 +23,9 @@
 
 package org.openspcoop2.pdd.core.token;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -186,5 +188,53 @@ public class TokenUtilities {
 		
 		return policy;
 
+	}
+	
+	
+	public static List<String> getClaimValues(Object value) {
+		if(value!=null) {
+			if(value instanceof List<?>) {
+				List<?> l = (List<?>) value;
+				if(!l.isEmpty()) {
+					List<String> lString = new ArrayList<>();
+					for (Object o : l) {
+						if(o!=null) {
+							lString.add(o.toString());
+						}
+					}
+					if(!lString.isEmpty()) {
+						return lString;
+					}
+				}
+			}
+			else {
+				String sValue = value.toString();
+				List<String> l = new ArrayList<>();
+				l.add(sValue);
+				return l;
+			}
+		}
+		return null;
+	}
+	
+	public static String getClaimValuesAsString(List<String> claimValues) {
+		String claimValue = null;
+		if(claimValues==null || claimValues.isEmpty()) {
+			return null;
+		}
+		if(claimValues.size()>1) {
+			for (String c : claimValues) {
+				if(claimValue!=null) {
+					claimValue = claimValue +","+c;
+				}
+				else {
+					claimValue = c;
+				}
+			}
+		}
+		else {
+			claimValue = claimValues.get(0);
+		}
+		return claimValue;
 	}
 }

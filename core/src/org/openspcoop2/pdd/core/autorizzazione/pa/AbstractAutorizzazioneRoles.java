@@ -64,13 +64,18 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		IDServizio idServizio = datiInvocazione.getIdServizio();
     		errore = this.getErrorString(idSoggetto, idServizio);
     		
+    		StringBuffer detailsBuffer = new StringBuffer();
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), 
     						datiInvocazione.getInfoConnettoreIngresso(), 
     						this.getPddContext(),
-    						this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
+    						this.checkRuoloRegistro, this.checkRuoloEsterno,
+    						detailsBuffer)==false){
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
+    			if(detailsBuffer.length()>0) {
+    				esito.setDetails(detailsBuffer.toString());
+    			}
     		}else{
     			esito.setAutorizzato(true);
     		}

@@ -5,7 +5,10 @@
         "issuer": {"type": "string"},
         "subject": {"type": "string"},
         "username": {"type": "string"},
-        "audience": {"type": "string"},
+        "audience": {
+           "type": "array",
+           "items": {"type": "string"}
+        },
         "clientId": {"type": "string"},
         "iat": {
            "type": "string",

@@ -145,8 +145,8 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	IDSoggetto fruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
     	IDServizio idServizio = datiInvocazione.getIdServizio();
     	
+		String xacmlPolicyPorta = null;
     	try{
-    		String xacmlPolicyPorta = null;
     		if(datiInvocazione.getPd()!=null) {
     			xacmlPolicyPorta = datiInvocazione.getPd().getXacmlPolicy();
     		}
@@ -202,6 +202,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		try{
     			String resultAsStringForLog = ResultUtilities.toRawString(results);
     			this.log.error("Autorizzazione con XACMLPolicy fallita ("+this.policyKey+") ;\nrequest: "+this.xacmlRequestAsString+
+    					"\npolicy: "+xacmlPolicyPorta+
     					"\nresults (size:"+results.size()+"): \n"+resultAsStringForLog);
     			
     			String resultAsString = ResultUtilities.toString(results, decision);

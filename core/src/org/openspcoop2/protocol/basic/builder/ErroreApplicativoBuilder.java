@@ -52,6 +52,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
@@ -74,6 +75,10 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.rest.problem.JsonSerializer;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807Builder;
+import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,14 +96,22 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory msgFactory = null;
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
+	protected boolean omitXMLDeclaration;
 	
 	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		this.traduttore = factory.createTraduttore();
 		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
+		this.omitXMLDeclaration = false;
 	}
 
+	public boolean isOmitXMLDeclaration() {
+		return this.omitXMLDeclaration;
+	}
+	public void setOmitXMLDeclaration(boolean omitXMLDeclaration) {
+		this.omitXMLDeclaration = omitXMLDeclaration;
+	}
 
 	
 	// NAMESPACE
@@ -193,13 +206,13 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public String toString(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneProtocolloBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_String(tipoErroreApplicativo, parameters, null);
+		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, parameters, null);
 	}
 	@Override
 	public String toString(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneIntegrazioneBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_String(tipoErroreApplicativo, null,parameters);
+		return this._buildErroreApplicativo_String(tipoErroreApplicativo, this.omitXMLDeclaration, null,parameters);
 	}
 	
 	
@@ -207,13 +220,13 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneProtocolloBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, parameters, null);
+		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, parameters, null);
 	}
 	@Override
 	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, 
 			EccezioneIntegrazioneBuilderParameters parameters)
 			throws ProtocolException {
-		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, null,parameters);
+		return this._buildErroreApplicativo_ByteArray(tipoErroreApplicativo, this.omitXMLDeclaration, null,parameters);
 	}
 
 
@@ -229,6 +242,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	
 	@Override
 	public AbstractEccezioneBuilderParameter readErroreApplicativo(TipoErroreApplicativo tipoErroreApplicativo, byte[] erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
+
 		ErroreApplicativo erroreApplicativoObject = null;
 		switch (tipoErroreApplicativo) {
 		case JSON:
@@ -302,7 +316,8 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	
 	/** BUILDER UTILITIES */
 	
-	protected SOAPElement _buildErroreApplicativo_SoapElement(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	protected SOAPElement _buildErroreApplicativo_SoapElement(
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		Element elementErroreApplicativo = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
@@ -335,30 +350,62 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 		ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
 		
 		try{
-			// il passaggio da XMLUtils forza anche la validazione dell'oggetto
-			byte[]xmlErroreApplicativo = org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativo(erroreApplicativo);
-			Element elementErroreApplicativo = this.xmlUtils.newElement(xmlErroreApplicativo);
-			ErroreApplicativoMessageUtils.addPrefixToElement(elementErroreApplicativo,"op2ErrAppl");
-			
-			return elementErroreApplicativo;
+			ConfigurationRFC7807 rfc7807 = null;
+			if(eccezioneIntegrazione!=null){
+				rfc7807 = eccezioneIntegrazione.getRfc7807();
+			}else{
+				rfc7807 = eccezioneProtocollo.getRfc7807();
+			}
+			if(rfc7807!=null) {
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				XmlSerializer xmlSerializer = new XmlSerializer();	
+				return xmlSerializer.toNode(problemRFC7807);
+			}
+			else {
+				// il passaggio da XMLUtils forza anche la validazione dell'oggetto
+				byte[]xmlErroreApplicativo = org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativo(erroreApplicativo);
+				Element elementErroreApplicativo = this.xmlUtils.newElement(xmlErroreApplicativo);
+				ErroreApplicativoMessageUtils.addPrefixToElement(elementErroreApplicativo,"op2ErrAppl");
+				
+				return elementErroreApplicativo;
+			}
 		} catch(Exception e) {
 			this.log.error("XMLBuilder.buildElement_Eccezione error: "+e.getMessage(),e);
 			throw new ProtocolException("buildErroreApplicativoElement failed: "+e.getMessage(),e);
 		}
 	}
 	
-	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo,
+	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		try{
-			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-				ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
-				return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo);
+			ConfigurationRFC7807 rfc7807 = null;
+			if(eccezioneIntegrazione!=null){
+				rfc7807 = eccezioneIntegrazione.getRfc7807();
+			}else{
+				rfc7807 = eccezioneProtocollo.getRfc7807();
 			}
-			else{
-				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
-				return this.xmlUtils.toString(element, true);
+			if(rfc7807!=null) {
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+					JsonSerializer jsonSerializer = new JsonSerializer();
+					return jsonSerializer.toString(problemRFC7807);
+				}
+				else {
+					XmlSerializer xmlSerializer = new XmlSerializer();	
+					return xmlSerializer.toString(problemRFC7807, omitXMLDeclaration);
+				}
+			}
+			else {
+				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+					return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo);
+				}
+				else{
+					Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+					return this.xmlUtils.toString(element, omitXMLDeclaration);
+				}
 			}
 		
 		}catch(Exception e){
@@ -366,22 +413,95 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 		}
 	}
 	
-	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo,
+	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
 		try{
-			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
-				ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
-				return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo).getBytes();
+			ConfigurationRFC7807 rfc7807 = null;
+			if(eccezioneIntegrazione!=null){
+				rfc7807 = eccezioneIntegrazione.getRfc7807();
+			}else{
+				rfc7807 = eccezioneProtocollo.getRfc7807();
 			}
-			else{
-				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
-				return this.xmlUtils.toByteArray(element, true);
+			if(rfc7807!=null) {
+				ProblemRFC7807 problemRFC7807 = this._buildErroreApplicativo_problemRFC7807(eccezioneProtocollo, eccezioneIntegrazione);
+				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+					JsonSerializer jsonSerializer = new JsonSerializer();
+					return jsonSerializer.toByteArray(problemRFC7807);
+				}
+				else {
+					XmlSerializer xmlSerializer = new XmlSerializer();	
+					return xmlSerializer.toByteArray(problemRFC7807, omitXMLDeclaration);
+				}
+			}
+			else {
+				if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+					ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+					return org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo).getBytes();
+				}
+				else{
+					Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+					return this.xmlUtils.toByteArray(element, omitXMLDeclaration);
+				}
 			}
 		
 		}catch(Exception e){
 			throw new ProtocolException("toByteArray failed: "+e.getMessage());
+		}
+	}
+	
+	private ProblemRFC7807 _buildErroreApplicativo_problemRFC7807(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
+		
+		try{
+			ConfigurationRFC7807 rfc7807 = null;
+			int httpStatus; 
+			String nomePorta;
+			if(eccezioneIntegrazione!=null){
+				rfc7807 = eccezioneIntegrazione.getRfc7807();
+				httpStatus = eccezioneIntegrazione.getHttpStatus();
+				nomePorta = eccezioneIntegrazione.getNomePorta();
+			}else{
+				rfc7807 = eccezioneProtocollo.getRfc7807();
+				httpStatus = eccezioneProtocollo.getHttpStatus();
+				nomePorta = eccezioneProtocollo.getNomePorta();
+			}
+			
+			ProblemRFC7807Builder rfc7807ProblemBuilder = null;
+			if(rfc7807.isType()) {
+				rfc7807ProblemBuilder = new ProblemRFC7807Builder(rfc7807.getTypeFormat());
+			}
+			else {
+				rfc7807ProblemBuilder = new ProblemRFC7807Builder(false);
+			}
+			ProblemRFC7807 problemRFC7807 = rfc7807ProblemBuilder.buildProblem(httpStatus);
+			if(rfc7807.isDetails() || rfc7807.isGovwayStatus()) {
+				ErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+				if(rfc7807.isDetails() && erroreApplicativo.getException()!=null) {
+					problemRFC7807.setDetail(erroreApplicativo.getException().getDescription());
+				}
+				if(rfc7807.isGovwayStatus() && erroreApplicativo.getException()!=null &&
+						erroreApplicativo.getException().getCode()!=null &&
+						erroreApplicativo.getException().getCode().getBase()!=null) {
+					String prefixCodeStatus = null;
+					if(erroreApplicativo.getException().getType()!=null && 
+							org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione.PROTOCOL.equals(erroreApplicativo.getException().getType())) {
+						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL;
+					}
+					else {
+						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
+					}
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE, 
+							prefixCodeStatus+erroreApplicativo.getException().getCode().getBase());
+				}
+			}
+			if(rfc7807.isInstance()) {
+				problemRFC7807.setInstance(nomePorta);
+			}
+			return problemRFC7807;
+		}catch(Exception e){
+			throw new ProtocolException("toProblemRFC7807 failed: "+e.getMessage());
 		}
 	}
 	
@@ -543,38 +663,69 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	private OpenSPCoop2Message _buildErroreApplicativo_OpenSPCoop2Message(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		MessageType messageType = null;
+		ConfigurationRFC7807 rfc7807= null;
+		boolean useProblemRFC7807 = false;
 		try{
 
+			// RFC7807
+			if(eccezioneIntegrazione!=null){
+				rfc7807 = eccezioneIntegrazione.getRfc7807();
+			}else{
+				rfc7807 = eccezioneProtocollo.getRfc7807();
+			}
+			useProblemRFC7807 = rfc7807!=null;
+			
 			// MESSAGE TYPE
 			if(eccezioneIntegrazione!=null){
 				messageType = eccezioneIntegrazione.getMessageType();
 			}else{
 				messageType = eccezioneProtocollo.getMessageType();
 			}
+						
+			boolean omitXMLDeclaration = true;
 			
+			// 1) Il Messagge Type XML o JSON DEVE ESSERE CAPITO PRIMA
+			// 2) In questo momento deve arrivare la configurazione del RFC PROBLEM
 			
 			switch (messageType) {
 			
 				case XML:
 				
-					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, eccezioneProtocollo, eccezioneIntegrazione);
+					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
 					OpenSPCoop2MessageParseResult pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
 					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
-					msg.setContentType(HttpConstants.CONTENT_TYPE_XML);
+					if(useProblemRFC7807) {
+						msg.setContentType(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
+					}
+					else {
+						msg.setContentType(HttpConstants.CONTENT_TYPE_XML);
+					}
+					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
 					return msg;
 
 				case JSON:
 				
-					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, eccezioneProtocollo, eccezioneIntegrazione);
+					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
 					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					msg = pr.getMessage_throwParseException();
-					msg.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+					if(useProblemRFC7807) {
+						msg.setContentType(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+					}
+					else {
+						msg.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+					}
+					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
 					return msg;
 					
 				case BINARY:
 				case MIME_MULTIPART:
 					// Viene usato per l'opzione None dove viene ritornato solamente il return code
-					return  this.msgFactory.createEmptyMessage(messageType, MessageRole.FAULT);
+					msg = this.msgFactory.createEmptyMessage(messageType, MessageRole.FAULT);
+					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					return msg;
 
 				default:
 				
@@ -687,13 +838,15 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 						responseMessageError.setParseException(eccezioneIntegrazione.getParseException());
 					}
 					
+					responseMessageError.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
 					return responseMessageError;
 					
 			}
 
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di errore applicativo",e);
-			return this.msgFactory.createFaultMessage(messageType,"ErroreDiProcessamento");
+			return this.msgFactory.createFaultMessage(messageType,useProblemRFC7807,"ErroreDiProcessamento");
 		}
 	}
 	

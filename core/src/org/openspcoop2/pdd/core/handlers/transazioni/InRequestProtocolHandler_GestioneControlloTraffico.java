@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -463,6 +464,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						if(ms>1000) {
 							// trasformo in secondi
 							long sec = ms / 1000;
+							// aggiungo backoff
+							if(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()>0) {
+								sec = sec + new Random().nextInt(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff());
+							}
 							String [] headers = op2Properties.getControlloTrafficoRetryAfterHeader();
 							if(headers!=null && headers.length>0) {
 								for (String header : headers) {

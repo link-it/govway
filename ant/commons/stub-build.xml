@@ -109,7 +109,7 @@
 		</if>
 		
 		<!-- Compilazione classi -->
-		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}" encoding="UTF-8">
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
 				<pathelement path="${required_lib}/axis14/axis-1.4.gw.jar"/>
@@ -223,7 +223,7 @@
 	    </if>
 		
 		<!-- Compilazione classi -->
-		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}">
+		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}" encoding="UTF-8">
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
 				<fileset dir="${required_lib}/cxf" includes="*.jar"/>

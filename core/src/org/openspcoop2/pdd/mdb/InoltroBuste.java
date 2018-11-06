@@ -32,6 +32,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.xml.soap.SOAPFault;
 
@@ -158,6 +159,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -3079,6 +3081,7 @@ public class InoltroBuste extends GenericLib{
 				if(functionAsRouter){
 					if(responseMessage==null){
 						//	Genero una risposta di errore, poiche' non presente
+						ejbUtils.setIntegrationErrorPortaApplicativa(IntegrationError.SERVICE_UNAVAILABLE);
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 									get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()),
@@ -3126,12 +3129,27 @@ public class InoltroBuste extends GenericLib{
 								return esito;
 							}
 							else {
+								IntegrationError integrationError = IntegrationError.SERVICE_UNAVAILABLE;
 								OpenSPCoop2Message responseMessageError = 
-										this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+										this.generatoreErrore.build(integrationError,
 												ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 													get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()),
 																eccezioneProcessamentoConnettore,
 																(responseMessage!=null ? responseMessage.getParseException() : null));
+								
+								// Retry-After
+								boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed();
+								Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed();
+								Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed();
+								if(	isEnabled &&
+									retryAfterSeconds!=null && retryAfterSeconds>0) {
+									int seconds = retryAfterSeconds;
+									if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
+										seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+									}
+									responseMessageError.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+								}
+								
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 								openspcoopstate.releaseResource();
 								esito.setEsitoInvocazione(true);	
@@ -3707,7 +3725,7 @@ public class InoltroBuste extends GenericLib{
 						if(fault!=null){
 							if (!isMessaggioErroreProtocollo) {
 								if(enrichSoapFaultApplicativo){
-									this.generatoreErrore.getErroreApplicativoBuilder(responseMessage.getMessageType()).
+									this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(responseMessage.getMessageType()).
 										insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 												get516_ServizioApplicativoNonDisponibile(), 
 												responseMessage);
@@ -4130,7 +4148,7 @@ public class InoltroBuste extends GenericLib{
 									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
 									//hasContent = restMsg.hasContent();
 									hasContent = true; // devo controllare gli header etc...
-									isFault = restMsg.isProblemDetailsForHttpApis_RFC7808() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+									isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
 								
 								if(hasContent && (isFault==false) ){
@@ -4365,7 +4383,7 @@ public class InoltroBuste extends GenericLib{
 
 					if(fault!=null){
 						if(enrichSoapFaultPdD){
-							this.generatoreErrore.getErroreApplicativoBuilder(responseMessage.getMessageType()).
+							this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(responseMessage.getMessageType()).
 								insertRoutingErrorInSOAPFault(identitaPdD,InoltroBuste.ID_MODULO,
 									msgDiag.getMessaggio_replaceKeywords("ricezioneSoapFault"), responseMessage);
 						}
@@ -4450,7 +4468,7 @@ public class InoltroBuste extends GenericLib{
 					}
 					else{
 						if(enrichSoapFaultPdD){
-							this.generatoreErrore.getErroreApplicativoBuilder(responseMessage.getMessageType()).
+							this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(responseMessage.getMessageType()).
 								insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
 										get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()), 
 										responseMessage);

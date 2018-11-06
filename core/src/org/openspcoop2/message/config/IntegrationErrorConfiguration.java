@@ -26,6 +26,9 @@ package org.openspcoop2.message.config;
 
 import org.openspcoop2.message.constants.IntegrationErrorMessageType;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 
 /**
  * IntegrationErrorConfiguration
@@ -45,11 +48,15 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 
 	private IntegrationErrorMessageType errorType;
 	private IntegrationErrorMessageType defaultErrorType;
+	private ConfigurationRFC7807 rfc7807;
 	private int httpReturnCode;
-
-	public IntegrationErrorConfiguration(IntegrationErrorMessageType errorType, int httpReturnCode){
+	private boolean useInternalFault; // in cooperazione
+		
+	public IntegrationErrorConfiguration(ConfigurationRFC7807 rfc7807, IntegrationErrorMessageType errorType, int httpReturnCode, boolean useInternalFault){
+		this.rfc7807 = rfc7807;
 		this.errorType = errorType;
 		this.httpReturnCode = httpReturnCode;
+		this.useInternalFault = useInternalFault;
 	}
 	
 	void setDefaultErrorType(IntegrationErrorMessageType defaultErrorType) {
@@ -58,8 +65,48 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	public int getHttpReturnCode() {
 		return this.httpReturnCode;
 	}
+	public ConfigurationRFC7807 getRfc7807() {
+		return this.rfc7807;
+	}
+	public boolean isUseInternalFault() {
+		return this.useInternalFault;
+	}
 	
-	public MessageType getMessageType(MessageType requestMsgType){
+	public MessageType getMessageType(HttpServletTransportRequestContext request, ServiceBinding serviceBinding, MessageType requestMsgType){
+		if(ServiceBinding.REST.equals(serviceBinding) && this.rfc7807!=null) {
+			if(this.rfc7807.isUseAcceptHeader() && request!=null && request.getParameterTrasporto(HttpConstants.ACCEPT)!=null) {
+				boolean asJson = false;
+				boolean asXml = false;
+				String value = request.getParameterTrasporto(HttpConstants.ACCEPT);
+				String [] acceptHeaders = null;
+				if(value.contains(",")) {
+					acceptHeaders = value.split(",");
+					for (int i = 0; i < acceptHeaders.length; i++) {
+						acceptHeaders[i] = acceptHeaders[i].trim();
+					}
+				}
+				else {
+					acceptHeaders = new String [] {value.trim()};
+				}
+				for (String hdr : acceptHeaders) {
+					if(hdr.toLowerCase().endsWith("/x-json") || hdr.toLowerCase().endsWith("/json") || hdr.toLowerCase().endsWith("+json")){
+						asJson = true;
+						break;
+					}
+					else if(hdr.toLowerCase().endsWith("/x-xml") || hdr.toLowerCase().endsWith("/xml") || hdr.toLowerCase().endsWith("+xml")){
+						asXml = true;
+						break;
+					}
+				}
+				if(asJson) {
+					return MessageType.JSON;
+				}
+				else if(asXml) {
+					return MessageType.XML;
+				}
+			}
+		}
+		
 		switch (this.errorType) {
 		case SOAP_AS_REQUEST:
 			if(MessageType.SOAP_11.equals(requestMsgType) || MessageType.SOAP_12.equals(requestMsgType) )

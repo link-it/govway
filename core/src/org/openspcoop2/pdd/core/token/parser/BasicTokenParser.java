@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.TokenUtilities;
+
 /**     
  * BasicTokenParser
  *
@@ -37,9 +39,9 @@ public class BasicTokenParser implements ITokenParser {
 
 	protected Integer httpResponseCode;
 	protected String raw;
-	protected Map<String, String> claims;
+	protected Map<String, Object> claims;
 	protected TipologiaClaims parser;
-	private ITokenUserInfoParser userInfoParser;
+	protected ITokenUserInfoParser userInfoParser;
 	
 	public BasicTokenParser(TipologiaClaims parser) {
 		this.parser = parser;
@@ -47,12 +49,32 @@ public class BasicTokenParser implements ITokenParser {
 	}
 	
 	@Override
-	public void init(String raw, Map<String, String> claims) {
+	public void init(String raw, Map<String, Object> claims) {
 		this.raw = raw;
 		this.claims = claims;
 		this.userInfoParser.init(raw, claims);
 	}
 
+	public static String getClaimAsString(Map<String, Object> claims, String claim) {
+		List<String> l = getClaimAsList(claims, claim);
+		if(l==null || l.isEmpty()) {
+			return null;
+		}
+		String claimValue = TokenUtilities.getClaimValuesAsString(l);
+		return claimValue;
+	}
+	public static List<String> getClaimAsList(Map<String, Object> claims, String claim) {
+		Object o = claims.get(claim);
+		if(o==null) {
+			return null;
+		}
+		List<String> l = TokenUtilities.getClaimValues(o);
+		if(l==null || l.isEmpty()) {
+			return null;
+		}
+		return l;
+	}
+	
 	@Override
 	public void checkHttpTransaction(Integer httpResponseCode) throws Exception{
 		this.httpResponseCode = httpResponseCode;
@@ -71,9 +93,9 @@ public class BasicTokenParser implements ITokenParser {
 			if(this.httpResponseCode!=null) {
 				if(this.httpResponseCode.intValue() == 400 || this.httpResponseCode.intValue()==401) {
 					if(this.claims!=null && this.claims.size()>0) {
-						String tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR);
+						String tmp = getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ERROR);
 						if(tmp==null) {
-							tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
+							tmp = getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
 						}
 						if(tmp!=null) {
 							return;
@@ -99,7 +121,7 @@ public class BasicTokenParser implements ITokenParser {
 		
 		switch (this.parser) {
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			String claim = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ACTIVE);
+			String claim = getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_ACTIVE);
 			return Boolean.valueOf(claim);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case OIDC_ID_TOKEN:
@@ -111,9 +133,9 @@ public class BasicTokenParser implements ITokenParser {
 			}
 			else {
 				if(this.httpResponseCode.intValue() == 400 || this.httpResponseCode.intValue()==401) {
-					String tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR);
+					String tmp = getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ERROR);
 					if(tmp==null) {
-						tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
+						tmp = getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
 					}
 					if(tmp!=null) {
 						return false;
@@ -128,13 +150,13 @@ public class BasicTokenParser implements ITokenParser {
 	public String getIssuer() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			return this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
+			return getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
+			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
 		case OIDC_ID_TOKEN:
-			return this.claims.get(Claims.OIDC_ID_TOKEN_ISSUER);
+			return getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_ISSUER);
 		case GOOGLE:
-			return this.claims.get(Claims.GOOGLE_CLAIMS_ISSUER);
+			return getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ISSUER);
 		case CUSTOM:
 			return null;
 		}
@@ -145,13 +167,13 @@ public class BasicTokenParser implements ITokenParser {
 	public String getSubject() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			return this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
+			return getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
+			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
 		case OIDC_ID_TOKEN:
-			return this.claims.get(Claims.OIDC_ID_TOKEN_SUBJECT);
+			return getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_SUBJECT);
 		case GOOGLE:
-			return this.claims.get(Claims.GOOGLE_CLAIMS_SUBJECT);
+			return getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_SUBJECT);
 		case CUSTOM:
 			return null;
 		}
@@ -164,11 +186,11 @@ public class BasicTokenParser implements ITokenParser {
 		case JSON_WEB_TOKEN_RFC_7519:
 			return null; // unsupported
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_USERNAME);
+			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_USERNAME);
 		case OIDC_ID_TOKEN:
-			String tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_PREFERRED_USERNAME);
+			String tmp = getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_PREFERRED_USERNAME);
 			/*if(tmp==null) {
-				tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_NICKNAME);
+				tmp = getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_NICKNAME);
 			}*/
 			return tmp;
 		case GOOGLE:
@@ -180,20 +202,20 @@ public class BasicTokenParser implements ITokenParser {
 	}
 
 	@Override
-	public String getAudience() {
+	public List<String> getAudience() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			return this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE);
+			return getClaimAsList(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_AUDIENCE);
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
+			return getClaimAsList(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
 		case OIDC_ID_TOKEN:
-			return this.claims.get(Claims.OIDC_ID_TOKEN_AUDIENCE);
+			return getClaimAsList(this.claims,Claims.OIDC_ID_TOKEN_AUDIENCE);
 		case GOOGLE:
-			return this.claims.get(Claims.GOOGLE_CLAIMS_AUDIENCE);
+			return getClaimAsList(this.claims,Claims.GOOGLE_CLAIMS_AUDIENCE);
 		case CUSTOM:
 			return null;
 		}
-		return null;
+		return  null;
 	}
 
 	@Override
@@ -201,16 +223,16 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			tmp =  this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
+			tmp =  getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			tmp =  this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_EXPIRED);
+			tmp =  getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_EXPIRED);
 			break;
 		case OIDC_ID_TOKEN:
-			tmp =  this.claims.get(Claims.OIDC_ID_TOKEN_EXPIRED);
+			tmp =  getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_EXPIRED);
 			break;
 		case GOOGLE:
-			tmp =  this.claims.get(Claims.GOOGLE_CLAIMS_EXPIRED);
+			tmp =  getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_EXPIRED);
 			break;
 		case CUSTOM:
 			return null;
@@ -230,16 +252,16 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			tmp =  this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
+			tmp =  getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			tmp =  this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUED_AT);
+			tmp =  getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUED_AT);
 			break;
 		case OIDC_ID_TOKEN:
-			tmp =  this.claims.get(Claims.OIDC_ID_TOKEN_ISSUED_AT);
+			tmp =  getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_ISSUED_AT);
 			break;
 		case GOOGLE:
-			tmp =  this.claims.get(Claims.GOOGLE_CLAIMS_ISSUED_AT);
+			tmp =  getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_ISSUED_AT);
 			break;
 		case CUSTOM:
 			return null;
@@ -259,10 +281,10 @@ public class BasicTokenParser implements ITokenParser {
 		String tmp = null;
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			tmp =  this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
+			tmp =  getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE);
 			break;
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			tmp =  this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_NOT_TO_BE_USED_BEFORE);
+			tmp =  getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_NOT_TO_BE_USED_BEFORE);
 			break;
 		case OIDC_ID_TOKEN:
 		case GOOGLE:
@@ -284,9 +306,9 @@ public class BasicTokenParser implements ITokenParser {
 	public String getJWTIdentifier() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
-			return this.claims.get(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
+			return getClaimAsString(this.claims,Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID);
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_JWT_ID);
+			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_JWT_ID);
 		case OIDC_ID_TOKEN:
 		case GOOGLE:
 			return null; // unsupported
@@ -302,11 +324,11 @@ public class BasicTokenParser implements ITokenParser {
 		case JSON_WEB_TOKEN_RFC_7519:
 			return null; // unsupported
 		case INTROSPECTION_RESPONSE_RFC_7662:
-			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
+			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
 		case OIDC_ID_TOKEN:
-			return this.claims.get(Claims.OIDC_ID_TOKEN_AZP);
+			return getClaimAsString(this.claims,Claims.OIDC_ID_TOKEN_AZP);
 		case GOOGLE:
-			return this.claims.get(Claims.GOOGLE_CLAIMS_AZP);
+			return getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_AZP);
 		case CUSTOM:
 			return null;
 		}
@@ -323,10 +345,10 @@ public class BasicTokenParser implements ITokenParser {
 		
 		String tmpScopes = null;
 		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser)) {
-			tmpScopes = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
+			tmpScopes = getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
 		}
 		else if(TipologiaClaims.GOOGLE.equals(this.parser)) {
-			tmpScopes = this.claims.get(Claims.GOOGLE_CLAIMS_SCOPE);
+			tmpScopes = getClaimAsString(this.claims,Claims.GOOGLE_CLAIMS_SCOPE);
 		}
 		if(tmpScopes!=null) {
 			String [] tmpArray = tmpScopes.split(" ");

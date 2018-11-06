@@ -52,7 +52,11 @@ import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
 import org.openspcoop2.protocol.utils.EsitoTransportContextIdentification;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.rest.problem.JsonDeserializer;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**	
@@ -297,6 +301,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				// bisogna controllare il messaggio xml, json o soap fault per vedere se porta al suo interno un errore di protocollo
 				// e' necessario farlo pero' solo se siamo in un caso FAULT.
 				
+				Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
+				String erroreGovway = null;
+				if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+					erroreGovway = (String) erroreGovwayObject;
+				}
+						
 				boolean checkReturnCodeForFault = false;
 				switch (message.getMessageType()) {
 				case SOAP_11:
@@ -305,7 +315,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(soapBody!=null) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, soapBody, tipoContext);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, soapBody, tipoContext, erroreGovway);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -315,13 +325,13 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 					break;
 				case XML:	
-					if(message.castAsRestXml().isProblemDetailsForHttpApis_RFC7808()) {
+					if(message.castAsRestXml().isProblemDetailsForHttpApis_RFC7807() && erroreGovway==null) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
 					}
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(message.castAsRestXml().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestXml().getContent(), tipoContext);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -331,13 +341,13 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}
 					break;
 				case JSON:	
-					if(message.castAsRestJson().isProblemDetailsForHttpApis_RFC7808()) {
+					if(message.castAsRestJson().isProblemDetailsForHttpApis_RFC7807() && erroreGovway==null) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
 					}
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(message.castAsRestJson().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestJson().getContent(), tipoContext, erroreGovway);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -579,11 +589,11 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		}
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
-				return getEsitoMessaggioApplicativo(erroreApplicativo, childNode, tipoContext);
+				return getEsitoMessaggioApplicativo(erroreApplicativo, childNode, tipoContext, erroreGovway);
 			}
 		}
 
@@ -591,33 +601,18 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway) throws ProtocolException{
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
 				
-				if(XMLUtils.isErroreApplicativo(childNode)){
-					
-					try{
-						byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
-						ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
-						Eccezione ecc = erroreApplicativoObject.getException();
-						if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
-							if(this.erroreProtocollo) {
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-							}
-							else {
-								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-							}
-						}
-						else{
-							String value = ecc.getCode().getBase();
-							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-							if(prefixFaultCode==null){
-								prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-							}
-							if(value.startsWith(prefixFaultCode)){
-								value = value.substring(prefixFaultCode.length());
-								int valueInt = Integer.parseInt(value);
+				if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
+					if(childNode instanceof Element) {
+						try{
+							XmlDeserializer xmlDeserializer = new XmlDeserializer();
+							ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) childNode);
+							Integer status = problem.getStatus();
+							if(status!=null) {
+								int valueInt = status.intValue();
 								if(valueInt>=400 && valueInt<=499){
 									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
 								}else if(valueInt>=500 && valueInt<=599){
@@ -625,23 +620,64 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 								}else{
 									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 								}
-							}else{
+							}
+							else {
 								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 							}
+						}catch(Exception e) {
+							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+						}
+					}
+				}
+				else {
+					if(XMLUtils.isErroreApplicativo(childNode)){
+						
+						try{
+							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
+							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
+							Eccezione ecc = erroreApplicativoObject.getException();
+							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
+								if(this.erroreProtocollo) {
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+								}
+								else {
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+								}
+							}
+							else{
+								String value = ecc.getCode().getBase();
+								String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+								if(prefixFaultCode==null){
+									prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+								}
+								if(value.startsWith(prefixFaultCode)){
+									value = value.substring(prefixFaultCode.length());
+									int valueInt = Integer.parseInt(value);
+									if(valueInt>=400 && valueInt<=499){
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+									}else if(valueInt>=500 && valueInt<=599){
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+									}else{
+										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+									}
+								}else{
+									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+								}
+							}
+							
+						}catch(Exception e){
+							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
 						}
 						
-					}catch(Exception e){
-						this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
 					}
 					
-				}
-				
-				// se arrivo qua provo a vedere se siamo nel caso di un internal Error
-				else if(OpenSPCoop2MessageFactory.isFaultXmlMessage(childNode)) {
-					try{
-						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-					}catch(Exception e){
-						this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+					// se arrivo qua provo a vedere se siamo nel caso di un internal Error
+					else if(OpenSPCoop2MessageFactory.isFaultXmlMessage(childNode)) {
+						try{
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+						}catch(Exception e){
+							this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+						}
 					}
 				}
 				
@@ -652,32 +688,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,String jsonBody,String tipoContext) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,String jsonBody,String tipoContext, String erroreGovway) throws ProtocolException{
 		
-		// tipo dell'errore
-		// $.exception.type
-		
-		// codice 
-		//$.exception.code.value
-		try {
-			String tipo = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
-			if(TipoEccezione.PROTOCOL.getValue().equals(tipo)){
-				if(this.erroreProtocollo) {
-					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
-				}
-				else {
-					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
-				}
-			}
-			else{
-				String value = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.code.value", this.log);
-				String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
-				if(prefixFaultCode==null){
-					prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-				}
-				if(value.startsWith(prefixFaultCode)){
-					value = value.substring(prefixFaultCode.length());
-					int valueInt = Integer.parseInt(value);
+		if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
+			try{
+				JsonDeserializer jsonDeserializer = new JsonDeserializer();
+				ProblemRFC7807 problem = jsonDeserializer.fromString(jsonBody);
+				Integer status = problem.getStatus();
+				if(status!=null) {
+					int valueInt = status.intValue();
 					if(valueInt>=400 && valueInt<=499){
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
 					}else if(valueInt>=500 && valueInt<=599){
@@ -685,24 +704,67 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					}else{
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 					}
-				}else{
+				}
+				else {
 					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
 				}
+			}catch(Exception e) {
+				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+			}
+		}
+		else {
+		
+			// tipo dell'errore
+			// $.exception.type
+			
+			// codice 
+			//$.exception.code.value
+			try {
+				String tipo = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
+				if(TipoEccezione.PROTOCOL.getValue().equals(tipo)){
+					if(this.erroreProtocollo) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+					}
+					else {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+					}
+				}
+				else{
+					String value = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.code.value", this.log);
+					String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
+					if(prefixFaultCode==null){
+						prefixFaultCode=Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+					}
+					if(value.startsWith(prefixFaultCode)){
+						value = value.substring(prefixFaultCode.length());
+						int valueInt = Integer.parseInt(value);
+						if(valueInt>=400 && valueInt<=499){
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+						}else if(valueInt>=500 && valueInt<=599){
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+						}else{
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+						}
+					}else{
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext); // ???
+					}
+				}
+				
+			}catch(Exception e){
+				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
 			}
 			
-		}catch(Exception e){
-			this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
-		}
-		
-		// se arrivo qua provo a vedere se siamo nel caso di un internal Error
-		try{
-			if(OpenSPCoop2MessageFactory.isFaultJsonMessage(jsonBody, this.log)) {
-				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+			// se arrivo qua provo a vedere se siamo nel caso di un internal Error
+			try{
+				if(OpenSPCoop2MessageFactory.isFaultJsonMessage(jsonBody, this.log)) {
+					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+				}
+			}catch(Exception e){
+				this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
 			}
-		}catch(Exception e){
-			this.log.error("Errore durante la comprensione dell'esito: "+e.getMessage(),e);
+			
 		}
-		
+			
 		return null;
 	}
 	

@@ -26,6 +26,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.config.IntegrationErrorCollection;
 import org.openspcoop2.message.config.IntegrationErrorConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -101,6 +102,14 @@ public abstract class AbstractErrorGenerator {
 		}
 	}
 	
+	protected String getInterfaceName() {
+		String nomePorta = null;
+		if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null) {
+			nomePorta = this.requestInfo.getProtocolContext().getInterfaceName();
+		}
+		return nomePorta;
+	}
+	
 	public void updateRequestMessageType(MessageType requestMessageType){
 		this.requestMessageType = requestMessageType;
 	}
@@ -136,12 +145,22 @@ public abstract class AbstractErrorGenerator {
 	}
 	protected MessageType getMessageTypeForError(IntegrationError integrationError){
 		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
-		return config.getMessageType(this.requestMessageType);
+		return config.getMessageType(this.requestInfo.getProtocolContext(), this.serviceBinding, this.requestMessageType);
 	}
 
 	protected int getReturnCodeForError(IntegrationError integrationError){
 		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
 		return config.getHttpReturnCode();
+	}
+	
+	protected boolean isUseInternalFault(IntegrationError integrationError){
+		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
+		return config.isUseInternalFault();
+	}
+	
+	protected ConfigurationRFC7807 getRfc7807ForError(IntegrationError integrationError){
+		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
+		return config.getRfc7807();
 	}
 
 	protected MessageType getMessageTypeForErrorSafeMode(IntegrationError integrationError){
@@ -160,14 +179,26 @@ public abstract class AbstractErrorGenerator {
 		return msgTypeErrorResponse;
 	}
 	
+	protected ConfigurationRFC7807 getRfc7807ForErrorSafeMode(IntegrationError integrationError){
+		ConfigurationRFC7807 rfc7807 = null;
+		try{
+			rfc7807 = getRfc7807ForError(integrationError);
+		}catch(Exception eError){
+			// non dovrebbero avvenire errori, altrimenti si utilizza il message type della richiesta 
+		}
+		return rfc7807;
+	}
+	
 	public OpenSPCoop2Message buildFault(Exception e){
 		//this.log.error(e.getMessage(),e);
+		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, e);
+		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 	}
 	public OpenSPCoop2Message buildFault(String errore){
 		//this.log.error(errore);
+		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, errore);
+		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, errore);
 	}
 }

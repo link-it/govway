@@ -608,7 +608,7 @@ public class ServletTestService extends HttpServlet {
 				}
 				
 				OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-				OpenSPCoop2Message msg = factory.createFaultMessage(soapVersion, faultMessage);
+				OpenSPCoop2Message msg = factory.createFaultMessage(soapVersion, false, faultMessage);
 				OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 				javax.xml.namespace.QName qName = new javax.xml.namespace.QName(faultNamespaceCode,faultCode);
 				SOAPBody bdy = soapMsg.getSOAPBody();

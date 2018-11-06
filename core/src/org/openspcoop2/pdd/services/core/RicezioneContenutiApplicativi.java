@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -2336,24 +2337,41 @@ public class RicezioneContenutiApplicativi {
 		}
 		if (!serviceIsEnabled || !portaEnabled  || serviceIsEnabledExceptionProcessamento!=null) {
 			ErroreIntegrazione errore = null;
+			IntegrationError integrationError = IntegrationError.SERVICE_UNAVAILABLE;
 			if(serviceIsEnabledExceptionProcessamento!=null){
 				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Comprensione stato servizio di ricezione contenuti applicativi non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione contenuti applicativi non riuscita", "PD");
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+				integrationError = IntegrationError.INTERNAL_ERROR;
 			}else{
 				String msg = "Servizio di ricezione contenuti applicativi disabilitato";
 				if(serviceIsEnabled){
 					msg = "Porta Delegata ["+nomeUtilizzatoPerErrore+"] disabilitata";
+					errore = ErroriIntegrazione.ERRORE_446_PORTA_SOSPESA.getErroreIntegrazione();
+				}
+				else {
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE);
 				}
 				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] "+msg);
 				msgDiag.logErroreGenerico(msg, "PD");
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE);
 			}
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
-				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-						errore,serviceIsEnabledExceptionProcessamento,null)));
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.generatoreErrore.build(integrationError,
+						errore,serviceIsEnabledExceptionProcessamento,null);
+				if(IntegrationError.SERVICE_UNAVAILABLE.equals(integrationError) &&
+						propertiesReader.isEnabledServiceUnavailableRetryAfter_pd_suspend() && 
+						propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend()!=null &&
+						propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend()>0) {
+					int seconds = propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend();
+					if(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()!=null &&
+							propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()>0) {
+						seconds = seconds + new Random().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend());
+					}
+					errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+				}
+				this.msgContext.setMessageResponse(errorOpenSPCoopMsg);
 			}
 			return;
 		}

@@ -36,6 +36,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -370,7 +371,13 @@ public class ConnectorDispatcherUtils {
 			else {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(log);
 			}
-			utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
+			if(requestInfo!=null && requestInfo.getIdTransazione()!=null) {
+				HeaderIntegrazione hdr = new HeaderIntegrazione(requestInfo.getIdTransazione());
+				utilitiesIntegrazione.setTransportProperties(hdr,trasporto,null);
+			}
+			else {
+				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
+			}
 			if(trasporto.size()>0){
 				java.util.Enumeration<?> en = trasporto.keys();
 		    	while(en.hasMoreElements()){

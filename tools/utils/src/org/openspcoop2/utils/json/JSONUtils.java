@@ -26,8 +26,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
@@ -243,29 +245,29 @@ public class JSONUtils {
 	
 	// UTILITIES
 	
-	public Map<String, String> convertToSimpleMap(JsonNode node){
+	public Map<String, Object> convertToSimpleMap(JsonNode node){
 		return this.convertToSimpleMap(node, true, false, true, false, ".");
 	}
-	public Map<String, String> convertToSimpleMap(JsonNode node, String separator){
+	public Map<String, Object> convertToSimpleMap(JsonNode node, String separator){
 		return this.convertToSimpleMap(node, true, false, true, false, separator);
 	}
-	public Map<String, String> convertToSimpleMap(JsonNode node, 
+	public Map<String, Object> convertToSimpleMap(JsonNode node, 
 			boolean analyzeArrayNode, boolean analyzeAsStringArrayNode,
 			boolean analyzeObjectNode, boolean analyzeAsStringObjectNode,
 			String separator){
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		_convertToSimpleMap(null, node, null, map,
 				analyzeArrayNode, analyzeAsStringArrayNode,
 				analyzeObjectNode, analyzeAsStringObjectNode,
 				separator);
 		return map;
 	}
-	private void _convertToSimpleMap(String name, JsonNode node, String prefix, Map<String, String> map,
+	private void _convertToSimpleMap(String name, JsonNode node, String prefix, Map<String, Object> map,
 			boolean analyzeArrayNode, boolean analyzeAsStringArrayNode,
 			boolean analyzeObjectNode, boolean analyzeAsStringObjectNode,
 			String separator){
 		
-		String newPrefix = null;
+		String newPrefix = "";
 		if(prefix!=null) {
 			newPrefix = prefix+separator;
 		}
@@ -280,25 +282,38 @@ public class JSONUtils {
 					if(analyzeArrayNode) {
 						ArrayNode array = (ArrayNode) child;
 						if(array.size()>0) {
+							List<String> lString = new ArrayList<>();
 							for (int i = 0; i < array.size(); i++) {
 								JsonNode arrayChildNode = array.get(i);
-								_convertToSimpleMap(field, arrayChildNode, newPrefix+i, map,
-										analyzeArrayNode, analyzeAsStringArrayNode,
-										analyzeObjectNode, analyzeAsStringObjectNode,
-										separator);
+								if(arrayChildNode instanceof ArrayNode || arrayChildNode instanceof ObjectNode) {
+									String prefixRecursive = newPrefix+normalizeKey(field)+"["+i+"]";
+									_convertToSimpleMap(field, arrayChildNode, prefixRecursive, map,
+											analyzeArrayNode, analyzeAsStringArrayNode,
+											analyzeObjectNode, analyzeAsStringObjectNode,
+											separator);
+								}
+								else {
+									String text = arrayChildNode.asText();
+									if(text != null && !text.isEmpty())
+										lString.add(text);
+								}
+							}
+							if(lString.size()>0) {
+								map.put(newPrefix+field, lString);
 							}
 						}
 					}
 					else if(analyzeAsStringArrayNode){
 						String text = child.asText();
 						if(text != null && !text.isEmpty())
-							map.put(field, text);
+							map.put(newPrefix+field, text);
 					}
 				}
 				else if(child instanceof ObjectNode) {
 					if(analyzeObjectNode) {
 						ObjectNode object = (ObjectNode) child;
-						_convertToSimpleMap(field, object, newPrefix+field, map,
+						String prefixRecursive = newPrefix+normalizeKey(field);
+						_convertToSimpleMap(field, object, prefixRecursive, map,
 								analyzeArrayNode, analyzeAsStringArrayNode,
 								analyzeObjectNode, analyzeAsStringObjectNode,
 								separator);
@@ -306,13 +321,13 @@ public class JSONUtils {
 					else if(analyzeAsStringObjectNode){
 						String text = child.asText();
 						if(text != null && !text.isEmpty())
-							map.put(field, text);
+							map.put(newPrefix+field, text);
 					}
 				}
 				else {
 					String text = child.asText();
 					if(text != null && !text.isEmpty())
-						map.put(field, text);
+						map.put(newPrefix+field, text);
 				}
 			}
 			
@@ -320,19 +335,41 @@ public class JSONUtils {
 		else if(node instanceof ArrayNode) {
 			ArrayNode array = (ArrayNode) node;
 			if(array.size()>0) {
+				List<String> lString = new ArrayList<>();
 				for (int i = 0; i < array.size(); i++) {
 					JsonNode arrayChildNode = array.get(i);
-					_convertToSimpleMap(name, arrayChildNode, newPrefix+i, map,
-							analyzeArrayNode, analyzeAsStringArrayNode,
-							analyzeObjectNode, analyzeAsStringObjectNode,
-							separator);
+					if(arrayChildNode instanceof ArrayNode || arrayChildNode instanceof ObjectNode) {
+						String prefixRecursive = newPrefix+normalizeKey(name)+"["+i+"]";
+						_convertToSimpleMap(name, arrayChildNode, prefixRecursive, map,
+								analyzeArrayNode, analyzeAsStringArrayNode,
+								analyzeObjectNode, analyzeAsStringObjectNode,
+								separator);
+					}
+					else {
+						String text = arrayChildNode.asText();
+						if(text != null && !text.isEmpty())
+							lString.add(text);
+					}
+				}
+				if(lString.size()>0) {
+					map.put(name, lString);
 				}
 			}
 		}
 		else {
 			String text = node.asText();
-			if(text != null && !text.isEmpty())
+			if(text != null && !text.isEmpty()) {
 				map.put(name, text);
+			}
 		}
+	}
+	private static String normalizeKey(String keyParam) {
+		String key = keyParam.trim();
+		if(key.contains(" ")) {
+			while(key.contains(" ")) {
+				key = key.replace(" ", "_");
+			}
+		}
+		return key;
 	}
 }

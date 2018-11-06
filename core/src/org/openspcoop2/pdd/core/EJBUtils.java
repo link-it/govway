@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.soap.SOAPBody;
 
@@ -2107,18 +2108,7 @@ public class EJBUtils {
 
 	/** ------------------- Metodi per la spedizione di risposte con errori ---------------- */
 
-	/**
-	 * Spedisce un messaggio ErroreProtocolloProcessamento al modulo di OpenSPCoop piu' indicato, a seconda che
-	 * la busta debba essere spedita sulla reply della connessione HTTP 
-	 * (nodo RicezioneBuste, la spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null)
-	 * o su di una nuova connessione (nodo InoltroRisposte)
-	 * La spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null.
-	 *
-	 * @param idModuloInAttesa identificativo del modulo 'RicezioneBusteXXX'. 
-	 * @param busta Busta da utilizzare per la costruzione della busta di risposta   
-	 * @param errore Errore
-	 * 
-	 */
+	/* ---- PROCESSAMENTO --- */
 	
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			ErroreIntegrazione errore,String idCorrelazioneApplicativa,
@@ -2128,7 +2118,7 @@ public class EJBUtils {
 				false,this.idModulo,this.protocolFactory);
 		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
-		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			ErroreIntegrazione errore,
@@ -2138,24 +2128,18 @@ public class EJBUtils {
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),false,this.idModulo,this.protocolFactory);
 		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
-		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException);
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,errore,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
-
-
-	/**
-	 * Spedisce un messaggio ErroreProtocolloProcessamento al modulo di OpenSPCoop piu' indicato, a seconda che
-	 * la busta debba essere spedita sulla reply della connessione HTTP 
-	 * (nodo RicezioneBuste, la spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null)
-	 * o su di una nuova connessione (nodo InoltroRisposte)
-	 * La spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null.
-	 *
-	 * @param idModuloInAttesa identificativo del modulo 'RicezioneBusteXXX'. 
-	 * @param busta Busta da utilizzare per la costruzione della busta di risposta   
-	 * @param errs Eccezioni
-	 * 
-	 */
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
 			List<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
+			String servizioApplicativoFruitore,
+			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
+		this._sendAsRispostaBustaErroreProcessamento(idModuloInAttesa, busta, errs, null, 
+				idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eProcessamento, parseException);
+	}
+	private void _sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
+			List<Eccezione> errs, ErroreIntegrazione errore, 
+			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 
@@ -2173,11 +2157,6 @@ public class EJBUtils {
 		//ErroreProcessamentoProtocollo: Header
 		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().buildMessaggioErroreProtocollo_Processamento(errs,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));
 
-		DettaglioEccezione dettaglioEccezione = null;
-		if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
-			dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, this.servizioApplicativoErogatore, busta, eProcessamento);
-		}
-		
 		// Fix Bug 131: eccezione di processamento
 		this.generatoreErrorePortaApplicativa.getImbustamentoErrore().gestioneListaEccezioniMessaggioErroreProtocolloProcessamento(busta);
 		// Fix Bug 131
@@ -2192,10 +2171,31 @@ public class EJBUtils {
 		}
 
 		//ErroreProcessamentoProtocollo: error Msg
-		OpenSPCoop2Message errorMsg = 
-				this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
+		OpenSPCoop2Message errorMsg = null;
+		if(errore==null) {
+			DettaglioEccezione dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, 
+					this.servizioApplicativoErogatore, busta, eProcessamento);
+			errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
+		}
+		else {
+			errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, errore, eProcessamento);
+		}			
 		if(errorMsg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
+		}
+		if(this.integrationErrorPortaApplicativa!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationErrorPortaApplicativa)) {
+			// Retry-After
+			boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed();
+			Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
+			Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
+			if(	isEnabled &&
+				retryAfterSeconds!=null && retryAfterSeconds>0) {
+				int seconds = retryAfterSeconds;
+				if(retryAfterBackOffSeconds!=null && retryAfterBackOffSeconds>0) {
+					seconds = seconds + new Random().nextInt(retryAfterBackOffSeconds);
+				}
+				errorMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+			}
 		}
 		if(eProcessamento instanceof HandlerException){
 			HandlerException he = (HandlerException) eProcessamento;
@@ -2207,45 +2207,28 @@ public class EJBUtils {
 		sendAsRispostaBustaErrore(idModuloInAttesa,busta,errorMsg,false,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}
 
-	/**
-	 * Spedisce un messaggio ErroreProtocolloValidazione al modulo di OpenSPCoop piu' indicato, a seconda che
-	 * la busta debba essere spedita sulla reply della connessione HTTP 
-	 * (nodo RicezioneBuste, la spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null)
-	 * o su di una nuova connessione (nodo InoltroRisposte)
-	 * La spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null.
-	 *
-	 * @param idModuloInAttesa identificativo del modulo 'RicezioneBusteXXX'. 
-	 * @param busta Busta da utilizzare per la costruzione della busta di risposta
-	 * @param eccezione Eccezione di validazione
-	 * 
-	 */
+	
+	/* ---- VALIDAZIONE --- */
+
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 		List<Eccezione> v = new ArrayList<Eccezione>();
 		v.add(eccezione);
-		sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
+		this._sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
 	}
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 		List<Eccezione> v = new ArrayList<Eccezione>();
 		v.add(eccezione);
-		sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
+		this._sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}
-
-
-	/**
-	 * Spedisce un messaggio ErroreProtocolloValidazione al modulo di OpenSPCoop piu' indicato, a seconda che
-	 * la busta debba essere spedita sulla reply della connessione HTTP 
-	 * (nodo RicezioneBuste, la spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null)
-	 * o su di una nuova connessione (nodo InoltroRisposte)
-	 * La spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null.
-	 *
-	 * @param idModuloInAttesa identificativo del modulo 'RicezioneBusteXXX'. 
-	 * @param busta Busta da utilizzare per la costruzione della busta di risposta
-	 * @param eccezioni Eccezioni di validazione
-	 * 
-	 */
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,List<Eccezione> eccezioni,
+			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
+		this._sendAsRispostaBustaErroreValidazione(idModuloInAttesa, busta, eccezioni,  
+				idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore);
+	}
+	private void _sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,
+			List<Eccezione> eccezioni,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 
 		//Costruisco busta Errore 

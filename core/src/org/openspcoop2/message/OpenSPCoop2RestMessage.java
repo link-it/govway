@@ -46,6 +46,6 @@ public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
 	
 	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
 
-	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException;
+	public boolean isProblemDetailsForHttpApis_RFC7807() throws MessageException,MessageNotSupportedException;
 	
 }

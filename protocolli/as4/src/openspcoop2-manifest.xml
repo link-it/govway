@@ -74,22 +74,26 @@
 	    		 </subscription>
     		</integration>
     		<integrationError>
-				<internal>
-    				<authentication httpReturnCode="500" messageType="soapAsRequest" />
+				<internal problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
 	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
 	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
 	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</internal>	
-    			<external>
-    				<authentication httpReturnCode="500" messageType="soapAsRequest" />
+    			<external problemType="rfc7807" useInternalFault="true">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="500" messageType="soapAsRequest" />
 	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
 	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
 	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
 	    			<tooManyRequests httpReturnCode="500" messageType="soapAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<serviceUnavailable httpReturnCode="500" messageType="soapAsRequest" />
 	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</external>	
     		</integrationError>
@@ -153,23 +157,27 @@
 	    		 </subscription>
     		</integration>
     		<integrationError>
-    			<internal>
+    			<internal problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
 	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
 	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
 	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
 	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
 	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
-	    			<default httpReturnCode="500" messageType="xml" />
+	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
+	    			<default httpReturnCode="500" messageType="json" />
     			</internal>
-    			<external>
-	    			<authentication httpReturnCode="401" messageType="none" />
-	    			<authorization httpReturnCode="403" messageType="none" />
-	    			<notFound httpReturnCode="404" messageType="none" />
-	    			<badRequest httpReturnCode="400" messageType="none" />
-	    			<tooManyRequests httpReturnCode="429" messageType="none" />
-	    			<internalError httpReturnCode="500" messageType="none" />
-	    			<default httpReturnCode="500" messageType="none" />
+    			<external problemType="rfc7807">
+    				<rfc7807 details="true" govwayStatus="true" instance="false" useAcceptHeader="true"/>
+	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
+	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
+	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
+	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<tooManyRequests httpReturnCode="429" messageType="sameAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+	    			<serviceUnavailable httpReturnCode="503" messageType="sameAsRequest" />
+	    			<default httpReturnCode="500" messageType="json" />
     			</external>
     		</integrationError>
     		<mediaTypeCollection>

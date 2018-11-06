@@ -908,16 +908,20 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 					List<Integer> codes = null;
 					if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
-						codes = esitiProperties.getEsitiCodeKo();
+						codes = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					}
 					else if(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
 						codes = esitiProperties.getEsitiCodeFaultApplicativo();
 					}
 					else if(EsitoUtils.ALL_OK_VALUE == this.esitoGruppo){
-						codes = esitiProperties.getEsitiCodeOk();
+						codes = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 					}
 					else if(EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo){
 						this.esitoDettaglio = EsitoUtils.ALL_VALUE;
+					}
+					if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
+						codes = esitiProperties.getEsitiCodeKo();
+						codes.addAll(esitiProperties.getEsitiCodeFaultApplicativo());
 					}
 					boolean found = false;
 					for (Integer code : codes) {
@@ -1206,6 +1210,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
 			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE)));
 			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE)));
 			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE)));
 			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE)));
 	
@@ -1241,6 +1246,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			}
 			else if(EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo){
 				esitiFiltro = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+			}
+			else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
+				esitiFiltro = esitiProperties.getEsitiCodeKo();
 			}
 
 			for (Integer esito : esiti) {

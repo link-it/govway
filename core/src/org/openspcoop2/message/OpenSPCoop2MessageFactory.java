@@ -48,6 +48,10 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.problem.JsonSerializer;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807Builder;
+import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -871,24 +875,24 @@ public abstract class OpenSPCoop2MessageFactory {
 	 * Messaggi di Errore
 	 */
 		
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType) {
-		return this.createFaultMessage(messageType, Costanti.DEFAULT_SOAP_FAULT_STRING,null);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807) {
+		return this.createFaultMessage(messageType, useProblemRFC7807, Costanti.DEFAULT_SOAP_FAULT_STRING,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, NotifierInputStreamParams notifierInputStreamParams) {
-		return createFaultMessage(messageType, Costanti.DEFAULT_SOAP_FAULT_STRING,notifierInputStreamParams);
-	}
-	
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, Throwable t) {
-		return this.createFaultMessage(messageType, t,null);
-	}
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
-		return createFaultMessage(messageType, t.getMessage(),notifierInputStreamParams);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, useProblemRFC7807, Costanti.DEFAULT_SOAP_FAULT_STRING,notifierInputStreamParams);
 	}
 	
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, String errore) {
-		return this.createFaultMessage(messageType, errore,null);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, Throwable t) {
+		return this.createFaultMessage(messageType,useProblemRFC7807, t,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(MessageType messageType, String errore,NotifierInputStreamParams notifierInputStreamParams){
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, useProblemRFC7807, t.getMessage(),notifierInputStreamParams);
+	}
+	
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, boolean useProblemRFC7807, String errore) {
+		return this.createFaultMessage(messageType, useProblemRFC7807, errore,null);
+	}
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, String errore,NotifierInputStreamParams notifierInputStreamParams){
 		try{
 			String fault = null;
 			String contentType = MessageUtilities.getDefaultContentType(messageType);
@@ -913,19 +917,56 @@ public abstract class OpenSPCoop2MessageFactory {
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 			}
 			else if(MessageType.XML.equals(messageType)){
-				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
-						+"<op2:Message>"+errore+"</op2:Message>"
-						+"</op2:Fault>";
+				if(useProblemRFC7807) {
+					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
+						problemRFC7807.setDetail(errore);
+					}
+					XmlSerializer xmlSerializer = new XmlSerializer();
+					fault = xmlSerializer.toString(problemRFC7807);
+					contentType = HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807;
+				}else {
+					fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
+							+"<op2:Message>"+errore+"</op2:Message>"
+							+"</op2:Fault>";
+				}
 			}
 			else if(MessageType.JSON.equals(messageType)){
-				fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
+				if(useProblemRFC7807) {
+					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
+						problemRFC7807.setDetail(errore);
+					}
+					JsonSerializer jsonSerializer = new JsonSerializer();
+					fault = jsonSerializer.toString(problemRFC7807);
+					contentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+				}else {
+					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
+				}
 			}
 			else{
 				// default uso xml
-				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
-						+"<op2:Message>"+errore+"</op2:Message>"
-						+"</op2:Fault>";
-				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);
+//				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
+//						+"<op2:Message>"+errore+"</op2:Message>"
+//						+"</op2:Fault>";
+//				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);
+				
+				// modifica default in json
+				if(useProblemRFC7807) {
+					ProblemRFC7807Builder builder = new ProblemRFC7807Builder(true);
+					ProblemRFC7807 problemRFC7807 = builder.buildProblem(500);
+					if(errore!=null && !Costanti.DEFAULT_SOAP_FAULT_STRING.equals(errore)) {
+						problemRFC7807.setDetail(errore);
+					}
+					JsonSerializer jsonSerializer = new JsonSerializer();
+					fault = jsonSerializer.toString(problemRFC7807);
+					contentType = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+				}else {
+					fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\" } }";
+					contentType = MessageUtilities.getDefaultContentType(MessageType.JSON);
+				}
 			}
 			
 			//System.out.println("XML ["+versioneSoap+"] ["+xml+"]");
@@ -937,7 +978,10 @@ public abstract class OpenSPCoop2MessageFactory {
 				// non dovrebbe succedere
 				throw result.getParseException().getSourceException();
 			}
-			return result.getMessage();
+			OpenSPCoop2Message msg = result.getMessage();
+			msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
+					org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+			return msg;
 		}
 		catch(Throwable e){
 			System.err.println("Exception non gestibile durante la creazione di un Fault. " + e);

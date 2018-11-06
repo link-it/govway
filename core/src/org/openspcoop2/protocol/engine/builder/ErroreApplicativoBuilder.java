@@ -31,6 +31,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
@@ -94,6 +95,12 @@ public class ErroreApplicativoBuilder  {
 	public MessageType getMessageType() {
 		return this.messageType;
 	}
+	
+	private ConfigurationRFC7807 rfc7807;
+	private boolean useProblemRFC7807;
+	private int httpStatus;
+	private String nomePorta;
+	
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
 
 	private String servizioApplicativo;	
@@ -109,6 +116,7 @@ public class ErroreApplicativoBuilder  {
 	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory<?> protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
 			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
+			ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
 			TipoPdD tipoPdD,String servizioApplicativo) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
@@ -131,6 +139,11 @@ public class ErroreApplicativoBuilder  {
 		
 		this.messageType = messageType;
 
+		this.rfc7807 = rfc7807;
+		this.useProblemRFC7807 = this.rfc7807!=null;
+		this.httpStatus = httpStatus;
+		this.nomePorta = nomePorta;
+		
 		this.dettaglioEccezioneOpenSPCoop2Builder = new DettaglioEccezioneOpenSPCoop2Builder(aLog, protocolFactory);
 		
 		this.tipoPdD = tipoPdD;
@@ -155,6 +168,10 @@ public class ErroreApplicativoBuilder  {
 		parameters.setProprieta(this.proprietaErroreApplicato);
 		
 		parameters.setMessageType(this.messageType);
+		
+		parameters.setRfc7807(this.rfc7807);
+		parameters.setHttpStatus(this.httpStatus);
+		parameters.setNomePorta(this.nomePorta);
 		
 		parameters.setTipoPorta(this.tipoPdD);
 		
@@ -279,7 +296,7 @@ public class ErroreApplicativoBuilder  {
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return this.fac.createFaultMessage(this.messageType, "ErroreDiProcessamento");
+			return this.fac.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
 		}
 	}
 
@@ -294,7 +311,7 @@ public class ErroreApplicativoBuilder  {
 			return this.erroreApplicativoBuilder.toMessage(parameters);
 		} catch (Exception e) {
 			this.log.error("Errore durante la costruzione del messaggio di eccezione busta",e);
-			return this.fac.createFaultMessage(this.messageType, "ErroreDiProcessamento");
+			return this.fac.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
 		}
 	}
 

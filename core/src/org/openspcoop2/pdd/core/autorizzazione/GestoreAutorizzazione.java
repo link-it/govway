@@ -25,6 +25,7 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -50,6 +51,7 @@ import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -318,8 +320,8 @@ public class GestoreAutorizzazione {
     		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+    			return esitoNew;
         	}
-    		return esitoNew;
     	}
     	
     	// Verifica Token Options
@@ -329,8 +331,8 @@ public class GestoreAutorizzazione {
     		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneTokenOptions(datiInvocazione.getPd().getGestioneToken().getOptions(), esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+    			return esitoNew;
         	}
-    		return esitoNew;
     	}
     	
     	return esito;
@@ -420,8 +422,8 @@ public class GestoreAutorizzazione {
     		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+    			return esitoNew;
         	}
-    		return esitoNew;
     	}
     	
     	
@@ -443,8 +445,8 @@ public class GestoreAutorizzazione {
     		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneTokenOptions(tokenOptions, esito, pddContext, datiInvocazione);
     		if(esitoNew.isAutorizzato()==false) {
     			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+    			return esitoNew;
         	}
-    		return esitoNew;
     	}
     	
     	return esito;
@@ -643,7 +645,7 @@ public class GestoreAutorizzazione {
 	    		for (Scope scope : authScope.getScopeList()) {
 					org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(scope.getNome(),null);
 					String nomeScope = scopeOp2Registry.getNome();
-					if(scopeOp2Registry.getNomeEsterno()!=null) {
+					if(scopeOp2Registry.getNomeEsterno()!=null && !"".equals(scopeOp2Registry.getNomeEsterno())) {
 						nomeScope = scopeOp2Registry.getNomeEsterno();
 					}
 					if(informazioniTokenNormalizzate.getScopes().contains(nomeScope)==false) {
@@ -767,8 +769,9 @@ public class GestoreAutorizzazione {
 			    			errorMessage = "Token without claim '"+key+"'";
 							break;
 						}
-						String valueClaim = informazioniTokenNormalizzate.getClaims().get(key);
-						if(valueClaim==null) {
+						Object valueClaimObject = informazioniTokenNormalizzate.getClaims().get(key);
+						List<String> lClaimValues = TokenUtilities.getClaimValues(valueClaimObject); 
+						if(lClaimValues==null || lClaimValues.isEmpty()) {
 							autorizzato = false;
 			    			errorMessage = "Token with claim '"+key+"' without value";
 							break;
@@ -778,7 +781,7 @@ public class GestoreAutorizzazione {
 							boolean ok = false;
 							for (int i = 0; i < values.length; i++) {
 								String v = values[i].trim();
-								if(v.equals(valueClaim)) {
+								if(lClaimValues.contains(v)) {
 									ok = true;
 									break;
 								}
@@ -789,7 +792,7 @@ public class GestoreAutorizzazione {
 							}
 						}
 						else {
-							if(value.equals(valueClaim)==false) {
+							if(lClaimValues.contains(value)==false) {
 								autorizzato = false;
 								errorMessage = "Token claim '"+key+"' with unexpected value";
 							}

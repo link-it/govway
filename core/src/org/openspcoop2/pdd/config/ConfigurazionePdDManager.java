@@ -613,9 +613,10 @@ public class ConfigurazionePdDManager {
 	
 	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
-			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pa, soggetto, infoConnettoreIngresso, 
-				pddContext, checkRuoloRegistro, checkRuoloEsterno);
+				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}
 	
 	public boolean isPortaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -661,9 +662,10 @@ public class ConfigurazionePdDManager {
 	
 	public boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
-			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
-				pddContext, checkRuoloRegistro, checkRuoloEsterno);
+				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}
 
 	public void aggiornaProprietaGestioneErrorePD(ProprietaErroreApplicativo gestioneErrore, ServizioApplicativo sa) throws DriverConfigurazioneException {

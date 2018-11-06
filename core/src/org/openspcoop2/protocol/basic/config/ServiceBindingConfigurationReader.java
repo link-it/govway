@@ -31,6 +31,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceRepresentation;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.config.ConfigurationServiceBindingRest;
 import org.openspcoop2.message.config.ConfigurationServiceBindingSoap;
 import org.openspcoop2.message.config.ContextUrlCollection;
@@ -44,6 +45,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.protocol.manifest.EmptySubContextMapping;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
+import org.openspcoop2.protocol.manifest.RFC7807;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.RestMediaTypeCollection;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
@@ -58,6 +60,7 @@ import org.openspcoop2.protocol.manifest.SubContextMapping;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.manifest.constants.DefaultIntegrationErrorMessageType;
 import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageType;
+import org.openspcoop2.protocol.manifest.constants.IntegrationErrorProblemType;
 import org.openspcoop2.protocol.manifest.constants.RestMessageType;
 import org.openspcoop2.protocol.manifest.constants.SoapMessageType;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -546,33 +549,58 @@ public class ServiceBindingConfigurationReader  {
 	
 	private static IntegrationErrorCollection readIntegrationErrorConfiguration(org.openspcoop2.protocol.manifest.IntegrationErrorCollection config) throws MessageException{
 		IntegrationErrorCollection integrationErrorConfiguration = new IntegrationErrorCollection();
+		
+		ConfigurationRFC7807 rfc7807 = null;
+		if(IntegrationErrorProblemType.RFC_7807.equals(config.getProblemType())) {
+			RFC7807 rfc7807_protocolManifest = config.getRfc7807();
+			rfc7807 = new ConfigurationRFC7807();
+			rfc7807.setType(rfc7807_protocolManifest.isType());
+			rfc7807.setTypeFormat(rfc7807_protocolManifest.getTypeFormat());
+			rfc7807.setUseAcceptHeader(rfc7807_protocolManifest.getUseAcceptHeader());
+			rfc7807.setInstance(rfc7807_protocolManifest.getInstance());
+			rfc7807.setGovwayStatus(rfc7807_protocolManifest.getGovwayStatus());
+			rfc7807.setDetails(rfc7807_protocolManifest.getDetails());
+		}
+		
 		if(config.getDefault()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.DEFAULT, 
-					convertToMessageType(config.getDefault().getMessageType()), config.getDefault().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.DEFAULT, 
+					convertToMessageType(config.getDefault().getMessageType()), config.getDefault().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getAuthentication()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.AUTHENTICATION, 
-					convertToMessageType(config.getAuthentication().getMessageType()), config.getAuthentication().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.AUTHENTICATION, 
+					convertToMessageType(config.getAuthentication().getMessageType()), config.getAuthentication().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getAuthorization()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.AUTHORIZATION, 
-					convertToMessageType(config.getAuthorization().getMessageType()), config.getAuthorization().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.AUTHORIZATION, 
+					convertToMessageType(config.getAuthorization().getMessageType()), config.getAuthorization().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getNotFound()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.NOT_FOUND, 
-					convertToMessageType(config.getNotFound().getMessageType()), config.getNotFound().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.NOT_FOUND, 
+					convertToMessageType(config.getNotFound().getMessageType()), config.getNotFound().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getBadRequest()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.BAD_REQUEST, 
-					convertToMessageType(config.getBadRequest().getMessageType()), config.getBadRequest().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.BAD_REQUEST, 
+					convertToMessageType(config.getBadRequest().getMessageType()), config.getBadRequest().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getTooManyRequests()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.TOO_MANY_REQUESTS, 
-					convertToMessageType(config.getTooManyRequests().getMessageType()), config.getTooManyRequests().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.TOO_MANY_REQUESTS, 
+					convertToMessageType(config.getTooManyRequests().getMessageType()), config.getTooManyRequests().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		if(config.getInternalError()!=null){
-			integrationErrorConfiguration.addIntegrationError(IntegrationError.INTERNAL_ERROR, 
-					convertToMessageType(config.getInternalError().getMessageType()), config.getInternalError().getHttpReturnCode());
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.INTERNAL_ERROR, 
+					convertToMessageType(config.getInternalError().getMessageType()), config.getInternalError().getHttpReturnCode(),
+					config.isUseInternalFault());
+		}
+		if(config.getServiceUnavailable()!=null){
+			integrationErrorConfiguration.addIntegrationError(rfc7807, IntegrationError.SERVICE_UNAVAILABLE, 
+					convertToMessageType(config.getServiceUnavailable().getMessageType()), config.getServiceUnavailable().getHttpReturnCode(),
+					config.isUseInternalFault());
 		}
 		return integrationErrorConfiguration;
 	}

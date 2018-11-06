@@ -48,7 +48,7 @@ public class InformazioniTokenUserInfo implements Serializable {
 	
 	public InformazioniTokenUserInfo(InformazioniToken informazioniToken, ITokenUserInfoParser tokenUserInfoParser) throws UtilsException {
 		String rawResponse = informazioniToken.getRawResponse();
-		Map<String, String> claims = informazioniToken.getClaims();
+		Map<String, Object> claims = informazioniToken.getClaims();
 		tokenUserInfoParser.init(rawResponse, claims);
 		this.fullName = tokenUserInfoParser.getFullName();
 		this.firstName = tokenUserInfoParser.getFirstName();

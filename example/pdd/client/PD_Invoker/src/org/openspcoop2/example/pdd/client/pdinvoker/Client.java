@@ -33,12 +33,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -115,6 +118,19 @@ public class Client {
 		@SuppressWarnings("unused")
 		String trasportoKeywordTransazione = Client.getProperty(reader, "openspcoop2.trasporto.keyword.transazione", true);
 		
+		// Header Custom
+        List<String> headersKeys = new ArrayList<String>();
+        List<String> headersValues = new ArrayList<String>();
+		Properties p = Utilities.readProperties("openspcoop2.header.", reader);
+		if(p!=null && p.size()>0){
+			Enumeration<?> enKeys = p.keys();
+			while (enKeys.hasMoreElements()) {
+				String key = (String) enKeys.nextElement();
+				String value = p.getProperty(key);
+				headersKeys.add(key);
+				headersValues.add(value);
+			}
+		}
 
 
 		//if(urlPD.endsWith("/")==false)
@@ -179,7 +195,7 @@ public class Client {
 		// Set the appropriate HTTP parameters.
 		httpConn.setRequestProperty( "Content-Length",
 				String.valueOf( b.length ) );
-		if(contentType!=null) {
+		if(contentType!=null && !"".equals(contentType)) {
 			httpConn.setRequestProperty("Content-Type",contentType);
 		}
 		httpConn.setRequestProperty("SOAPAction",soapActon);
@@ -213,6 +229,11 @@ public class Client {
 		}
 		if(user != null && passw != null)
 			httpConn.setRequestProperty("Authorization",authentication);
+		if(headersKeys!=null) {
+			for (int i = 0; i < headersKeys.size(); i++) {
+				httpConn.setRequestProperty(headersKeys.get(i),headersValues.get(i));
+			}
+		}
 		HttpRequestMethod httpRequestMethod = HttpRequestMethod.valueOf(httpMethod);
 		HttpUtilities.setStream(httpConn, httpRequestMethod, contentType);
 		HttpBodyParameters httpBody = new  HttpBodyParameters(httpRequestMethod, contentType);

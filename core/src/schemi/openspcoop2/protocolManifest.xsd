@@ -173,20 +173,35 @@
        <xsd:complexType name="IntegrationErrorConfiguration">
               <xsd:sequence>
                      <xsd:element name="internal" type="IntegrationErrorCollection" />
+                     <!-- Complex Content non supportato <xsd:element name="external" type="IntegrationErrorConfigurationExternal" /> -->
                      <xsd:element name="external" type="IntegrationErrorCollection" />
               </xsd:sequence>
        </xsd:complexType>
+       <!-- Complex Content non supportato: viene aggiunto l'attributo comunque in IntegrationErrorCollection
+       <xsd:complexType name="IntegrationErrorConfigurationExternal">
+              <xsd:complexContent>
+                     <xsd:extension base="IntegrationErrorConfiguration">
+                            <xsd:attribute name="useInternalFault" type="xsd:boolean" use="optional" default="false"/>
+                     </xsd:extension>
+              </xsd:complexContent>
+       </xsd:complexType>
+       -->
        
        <xsd:complexType name="IntegrationErrorCollection">
               <xsd:sequence>
+                     <xsd:element name="rfc7807" type="RFC7807" minOccurs="0" />
                      <xsd:element name="authentication" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="authorization" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="notFound" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="badRequest" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="tooManyRequests" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="internalError" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="serviceUnavailable" type="IntegrationError" minOccurs="0" />
                      <xsd:element name="default" type="DefaultIntegrationError" />
               </xsd:sequence>
+              <xsd:attribute name="problemType" type="IntegrationErrorProblemType" use="required" />
+              <!-- Complex Content non supportato: l'attributo sottostante serve solo in un caso di IntegrationErrorCollection -->
+              <xsd:attribute name="useInternalFault" type="xsd:boolean" use="optional" default="false"/>
        </xsd:complexType>
        
        <xsd:complexType name="IntegrationError">
@@ -199,7 +214,14 @@
               <xsd:attribute name="messageType" type="DefaultIntegrationErrorMessageType" use="required" />
        </xsd:complexType>
        
-       
+       <xsd:complexType name="RFC7807">
+              <xsd:attribute name="useAcceptHeader" type="xsd:boolean" use="required" />
+              <xsd:attribute name="details" type="xsd:boolean" use="required" />
+              <xsd:attribute name="instance" type="xsd:boolean" use="required" />
+              <xsd:attribute name="govwayStatus" type="xsd:boolean" use="required" />
+              <xsd:attribute name="type" type="xsd:boolean" default="true" />
+	      <xsd:attribute name="typeFormat" type="xsd:string" default="https://httpstatuses.com/%d" />
+       </xsd:complexType>
        
        
        <!-- Interface Configuration -->
@@ -493,6 +515,13 @@
                      <xsd:enumeration value="json"/>
                      <xsd:enumeration value="binary"/>
                      <xsd:enumeration value="mimeMultipart"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="IntegrationErrorProblemType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="govway"/>
+                     <xsd:enumeration value="rfc7807"/>
               </xsd:restriction>
        </xsd:simpleType>
        

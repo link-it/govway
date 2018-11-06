@@ -147,7 +147,7 @@
 		</if>
 		<echo message="compileSRC[${compile_src_openspcoop2.SRC_DIR}]" />
 		<javac includeantruntime="false" destdir="${build}/compile-jar-openspcoop2" debug="${debug}" 
-			source="${classSourceVersion}" target="${classTargetVersion}">
+			source="${classSourceVersion}" target="${classTargetVersion}" encoding="UTF-8">
 			<compilerarg value="-Xlint:unchecked"/>
 			<compilerarg value="-Xlint:deprecation"/>
 			<src path="${compile_src_openspcoop2.SRC_DIR}"/>

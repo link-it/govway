@@ -50,7 +50,7 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	}
 	
 	@Override
-	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext) throws ProtocolException{
+	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){

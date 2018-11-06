@@ -233,6 +233,9 @@ public enum ErroriIntegrazione {
 	ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficente per fruire del servizio richiesto",
 			CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA),
 
+	ERRORE_446_PORTA_SOSPESA("Porta disabilitata",
+			CodiceErroreIntegrazione.CODICE_446_SUSPEND),
+	
 	// errori spediti in buste errore
 	
 	ERRORE_450_PA_INESISTENTE("La porta applicativa richiesta dalla busta non esiste",

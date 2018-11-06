@@ -53,6 +53,7 @@ import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.InformazioniTokenUserInfo;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -193,9 +194,9 @@ public class XACMLPolicyUtilities {
 		
 		InformazioniToken informazioniTokenNormalizzate = null;
 		InformazioniTokenUserInfo informazioniTokenUserInfoNormalizzate = null;
-		Map<String, String> jwtClaims = null;
-		Map<String, String> introspectionClaims = null;
-		Map<String, String> userInfoClaims = null;
+		Map<String, Object> jwtClaims = null;
+		Map<String, Object> introspectionClaims = null;
+		Map<String, Object> userInfoClaims = null;
 		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 		if(oInformazioniTokenNormalizzate!=null) {
 			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
@@ -314,8 +315,10 @@ public class XACMLPolicyUtilities {
 			Iterator<?> it = jwtClaims.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				String value = jwtClaims.get(key);
-				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_JWT_CLAIMS_PREFIX+key, value);
+				Object value = jwtClaims.get(key);
+				key = normalizeKeyClaim(key);
+				setActionAttribute(xacmlRequest, value, 
+						XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_JWT_CLAIMS_PREFIX+key);
 			}
 		}
 		
@@ -323,8 +326,10 @@ public class XACMLPolicyUtilities {
 			Iterator<?> it = introspectionClaims.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				String value = introspectionClaims.get(key);
-				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_INTROSPECTION_CLAIMS_PREFIX+key, value);
+				Object value = introspectionClaims.get(key);
+				key = normalizeKeyClaim(key);
+				setActionAttribute(xacmlRequest, value, 
+						XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_INTROSPECTION_CLAIMS_PREFIX+key);
 			}
 		}
 
@@ -537,8 +542,10 @@ public class XACMLPolicyUtilities {
 			Iterator<?> it = userInfoClaims.keySet().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				String value = userInfoClaims.get(key);
-				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_USERINFO_CLAIMS_PREFIX+key, value);
+				Object value = userInfoClaims.get(key);
+				key = normalizeKeyClaim(key);
+				setSubjectAttribute(xacmlRequest, value, 
+						XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_USERINFO_CLAIMS_PREFIX+key);
 			}
 		}
 
@@ -566,6 +573,46 @@ public class XACMLPolicyUtilities {
 		return xacmlRequest;
 
 
+	}
+	
+	private static String normalizeKeyClaim(String keyParam) {
+		String key = keyParam;
+		if(key.contains(".")) {
+			while(key.contains(".")) {
+				key = key.replace(".", ":");
+			}
+		}
+		return key;
+	}
+	
+	private static void setActionAttribute(XacmlRequest xacmlRequest, Object value, String claim) {
+		setAttribute(xacmlRequest, value, claim, true);
+	}
+	private static void setSubjectAttribute(XacmlRequest xacmlRequest, Object value, String claim) {
+		setAttribute(xacmlRequest, value, claim, false);
+	}
+	private static void setAttribute(XacmlRequest xacmlRequest, Object value, String claim, boolean action) {
+		if(value!=null) {
+			List<String> l = TokenUtilities.getClaimValues(value);
+			if(l!=null && !l.isEmpty()) {
+				if(l.size()>1) {
+					if(action) {
+						xacmlRequest.addActionAttribute(claim, l);
+					}
+					else {
+						xacmlRequest.addSubjectAttribute(claim, l);
+					}
+				}
+				else {
+					if(action) {
+						xacmlRequest.addActionAttribute(claim, l.get(0));
+					}
+					else {
+						xacmlRequest.addSubjectAttribute(claim, l.get(0));
+					}
+				}
+			}
+		}
 	}
 
 }

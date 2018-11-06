@@ -59,10 +59,7 @@ public class Costanti {
 	/** Costanti per posizione errore degli id WSSecurity */
 	public static final String FIND_ERROR_ENCRYPTED_REFERENCES = "[WSS-Encrypt ReferencesSearch]";
 	public static final String FIND_ERROR_SIGNATURE_REFERENCES = "[WSS-Signature ReferencesSearch]";
-	
-	/** RFC 7807 Problem Details for HTTP APIs */
-	public static final String XML_PROBLEM_DETAILS_RFC_7808_NAMESPACE = "urn:ietf:rfc:7807";
-	
+		
 	/** Context Empty */
 	public static final String CONTEXT_EMPTY = "@EMPTY@";
 	
@@ -78,4 +75,9 @@ public class Costanti {
 	/** FAULT DEFAULT */
 	public static final String DEFAULT_SOAP_FAULT_STRING = "InternalError";
 	public static final String DEFAULT_SOAP_FAULT_ACTOR = "http://govway.org/fault";
+	
+	/** PROBLEM */
+    public final static String ERRORE_GOVWAY = "ERRORE_GOVWAY";
+    public final static String TIPO_GOVWAY = "govway";
+    public final static String TIPO_RFC7807 = "rfc7807";
 }

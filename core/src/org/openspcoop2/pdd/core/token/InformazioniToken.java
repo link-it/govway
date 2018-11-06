@@ -51,15 +51,16 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private static final long serialVersionUID = 1L;
 	
 	public InformazioniToken() {} // per serializzatore
-	public InformazioniToken(String rawResponse, ITokenParser tokenParser) throws Exception {
-		this(null,rawResponse,tokenParser);
+	public InformazioniToken(SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws Exception {
+		this(null,sourceType, rawResponse,tokenParser);
 	}
-	public InformazioniToken(Integer httpResponseCode, String rawResponse, ITokenParser tokenParser) throws Exception {
+	public InformazioniToken(Integer httpResponseCode, SorgenteInformazioniToken sourceType, String rawResponse, ITokenParser tokenParser) throws Exception {
 		this.rawResponse = rawResponse;
+		this.sourceType = sourceType;
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		if(jsonUtils.isJson(this.rawResponse)) {
 			JsonNode root = jsonUtils.getAsNode(this.rawResponse);
-			Map<String, String> readClaims = jsonUtils.convertToSimpleMap(root);
+			Map<String, Object> readClaims = jsonUtils.convertToSimpleMap(root);
 			if(readClaims!=null && readClaims.size()>0) {
 				this.claims.putAll(readClaims);
 			}
@@ -72,17 +73,29 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.iss = tokenParser.getIssuer();
 		this.sub = tokenParser.getSubject();
 		this.username = tokenParser.getUsername();
-		this.aud = tokenParser.getAudience();
+		List<String> a = tokenParser.getAudience();
+		if(a!=null && a.size()>0) {
+			if(this.aud == null) {
+				this.aud = new ArrayList<>();
+			}
+			this.aud.addAll(a);
+		}
 		this.exp = tokenParser.getExpired();
 		this.iat = tokenParser.getIssuedAt();
 		this.nbf = tokenParser.getNotToBeUsedBefore();
 		this.clientId = tokenParser.getClientId();
 		List<String> r = tokenParser.getRoles();
 		if(r!=null && r.size()>0) {
+			if(this.roles == null) {
+				this.roles = new ArrayList<>();
+			}
 			this.roles.addAll(r);
 		}
 		List<String> s = tokenParser.getScopes(); 
 		if(s!=null && s.size()>0) {
+			if(this.scopes == null) {
+				this.scopes = new ArrayList<>();
+			}
 			this.scopes.addAll(s);
 		}
 		if(tokenParser.getUserInfoParser()!=null) {
@@ -90,8 +103,22 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		}
 	}
 	@SuppressWarnings("unchecked")
-	public InformazioniToken(InformazioniToken ... informazioniTokens ) throws Exception {
+	public InformazioniToken(boolean saveSourceTokenInfo, InformazioniToken ... informazioniTokens ) throws Exception {
 		if(informazioniTokens!=null && informazioniTokens.length>0) {
+			
+			if(saveSourceTokenInfo) {
+				this.sourcesTokenInfo = new HashMap<>();
+				for (int i = 0; i < informazioniTokens.length; i++) {
+					this.sourcesTokenInfo.put(informazioniTokens[i].getSourceType(),
+							informazioniTokens[i].getRawResponse());
+				}
+			}
+			else {
+				this.sourceTypes = new ArrayList<>();
+				for (int i = 0; i < informazioniTokens.length; i++) {
+					this.sourceTypes.add(informazioniTokens[i].getSourceType());
+				}
+			}
 			
 			for (int i = 0; i < informazioniTokens.length; i++) {
 				if(informazioniTokens[i].getClaims().size()>0) {
@@ -115,8 +142,14 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			}
 			
 			Object aud = getValue("aud", informazioniTokens); 
-			if(aud!=null && aud instanceof String) {
-				this.aud = (String) aud;
+			if(aud!=null && aud instanceof List) {
+				List<String> l = (List<String>) aud;
+				if(l.size()>0) {
+					if(this.aud == null) {
+						this.aud = new ArrayList<>();
+					}
+					this.aud.addAll(l);
+				}
 			}
 			
 			Object exp = getValue("exp", informazioniTokens); 
@@ -143,6 +176,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			if(roles!=null && roles instanceof List) {
 				List<String> l = (List<String>) roles;
 				if(l.size()>0) {
+					if(this.roles == null) {
+						this.roles = new ArrayList<>();
+					}
 					this.roles.addAll(l);
 				}
 			}
@@ -151,6 +187,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			if(scopes!=null && scopes instanceof List) {
 				List<String> l = (List<String>) scopes;
 				if(l.size()>0) {
+					if(this.scopes == null) {
+						this.scopes = new ArrayList<>();
+					}
 					this.scopes.addAll(l);
 				}
 			}
@@ -203,9 +242,8 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 			return tmp;
 		}
 	}
-	
-	// RawResponse
-	private String rawResponse;
+		
+	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
 	
 	// Indicazione se il token e' valido
 	private boolean valid;
@@ -222,7 +260,7 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	// Service-specific string identifier or list of string identifiers representing the intended audience for this token, 
 	// as defined in JWT [RFC7519].
-	private String aud;
+	private List<String> aud;
 	
 	// Integer timestamp, measured in the number of seconds since January 1 1970 UTC, 
 	// indicating when this token will expire, as defined in JWT [RFC7519].
@@ -241,17 +279,28 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private String clientId; // in oidc e' azp
 	
 	// Ruoli di un utente
-	private List<String> roles = new ArrayList<>();
+	private List<String> roles;
 	
 	// Scopes
-	private List<String> scopes = new ArrayList<>();
-	
-	// Claims
-	private Map<String,String> claims = new HashMap<String,String>();
+	private List<String> scopes;
 
 	// UserInfo
 	private InformazioniTokenUserInfo userInfo;
 	
+	// Claims
+	private Map<String,Object> claims = new HashMap<String,Object>();
+	
+	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
+	
+	// RawResponse
+	private String rawResponse;
+	
+	// SorgenteInformazioniToken
+	private SorgenteInformazioniToken sourceType;
+	
+	// Multiple Source
+	private List<SorgenteInformazioniToken> sourceTypes = null;
+	private Map<SorgenteInformazioniToken,String> sourcesTokenInfo = null;
 	
 	public boolean isValid() {
 		return this.valid;
@@ -285,11 +334,11 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.username = username;
 	}
 
-	public String getAud() {
+	public List<String> getAud() {
 		return this.aud;
 	}
 
-	public void setAud(String aud) {
+	public void setAud(List<String> aud) {
 		this.aud = aud;
 	}
 
@@ -341,22 +390,35 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 		this.scopes = scopes;
 	}
 
-	public Map<String, String> getClaims() {
-		return this.claims;
-	}
-
-	public void setClaims(Map<String, String> claims) {
-		this.claims = claims;
-	}
-	
-	public String getRawResponse() {
-		return this.rawResponse;
-	}
-	
 	public InformazioniTokenUserInfo getUserInfo() {
 		return this.userInfo;
 	}
 	public void setUserInfo(InformazioniTokenUserInfo userInfo) {
 		this.userInfo = userInfo;
 	}
+	
+	public Map<String, Object> getClaims() {
+		return this.claims;
+	}
+
+	public void setClaims(Map<String, Object> claims) {
+		this.claims = claims;
+	}
+			
+	public String getRawResponse() {
+		return this.rawResponse;
+	}
+	
+	public SorgenteInformazioniToken getSourceType() {
+		return this.sourceType;
+	}
+	
+	public Map<SorgenteInformazioniToken, String> getSourcesTokenInfo() {
+		return this.sourcesTokenInfo;
+	}
+
+	public List<SorgenteInformazioniToken> getSourceTypes() {
+		return this.sourceTypes;
+	}
+	
 }

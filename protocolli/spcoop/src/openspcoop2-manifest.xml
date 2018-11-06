@@ -73,10 +73,10 @@
 	    		 </subscription>
     		</integration>
    			<integrationError>
-    			<internal>
+    			<internal problemType="govway">
     				<default httpReturnCode="500" messageType="soap11" />
     			</internal>	
-    			<external>
+    			<external problemType="govway">
     				<default httpReturnCode="500" messageType="soap11" />
     			</external>	
     		</integrationError>

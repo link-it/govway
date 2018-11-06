@@ -113,11 +113,13 @@ public class CostantiExporter {
 	public final static String ESITO_GRUPPO_ERROR  = "ko";
 	public final static String ESITO_GRUPPO_OK  = "ok";
 	public final static String ESITO_GRUPPO_FAULT_APPLICATIVO  = "faultApplicativo";
+	public final static String ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO  = "ko_faultApplicativo";
 	public static final List<String> ESITI_GRUPPO = new ArrayList<String> ();
 	static{
 		ESITI_GRUPPO.add(ESITO_GRUPPO_ERROR);
 		ESITI_GRUPPO.add(ESITO_GRUPPO_OK);
 		ESITI_GRUPPO.add(ESITO_GRUPPO_FAULT_APPLICATIVO);
+		ESITI_GRUPPO.add(ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO);
 	}
 	
 	public final static String ESITO  = "esito";

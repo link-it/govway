@@ -48,6 +48,7 @@ public class EsitoUtils {
 	public final static String ALL_OK_LABEL  = "Completate con successo";
 	public final static String ALL_FAULT_APPLICATIVO_LABEL  = "Fault Applicativo";
 	public final static String ALL_PERSONALIZZATO_LABEL  = "Personalizzato";
+	public final static String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite + Fault Applicativo";
 	
 	public final static String ALL_VALUE_AS_STRING = "-";
 	
@@ -56,6 +57,7 @@ public class EsitoUtils {
 	public final static Integer ALL_OK_VALUE = -3;
 	public final static Integer ALL_FAULT_APPLICATIVO_VALUE = -4;
 	public final static Integer ALL_PERSONALIZZATO_VALUE = -5;
+	public final static Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
 	
 	private Logger logger;
 	private EsitiProperties esitiProperties;
@@ -81,6 +83,7 @@ public class EsitoUtils {
 		boolean faultApplicativo = (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE == esitoGruppo);
 		boolean soloErrori = (EsitoUtils.ALL_ERROR_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
 		boolean personalizzato = (EsitoUtils.ALL_PERSONALIZZATO_VALUE == esitoGruppo);
+		boolean soloErroriPiuFaultApplicativi = (EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
 
 		if(!senzaFiltro){
 			
@@ -98,13 +101,19 @@ public class EsitoUtils {
 				int codeFaultApplicativo = this.esitiProperties.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
 				expr.and().equals(fieldEsito, codeFaultApplicativo);
 			}
-			else if(soloErrori){
+			else if(soloErrori || soloErroriPiuFaultApplicativi){
 				// Troppi valori dentro gli IN
 //				List<Integer> esitiKo = esitiProperties.getEsitiCodeKo();
 //				expr.and().in(fieldEsito, esitiKo);
 				
 				IExpression exprOk = newExpression;
-				List<Integer> esitiOk = this.esitiProperties.getEsitiCodeOk(); // li prendo tutti anche il fault, poichè faccio il not
+				List<Integer> esitiOk = null;
+				if(soloErrori) {
+					esitiOk = this.esitiProperties.getEsitiCodeOk(); // li prendo tutti anche il fault, poichè faccio il not
+				}
+				else {
+					esitiOk = this.esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
+				}
 				exprOk.and().in(fieldEsito, esitiOk);
 				expr.and().not(exprOk);
 			}
@@ -146,6 +155,9 @@ public class EsitoUtils {
 		else if(ALL_PERSONALIZZATO_LABEL.equals(label)){
 			return ALL_PERSONALIZZATO_VALUE;
 		}
+		else if(ALL_ERROR_FAULT_APPLICATIVO_LABEL.equals(label)){
+			return ALL_ERROR_FAULT_APPLICATIVO_VALUE;
+		}
 		
 		try{
 			return this.esitiProperties.convertLabelToCode(label);
@@ -172,6 +184,9 @@ public class EsitoUtils {
 			}
 			else if(ALL_PERSONALIZZATO_VALUE == ((Integer)value)){
 				return ALL_PERSONALIZZATO_LABEL;
+			}
+			else if(ALL_ERROR_FAULT_APPLICATIVO_VALUE == ((Integer)value)){
+				return ALL_ERROR_FAULT_APPLICATIVO_LABEL;
 			}
 			
 			try{

@@ -2298,7 +2298,8 @@ public class ConfigurazionePdDReader {
 	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
 			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
-			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if( (pa == null) || pa.getRuoli()==null || pa.getRuoli().sizeRuoloList()<=0 ){
 			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta applicativa");
@@ -2385,12 +2386,18 @@ public class ConfigurazionePdDReader {
 			}
 			else{
 				if(RuoloTipoMatch.ALL.equals(ruoloMatch)){
+					if(details!=null) {
+						details.append("Role '"+ruolo.getNome()+"' not found");
+					}
 					return false; // deve possedere tutti i ruoli
 				}
 			}
 		}
 		
 		if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+			if(details!=null) {
+				details.append("Roles not found");
+			}
 			return false; // non è stato trovato alcun ruolo
 		}
 		else{
@@ -2541,7 +2548,8 @@ public class ConfigurazionePdDReader {
 	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
 			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
-			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+			StringBuffer details) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
 		if( (pd == null) || pd.getRuoli()==null || pd.getRuoli().sizeRuoloList()<=0 ){
 			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta delegata");
@@ -2628,12 +2636,18 @@ public class ConfigurazionePdDReader {
 			}
 			else{
 				if(RuoloTipoMatch.ALL.equals(ruoloMatch)){
+					if(details!=null) {
+						details.append("Role '"+ruolo.getNome()+"' not found");
+					}
 					return false; // deve possedere tutti i ruoli
 				}
 			}
 		}
 		
 		if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+			if(details!=null) {
+				details.append("Roles not found");
+			}
 			return false; // non è stato trovato alcun ruolo
 		}
 		else{

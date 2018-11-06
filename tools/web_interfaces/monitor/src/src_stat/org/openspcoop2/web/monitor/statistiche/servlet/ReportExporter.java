@@ -583,6 +583,9 @@ public class ReportExporter extends HttpServlet{
 			else if(CostantiExporter.ESITO_GRUPPO_FAULT_APPLICATIVO.equals(esitoGruppo)){
 				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
 			}
+			else if(CostantiExporter.ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO.equals(esitoGruppo)){
+				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+			}
 		}
 			
 		String esito = req.getParameter(CostantiExporter.ESITO);

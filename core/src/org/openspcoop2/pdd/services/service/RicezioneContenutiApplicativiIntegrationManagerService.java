@@ -196,9 +196,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		RicezioneContenutiApplicativiContext context = null;
 		try {
 			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
+			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				TransactionContext.createTransaction(idTransazione);
 			}
+			requestInfo.setIdTransazione(idTransazione);
 		}catch(Throwable e) {
 			context = null;
 			// non loggo l'errore tanto poi provo a ricreare il context subito dopo e li verra' registrato l'errore
@@ -212,7 +214,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		if(context!=null && protocolFactory!=null) {
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 		}
-		
+				
 		// GeneratoreErrore
 		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;
 		try{

@@ -151,9 +151,9 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     	
     	
     	// ****** Raccolta Dati e Policy ********
-		    	
+		    
+		String xacmlPolicyPorta = null;
     	try{
-    		String xacmlPolicyPorta = null;
     		if(datiInvocazione.getPa()!=null) {
     			xacmlPolicyPorta = datiInvocazione.getPa().getXacmlPolicy();
     		}
@@ -209,6 +209,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
     		try{
     			String resultAsStringForLog = ResultUtilities.toRawString(results);
     			this.log.error("Autorizzazione con XACMLPolicy fallita ("+this.policyKey+") ;\nrequest: "+this.xacmlRequestAsString+
+    					"\npolicy: "+xacmlPolicyPorta+
     					"\nresults (size:"+results.size()+"): \n"+resultAsStringForLog);
     			
     			String resultAsString = ResultUtilities.toString(results, decision);

@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 
 import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -43,6 +44,7 @@ import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
+import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -332,7 +334,23 @@ public class ServicesUtils {
 			else {
 				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 			}
-			utilitiesIntegrazione.setInfoProductTransportProperties(propertiesTrasporto);
+			
+			String idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE);
+			if(idTransazione==null) {
+				idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE.toLowerCase());
+			}
+			if(idTransazione==null) {
+				idTransazione = propertiesTrasporto.getProperty(Costanti.ID_TRANSAZIONE.toUpperCase());
+			}
+			
+			if(idTransazione==null) {
+				idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
+				HeaderIntegrazione hdr = new HeaderIntegrazione(idTransazione);
+				utilitiesIntegrazione.setTransportProperties(hdr,propertiesTrasporto,null);
+			}
+			else {
+				utilitiesIntegrazione.setInfoProductTransportProperties(propertiesTrasporto);
+			}
 		}catch(Exception e){
 			logCore.error("Set header di integrazione fallito: "+e.getMessage(),e);
 		}

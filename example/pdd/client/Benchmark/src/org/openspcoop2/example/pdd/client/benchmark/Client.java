@@ -168,7 +168,9 @@ public class Client {
         }
         
         // ContentType
-        config.setContentType(contentType);
+        if(contentType!=null && !"".equals(contentType)) {
+        	config.setContentType(contentType);
+        }
         
         // Method
         config.setMethod(httpMethod);

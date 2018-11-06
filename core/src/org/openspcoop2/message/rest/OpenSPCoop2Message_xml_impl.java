@@ -93,13 +93,13 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 	}
 
 	@Override
-	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException {
+	public boolean isProblemDetailsForHttpApis_RFC7807() throws MessageException,MessageNotSupportedException {
 		try{
 			if(this.contentType==null) {
 				return false;
 			}
 			String baseType = ContentTypeUtilities.readBaseTypeFromContentType(this.contentType);
-			return HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7808.equalsIgnoreCase(baseType);
+			return HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807.equalsIgnoreCase(baseType);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}

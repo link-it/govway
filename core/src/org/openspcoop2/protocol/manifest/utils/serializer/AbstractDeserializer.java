@@ -66,6 +66,7 @@ import org.openspcoop2.protocol.manifest.CollaborationProfile;
 import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.Transaction;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
+import org.openspcoop2.protocol.manifest.RFC7807;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping;
 import org.openspcoop2.protocol.manifest.OrganizationType;
@@ -2792,6 +2793,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public IntegrationConfigurationResourceIdentificationMode readIntegrationConfigurationResourceIdentificationModeFromString(String in) throws DeserializerException {
 		return (IntegrationConfigurationResourceIdentificationMode) this.xmlToObj(in.getBytes(), IntegrationConfigurationResourceIdentificationMode.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RFC7807
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RFC7807 readRFC7807(String fileName) throws DeserializerException {
+		return (RFC7807) this.xmlToObj(fileName, RFC7807.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RFC7807 readRFC7807(File file) throws DeserializerException {
+		return (RFC7807) this.xmlToObj(file, RFC7807.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RFC7807 readRFC7807(InputStream in) throws DeserializerException {
+		return (RFC7807) this.xmlToObj(in, RFC7807.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RFC7807 readRFC7807(byte[] in) throws DeserializerException {
+		return (RFC7807) this.xmlToObj(in, RFC7807.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RFC7807 readRFC7807FromString(String in) throws DeserializerException {
+		return (RFC7807) this.xmlToObj(in.getBytes(), RFC7807.class);
 	}	
 	
 	

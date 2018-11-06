@@ -114,7 +114,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	}
 	
 	@Override
-	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo,
+	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
@@ -125,7 +125,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			}
 			else{
 				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
-				return this.xmlUtils.toString(element, true);
+				return this.xmlUtils.toString(element, omitXMLDeclaration);
 			}
 		
 		}catch(Exception e){
@@ -134,7 +134,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 	}
 	
 	@Override
-	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo,
+	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo, boolean omitXMLDeclaration,
 			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		
@@ -145,7 +145,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			}
 			else{
 				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
-				return this.xmlUtils.toByteArray(element, true);
+				return this.xmlUtils.toByteArray(element, omitXMLDeclaration);
 			}
 		
 		}catch(Exception e){

@@ -23,6 +23,11 @@ openspcoop2.PD = NOME_PORTA_DELEGATA
 openspcoop2.username = USERNAME
 openspcoop2.password = PASSWORD
 
+# Header Custom
+#openspcoop2.header.nomeHeader1=ValoreHeader1
+#...
+#openspcoop2.header.nomeHeaderN=ValoreHeaderN
+
 # Print info
 openspcoop2.printFileSent = true
 openspcoop2.printFileReceived = true

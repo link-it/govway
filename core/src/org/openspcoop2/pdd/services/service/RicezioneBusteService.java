@@ -230,9 +230,11 @@ public class RicezioneBusteService  {
 		try {
 			context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
 			protocolFactory = req.getProtocolFactory();
+			String idTransazione = (String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			if(openSPCoopProperties.isTransazioniEnabled()) {
-				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				TransactionContext.createTransaction(idTransazione);
 			}
+			requestInfo.setIdTransazione(idTransazione);
 		}catch(Throwable e) {
 			context = null;
 			protocolFactory = null;
@@ -847,7 +849,7 @@ public class RicezioneBusteService  {
 						}
 					}
 				}
-				else if(responseMessage.castAsRest().isProblemDetailsForHttpApis_RFC7808() || 
+				else if(responseMessage.castAsRest().isProblemDetailsForHttpApis_RFC7807() || 
 						(MessageRole.FAULT.equals(responseMessage.getMessageRole()) &&
 							(
 							MessageType.XML.equals(responseMessage.getMessageType()) 

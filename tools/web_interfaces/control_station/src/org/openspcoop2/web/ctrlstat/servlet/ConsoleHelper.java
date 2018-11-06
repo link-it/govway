@@ -4487,6 +4487,10 @@ public class ConsoleHelper {
 							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
 							return false;
 						}
+						if(pa.getServiziApplicativiAutorizzati()!=null && pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+							this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA);
+							return false;
+						}
 					}
 					if(isSupportatoAutenticazione && pa.getAutenticazione()!=null && 
 							!pa.getAutenticazione().equals(autenticazione)){

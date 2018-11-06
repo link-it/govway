@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
@@ -3272,11 +3273,13 @@ public class RicezioneBuste {
 		if (!serviceIsEnabled || !portaEnabled || serviceIsEnabledExceptionProcessamento!=null) {
 			ErroreIntegrazione errore = null;
 			String esito = null;
+			IntegrationError integrationError = IntegrationError.SERVICE_UNAVAILABLE;
 			if(serviceIsEnabledExceptionProcessamento!=null){
 				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
 				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione buste non riuscita", "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita";
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+				integrationError = IntegrationError.INTERNAL_ERROR;
 			}else{
 				String msg = "Servizio di ricezione buste disabilitato";
 				if(serviceIsEnabled){
@@ -3286,12 +3289,15 @@ public class RicezioneBuste {
 					else{
 						msg = "Porta Delegata ["+pd.getNome()+"] disabilitata";
 					}
+					errore = ErroriIntegrazione.ERRORE_446_PORTA_SOSPESA.getErroreIntegrazione();
+				}
+				else {
+					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE);
 				}
 				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] "+msg);
 				msgDiag.logErroreGenerico(msg, "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] "+msg;
-				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE);
 			}
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
@@ -3305,8 +3311,21 @@ public class RicezioneBuste {
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
+				parametriGenerazioneBustaErrore.setIntegrationError(integrationError);
 
 				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,serviceIsEnabledExceptionProcessamento);
+				
+				if(IntegrationError.SERVICE_UNAVAILABLE.equals(integrationError) &&
+						propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_suspend() && 
+						propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend()!=null &&
+						propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend()>0) {
+					int seconds = propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_suspend();
+					if(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend()!=null &&
+							propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend()>0) {
+						seconds = seconds + new Random().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend());
+					}
+					errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
+				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
@@ -6944,6 +6963,7 @@ public class RicezioneBuste {
 				headerIntegrazioneRisposta.getBusta().setDestinatario(bustaRichiesta.getDestinatario());
 				headerIntegrazioneRisposta.getBusta().setTipoServizio(bustaRichiesta.getTipoServizio());
 				headerIntegrazioneRisposta.getBusta().setServizio(bustaRichiesta.getServizio());
+				headerIntegrazioneRisposta.getBusta().setVersioneServizio(bustaRichiesta.getVersioneServizio());
 				headerIntegrazioneRisposta.getBusta().setAzione(bustaRichiesta.getAzione());
 				headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
 				headerIntegrazioneRisposta.getBusta().setID(bustaRichiesta.getID());

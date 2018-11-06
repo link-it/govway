@@ -53,7 +53,14 @@ public class RequestInfo implements java.io.Serializable {
 	private IDSoggetto identitaPdD;
 	private IDSoggetto fruitore;
 	private IDServizio idServizio;
+	private String idTransazione;
 	
+	public String getIdTransazione() {
+		return this.idTransazione;
+	}
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}

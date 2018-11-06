@@ -1,0 +1,85 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.utils.rest.problem;
+
+import java.util.List;
+
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.xml.XMLUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+/**
+ * XmlDeserializer
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class XmlDeserializer extends AbstractDeserializer {
+
+	private XMLUtils xmlUtils;
+	
+	public XmlDeserializer() {
+		this(false);
+	}
+	public XmlDeserializer(boolean generateTypeBlank) {
+		super(generateTypeBlank);
+		this.xmlUtils = XMLUtils.getInstance();
+	}
+	
+	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
+		Element problemNode = null;
+		try {
+			problemNode = this.xmlUtils.newElement(problemString.getBytes());
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+		return this.fromNode(problemNode);
+	}
+	public ProblemRFC7807 fromByteArray(byte[] problemByteArray) throws UtilsException {
+		Element problemNode = null;
+		try {
+			problemNode = this.xmlUtils.newElement(problemByteArray);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+		return this.fromNode(problemNode);
+	}
+	public ProblemRFC7807 fromNode(Element problemNode) throws UtilsException {
+		
+		ProblemRFC7807 problem = new ProblemRFC7807();
+		
+		List<Node> list = this.xmlUtils.getNotEmptyChildNodes(problemNode);
+		for (Node node : list) {
+			
+			String name = node.getLocalName();
+			Object value = node.getTextContent();
+			
+			super.set(problem, name, value);
+		}
+
+		return problem;
+	}
+	
+}

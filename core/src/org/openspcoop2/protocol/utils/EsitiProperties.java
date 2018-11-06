@@ -222,7 +222,7 @@ public class EsitiProperties {
 			for (Integer codeEsitoOk : codesOk) {
 				boolean found = false;
 				for (Integer codeEsito : codes) {
-					if(codeEsitoOk == codeEsito){
+					if(codeEsitoOk.intValue() == codeEsito.intValue()){
 						found = true;
 						break;
 					}
@@ -396,9 +396,12 @@ public class EsitiProperties {
 	}
 	
 	public boolean existsEsitoCode(Integer code) throws ProtocolException{
+		if(code==null) {
+			return false;
+		}
 		List<Integer> codes = getEsitiCode();
 		for (Integer codeEsito : codes) {
-			if(codeEsito == code){
+			if(codeEsito.intValue() == code.intValue()){
 				return true;
 			}
 		}
@@ -545,7 +548,7 @@ public class EsitiProperties {
 				boolean found = false;
 				List<Integer> oks = this.getEsitiCodeOk();
 				for (Integer ok : oks) {
-					if(ok == esito){
+					if(ok.intValue() == esito.intValue()){
 						found = true;
 						break;
 					}

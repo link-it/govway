@@ -154,7 +154,7 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 	}
 	
 	@Override
-	public boolean isProblemDetailsForHttpApis_RFC7808() throws MessageException,MessageNotSupportedException {
+	public boolean isProblemDetailsForHttpApis_RFC7807() throws MessageException,MessageNotSupportedException {
 		return false;
 	}
 	

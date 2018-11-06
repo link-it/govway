@@ -64,11 +64,13 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     	}
     	
     	try{
+    		StringBuffer detailsBuffer = new StringBuffer();
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazioneRoles(datiInvocazione.getPd(), datiInvocazione.getServizioApplicativo(), 
     						datiInvocazione.getInfoConnettoreIngresso(), 
     						this.getPddContext(),
-    						this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
+    						this.checkRuoloRegistro, this.checkRuoloEsterno,
+    						detailsBuffer)==false){
     			if(servizioApplicativo!=null){
 	    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 	    					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo));
@@ -78,6 +80,9 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     						getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo());
     			}
     			esito.setAutorizzato(false);
+    			if(detailsBuffer.length()>0) {
+    				esito.setDetails(detailsBuffer.toString());
+    			}
     			return esito;
     		}
     	}catch(DriverConfigurazioneNotFound e){

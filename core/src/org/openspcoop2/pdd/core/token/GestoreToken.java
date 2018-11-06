@@ -631,7 +631,7 @@ public class GestoreToken {
     				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
     						JOSERepresentation.COMPACT);
     				if(jsonCompactVerify.verify(token)) {
-    					informazioniToken = new InformazioniToken(jsonCompactVerify.getDecodedPayload(),tokenParser);
+    					informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonCompactVerify.getDecodedPayload(),tokenParser);
     				}
     				else {
     					detailsError = "Token non valido";
@@ -648,7 +648,7 @@ public class GestoreToken {
     				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
     						JOSERepresentation.COMPACT);
     				jsonDecrypt.decrypt(token);
-    				informazioniToken = new InformazioniToken(jsonDecrypt.getDecodedPayload(),tokenParser);
+    				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
     				detailsError = "Token non valido: "+e.getMessage();
     				eProcess = e;
@@ -807,7 +807,7 @@ public class GestoreToken {
 			
 			if(detailsError==null) {
 				try {
-					informazioniToken = new InformazioniToken(httpResponseCode, new String(risposta),tokenParser);
+					informazioniToken = new InformazioniToken(httpResponseCode, SorgenteInformazioniToken.INTROSPECTION, new String(risposta),tokenParser);
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
 					eProcess = e;
@@ -966,7 +966,7 @@ public class GestoreToken {
 			
 			if(detailsError==null) {
 				try {
-					informazioniToken = new InformazioniToken(httpResponseCode, new String(risposta),tokenParser);
+					informazioniToken = new InformazioniToken(httpResponseCode, SorgenteInformazioniToken.USER_INFO, new String(risposta),tokenParser);
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di UserInfo non valida: "+e.getMessage();
 					eProcess = e;
@@ -1339,11 +1339,27 @@ public class GestoreToken {
 			}
 			if(informazioniTokenNormalizzate.getAud()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE)) {
+					ArrayNode array = null;
+					StringBuffer bf = new StringBuffer();
+					if(!op2headers) {
+						array =  jsonUtils.newArrayNode();
+					}
+					for (String role : informazioniTokenNormalizzate.getAud()) {
+						if(op2headers) {
+							if(bf.length()>0) {
+								bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_audienceSeparator());
+							}
+							bf.append(role);
+						}
+						else {
+							array.add(role);
+						}
+					}
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), informazioniTokenNormalizzate.getAud());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), bf.toString());
 					}
 					else {
-						jsonNode.put("audience", informazioniTokenNormalizzate.getAud());
+						jsonNode.set("audience", array);
 					}
 				}
 			}
@@ -1418,7 +1434,7 @@ public class GestoreToken {
 					for (String role : informazioniTokenNormalizzate.getRoles()) {
 						if(op2headers) {
 							if(bf.length()>0) {
-								bf.append(" ");
+								bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_roleSeparator());
 							}
 							bf.append(role);
 						}
@@ -1444,7 +1460,7 @@ public class GestoreToken {
 					for (String scope : informazioniTokenNormalizzate.getScopes()) {
 						if(op2headers) {
 							if(bf.length()>0) {
-								bf.append(" ");
+								bf.append(properties.getGestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator());
 							}
 							bf.append(scope);
 						}
@@ -1544,9 +1560,13 @@ public class GestoreToken {
 					
 					if(informazioniTokenNormalizzate.getClaims()!=null && informazioniTokenNormalizzate.getClaims().containsKey(claimName)) {
 						
-						String claimValue = informazioniTokenNormalizzate.getClaims().get(claimName);
+						Object claimValueObject = informazioniTokenNormalizzate.getClaims().get(claimName);
+						List<String> claimValues = null;
+						if(claimValueObject!=null) {
+							claimValues = TokenUtilities.getClaimValues(claimValueObject);
+						}
 						String headerName = null;
-						if(claimValue!=null) {
+						if(claimValues!=null && !claimValues.isEmpty()) {
 							boolean setCustomClaims = false;
 							if(op2headers) {
 								headerName = properties.getCustomClaimsHeaderName_gestioneTokenHeaderIntegrazioneTrasporto(claimKey);
@@ -1568,6 +1588,7 @@ public class GestoreToken {
 							}
 							
 							if(setCustomClaims) {
+								String claimValue = TokenUtilities.getClaimValuesAsString(claimValues);
 								if(op2headers) {
 									tokenForward.getTrasporto().put(headerName, claimValue);
 								}
@@ -1741,7 +1762,7 @@ public class GestoreToken {
 			return list.get(0);
 		}
 		else {
-			return new InformazioniToken(list.toArray(new InformazioniToken[1]));
+			return new InformazioniToken(OpenSPCoop2Properties.getInstance().isGestioneToken_saveSourceTokenInfo(), list.toArray(new InformazioniToken[1]));
 		}
 	}
 	
@@ -1766,9 +1787,16 @@ public class GestoreToken {
 				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
 					esitoGestioneToken.setValido(false);
 					esitoGestioneToken.setDetails("Token expired");
-					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
-	    					esitoGestioneToken.getDetails()));  
+					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+		    					esitoGestioneToken.getDetails()));  		
+	    			}
+	    			else {
+	    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    						esitoGestioneToken.getDetails()));
+	    			} 	
 				}
 			}
 			
@@ -1786,9 +1814,16 @@ public class GestoreToken {
 					esitoGestioneToken.setValido(false);
 					SimpleDateFormat sdf = new SimpleDateFormat(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
-					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
-	    					esitoGestioneToken.getDetails()));  
+					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+		    					esitoGestioneToken.getDetails()));  
+					}
+	    			else {
+	    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    						esitoGestioneToken.getDetails()));
+	    			} 
 				}
 			}
 		}
@@ -1808,9 +1843,16 @@ public class GestoreToken {
 						esitoGestioneToken.setValido(false);
 						SimpleDateFormat sdf = new SimpleDateFormat(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
-						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
-		    					esitoGestioneToken.getDetails()));  
+						if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+							esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+			    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+			    					esitoGestioneToken.getDetails()));  
+						}
+		    			else {
+		    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+		    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+		    						esitoGestioneToken.getDetails()));
+		    			} 
 					}
 				}
 			}

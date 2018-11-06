@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.manifest.CollaborationProfile;
 import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.Transaction;
 import org.openspcoop2.protocol.manifest.IntegrationConfigurationResourceIdentificationMode;
+import org.openspcoop2.protocol.manifest.RFC7807;
 import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
 import org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping;
 import org.openspcoop2.protocol.manifest.OrganizationType;
@@ -5233,6 +5234,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IntegrationConfigurationResourceIdentificationMode integrationConfigurationResourceIdentificationMode,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IntegrationConfigurationResourceIdentificationMode.class, integrationConfigurationResourceIdentificationMode, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RFC7807
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RFC7807 rfC7807) throws SerializerException {
+		this.objToXml(fileName, RFC7807.class, rfC7807, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,RFC7807 rfC7807,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, RFC7807.class, rfC7807, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param file Xml file to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RFC7807 rfC7807) throws SerializerException {
+		this.objToXml(file, RFC7807.class, rfC7807, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param file Xml file to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,RFC7807 rfC7807,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, RFC7807.class, rfC7807, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param out OutputStream to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RFC7807 rfC7807) throws SerializerException {
+		this.objToXml(out, RFC7807.class, rfC7807, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param out OutputStream to serialize the object <var>rfC7807</var>
+	 * @param rfC7807 Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,RFC7807 rfC7807,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, RFC7807.class, rfC7807, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param rfC7807 Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RFC7807 rfC7807) throws SerializerException {
+		return this.objToXml(RFC7807.class, rfC7807, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param rfC7807 Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(RFC7807 rfC7807,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RFC7807.class, rfC7807, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param rfC7807 Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RFC7807 rfC7807) throws SerializerException {
+		return this.objToXml(RFC7807.class, rfC7807, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>rfC7807</var> of type {@link org.openspcoop2.protocol.manifest.RFC7807}
+	 * 
+	 * @param rfC7807 Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(RFC7807 rfC7807,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(RFC7807.class, rfC7807, prettyPrint).toString();
 	}
 	
 	

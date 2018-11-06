@@ -38,14 +38,19 @@ public class Costanti {
 
 	
 	/** ERRORE APPLICATIVO */
+		
 	public static final String ERRORE_INTEGRAZIONE_NAMESPACE = org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TARGET_NAMESPACE; // uso stesso namespace; 
-	public static final String ERRORE_INTEGRAZIONE_PREFIX = "gwIntegration";
-	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY_ORG_";
+	public static final String ERRORE_INTEGRAZIONE_PREFIX = "integration";
+	public final static String ERRORE_INTEGRAZIONE_PREFIX_CODE = "GOVWAY-";
 	
 	public static final String ERRORE_PROTOCOLLO_NAMESPACE =  "http://govway.org/protocol/fault";
-	public static final String ERRORE_PROTOCOLLO_PREFIX = "gwProtocol";
+	public static final String ERRORE_PROTOCOLLO_PREFIX = "protocol";
 	public final static String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
-		
+	
+	public static final String PROBLEM_RFC7807_GOVWAY_CODE = "govway_status";
+	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION = ERRORE_INTEGRAZIONE_PREFIX+":";
+	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL = ERRORE_PROTOCOLLO_PREFIX+":";
+	
     /** Ora di creazione di un tracciamento. Il token 'locale' indica il tempo locale
     non sincronizzato da sistema che lo imposta*/
     public static final String TIPO_TEMPO_LOCALE = "Locale";
@@ -64,7 +69,7 @@ public class Costanti {
     public static final String ECCEZIONE_PROTOCOLLO = "EccezioneProtocollo";
     /** Definisce un tipo di EccezioneApplicativa */
     public static final String ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";
-    
+       
 	/** Archive mode */
 	public static final ArchiveMode OPENSPCOOP_ARCHIVE_MODE = new ArchiveMode("govlet");
 	public static final ImportMode OPENSPCOOP_IMPORT_ARCHIVE_MODE = new ImportMode(OPENSPCOOP_ARCHIVE_MODE);
@@ -73,7 +78,7 @@ public class Costanti {
 	public static final ArchiveModeType OPENSPCOOP_ARCHIVE_MODE_TYPE = new ArchiveModeType("govlet");
 	/** Archive extension */
 	public static final String OPENSPCOOP_ARCHIVE_EXT = "zip";
-	
+		
 	/**
 	 *  Archive extension 
 	 *  NOTA: i nomi dei file non sono significativi. L'export li 'normalizzera' (es. viene eliminato lo '/')
