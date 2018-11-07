@@ -42,13 +42,13 @@
 	ifProperty="${antinstaller_modalita_installazione}==nuova">
                        
         <!-- <comment displayText="Directory di lavoro" bold="true"/>  sotto come display c'era path -->
-        <directory defaultValue="/var/govway" defaultValueWin="C:\govway" displayText="Directory di lavoro"
+        <directory defaultValue="/etc/govway" defaultValueWin="C:\govway" displayText="Directory di lavoro"
             property="antinstaller_directory_lavoro_openspcoop" checkExists="false" />
         
         <comment displayText=""/>
 
         <!-- <comment displayText="Directory di log" bold="true"/>  sotto come display c'era path -->
-        <directory defaultValue="/var/govway/log" defaultValueWin="C:\govway\log" displayText="Directory di log"
+        <directory defaultValue="/var/log/govway" defaultValueWin="C:\govway\log" displayText="Directory di log"
             property="antinstaller_directory_log_openspcoop" checkExists="false" />
 
         <comment displayText=""/>

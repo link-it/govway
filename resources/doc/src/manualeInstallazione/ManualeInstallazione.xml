@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.5/docbookx.dtd">
+<?xml-stylesheet type="text/xsl" href="article.xsl"?>
+<article lang="it">
+	<articleinfo>
+		<title>GovWay - Guida all'Installazione</title>
+		<titleabbrev>GovWay - Guida all'installazione </titleabbrev>
+		<copyright>
+			<year>2005-2018</year>
+			<holder>
+				<ulink url="https://www.link.it">
+					<citetitle>Link.it srl</citetitle>
+				</ulink>
+			</holder>
+		</copyright>
+		<address> Link.it SRL <street> Via S. Martino,51 </street>
+			<postcode>I-56125</postcode>
+			<city> Pisa</city>
+			<country> ITALY </country>
+			<email>e-mail: info@link.it</email>
+		</address>
+	</articleinfo>
+	<!-- 1. Scopo del Documento -->
+	<sect1 id="intro">
+		<title>Introduzione</title>
+		<para> In questa sezione trovi una guida rapida per l'installazione della versione binaria
+			di GovWay. Verifica e, se necessario, installa il software di base per GovWay come
+			indicato nella Fase Preliminare. Un installer grafico ti guiderà nella personalizzazione
+			della binary release verso la tua piattaforma. </para>
+	</sect1>
+	<sect1 id="preliminare">
+		<title>Fase Preliminare</title>
+		<para> Prima di procedere con l'installazione di GovWay è necessario disporre del software
+			di base nell'ambiente di esercizio. Verificare i passi seguenti, procedendo
+			eventualmente all'installazione dei componenti mancanti. <orderedlist>
+				<listitem>
+					<para>
+						<emphasis>Java Runtime Environment (JRE) 8 o superiore</emphasis> (è
+						possibile scaricare JRE al seguente indirizzo: <ulink
+							url="http://www.oracle.com/technetwork/java/javase/downloads/index.html"
+							> http://www.oracle.com/technetwork/java/javase/downloads/index.html
+						</ulink> ) </para>
+					<para>Verificare la configurazione dell'ambiente Java dell'Application Server.
+						Si raccomanda una configurazione minima dei parametri della JVM, come segue: <itemizedlist>
+							<listitem>
+								<para>-XX:MaxMetaspaceSize=516m -Xmx1024m</para>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Application Server WildFly</emphasis> (<ulink
+							url="http://wildfly.org">http://wildfly.org</ulink>) (versione 10.x,
+						11.x, 12.x, 13.x o 14.x). In alternativa è possibile effettuare
+						l'installazione su Apache Tomcat (<ulink url="http://tomcat.apache.org"
+							>http://tomcat.apache.org</ulink>) (versione 7.x, 8.x o 9.x). <note>
+							<para>GovWay supporta anche altri application server j2ee diversi da
+								quelli citati, partendo dalla distribuzione sorgente.</para>
+						</note>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Un <emphasis>RDBMS</emphasis> accessibile via JDBC. La binary release
+						supporta le seguenti piattaforme: <itemizedlist>
+							<listitem>
+								<para>
+									<emphasis>PostgreSQL 8.x o superiore</emphasis>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>MySQL 5.6.4 o superiore</emphasis>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>Oracle 10g o superiore</emphasis>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>HyperSQL 2.0 o superiore</emphasis>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>MS SQL Server 2008 o superiore</emphasis>
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>IBM DB2 9.5 o superiore</emphasis>
+								</para>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+			</orderedlist> La distribuzione GovWay è stata estesamente testata prima del rilascio
+			sulla seguente piattaforma di riferimento: <itemizedlist>
+				<listitem>
+					<para><emphasis>Sun JRE 8 (version: 1.8.0_111)</emphasis></para>
+				</listitem>
+				<listitem>
+					<para><emphasis>PostgreSQL 9 (version: 9.5.10)</emphasis></para>
+				</listitem>
+				<listitem>
+					<para><emphasis>WildFly 14 (version: 14.0.0.Final)</emphasis></para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</sect1>
+	<sect1 id="installer">
+		<title>Esecuzione dell'Installer</title>
+		<para>
+			<orderedlist>
+				<listitem>
+					<para> Scarica <ulink url="https://www.govway.org/download">qui</ulink> la
+						binary release di GovWay </para>
+				</listitem>
+				<listitem>
+					<para> Scompatta l'archivio, verifica ed eventualmente imposta la variabile
+						d'ambiente <emphasis>JAVA_HOME</emphasis> in modo che riferisca la directory
+						radice dell'installazione di Java. Lancia l'utility di installazione
+						mandando in esecuzione il file <emphasis>install.sh</emphasis> su
+						Unix/Linux, oppure <emphasis>install.cmd</emphasis> su Windows. </para>
+					<para>
+						<emphasis role="bold">Nota Bene:</emphasis> L'utility di installazione non
+						installa il prodotto ma produce tutti gli elementi necessari che dovranno
+						essere dispiegati nell'ambiente di esercizio. L'utility di installazione
+						mostra all'avvio una pagina introduttiva. <figure id="menu-introduzione">
+							<title>Introduzione</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr0.pdf"/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr0.jpg"/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Dopo la pagina introduttiva, cliccando sul pulsante
+							<emphasis>Next</emphasis>, si procede con la scelta della
+							<emphasis>Modalità di Installazione</emphasis>. Le scelte possibili
+						sono: <itemizedlist>
+							<listitem>
+								<para>
+									<emphasis>Nuova Installazione</emphasis>: scelta da effettuare
+									nel caso in cui si stia procedendo con una nuova installazione
+									di GovWay. </para>
+							</listitem>
+							<listitem>
+								<para>
+									<emphasis>Aggiornamento</emphasis>: scelta da effettuare nel
+									caso in cui si stia procedendo con l'aggiornamento di una
+									versione di GovWay precedentemente installata. </para>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+			</orderedlist>
+		</para>
+		<sect2>
+			<title>Nuova Installazione</title>
+			<para> Supponiamo che la scelta sia quella di una nuova installazione. Vediamo come si
+				sviluppa il processo di installazione: <orderedlist>
+					<listitem>
+						<para> Si procede con l'inserimento delle <emphasis>Informazioni
+								Preliminari</emphasis>, che prevede i seguenti dati: <figure
+								id="menu-informazioni-preliminari">
+								<title>Informazioni Preliminari</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr1.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr1.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure> Operare le scelte sulla maschera di <emphasis>Informazioni
+								Preliminari</emphasis> tenendo presente che: <itemizedlist>
+								<listitem>
+									<para>
+										<emphasis>Directory di lavoro</emphasis>: una directory
+										utilizzata da GovWay per inserire i diversi file di
+										tracciamento prodotti. Non è necessario che questa directory
+										esista sulla macchina dove si sta eseguendo l'installer;
+										tale directory dovrà esistere nell'ambiente di esercizio
+										dove verrà effettivamente installato il software GovWay.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Directory di log</emphasis>: una directory
+										utilizzata da GovWay per produrre i file di log. Non è
+										necessario che questa directory esista sulla macchina dove
+										si sta eseguendo l'installer; tale directory dovrà esistere
+										nell'ambiente di esercizio dove verrà effettivamente
+										installato il software GovWay. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>DBMS</emphasis>: il tipo di database scelto tra
+										quelli supportati: PostgreSQL, MySQL, Oracle, HyperSQL,
+										SQLServer, IBM DB2. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Application Server</emphasis>: Application server
+										utilizzato selezionato tra: WildFly (10.x, 11.x, 12.x, 13.x
+										o 14.x) e Apache Tomcat (9.x, 8.x, 7.x). </para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Al passo successivo si dovranno inserire tutti i dati per l'accesso
+							al database ed in particolare: <figure id="menu-accesso-database">
+								<title>Informazioni Accesso Database</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr2.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr2.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+							<itemizedlist>
+								<listitem>
+									<para>
+										<emphasis>Hostname</emphasis>: indirizzo per raggiungere il
+										database </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Porta</emphasis>: la porta da associare all'host
+										per la connessione al database </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Nome Database</emphasis>: il nome dell'istanza del
+										database a supporto di GovWay. Non è necessario che questo
+										database esista in questa fase. Il database di GovWay
+										infatti potrà essere creato nella fase successiva purché il
+										nome assegnato coincida con il valore inserito in questo
+										campo. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Username</emphasis>: l'utente con diritti di
+										lettura/scrittura sul database sopra indicato. Analogamente
+										al punto precedente, l'utente potrà essere creato nella fase
+										successiva dopo aver creato il database. Ricordarsi però di
+										utilizzare il medesimo username indicato in questo campo.
+									</para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Password</emphasis>: la password dell'utente del
+										database. </para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Il successivo passo richiede di stabilire le credenziali relative alle
+							utenze di amministrazione per l'accesso ai cruscotti di gestione:
+								<figure id="menu-credenziali-console">
+								<title>Informazioni Utenza Amministratore</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr3.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr3.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure> I dati da inserire sono: <itemizedlist>
+								<listitem>
+									<para>
+										<emphasis>Username/Password</emphasis> relativi all'utente
+										amministratore della govwayConsole. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Username/Password</emphasis> relativi all'utente
+										operatore della govwayMonitor. </para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Al passo successivo si dovranno inserire i dati relativi alle
+							modalità operative da supportare: <figure id="menu-modalita-operativa">
+								<title>Modalità Operativa</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr4.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr4.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+							<itemizedlist>
+								<listitem>
+									<para>
+										<emphasis>Modalità</emphasis>: contrassegnare con un flag le
+										modalità che saranno gestite da GovWay, scelti tra quelli
+										offerti built-in dal prodotto. Allo stato attuale le
+										modalità operative supportate sono: <itemizedlist>
+											<listitem>
+												<para><emphasis>API Gateway</emphasis></para>
+											</listitem>
+											<listitem>
+												<para><emphasis>SPCoop</emphasis></para>
+											</listitem>
+											<listitem>
+												<para><emphasis>eDelivery</emphasis></para>
+											</listitem>
+											<listitem>
+												<para><emphasis>SdI (Fatturazione
+												Elettronica)</emphasis></para>
+											</listitem>
+										</itemizedlist></para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Soggetto</emphasis>: nome del soggetto interno che
+										verrà creato automaticamente. </para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Se si è scelto di includere la modalità eDelivery viene richiesto di
+							immettere i relativi dati di configurazione. <figure
+								id="menu-edelivery-config">
+								<title>Configurazione eDelivery</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr5.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr5.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure> I dati di configurazione da immettere in questo step
+							riguardano l'installazione di Domibus con la quale GovWay deve
+							integrarsi per il dialogo con altri access point tramite il protocollo
+							eDelivery. I dati richiesti sono: <itemizedlist>
+								<listitem>
+									<para>HTTP Endpoint: gli endpoint per contattare l'access point
+										domibus interno <itemizedlist>
+											<listitem>
+												<para>Domibus MSH URL: endpoint pubblico per la
+												raggiungibilità dagli altri access point</para>
+											</listitem>
+											<listitem>
+												<para>Domibus Backend WS URL: endpoint dei servizi
+												di backend che saranno utilizzati da GovWay per
+												l'integrazione a Domibus</para>
+											</listitem>
+										</itemizedlist>
+									</para>
+								</listitem>
+								<listitem>
+									<para>Broker JMS: i dati di accesso al broker JMS utilizzato
+										internamente da Domibus <itemizedlist>
+											<listitem>
+												<para>Provider URL: endpoint del Broker JMS</para>
+											</listitem>
+											<listitem>
+												<para>Username/Password: credenziali per l'accesso
+												ai servizi del Broker JMS</para>
+											</listitem>
+										</itemizedlist>
+									</para>
+								</listitem>
+								<listitem>
+									<para>DBMS <itemizedlist>
+											<listitem>
+												<para>Tipo: la piattaforma database utilizzata da
+												Domibus.</para>
+											</listitem>
+										</itemizedlist>
+									</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Se si è scelto di includere il protocollo eDelivery, in aggiunta allo
+							step precedente, verranno richiesti i dati di accesso al database
+							utilizzato da Domibus: <figure id="menu-domibus-database">
+								<title>Configurazione eDelivery (DBMS)</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr6.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr6.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+							<itemizedlist>
+								<listitem>
+									<para>
+										<emphasis>Hostname</emphasis>: indirizzo per raggiungere il
+										database </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Porta</emphasis>: la porta da associare all'host
+										per la connessione al database </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Nome Database</emphasis>: il nome dell'istanza del
+										database a supporto di Domibus. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Username</emphasis>: l'utente con diritti di
+										lettura/scrittura sul database sopra indicato. </para>
+								</listitem>
+								<listitem>
+									<para>
+										<emphasis>Password</emphasis>: la password dell'utente del
+										database. </para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<!-- 				
+				<listitem>
+					<para>
+						Se si è scelto di includere il protocollo SPCoop, viene richiesto se si desidera l'installazione
+						del modulo di compatibilità con la precedente versione del prodotto
+						<emphasis>OpenSPCoop v1</emphasis>.
+						Questa scelta consente di mantenere
+						la compatibilità con servizi applicativi che utilizzano le
+						interfacce
+						di OpenSPCoop v1.
+						<figure id="menu-compatibilita-openscpoopv1">
+							<title>Compatibilita' OpenSPCoop v1</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr7.pdf" />
+								</imageobject>
+								<imageobject>
+									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr7.jpg" />
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</para>
+				</listitem>
+-->
+					<listitem>
+						<para> All'ultimo passo, premendo il pulsante <emphasis>Install</emphasis>
+							il processo di configurazione si conclude con la produzione dei file
+							necessari per l'installazione di GovWay che verranno inseriti nella
+							nuova directory <emphasis>dist</emphasis> creata al termine di questo
+							processo. <figure id="menu-install">
+								<title>Installazione</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr8.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr8.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</figure> I files presenti nella directory <emphasis role="bold"
+								>dist</emphasis> dovranno essere utilizzati nella fase successiva di
+							dispiegamento di GovWay </para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect2>
+		<sect2>
+			<title>Aggiornamento</title>
+			<para> Supponiamo che la scelta sia quella di aggiornare una installazione precedente.
+				Vediamo come si sviluppa il processo per differenza rispetto al caso di una nuova
+				installazione: <orderedlist>
+					<listitem>
+						<para> Il primo passo è quello di indicare la versione di GovWay da cui si
+							parte per l'aggiornamento. <figure id="menu-version">
+								<title>Scelta versione precedente</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr9.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr9.png"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Al passo successivo, dove si indicano le informazioni preliminari, vi
+							è il vincolo di indicare la medesima piattaforma database utilizzata per
+							l'installazione che si vuole aggiornare. <figure
+								id="menu-informazioni-preliminari-update">
+								<title>Scelta piattaforma database identica all'installazione di
+									provenienza</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr10.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="80%"
+											fileref="FIGURE_OUT/installer-scr10.png"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+					<listitem>
+						<para> I rimanenti passaggi sono uguali al caso della nuova installazione
+							con la differenza che non sarà disponibile la funzione per impostare le
+							credenziali dei cruscotti grafici. </para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect2>
+	</sect1>
+	<sect1 id="dispiegamento">
+		<title>Fase di Dispiegamento</title>
+		<para> Al termine dell'esecuzione dell'utility di installazione vengono prodotti i files
+			necessari per effettuare il dispiegamento nell'ambiente di esercizio. Tali files sono
+			disponibili nella directory <emphasis>dist</emphasis>. </para>
+		<para> Il processo di dispiegamento del software si distingue nei casi di nuova
+			installazione e aggiornamento. Le sezioni seguenti illustrano i due casi. </para>
+		<sect2 id="deploy_new">
+			<title>Nuova Installazione</title>
+			<para> Per completare il processo di installazione si devono effettuare i passi
+				seguenti: <orderedlist>
+					<listitem>
+						<para>Creare un utente sul RDBMS avente i medesimi valori di username e
+							password indicati in fase di setup. </para>
+					</listitem>
+					<listitem>
+						<para>Creare un database, per ospitare le tabelle dell'applicazione, avente
+							il nome indicato durante la fase di setup. Il charset da utilizzare è
+							UTF-8. </para>
+					</listitem>
+					<listitem>
+						<para>Impostare i permessi di accesso in modo che l'utente creato al passo 1
+							abbia i diritti di lettura/scrittura sul database creato al
+								<emphasis>passo 2</emphasis>. Si può consultare un esempio relativo
+							a questi primi 3 passi, riferito alla piattaforma PostgreSQL, in <xref
+								linkend="setupDB"/>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Eseguire lo script <emphasis>sql/GovWay.sql</emphasis> per la
+							creazione dello schema del database. Ad esempio, nel caso di PostgreSQL,
+							si potrà eseguire il comando <emphasis>psql &lt;hostname&gt;
+								&lt;username&gt; -f sql/GovWay.sql</emphasis>
+						</para>
+						<para> Successivamente eseguire lo script
+								<emphasis>sql/GovWay_init.sql</emphasis> per inserire i dati di
+							inizializzazione del database. </para>
+					</listitem>
+					<listitem>
+						<para> Installare il DriverJDBC, relativo al tipo di RDBMS indicato in fase
+							di setup, nella directory: <itemizedlist>
+								<listitem>
+									<para><emphasis>&lt;WILDFLY_HOME&gt;/standalone/deployments</emphasis>,
+										nel caso di Wildfly.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>&lt;TOMCAT_HOME&gt;/lib</emphasis>, nel caso di
+										Tomcat.</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Per le connessioni al database è necessario configurare i seguenti
+							datasource impostati con i parametri forniti durante l'esecuzione
+							dell'utility di installazione: <itemizedlist>
+								<listitem>
+									<para>Il gateway necessita di un datasource con nome JNDI
+											<emphasis>org.govway.datasource</emphasis></para>
+								</listitem>
+								<listitem>
+									<para>Le console grafiche necessitano di un datasource con nome
+										JNDI
+										<emphasis>org.govway.datasource.console</emphasis></para>
+								</listitem>
+								<listitem>
+									<para>Nel caso si sia richiesto il supporto al protocollo
+										eDelivery, è necessario un terzo datasource con nome JNDI
+											<emphasis>org.govway.datasource.domibus</emphasis></para>
+								</listitem>
+							</itemizedlist> I datasource, preconfigurati per l'Application Server
+							indicato, sono disponibili nella directory datasource e contengono le
+							configurazioni di accesso al database indicate (ip, db_name, utenza,
+							password). Tali files possono essere utilizzati come riferimento per la
+							definizione dei datasource richiesti nelle modalità disponibili per
+							l'Application Server scelto. Tali files possono anche essere utilizzati
+							direttamente per un rapido dispiegamento copiandoli nelle seguenti
+							posizioni nel file system: <itemizedlist>
+								<listitem>
+									<para><emphasis>&lt;WILDFLY_HOME&gt;/standalone/deployments</emphasis>,
+										nel caso di Wildfly.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>&lt;TOMCAT_HOME&gt;/conf/Catalina/localhost</emphasis>,
+										nel caso di Tomcat</para>
+								</listitem>
+							</itemizedlist> Utilizzando i file preconfigurati, su WildFly è
+							necessario sostituire al loro interno il placeholder
+								<emphasis>NOME_DRIVER_JDBC.jar</emphasis> con il nome del driver
+							JDBC installato in precedenza. </para>
+					</listitem>
+					<listitem>
+						<para> Eseguire il dispiegamento delle applicazioni presenti nella directory
+								<emphasis>archivi</emphasis> secondo le modalità disponibili per
+							l'Application Server scelto. Per un rapido dispiegamento è possibile
+							copiare gli archivi nelle seguenti posizioni nel file system: <itemizedlist>
+								<listitem>
+									<para><emphasis>&lt;WILDFLY_HOME&gt;/standalone/deployments</emphasis>,
+										nel caso di Wildfly.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>&lt;TOMCAT_HOME&gt;/webapps</emphasis>, nel caso
+										di Tomcat</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Verificare che la directory di lavoro di GovWay, fornita con le
+							informazioni preliminari dell'utility di installazione, esista o
+							altrimenti crearla con permessi tali da consentire la scrittura
+							all'utente di esecuzione dell'application server </para>
+					</listitem>
+					<listitem>
+						<para>Copiare nella directory di lavoro tutti i files di configurazioni
+							presenti nella directory <emphasis>cfg</emphasis>. Ad esempio con il
+							comando: <emphasis>cp cfg/*.properties /etc/govway/</emphasis></para>
+						<para>La directory di destinazione deve essere accessibile in lettura
+							all'utente con cui si esegue l'Application Server.</para>
+					</listitem>
+					<listitem>
+						<para> Avviare l'application server con il relativo service oppure
+							utilizzando la linea di comando: <itemizedlist>
+								<listitem>
+									<para><emphasis>&lt;WILDFLY_HOME&gt;/bin/standalone.sh</emphasis>,
+										nel caso di Wildfly.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>&lt;TOMCAT_HOME&gt;/bin/startup.sh</emphasis>,
+										nel caso di Tomcat.</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect2>
+		<sect2>
+			<title>Aggiornamento</title>
+			<para> Sulla base delle scelte operate sulle maschere del wizard, nella directory
+					<emphasis>dist</emphasis> saranno presenti i file necessari per procedere
+				all'aggiornamento richiesto. </para>
+			<para> L'aggiornamento richiede i i seguenti step: <itemizedlist>
+					<listitem>
+						<para> Fermo dell'Application Server </para>
+					</listitem>
+					<listitem>
+						<para> Aggiornamento del database come descritto nella <xref
+								linkend="deploy_upd_database"/>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Aggiornamento dei datasource come descritto nella <xref
+								linkend="deploy_upd_datasource"/>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Aggiornamento degli archivi applicativi come descritto nella <xref
+								linkend="deploy_upd_archivi"/>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Aggiornamento dei files di properties come descritto nella <xref
+								linkend="deploy_upd_properties"/>
+						</para>
+					</listitem>
+					<listitem>
+						<para> Riavvio dell'Application Server </para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<sect3 id="deploy_upd_database">
+				<title>Aggiornamento del database</title>
+				<para> Nella sottodirectory <emphasis>sql</emphasis> si trovano gli script SQL da
+					eseguire sul database attualmente utilizzato per adeguarlo alla nuova versione: <orderedlist>
+						<listitem>
+							<para> Eseguire lo script
+									<emphasis>sql/GovWay_upgrade_&lt;new_version&gt;.sql</emphasis>
+								per aggiornare lo schema del database. </para>
+						</listitem>
+						<listitem>
+							<para> Se si è modificata la tipologia di Application Server rispetto a
+								quella utilizzata nell'installazione precedente (es. da jboss a
+								tomcat), deve anche essere eseguito lo script
+									<emphasis>sql/utilities/as/upgradeAS_to&lt;new-type&gt;.sql</emphasis>
+							</para>
+						</listitem>
+					</orderedlist>
+				</para>
+			</sect3>
+			<sect3 id="deploy_upd_datasource">
+				<title>Aggiornamento dei datasource</title>
+				<para> Nella sottodirectory <emphasis>datasource</emphasis> si trovano le
+					configurazioni dei datasource automaticamente generate in base ai dati di
+					connessione al database forniti e all'Application Server indicato. Se non è
+					stato modificato l'Application Server, rispetto a quello utilizzato nell'attuale
+					installazione, un aggiornamento dei datasource non è necessario. Eventualmente
+					confrontare i dati di configurazione dei datasource generati dall'installer con
+					i dati degli attuali datasource presenti nell'Application Server per verificare
+					che non esistano differenze. Se necessario aggiornare questi elementi, procedere
+					come indicato per questa attività nella <xref linkend="deploy_new"/>. </para>
+			</sect3>
+			<sect3 id="deploy_upd_archivi">
+				<title>Aggiornamento degli archivi applicativi</title>
+				<para> Eseguire il dispiegamento delle applicazioni presenti nella sottodirectory
+						<emphasis>archivi</emphasis> secondo le modalità disponibili per
+					l'Application Server scelto. Per un rapido dispiegamento è possibile copiare gli
+					archivi nelle seguenti posizioni del file system: <itemizedlist>
+						<listitem>
+							<para> jboss: JBOSS_HOME/standalone/deployments/ </para>
+						</listitem>
+						<listitem>
+							<para> tomcat: TOMCAT_HOME/webapps/ </para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</sect3>
+			<sect3 id="deploy_upd_properties">
+				<title>Aggiornamento dei file di properties</title>
+				<para> Nella sottodirectory <emphasis>cfg</emphasis> si trovano i template dei file
+					di properties esterni. Questi file, durante l'installazione del prodotto, sono
+					già stati copiati nella directory di lavoro di GovWay. Tali file di properties
+					hanno lo scopo di fornire all'utente dei file pre-confezionati, con proprietà
+					commentate, da utilizzare rapidamente secondo quanto descritto nei manuali
+					d'utilizzo del prodotto, per modificare eventuali configurazioni built-in. Non è
+					quindi indispensabile che tali file vengano riportati sull'installazione
+					precedente e soprattutto occorre fare attenzione a non sovrascrivere
+					eventualmente i precedenti, se erano stati modificati rispetto al template
+					iniziale (generato dall'installer). </para>
+			</sect3>
+		</sect2>
+	</sect1>
+	<sect1 id="verifica">
+		<title>Verifica dell'Installazione</title>
+		<para> Appena conclusa la fase di dispiegamento si può procedere con l'avvio
+			dell'application server, quindi: <orderedlist>
+				<listitem>
+					<para> Verificare che la <emphasis>govwayConsole</emphasis>, l'applicazione web
+						per la gestione di GovWay, sia accessibile tramite browser all'indirizzo:
+							<emphasis>http://&lt;hostname-pdd&gt;/govwayConsole</emphasis>. In caso
+						di corretto funzionamento verrà visualizzata la schermata seguente: <figure
+							id="menu-verifica-installazione-console">
+							<title>Verifica Installazione: govwayConsole</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="80%"
+										fileref="FIGURE_OUT/govwayConsole_login.pdf"/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="80%"
+										fileref="FIGURE_OUT/govwayConsole_login.png"/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Accedere alla govwayConsole utilizzando le credenziali fornite durante
+						l'esecuzione dell'installer.</para>
+				</listitem>
+				<listitem>
+					<para> Verificare che la <emphasis>govwayMonitor</emphasis>, l'applicazione web
+						per il monitoraggio di GovWay, sia accessibile tramite browser
+						all'indirizzo:
+							<emphasis>http://&lt;hostname-pdd&gt;/govwayMonitor</emphasis>. In caso
+						di corretto funzionamento verrà visualizzata la schermata seguente: <figure
+							id="menu-verifica-installazione-monitor">
+							<title>Verifica Installazione: govwayMonitor</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="80%"
+										fileref="FIGURE_OUT/govwayMonitor_login.pdf"/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="80%"
+										fileref="FIGURE_OUT/govwayMonitor_login.png"/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Accedere alla govwayMonitor utilizzando le credenziali fornite durante
+						l'esecuzione dell'installer.</para>
+				</listitem>
+			</orderedlist>
+		</para>
+	</sect1>
+	<sect1 id="cluster">
+		<title>Configurazione in Load Balancing</title>
+		<para> Per realizzare un'installazione in load balancing è necessario predisporre più
+			istanze dell'Application Server, ognuna con una propria installazione del software. Sarà
+			inoltre necessario: <orderedlist>
+				<listitem>
+					<para>Che tutte le istanze di GovWay siano configurate per condividere lo stesso
+						DB.</para>
+				</listitem>
+				<listitem>
+					<para>Che esista un Load Balancer in grado di bilanciare il flusso di richieste
+						in arrivo sulle varie istanze di AS ospitanti il software GovWay.</para>
+				</listitem>
+				<listitem>
+					<para>Che GovWay sia opportunamente configurato con un identificatore unico che
+						contraddistingua lo specifico nodo.</para>
+				</listitem>
+			</orderedlist> In particolare per realizzare la configurazione descritta al punto 3, è
+			necessario: <orderedlist numeration="loweralpha">
+				<listitem>
+					<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
+						aggiungendo la seguente riga:
+						<screen>
+						# Identificativo univoco della macchina 
+						org.govway.pdd.cluster_id=#IDGW#
+						</screen>
+						inserendo al posto di #IDGW# l'identificatore unico associato alla specifica
+						istanza che si sta configurando. Scegliere un identificativo con cui si
+						possa facilmente riconoscere la macchina, ad esempio l'hostname. </para>
+				</listitem>
+				<listitem>
+					<para>Nel caso del protocollo SPCoop, editare il file
+						&lt;directory-lavoro&gt;/spcoop_local.properties aggiungendo le seguenti
+						righe:
+						<screen>
+						# Tipo di generazione dell'identificativo
+						org.govway.protocol.spcoop.id.tipo=static
+						# Prefisso dell'identificativo (opzionale)
+						org.govway.protocol.spcoop.id.prefix=#NUMERO#
+						</screen>
+						inserendo al posto di #NUMERO# l'identificatore unico associato a quella
+						istanza (da 0 a 99). Scegliere un identificativo numerico progressivo, a
+						partire da 0, per ciascuna istanza del software GovWay nel cluster. </para>
+				</listitem>
+				<listitem>
+					<para>Effettuata la modifica dei files è necessario un riavvio dell'Application
+						Server per rendere operative le modifiche.</para>
+				</listitem>
+			</orderedlist>
+		</para>
+		<para> NOTA: La directory '&lt;directory-lavoro&gt;' è la directory contenente tutti i files
+			di configurazione. Verificare quale directory è stata indicata durante l'esecuzione del
+			setup (vedi Esecuzione dell'Installer). </para>
+		<sect2 id="cluster-console">
+			<title>Configurazione delle Console</title>
+			<para> La configurazione del Load Balancing si completa fornendo ulteriori dati di
+				configurazione alle console grafiche. Queste configurazioni consentono alle console
+				di avere i corretti riferimenti ai nodi presenti in modo da poter dettagliare questo
+				aspetto nelle proprie maschere ed inoltre poter propagare eventuali modifiche su
+				ogni nodo senza attendere il timeout della cache o richiedere riavvii
+				dell'AS.</para>
+			<para> A tale scopo sarà necessario: <orderedlist>
+					<listitem>
+						<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
+							aggiungendo le seguenti righe su ogni PdD in Load Balancing:
+							<screen>
+					# JMX Resources
+					org.govway.pdd.checkPdD.readJMXResources.enabled=true
+					org.govway.pdd.checkPdD.readJMXResources.username=#USERNAME#
+					org.govway.pdd.checkPdD.readJMXResources.password=#PASSWORD#
+					</screen>
+							inserendo al posto di #USERNAME# e #PASSWORD# le credenziali che
+							dovranno essere utilizzate dalle console e che dovranno essere
+							configurate nei punti successivi di questo paragrafo. </para>
+					</listitem>
+					<listitem>
+						<para> Editare il file &lt;directory-lavoro&gt;/console_local.properties
+							aggiungendo le seguenti righe al fine di configurare la govwayConsole:
+							<screen>
+						# Configurazione gateway in Load Balancing
+						risorseJmxPdd.tipoAccesso=openspcoop
+						risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#						
+						</screen>
+							Devono essere elencati tutti gli identificativi, di ogni nodo gateway in
+							Load Balancing, registrati nel file GovWay_local.properties nella
+							proprietà 'org.govway.pdd.cluster_id' come descritto in precedenza. Per
+							ogni identificativo devono inoltre essere fornite le seguenti
+							informazioni:
+							<screen>
+						# Configurazione IDGW1
+						#IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
+						#IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/GovWay/checkPdD
+						#IDGW1#.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
+						#IDGW1#.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
+						...
+						# Configurazione IDGWN
+						#IDGWN#.risorseJmxPdd.descrizione=#DESCRIZIONEGWN#
+						#IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/GovWay/checkPdD
+						#IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
+						#IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
+						</screen>
+							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
+							le credenziali utilizzate nel govway_local.properties nella proprietà
+							'org.govway.pdd.checkPdD.readJMXResources.username' e
+							'org.govway.pdd.checkPdD.readJMXResources.password' come descritto in
+							precedenza. </para>
+						<para> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
+							porta con cui è raggiungibile GovWay. Infine deve anche essere fornita
+							una descrizione per ogni nodo in Load Balancing al posto di
+							#DESCRIZIONEGW#. </para>
+					</listitem>
+					<listitem>
+						<para> Editare il file &lt;directory-lavoro&gt;/monitor_local.properties
+							Disabilitare la configurazione per la singola istanza commentando la
+							proprietà statoPdD.sonde.standard.Gateway.url:
+							<screen>
+						# Configurazione PdD in Singola Istanza
+						statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/checkPdD?forceInvocationDisablePdD=true
+						</screen>
+							Aggiungere le seguenti righe al fine di configurare la govwayMonitor per
+							il Load Balancing:
+							<screen>
+						# Configurazione PdD in Load Balancing
+						configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
+						configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
+						statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
+						transazioni.idCluster.useSondaPdDList=true
+						</screen>
+							Devono essere elencati tutti gli identificativi, di ogni PdD in Load
+							Balancing, registrati nel file govway_local.properties nella proprietà
+							'org.govway.pdd.cluster_id' come descritto in precedenza. Per ogni
+							identificativo devono inoltre essere fornite le seguenti informazioni:
+							<screen>
+						# Configurazione IDGW1
+						statoPdD.sonde.pddOE.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/SondaPdD/check?forceInvocationDisablePdD=true
+						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http:// #HOSTGW1# : #PORTGW1
+						# /govway/checkPdD
+						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
+						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
+						...
+						# Configurazione IDGWN
+						statoPdD.sonde.pddOE.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/SondaPdD/check?forceInvocationDisablePdD=true
+						#IDGWN#.configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
+						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN
+						#/govway/checkPdD
+						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
+						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
+						</screen>
+							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
+							le credenziali utilizzate nel govway_local.properties nella proprietà
+							'org.govway.pdd.checkPdD.readJMXResources.username' e
+							'org.govway.pdd.checkPdD.readJMXResources.password' come descritto in
+							precedenza. Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname
+							e la porta con cui è raggiungibile GovWay. </para>
+					</listitem>
+				</orderedlist>
+			</para>
+		</sect2>
+	</sect1>
+	<appendix id="setupDB">
+		<title>Esempio di setup del database PostgreSQL</title>
+		<para> Procedura indicativa, applicabile alla piattaforma RDBMS PostgreSQL, per la
+			redisposizione del database di GovWay: <orderedlist>
+				<listitem>
+					<para> Creazione Utente
+						<screen>
+							[user@localhost]$ su
+							Parola d'ordine: XXX
+							[root@localhost]# su - postgres
+							-bash-3.1$ createuser -P
+							Enter name of role to add: govway
+							Enter password for new role: govway
+							Conferma password: govway
+							Shall the new role be a superuser? (y/n) n
+							Shall the new role be allowed to create databases? (y/n) n
+							Shall the new role be allowed to create more new roles? (y/n) n
+							CREATE ROLE
+						</screen>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Creazione Database
+						<screen>
+							[user@localhost]$ su
+							Parola d'ordine: XXX
+							[root@localhost]# su - postgres
+							-bash-3.1$createdb -O govway govway
+							CREATE DATABASE
+						</screen>
+					</para>
+				</listitem>
+				<listitem>
+					<para> Abilitazione accesso dell'utente al Database, è possibile abilitare
+						l'accesso editando il file
+							<emphasis>/var/lib/pgsql/data/pg_hba.conf</emphasis> (come super
+						utente). Abilitiamo quindi l'utente govway ad accedere al db govway,
+						aggiungendo le seguenti righe al file:
+						<screen>
+							local govway govway md5
+							host govway govway 127.0.0.1 255.255.255.255 md5
+						</screen>
+					</para>
+				</listitem>
+			</orderedlist>
+		</para>
+	</appendix>
+</article>

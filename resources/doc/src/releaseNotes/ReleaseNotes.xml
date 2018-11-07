@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "/usr/share/sgml/docbook/xml-dtd-4.1.2/docbookx.dtd">
+<?xml-stylesheet type="text/xsl" href="article.xsl"?>
+<article lang="it">
+	<articleinfo>
+		<title>Release Notes del prodotto GovWay</title>
+		<titleabbrev>Release Notes</titleabbrev>
+		<copyright>
+			<year>2005-2018</year>
+			<holder>
+				<ulink url="http://www.link.it">
+					<citetitle>Link.it srl</citetitle>
+				</ulink>
+			</holder>
+		</copyright>
+		<address> Link.it SRL <street> Via S. Martino,51 </street>
+			<postcode>I-56125</postcode><city> Pisa</city>
+			<country> ITALY </country>
+			<email>e-mail: info@link.it</email>
+		</address>
+	</articleinfo>
+	<sect1 id="RL3.0.1">
+		<title>Versione 3.0.1</title>
+		<para> In questa sezione sono descritte le principali nuove funzionalit&agrave; e i problemi
+			risolti nella versione 3.0.1 di GovWay. Per un elenco dettagliato dei problemi risolti e
+			per maggiori dettagli sulle funzionalit&agrave; si pu&ograve; invece far riferimento al
+			file ChangeLog di questa versione. </para>
+		<sect2 id="RL3.0.1_Multitenant">
+			<title>Nuova funzionalit&agrave; Multi-Tenant</title>
+			<para>Semplificata drasticamente la gestione in modalit&agrave; multi-tenant, prima
+				possibile esclusivamente in maniera analoga alla precedente modalità di gestione
+				della Console OpenSPCoop. <itemizedlist>
+					<listitem>
+						<para><emphasis>Attivazione</emphasis>: è possibile attivare la modalità
+							multi-tenant direttamente dalla console di gestione, tramite la sezione
+							'Configurazione - Generale'.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Selezione del dominio</emphasis>: è possibile selezionare il
+							soggetto su cui operare direttamente dalla testata delle console di
+							configurazione e monitoraggio.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Comunicazioni interne al dominio gestito</emphasis>: è
+							possibile abilitare la gestione multi-tenant in modo da permettere
+							interazioni tra soggetti fruitori ed erogatori entrambi appartenente al
+							dominio interno.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</sect2>
+		<sect2 id="RL3.0.1_ErroriGateway">
+			<title>Revisione dei formati di errore generati dal Gateway</title>
+			<para>I formati dei messaggi di errore generati dal Gateway sono ora conformi a quanto
+				previsto dall'RFC 7807 e dalle specifiche AGID "MI 2018". Sono stati inoltre
+				uniformati i messaggi di errore ritornati nelle erogazioni e nelle fruizioni.</para>
+			<para>Per le API di tipologia REST viene generato un oggetto <emphasis>Problem
+					Details</emphasis> come definito nella specifica <emphasis>RFC 7807</emphasis>
+					(<ulink url="https://tools.ietf.org/html/rfc7807"
+					>https://tools.ietf.org/html/rfc7807</ulink>). Le casistiche di errore
+				supportate sono le seguenti: <itemizedlist>
+					<listitem>
+						<para><emphasis>401</emphasis>: rientrano in questa castistica gli errori
+							avenuti durante le fasi di autenticazione degli applicativi e di
+							verifica del token OAuth</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>403</emphasis>: identifica un'autorizzazione fallita</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>404</emphasis>: richiesta una erogazione o fruizione
+							inesistente</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>400</emphasis>: l'errore occorso è imputabile ai dati
+							forniti dal client (es. messaggio non valido in caso di validazione
+							attiva)</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>429</emphasis>: identifica una violazione della politica di
+							Rate Limiting</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>503</emphasis>: rientrano in questa casistica gli errori
+							causati da una irraggiungibilità dell'applicativo indirizzato dal
+							Gateway o una temporanea sospensione della erogazione/fruzione</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>500</emphasis>: qualsiasi altro errore</para>
+					</listitem>
+				</itemizedlist> Nell'elemento <emphasis>detail</emphasis> è presente il dettaglio
+				dell'errore mentre nell'elemento <emphasis>govway_status</emphasis> una codifica in
+				GovWay di tale errore. </para>
+			<para>Per le API di tipologia SOAP, sia in erogazione che in fruizione, viene generato
+				un SOAPFault contenente un actor valorizzato con
+					<emphasis>http://govway.org/integration</emphasis>. Nell'elemento
+					<emphasis>fault string</emphasis> è presente il dettaglio dell'errore mentre
+				nell'elemento <emphasis>fault code</emphasis> una codifica in GovWay di tale
+				errore.</para>
+
+		</sect2>
+		<sect2 id="RL3.0.1_MiglioramentiAutenticazioneAutorizzazione">
+			<title>Nuove funzionalit&agrave; di Identificazione e Autorizzazione</title>
+			<para>Per le API erogate da Soggetti interni è ora permesso l'accesso anche da parte di
+				applicativi (interni al dominio gestito) e non solo di Soggetti (esterni al dominio
+				gestito).</para>
+		</sect2>
+		<sect2 id="RL3.0.1_MiglioramentiGovWayConsole">
+			<title>Miglioramenti alle Console di Gestione e Monitoraggio</title>
+			<para> Sono state apportate le seguenti migliorie: <itemizedlist>
+					<listitem>
+						<para><emphasis>Restyling grafico del menù in testata</emphasis>:
+							perfezionata la gestione delle informazioni relative all'utente
+							collegato, alle modalità di utilizzo e, se attivato il multi-tenant, al
+							soggetto gestito.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Nuova presentazione delle API</emphasis>: completo restyling
+							delle modalità di visualizzazione e di editing delle API
+							registrate.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</sect2>
+		<sect2 id="RL3.0.1_Installer">
+			<title>Miglioramenti all'Installer</title>
+			<para> Sono state apportati i seguenti miglioramenti all'Installer binario: <itemizedlist>
+					<listitem>
+						<para><emphasis>Aggiornamento</emphasis>; L'Installer può ora gestire anche
+							l'aggiornamento del Software rispetto ad una precedente versione già
+							installata. </para>
+					</listitem>
+					<listitem>
+						<para><emphasis>SQL</emphasis>; corretti gli script sql, prodotti
+							dall'installer, che causavano errori se utilizzati sui seguenti
+							database: <itemizedlist>
+								<listitem>
+									<para><emphasis>SQLServer</emphasis>, si otteneva il messaggio
+										di errore: Introducing FOREIGN KEY constraint 'fk_...' on
+										table '...' may cause cycles or multiple cascade
+										paths</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>MySQL</emphasis>, venivano segnalati diversi
+										errori come il seguente: CONSTRAINT unique_... UNIQUE (...),
+										- ERROR 1071 (42000): Specified key was too long; max key
+										length is 767 bytes</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</sect2>
+	</sect1>
+	<sect1 id="RL3.0">
+		<title>Versione 3.0</title>
+		<para>Il software GovWay è l'evoluzione della Porta di Dominio OpenSPCoop, e riparte quindi
+			dalla versione 3.0, riprendendo il precedente versionamento del software
+			OpenSPCoop.</para>
+		<para> GovWay recepisce le tante innovazioni dell'interoperabilità applicativa intervenute
+			nelle normative italiana ed europea e negli standard internazionali. Il cambio di nome
+			del progetto da OpenSPCoop a GovWay è stato necessario per svincolare il prodotto da uno
+			standard ormai deprecato come SPCoop, mantenendo però il focus sulle funzioni di API
+			Gateway verticalizzato sulle forti peculiarità della Pubblica Amministrazione italiana. </para>
+		<para> Avremmo voluto pubblicare la nuova versione contestualmente al rilascio delle nuove
+			linee guida di AGID, annunciate nel piano triennale per fine 2017. Il ritardo di questa
+			specifica (alla data di rilascio sono disponibili i soli primi due capitoli
+			introduttivi) ci ha convinti a rilasciare GovWay nella nostra "interpretazione"
+			dell'attuale versione della nuova specifica, in attesa di poterci adeguare alla versione
+			definitiva non appena disponibile. </para>
+		<para> Oltre al nuovo modello di interoperabilità (MI2018), Govway supporta nativamente: </para>
+		<itemizedlist>
+			<listitem>
+				<para> tutti i più recenti standard internazionali (i nuovi servizi RESTful, la
+					gestione dei Token, in particolare per AUTH2 e OIDC, ed in generale tutte le
+					ultime specifiche relative all'API Management); </para>
+			</listitem>
+			<listitem>
+				<para> le normative dell'interoperabilità europea, basate sul "building block"
+					eDelivery del progetto CEF (Connecting European Facilities), utilizzate per gli
+					scambi applicativi trans-europei; </para>
+			</listitem>
+			<listitem>
+				<para> la retrocompatibilità con SPCoop, ancora molto utilizzato e quindi per il
+					momento sicuramente imprescindibile come protocollo di interoperabilità nella
+					Pubblica Amministrazione Italiana. </para>
+			</listitem>
+			<listitem>
+				<para> infine GovWay introduce infine il concetto di "govlet", connettori pronti per
+					i principali servizi della PA italiana. Al momento sono disponibili govlet per
+					SIOPE+, PagoPA e Fatturazione Elettronica, tutti scaricabili dal sito
+					govway.org, ma la libreria di govlet è in rapida evoluzione. </para>
+			</listitem>
+		</itemizedlist>
+	</sect1>
+</article>
