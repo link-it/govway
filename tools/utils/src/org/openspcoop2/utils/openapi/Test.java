@@ -76,6 +76,14 @@ public class Test {
 		String testSenzaBaseUri = "/pets";
 		System.out.println("["+testName+"] API-Op ["+testSenzaBaseUri+"]: "+
 				checkNotNull(api.findOperation(HttpRequestMethod.POST, testSenzaBaseUri), f, "POST_pets"));
+		
+		testSenzaBaseUri = "/pets";
+		System.out.println("["+testName+"] API-Op ["+testSenzaBaseUri+"]: "+
+				checkNotNull(api.findOperation(HttpRequestMethod.PUT, testSenzaBaseUri), f, "PUT_pets"));
+		
+		testSenzaBaseUri = "/pets";
+		System.out.println("["+testName+"] API-Op ["+testSenzaBaseUri+"]: "+
+				checkNotNull(api.findOperation(HttpRequestMethod.DELETE, testSenzaBaseUri), f, "DELETE_pets"));
 
 		String testConPetid = "/pets/2";
 		System.out.println("["+testName+"] API-Op ["+testConPetid+"]: "+

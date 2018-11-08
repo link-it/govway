@@ -85,7 +85,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPet"
+              	"$ref": "#/components/schemas/NewPet"
               }
             }
           }
@@ -101,12 +101,101 @@
               }
             }
           },
+          "405": {
+            "description": "Invalid input"
+          },
           "default": {
             "description": "unexpected error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Creates a new pet in the store.  Duplicates are allowed",
+        "operationId": "addPet",
+        "requestBody": {
+          "description": "Pet to add to the store",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+              	"$ref": "test_import.json#/components/schemas/ImportNewPet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "pet response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "test_import.json#/components/schemas/ImportPet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          },
+          "400": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "test_import.json#/components/schemas/ImportError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Creates a new pet in the store.  Duplicates are allowed",
+        "operationId": "addPet",
+        "requestBody": {
+          "description": "Pet to add to the store",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+              	"$ref": "#/components/schemas/Import2NewPet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "pet response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "test_import2.json#/components/schemas/Import2Pet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "test_import2.json#/components/schemas/Import2Error"
                 }
               }
             }
@@ -498,8 +587,12 @@
               "sold"
             ]
           }
-        }
+        },
+        "additionalProperties": false
       },
+      "Import2NewPet": {
+        "$ref": "http://hostCasualeVerraNormalizzato.org/test/test_import.json#/components/schemas/ImportNewPet"
+      },  
       "Error": {
         "required": [
           "code",
@@ -513,7 +606,8 @@
           "message": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   }

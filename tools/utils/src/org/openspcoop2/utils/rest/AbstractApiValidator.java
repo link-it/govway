@@ -273,14 +273,21 @@ public abstract class AbstractApiValidator   {
 				
 				HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
 				ApiResponse apiResponseFound = null;
+				ApiResponse apiResponseDefault = null;
 				
 				for (ApiResponse apiResponse : operation.getResponses()) {
+					if(apiResponse.isDefaultHttpReturnCode()) {
+						apiResponseDefault = apiResponse;
+					}
 					if(response.getStatus() == apiResponse.getHttpReturnCode()){
 						apiResponseFound = apiResponse;
 						break;
 					}										
 				}
 				
+				if(apiResponseFound==null && apiResponseDefault!=null) {
+					apiResponseFound = apiResponseDefault;
+				}
 				if(apiResponseFound==null){
 					throw new ValidatorException("HttpReturnCode ["+response.getStatus()+"] unsupported");
 				}

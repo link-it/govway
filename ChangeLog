@@ -1,3 +1,11 @@
+2018-11-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-785
+	La Validazione OpenAPI/Swagger non funzionava correttamente nei seguenti casi:
+	- se l'interfaccia del servizio importava schemi json/yaml esterni tramite la sintassi $ref.
+	- per i messaggi di risposta
+
 2018-11-07  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.1.rc2

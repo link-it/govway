@@ -1,0 +1,25 @@
+"components": {
+    "schemas": {
+      "Import2Pet": {
+        "allOf": [
+          {
+            "$ref": "test_import.json#/components/schemas/ImportNewPet"
+          },
+          {
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        ]
+      },  
+      "Import2Error": {
+        "$ref": "test_import.json#/components/schemas/ImportError"
+      }    
+   }
+}

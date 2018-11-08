@@ -56,7 +56,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		HttpRequestMethod m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		HttpRequestMethod m = null;
+		try {
+			m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		}catch(Exception e) {
+			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			return;
+		}
 		switch (m) {
 		
 		// Standard

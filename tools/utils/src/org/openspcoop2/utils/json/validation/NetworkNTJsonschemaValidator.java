@@ -105,7 +105,7 @@ public class NetworkNTJsonschemaValidator implements IJsonSchemaValidator {
 
 	        this.schema = factory.getSchema(jsonSchema);
 	        
-		} catch(Exception e) {
+		} catch(Throwable e) {
 			throw new ValidationException(e);
 		}
 	}

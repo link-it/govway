@@ -24,56 +24,57 @@ package org.openspcoop2.utils.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 /**	
- * JSONUtils
+ * YAMLUtils
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JSONUtils extends AbstractUtils {
+public class YAMLUtils extends AbstractUtils {
 	
-	private static JSONUtils jsonUtils = null;
-	private static JSONUtils jsonUtilsPretty = null;
+	private static YAMLUtils yamlUtils = null;
+	private static YAMLUtils yamlUtilsPretty = null;
 	private static synchronized void init(boolean prettyPrint){
 		if(prettyPrint) {
-			if(JSONUtils.jsonUtilsPretty==null){
-				JSONUtils.jsonUtilsPretty = new JSONUtils(true);
+			if(YAMLUtils.yamlUtilsPretty==null){
+				YAMLUtils.yamlUtilsPretty = new YAMLUtils(true);
 			}
 		}
 		else {
-			if(JSONUtils.jsonUtils==null){
-				JSONUtils.jsonUtils = new JSONUtils(false);
+			if(YAMLUtils.yamlUtils==null){
+				YAMLUtils.yamlUtils = new YAMLUtils(false);
 			}
 		}
 	}
-	public static JSONUtils getInstance(){
+	public static YAMLUtils getInstance(){
 		return getInstance(false);
 	}
-	public static JSONUtils getInstance(boolean prettyPrint){
+	public static YAMLUtils getInstance(boolean prettyPrint){
 		if(prettyPrint) {
-			if(JSONUtils.jsonUtilsPretty==null){
-				JSONUtils.init(true);
+			if(YAMLUtils.yamlUtilsPretty==null){
+				YAMLUtils.init(true);
 			}
-			return JSONUtils.jsonUtilsPretty;
+			return YAMLUtils.yamlUtilsPretty;
 		}
 		else {
-			if(JSONUtils.jsonUtils==null){
-				JSONUtils.init(false);
+			if(YAMLUtils.yamlUtils==null){
+				YAMLUtils.init(false);
 			}
-			return JSONUtils.jsonUtils;
+			return YAMLUtils.yamlUtils;
 		}
 	}
 	
 
-	private static ObjectMapper mapper;
+	private static YAMLMapper mapper;
 	private synchronized static void initMapper()  {
 		if(mapper==null){
-			mapper = new ObjectMapper();
+			mapper = new YAMLMapper();
 		}
 	}
-	private static ObjectMapper getObjectMapper() {
+	private static YAMLMapper getObjectMapper() {
 		if(mapper==null){
 			initMapper();
 		}
@@ -108,7 +109,7 @@ public class JSONUtils extends AbstractUtils {
 	
 	
 	
-	protected JSONUtils(boolean prettyPrint) {
+	protected YAMLUtils(boolean prettyPrint) {
 		super(prettyPrint);
 	}
 	
@@ -143,12 +144,13 @@ public class JSONUtils extends AbstractUtils {
 	
 	// IS
 	
-	public boolean isJson(byte[]jsonBytes){
-		return this.isValid(jsonBytes);
+	public boolean isYaml(byte[]jsonBytes){
+		return !JSONUtils.getInstance().isJson(jsonBytes) && this.isValid(jsonBytes);
 	}
 	
-	public boolean isJson(String jsonString){
-		return this.isValid(jsonString);
+	public boolean isYaml(String jsonString){
+		return !JSONUtils.getInstance().isJson(jsonString) && this.isValid(jsonString);
 	}
+	
 	
 }

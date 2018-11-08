@@ -25,7 +25,12 @@ package org.openspcoop2.utils.openapi.validator;
 
 import java.net.URI;
 
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.api.ApiSchema;
+import org.openspcoop2.utils.rest.api.ApiSchemaType;
 
 
 /**
@@ -44,11 +49,30 @@ public class TestOpenApi3 {
 		URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
 		String baseUri = "http://petstore.swagger.io/api";
 		
-		Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3);
+		ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
+				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
+		ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
+				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
+		
+		ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
+		ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
+				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
+		
+		Test.testValidation(jsonUri, baseUri, "json", ApiFormats.OPEN_API_3, 
+				apiSchemaJson, apiSchemaJson2);
 		
 		System.out.println("\n\n\n==============================================================");
-		Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3);
+		Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.OPEN_API_3, 
+				apiSchemaYaml, apiSchemaYaml2);
 
+		
+		System.out.println("\n\n\n==============================================================");
+		System.out.println("IS JSON atteso:true trovato: "+JSONUtils.getInstance().isJson(apiSchemaJson.getContent()));
+		System.out.println("IS YAML atteso:false trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaJson.getContent()));
+		System.out.println("IS JSON atteso:false trovato: "+JSONUtils.getInstance().isJson(apiSchemaYaml.getContent()));
+		System.out.println("IS YAML atteso:true trovato: "+YAMLUtils.getInstance().isYaml(apiSchemaYaml.getContent()));
+		
 	}
 
 }

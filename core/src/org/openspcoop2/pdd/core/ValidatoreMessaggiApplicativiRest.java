@@ -279,15 +279,16 @@ public class ValidatoreMessaggiApplicativiRest {
 		}
 		
 		IApiValidator apiValidator = null;
+		ApiValidatorConfig validatorConfig = null;
 		try {
 			apiValidator = ApiFactory.newApiValidator(format);
-			ApiValidatorConfig validatorConfig = new ApiValidatorConfig();
+			validatorConfig = new ApiValidatorConfig();
 			apiValidator.init(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);
 		}catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
-			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
+			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(interfaceType));
 			throw ex;
 		}
 			
@@ -400,7 +401,7 @@ public class ValidatoreMessaggiApplicativiRest {
 				apiValidator.validate(httpResponse);
 			}
 			
-		}catch(Exception e ){ // WSDLValidatorException
+		}catch(Throwable e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());
 			if(isRichiesta){
@@ -409,6 +410,12 @@ public class ValidatoreMessaggiApplicativiRest {
 				ex.setErrore(ErroriIntegrazione.ERRORE_419_VALIDAZIONE_RISPOSTA_TRAMITE_INTERFACCIA_FALLITA.getErrore419_ValidazioneRispostaTramiteInterfacciaFallita(interfaceType));
 			}
 			throw ex;
+		}finally {
+			try {
+				apiValidator.close(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);
+			}catch(Exception e){
+				this.logger.error("validateWithInterface close error: "+e.getMessage(),e);
+			}
 		}
 		
 	}

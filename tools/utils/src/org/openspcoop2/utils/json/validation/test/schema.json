@@ -150,4 +150,6 @@
       }
     }
   }
-}, "anyOf": [{"$ref": "#/definitions/Pet"}]}
+}, 
+"anyOf": [{"$ref": "#/definitions/Pet"}]
+}

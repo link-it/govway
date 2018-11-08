@@ -20,26 +20,38 @@
  *
  */
 
-package org.openspcoop2.utils.rest;
-
-import org.openspcoop2.utils.rest.api.Api;
-import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
-import org.slf4j.Logger;
+package org.openspcoop2.utils.rest.api;
 
 /**
- * IApiValidator
+ * ApiReference
  *
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IApiValidator {
+public class ApiReference {
 
-	public void init(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException;
+	private String schemaRef;
+	private String type;
+
+	public ApiReference(String schemaRef, String type) {
+		this.schemaRef = schemaRef;
+		this.type = type;
+	}
 	
-	public void close(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException;
-	
-	public void validate(HttpBaseEntity<?> httpEntity) throws ProcessingException, ValidatorException;
-		
+	public String getSchemaRef() {
+		return this.schemaRef;
+	}
+	public void setSchemaRef(String schemaRef) {
+		this.schemaRef = schemaRef;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+
 }

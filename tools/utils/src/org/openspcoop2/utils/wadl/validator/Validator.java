@@ -96,6 +96,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 	
 	public Validator(){}
 	
+	@Override
+	public void close(Logger log, Api api, ApiValidatorConfig config) throws ProcessingException{
+		
+	}
 	
 	@Override
 	public void validate(HttpBaseEntity<?> httpEntity) throws ProcessingException, ValidatorException{

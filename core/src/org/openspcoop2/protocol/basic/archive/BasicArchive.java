@@ -80,6 +80,7 @@ import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiReference;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestQueryParameter;
@@ -434,6 +435,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 										json.setTipo(jsonType);
 										rr.setJson(json);
 									}
+									else if(body.getElement() instanceof ApiReference) {
+										ApiReference apiRef = (ApiReference) body.getElement();
+										String jsonType = apiRef.getType();
+										rr.setRepresentationType(RepresentationType.JSON);
+										ResourceRepresentationJson json = new ResourceRepresentationJson();
+										json.setTipo(apiRef.getSchemaRef()+"#"+jsonType);
+										rr.setJson(json);
+									}
 									else {
 										rr.setRepresentationType(null);
 										rr.setJson(null);
@@ -632,6 +641,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 											rr.setRepresentationType(RepresentationType.JSON);
 											ResourceRepresentationJson json = new ResourceRepresentationJson();
 											json.setTipo(jsonType);
+											rr.setJson(json);
+										}
+										else if(body.getElement() instanceof ApiReference) {
+											ApiReference apiRef = (ApiReference) body.getElement();
+											String jsonType = apiRef.getType();
+											rr.setRepresentationType(RepresentationType.JSON);
+											ResourceRepresentationJson json = new ResourceRepresentationJson();
+											json.setTipo(apiRef.getSchemaRef()+"#"+jsonType);
 											rr.setJson(json);
 										}
 										else {

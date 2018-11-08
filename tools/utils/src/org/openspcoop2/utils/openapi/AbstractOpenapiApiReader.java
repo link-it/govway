@@ -42,6 +42,7 @@ import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiReference;
 import org.openspcoop2.utils.rest.api.ApiRequest;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
@@ -85,10 +86,12 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	private OpenAPI openApi;
 	private ApiFormats format;
 	private ParseOptions parseOptions;
+	private List<ApiSchema> schemas;
 	
 	public AbstractOpenapiApiReader(ApiFormats format) {
 		this.format = format;
 		this.parseOptions = new ParseOptions();
+		this.schemas = new ArrayList<>();
 	}
 
 	private void parseResult(Logger log, SwaggerParseResult pr) throws ProcessingException {
@@ -139,6 +142,13 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				pr = new OpenAPIV3Parser().readContents(content, null, this.parseOptions);
 			}
 			this.parseResult(log, pr);
+					
+			if(schema!=null && schema.length>0) {
+				for (int i = 0; i < schema.length; i++) {
+					this.schemas.add(schema[i]);
+				}
+			}
+			
 		} catch(Exception e) {
 			throw new ProcessingException(e);
 		}
@@ -241,6 +251,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			throw new ProcessingException("Api non correttamente inizializzata");
 		try {
 			OpenapiApi api = new OpenapiApi(this.openApi);
+			if(!this.schemas.isEmpty()) {
+				for (ApiSchema apiSchema : this.schemas) {
+					api.addSchema(apiSchema);
+				}
+			}
 			if(!this.openApi.getServers().isEmpty())
 				api.setBaseURL(new URL(this.openApi.getServers().get(0).getUrl()));
 
@@ -321,8 +336,19 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				Schema<?> model = requestBody.getContent().get(consume).getSchema();
 
 				String type = null;
+				ApiReference apiRef = null;
 				if(model.get$ref()!= null) {
-					type = model.get$ref().replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+					String href = model.get$ref().trim();
+					if(href.contains("#") && !href.startsWith("#")) {
+						type = href.substring(href.indexOf("#"), href.length());
+						type = type.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+						String ref = href.split("#")[0];
+						File fRef = new File(ref);
+						apiRef = new ApiReference(fRef.getName(), type);
+					}
+					else {
+						type = href.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+					}
 				} else {
 					type = ("request_" + method.toString() + "_" + path+ "_" + consume).replace("/", "_");
 					api.getDefinitions().put(type, model);
@@ -330,7 +356,11 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				
 				ApiBodyParameter bodyParam = new ApiBodyParameter(type);
 				bodyParam.setMediaType(consume);
-				bodyParam.setElement(type);
+				if(apiRef!=null) {
+					bodyParam.setElement(apiRef);
+				}else {
+					bodyParam.setElement(type);
+				}
 				if(requestBody.getRequired() != null)
 					bodyParam.setRequired(requestBody.getRequired());
 
@@ -445,28 +475,52 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				apiResponse.addHeaderParameter(parameter);
 			}
 		}
-
+		
 		if(response.getContent() != null && !response.getContent().isEmpty()) {
 			for(String contentType: response.getContent().keySet()) {
 
 				MediaType mediaType = response.getContent().get(contentType);
 				Schema<?> schema = mediaType.getSchema();
+				
+				String name = ("response_" +method.toString() + "_" + path + "_" + responseK + "_" + contentType).replace("/", "_");
 
-				String name = ("response_" +method.toString() + "_" + path + "_" + contentType).replace("/", "_");
-
-				api.getDefinitions().put(name, schema);
-
+				String type = null;
+				ApiReference apiRef = null;
+				if(schema.get$ref()!= null) {
+					String href = schema.get$ref().trim();
+					if(href.contains("#") && !href.startsWith("#")) {
+						type = href.substring(href.indexOf("#"), href.length());
+						type = type.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+						String ref = href.split("#")[0];
+						File fRef = new File(ref);
+						apiRef = new ApiReference(fRef.getName(), type);
+					}
+					else {
+						type = href.replaceAll("#/components/schemas/", "").replaceAll("#/definitions/", "");
+					}
+				} else {
+					type = ("response_" +method.toString() + "_" + path + "_" + responseK + "_" + contentType).replace("/", "_");
+					api.getDefinitions().put(type, schema);
+				}
+				
 				ApiBodyParameter bodyParam = new ApiBodyParameter(name);
 				bodyParam.setMediaType(contentType);
+				if(apiRef!=null) {
+					bodyParam.setElement(apiRef);
+				}else {
+					bodyParam.setElement(type);
+				}
 				
-				String type = getParameterType(schema, null);
+//				String typeF = getParameterType(schema, null);
+//				bodyParam.setElement(type);
 				
-				bodyParam.setElement(type);
+				bodyParam.setRequired(true);
+				
 				apiResponse.addBodyParameter(bodyParam);
 			}
 		}
 
 		return apiResponse;
 	}
-
+	
 }

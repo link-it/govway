@@ -36,6 +36,6 @@ import java.io.Serializable;
 
 public enum ApiSchemaType implements Serializable{
 
-	XSD, JSON
+	XSD, JSON, YAML
 	
 }

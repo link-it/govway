@@ -38,6 +38,7 @@ import org.openspcoop2.utils.rest.api.ApiBodyParameter;
 import org.openspcoop2.utils.rest.api.ApiCookieParameter;
 import org.openspcoop2.utils.rest.api.ApiHeaderParameter;
 import org.openspcoop2.utils.rest.api.ApiOperation;
+import org.openspcoop2.utils.rest.api.ApiReference;
 import org.openspcoop2.utils.rest.api.ApiRequest;
 import org.openspcoop2.utils.rest.api.ApiRequestDynamicPathParameter;
 import org.openspcoop2.utils.rest.api.ApiRequestFormParameter;
@@ -106,6 +107,7 @@ public class RegistryAPI extends Api {
 							if(response.sizeRepresentationList()>0) {
 								initRepresentationList(response.getRepresentationList(), null, apiResponse);
 							}
+							apiOp.addResponse(apiResponse);
 						}
 					}
 					
@@ -176,7 +178,14 @@ public class RegistryAPI extends Api {
 				switch (rr.getRepresentationType()) {
 				case JSON:
 					if(rr.getJson()!=null) {
-						parameter.setElement(rr.getJson().getTipo());
+						String tipo = rr.getJson().getTipo();
+						if(tipo!=null && tipo.contains("#")) {
+							ApiReference ref = new ApiReference(tipo.split("#")[0], tipo.split("#")[1]);
+							parameter.setElement(ref);
+						}
+						else {
+							parameter.setElement(tipo);
+						}
 					}
 					break;
 				case XML:

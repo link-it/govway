@@ -35,6 +35,8 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
@@ -64,6 +66,8 @@ public class AccordoServizioWrapperUtilities {
 	private Logger logger = null;
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
+	private JSONUtils jsonUtils = null;
+	private YAMLUtils yamlUtils = null;
 	
 	/** Accordo Servizio */
 	public AccordoServizioWrapperUtilities(Logger log, AccordoServizioWrapper accordoServizio){
@@ -74,6 +78,8 @@ public class AccordoServizioWrapperUtilities {
 		this.accordoServizioWrapper = accordoServizio;
 		this.xmlUtils = XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
+		this.jsonUtils = JSONUtils.getInstance();
+		this.yamlUtils = YAMLUtils.getInstance();
 	}
 	private AccordoServizioWrapper accordoServizioWrapper = null;
 	public AccordoServizioWrapper getAccordoServizioWrapper() {
@@ -217,6 +223,8 @@ public class AccordoServizioWrapperUtilities {
 	
 	private ApiSchema [] buildSchemas(AccordoServizioParteComune as, boolean fromBytes) throws DriverRegistroServiziException{
 		Hashtable<String, byte[]> resourcesXSD = new Hashtable<String, byte[]>();
+		Hashtable<String, byte[]> resourcesJSON = new Hashtable<String, byte[]>();
+		Hashtable<String, byte[]> resourcesYAML = new Hashtable<String, byte[]>();
 		
 		// --------- ALLEGATI --------- 
 		if(as.sizeAllegatoList()>0){
@@ -254,12 +262,22 @@ public class AccordoServizioWrapperUtilities {
 
 				try{
 					if(this.xsdUtils.isXSDSchema(resource)){
-
 						if(resourcesXSD.containsKey(systemId)){
-							throw new Exception("Esiste più di un documento xsd, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione xsd di OpenSPCoop richiede l'utilizzo di nomi diversi)");
+							throw new Exception("Esiste più di un documento xsd, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesXSD.put(systemId,resource); 
-
+					}
+					else if(this.yamlUtils.isYaml(resource)){
+						if(resourcesXSD.containsKey(systemId)){
+							throw new Exception("Esiste più di un documento yaml, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
+						}
+						resourcesYAML.put(systemId,resource); 
+					}
+					else if(this.jsonUtils.isJson(resource)){
+						if(resourcesXSD.containsKey(systemId)){
+							throw new Exception("Esiste più di un documento json, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
+						}
+						resourcesJSON.put(systemId,resource); 
 					}
 				}catch(Exception e){
 					throw new DriverRegistroServiziException("La lettura dell'allegato ["+systemId+"] ha causato un errore: "+e.getMessage(),e);
@@ -305,12 +323,22 @@ public class AccordoServizioWrapperUtilities {
 
 				try{
 					if(this.xsdUtils.isXSDSchema(resource)){
-
 						if(resourcesXSD.containsKey(systemId)){
-							throw new Exception("Esiste più di un documento xsd, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione xsd di OpenSPCoop richiede l'utilizzo di nomi diversi)");
+							throw new Exception("Esiste più di un documento xsd, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesXSD.put(systemId,resource); 
-
+					}
+					else if(this.yamlUtils.isYaml(resource)){
+						if(resourcesXSD.containsKey(systemId)){
+							throw new Exception("Esiste più di un documento yaml, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
+						}
+						resourcesYAML.put(systemId,resource); 
+					}
+					else if(this.jsonUtils.isJson(resource)){
+						if(resourcesXSD.containsKey(systemId)){
+							throw new Exception("Esiste più di un documento json, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
+						}
+						resourcesJSON.put(systemId,resource); 
 					}
 				}catch(Exception e){
 					throw new DriverRegistroServiziException("La lettura della specifica semiformale ["+systemId+"] ha causato un errore: "+e.getMessage(),e);
@@ -326,6 +354,22 @@ public class AccordoServizioWrapperUtilities {
 				String key = (String) enKeys.nextElement();
 				byte[] value = resourcesXSD.get(key);
 				schemas.add(new ApiSchema(key, value, ApiSchemaType.XSD));
+			}
+		}
+		if(resourcesYAML!=null && resourcesYAML.size()>0) {
+			Enumeration<String> enKeys = resourcesYAML.keys();
+			while (enKeys.hasMoreElements()) {
+				String key = (String) enKeys.nextElement();
+				byte[] value = resourcesYAML.get(key);
+				schemas.add(new ApiSchema(key, value, ApiSchemaType.YAML));
+			}
+		}
+		if(resourcesJSON!=null && resourcesJSON.size()>0) {
+			Enumeration<String> enKeys = resourcesJSON.keys();
+			while (enKeys.hasMoreElements()) {
+				String key = (String) enKeys.nextElement();
+				byte[] value = resourcesJSON.get(key);
+				schemas.add(new ApiSchema(key, value, ApiSchemaType.JSON));
 			}
 		}
 		ApiSchema [] s = null;
