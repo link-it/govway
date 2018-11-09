@@ -557,6 +557,18 @@
                 </listitem>
                 <listitem>
                   <para>
+                    <emphasis>Validazione Richiesta Fallita</emphasis>: Esito della
+                    transazioni i cui controlli di validazione del messaggio di richiesta
+                    hanno riportato un errore. </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    <emphasis>Validazione Risposta Fallita</emphasis>: Esito della
+                    transazioni i cui controlli di validazione del messaggio di risposta
+                    hanno riportato un errore. </para>
+                </listitem>
+                <listitem>
+                  <para>
                     <emphasis>Gestione Allegati Richiesta Fallita</emphasis>: Esito delle
                     transazioni che hanno prodotto un errore durante la fase di elaborazione degli
                     allegati alla richiesta (ad esempio durante la gestione del protocollo MTOM).

@@ -98,6 +98,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private boolean exportCsvAbilitato = false;
 	private boolean exportCsvCompletato = false;
 	private boolean visualizzaDataAccettazione = false;
+	private boolean updateTipoStorico = false;
 
 	private ApplicationBean applicationBean = null;
 	
@@ -912,9 +913,20 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	public void setTipoStorico(String tipoStorico) {
 		this.tipoStorico = tipoStorico;
 		
-		this.search.initSearchListener(null);
-		this.search.setModalitaRicercaStorico(this.tipoStorico);
+		if(this.updateTipoStorico) {
+			this.search.initSearchListener(null);
+			this.search.setModalitaRicercaStorico(this.tipoStorico);
+			this.updateTipoStorico = false;
+		}
 		
+	}
+
+	public boolean isUpdateTipoStorico() {
+		return this.updateTipoStorico;
+	}
+
+	public void setUpdateTipoStorico(boolean updateTipoStorico) {
+		this.updateTipoStorico = updateTipoStorico;
 	}
 	
 }

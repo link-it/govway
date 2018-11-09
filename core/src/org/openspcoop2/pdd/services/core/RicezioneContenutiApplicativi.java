@@ -3336,6 +3336,9 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
+					
 					// validazione abilitata
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {
@@ -3356,6 +3359,9 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 				logCore.error("Riscontrato errore durante la validazione xsd della richiesta applicativa",ex);
 				if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false) {
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
+					
 					// validazione abilitata
 					openspcoopstate.releaseResource();
 					if (this.msgContext.isGestioneRisposta()) {

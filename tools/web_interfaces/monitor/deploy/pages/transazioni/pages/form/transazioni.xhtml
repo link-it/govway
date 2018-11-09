@@ -26,6 +26,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<a4j:htmlCommandLink action="transazioni"  rendered="#{tipoStorico.rendered}" styleClass="tipologia-button">
 									<i class="material-icons md-48">#{tipoStorico.icona}</i>
 									<span class="tipologia-button-text">#{tipoStorico.label}</span>
+									<f:setPropertyActionListener value="true" target="#{transazioniBean.updateTipoStorico}" />
 									<f:setPropertyActionListener value="#{tipoStorico.value}" target="#{transazioniBean.tipoStorico}" />
 								</a4j:htmlCommandLink>
 							</a4j:outputPanel>

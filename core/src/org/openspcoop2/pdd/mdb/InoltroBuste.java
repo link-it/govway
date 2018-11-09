@@ -4253,6 +4253,9 @@ public class InoltroBuste extends GenericLib{
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
+									
+									pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RISPOSTA, "true");
+									
 									// validazione abilitata
 									if(msgResponse!=null){
 										msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem
@@ -4273,6 +4276,9 @@ public class InoltroBuste extends GenericLib{
 								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("Riscontrato errore durante la validazione xsd della risposta applicativa",ex);
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
+									
+									pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RISPOSTA, "true");
+									
 									// validazione abilitata
 									if(msgResponse!=null){
 										msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem

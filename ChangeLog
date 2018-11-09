@@ -1,3 +1,13 @@
+2018-11-09  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Risolto Bug OP-787
+	Dopo aver effettuato una ricerca nell'archivio storico, ed ottenuto l'elenco delle transazioni risultanti, 
+	se si aggiungevano nuovi criteri di filtro e si premeva il pulsante "Filtra Risultati" non succede apparentemente nulla.
+	Il problema è stato risolto.
+	Inoltre sono stati aggiunti due nuovi esiti 'Validazione Richiesta Fallita' e 'Validazione Risposta Fallita' che vengono
+	associati alle transazioni qualora la validazione dei contenuti riscontra un messaggio non corretto.
+
 2018-11-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

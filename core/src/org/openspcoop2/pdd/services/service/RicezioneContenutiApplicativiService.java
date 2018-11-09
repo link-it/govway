@@ -842,6 +842,13 @@ public class RicezioneContenutiApplicativiService {
 						)
 					) {
 					consume = false; // può essere usato nel post out response handler
+					String contentAsString = null;
+					try {
+						contentAsString = responseMessage.castAsRest().getContentAsString();
+					}catch(Throwable t) {
+						logCore.error("Parsing errore non riuscito: "+t.getMessage(),t);
+					}
+					descrizioneSoapFault = " ("+contentAsString+")";
 				}
 				res.setStatus(statoServletResponse);
 				

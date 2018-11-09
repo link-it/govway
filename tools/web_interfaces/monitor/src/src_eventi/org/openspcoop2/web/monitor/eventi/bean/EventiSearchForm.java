@@ -107,6 +107,7 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 
 	@Override
 	protected String eseguiAggiorna() {
+		this.setAggiornamentoDatiAbilitato(true); // abilito aggiornamento
 		return this._filtra(true);
 	}
 	
