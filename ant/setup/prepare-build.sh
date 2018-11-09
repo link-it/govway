@@ -8,7 +8,8 @@
 # tomcat7: supporta la versione 7.x
 # tomcat8: supporta la versione 8.x e 9.x, Rispetto alla versione 7.x variano i datasource.
 # L'importante che anche il build.xml del setup associ poi lo stesso valore per qualsiasi scelta di tomcat venga fatta
-AS_VERSION=wildfly10,tomcat7,tomcat8
+# NOTA: per il software basta usare tomcat7, la differenza sui datasource è stata gestita all'interno dello script ant/setup/build.xml
+AS_VERSION=wildfly10,tomcat7
 
 ROOT=../../
 CORE=${ROOT}/core
