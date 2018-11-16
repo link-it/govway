@@ -874,6 +874,8 @@ public class SoggettiHelper extends ConnettoriHelper {
 				String filterDominio = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_DOMINIO);
 				addFilterDominio(filterDominio, false);
 			}
+			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
+			addFilterRuolo(filterRuolo, false);
 			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);

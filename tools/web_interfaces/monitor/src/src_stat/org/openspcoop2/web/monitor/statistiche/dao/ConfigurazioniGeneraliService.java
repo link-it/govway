@@ -366,7 +366,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
 				String servizioString = this.getSearch().getNomeServizio();
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome());
+				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 				if(aspc != null){
 					String nomeAspc = aspc.getNome();
 
@@ -518,7 +518,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			}
 
 			count = this.dynamicService.
-					countServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false, this.search.getPermessiUtenteOperatore());
+					countConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false, this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli accordi servizio parte specifica: " + e.getMessage(),e);
 		}
@@ -562,7 +562,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count =   this.dynamicService.countServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false,  this.search.getPermessiUtenteOperatore());
+			count =   this.dynamicService.countConfigurazioneServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, null, null, false,  this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle fruizioni servizio: " + e.getMessage(),e);
 		}

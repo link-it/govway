@@ -14134,11 +14134,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 			filterSoggettoDefault = "true".equalsIgnoreCase(filterSoggettoDefaultTmp.trim());
 		}
 		
+		String filterRuolo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_RUOLO);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterDominio : " + filterDominio);
 		this.log.debug("filterSoggettoDefault : " + filterSoggettoDefault);
+		this.log.debug("filterRuolo : " + filterRuolo);
 		
 		Connection con = null;
 		boolean error = false;
@@ -14209,6 +14212,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+					sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_soggetto");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_ruolo");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".nome=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -14234,6 +14244,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+					sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_soggetto");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_ruolo");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".nome=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -14255,6 +14272,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(pddTipologia!=null) {
 				stmt.setString(index++, pddTipologia.toString());
+			}
+			if(filterRuolo!=null && !"".equals(filterRuolo)) {
+				stmt.setString(index++, filterRuolo);
 			}
 
 			risultato = stmt.executeQuery();
@@ -14303,6 +14323,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+					sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_soggetto");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_ruolo");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".nome=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -14341,6 +14368,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+					sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_soggetto");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".id="+CostantiDB.SOGGETTI_RUOLI+".id_ruolo");
+					sqlQueryObject.addWhereCondition(CostantiDB.RUOLI+".nome=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_soggetto");
 				sqlQueryObject.addOrderBy("tipo_soggetto");
@@ -14367,6 +14401,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(pddTipologia!=null) {
 				stmt.setString(index++, pddTipologia.toString());
+			}
+			if(filterRuolo!=null && !"".equals(filterRuolo)) {
+				stmt.setString(index++, filterRuolo);
 			}
 			risultato = stmt.executeQuery();
 

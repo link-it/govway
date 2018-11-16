@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.protocol.manifest.constants.FunctionType;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import java.util.List;
  * 			&lt;element name="restMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="emptyFunction" type="{http://www.openspcoop2.org/protocol/manifest}FunctionType" use="optional"/>
  * 		&lt;attribute name="binding" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -128,6 +130,26 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.name = name;
   }
 
+  public void set_value_emptyFunction(String value) {
+    this.emptyFunction = (FunctionType) FunctionType.toEnumConstantFromString(value);
+  }
+
+  public String get_value_emptyFunction() {
+    if(this.emptyFunction == null){
+    	return null;
+    }else{
+    	return this.emptyFunction.toString();
+    }
+  }
+
+  public org.openspcoop2.protocol.manifest.constants.FunctionType getEmptyFunction() {
+    return this.emptyFunction;
+  }
+
+  public void setEmptyFunction(org.openspcoop2.protocol.manifest.constants.FunctionType emptyFunction) {
+    this.emptyFunction = emptyFunction;
+  }
+
   public void set_value_binding(String value) {
     this.binding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
@@ -194,6 +216,12 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_emptyFunction;
+
+  @XmlAttribute(name="emptyFunction",required=false)
+  protected FunctionType emptyFunction;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_binding;

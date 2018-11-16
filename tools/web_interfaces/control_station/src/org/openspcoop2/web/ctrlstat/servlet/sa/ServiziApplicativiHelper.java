@@ -1432,6 +1432,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				this.addFilterRuoloServizioApplicativo(filterRuoloSA,false);
 			}
 			
+			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
+			addFilterRuolo(filterRuolo, false);
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));

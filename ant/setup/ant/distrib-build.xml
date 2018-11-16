@@ -132,6 +132,14 @@
 				<delete dir="${dist}/cfg"/>
 			</then>
 		</if>
+		<if>
+			<not>
+				<istrue value="${antinstaller_loader}"/>
+			</not>
+			<then>
+				<delete file="${dist}/cfg/loader_local.properties"/>
+			</then>
+		</if>
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>
@@ -241,30 +249,37 @@
 				
 		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
 		<if>
-			<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+			<and>
+				<istrue value="${antinstaller_loader}"/>
+			</and>
 			<then>
-				<fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib" id="govway_loader.jar">
-					<include name="*.jar"/>
-				</fileset>
-				<pathconvert pathsep=" " property="govway_loader.classpath" refid="govway_loader.jar">
-					<map from="${tmp_archivi}/govwayLoader.war/WEB-INF/lib/" to="lib/"/>
-				</pathconvert>
-				<var name="manifest.classpath.govway_loader" value="${govway_loader.classpath}" />	
-				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
-				    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib"/>
-				</move>
-				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
-				    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
-				</move>
-				<war destfile="${dist}/archivi/OpenSPCoop2/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war">
-					<manifest>
-						<attribute name="Class-Path" value="${manifest.classpath.govway_loader} properties/" />
-					</manifest>
-				</war>
+				<if>
+					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					<then>
+						<fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib" id="govway_loader.jar">
+							<include name="*.jar"/>
+						</fileset>
+						<pathconvert pathsep=" " property="govway_loader.classpath" refid="govway_loader.jar">
+							<map from="${tmp_archivi}/govwayLoader.war/WEB-INF/lib/" to="lib/"/>
+						</pathconvert>
+						<var name="manifest.classpath.govway_loader" value="${govway_loader.classpath}" />	
+						<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
+						    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib"/>
+						</move>
+						<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
+						    <fileset dir="${tmp_archivi}/govwayLoader.war/WEB-INF/classes"/>
+						</move>
+						<war destfile="${dist}/archivi/OpenSPCoop2/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war">
+							<manifest>
+								<attribute name="Class-Path" value="${manifest.classpath.govway_loader} properties/" />
+							</manifest>
+						</war>
+					</then>
+					<else>
+						<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
+					</else>
+				</if>
 			</then>
-			<else>
-				<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
-			</else>
 		</if>
 				
 		<!-- *** Correzione Application.xml ***-->
@@ -272,7 +287,10 @@
 			<or>
 				<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 				<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
-				<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+				<and>
+					<istrue value="${antinstaller_loader}"/>
+					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+				</and>
 			</or>
 			<then>
 		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
@@ -315,7 +333,10 @@
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					<and>
+						<istrue value="${antinstaller_loader}"/>
+						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					</and>
 					<then>
 		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
 <![CDATA[
@@ -355,7 +376,10 @@
 				<or>
 					<istrue value="${build_govwayConsole_consoleIntegrataEAR}"/>
 					<istrue value="${build_govwayMonitor_consoleIntegrataEAR}"/>
-					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					<and>
+						<istrue value="${antinstaller_loader}"/>
+						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					</and>
 				</or>
 			</and>
 			<then>
@@ -405,7 +429,10 @@
 					</then>
 				</if>
 				<if>
-					<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					<and>
+						<istrue value="${antinstaller_loader}"/>
+						<istrue value="${build_govwayLoader_consoleIntegrataEAR}"/>
+					</and>
 					<then>
 						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
 <![CDATA[
@@ -521,7 +548,14 @@
 		</if>
 		<zip destfile="${dist}/archivi/govwayConsole.war" basedir="${tmp_archivi}/govwayConsole.war"/>
 		<zip destfile="${dist}/archivi/govwayMonitor.war" basedir="${tmp_archivi}/govwayMonitor.war"/>
-		<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
+		<if>
+			<and>
+				<istrue value="${antinstaller_loader}"/>
+			</and>
+			<then>
+				<zip destfile="${dist}/archivi/govwayLoader.war" basedir="${tmp_archivi}/govwayLoader.war"/>
+			</then>
+		</if>
 	</target>
 		
 </project>

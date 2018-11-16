@@ -214,7 +214,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	}
 
-	protected List<SelectItem> _getServizi(String input) {
+	protected List<SelectItem> _getServizi(String input) throws Exception {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}

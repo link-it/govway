@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
@@ -725,18 +726,31 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	
 	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String input){
-		return getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, null);
+	}
+	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, soloOperativi, null);
 	}
 
+	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi,  PermessiUtenteOperatore permessiUtenteOperatore){
+		return _getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, soloOperativi, permessiUtenteOperatore);
+	}
 
-	public List<SelectItem> getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+	private List<SelectItem> _getListaSelectItemsElencoServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
-			List<IDServizio> servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+			List<IDServizio> servizi2 = null;
+			if(permessiUtenteOperatore!=null) {
+				// ci si arriva da elenco configurazioni
+				servizi2 = this.dynamicUtilsService.getConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false, permessiUtenteOperatore);
+			}
+			else {
+				servizi2 = this.dynamicUtilsService.getServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+			}
 
 			List<String> lstLabelOrdinate = new ArrayList<>();
 			Map<String, String> mapElementi = new HashMap<>();
@@ -825,19 +839,32 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return servizi;
 	}
 	
-	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String input){
-		return getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String input){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false, null);
 	}
 
-
-	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String input, boolean soloOperativi){
+	public List<SelectItem> getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, null, null, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, null);
+	}
+	
+	public List<SelectItem> getListaSelectItemsElencoConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
+		return _getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, tipoSoggettoErogatore, nomeSoggettoErogatore, input, soloOperativi, permessiUtenteOperatore);
+	}
+	
+	private List<SelectItem> _getListaSelectItemsElencoServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String input, boolean soloOperativi, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
 
 			UserDetailsBean user = Utility.getLoggedUser();
 
-			List<IDServizio> servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto, input, false);
+			List<IDServizio> servizi2 = null;
+			if(tipoSoggetto!=null && nomeSoggetto!=null) {
+				// ci si arriva da elenco configurazioni
+				servizi2 = this.dynamicUtilsService.getConfigurazioneServiziFruizione(tipoProtocollo,tipoSoggetto,nomeSoggetto,null,null, tipoSoggettoErogatore, nomeSoggettoErogatore, null,null, input, false, permessiUtenteOperatore);
+			}else {
+				 servizi2 = this.dynamicUtilsService.getServiziFruizione(tipoProtocollo, tipoSoggettoErogatore, nomeSoggettoErogatore, input, false);
+			}
 
 			List<String> lstLabelOrdinate = new ArrayList<>();
 			Map<String, String> mapElementi = new HashMap<>();
@@ -864,7 +891,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 //					}
 					
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getSoggettoErogatore().getTipo(), res.getSoggettoErogatore().getNome(), res.getVersione());
-					String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+					String label = StringUtils.isEmpty(nomeSoggettoErogatore) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
 							: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 					
 					value = uri.toString();
@@ -922,7 +949,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			}
 
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
+			this.log.error("Si e' verificato un errore durante la ricerca dei servizi erogati dal Soggetto [" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore+ "]");
 		}
 		return servizi;
 	}

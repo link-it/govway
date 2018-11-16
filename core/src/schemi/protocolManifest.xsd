@@ -342,6 +342,7 @@
                      <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
               </xsd:sequence>
               <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="emptyFunction" type="FunctionType" use="optional"/>
               <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
        </xsd:complexType>
        
@@ -353,6 +354,7 @@
                      <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
               </xsd:sequence>
               <xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+              <xsd:attribute name="emptyFunction" type="FunctionType" use="optional"/>
               <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
        </xsd:complexType>
        

@@ -19,7 +19,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v"/>
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
@@ -35,7 +35,7 @@
 	    		 			<param actor="providerName" suffix="/"/>
 	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
 	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
+	    		 			<param actor="serviceVersion" prefix="v" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
 						<specificResource>
 							<name>
@@ -53,7 +53,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v"/>
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
@@ -71,7 +71,7 @@
 	    		 			<param actor="providerName" suffix="/"/>
 	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
 	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
+	    		 			<param actor="serviceVersion" prefix="v" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
 						<specificResource>
 							<name>
@@ -124,7 +124,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v" />
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="interface" forceInterfaceMode="true">
@@ -149,7 +149,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v" />
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="interface" forceInterfaceMode="true">
@@ -223,8 +223,8 @@
     
 		<!-- Contesto proxy supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
-	    <context name="api"/>
-	    <emptyContext enabled="true"/>
+	    <context name="api" emptyFunction="PA"/>
+	    <emptyContext enabled="true" emptyFunction="PA"/>
 	
 		<!-- Contesto soap supporta solamente il service binding soap 
 	 	     (Controllo Runtime) -->

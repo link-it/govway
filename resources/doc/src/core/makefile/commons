@@ -1,12 +1,15 @@
-html:	convert-accents
+html: convert-accents stylesheet-images
 	@echo "Producing html files ..."
 	xmlto html-nochunks -x ../core/xsl/main-html-nochunks.xsl ${SOURCE_FILE}.converted --skip-validation
 	@echo "Producing html files ok"
 
-xhtml:
+xhtml: convert-accents
+	@echo "Producing xhtml files ..."
 	xmlto xhtml -x ../core/xsl/main-xhtml-chunks.xsl ${SOURCE_FILE}.converted -o xhtmlout --skip-validation
+	cd xhtmlout; ln -s ../../core/stylesheet-images .; cd ..;
+	@echo "Producing xhtml files ok"
 
-pdf:    convert-accents
+pdf: convert-accents stylesheet-images
 	@echo "Producing pdf ..."
 	dblatex ${DB_LATEX_OPTIONS} --pdf ${SOURCE_FILE}.converted -o ${SOURCE_NAME}${PDF_DOC_VERSION}_originalCover.pdf
 	gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=${SOURCE_NAME}${PDF_DOC_VERSION}_originalCover_noPagineIniziali.pdf -dFirstPage=2 ${SOURCE_NAME}${PDF_DOC_VERSION}_originalCover.pdf
@@ -28,6 +31,7 @@ clean: clean-html clean-pdf clean-xhtml
 	rm -f ${SOURCE_FILE}~ 
 	rm -f ${SOURCE_FILE}.converted
 	rm -rf FIGURE_OUT
+	rm -f stylesheet-images
 
 clean-html:
 	rm -f *.html
@@ -37,6 +41,10 @@ clean-xhtml:
 
 clean-pdf:
 	rm -f *${SOURCE_NAME}*.pdf 
+
+stylesheet-images:
+	rm -f stylesheet-images	
+	ln -s ../core/stylesheet-images .
 
 convert-accents:
 	cp ${SOURCE_FILE} ${SOURCE_FILE}.converted

@@ -118,6 +118,9 @@ public class CostantiPdD {
     /** Costante che indica una busta in uscita */
     public final static String TRACCIAMENTO_OUT = "OUT";
     
+    /** Nome Porta Invocata originale */
+    public final static String NOME_PORTA_INVOCATA = "NOME_PORTA_INVOCATA";
+    
     /** Dati di integresso del messaggio */
     public final static String DATA_ACCETTAZIONE_RICHIESTA = "CONTEXT_DATA_ACCETTAZIONE_RICHIESTA";
     public final static String DATA_INGRESSO_RICHIESTA = "CONTEXT_DATA_INGRESSO_RICHIESTA";

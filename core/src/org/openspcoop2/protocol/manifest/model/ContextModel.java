@@ -47,6 +47,7 @@ public class ContextModel extends AbstractModel<Context> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new Field("soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"Context",Context.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"Context",Context.class));
 		this.NAME = new Field("name",java.lang.String.class,"Context",Context.class);
+		this.EMPTY_FUNCTION = new Field("emptyFunction",java.lang.String.class,"Context",Context.class);
 		this.BINDING = new Field("binding",java.lang.String.class,"Context",Context.class);
 	
 	}
@@ -60,6 +61,7 @@ public class ContextModel extends AbstractModel<Context> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new ComplexField(father,"soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"Context",Context.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"Context",Context.class));
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"Context",Context.class);
+		this.EMPTY_FUNCTION = new ComplexField(father,"emptyFunction",java.lang.String.class,"Context",Context.class);
 		this.BINDING = new ComplexField(father,"binding",java.lang.String.class,"Context",Context.class);
 	
 	}
@@ -75,6 +77,8 @@ public class ContextModel extends AbstractModel<Context> {
 	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel REST_MEDIA_TYPE_COLLECTION = null;
 	 
 	public IField NAME = null;
+	 
+	public IField EMPTY_FUNCTION = null;
 	 
 	public IField BINDING = null;
 	 

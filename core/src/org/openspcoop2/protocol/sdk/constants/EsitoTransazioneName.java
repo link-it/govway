@@ -71,6 +71,7 @@ public enum EsitoTransazioneName implements Serializable{
 	HTTP_5xx,
 	ERRORE_VALIDAZIONE_RICHIESTA,
 	ERRORE_VALIDAZIONE_RISPOSTA,
+	ERRORE_SOSPENSIONE,
 	
 	CUSTOM;
 

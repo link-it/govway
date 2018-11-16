@@ -484,7 +484,7 @@ public class SoggettoUpdateUtilities {
 								}
 								String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
 								if(descrizionePD.contains(match_caso1_testService)) {
-									String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+": ";
+									String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
 									descrizionePD = descrizionePD.replace(match_caso1_testService, replace_caso1_testService);
 								}
 							
@@ -559,6 +559,48 @@ public class SoggettoUpdateUtilities {
 								}
 							}// fine controllo azione
 	
+							// DelegatedBy
+							String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+							if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
+								String regexDelegante = ".*\\/.*\\/.*";
+								// pattern (fruitore)/(erogatore)/....
+								if(nomePortaDelegante.matches(regexDelegante)){
+									String[] tmpDelegante = nomePortaDelegante.split("\\/");
+									String partFruitoreDelegante = tmpDelegante[0];
+									String partErogatoreDelegante = tmpDelegante[1];
+									String rimanenteDelegante = "";
+									int lengthParteRimanenteDelegante = (partFruitoreDelegante+"/"+partErogatoreDelegante).length();
+									if(nomePortaDelegante.length()>lengthParteRimanenteDelegante){
+										rimanenteDelegante = nomePortaDelegante.substring(lengthParteRimanenteDelegante);
+									}							
+									boolean modificatoNomeDelegante = false;
+									
+									// se (fruitore) contiene tipoNomeSoggetto proprietario della PortaDelegata deve essere modificato
+									if(tipoNomeSoggettoFruitore.equals(partFruitoreDelegante)){
+										if(tipoNomeSoggettoFruitore.equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+											partFruitoreDelegante = this.tipoprov + "_" + this.nomeprov;
+											modificatoNomeDelegante = true;
+										}
+									}
+									else if(("__"+tipoNomeSoggettoFruitore).equals(partFruitoreDelegante)){
+										if((tipoNomeSoggettoFruitore).equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+											partFruitoreDelegante = "__"+this.tipoprov + "_" + this.nomeprov;
+											modificatoNomeDelegante = true;
+										}
+									}
+									
+									// se (erogatore) contiene tipoNomeSoggetto erogatore della PortaDelegata deve essere modificato
+									if(partErogatoreDelegante!=null && partErogatoreDelegante.equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+										partErogatoreDelegante = this.tipoprov + "_" + this.nomeprov;
+										modificatoNomeDelegante = true;
+									}
+									
+									if(modificatoNomeDelegante){
+										String nuovoNomeDelegante = partFruitoreDelegante + "/" + partErogatoreDelegante + rimanenteDelegante;
+										portaDelegata.getAzione().setNomePortaDelegante(nuovoNomeDelegante);
+									}
+								}
+							}// fine controllo DelegatedBy
 						}
 					}
 					
@@ -585,7 +627,7 @@ public class SoggettoUpdateUtilities {
 				// recupero lo porte delegate per location
 				// e aggiorno il nome e la location
 				String locationPrefix = "";
-				String locationSuffix = "/" + this.oldtipoprov +"_" + this.oldnomeprov + "/" + asps.getTipo()+"_" +asps.getNome() + "/" + asps.getVersione().intValue();
+				String locationSuffix = "/" + this.oldtipoprov +"_" + this.oldnomeprov + "/" + asps.getTipo()+"_" +asps.getNome() + "/v" + asps.getVersione().intValue();
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					locationPrefix = fruitore.getTipo()+"_" + fruitore.getNome();
 					String location = locationPrefix + locationSuffix;
@@ -596,7 +638,15 @@ public class SoggettoUpdateUtilities {
 					try {
 						portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
 					}catch(DriverConfigurazioneNotFound notFound) {}
-					
+					if(portaDelegata==null) {
+						try {
+							// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
+							String oldLocationSuffix = "/" + this.oldtipoprov +"_" + this.oldnomeprov + "/" + asps.getTipo()+"_" +asps.getNome() + "/" + asps.getVersione().intValue();
+							String oldLocation = locationPrefix + oldLocationSuffix;
+							idPD.setNome(oldLocation);
+							portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
+						}catch(DriverConfigurazioneNotFound notFound) {}
+					}
 					if(portaDelegata!=null){
 
 						// Per tutte le porte delegate che rispettano la
@@ -613,7 +663,7 @@ public class SoggettoUpdateUtilities {
 							portaDelegata = listaPD.get(idPorta);
 						}
 						// new locationSuffix
-						String newLocationSuffix = "/" + this.tipoprov+"_" +this.nomeprov + "/" + asps.getTipo()+"_" +asps.getNome() + "/" + asps.getVersione().intValue();
+						String newLocationSuffix = "/" + this.tipoprov+"_" +this.nomeprov + "/" + asps.getTipo()+"_" +asps.getNome() + "/v" + asps.getVersione().intValue();
 						String newLocationPrefix = null;
 						if(fruitore.getTipo().equals(this.oldtipoprov) && fruitore.getNome().equals(this.oldnomeprov)){
 							newLocationPrefix = this.tipoprov+ "_" +this.nomeprov;
@@ -643,7 +693,7 @@ public class SoggettoUpdateUtilities {
 							}
 							String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
 							if(descrizionePD.contains(match_caso1_testService)) {
-								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+": ";
+								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
 								descrizionePD = descrizionePD.replace(match_caso1_testService, replace_caso1_testService);
 							}
 						
@@ -727,6 +777,45 @@ public class SoggettoUpdateUtilities {
 
 							}
 						}// fine controllo azione
+						
+						// DelegatedBy
+						String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+						if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
+							String regexDelegante = ".*\\/.*\\/.*";
+							// pattern (fruitore)/(erogatore)/....
+							if(nomePortaDelegante.matches(regexDelegante)){
+								String[] tmpDelegante = nomePortaDelegante.split("\\/");
+								String partFruitoreDelegante = tmpDelegante[0];
+								String partErogatoreDelegante = tmpDelegante[1];
+								String rimanenteDelegante = "";
+								int lengthParteRimanenteDelegante = (partFruitoreDelegante+"/"+partErogatoreDelegante).length();
+								if(nomePortaDelegante.length()>lengthParteRimanenteDelegante){
+									rimanenteDelegante = nomePortaDelegante.substring(lengthParteRimanenteDelegante);
+								}							
+								boolean modificatoNomeDelegante = false;
+								
+								// se (fruitore) contiene tipoNomeSoggetto proprietario della PortaDelegata deve essere modificato
+								if((this.oldtipoprov + "_" + this.oldnomeprov).equals(partFruitoreDelegante)){
+									partFruitoreDelegante = this.tipoprov + "_" + this.nomeprov;
+									modificatoNomeDelegante = true;
+								}
+								else if(("__"+(this.oldtipoprov + "_" + this.oldnomeprov)).equals(partFruitoreDelegante)){
+									partFruitoreDelegante = "__"+this.tipoprov + "_" + this.nomeprov;
+									modificatoNomeDelegante = true;
+								}
+								
+								// se (erogatore) contiene tipoNomeSoggetto erogatore della PortaDelegata deve essere modificato
+								if(partErogatoreDelegante!=null && partErogatoreDelegante.equals(this.oldtipoprov + "_" + this.oldnomeprov)){
+									partErogatoreDelegante = this.tipoprov + "_" + this.nomeprov;
+									modificatoNomeDelegante = true;
+								}
+								
+								if(modificatoNomeDelegante){
+									String nuovoNomeDelegante = partFruitoreDelegante + "/" + partErogatoreDelegante + rimanenteDelegante;
+									portaDelegata.getAzione().setNomePortaDelegante(nuovoNomeDelegante);
+								}
+							}
+						}// fine controllo DelegatedBy
 
 						// (ri)aggiungo pd
 						listaPD.put(idPorta, portaDelegata);
@@ -880,7 +969,7 @@ public class SoggettoUpdateUtilities {
 							// Service implementation gw/ENTE:gw/TEST:1
 							String match_caso1_testService = " "+this.oldtipoprov+"/"+this.oldnomeprov+":";
 							if(descrizionePA.contains(match_caso1_testService)) {
-								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+": ";
+								String replace_caso1_testService = " "+this.tipoprov+"/"+this.nomeprov+":";
 								descrizionePA = descrizionePA.replace(match_caso1_testService, replace_caso1_testService);
 							}
 						
@@ -944,6 +1033,46 @@ public class SoggettoUpdateUtilities {
 								}
 							}
 						}
+						
+						// DelegatedBy
+						String nomePortaDelegante = paAzione != null ? (paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null) : null;
+						if (PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
+							
+							String regexDelegante = "(.*)\\/(.*)\\/(.*)";
+							if (nomePortaDelegante.matches(regexDelegante)) {
+
+								String[] valDelegante = nomePortaDelegante.split("\\/");
+								String patErogatoreDelegante = valDelegante[0];
+								String patServizioDelegante = valDelegante[1];
+								String patVersioneServizioDelegante = valDelegante[2];
+								String patAzioneDelegante = null;
+								if(valDelegante.length>3){
+									patAzioneDelegante = "";
+									for (int i = 3; i < valDelegante.length; i++) {
+										if(i>3){
+											patAzioneDelegante = patAzioneDelegante + "/";
+										}
+										patAzioneDelegante = patAzioneDelegante + valDelegante[i];
+									}
+								}
+
+								// erogatore
+								if (patErogatoreDelegante.equals(this.oldtipoprov+ "_" +this.oldnomeprov)) {
+									patErogatoreDelegante = this.tipoprov+ "_" +this.nomeprov;
+								}
+								else if (patErogatoreDelegante.equals("__"+this.oldtipoprov+ "_" +this.oldnomeprov)) {
+									patErogatoreDelegante = "__"+this.tipoprov+ "_" +this.nomeprov;
+								}
+
+								String newNomeDelegante = patErogatoreDelegante + "/" + patServizioDelegante + "/" + patVersioneServizioDelegante ;
+								if(patAzioneDelegante!=null){
+									newNomeDelegante = newNomeDelegante + "/" + patAzioneDelegante;
+								}
+								
+								portaApplicativa.getAzione().setNomePortaDelegante(newNomeDelegante);
+							}
+							
+						}// fine controllo DelegatedBy
 						
 						
 					}// fine controllo nome

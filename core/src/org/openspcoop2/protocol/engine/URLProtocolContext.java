@@ -24,13 +24,13 @@ package org.openspcoop2.protocol.engine;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
+import org.slf4j.Logger;
 
 /**
  * URL Protocol Context
@@ -107,150 +107,147 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 			logCore.debug("SERVLET CONTEXT ["+servletContext+"] URL["+urlInvocazione+"]");
 			// es SERVLET CONTEXT [/govway] URL[/govway/altriParametri]
 		try {
-					
+			
+			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			IProtocolFactory<?> pfEmptyContext = protocolFactoryManager.getProtocolFactoryWithEmptyContext();
+			IDService idServiceDefaultEmptyContext = protocolFactoryManager.getDefaultServiceForEmptyContext();
+			
 			// Altro...
-			if(urlInvocazione.startsWith(servletContext+"/")==false){
-				throw new Exception("OpenSPCoop2 [protocol/]service to be used not supplied (context error)");
+			if(urlInvocazione.startsWith(servletContext+"/")){
+				servizioInvocato = urlInvocazione.substring((servletContext+"/").length());
+			}
+			else if(urlInvocazione.equals(servletContext)){
+				servizioInvocato = null;
+			}
+			else {
+				throw new Exception("GovWay [protocol/]service to be used not supplied (context error)");
 			}
 			
-			servizioInvocato = urlInvocazione.substring((servletContext+"/").length());
+			
 			if(logCore!=null)
 				logCore.debug("SERVIZIO RICHIESTO: ["+servizioInvocato+"]");
 			
 			// verifico che dopo "openspcoop2" sia stato fornito qualcosa
 			if(servizioInvocato==null || "".equals(servizioInvocato.trim())){
-				throw new Exception("OpenSPCoop2 [protocol/]service to be used not supplied");
-			}
-			
-			// Esamino il servizio fornito. Puo' darsi che prima del servizio ci sia il protocollo.
-			String protocollo = null;
-			String function = null;
-			String functionParameters = null;
-			if(servizioInvocato.indexOf("/") >= 0){
-				protocollo = servizioInvocato.substring(0,servizioInvocato.indexOf("/"));
-				function = servizioInvocato.substring(servizioInvocato.indexOf("/")+1,servizioInvocato.length());
-			}else{
-				protocollo = servizioInvocato;
-				function = servizioInvocato;
-			}
-			if(logCore!=null)
-				logCore.debug("PROTOCOLLO["+protocollo+"] FUNCTION["+function+"]");
-			
-			// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
-			boolean IMengine = false;
-			if(integrationManagerEngine && protocollo.equals(URLProtocolContext.IntegrationManager_ENGINE)) {
-				if(logCore!=null)
-					logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
-				function = protocollo;
-				
-				IMengine = true;
-				
-				Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
-				if(o == null || !(o instanceof String)){
-					throw new Exception("Indicazione del protocollo non presente");
-				}
-				this.protocolName = (String) o;
-				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocolName);
-				if(pf==null){
-					throw new Exception("Non risulta registrato un protocollo con nome ["+this.protocolName+"]");
-				}
-				
-				o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT);
-				if(o == null || !(o instanceof String)){
-					throw new Exception("Indicazione del web context del protocollo non presente");
-				}
-				this.protocolWebContext = (String) o;
-				pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
-				if(pf==null){
-					if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
-						throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
-					else
-						throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
-				}
-				
-				int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
-				if(req.getRequestURI().length()>sizePrefix){
-					functionParameters = req.getRequestURI().substring(sizePrefix);
-				}
-				
-				if(functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
-					function+="_"+IntegrationManager_SERVICE_PD;
-					
-					Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA);
-					if(oPD == null || !(oPD instanceof String)){
-						throw new Exception("Indicazione della porta delegata non presente");
+				if(pfEmptyContext!=null && idServiceDefaultEmptyContext!=null) {
+					this.protocolName = pfEmptyContext.getProtocol();
+					this.idServiceCustom = idServiceDefaultEmptyContext;
+					switch (idServiceDefaultEmptyContext) {
+					case PORTA_DELEGATA:
+						this.function = URLProtocolContext.PD_FUNCTION_GOVWAY;
+						break;
+					case PORTA_APPLICATIVA:
+						this.function = URLProtocolContext.PA_FUNCTION_GOVWAY;
+						break;
+					case PORTA_DELEGATA_XML_TO_SOAP:
+						this.function = URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+						break;
+					default:
+						throw new Exception("GovWay [protocol/]service to be used not supplied");
 					}
-					
-					functionParameters=(String)oPD;
-					
-				} 
-				else if(functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
-					function+="_"+IntegrationManager_SERVICE_MessageBox;
-					
-					if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {
-						functionParameters = functionParameters.substring(IntegrationManager_SERVICE_MessageBox.length());
-					}
-//					else {
-//						functionParameters = null;
-//					}
-				}
-			}
-			else if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
-					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
-					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
-					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
-					protocollo.equals(URLProtocolContext.Check_FUNCTION) ||
-					(customContexts!=null && customContexts.isMatch(protocollo, function))) {
-				// ContextProtocol Empty
-				if(logCore!=null)
-					logCore.debug("SERVLET PATH EMPTY");
-				if((customContexts!=null && customContexts.isMatch(protocollo, function))) {
-					this.idServiceCustom = customContexts.getServiceMatch(protocollo, function);
-					function = customContexts.getFunctionMatch(protocollo, function);
-					if(logCore!=null)
-						logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
+					this.functionParameters = servizioInvocato;
+					this.protocolWebContext = Costanti.CONTEXT_EMPTY;
 				}
 				else {
+					throw new Exception("GovWay [protocol/]service to be used not supplied");
+				}
+			}
+			else {
+			
+				// Esamino il servizio fornito. Puo' darsi che prima del servizio ci sia il protocollo.
+				String protocollo = null;
+				String function = null;
+				String functionParameters = null;
+				if(servizioInvocato.indexOf("/") >= 0){
+					protocollo = servizioInvocato.substring(0,servizioInvocato.indexOf("/"));
+					function = servizioInvocato.substring(servizioInvocato.indexOf("/")+1,servizioInvocato.length());
+				}else{
+					protocollo = servizioInvocato;
+					function = servizioInvocato;
+				}
+				if(logCore!=null)
+					logCore.debug("PROTOCOLLO["+protocollo+"] FUNCTION["+function+"]");
+				
+				// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
+				boolean IMengine = false;
+				if(integrationManagerEngine && protocollo.equals(URLProtocolContext.IntegrationManager_ENGINE)) {
+					if(logCore!=null)
+						logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
 					function = protocollo;
+					
+					IMengine = true;
+					
+					Object o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+					if(o == null || !(o instanceof String)){
+						throw new Exception("Indicazione del protocollo non presente");
+					}
+					this.protocolName = (String) o;
+					IProtocolFactory<?> pf = protocolFactoryManager.getProtocolFactoryByName(this.protocolName);
+					if(pf==null){
+						throw new Exception("Non risulta registrato un protocollo con nome ["+this.protocolName+"]");
+					}
+					
+					o = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT);
+					if(o == null || !(o instanceof String)){
+						throw new Exception("Indicazione del web context del protocollo non presente");
+					}
+					this.protocolWebContext = (String) o;
+					pf = protocolFactoryManager.getProtocolFactoryByServletContext(this.protocolWebContext);
+					if(pf==null){
+						if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
+							throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
+						else
+							throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+					}
+					
+					int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
+					if(req.getRequestURI().length()>sizePrefix){
+						functionParameters = req.getRequestURI().substring(sizePrefix);
+					}
+					
+					if(functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
+						function+="_"+IntegrationManager_SERVICE_PD;
+						
+						Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA);
+						if(oPD == null || !(oPD instanceof String)){
+							throw new Exception("Indicazione della porta delegata non presente");
+						}
+						
+						functionParameters=(String)oPD;
+						
+					} 
+					else if(functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
+						function+="_"+IntegrationManager_SERVICE_MessageBox;
+						
+						if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {
+							functionParameters = functionParameters.substring(IntegrationManager_SERVICE_MessageBox.length());
+						}
+	//					else {
+	//						functionParameters = null;
+	//					}
+					}
 				}
-				protocollo = Costanti.CONTEXT_EMPTY;
-				
-				int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
-				if(req.getRequestURI().length()>sizePrefix){
-					functionParameters = req.getRequestURI().substring(sizePrefix);
-				}
-				else {
-					// Serve nei casi custom
-					functionParameters = null;
-				}
-			}
-			else{
-				// Calcolo function
-				if(function.indexOf("/") > 0){
-					function = function.substring(0,function.indexOf("/"));
-				}
-				else if(function.indexOf("?") > 0){
-					function = function.substring(0,function.indexOf("?"));
-				}
-				if(logCore!=null)
-					logCore.debug("FUNCTION ["+function+"]");
-				
-				int sizePrefix = (req.getContextPath() + "/"+ protocollo + "/" + function + "/").length();
-				if(req.getRequestURI().length()>sizePrefix){
-					functionParameters = req.getRequestURI().substring(sizePrefix);
-				}
-				else {
-					// Serve nei casi custom
-					functionParameters = null;
-				}
-				
-				if((customContexts!=null && customContexts.isMatch(function, functionParameters))) {
-					this.idServiceCustom = customContexts.getServiceMatch(function, functionParameters);
-					function = customContexts.getFunctionMatch(function, functionParameters);
+				else if(protocollo.equals(URLProtocolContext.PA_FUNCTION) || 
+						protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
+						protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
+						protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
+						protocollo.equals(URLProtocolContext.Check_FUNCTION) ||
+						(customContexts!=null && customContexts.isMatch(protocollo, function))) {
+					// ContextProtocol Empty
 					if(logCore!=null)
-						logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
-					// ricalcolo function parameters
-					sizePrefix = (req.getContextPath() + "/"+ protocollo + "/" + function + "/").length();
+						logCore.debug("SERVLET PATH EMPTY");
+					if((customContexts!=null && customContexts.isMatch(protocollo, function))) {
+						this.idServiceCustom = customContexts.getServiceMatch(protocollo, function);
+						function = customContexts.getFunctionMatch(protocollo, function);
+						if(logCore!=null)
+							logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
+					}
+					else {
+						function = protocollo;
+					}
+					protocollo = Costanti.CONTEXT_EMPTY;
+					
+					int sizePrefix = (req.getContextPath() + "/" + function + "/").length();
 					if(req.getRequestURI().length()>sizePrefix){
 						functionParameters = req.getRequestURI().substring(sizePrefix);
 					}
@@ -259,25 +256,149 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 						functionParameters = null;
 					}
 				}
-			}
-									
-			if(logCore!=null)
-				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
-			
-			if(!IMengine) {
-				this.protocolWebContext = protocollo;
-				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(this.protocolWebContext);
-				if(pf==null){
-					if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
-						throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
-					else
-						throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+				else{
+					// Verifico se esiste o meno il protocollo tra quelli registrati
+					boolean casoSpeciale_noProtocollo_noFunction = false;
+					try {
+						IProtocolFactory<?> pfCheck = protocolFactoryManager.getProtocolFactoryByServletContext(protocollo);
+						if(pfCheck==null) {
+							throw new Exception("NotFound");
+						}
+					}catch(Exception e) {
+						if(pfEmptyContext!=null) {
+							if(function!=null && !"".equals(function)) {
+								function = protocollo + "/" + function;
+							}
+							else {
+								function = protocollo;
+							}
+							protocollo = Costanti.CONTEXT_EMPTY;
+							casoSpeciale_noProtocollo_noFunction = true;
+						}
+					}
+						
+					
+					// Calcolo function
+					String functionParameterForCheckCustom = null;
+					if(function.indexOf("/") > 0){
+						functionParameterForCheckCustom = function.substring(function.indexOf("/"));
+						if(functionParameterForCheckCustom.length()>1 && functionParameterForCheckCustom.startsWith("/")) {
+							functionParameterForCheckCustom = functionParameterForCheckCustom.substring(1);
+						}
+					}
+					if(function.indexOf("/") > 0){
+						function = function.substring(0,function.indexOf("/"));
+					}
+					else if(function.indexOf("?") > 0){
+						function = function.substring(0,function.indexOf("?"));
+					}
+					if(logCore!=null)
+						logCore.debug("FUNCTION ["+function+"]");
+					
+					boolean emptyFunction = false;
+					if(casoSpeciale_noProtocollo_noFunction ||
+							(
+									! (function.equals(URLProtocolContext.PA_FUNCTION) || 
+											function.equals(URLProtocolContext.PD_FUNCTION) || 
+											function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
+											function.equals(URLProtocolContext.IntegrationManager_FUNCTION) ||
+											function.equals(URLProtocolContext.Check_FUNCTION) ||
+										(customContexts!=null && customContexts.isMatch(function, functionParameterForCheckCustom))) 
+									)
+							){
+						IDService idS = null;
+						if(casoSpeciale_noProtocollo_noFunction) {
+							if(pfEmptyContext!=null && idServiceDefaultEmptyContext!=null) {
+								idS = idServiceDefaultEmptyContext;							
+							}
+						}
+						else {
+							idS = protocolFactoryManager.getDefaultServiceForWebContext(protocollo);
+						}
+						if(idS!=null) {
+							this.protocolName = pfEmptyContext.getProtocol();
+							this.idServiceCustom = idS;
+							switch (idS) {
+							case PORTA_DELEGATA:
+								function = URLProtocolContext.PD_FUNCTION_GOVWAY;
+								emptyFunction = true;
+								break;
+							case PORTA_APPLICATIVA:
+								function = URLProtocolContext.PA_FUNCTION_GOVWAY;
+								emptyFunction = true;
+								break;
+							case PORTA_DELEGATA_XML_TO_SOAP:
+								function = URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+								emptyFunction = true;
+								break;
+							default:
+							}
+						}
+					}
+					
+					StringBuffer bfSizePrefix = new StringBuffer(req.getContextPath());
+					if(!Costanti.CONTEXT_EMPTY.equals(protocollo)) {
+						bfSizePrefix.append("/").append(protocollo);
+					}
+					if(!emptyFunction) {
+						bfSizePrefix.append("/").append(function);
+					}
+					bfSizePrefix.append("/");
+					
+					int sizePrefix = bfSizePrefix.length();
+					if(req.getRequestURI().length()>sizePrefix){
+						functionParameters = req.getRequestURI().substring(sizePrefix);
+					}
+					else {
+						// Serve nei casi custom
+						functionParameters = null;
+					}
+					
+					if(!casoSpeciale_noProtocollo_noFunction && !emptyFunction) {
+						if((customContexts!=null && customContexts.isMatch(function, functionParameters))) {
+							this.idServiceCustom = customContexts.getServiceMatch(function, functionParameters);
+							function = customContexts.getFunctionMatch(function, functionParameters);
+							if(logCore!=null)
+								logCore.debug("CUSTOM FUNCTION ["+function+"] ["+this.idServiceCustom+"]");
+							// ricalcolo function parameters
+							sizePrefix = (req.getContextPath() + "/"+ protocollo + "/" + function + "/").length();
+							if(req.getRequestURI().length()>sizePrefix){
+								functionParameters = req.getRequestURI().substring(sizePrefix);
+							}
+							else {
+								// Serve nei casi custom
+								functionParameters = null;
+							}
+						}
+					}
+					
+					if(casoSpeciale_noProtocollo_noFunction && emptyFunction) {
+						this.requestURI = this.requestURI.replace(servletContext+"/", servletContext+"/"+function+"/");
+					}
+					else if(emptyFunction) {
+						this.requestURI = this.requestURI.replace(servletContext+"/"+protocollo+"/", servletContext+"/"+protocollo+"/"+function+"/");
+					}
 				}
-				this.protocolName = pf.getProtocol();
+										
+				if(logCore!=null)
+					logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
+				
+				if(!IMengine) {
+					this.protocolWebContext = protocollo;
+					IProtocolFactory<?> pf = protocolFactoryManager.getProtocolFactoryByServletContext(this.protocolWebContext);
+					if(pf==null){
+						if(!Costanti.CONTEXT_EMPTY.equals(this.protocolWebContext))
+							throw new Exception("Non risulta registrato un protocollo con contesto ["+this.protocolWebContext+"]");
+						else
+							throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+					}
+					this.protocolName = pf.getProtocol();
+				}
+	
+				this.function = function;
+				this.functionParameters = functionParameters;
+				
 			}
-
-			this.function = function;
-			this.functionParameters = functionParameters;		
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

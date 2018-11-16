@@ -1,3 +1,17 @@
+2018-11-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-790
+	Semplificate le url di invocazione di una erogazione/fruizione nel profilo 'API Gateway' tramite le seguenti convenzioni:
+	1) Registrato come default il contesto vuoto per la modalità API Gateway. 
+	Si può utilizzare per indirizzare il profilo 'API Gateway' sia '/govway/api/in' che '/govway/in'.
+	2) Registrato come default il canale di inbound per le erogazioni.
+	Si può utilizzare per indirizzare una erogazione per il profilo 'API Gateway' sia '/govway/in/<API>' che '/govway/<API>'.
+	3) Aggiunta alla versione presente nel path un prefisso 'v'.
+	Grazie ai 3 accorgimenti sopra indicati, una erogazione di API è adesso indirizzabile 
+	tramite una url di invocazione più compatta simile ad esempio alla seguente:
+	- http://host/govway/Ente/API/v2
+
 2018-11-09  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayMonitor]

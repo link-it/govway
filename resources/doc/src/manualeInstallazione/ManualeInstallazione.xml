@@ -132,10 +132,10 @@
 							<title>Introduzione</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr0.pdf"/>
+									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr0.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr0.jpg"/>
+									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr0.jpg"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -174,11 +174,11 @@
 								<title>Informazioni Preliminari</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr1.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr1.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -224,11 +224,11 @@
 								<title>Informazioni Accesso Database</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr2.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr2.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -277,11 +277,11 @@
 								<title>Informazioni Utenza Amministratore</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr3.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr3.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -305,11 +305,11 @@
 								<title>Modalità Operativa</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr4.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr4.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -351,11 +351,11 @@
 								<title>Configurazione eDelivery</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr5.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr5.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -410,11 +410,11 @@
 								<title>Configurazione eDelivery (DBMS)</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr6.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr6.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -462,10 +462,10 @@
 							<title>Compatibilita' OpenSPCoop v1</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr7.pdf" />
+									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr7.pdf" />
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/installer-scr7.jpg" />
+									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr7.jpg" />
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -481,11 +481,11 @@
 								<title>Installazione</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr8.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr8.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -507,11 +507,11 @@
 								<title>Scelta versione precedente</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr9.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr9.png"/>
 									</imageobject>
 								</mediaobject>
@@ -527,11 +527,11 @@
 									provenienza</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr10.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="80%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/installer-scr10.png"/>
 									</imageobject>
 								</mediaobject>
@@ -792,11 +792,11 @@
 							<title>Verifica Installazione: govwayConsole</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/govwayConsole_login.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/govwayConsole_login.png"/>
 								</imageobject>
 							</mediaobject>
@@ -817,11 +817,11 @@
 							<title>Verifica Installazione: govwayMonitor</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/govwayMonitor_login.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/govwayMonitor_login.png"/>
 								</imageobject>
 							</mediaobject>

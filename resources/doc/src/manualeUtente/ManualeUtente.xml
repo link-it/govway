@@ -307,11 +307,11 @@
 					<title>Fasi dell'elaborazione di una richiesta</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="100%"
-								fileref="FIGURE_OUT/ArchitetturaFunzionaleGovWay.jpg"/>
+							<imagedata width="80%"
+								fileref="FIGURE_OUT/ArchitetturaFunzionaleGovWay.png"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="100%"
+							<imagedata width="80%"
 								fileref="FIGURE_OUT/ArchitetturaFunzionaleGovWay.pdf"/>
 						</imageobject>
 					</mediaobject>
@@ -426,7 +426,7 @@
 							<imagedata width="80%" fileref="FIGURE_OUT/ErogazioneScenario.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ErogazioneScenario.jpg"/>
+							<imagedata width="80%" fileref="FIGURE_OUT/ErogazioneScenario.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -743,7 +743,7 @@
 						<imagedata width="80%" fileref="FIGURE_OUT/FruizioneScenario.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/FruizioneScenario.jpg"/>
+						<imagedata width="80%" fileref="FIGURE_OUT/FruizioneScenario.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>

@@ -1214,7 +1214,8 @@ public class RicezioneBuste {
 					idPA.getIdentificativiErogazione().setIdServizio(idServizio);
 					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, this.generatoreErrore, 
 							ServicesUtils.getServiceIdentificationReader(logCore, requestInfo), msgDiag, 
-							urlProtocolContext, idPA);
+							urlProtocolContext, idPA,
+							pddContext);
 					//requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
 				}
 				
@@ -1541,7 +1542,15 @@ public class RicezioneBuste {
 			if(identificazione.find(action)) {
 				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
 				if(idPA_action!=null) {
+					
+					requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, pa.getNome()); // prima di aggiornare la porta applicativa
+										
 					pa = identificazione.getPortaApplicativa(action);
+					msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, pa.getNome());
+					msgDiag.updatePorta(pa.getNome());
+					if(requestMessage.getTransportRequestContext()!=null) {
+						requestMessage.getTransportRequestContext().setInterfaceName(pa.getNome());
+					}
 				}
 			}else {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
@@ -3281,6 +3290,9 @@ public class RicezioneBuste {
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 				integrationError = IntegrationError.INTERNAL_ERROR;
 			}else{
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOSPENSIONE, "true");
+				
 				String msg = "Servizio di ricezione buste disabilitato";
 				if(serviceIsEnabled){
 					if(pa!=null){

@@ -172,7 +172,7 @@ public interface IDynamicUtilsService {
 	 * @param nomeServizio
 	 * @return Accordi Servizio Parte Comune trovati
 	 */
-	public AccordoServizioParteComune getAccordoServizio(String tipoProtocollo, IDSoggetto idSoggetto, String tipoServizio, String nomeServizio);
+	public AccordoServizioParteComune getAccordoServizio(String tipoProtocollo, IDSoggetto idSoggetto, String tipoServizio, String nomeServizio, Integer versioneServizio);
 	
 	/***
 	 * 
@@ -257,9 +257,11 @@ public interface IDynamicUtilsService {
 
 	public List<IDServizio> getServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,boolean searchTipo);
 	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String val,boolean searchTipo);
-	public int countServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<IDServizio> getConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countConfigurazioneServiziErogazione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
 	
-	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,boolean searchTipo);
-	public int countServiziFruizione(String tipoProtocollo, String tipoSoggetto , String nomeSoggetto, String val,boolean searchTipo);
-	public int countServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<IDServizio> getServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,boolean searchTipo);
+	public int countServiziFruizione(String tipoProtocollo, String tipoSoggettoErogatore , String nomeSoggettoErogatore, String val,boolean searchTipo);
+	public List<IDServizio> getConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countConfigurazioneServiziFruizione(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, String val,boolean searchTipo, PermessiUtenteOperatore permessiUtenteOperatore);
 }

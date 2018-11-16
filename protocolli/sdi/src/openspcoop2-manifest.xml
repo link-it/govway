@@ -20,7 +20,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v" />
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes forceInterfaceMode="false">
@@ -42,7 +42,7 @@
     		 			<param actor="providerName" suffix="/"/>
     		 			<param actor="serviceType" suffix="_"/>
     		 			<param actor="serviceName" suffix="/"/>
-    		 			<param actor="serviceVersion"/>
+    		 			<param actor="serviceVersion" prefix="v" />
     		 		</name>
 					<resourceIdentification>
 	    		 		<identificationModes default="url" forceInterfaceMode="true">
@@ -60,7 +60,7 @@
 	    		 			<param actor="providerName" suffix="/"/>
 	    		 			<param prefix="(?:" actor="serviceType" suffix="_)?"/>
 	    		 			<param actor="serviceName" suffix="/"/>
-	    		 			<param actor="serviceVersion" suffix="/([^/|^?]*).*"/>
+	    		 			<param actor="serviceVersion" prefix="v" suffix="/([^/|^?]*).*"/>
 	    		 		</identificationParameter>
 						<specificResource>
 							<name>

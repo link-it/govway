@@ -231,7 +231,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		ConnectorDispatcherErrorInfo cInfo = null;
 		try{
 			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
-					generatoreErrore, serviceIdentificationReader, msgDiag);
+					generatoreErrore, serviceIdentificationReader, msgDiag, 
+					context!=null ? context.getPddContext(): null);
 			if(cInfo!=null){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -601,6 +602,10 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 			Utilities.printFreeMemory("IntegrationManager - Post costruzione richiesta");
 			msgRequest.setProtocolName(protocolFactory.getProtocol());
+			Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+			if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+				msgRequest.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );
+			}
 
 			
 

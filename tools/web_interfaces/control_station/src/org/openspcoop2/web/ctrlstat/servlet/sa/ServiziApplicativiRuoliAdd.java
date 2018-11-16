@@ -107,7 +107,7 @@ public final class ServiziApplicativiRuoliAdd extends Action {
 			String nomeservizioApplicativo = sa.getNome();		
 			
 			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
-			filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+			filtroRuoli.setContesto(RuoloContesto.QUALSIASI); // gli applicativi possono essere usati anche nelle erogazioni.
 			filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
 			
 			List<String> ruoli = new ArrayList<>();

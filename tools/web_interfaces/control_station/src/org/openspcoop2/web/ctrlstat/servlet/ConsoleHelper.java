@@ -78,6 +78,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.Config;
@@ -5268,6 +5269,36 @@ public class ConsoleHelper {
 			throw new Exception(e);
 		}
 
+	}
+	
+	public void addFilterRuolo(String ruolo, boolean postBack) throws Exception{
+		try {
+			
+			FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+			filtroRuoli.setContesto(RuoloContesto.QUALSIASI);
+			filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+			List<IDRuolo> listRuoli = this.ruoliCore.getAllIdRuoli(filtroRuoli);
+			int length = 1;
+			if(listRuoli!=null && listRuoli.size()>0) {
+				length+=listRuoli.size();
+			}
+			String [] values = new String[length];
+			String [] labels = new String[length];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_RUOLO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_RUOLO_QUALSIASI;
+			if(listRuoli!=null && listRuoli.size()>0) {
+				for (int i =0; i < listRuoli.size() ; i ++) {
+					labels[i+1] = listRuoli.get(i).getNome();
+					values[i+1] = listRuoli.get(i).getNome();
+				}
+			}
+			
+			this.pd.addFilter(Filtri.FILTRO_RUOLO, RuoliCostanti.LABEL_RUOLO, ruolo, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{

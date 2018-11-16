@@ -12119,12 +12119,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			filterSoggettoNome = filterSoggettoTipoNome.split("/")[1];
 		}
 		
+		String filterRuolo = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_RUOLO);
+		
 		this.log.debug("search : " + search);
 		this.log.debug("filterProtocollo : " + filterProtocollo);
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterSoggettoNome : " + filterSoggettoNome);
 		this.log.debug("filterSoggettoTipo : " + filterSoggettoTipo);
 		this.log.debug("filterRuoloServizioApplicativo : " + filterRuoloServizioApplicativo);
+		this.log.debug("filterRuolo : " + filterRuolo);
 		
 		Connection con = null;
 		PreparedStatement stmt=null;
@@ -12171,6 +12174,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
@@ -12194,6 +12202,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
@@ -12211,6 +12224,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
 				stmt.setString(index++, filterSoggettoTipo);
 				stmt.setString(index++, filterSoggettoNome);
+			}
+			if(filterRuolo!=null && !"".equals(filterRuolo)) {
+				stmt.setString(index++, filterRuolo);
 			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -12247,6 +12263,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -12281,6 +12302,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
 				}
+				if(filterRuolo!=null && !"".equals(filterRuolo)) {
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
+				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
 				sqlQueryObject.addOrderBy("nome_soggetto");
@@ -12304,6 +12330,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			if(filterSoggettoNome!=null && !"".equals(filterSoggettoNome)) {
 				stmt.setString(index++, filterSoggettoTipo);
 				stmt.setString(index++, filterSoggettoNome);
+			}
+			if(filterRuolo!=null && !"".equals(filterRuolo)) {
+				stmt.setString(index++, filterRuolo);
 			}
 			risultato = stmt.executeQuery();
 

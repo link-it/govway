@@ -47,6 +47,7 @@ public class WebEmptyContextModel extends AbstractModel<WebEmptyContext> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new Field("soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
 		this.ENABLED = new Field("enabled",boolean.class,"WebEmptyContext",WebEmptyContext.class);
+		this.EMPTY_FUNCTION = new Field("emptyFunction",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 		this.BINDING = new Field("binding",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 	
 	}
@@ -60,6 +61,7 @@ public class WebEmptyContextModel extends AbstractModel<WebEmptyContext> {
 		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new ComplexField(father,"soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
 		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
 		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"WebEmptyContext",WebEmptyContext.class);
+		this.EMPTY_FUNCTION = new ComplexField(father,"emptyFunction",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 		this.BINDING = new ComplexField(father,"binding",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 	
 	}
@@ -75,6 +77,8 @@ public class WebEmptyContextModel extends AbstractModel<WebEmptyContext> {
 	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel REST_MEDIA_TYPE_COLLECTION = null;
 	 
 	public IField ENABLED = null;
+	 
+	public IField EMPTY_FUNCTION = null;
 	 
 	public IField BINDING = null;
 	 

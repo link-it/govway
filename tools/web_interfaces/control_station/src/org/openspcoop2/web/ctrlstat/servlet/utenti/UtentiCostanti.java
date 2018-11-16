@@ -195,7 +195,7 @@ public class UtentiCostanti {
 	
 	public final static String LABEL_PARAMETRO_UTENTI_SOGGETTO = "Soggetto";
 	public final static String LABEL_PARAMETRO_UTENTI_SOGGETTO_EROGATORE = "Soggetto Erogatore";
-	public final static String LABEL_PARAMETRO_UTENTI_SERVIZIO = "Servizio";
+	public final static String LABEL_PARAMETRO_UTENTI_SERVIZIO = "API";
 	public final static String LABEL_PARAMETRO_UTENTI_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
 	
 	public final static String LABEL_UTENTE_PERMESSI = "Utente";

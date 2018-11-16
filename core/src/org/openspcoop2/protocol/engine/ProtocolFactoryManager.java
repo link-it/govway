@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
 import org.openspcoop2.protocol.manifest.Integration;
@@ -47,6 +48,7 @@ import org.openspcoop2.protocol.manifest.SubContextMapping;
 import org.openspcoop2.protocol.manifest.Web;
 import org.openspcoop2.protocol.manifest.constants.ActorType;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
+import org.openspcoop2.protocol.manifest.constants.FunctionType;
 import org.openspcoop2.protocol.manifest.constants.MessageType;
 import org.openspcoop2.protocol.manifest.constants.ResourceIdentificationType;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
@@ -1165,6 +1167,65 @@ public class ProtocolFactoryManager {
 		return this.getProtocolFactoryByName(protocol);
 	}
 	
+	public IProtocolFactory<?> getProtocolFactoryWithEmptyContext() throws ProtocolException {
+		Openspcoop2 m = this.getProtocolManifest(Costanti.CONTEXT_EMPTY);
+		if(this.factories.containsKey(m.getProtocol().getName())){
+			return this.factories.get(m.getProtocol().getName());
+		}
+		return null;
+	}
+	public IDService getDefaultServiceForWebContext(String context) throws ProtocolException {
+		IProtocolFactory<?> pf = this.getProtocolFactoryByServletContext(context);
+		if(pf==null) {
+			return null;
+		}
+		if(pf.getManifest().getWeb().sizeContextList()<=0) {
+			return null;
+		}
+		FunctionType fType = null;
+		for (int i = 0; i < pf.getManifest().getWeb().sizeContextList(); i++) {
+			if(pf.getManifest().getWeb().getContext(i).getName().equals(context)){
+				fType = pf.getManifest().getWeb().getContext(i).getEmptyFunction();
+				break;
+			}
+		}
+		if(fType==null) {
+			return null;
+		}
+		switch (fType) {
+		case PD:
+			return IDService.PORTA_DELEGATA;
+		case PA:
+			return IDService.PORTA_APPLICATIVA;
+		case PDTO_SOAP:
+			return IDService.PORTA_DELEGATA_XML_TO_SOAP;
+		default:
+			return null;
+		}
+	}
+	public IDService getDefaultServiceForEmptyContext() throws ProtocolException {
+		IProtocolFactory<?> pf = this.getProtocolFactoryWithEmptyContext();
+		if(pf==null) {
+			return null;
+		}
+		if(pf.getManifest().getWeb().getEmptyContext()==null) {
+			return null;
+		}
+		FunctionType fType = pf.getManifest().getWeb().getEmptyContext().getEmptyFunction();
+		if(fType==null) {
+			return null;
+		}
+		switch (fType) {
+		case PD:
+			return IDService.PORTA_DELEGATA;
+		case PA:
+			return IDService.PORTA_APPLICATIVA;
+		case PDTO_SOAP:
+			return IDService.PORTA_DELEGATA_XML_TO_SOAP;
+		default:
+			return null;
+		}
+	}
 	
 	public IProtocolFactory<?> getDefaultProtocolFactory() throws ProtocolException {
 		try {

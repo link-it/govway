@@ -495,7 +495,7 @@ public class PorteDelegateCostanti {
 	//public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_DEFAULT = "*";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_DEFAULT = "default";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX = "Specific";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE = "Mode";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE = "Modalità";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_GRUPPO = "Gruppo";

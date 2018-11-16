@@ -78,7 +78,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 	public static ConnectorDispatcherErrorInfo updatePortaDelegataRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
-			MsgDiagnostico msgDiag) throws ConnectorException{
+			MsgDiagnostico msgDiag, PdDContext pddContextNullable) throws ConnectorException{
 		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
@@ -150,8 +150,14 @@ public class RicezioneContenutiApplicativiServiceUtils {
 						if(identificazione.find(idServizio.getAzione())) {
 							IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
 							if(idPD_action!=null) {
-								protocolContext.setInterfaceName(idPD_action.getNome());
+								
+								if(pddContextNullable!=null) {
+									pddContextNullable.addObject(CostantiPdD.NOME_PORTA_INVOCATA, idPD.getNome()); // prima di aggiornare la porta delegata
+								}
+								
+								msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD_action.getNome());
 								msgDiag.updatePorta(idPD_action.getNome());
+								protocolContext.setInterfaceName(idPD_action.getNome());
 								idPD = idPD_action;
 							}
 						}

@@ -160,7 +160,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	}
 
 	@Override
-	protected List<SelectItem> _getServizi(String input) {
+	protected List<SelectItem> _getServizi(String input) throws Exception {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
@@ -175,10 +175,10 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 			PddRuolo ruoloReport = ((ConfigurazioniGeneraliSearchForm)this.search).getTipologiaTransazioni();
 
 			if(ruoloReport == null || ruoloReport.equals(PddRuolo.DELEGATA)) {
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, false);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziFruizione(tipoProtocollo, tipoSoggetto, nomeSoggetto,null,null,input, false, this.search.getPermessiUtenteOperatore());
 			}else {
 				// bisogna filtrare per soggetti operativi
-				this.servizi = this.dynamicUtils.getListaSelectItemsElencoServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, true);
+				this.servizi = this.dynamicUtils.getListaSelectItemsElencoConfigurazioneServiziErogazione(tipoProtocollo, tipoSoggetto, nomeSoggetto,input, true, this.search.getPermessiUtenteOperatore());
 			}
 			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.servizi);
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);

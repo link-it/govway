@@ -252,7 +252,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		
 		// Aggiorno RequestInfo
 		ConnectorDispatcherErrorInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, serviceIdentificationReader, msgDiag);
+				this.generatoreErrore, serviceIdentificationReader, msgDiag, 
+				context!=null ? context.getPddContext(): null);
 		if(cInfo!=null){
 			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
@@ -472,6 +473,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
 				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
+				Object nomePortaInvocataObject = context.getPddContext().getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+					requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, (String) nomePortaInvocataObject );
+				}
 								
 			}catch(Exception e){
 				logCore.error(tipoLetturaRisposta +" con errore: "+e.getMessage(),e);

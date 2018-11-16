@@ -99,7 +99,7 @@ public class UtentiServiziAdd extends Action {
 			
 			searchServizi.addFilter(Liste.SERVIZI, Filtri.FILTRO_PROTOCOLLO, protocollo);
 			boolean[] permessiUtente = null;
-			List<AccordoServizioParteSpecifica> serviziList = aspsCore.soggettiServizioList(null, searchServizi, permessiUtente , session);
+			List<AccordoServizioParteSpecifica> serviziList = aspsCore.soggettiServizioList(null, searchServizi, permessiUtente , false, false);
 			
 			List<AccordoServizioParteSpecifica> listaServiziNonUtilizzati = new ArrayList<AccordoServizioParteSpecifica>();
 			

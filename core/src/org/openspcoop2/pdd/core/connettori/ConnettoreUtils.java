@@ -34,6 +34,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
@@ -190,14 +191,24 @@ public class ConnettoreUtils {
 				
 				String location = locationParam;
 				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+					
+					Object nomePortaInvocataObject = msg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
+					String nomePortaInvocata = null;
+					if(nomePortaInvocataObject!=null && nomePortaInvocataObject instanceof String) {
+						nomePortaInvocata = (String) nomePortaInvocataObject;
+					}
+					else if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+						nomePortaInvocata = msg.getTransportRequestContext().getInterfaceName();
+					}
+					
 					String normalizedInterfaceName = null;
-					if(msg.getTransportRequestContext()!=null && msg.getTransportRequestContext().getInterfaceName()!=null) {
+					if(nomePortaInvocata!=null) {
 						PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
 						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(idModulo)){
-							normalizedInterfaceName = namingUtils.normalizePA(msg.getTransportRequestContext().getInterfaceName());
+							normalizedInterfaceName = namingUtils.normalizePA(nomePortaInvocata);
 						}
 						else {
-							normalizedInterfaceName = namingUtils.normalizePD(msg.getTransportRequestContext().getInterfaceName());
+							normalizedInterfaceName = namingUtils.normalizePD(nomePortaInvocata);
 						}
 					}
 					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext(),

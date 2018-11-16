@@ -147,7 +147,7 @@ public class NamingUtils {
 	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo, boolean addSoggettoReferente) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(idAccordo.getNome());
-		bf.append(":");
+		bf.append(" v");
 		bf.append(idAccordo.getVersione());
 		if(addSoggettoReferente) {
 			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
@@ -169,7 +169,7 @@ public class NamingUtils {
 		
 		String versione = "";
 		if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoVersionamentoAccordiParteSpecifica()) {
-			versione = ":"+versioneInt;
+			versione = " v"+versioneInt;
 		}
 		
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
@@ -237,7 +237,7 @@ public class NamingUtils {
 	public static String getLabelAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		bf.append(idAccordo.getNome());
-		bf.append(":");
+		bf.append(" v");
 		bf.append(idAccordo.getVersione());
 		//if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
 		if(idAccordo.getSoggettoReferente()!=null){

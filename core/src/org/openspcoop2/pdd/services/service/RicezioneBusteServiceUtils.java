@@ -78,7 +78,7 @@ public class RicezioneBusteServiceUtils {
 	public static ConnectorDispatcherErrorInfo updatePortaApplicativaRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneBusteExternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
-			MsgDiagnostico msgDiag) throws ConnectorException{
+			MsgDiagnostico msgDiag, PdDContext pddContextNullable) throws ConnectorException{
 		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
@@ -103,7 +103,7 @@ public class RicezioneBusteServiceUtils {
 					res, generatoreErrore, 
 					serviceIdentificationReader, 
 					msgDiag,
-					protocolContext,idPA);
+					protocolContext,idPA, pddContextNullable);
 		}
 		
 		return null;
@@ -113,18 +113,18 @@ public class RicezioneBusteServiceUtils {
 			RicezioneBusteExternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag, 
-			URLProtocolContext protocolContext, IDPortaApplicativa idPA) throws ConnectorException{
+			URLProtocolContext protocolContext, IDPortaApplicativa idPA, PdDContext pddContextNullable) throws ConnectorException{
 		return updatePortaApplicativaRequestInfo(requestInfo, logCore, 
 				null, generatoreErrore, 
 				serviceIdentificationReader, 
 				msgDiag, 
-				protocolContext, idPA);
+				protocolContext, idPA, pddContextNullable);
 	}
 	private static ConnectorDispatcherErrorInfo updatePortaApplicativaRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneBusteExternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag, 
-			URLProtocolContext protocolContext, IDPortaApplicativa idPA) throws ConnectorException{
+			URLProtocolContext protocolContext, IDPortaApplicativa idPA, PdDContext pddContextNullable) throws ConnectorException{
 
 			
 		// da ora in avanti, avendo localizzato una PA, se avviene un errore genero l'errore stesso
@@ -179,8 +179,14 @@ public class RicezioneBusteServiceUtils {
 					if(identificazione.find(idServizio.getAzione())) {
 						IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(idServizio.getAzione());
 						if(idPA_action!=null) {
-							protocolContext.setInterfaceName(idPA_action.getNome());
+							
+							if(pddContextNullable!=null) {
+								pddContextNullable.addObject(CostantiPdD.NOME_PORTA_INVOCATA, idPA.getNome()); // prima di aggiornare la porta applicativa
+							}
+							
+							msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, idPA_action.getNome());
 							msgDiag.updatePorta(idPA_action.getNome());
+							protocolContext.setInterfaceName(idPA_action.getNome());
 							idPA = idPA_action;
 						}
 					}

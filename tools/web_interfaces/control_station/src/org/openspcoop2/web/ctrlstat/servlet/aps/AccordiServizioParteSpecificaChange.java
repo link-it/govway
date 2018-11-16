@@ -1758,13 +1758,19 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				List<IDPortaDelegata> listIdsPorteDelegate = porteDelegateCore.getAllIdPorteDelegate(filtroPD);
 				if(listIdsPorteDelegate!=null && !listIdsPorteDelegate.isEmpty()) {
 					
-					String locationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
-							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome() +
+					String tmpLocationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome();
+					
+					String locationSuffix = tmpLocationSuffix +
+							"/v" + asps.getOldIDServizioForUpdate().getVersione().intValue();
+					
+					// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
+					String locationSuffix_oldWithoutV = tmpLocationSuffix +
 							"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 					
 					String newLocationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
 							"/" + asps.getTipo() + "_" + asps.getNome() +
-							"/" + asps.getVersione().intValue();
+							"/v" + asps.getVersione().intValue();
 					
 					for (IDPortaDelegata idPortaDelegata : listIdsPorteDelegate) {
 						PortaDelegata tmpPorta = porteDelegateCore.getPortaDelegata(idPortaDelegata);	
@@ -1777,6 +1783,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						String locationPrefix = tmpPorta.getTipoSoggettoProprietario()+"_"+tmpPorta.getNomeSoggettoProprietario();
 						String check1 = locationPrefix+locationSuffix;
 						String check2 = "__"+locationPrefix+locationSuffix;
+						String check1_oldWithoutV = locationPrefix+locationSuffix_oldWithoutV;
+						String check2_oldWithoutV = "__"+locationPrefix+locationSuffix_oldWithoutV;
 						String parteRimanente = "";
 						String nuovoNome = null;
 						boolean match = false;
@@ -1787,6 +1795,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						else if(tmpPorta.getNome().startsWith(check2)) {
 							match = true;	
 							parteRimanente = tmpPorta.getNome().substring(check2.length());
+							nuovoNome = "__"+locationPrefix+newLocationSuffix+parteRimanente;
+						}
+						else if(tmpPorta.getNome().equals(check1_oldWithoutV)) {
+							match = true;	
+							nuovoNome = locationPrefix+newLocationSuffix;
+						}
+						else if(tmpPorta.getNome().startsWith(check2_oldWithoutV)) {
+							match = true;	
+							parteRimanente = tmpPorta.getNome().substring(check2_oldWithoutV.length());
 							nuovoNome = "__"+locationPrefix+newLocationSuffix+parteRimanente;
 						}
 						
@@ -1810,10 +1827,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							
 								// Caso 2: altra subscription
 								// Internal Subscription 'Specific1' for gw_ENTE/gw_ErogatoreEsterno/gw_EsempioREST/1
-								String match_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								String tmpMatchCaso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+								String match_caso2 = tmpMatchCaso2 +"v"+ asps.getOldIDServizioForUpdate().getVersione().intValue();
+								String match_caso2_oldWithoutV = tmpMatchCaso2 + asps.getOldIDServizioForUpdate().getVersione().intValue();
 								if(descrizionePD.contains(match_caso2)) {
-									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue();
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 									descrizionePD = descrizionePD.replace(match_caso2, replace_caso2);
+								}
+								else if(descrizionePD.contains(match_caso2_oldWithoutV)) {
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+									descrizionePD = descrizionePD.replace(match_caso2_oldWithoutV, replace_caso2);
 								}
 								
 								tmpPorta.setDescrizione(descrizionePD);
@@ -1863,8 +1886,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 										}
 										
 										// vedo se matcha anche erogatore (loopback)
-										if (partVersione.equals((asps.getOldIDServizioForUpdate().getVersione().intValue()+""))) {
-											partVersione = asps.getVersione().intValue()+"";
+										String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+										String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+										if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
+											partVersione = "v"+asps.getVersione().intValue()+"";
 											matchURL = true;
 										}
 
@@ -1878,7 +1903,23 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								}
 							}// fine controllo azione
 							
-							
+							// DelegatedBy
+							String nomePortaDelegante = pdAzione != null ? (pdAzione.getNomePortaDelegante() != null ? pdAzione.getNomePortaDelegante() : null) : null;
+							if (PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
+								String nuovoNomeDelegate = null;
+								boolean matchDelegate = false;
+								if(nomePortaDelegante.equals(check1)) {
+									matchDelegate = true;	
+									nuovoNomeDelegate = locationPrefix+newLocationSuffix;
+								}
+								else if(nomePortaDelegante.equals(check1_oldWithoutV)) {
+									matchDelegate = true;	
+									nuovoNomeDelegate = locationPrefix+newLocationSuffix;
+								}
+								if(matchDelegate) {
+									tmpPorta.getAzione().setNomePortaDelegante(nuovoNomeDelegate);
+								}
+							}// fine controllo DelegatedBy
 						}
 						
 						listaPD.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
@@ -1898,13 +1939,20 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				List<IDPortaApplicativa> listIdsPorteApplicative = porteApplicativeCore.getAllIdPorteApplicative(filtroPA);
 				if(listIdsPorteApplicative!=null && !listIdsPorteApplicative.isEmpty()) {
 					
-					String locationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
-							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome() +
+					String tmpLocationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+							"/" + asps.getOldIDServizioForUpdate().getTipo() + "_" + asps.getOldIDServizioForUpdate().getNome();
+					
+					String locationSuffix = tmpLocationSuffix+
+							"/v" + asps.getOldIDServizioForUpdate().getVersione().intValue();
+					
+					// backward compatibility: provare ad eliminare la v, che prima non veniva utilizzata
+					
+					String locationSuffix_oldWithoutV = tmpLocationSuffix +
 							"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 					
 					String newLocationSuffix = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + "_" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
 							"/" + asps.getTipo() + "_" + asps.getNome() +
-							"/" + asps.getVersione().intValue();
+							"/v" + asps.getVersione().intValue();
 					
 					for (IDPortaApplicativa idPortaApplicativa : listIdsPorteApplicative) {
 						PortaApplicativa tmpPorta = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);	
@@ -1916,6 +1964,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						
 						String check1 = locationSuffix;
 						String check2 = "__"+locationSuffix;
+						String check1_oldWithoutV = locationSuffix_oldWithoutV;
+						String check2_oldWithoutV = "__"+locationSuffix_oldWithoutV;
 						String parteRimanente = "";
 						String nuovoNome = null;
 						boolean match = false;
@@ -1926,6 +1976,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						else if(tmpPorta.getNome().startsWith(check2)) {
 							match = true;	
 							parteRimanente = tmpPorta.getNome().substring(check2.length());
+							nuovoNome = "__"+newLocationSuffix+parteRimanente;
+						}
+						else if(tmpPorta.getNome().equals(check1_oldWithoutV)) {
+							match = true;	
+							nuovoNome = newLocationSuffix;
+						}
+						else if(tmpPorta.getNome().startsWith(check2_oldWithoutV)) {
+							match = true;	
+							parteRimanente = tmpPorta.getNome().substring(check2_oldWithoutV.length());
 							nuovoNome = "__"+newLocationSuffix+parteRimanente;
 						}
 						
@@ -1950,10 +2009,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							
 								// Caso 2: altra subscription
 								// Internal Implementation 'Specific1' for gw_ENTE/gw_TEST/1
-								String match_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								String tmpMatch_caso2 = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+								String match_caso2 = tmpMatch_caso2+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+								String match_caso2_oldWithoutV = tmpMatch_caso2+asps.getOldIDServizioForUpdate().getVersione().intValue();
 								if(descrizionePA.contains(match_caso2)) {
-									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue();
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
 									descrizionePA = descrizionePA.replace(match_caso2, replace_caso2);
+								}
+								else if(descrizionePA.contains(match_caso2_oldWithoutV)) {
+									String replace_caso2 = "/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue();
+									descrizionePA = descrizionePA.replace(match_caso2_oldWithoutV, replace_caso2);
 								}
 								
 								tmpPorta.setDescrizione(descrizionePA);
@@ -2002,8 +2067,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 										}
 										
 										// vedo se matcha anche erogatore (loopback)
-										if (partVersione.equals((asps.getOldIDServizioForUpdate().getVersione().intValue()+""))) {
-											partVersione = asps.getVersione().intValue()+"";
+										String versioneOld = "v"+(asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+										String versioneOld_oldWithoutV = (asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+										if (partVersione.equals(versioneOld) || partVersione.equals(versioneOld_oldWithoutV)) {
+											partVersione = "v"+asps.getVersione().intValue()+"";
 											matchURL = true;
 										}
 
@@ -2018,6 +2085,23 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							}// fine controllo azione
 							
 							
+							// DelegatedBy
+							String nomePortaDelegante = paAzione != null ? (paAzione.getNomePortaDelegante() != null ? paAzione.getNomePortaDelegante() : null) : null;
+							if (PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(identificazione) && nomePortaDelegante!=null ) {
+								String nuovoNomeDelegate = null;
+								boolean matchDelegate = false;
+								if(nomePortaDelegante.equals(check1)) {
+									matchDelegate = true;	
+									nuovoNomeDelegate = newLocationSuffix;
+								}
+								else if(nomePortaDelegante.equals(check1_oldWithoutV)) {
+									matchDelegate = true;	
+									nuovoNomeDelegate = newLocationSuffix;
+								}
+								if(matchDelegate) {
+									tmpPorta.getAzione().setNomePortaDelegante(nuovoNomeDelegate);
+								}
+							}// fine controllo DelegatedBy
 						}
 						
 						listaPA.add(tmpPorta); // la porta la aggiungo cmq per modificare i dati
@@ -2042,14 +2126,24 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 									
 									// __gw_ENTE/gw_TEST/1__Specific2
 									// gw_ENTE/gw_TEST/1
-									String check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String tmp_check_nomeSA = "/"+asps.getOldIDServizioForUpdate().getTipo()+"_"+asps.getOldIDServizioForUpdate().getNome()+"/";
+									String check_nomeSA = tmp_check_nomeSA+"v"+asps.getOldIDServizioForUpdate().getVersione().intValue();
+									String check_nomeSA_oldWithoutV = tmp_check_nomeSA+asps.getOldIDServizioForUpdate().getVersione().intValue();
 									if(sa.getNome().endsWith(check_nomeSA)) {
 										sa.setNome(sa.getNome().replace(check_nomeSA, 
-												"/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue()));
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
 									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA)) {
 										sa.setNome(sa.getNome().replace(check_nomeSA, 
-												"/"+asps.getTipo()+"_"+asps.getNome()+"/"+asps.getVersione().intValue()));
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().endsWith(check_nomeSA_oldWithoutV)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
+									}
+									else if(sa.getNome().startsWith("__") && sa.getNome().contains(check_nomeSA_oldWithoutV)) {
+										sa.setNome(sa.getNome().replace(check_nomeSA_oldWithoutV, 
+												"/"+asps.getTipo()+"_"+asps.getNome()+"/v"+asps.getVersione().intValue()));
 									}
 									listaPA_SA.add(sa);
 									break;

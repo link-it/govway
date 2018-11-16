@@ -1299,6 +1299,9 @@ public class RicezioneContenutiApplicativi {
 			if(identificazione.find(action)) {
 				IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(action);
 				if(idPD_action!=null) {
+					
+					requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, portaDelegata.getNome()); // prima di aggiornare la porta delegata
+					
 					identificativoPortaDelegata = idPD_action;
 					portaDelegata = identificazione.getPortaDelegata(action);
 					nomeUtilizzatoPerErrore = "Configurazione specifica per l'azione '"+action+"', porta '"+ identificativoPortaDelegata.getNome()+"'";
@@ -1306,7 +1309,11 @@ public class RicezioneContenutiApplicativi {
 					// aggiornao dati che possiede la Porta Delegata ID Porta Delegata
 					this.msgContext.getIntegrazione().setIdPD(identificativoPortaDelegata);
 					msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, identificativoPortaDelegata.getNome());
+					msgDiag.updatePorta(identificativoPortaDelegata.getNome());
 					richiestaDelegata.setIdPortaDelegata(identificativoPortaDelegata);
+					if(requestMessage.getTransportRequestContext()!=null) {
+						requestMessage.getTransportRequestContext().setInterfaceName(identificativoPortaDelegata.getNome());
+					}
 				}
 			}else {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
@@ -2344,6 +2351,9 @@ public class RicezioneContenutiApplicativi {
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 				integrationError = IntegrationError.INTERNAL_ERROR;
 			}else{
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOSPENSIONE, "true");
+								
 				String msg = "Servizio di ricezione contenuti applicativi disabilitato";
 				if(serviceIsEnabled){
 					msg = "Porta Delegata ["+nomeUtilizzatoPerErrore+"] disabilitata";
