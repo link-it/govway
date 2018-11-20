@@ -604,18 +604,30 @@
 							datasource impostati con i parametri forniti durante l'esecuzione
 							dell'utility di installazione: <itemizedlist>
 								<listitem>
-									<para>Il gateway necessita di un datasource con nome JNDI
-											<emphasis>org.govway.datasource</emphasis></para>
+									<para>Il gateway necessita di un datasource con nome JNDI: <itemizedlist>
+											<listitem>
+												<para><emphasis>org.govway.datasource</emphasis></para>
+											</listitem>
+										</itemizedlist>
+									</para>
 								</listitem>
 								<listitem>
 									<para>Le console grafiche necessitano di un datasource con nome
-										JNDI
-										<emphasis>org.govway.datasource.console</emphasis></para>
+										JNDI: <itemizedlist>
+											<listitem>
+												<para><emphasis>org.govway.datasource.console</emphasis></para>
+											</listitem>
+										</itemizedlist>
+									</para>
 								</listitem>
 								<listitem>
 									<para>Nel caso si sia richiesto il supporto al protocollo
-										eDelivery, è necessario un terzo datasource con nome JNDI
-											<emphasis>org.govway.datasource.domibus</emphasis></para>
+										eDelivery, è necessario un terzo datasource con nome JNDI: <itemizedlist>
+											<listitem>
+												<para><emphasis>org.govway.datasource.console.domibus</emphasis></para>
+											</listitem>
+										</itemizedlist>
+									</para>
 								</listitem>
 							</itemizedlist> I datasource, preconfigurati per l'Application Server
 							indicato, sono disponibili nella directory datasource e contengono le
@@ -919,8 +931,8 @@
 						risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#						
 						</screen>
 							Devono essere elencati tutti gli identificativi, di ogni nodo gateway in
-							Load Balancing, registrati nel file GovWay_local.properties nella
-							proprietà 'org.govway.pdd.cluster_id' come descritto in precedenza. Per
+							Load Balancing, descritti in precedenza e registrati nella proprietà:
+							<screen>'org.govway.pdd.cluster_id' del file govway_local.properties</screen> Per
 							ogni identificativo devono inoltre essere fornite le seguenti
 							informazioni:
 							<screen>
@@ -937,10 +949,10 @@
 						#IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
 							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
-							le credenziali utilizzate nel govway_local.properties nella proprietà
+							le credenziali utilizzate in precedenza nel file
+							<screen>govway_local.properties, proprietà
 							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password' come descritto in
-							precedenza. </para>
+							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>  </para>
 						<para> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
 							porta con cui è raggiungibile GovWay. Infine deve anche essere fornita
 							una descrizione per ogni nodo in Load Balancing al posto di
@@ -984,10 +996,10 @@
 						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
 							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
-							le credenziali utilizzate nel govway_local.properties nella proprietà
+							le credenziali utilizzate in precedenza nel file
+							<screen>govway_local.properties, proprietà
 							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password' come descritto in
-							precedenza. Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname
+							'org.govway.pdd.checkPdD.readJMXResources.password'</screen> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname
 							e la porta con cui è raggiungibile GovWay. </para>
 					</listitem>
 				</orderedlist>

@@ -633,8 +633,13 @@
 										<para>
 											<emphasis>API senza WSDL</emphasis>: l'operation viene
 											identificata inserendo il relativo identificativo nella
-											URL di invocazione
-											(&lt;URL_Invocazione&gt;/&lt;Azione&gt;). </para>
+											URL di invocazione:
+											<itemizedlist>
+												<listitem>
+													<para>&lt;URL_Invocazione&gt;/&lt;Azione&gt;</para>
+												</listitem>
+											</itemizedlist>
+										</para>
 										<para> Sono disponibili ulteriori metodi per
 											l'identificazione dell'operation nel caso SOAP, per i
 											cui dettagli si rimanda alla <xref
@@ -3660,9 +3665,13 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				semplificare l'attività di configurazione di GovWay. I passi da eseguire sono i
 				seguenti: <orderedlist>
 					<listitem>
-						<para> Scaricare il govlet per la fatturazione passiva al seguente indirizzo
-								<ulink url="http://www.govway.org/govlets/fatturazione-passiva.zip"
-							/>
+						<para> Scaricare il govlet per la fatturazione passiva al seguente indirizzo:
+							<itemizedlist>
+								<listitem>
+									<para><ulink url="http://www.govway.org/govlets/fatturazione-passiva.zip"
+									/></para>
+								</listitem>
+							</itemizedlist>
 						</para>
 					</listitem>
 					<listitem>
@@ -3722,38 +3731,70 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					</listitem>
 				</orderedlist>
 			</para>
+			<sect3 id="ricezioneFatturazionePassiva">
+				<title>Ricezione Fatture e Notifiche di Decorrenza Termini</title>
+				<para>
+					Allo SdI, per raggiunge il servizio di RicezioneFatture su Govway, dovrà essere comunicata la seguente URL:
+					<screen>https://&lt;host-govway&lt;/govway/sdi/in/&lt;SoggettoSDI>/RicezioneFatture/v1</screen>
+					Le fatture e le notifiche saranno consegnati all'applicativo dell'ente secondo le modalità specificate durante l'esecuzione del Govlet.
+					In fase di consegna delle fatture e delle notifiche verranno generati rispettivamente gli header descritti nella tabella <xref linkend="headerRicezioneFattura"/>
+					e nella tabella <xref linkend="headerRicezioneNotificaDT"/>.
+				</para>
+			</sect3>
 			<sect3 id="invocazioneFatturazionePassiva">
 				<title>Invio della Notifica di Esito Committente</title>
-				<para> Per l'invio della Notifica di Esito Committente l'applicativo mittente
-					utilizza una URL così composta:
-						<citetitle>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviNotifica/1?NomeFile=&lt;NomeFileFattura&gt;&amp;IdentificativoSdI=&lt;identificativoSDI&gt;</citetitle>
-					Dove: <itemizedlist>
+				<para> Per l'invio della Notifica di Esito Committente l'applicativo deve utilizzare:
+					<itemizedlist>
 						<listitem>
-							<para>
-								<emphasis>host-govway</emphasis>: è l'hostname con cui è
-								raggiungibile l'istanza di Govway. </para>
+							<para>Una URL così
+								composta:
+								<screen>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviNotifica/v1?NomeFile=&lt;NomeFileFattura&gt;&amp;IdentificativoSdI=&lt;identificativoSDI&gt;</screen>
+								dove: <itemizedlist>
+									<listitem>
+										<para>
+											<emphasis>host-govway</emphasis>: è l'hostname con cui è
+											raggiungibile l'istanza di Govway. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>SoggettoSDI</emphasis>: il soggetto interno destinatario
+											delle fatture, come configurato durante l'esecuzione del govlet di
+											fatturazione passiva. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>NomeFileFattura</emphasis>: è il nome del file che
+											contiene la fattura cui fa riferimento la notifica EC. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>identificativoSDI</emphasis>: è l'identificativo SDI che
+											fa riferimento al lotto della fattura ricevuta. </para>
+									</listitem>
+								</itemizedlist>
+							</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>SoggettoSDI</emphasis>: il soggetto interno destinatario
-								delle fatture, come configurato durante l'esecuzione del govlet di
-								fatturazione passiva. </para>
+							<para>L'invocazione deve essere corredata dalle credenziali che sono state
+								indicate durante la configurazione tramite il relativo govlet.
+							</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>NomeFileFattura</emphasis>: è il nome del file che
-								contiene la fattura cui fa riferimento la notifica EC. </para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>identificativoSDI</emphasis>: è l'identificativo SDI che
-								fa riferimento al lotto della fattura ricevuta. </para>
+							<para>Utilizzare l'header http <emphasis>Content-Type</emphasis> valorizzato con <emphasis>text/xml</emphasis> o <emphasis>application/xml</emphasis>
+							</para>
 						</listitem>
 					</itemizedlist>
+					Un esempio di invio di una fattura viene fornito tramite il seguente comando curl:
 					<note>
-						<para> La chiamata deve essere corredata dalle credenziali che sono state
-							indicate durante la configurazione tramite il relativo govlet. </para>
+						<title>Soggetto Interno al Dominio</title>
+						<para>In questo esempio si suppone che il nome del soggetto (riferito precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito
+							durante la fase di installazione di GovWay sia
+							<emphasis>Ente</emphasis>.</para>
 					</note>
+					<screen>curl -X POST -basic --user SdIRiceviNotifica:123456 \
+--data-binary @IT01234567890_11111_EC_001.xml \
+-H "Content-Type: application/xml" \
+"http://127.0.0.1:8080/govway/sdi/out/xml2soap/Ente/CentroServiziFatturaPA/SdIRiceviNotifica/v1?NomeFile=IT01234567890_11111.xml&amp;IdentificativoSdI=345"</screen>
 				</para>
 			</sect3>
 		</sect2>
@@ -3867,7 +3908,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				seguenti: <orderedlist>
 					<listitem>
 						<para> Scaricare il govlet per la fatturazione attiva al seguente indirizzo
-								<ulink url="http://www.govway.org/govlets/fatturazione-attiva.zip"/>
+							<itemizedlist>
+								<listitem>
+									<para><ulink url="http://www.govway.org/govlets/fatturazione-attiva.zip"/></para>
+								</listitem>
+							</itemizedlist>
 						</para>
 					</listitem>
 					<listitem>
@@ -3919,45 +3964,84 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					</listitem>
 				</orderedlist>
 			</para>
-			<sect3>
-				<title>Invio della fattura attiva</title>
-				<para> Per l'invio della fattura attiva l'applicativo mittente utilizza una URL così
-					composta:
-						<citetitle>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviFile/1?Versione=&lt;VersioneFatturaPA&gt;&amp;TipoFile=&lt;TipoFile&gt;&amp;IdPaese=&lt;IdPaese&gt;&amp;IdCodice=&lt;IdCodice&gt;</citetitle>
-					Dove: <itemizedlist>
+			<sect3 id="invioFatturazioneAttiva">
+				<title>Invio della fattura</title>
+				<para> Per l'invio della fattura l'applicativo mittente deve utilizzare:
+					<itemizedlist>
 						<listitem>
-							<para>
-								<emphasis>host-govway</emphasis>: è l'hostname con cui è
-								raggiungibile l'istanza di Govway. </para>
+							<para>Una URL così
+								composta:
+								<screen>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviFile/v1?Versione=&lt;VersioneFatturaPA&gt;&amp;TipoFile=&lt;TipoFile&gt;&amp;IdPaese=&lt;IdPaese&gt;&amp;IdCodice=&lt;IdCodice&gt;</screen>
+								dove: <itemizedlist>
+									<listitem>
+										<para>
+											<emphasis>host-govway</emphasis>: è l'hostname con cui è
+											raggiungibile l'istanza di Govway. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>SoggettoSDI</emphasis>: il soggetto interno al dominio come configurato durante l'esecuzione del govlet di
+											fatturazione passiva. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>Versione</emphasis>: versione della fattura che si sta
+											inviando: FPA12 (Fattura 1.2 per Pubbliche Amministrazione), FPR12
+											(Fattura 1.2 per Privati), SDI11 e SDI10 (Fattura per Pubblica
+											amministrazione versione 1.1. e 1.0). </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>TipoFile</emphasis>: tipo di fattura: XML (Fattura firmata XADES), P7M (Fattura firmata CADES) o ZIP (archivio di fatture). </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>IdPaese e IdCodice</emphasis>: dati del trasmittente della
+											fattura. </para>
+									</listitem>
+								</itemizedlist>
+							</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>SoggettoSDI</emphasis>: il soggetto interno destinatario
-								delle fatture, come configurato durante l'esecuzione. del govlet di
-								fatturazione passiva. </para>
+							<para>L'invocazione deve essere corredata dalle credenziali che sono state
+								indicate durante la configurazione tramite il relativo govlet.
+							</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>Versione</emphasis>: versione della fattura che si sta
-								inviando: FPA12 (Fattura 1.2 per Pubbliche Amministrazione), FPR12
-								(Fattura 1.2 per Privati), SDI11 e SDI10 (Fattura per Pubblica
-								amministrazione versione 1.1. e 1.0). </para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>TipoFile</emphasis>: tipo di fattura: P7M (Fattura
-								firmata) o ZIP (archivio di fatture). </para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>IdPaese e IdCodice</emphasis>: dati del trasmittente della
-								fattura. </para>
+							<para>A seconda del tipo di fattura deve essere utilizzato il corretto header http <emphasis>Content-Type</emphasis>:
+								<itemizedlist>
+									<listitem>
+										<para>XML: è possibile utilizzare <emphasis>text/xml</emphasis> o <emphasis>application/xml</emphasis></para>
+									</listitem>
+									<listitem>
+										<para>P7M: <emphasis>application/pkcs7-mime</emphasis></para>
+									</listitem>
+									<listitem>
+										<para>XML: <emphasis>application/zip</emphasis></para>
+									</listitem>
+								</itemizedlist>
+							</para>
 						</listitem>
 					</itemizedlist>
+					Un esempio di invio di una fattura viene fornito tramite il seguente comando curl:
 					<note>
-						<para> La chiamata deve essere corredata dalle credenziali che sono state
-							indicate durante la configurazione tramite il relativo govlet. </para>
+						<title>Soggetto Interno al Dominio</title>
+						<para>In questo esempio si suppone che il nome del soggetto (riferito precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito
+							durante la fase di installazione di GovWay sia
+							<emphasis>Ente</emphasis>.</para>
 					</note>
+					<screen>curl -X POST -basic --user SdIRiceviFile:123456 \
+--data-binary @IT01234567890_11111.xml.p7m \
+-H "Content-Type: application/pkcs7-mime" \
+"http://127.0.0.1:8080/govway/sdi/out/xml2soap/Ente/CentroServiziFatturaPA/SdIRiceviFile/v1?Versione=SDI10&amp;TipoFile=P7M&amp;IdPaese=IT&amp;IdCodice=01629370097"</screen>
+				</para>
+			</sect3>
+			<sect3 id="ricezioneFatturazioneAttiva">
+				<title>Ricezione delle Notifiche dallo Sdi</title>
+				<para>Allo Sdi dovrà essere comunicata la seguente url che utilizzerà per inoltrare le notifiche:
+					<screen>https://&lt;host-govway&lt;/govway/sdi/in/&lt;SoggettoSDI>/TrasmissioneFatture/v1</screen>
+						Le notifiche ricevute verranno consegnate secondo le modalità specificate durante l'esecuzione del Govlet. 
+						In fase di consegna verranno generati gli header descritti nella tabella <xref linkend="headerRicezioneNotifiche"/>
 				</para>
 			</sect3>
 		</sect2>
