@@ -1,0 +1,43 @@
+<project name="openspcoop2-codeGen-govwayMonitorApiRS">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.core.monitor.rs.server
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/swagger-codegen.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_swagger">
+
+		<if>
+		        <equals arg1="${overwriteImpl}" arg2="$${overwriteImpl}"/>
+		        <then>
+		                <fail message="Parametro overwriteImpl non fornito, la proprietà indica (true/false) se generare le classi 'impl'"/>
+		        </then>
+		</if>
+
+	    	<antcall target="-swagger_codegen">
+			<param name="swaggerCodeGen.inputSpec" value="${src_govwayMonitorApiRS}/schemi/govway_rs-api_monitor.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.core.monitor.rs.server"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/core/monitor/rs/server"/>
+			<param name="swaggerCodeGen.outputDir" value="${src_govwayMonitorApiRS}"/>
+			<param name="swaggerCodeGen.writeImpl" value="${overwriteImpl}"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
+			<param name="swaggerCodeGen.beanValidation" value="true"/>
+			<param name="swaggerCodeGen.useGovwayTemplate" value="true"/>
+		</antcall>
+
+	</target>
+
+
+</project>

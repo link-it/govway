@@ -1,0 +1,6 @@
+{
+"dateLibrary":"joda",
+"withXml":WITHXMLOPTION,
+"serializableModel":true,
+"useBeanValidation":BEANVALIDATION
+}

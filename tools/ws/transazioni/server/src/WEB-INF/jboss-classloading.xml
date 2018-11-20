@@ -1,5 +1,5 @@
 <classloading xmlns="urn:jboss:classloading:1.0"
-		domain="transazioni@WAR_EXTENSION@.war"
+		domain="govwayTransazioniApi@WAR_EXTENSION@.war"
 		parent-first="false"
 		export-all="NON_EMPTY"
 		import-all="true">

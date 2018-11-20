@@ -27,6 +27,7 @@ soapbox
 spring
 spring-security
 swagger
+swagger-codegen
 testsuite
 wadl
 wss4j

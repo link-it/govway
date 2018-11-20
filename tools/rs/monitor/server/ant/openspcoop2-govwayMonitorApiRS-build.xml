@@ -1,0 +1,82 @@
+<project name="openspcoop2-compile-govwayMonitor-rs-server">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.core.monitor.rs.server
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="compile_openspcoop2_govwayMonitorApiRS" description="compila la libreria org.openspcoop2.core.monitor.rs.server.*">
+
+		<if>
+			<istrue value="${buildGovWayMonitorApiRS}"/>
+			<then>
+		
+				<!-- Info git -->
+				<runtarget target="checkgit" />
+				
+				<!-- org.openspcoop2.web.monitor -->
+				<var name="packagesCompiled" value="org.openspcoop2.core.monitor.rs.server" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.monitor.rs.server.model" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.monitor.rs.server.api" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.monitor.rs.server.impl" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.monitor.rs.server.config" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.monitor.rs.server.filter" />	
+
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_govwayMonitorApiRS}/"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="rs-monitor-server"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.monitor.rs.server"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayMonitor}"/>
+					<param name="build" value="${build_govwayMonitor}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<!--
+				<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="rs-monitor-server"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_govwayMonitor}"/>
+					<param name="build" value="${build_govwayMonitor}"/>
+				</antcall>
+				-->
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_govwayMonitor}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="rs-monitor-server"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_govwayMonitorApiRS}/api/core"/>
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="src" value="${src_govwayMonitorApiRS}"/>
+					<param name="doc" value="${doc_govwayMonitorApiRS}"/>
+					<param name="dist" value="${dist_govwayMonitorApiRS}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

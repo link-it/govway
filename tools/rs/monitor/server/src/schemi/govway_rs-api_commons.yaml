@@ -1,0 +1,16 @@
+components:
+  schemas:
+    Fault:
+      required:
+        - codice
+        - descrizione
+      properties:
+        codice:
+          type: string
+          description: Codice dell'errore riscontrato
+        descrizione:
+          type: string
+          description: Descrizione dell'errore
+        dettaglio:
+          type: string
+          description: Dettagli aggiuntivi sull'errore        

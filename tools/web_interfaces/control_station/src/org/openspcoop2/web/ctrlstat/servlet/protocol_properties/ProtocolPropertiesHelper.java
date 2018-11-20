@@ -62,6 +62,7 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
@@ -94,6 +95,9 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	public ProtocolPropertiesHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		super(request, pd, session);
+	}
+	public ProtocolPropertiesHelper(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) {
+		super(core, request, pd, session);
 	}
 
 	public Object getIdOggettoProprietario(Object proprietario, String idProprietario, String nomeProprieta, String nomeParentProprieta, ProprietariProtocolProperty tipoProprietario, String tipoAccordo) throws Exception {

@@ -8,6 +8,7 @@
 
 	<import file="./local_env.xml" />
 	<import file="./ant/openspcoop2-utils-build.xml" />
+	<import file="./ant/openspcoop2-utils-codeGen.xml" />
 
 
 	<!-- estensione di ant (if .... ) -->

@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -67,6 +68,10 @@ public class UtentiHelper extends ConsoleHelper {
 	public UtentiHelper(HttpServletRequest request, PageData pd,
 			HttpSession session) throws Exception {
 		super(request, pd, session);
+	}
+	public UtentiHelper(ControlStationCore core, HttpServletRequest request, PageData pd,
+			HttpSession session) throws Exception {
+		super(core, request, pd, session);
 	}
 
 	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,

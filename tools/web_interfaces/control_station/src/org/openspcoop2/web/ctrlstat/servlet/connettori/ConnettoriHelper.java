@@ -95,6 +95,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
 	}
+	public ConnettoriHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
+	}
 
 	public String getAutenticazioneHttp(String autenticazioneHttp,String endpointtype, String user){
 		if((endpointtype!=null && (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())))){

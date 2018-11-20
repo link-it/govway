@@ -1,0 +1,3753 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: Servizi per la configurazione di GovWay
+  version: "1.0.0"
+  title: GovWay Config API
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+tags:
+  - name: api
+    description: Interfacce API che definiscono servizi REST e SOAP
+  - name: soggetti
+    description: soggetti esterni o interni al dominio di gestione
+  - name: applicativi
+    description: applicativi interni al dominio di gestione
+  - name: ruoli
+    description: ruoli associabili agli applicativi ed ai soggetti
+  - name: scope
+    description: scope
+  - name: backoffice
+    description: operazioni per gestire le entità del registro OpenSPCoop
+paths:
+  
+   # ** API **
+  /api:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+    get:
+      tags:
+        - api
+      parameters:
+        - $ref: "teamdigitale-components.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/tipo_api"
+      summary: Ricerca api
+      operationId: findAll
+      description: 'Elenca le API registrate'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApi"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    post:
+      tags:
+        - api
+      summary: Creazione di un'API
+      operationId: create
+      description: 'Questa operazione consente di creare una api'
+      requestBody:
+        description: Dati dell'api che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api'
+      responses:
+        '201':
+          description: Api creata con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '409':
+          $ref: 'teamdigitale-components.yaml#/components/responses/409Conflict'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+  /api/{nome}/{versione}:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+      - in: path
+        name: nome
+        description: nome dell'api
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'api
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+    delete:
+      tags:
+        - api
+      summary: Elimina un soggetto
+      operationId: delete
+      description: Questa operazione consente di eliminare un API identificata dal nome e dalla versione
+      responses: 
+        '204':
+          description: Soggetto eliminato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'   
+  
+
+  
+  # ** Soggetti **
+  /soggetti:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+    get:
+      tags:
+        - soggetti
+      parameters:
+        - $ref: "teamdigitale-components.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/dominio"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/ruolo"
+      summary: Ricerca soggetti
+      operationId: findAll
+      description: 'Elenca i soggetti registrati'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaSoggetti"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    post:
+      tags:
+        - soggetti
+      summary: Creazione di un soggetto
+      operationId: create
+      description: 'Questa operazione consente di creare un soggetto'
+      requestBody:
+        description: Dati del soggetto che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Soggetto'
+      responses:
+        '201':
+          description: Soggetto creato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '409':
+          $ref: 'teamdigitale-components.yaml#/components/responses/409Conflict'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+  /soggetti/{nome}:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - in: path
+        name: nome
+        description: nome del soggetto
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - soggetti
+      summary: Restituisce il dettaglio di un soggetto
+      operationId: get
+      description: Questa operazione consente di ottenere il dettaglio di un soggetto identificato dal nome
+      responses:
+        "200":
+          description: Dati del soggetto restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Soggetto"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    put:
+      tags:
+        - soggetti
+      summary: Modifica i dati di un soggetto
+      operationId: update
+      description: Questa operazione consente di aggiornare i dati di un soggetto identificato dal nome
+      requestBody:
+        description: Dati del soggetto da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Soggetto'
+      responses: 
+        '204':
+          description: L'applicativo è stato aggiornato correttamente
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    delete:
+      tags:
+        - soggetti
+      summary: Elimina un soggetto
+      operationId: delete
+      description: Questa operazione consente di eliminare un soggetto identificato dal nome
+      responses: 
+        '204':
+          description: Soggetto eliminato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'    
+
+  # ** Applicativi **
+  /applicativi:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+    get:
+      tags:
+        - applicativi
+      parameters:
+        - $ref: "teamdigitale-components.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/ruolo"
+      summary: Ricerca applicativi
+      operationId: findAll
+      description: 'Elenca gli applicativi registrati'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApplicativi"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    post:
+      tags:
+        - applicativi
+      summary: Creazione di un applicativo
+      operationId: create
+      description: 'Questa operazione consente di creare un applicativo associato ad un soggetto interno'
+      requestBody:
+        description: Dati dell'applicativo che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Applicativo'
+      responses:
+        '201':
+          description: Applicativo creato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '409':
+          $ref: 'teamdigitale-components.yaml#/components/responses/409Conflict'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+  /applicativi/{nome}:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+      - in: path
+        name: nome
+        description: nome dell'applicativo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - applicativi
+      summary: Restituisce il dettaglio di un applicativo
+      operationId: get
+      description: Questa operazione consente di ottenere il dettaglio di un applicativo identificato dal nome e dal soggetto di riferimento
+      responses:
+        "200":
+          description: Dati dell'applicativo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Applicativo"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    put:
+      tags:
+        - applicativi
+      summary: Modifica i dati di un applicativo
+      operationId: update
+      description: Questa operazione consente di aggiornare i dati di un applicativo identificato dal nome e dal soggetto di riferimento
+      requestBody:
+        description: Dati dell'applicativo da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Applicativo'
+      responses: 
+        '204':
+          description: L'applicativo è stato aggiornato correttamente
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    delete:
+      tags:
+        - applicativi
+      summary: Elimina un applicativo
+      operationId: delete
+      description: Questa operazione consente di eliminare un applicativo identificato dal nome e dal soggetto di riferimento
+      responses: 
+        '204':
+          description: Applicativo eliminato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default' 
+  
+  # ** Ruoli **        
+  /ruoli:
+    get:
+      tags:
+        - ruoli
+      parameters:
+        - $ref: "teamdigitale-components.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/fonte"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/contesto"
+      summary: Ricerca ruoli
+      operationId: findAll
+      description: 'Elenca i ruoli registrati'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaRuoli"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    post:
+      tags:
+        - ruoli
+      summary: Creazione di un ruolo
+      operationId: create
+      description: 'Questa operazione consente di creare un ruolo'
+      requestBody:
+        description: Dati del ruolo che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ruolo'
+      responses:
+        '201':
+          description: Ruolo creato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '409':
+          $ref: 'teamdigitale-components.yaml#/components/responses/409Conflict'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+  /ruoli/{nome}:
+    parameters:
+      - in: path
+        name: nome
+        description: nome del ruolo
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - ruoli
+      summary: Restituisce il dettaglio di un ruolo
+      operationId: get
+      description: Questa operazione consente di ottenere il dettaglio di un ruolo identificato dal nome
+      responses:
+        "200":
+          description: Dati del ruolo restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ruolo"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    put:
+      tags:
+        - ruoli
+      summary: Modifica i dati di un ruolo
+      operationId: update
+      description: Questa operazione consente di aggiornare i dati di un ruolo identificato dal nome
+      requestBody:
+        description: Dati del ruolo da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ruolo'
+      responses: 
+        '204':
+          description: Il Ruolo è stato aggiornato correttamente
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    delete:
+      tags:
+        - ruoli
+      summary: Elimina un ruolo
+      operationId: delete
+      description: Questa operazione consente di eliminare un ruolo identificato dal nome
+      responses: 
+        '204':
+          description: Ruolo eliminato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default' 
+          
+  # ** Scope **        
+  /scope:
+    get:
+      tags:
+        - scope
+      parameters:
+        - $ref: "teamdigitale-components.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-components.yaml#/components/parameters/offset"
+        - $ref: "govway_rs-api_commons.yaml#/components/parameters/contesto"
+      summary: Ricerca scope
+      operationId: findAll
+      description: 'Elenca gli scope registrati'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaScope"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    post:
+      tags:
+        - scope
+      summary: Creazione di uno scope
+      operationId: create
+      description: 'Questa operazione consente di creare uno scope'
+      requestBody:
+        description: Dati dello scope che si vuole creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+      responses:
+        '201':
+          description: Scope creato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '409':
+          $ref: 'teamdigitale-components.yaml#/components/responses/409Conflict'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+  /scope/{nome}:
+    parameters:
+      - in: path
+        name: nome
+        description: nome dello scope
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - scope
+      summary: Restituisce il dettaglio di uno scope
+      operationId: get
+      description: Questa operazione consente di ottenere il dettaglio di uno scope identificato dal nome
+      responses:
+        "200":
+          description: Dati dello scope restituiti con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scope"
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    put:
+      tags:
+        - scope
+      summary: Modifica i dati di uno scope
+      operationId: update
+      description: Questa operazione consente di aggiornare i dati di uno scope identificato dal nome
+      requestBody:
+        description: Dati dello scope da aggiornare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+      responses: 
+        '204':
+          description: Lo scope è stato aggiornato correttamente
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default'
+    delete:
+      tags:
+        - scope
+      summary: Elimina uno scope
+      operationId: delete
+      description: Questa operazione consente di eliminare uno scope identificato dal nome
+      responses: 
+        '204':
+          description: Scope eliminato con successo
+        '400':
+          $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
+        '404':
+          $ref: 'teamdigitale-components.yaml#/components/responses/404NotFound'
+        '429':
+          $ref: 'teamdigitale-components.yaml#/components/responses/429TooManyRequests'
+        '503':
+          $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-components.yaml#/components/responses/default' 
+
+  /erogazioni:
+    parameters:
+    - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+    - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+    get:
+      tags:
+        - backoffice
+      parameters:
+        - in: query
+          name: q
+          description: filtro sulle erogazioni
+          schema:
+            type: string
+        - in: query
+          name: pagina
+          description: Numero di pagina dei risultati
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - in: query
+          name: risultatiPerPagina
+          description: Numero massimo di risultati nella risposta
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 25
+            maximum: 200
+      summary: Ricerca erogazioni
+      operationId: ListErogazioni
+      description: 'Ricerca erogazioni'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+                  - type: object
+                    required:
+                      - risultati
+                    properties:
+                      risultati:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ErogazioneItem'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+  /fruizioni:
+    parameters:
+    - in: query
+      name: profilo
+      schema:
+        type: string
+        enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+      description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+    get:
+      tags:
+        - backoffice
+      parameters:
+        - in: query
+          name: q
+          description: filtro sulle fruizioni
+          schema:
+            type: string
+        - in: query
+          name: pagina
+          description: Numero di pagina dei risultati
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - in: query
+          name: risultatiPerPagina
+          description: Numero massimo di risultati nella risposta
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 25
+            maximum: 200
+      summary: Ricerca fruizioni
+      operationId: ListFruizioni
+      description: 'Ricerca fruizioni'
+      responses: 
+        '200':
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+                  - type: object
+                    required:
+                      - risultati
+                    properties:
+                      risultati:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FruizioneItem'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+ 
+  /soggetti/{nomeSoggetto}/erogazioni:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+    post:
+      tags:
+        - backoffice
+      summary: Crea una nuova erogazione di servizio per un dato soggetto
+      operationId: CreaErogazione
+      description: 'Questa operazione consente di configurare un servizio erogato da un determinato soggetto'
+      responses:
+        '201':
+          description: Erogazione creata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '409':
+          description: Erogazione già presente nel registro
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Erogazione'
+        description: Dati relativi all'erogazione da creare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+    delete:
+      tags:
+        - backoffice
+      summary: Elimina una erogazione
+      operationId: DeleteErogazione
+      description: 'Questa operazione consente di eliminare una erogazione identificata dal soggetto erogatore, nome del servizio e versione'
+      parameters:
+        - in: path
+          name: nomeServizio
+          description: nome del servizio erogato
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: versione
+          description: versione dell'erogazione
+          required: true
+          schema:
+            type: integer
+            format: int32 
+            minimum: 1  
+      responses: 
+        '204':
+          description: Erogazione eliminata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Erogazione non presente nel registro
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+    get:
+      tags:
+        - backoffice
+      summary: 'Restituisce l''indice degli elementi di configurazione presenti per la data erogazione'
+      operationId: getConfigurazioniErogazione
+      description: 'Restituisce l''indice degli elementi di configurazione presenti per la data erogazione'
+      responses: 
+        "200":
+          description: 'l''indice degli elementi di configurazione è stato restituito correttamente'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items: 
+                    type: string
+                example: [['azione1', 'azione2'],['azione3'],['default']]
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    post:
+      tags:
+        - backoffice
+      summary: 'Crea una nuova configurazione per la data erogazione'
+      operationId: creaConfigurazioniErogazione
+      description: 'Crea una nuova configurazione per la data erogazione indicando le azioni su cui ha effetto'
+      responses:   
+        '201':
+          description: La nuova configurazione è stata creata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+        '409':
+          description: Configurazione già esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                azioni:
+                  type: array
+                  items:
+                    type: string
+                clonaDa:
+                  type: string
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+        - backoffice
+      summary: 'Elimina una singola configurazione relativa ad un''erogazione'
+      operationId: deleteConfigurazioniErogazione
+      description: 'Elimina una configurazione per la data erogazione'
+      responses: 
+        '204':
+          description: Configurazione dell'erogazione eliminata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Erogazione non presente nel registro
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/autenticazione:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione cui fa riferimento la configurazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce i dettagli di autenticazione per un servizio erogato e una data azione configurata
+      operationId: getAutenticazioneErogazione
+      description: 'Restituisce i dettagli inerenti il criterio di autenticazione previsto per i fruitori di un servizio erogato'
+      responses: 
+        "200":
+          description: 'I dati di autenticazione sono stati restituiti correttamente'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Autenticazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Modifica il criterio di autenticazione di una erogazione per una data azione configurata
+      operationId: updateAutenticazioneErogazione
+      description: 'Questa operazione consente di aggiornare la configurazione del criterio di autenticazione associato ad un servizio erogato. Se non esiste una configurazione specifica per l''azione indicata, la modifica avrà effetto sulla configurazione di default'
+      responses: 
+        '204':
+          description: Il criterio di autenticazione è stato aggiornato correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autenticazione'
+        description: Dati di autenticazione da aggiornare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/autorizzazione:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce i dettagli di autorizzazione per un servizio erogato
+      operationId: getAutorizzazioneErogazione
+      description: 'Restituisce i dettagli inerenti il criterio di autorizzazione previsto per i fruitori di un servizio erogato'
+      responses: 
+        "200":
+          description: 'I dati di autorizzazione sono stati restituiti correttamente'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutorizzazioneSoggetti"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: modifica il criterio di autorizzazione di una erogazione
+      operationId: updateAutorizzazioneErogazione
+      description: descrizione estesa dell'operazione
+      responses: 
+        '204':
+          description: Il criterio di autorizzazione è stato aggiornato correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutorizzazioneSoggetti'
+        description: dati autorizzazione da aggiornare 
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/validazione:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera il criterio di validazione messaggi di una erogazione
+      operationId: getValidazioneErogazione
+      description: 'Questa operazione consente di ottenere la configurazione della validazione dei messaggi relativi ad un servizio erogato'
+      responses: 
+        "200":
+          description: Configurazione validazione restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Validazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della validazione messaggi di una erogazione
+      operationId: updateValidazioneErogazione
+      description: 'Questa operazione consente di modificare la configurazione della validazione dei messaggi relativi ad un servizio erogato'
+      responses: 
+        '204':
+          description: Configurazione validazione aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Validazione'
+        description: Dati validazione da aggiornare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/correlazione:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione della correlazione applicativa di una erogazione
+      operationId: getCorrelazioneErogazione
+      description: 'Questa operazione consente di ottenere la configurazione della correlazione applicativa relativa ad un servizio erogato'
+      responses: 
+        "200":
+          description: Configurazione correlazione applicativa restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativa"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della correlazione applicativa di una erogazione
+      operationId: updateCorrelazioneErogazione
+      description: 'Questa operazione consente di modificare la configurazione della correlazione applicativa relativa ad un servizio erogato'
+      responses: 
+        '204':
+          description: Configurazione correlazione applicativa aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrelazioneApplicativa'
+        description: Dati correlazione applicativa da aggiornare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/sicurezza:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione della sicurezza livello messaggio di una erogazione
+      operationId: getSicurezzaErogazione
+      description: 'Questa operazione consente di ottenere la configurazione della sicurezza livello messaggio relativa ad un servizio erogato'
+      responses: 
+        "200":
+          description: Configurazione Message Secuyrity restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SicurezzaMessaggio"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della sicurezza livello messaggio di una erogazione
+      operationId: updateSicurezzaErogazione
+      description: 'Questa operazione consente di modificare la configurazione della sicurezza livello messaggio relativa ad un servizio erogato'
+      responses: 
+        '204':
+          description: Configurazione Message Security aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SicurezzaMessaggio'
+        description: Dati Message Security da aggiornare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/mtom:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione mtom di una erogazione
+      operationId: getMtomErogazione
+      description: 'Questa operazione consente di ottenere la configurazione MTOM relativa ad un servizio erogato'
+      responses: 
+        "200":
+          description: Configurazione MTOM restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mtom_Erogazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione MTOM di una erogazione
+      operationId: updateMtomErogazione
+      description: 'Questa operazione consente di modificare la configurazione MTOM relativa ad un servizio erogato'
+      responses: 
+        '204':
+          description: Configurazione MTOM aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mtom_Erogazione'
+        description: Dati MTOM da aggiornare  
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/configurazioni/{azione}/archiviomessaggi:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione dell'erogazione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione dell'archivio messaggi di una erogazione
+      operationId: getArchivioMessaggiErogazione
+      description: 'Questa operazione consente di ottenere la configurazione Archivio Messaggi relativa ad un servizio erogato'
+      responses: 
+        "200":
+          description: Configurazione Archivio Messaggi restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchivioMessaggi"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione Archivio Messaggi di una erogazione
+      operationId: updateArchivioMessaggiErogazione
+      description: 'Questa operazione consente di modificare la configurazione Archivio Messaggi relativa ad un servizio erogato'
+      responses: 
+        '204':
+          description: Configurazione Archivio Messaggi aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArchivioMessaggi'
+        description: Dati Archivio Messaggi da aggiornare  
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/connettore:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce il dettaglio del connettore di una erogazione
+      operationId: getConnettoreErogazione
+      description: 'Questa operazione restituisce la configurazione del connettore associato ad un servizio erogato'
+      responses: 
+        "200":
+          description: Dettaglio del connettore restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Connettore"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione del connettore di una erogazione
+      operationId: updateConnettoreErogazione
+      description: 'Questa operazione consente di aggiornare la configurazione del connettore associato ad un servizio erogato'
+      responses: 
+        '204':
+          description: Connettore aggiornato con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Connettore'
+        description: Dati del connettore da aggiornare
+  /soggetti/{nomeSoggetto}/erogazioni/{nomeServizio}/{versione}/urlinvocazione:
+    parameters:
+      - in: path
+        name: nomeSoggetto
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce la url di invocazione di una erogazione
+      operationId: getUrlInvocazioneErogazione
+      description: 'Questa operazione restituisce la url di invocazione associata ad un servizio erogato'
+      responses: 
+        "200":
+          description: Dettaglio Url invocazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UrlInvocazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: L'erogazione riferita non esiste
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la url di invocazione di una erogazione
+      operationId: updateUrlInvocazioneErogazione
+      description: 'Questa operazione consente di aggiornare la url di invocazione associata ad un servizio erogato'
+      responses: 
+        '204':
+          description: Dettaglio Url invocazione aggiornato con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: L'erogazione riferita non esiste
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlInvocazione'
+        description: Dati Url Invocazione da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+    post:
+      tags:
+        - backoffice
+      summary: Crea una fruizione
+      operationId: CreaFruizione
+      description: 'Questa operazione consente di registrare la fruizione per un determinato servizio'
+      responses:
+        '201':
+          description: La fruizione è stata creata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '409':
+          description: La fruizione è già esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fruizione'
+        description: Dati della fruizione da creare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+    delete:
+      tags:
+        - backoffice
+      summary: Cancella una fruizione
+      operationId: DeleteFruizione
+      description: Questa operazione consente di cancellare la fruizione di un servizio
+      responses: 
+        '204':
+          description: Fruizione eliminata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non trovata
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: 'Restituisce l''indice degli elementi di configurazione presenti per la data fruizione'
+      operationId: getConfigurazioniFruizione
+      description: 'Restituisce l''indice degli elementi di configurazione presenti per la data fruizione'
+      responses: 
+        "200":
+          description: 'l''indice degli elementi di configurazione è stato restituito correttamente'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items: 
+                    type: string
+                example: [['azione1', 'azione2'],['azione3'],['default']]
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non presente
+    post:
+      tags:
+        - backoffice
+      summary: 'Crea una nuova configurazione per la data fruizione'
+      operationId: creaConfigurazioniFruizione
+      description: 'Crea una nuova configurazione per la data fruizione indicando le azioni su cui ha effetto'
+      responses:   
+        '201':
+          description: La nuova configurazione è stata creata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non presente
+        '409':
+          description: Configurazione già esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                azioni:
+                  type: array
+                  items:
+                    type: string
+                clonaDa:
+                  type: string
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: azione
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+    delete:
+      tags:
+        - backoffice
+      summary: 'Elimina una singola configurazione relativa ad una fruizione'
+      operationId: deleteConfigurazioniFruizione
+      description: 'Elimina una configurazione per la data fruizione'
+      responses: 
+        '204':
+          description: Configurazione della fruizione eliminata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non presente       
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/autenticazione:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce i dettagli di autenticazione per un servizio fruito 
+      operationId: getAutenticazioneFruizione
+      description: Questa operazione consente di ottenere i dettagli di configurazione del metodo di autenticazione degli applicativi che fruiscono di un servizio 
+      responses: 
+        "200":
+          description: Dettagli di autenticazione restituiti correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Autenticazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non presente
+    put:
+      tags:
+        - backoffice
+      summary: Modifica la configurazione dell'autenticazione per la fruizione di un servizio
+      operationId: updateAutenticazioneFruizione
+      description: Questa operazione consente di aggiornare la configurazione del metodo di autenticazione degli applicativi che fruiscono di un servizio 
+      responses: 
+        '204':
+          description: Dati di autenticazione aggiornati correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non presente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autenticazione'
+        description: Dati autenticazione da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/autorizzazione:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: 'Restituisce i dettagli di autorizzazione per un servizio fruito'
+      operationId: getAutorizzazioneFruizione
+      description: 'Questa operazione consente di ottenere il dettaglio di configurazione dei criteri di autorizzazione relativi agli applicativi che fruiscono di un servizio'
+      responses: 
+        "200":
+          description: Dettagli di autorizzazione restituiti correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutorizzazioneSoggetti"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente 
+    put:
+      tags:
+        - backoffice
+      summary: 'Aggiorna i dettagli di autorizzazione per un servizio fruito'
+      operationId: updateAutorizzazioneFruizione
+      description: 'Questa operazione consente di aggiornare la configurazione dei criteri di autorizzazione relativi agli applicativi che fruiscono di un servizio'
+      responses: 
+        '204':
+          description: Configurazione dell'autorizzazione aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutorizzazioneSoggetti'
+        description: dati autorizzazione da aggiornare 
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/validazione:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce il criterio di validazione dei messaggi per una fruizione
+      operationId: getValidazioneFruizione
+      description: 'Questa operazione consente di ottenere la configurazione della validazione dei messaggi relativi ad un servizio fruito'
+      responses: 
+        "200":
+          description: Configurazione validazione restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Validazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della validazione messaggi di una fruizione
+      operationId: updateValidazioneFruizione
+      description: 'Questa operazione consente di modificare la configurazione della validazione dei messaggi relativi ad un servizio fruito'
+      responses: 
+        '204':
+          description: Configurazione validazione aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Validazione'
+        description: dati validazione da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/correlazione:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione della correlazione applicativa di una fruizione
+      operationId: getCorrelazioneFruizione
+      description: 'Questa operazione consente di ottenere la configurazione della correlazione applicativa relativa ad un servizio fruito'
+      responses: 
+        "200":
+          description: Configurazione correlazione applicativa restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelazioneApplicativa"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della correlazione applicativa di una fruizione
+      operationId: updateCorrelazioneFruizione
+      description: 'Questa operazione consente di modificare la configurazione della correlazione applicativa relativa ad un servizio fruito'
+      responses: 
+        '204':
+          description: Configurazione correlazione applicativa aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrelazioneApplicativa'
+        description: Dati correlazione applicativa da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/sicurezza:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione della sicurezza livello messaggio di una fruizione
+      operationId: getSicurezzaFruizione
+      description: 'Questa operazione consente di ottenere la configurazione della sicurezza livello messaggio relativa ad un servizio fruito'
+      responses: 
+        "200":
+          description: Configurazione Message Secuyrity restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SicurezzaMessaggio"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione della sicurezza livello messaggio di una fruizione
+      operationId: updateSicurezzaFruizione
+      description: 'Questa operazione consente di modificare la configurazione della sicurezza livello messaggio relativa ad un servizio fruito'
+      responses: 
+        '204':
+          description: Configurazione Message Security aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SicurezzaMessaggio'
+        description: Dati Message Security da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/mtom:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione mtom di una fruizione
+      operationId: getMtomFruizione
+      description: 'Questa operazione consente di ottenere la configurazione MTOM relativa ad un servizio fruito'
+      responses: 
+        "200":
+          description: Configurazione MTOM restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mtom_Fruizione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione MTOM di una fruizione
+      operationId: updateMtomFruizione
+      description: 'Questa operazione consente di modificare la configurazione MTOM relativa ad un servizio fruito'
+      responses: 
+        '204':
+          description: Configurazione MTOM aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mtom_Fruizione'
+        description: Dati MTOM da aggiornare  
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/configurazioni/{azione}/archiviomessaggi:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+      - in: path
+        name: azione
+        description: azione che identifica la configurazione della fruizione
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Recupera la configurazione dell'archivio messaggi di una fruizione
+      operationId: getArchivioMessaggiFruizione
+      description: 'Questa operazione consente di ottenere la configurazione Archivio Messaggi relativa ad un servizio fruito'
+      responses: 
+        "200":
+          description: Configurazione Archivio Messaggi restituita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArchivioMessaggi"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione Archivio Messaggi di una fruizione
+      operationId: updateArchivioMessaggiFruizione
+      description: 'Questa operazione consente di modificare la configurazione Archivio Messaggi relativa ad un servizio fruito'
+      responses: 
+        '204':
+          description: Configurazione Archivio Messaggi aggiornata correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArchivioMessaggi'
+        description: Dati Archivio Messaggi da aggiornare  
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/connettore:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio fruito
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione del servizio fruito
+        required: true
+        schema:
+          type: integer
+          format: int32 
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce il dettaglio del connettore di una fruizione
+      operationId: getConnettoreFruizione
+      description: 'Questa operazione restituisce la configurazione del connettore associato ad un servizio fruito'
+      responses: 
+        "200":
+          description: Dettaglio del connettore restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Connettore"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la configurazione del connettore di una fruizione
+      operationId: updateConnettoreFruizione
+      description: 'Questa operazione consente di aggiornare la configurazione del connettore associato ad un servizio fruito. Tale impostazione sovrascrive la configurazione del connettore eventualmente presente a livello dell''erogazione'
+      responses: 
+        '204':
+          description: Impostazioni del connettore aggiornate correttamente
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Connettore'
+        description: Dati del connettore da aggiornare
+  /soggetti/{soggettoErogatore}/erogazioni/{nomeServizio}/{versione}/fruizioni/{soggettoFruitore}/urlinvocazione:
+    parameters:
+      - in: path
+        name: soggettoErogatore
+        description: 'nome del soggetto erogatore'
+        required: true
+        schema: 
+          type: string
+      - in: query
+        name: profilo
+        schema:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+      - in: path
+        name: nomeServizio
+        description: nome del servizio erogato
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: versione
+        description: versione dell'erogazione
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 1  
+      - in: path
+        name: soggettoFruitore
+        description: 'nome del soggetto fruitore'
+        required: true
+        schema: 
+          type: string
+    get:
+      tags:
+        - backoffice
+      summary: Restituisce la url di invocazione di una fruizione
+      operationId: getUrlInvocazioneFruizione
+      description: 'Questa operazione restituisce la url di invocazione associata ad un servizio fruito'
+      responses: 
+        "200":
+          description: Dettaglio Url invocazione restituito con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UrlInvocazione"
+        "400":
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        "404":
+          description: Fruizione non esistente
+    put:
+      tags:
+        - backoffice
+      summary: Aggiorna la url di invocazione di una fruizione
+      operationId: updateUrlInvocazioneFruizione
+      description: 'Questa operazione consente di aggiornare la url di invocazione associata ad un servizio fruito'
+      responses: 
+        '204':
+          description: Dettaglio Url invocazione aggiornato con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: Fruizione non esistente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlInvocazione'
+        description: Dati Url Invocazione da aggiornare
+ 
+ 
+  /api/{nomeServizio}/{versione}:
+    parameters:
+    - in: query
+      name: profilo
+      schema:
+        type: string
+        enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+        description: 'Indica la modalità operativa, a scelta tra "API Gateway", "SPCoop", "FatturaPA", "eDelivery"' 
+    put:
+      tags:
+        - backoffice
+      summary: Modifica una API
+      operationId: UpdateAPI
+      description: Questa operazione consente di aggiornare una API esistente
+      parameters:
+        - in: path
+          name: nomeServizio
+          description: nome del servizio associato all'api da modificare
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: versione
+          description: versione dell'api da modificare
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses: 
+        '204':
+          description: API modificata con successo
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroreGenerico'
+        '404':
+          description: API non trovata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api'
+        description: dati dell'api da aggiornare
+   
+components:
+  schemas:
+    Erogazione:
+      type: object
+      required:
+        - versione
+        - api
+        - connettore
+      properties:
+        profilo:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'eDelivery', 'FatturaPA']
+          example: 'APIGateway'
+        versione:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1
+        servizio: 
+          type: string
+          example: 'servizio'
+        api:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiRef'
+            - $ref: '#/components/schemas/Api'
+          example:
+            nome: 'ServizioRest'
+            versione: 1
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoServizi' 
+        url_invocazione:
+          $ref: '#/components/schemas/UrlInvocazione' 
+        configurazione:
+          type: array
+          items:
+            type: object
+            properties:
+              azioni:
+                type: array
+                items:
+                  type: string
+                  example: 'azione1'
+              elementiConfigurazione:
+                anyOf:
+                  - $ref: '#/components/schemas/Autenticazione'
+                  - $ref: '#/components/schemas/AutorizzazioneSoggetti'
+                  - $ref: '#/components/schemas/Validazione'
+                  - $ref: '#/components/schemas/SicurezzaMessaggio'
+                  - $ref: '#/components/schemas/Mtom_Erogazione'
+                  - $ref: '#/components/schemas/CorrelazioneApplicativa'
+                  - $ref: '#/components/schemas/ArchivioMessaggi'
+                example:
+                  autenticazione:
+                    stato: 'http-basic'
+                  autorizzazione:
+                    stato: 'abilitato'
+                    soggetti: ['EnteEsterno']
+                  validazione:
+                    stato: 'disabilitato'
+                  sicurezza:
+                    stato: 'disabilitato'
+        connettore:
+          $ref: '#/components/schemas/Connettore'
+    ErogazioneItem:
+      type: object
+      required:
+        - servizio
+        - profilo
+        - api
+      properties:
+        servizio:
+          type: string
+          example: 'servizio:1'
+        profilo:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'eDelivery', 'FatturaPA']
+          example: 'APIGateway'
+        api:
+          type: string
+          example: 'APITest:1'
+        tipo:
+          type: string
+          enum: ['Rest', 'Soap']
+          example: 'Rest'
+        count_configurazioni:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1
+        count_allegati:
+          type: integer
+          format: int32
+          minimum: 0
+          example: 0
+    Fruizione:
+      type: object
+      required:
+        - erogatore
+        - versione
+        - api
+      properties:
+        profilo:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'eDelivery', 'FatturaPA']
+          example: 'APIGateway'
+        erogatore:
+          type: string
+          example: 'EnteEsterno'
+        versione:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1
+        fruitore:
+          type: string
+          example: 'EnteInterno'
+        servizio:
+          type: string
+          example: 'servizio'
+        api:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiRef'
+            - $ref: '#/components/schemas/Api'
+          example:
+            nome: 'ServizioRest'
+            versione: 1
+        allegati:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllegatoServizi' 
+        url_invocazione:
+          $ref: '#/components/schemas/UrlInvocazione' 
+        configurazione:
+          type: array
+          items:
+            type: object
+            properties:
+              azioni:
+                type: array
+                items:
+                  type: string
+                  example: 'azione1'
+              elementiConfigurazione:
+                anyOf:
+                  - $ref: '#/components/schemas/Autenticazione'
+                  - $ref: '#/components/schemas/AutorizzazioneApplicativi'
+                  - $ref: '#/components/schemas/Validazione'
+                  - $ref: '#/components/schemas/Mtom_Fruizione'
+                  - $ref: '#/components/schemas/CorrelazioneApplicativa'
+                  - $ref: '#/components/schemas/ArchivioMessaggi'
+                example:
+                  autenticazione:
+                    stato: 'http-basic'
+                  autorizzazione:
+                    stato: 'abilitato'
+                    applicativi: ['Sa1']
+        connettore:
+          $ref: '#/components/schemas/Connettore'
+    FruizioneItem:
+      type: object
+      required:
+        - servizio
+        - erogatore
+        - profilo
+        - api
+      properties:
+        servizio:
+          type: string
+          example: 'servizio:1'
+        erogatore:
+          type: string
+          example: 'EnteEsterno'
+        profilo:
+          type: string
+          enum: ['APIGateway', 'SPCoop', 'eDelivery', 'FatturaPA']
+          example: 'APIGateway'
+        api:
+          type: string
+          example: 'APITest:1'
+        tipo:
+          type: string
+          enum: ['Rest', 'Soap']
+          example: 'Rest'
+        count_configurazioni:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1
+        count_allegati:
+          type: integer
+          format: int32
+          minimum: 0
+          example: 0
+    ApiRef:
+      type: object
+      required:
+        - nome
+        - versione
+      properties:
+        nome:
+          type: string
+          example: 'ApiRest'
+        versione:
+          type: integer
+          format: int32
+          minimum: 1
+   
+    Autenticazione:
+      type: object
+      properties:
+        autenticazione:
+          type: object
+          properties:
+            stato:
+              type: string
+              enum: ['disabilitato', 'https', 'http-basic', 'principal', 'custom']
+              default: 'disabilitato'
+              example: 'disabilitato'
+            custom:
+              type: string
+              example: 'CustomAuth'
+            opzionale:
+              type: boolean
+              example: false
+    AutorizzazioneSoggetti: 
+      type: object
+      properties:
+        autorizzazione:
+          type: object
+          properties:
+            stato: 
+              type: string
+              enum: ['disabilitato', 'abilitato', 'xacml-policy', 'custom']
+              default: 'disabilitato'
+              example: 'disabilitato'
+            custom:
+              type: string
+              example: 'CustomAuthz'
+            soggetti:
+              type: array
+              items:
+                type: string
+                example: 'EnteEsterno'
+            ruoli:
+              type: object
+              properties:
+                elencoRuoli:
+                  type: array
+                  items:
+                    type: string
+                    example: 'Ruolo1'
+                fonte:
+                  type: string
+                  enum: ['qualsiasi', 'registro', 'esterna']
+                  example: 'qualsiasi'
+                richiesti:
+                  type: string
+                  enum: ['tutti', 'almenoUno']
+                  example: 'tutti'
+    AutorizzazioneApplicativi: 
+      type: object
+      properties:
+        autorizzazione:
+          type: object
+          properties:
+            stato: 
+              type: string
+              enum: ['disabilitato', 'abilitato', 'xacml-policy', 'custom']
+              default: 'disabilitato'
+              example: 'disabilitato'
+            custom:
+              type: string
+              example: 'CustomAuthz'
+            applicativi:
+              type: array
+              items:
+                type: string
+                example: 'Sa1'
+            ruoli:
+              type: object
+              properties:
+                elencoRuoli:
+                  type: array
+                  items:
+                    type: string
+                    example: 'Ruolo1'
+                fonte:
+                  type: string
+                  enum: ['qualsiasi', 'registro', 'esterna']
+                  example: 'qualsiasi'
+                richiesti:
+                  type: string
+                  enum: ['tutti', 'almenoUno']
+                  example: 'tutti'
+    Connettore:
+      type: object
+      required: 
+        - endpoint
+      properties:
+        endpoint:
+          type: string
+          format: url
+          example: 'http://ente.it/servizio'
+        http:
+          type: object
+          properties:
+            username: 
+              type: string
+              example: 'user'
+            password: 
+              type: string
+              format: password
+              example: 'pwd'
+        https:
+          type: object
+          properties:
+            tipologia:
+              type: string
+              enum: ['SSLv2Hello', 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2']
+              example: 'TLSv1.2'
+            hostnameVerifier:
+              type: boolean
+              example: false
+            server:
+              type: object
+              properties:
+                path:
+                  type: string
+                  example: '/path/to/truststore'
+                tipo:
+                  type: string
+                  enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
+                  example: 'jks'
+                password:
+                  type: string
+                  format: password
+                  example: 'pwd'
+                algoritmo:
+                  type: string
+                  example: 'PKIX'
+            client: 
+              type: object
+              properties:
+                path:
+                  type: string
+                  example: '/path/to/keystore'
+                tipo:
+                  type: string
+                  enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
+                  example: 'jks'
+                password:
+                  type: string
+                  format: password
+                  example: 'pwd'
+                passwordChiavePrivata:
+                  type: string
+                  format: password
+                  example: 'pwd'
+                algoritmo:
+                  type: string
+                  example: 'SunX509'
+        proxy:
+          type: object
+          properties:
+            hostname:
+              type: string
+              format: hostname
+              example: 'http://proxy.ente.it'
+            porta:
+              type: integer
+              format: int32
+              minimum: 1
+              maximum: 65535
+              example: 8080
+            username:
+              type: string
+              example: 'user'
+            password:
+              type: string
+              format: password
+              example: 'pwd'
+    Validazione:
+      type: object
+      properties:
+        validazione: 
+          type: object
+          required:
+            - stato
+            - tipo
+          properties:
+            stato:
+              type: string
+              enum: ['disabilitato', 'abilitato', 'warningOnly']
+              example: 'swagger'
+            tipo:
+              type: string
+              enum: ['wsdl', 'xsd', 'swagger']
+              example: 'swagger'
+            mtom:
+              type: boolean
+              example: false
+    AllegatoAPI:
+      type: object
+      required:
+        - ruolo
+        - documento
+      properties:
+        ruolo:
+          type: string
+          enum: ['allegato', 'specificaSemiFormale']
+          example: 'specificaSemiFormale'
+        tipo:
+          type: string
+          enum: ['UML', 'HTML', 'XML', 'JSON', 'Linguaggio Naturale']
+          example: 'Linguaggio Naturale'
+        documento:
+          type: string
+          format: byte
+          example: '@@@'
+    AllegatoServizi:
+      type: object
+      required:
+        - ruolo
+        - documento
+      properties:
+        ruolo:
+          type: string
+          enum: ['allegato', 'specificaSemiFormale', 'SpecificaSicurezza', 'SpecificaLivelloServizio']
+          example: 'specificaSemiFormale'
+        tipo:
+          type: string
+          enum: ['UML', 'HTML', 'XML', 'JSON', 'Linguaggio Naturale', 'WS-Policy', 'XACML-Policy', 'WS-Agreement', 'WSLA']
+          example: 'Linguaggio Naturale'
+        documento:
+          type: string
+          format: byte
+          example: '@@@'
+    ErroreGenerico:
+      type: object
+      required:
+        - codice
+        - messaggio
+      properties:
+        codice:
+          type: string
+          example: OP320
+        tipo:
+          type: string
+          enum: ['info', 'error']
+          example: 'info'
+        messaggio:
+          type: string
+          example: 'Testo di descrizione dell''errore occorso'
+    SicurezzaMessaggio:
+      type: object
+      required:
+        - sicurezza
+      properties:
+        sicurezza:
+          type: object
+          required:
+            - stato
+          properties:
+            stato:
+              type: string
+              enum: ['abilitato', 'disabilitato']
+              example: 'abilitato'
+            richiesta:
+              type: array
+              items:
+                type: object
+                required:
+                  - nome
+                  - valore
+                properties:
+                  nome:
+                    type: string
+                    example: action
+                  valore:
+                    type: string
+                    example: encrypt
+            risposta:
+              type: array
+              items:
+                type: object
+                required:
+                  - nome
+                  - valore
+                properties:
+                  nome:
+                    type: string
+                    example: action
+                  valore:
+                    type: string
+                    example: timestamp
+    Mtom_Erogazione:
+      type: object
+      required:
+        - mtom
+      properties:
+        mtom:
+          type: object
+          required:
+            - richiesta
+            - risposta
+          properties:
+            richiesta:
+              type: string
+              enum: ['disable', 'unpackaging', 'verify']
+              example: verify
+            risposta:
+              type: string
+              enum: ['disable', 'packaging', 'verify']
+              example: verify
+    Mtom_Fruizione:
+      type: object
+      required:
+        - mtom
+      properties:
+        mtom:
+          type: object
+          required:
+            - richiesta
+            - risposta
+          properties:
+            richiesta:
+              type: string
+              enum: ['disable', 'packaging', 'verify']
+              example: verify
+            risposta:
+              type: string
+              enum: ['disable', 'unpackaging', 'verify']
+              example: verify
+    CorrelazioneApplicativa:
+      type: object
+      required:
+        - correlazione
+      properties:
+        correlazione:
+          type: object
+          properties:
+            richiesta:
+              type: array
+              items:
+                type: object
+                properties:
+                  elemento:
+                    type: string
+                    example: nomeUtente
+                  identificazione:
+                    type: string
+                    enum: ['urlBased', 'inputBased', 'contentBased', 'disabilitato']
+                    example: inputBased
+                  pattern:
+                    type: string
+                    example: id_applicativo
+                  identificazione_fallita:
+                    type: string
+                    enum: ['blocca', 'accetta']
+                    example: blocca
+            risposta:
+              type: array
+              items:
+                type: object
+                properties:
+                  elemento:
+                    type: string
+                    example: nomeUtente
+                  identificazione:
+                    type: string
+                    enum: ['inputBased', 'contentBased', 'disabilitato']
+                    example: inputBased
+                  pattern:
+                    type: string
+                    example: id_applicativo
+                  identificazione_fallita:
+                    type: string
+                    enum: ['blocca', 'accetta']
+                    example: blocca
+    ArchivioMessaggi:
+      type: object
+      required:
+        - archivioMessaggi
+      properties:
+        archivioMessaggi:
+          type: object
+          properties:
+            richiesta:
+              type: object
+              properties:
+                stato:
+                  type: string
+                  enum: ['abilitato', 'disabilitato']
+                  example: 'abilitato'
+                messaggio_ingresso:
+                  type: object
+                  properties:
+                    headers:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    body:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    attachments:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                messaggio_uscita:
+                  type: object
+                  properties:
+                    headers:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    body:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    attachments:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+            risposta:
+              type: object
+              properties:
+                stato:
+                  type: string
+                  enum: ['abilitato', 'disabilitato']
+                  example: 'abilitato'
+                messaggio_ingresso:
+                  type: object
+                  properties:
+                    headers:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    body:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    attachments:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                messaggio_uscita:
+                  type: object
+                  properties:
+                    headers:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    body:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+                    attachments:
+                      type: string
+                      enum: ['abilitato', 'disabilitato']
+                      example: 'abilitato'
+    UrlInvocazione:
+      type: object
+      required:
+        - url_invocazione
+      properties:
+        url_invocazione:
+          type: object
+          properties:
+            url:
+              type: string
+              example: 'http://localhost:8080/openspcoop2/gw/PD/EnteInterno/EnteInterno/test/1'
+            identificazione:
+              type: string
+              enum: ['content-based', 'header-based', 'url-based', 'input-based', 'interface-based', 'soap-action-based'] 
+              example: 'url-based'
+            pattern:
+              type: string
+              example: '.*/(?:gw_)?EnteInterno/(?:gw_)?EnteInterno/(?:gw_)?test/1/([^/|^?]*).*'
+            force_interface:
+              type: boolean
+              example: true
+            azioni:
+              type: string
+              example: 'azione1, azione2'
+              
+      
+    # Base: Credenziali
+    AuthenticationHttpBasic:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: 'user'
+        password:
+          type: string
+          format: password
+          example: 'pwd'
+    AuthenticationHttps:
+      type: object
+      required:
+        - subject
+      properties:
+        subject: 
+          type: string
+          example: 'cn=esterno'
+    AuthenticationPrincipal:
+      type: object
+      required:
+       - userid
+      properties:
+        userid:
+          type: string
+          example: 'idEsterno'
+    BaseCredenziali:
+      type: object
+      properties:
+        modalita_accesso:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/ModalitaAccessoEnum'
+        credenziali:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AuthenticationHttpBasic'
+            - $ref: '#/components/schemas/AuthenticationHttps'
+            - $ref: '#/components/schemas/AuthenticationPrincipal'
+          discriminator:
+            propertyName: modalita_accesso
+            mapping:
+              'http-basic': '#/components/schemas/AuthenticationHttpBasic'
+              'https': '#/components/schemas/AuthenticationHttps'
+              'principal': '#/components/schemas/AuthenticationPrincipal'
+          example:
+            username: 'user'
+            password: 'pwd'
+
+    # API
+    Api:
+      type: object
+      required:
+        - nome
+      properties:
+        tipo:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/TipoApiEnum'
+        nome:
+          type: string
+          example: 'PetStore'
+        descrizione:
+          type: string
+          example: 'descrizione API'
+        versione:
+          type: integer
+          format: int32
+          minimum: 1
+          default: 1
+          example: 1
+        formato:
+          type: object
+          oneOf:
+            - $ref: 'govway_rs-api_commons.yaml#/components/schemas/FormatoSoapEnum'
+            - $ref: 'govway_rs-api_commons.yaml#/components/schemas/FormatoRestEnum'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'soap': 'govway_rs-api_commons.yaml#/components/schemas/FormatoSoapEnum'
+              'rest': 'govway_rs-api_commons.yaml#/components/schemas/FormatoRestEnum'
+          example:
+            formato: 'OpenApi3.0' 
+        interfaccia:
+          type: string
+          format: byte
+    ApiItem:
+      allOf:
+        - $ref: 'govway_rs-api_commons.yaml#/components/schemas/BaseSoggettoItem'
+        - type: object
+          required:
+            - nome
+            - tipo
+            - versione
+            - formato
+            - stato
+            - stato_descrizione
+          properties:
+            tipo:
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/TipoApiEnum'
+            nome:
+              type: string
+              example: 'PetStore'
+            descrizione:
+              type: string
+              example: 'descrizione API'
+            versione:
+              type: integer
+              format: int32
+              minimum: 1
+              example: 1
+            formato:
+              type: object
+              oneOf:
+                - $ref: 'govway_rs-api_commons.yaml#/components/schemas/FormatoSoapEnum'
+                - $ref: 'govway_rs-api_commons.yaml#/components/schemas/FormatoRestEnum'
+              discriminator:
+                propertyName: tipo
+                mapping:
+                  'soap': 'govway_rs-api_commons.yaml#/components/schemas/FormatoSoapEnum'
+                  'rest': 'govway_rs-api_commons.yaml#/components/schemas/FormatoRestEnum'
+              example:
+                formato: 'OpenApi3.0' 
+            interfaccia:
+              type: string
+              format: byte
+            stato:
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/StatoApi'
+            stato_descrizione:
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/StatoApiDescrizione'
+    ListaApi:
+       allOf:
+          - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiItem'
+
+    # Soggetti
+    Soggetto:
+      allOf:
+        - $ref: '#/components/schemas/BaseCredenziali'
+        - type: object
+          required:
+            - nome
+          properties:
+            nome:
+              type: string
+              example: 'EnteEsterno'
+            dominio:
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/DominioEnum'
+            descrizione:
+              type: string
+              example: 'descrizione del soggetto EnteEsterno'
+            ruoli:
+              type: array
+              items:
+                type: string
+              example: ['ruolo1', 'ruolo2'] 
+    SoggettoItem:
+      allOf:
+        - $ref: 'govway_rs-api_commons.yaml#/components/schemas/BaseItem'
+        - type: object
+          required:
+            - nome
+            - dominio
+          properties:
+            nome:
+              type: string
+              example: 'EnteEsterno'
+            dominio:
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/DominioEnum'
+            count_ruoli:
+              type: integer
+              format: int32
+              minimum: 0
+              example: 0
+    ListaSoggetti:
+       allOf:
+          - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SoggettoItem'
+            
+    # Applicativi
+    Applicativo:
+      allOf:
+        - $ref: '#/components/schemas/BaseCredenziali'
+        - type: object
+          required:
+            - nome
+          properties:
+            nome:
+              type: string
+              example: 'sa1'
+            ruoli:
+              type: array
+              items:
+                type: string
+              example: ['ruolo1', 'ruolo2'] 
+    ApplicativoItem:
+      allOf:
+        - $ref: 'govway_rs-api_commons.yaml#/components/schemas/BaseSoggettoItem'
+        - type: object
+          required: 
+            - nome
+          properties:
+            nome:
+              type: string
+              example: applicativo1
+            count_ruoli:
+              type: integer
+              format: int32
+              minimum: 0
+              example: 3
+    ListaApplicativi:
+       allOf:
+          - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicativoItem'
+                 
+    # Ruoli
+    Ruolo:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+          example: 'AccessoSolaLettura'
+        descrizione:
+          type: string
+          example: 'descrizione del ruolo' 
+        fonte:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/FonteEnum'
+        identificativo_esterno:
+          type: string
+          example: 'urn://accesso_sola_lettura'
+        contesto:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/ContestoEnum'
+    RuoloItem:
+      type: object
+      required: 
+        - nome
+        - fonte
+        - contesto
+      properties:
+        nome:
+          type: string
+          example: 'AccessoSolaLettura' 
+        fonte:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/FonteEnum'
+        contesto:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/ContestoEnum'
+    ListaRuoli:
+       allOf:
+          - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RuoloItem'
+                  
+    # Scope
+    Scope:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+          example: 'AccessoSolaLettura'
+        descrizione:
+          type: string
+          example: 'descrizione dello scope' 
+        identificativo_esterno:
+          type: string
+          example: 'urn://accesso_sola_lettura'
+        contesto:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/ContestoEnum'
+    ScopeItem:
+      type: object
+      required: 
+        - nome
+        - contesto
+      properties:
+        nome:
+          type: string
+          example: 'AccessoSolaLettura' 
+        contesto:
+          $ref: 'govway_rs-api_commons.yaml#/components/schemas/ContestoEnum'
+    ListaScope:
+       allOf:
+          - $ref: 'govway_rs-api_commons.yaml#/components/schemas/ListaPaginata'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScopeItem'

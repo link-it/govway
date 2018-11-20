@@ -87,7 +87,24 @@ public class HttpConstants {
 	public final static String CACHE_STATUS_HTTP_1_0_DISABLE_CACHE = "no-cache";
 	public final static String CACHE_STATUS_PROXY_EXPIRES = "Expires";
 	public final static long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
-	
+
+	/** CORS Request */
+	public final static String ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
+	public final static String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
+	public final static String ACCESS_CONTROL_REQUEST_ORIGIN = "Origin";
+		
+	/** CORS Response */
+	public final static String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+	public final static String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+	public final static String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+	public final static String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+	public final static String ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE = "*";
+	public final static String ACCESS_CONTROL_ALLOW_ORIGIN_VARY = "Vary";
+	public final static String ACCESS_CONTROL_ALLOW_ORIGIN_VARY_ORIGIN_VALUE = "Origin";
+	public final static String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+	public final static String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
+	public final static String ACCESS_CONTROL_MAX_AGE_DISABLE_CACHE = "-1";
+
 	/** Agent */
 	public final static String USER_AGENT = "User-Agent";
 	public final static String SERVER = "Server";

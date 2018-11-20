@@ -364,6 +364,20 @@ public class ConsoleHelper {
 	private Exception eErrorInit;
 	
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
+		ControlStationCore core = null;
+		try {
+			core = new ControlStationCore();
+		} catch (Exception e) {
+			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
+			this.errorInit = true;
+			this.eErrorInit = e;
+		}
+		this.init(core, request, pd, session);
+	}
+	public ConsoleHelper(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) {
+		this.init(core, request, pd, session);
+	}
+	private void init(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
 		this.pd = pd;
 		this.session = session;
@@ -375,7 +389,7 @@ public class ConsoleHelper {
 				this.tipoInterfaccia = user.getInterfaceType();
 			}
 			
-			this.core = new ControlStationCore();
+			this.core = core;
 			this.pddCore = new PddCore(this.core);
 			this.utentiCore = new UtentiCore(this.core);
 			this.soggettiCore = new SoggettiCore(this.core);
@@ -430,7 +444,11 @@ public class ConsoleHelper {
 				}
 			}
 			
-			this.size = ConsoleProperties.getInstance().getConsoleLunghezzaLabel();
+			try {
+				this.size = ConsoleProperties.getInstance().getConsoleLunghezzaLabel();
+			}catch(Exception e) {
+				this.size = 50;
+			}
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 			this.errorInit = true;
@@ -1869,16 +1887,16 @@ public class ConsoleHelper {
 
 			String search = ricerca.getSearchString(idLista);
 
-			if (this.getParameter("index") != null) {
-				offset = Integer.parseInt(this.getParameter("index"));
+			if (this.getParameter(Costanti.SEARCH_INDEX) != null) {
+				offset = Integer.parseInt(this.getParameter(Costanti.SEARCH_INDEX));
 				ricerca.setIndexIniziale(idLista, offset);
 			}
-			if (this.getParameter("pageSize") != null) {
-				limit = Integer.parseInt(this.getParameter("pageSize"));
+			if (this.getParameter(Costanti.SEARCH_PAGE_SIZE) != null) {
+				limit = Integer.parseInt(this.getParameter(Costanti.SEARCH_PAGE_SIZE));
 				ricerca.setPageSize(idLista, limit);
 			}
-			if (this.getParameter("search") != null) {
-				search = this.getParameter("search");
+			if (this.getParameter(Costanti.SEARCH) != null) {
+				search = this.getParameter(Costanti.SEARCH);
 				search = search.trim();
 				if (search.equals("")) {
 					ricerca.setSearchString(idLista, org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED);

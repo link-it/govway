@@ -111,6 +111,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 	public ErogazioniHelper(HttpServletRequest request, PageData pd, HttpSession session) throws Exception {
 		super(request, pd, session);
 	}
+	public ErogazioniHelper(ControlStationCore core, HttpServletRequest request, PageData pd, HttpSession session) throws Exception {
+		super(core, request, pd, session);
+	}
 
 	public void checkGestione(HttpSession session, Search ricerca, int idLista, String tipologiaParameterName) throws Exception {
 		this.checkGestione(session, ricerca, idLista, tipologiaParameterName, false);

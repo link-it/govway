@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GovWayConfigApiRS_LocalEnv" basedir=".">
+
+      <!-- root di OpenSPCoop -->
+      <property name="openspcoop2" location="../../../.."/>
+      <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      
+      <!-- ApplicationServer version -->
+      <property name="as" value="jboss/wildfly/tomcat" />
+
+      <property name="required_lib_govwayConfigApiRS" location="${openspcoop2}/lib/"/>
+      <property name="required_lib" value="${required_lib_govwayConfigApiRS}"/>
+      <property name="openspcoop2.lib" location="${required_lib_govwayConfigApiRS}"/>
+
+      <!-- Build-Options -->
+      <property name="buildAsRelease" value="false"/>
+      <property name="buildGovWayConfigApiRS" value="true"/>
+      <property name="buildAPI" value="true"/>
+
+      <!-- Dipendenze di compilazione -->
+      <property name="webInterfaces" location="../../../web_interfaces"/>
+      <property name="mvc" value="${webInterfaces}/lib/mvc"/>
+      <property name="src_mvc" value="${mvc}/src"/>
+      <property name="audit" value="${webInterfaces}/lib/audit"/>
+      <property name="src_audit" value="${audit}/src"/>
+      <property name="users" value="${webInterfaces}/lib/users"/>
+      <property name="src_users" value="${users}/src"/>
+      <property name="queue" value="${webInterfaces}/lib/queue"/>
+      <property name="src_queue" value="${queue}/src"/>
+      <property name="govwayConsole" location="${webInterfaces}/control_station" />
+      <property name="src_govwayConsole" value="${govwayConsole}/src" />
+
+      <!-- Specifica se inserire le informazioni di debug nelle classi -->
+      <property name="debug" value="true" />
+      <property name="printServerInfo" value="false" />
+
+</project>

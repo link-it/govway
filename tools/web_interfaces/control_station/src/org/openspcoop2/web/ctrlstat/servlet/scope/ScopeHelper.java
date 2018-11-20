@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 //import org.openspcoop2.core.registry.constants.ScopeTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -60,6 +61,10 @@ public class ScopeHelper extends ConsoleHelper{
 	public ScopeHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
+	}
+	public ScopeHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
 	}
 
 	public Vector<DataElement> addScopeToDati(TipoOperazione tipoOP, Long scopeId, String nome, String descrizione, String tipologia,

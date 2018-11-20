@@ -1,0 +1,156 @@
+openapi: 3.0.0
+components:
+  parameters:
+  
+    # Selezione Modalita e Soggetto del Dominio
+    profilo:
+      name: profilo
+      in: query
+      description: Indica la modalità operativa del Gateway, a scelta tra "APIGateway", "SPCoop", "FatturaPA", "eDelivery"
+      required: false
+      example: APIGateway
+      schema:
+        $ref: '#/components/schemas/ProfiloEnum'
+    soggetto:
+      name: soggetto
+      in: query
+      description: Indica il Soggetto di dominio interno indirizzato dall'operazione.
+      required: false
+      example: ENTE
+      schema:
+        type: string 
+        
+    # Ricerche
+    tipo_api:
+      name: tipo_api
+      in: query
+      description: Indica il tipo di API
+      required: false
+      example: 'rest'
+      schema:
+        $ref: '#/components/schemas/TipoApiEnum'
+    dominio:
+      name: dominio
+      in: query
+      description: Indica il dominio di un soggetto
+      required: false
+      example: 'esterno'
+      schema:
+        $ref: '#/components/schemas/DominioEnum'
+    ruolo:
+      name: ruolo
+      in: query
+      description: Identifica un ruolo
+      required: false
+      example: 'AccessoSolaLettura'
+      schema:
+        type: string
+    fonte:
+      name: fonte
+      in: query
+      description: Indica la fonte di un oggetto
+      required: false
+      example: 'esterna'
+      schema:
+        $ref: '#/components/schemas/FonteEnum'
+    contesto:
+      name: contesto
+      in: query
+      description: Indica il contesto di utilizzo di un oggetto
+      required: false
+      example: 'erogazione'
+      schema:
+        $ref: '#/components/schemas/ContestoEnum'
+        
+  schemas:
+            
+    # Base: Modalita e Soggetto del Dominio
+    BaseItem:
+      type: object
+      properties:
+        profilo:
+          $ref: '#/components/schemas/ProfiloEnum'
+    
+    BaseSoggettoItem:
+      allOf:
+        - $ref: '#/components/schemas/BaseItem'
+        - type: object
+          properties:
+            soggetto: 
+              type: string
+              example: EnteInterno
+    
+    # Base: Stato
+    StatoApi:
+      type: string
+      enum: ['ok', 'warn','error']
+    StatoApiDescrizione:
+      type: string
+      example: 'Nessuna risorsa definita nella API'
+          
+    # Base: Lista ritornata
+    ListaPaginata:
+      type: object
+      required:
+        - results
+        - page
+        - pages
+        - page_results
+        - next_results
+      properties:
+        results:
+          type: integer
+          format: int32
+          example: '100'
+        page:
+          type: integer
+          format: int32
+          example: '1'
+        pages:
+          type: integer
+          format: int32
+          example: '4'
+        page_results:
+          type: integer
+          format: int32
+          example: '25'
+        next_results:
+          type: string
+          format: integer
+          example: '/risorsa?offset=2'
+          
+    # Base: Enumeration
+    ProfiloEnum:
+      type: string
+      enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+      default: APIGateway
+    FormatoSoapEnum:
+      type: string
+      enum: ['Wsdl1.1']
+      default: 'Wsdl1.1'
+    FormatoRestEnum:
+      type: string
+      enum: ['Wadl', 'Swagger2.0','OpenApi3.0']
+      default: 'OpenApi3.0'
+    TipoApiEnum:
+      type: string
+      enum: ['soap', 'rest']
+      example: 'rest'
+    DominioEnum:
+      type: string
+      enum: ['interno', 'esterno']
+      example: 'esterno'
+    ModalitaAccessoEnum:
+      type: string
+      enum: ['http-basic', 'https', 'principal']
+      example: 'http-basic'
+    ContestoEnum:
+      type: string
+      enum: ['qualsiasi', 'erogazione', 'fruizione']
+      example: 'qualsiasi'
+      default: 'qualsiasi'
+    FonteEnum:
+      type: string
+      enum: ['qualsiasi', 'registro', 'esterna']
+      example: 'qualsiasi'
+      default: 'qualsiasi'

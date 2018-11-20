@@ -119,6 +119,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
@@ -1345,11 +1346,22 @@ public class ControlStationCore {
 	/* --- COSTRUTTORI --- */
 
 	public ControlStationCore() throws Exception {
+		this(false,null,null);
+	}
+	
+	public ControlStationCore(boolean initForApi, String confDir, String protocolloDefault) throws Exception {
 
-		ControlStationCore.checkInitLogger();
+		if(initForApi) {
+			ControlStationCore.log = LoggerWrapperFactory.getLogger(ControlStationCore.class);
+		}
+		else {
+			ControlStationCore.checkInitLogger();
+		}
 
 		try{
-			this.initCore();
+			if(!initForApi) {
+				this.initCore();
+			}
 
 			// inizializzo il DBManager
 			this.initConnections();
@@ -1358,7 +1370,9 @@ public class ControlStationCore {
 			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), null, ControlStationCore.log);
 
 			// inizializzo JMX
-			this.initCoreJmxResources();
+			if(!initForApi) {
+				this.initCoreJmxResources();
+			}
 			
 			// inizializza l'AuditManager
 			ControlStationCore.initializeAuditManager(this.tipoDB);
@@ -1373,12 +1387,20 @@ public class ControlStationCore {
 			ConfigurazionePdD configPdD = new ConfigurazionePdD();
 			configPdD.setLog(ControlStationCore.log);
 			configPdD.setLoader(org.openspcoop2.utils.resources.Loader.getInstance());
-			configPdD.setConfigurationDir(ConsoleProperties.getInstance().getConfDirectory());
+			if(!initForApi) {
+				configPdD.setConfigurationDir(ConsoleProperties.getInstance().getConfDirectory());
+			}
+			else {
+				configPdD.setConfigurationDir(confDir);
+			}
 			configPdD.setAttesaAttivaJDBC(this.jdbcSerializableAttesaAttiva);
 			configPdD.setCheckIntervalJDBC(this.jdbcSerializableCheck);
 			configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(DatasourceProperties.getInstance().getTipoDatabase()));
 			ProtocolFactoryManager.initialize(ControlStationCore.log, configPdD, this.protocolloDefault);
 			this.protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			if(initForApi) {
+				this.protocolloDefault = protocolloDefault;
+			}
 			if(this.protocolloDefault==null){
 				this.protocolloDefault = this.protocolFactoryManager.getDefaultProtocolFactory().getProtocol();
 			}

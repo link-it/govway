@@ -139,11 +139,13 @@ import org.openspcoop2.web.lib.users.dao.User;
  */
 public class ConfigurazioneHelper extends ConsoleHelper{
 
-	//	private ConnettoriHelper connettoriHelper = null;
 	public ConfigurazioneHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
-		//		this.connettoriHelper = new ConnettoriHelper(request, pd, session);
+	}
+	public ConfigurazioneHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
 	}
 
 	public Vector<DataElement>   addIdProprietaToDati(TipoOperazione tipoOp, String idprop, Vector<DataElement> dati) {

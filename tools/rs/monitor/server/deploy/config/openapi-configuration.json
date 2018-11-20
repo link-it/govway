@@ -1,0 +1,30 @@
+{
+	"resourcePackages": [
+		"org.openspcoop2.core.monitor.rs.server.api"
+	],
+	"prettyPrint": true,
+	"cacheTTL": 0,
+	"openAPI": {
+		"info": {
+			"version": "1.0.0",
+			"title": "GovWay Monitor API",
+			"description": "Servizi per il monitoraggio di GovWay",
+			"contact": {
+				"email": "info@link.it"
+			},
+			"license": {
+				"name": "GPL v3.0",
+				"url": "https://www.gnu.org/licenses/gpl-3.0.txt"
+			}
+		},
+		"servers": [
+			{
+				"url": "/govwayAPIMonitor",
+				"description": "The API server"
+			}
+		]
+	},
+	"userDefinedOptions": {
+		"support.swagger.ui": true
+	}
+}

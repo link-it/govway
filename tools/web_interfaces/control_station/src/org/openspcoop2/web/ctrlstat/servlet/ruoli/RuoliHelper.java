@@ -35,6 +35,7 @@ import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -56,6 +57,10 @@ public class RuoliHelper extends ConsoleHelper{
 	public RuoliHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
+	}
+	public RuoliHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
 	}
 
 	public Vector<DataElement> addRuoloToDati(TipoOperazione tipoOP, Long ruoloId, String nome, String descrizione, String tipologia,

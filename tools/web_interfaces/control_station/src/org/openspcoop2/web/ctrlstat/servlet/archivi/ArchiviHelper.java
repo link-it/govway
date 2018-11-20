@@ -114,6 +114,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
 	}
+	public ArchiviHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
+	}
 
 
 	public void addExportToDati(Vector<DataElement> dati,

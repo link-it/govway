@@ -30,6 +30,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
@@ -60,6 +61,10 @@ public class OperazioniHelper extends ConsoleHelper{
 	public OperazioniHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
+	}
+	public OperazioniHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
 	}
 
 	public void prepareOperazioniList(Search ricerca, List<Operation> lista)throws Exception {

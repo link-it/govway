@@ -1,0 +1,33 @@
+<project name="openspcoop2-codeGen-utils">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.utils.jaxrs
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/swagger-codegen.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_for_jaxrs_utils">
+	    	<antcall target="-swagger_codegen_components">
+			<param name="swaggerCodeGen.inputSpec" value="${src_utils}/org/openspcoop2/utils/jaxrs/fault/fault.yaml"/>
+			<param name="swaggerCodeGen.package" value="org.openspcoop2.utils.jaxrs.fault"/>
+			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/utils/jaxrs/fault"/>
+			<param name="swaggerCodeGen.outputDir" value="${src_utils}"/>
+			<param name="swaggerCodeGen.withXmlAnnotations" value="false"/>
+			<param name="swaggerCodeGen.beanValidation" value="false"/>
+		</antcall>
+
+	</target>
+
+
+</project>

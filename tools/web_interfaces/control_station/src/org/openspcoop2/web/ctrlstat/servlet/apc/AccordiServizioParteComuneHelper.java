@@ -78,6 +78,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.rest.api.ApiResponse;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -110,6 +111,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	public AccordiServizioParteComuneHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
+	}
+	public AccordiServizioParteComuneHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) throws Exception {
+		super(core, request, pd,  session);
 	}
 
 	public boolean asWithAllegatiXsd(AccordoServizioParteComune as) {
@@ -3041,7 +3046,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 
 			if( gestioneInformazioniGenerali && (listaTipiProtocollo != null && listaTipiProtocollo.size() > 1) ){
-				if(used){
+				boolean usedCheckForProtocollo = used;
+				usedCheckForProtocollo = true; // forzo l'indicazione in modo che il protocollo in change informazioni generali non sia modificabile
+				if(usedCheckForProtocollo){
 					
 					DataElement deLABEL = new DataElement();
 					deLABEL.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
@@ -3094,7 +3101,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		// Service Binding
 		boolean forceHiddenServiceBinding = !gestioneInformazioniGenerali;
-		de = this.getServiceBindingDataElement(protocolFactory, used, serviceBinding, forceHiddenServiceBinding);
+		boolean usedCheckForServiceBinding = used;
+		if( gestioneInformazioniGenerali ) {
+			usedCheckForServiceBinding = true; // forzo l'indicazione in modo che il tipo rest/soap in change informazioni generali non sia modificabile
+		}
+		de = this.getServiceBindingDataElement(protocolFactory, usedCheckForServiceBinding, serviceBinding, forceHiddenServiceBinding);
 		dati.addElement(de);
 		
 		// messagetype

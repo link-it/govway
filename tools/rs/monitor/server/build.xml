@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="GovWayMonitorApiRS" basedir=".">
+	<description>
+        	File di Script per la compilazione dell'interfaccia api rs per il monitoraggio
+    	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-govwayMonitorApiRS-build.xml" />
+	<import file="./ant/openspcoop2-govwayMonitorApiRS-codeGen.xml" />
+	<import file="./ant/openspcoop2-govwayMonitorApiRS-war.xml" />
+	<import file="${mvc}/build.xml" />
+	<import file="${users}/build.xml" />
+	<import file="${audit}/build.xml" />
+	<import file="${govwayMonitor}/build.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<!-- set properties for this build -->
+	<property name="govwayMonitorApiRS" location="${basedir}" />
+	
+	<property name="src_govwayMonitorApiRS" value="${govwayMonitorApiRS}/src" />
+	<property name="src_webinf_govwayMonitorApiRS" value="${src_govwayMonitorApiRS}/WEB-INF" />
+	<property name="build_govwayMonitorApiRS" location="build/govwayMonitor" />
+	<property name="build_govwayMonitorApiRS_war" location="build/govwayMonitorWar" />
+	<property name="dist_govwayMonitorApiRS" location="dist" />
+	<property name="doc_govwayMonitorApiRS" location="doc" />
+	<property name="properties_govwayMonitorApiRS" value="deploy/properties" />
+	<property name="deploy_govwayMonitorApiRS" value="deploy" />
+	<property name="tmp_jboss_conf" location="tmp" />
+
+	
+	<!-- Check AS Version -->
+	<if>
+		<not>
+			<istrue value="${_asVersionVerified}"/>
+		</not>
+		<then>
+			<runtarget target="check_as_version" />
+			<var name="_asVersionVerified" value="true"/>
+		</then>
+	</if>
+	
+	<!-- Jar dipendenti dall'A.S. -->
+	<var name="xerces_jar" value=""/>
+	<var name="xml_apis_jar" value=""/>
+	<var name="xalan_jar" value="" />
+	<var name="xalan_serializer_jar" value="" />
+	<var name="commons_logging_jar" value="" />
+	<var name="javax_jms_jar" value="" />
+	<var name="jaxp_ri_jar" value=""/>
+	<var name="ecj_jar" value="" />
+	<var name="jsr311-api_jar" value="" />
+	<var name="javax_servlet_jsp_jstl_jar" value="" />
+	<var name="javax_servlet_jsp_jstl_api_jar" value="" />
+	<var name="jsf_impl_jar" value="" />
+	<var name="jsf_api_jar" value="" />
+	<var name="el_impl_jar" value="" />
+	<var name="javax_el_jar" value="" />
+	<var name="jsf_module_jar" value="" />
+	<var name="wildfly_module_jar" value="" />
+	<var name="jboss_classloading" value="" />
+	<var name="jboss_scanning" value="" />
+	<var name="jboss_deployment_structure" value="" />
+
+	<!-- commons_logging -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="commons_logging_jar" value="commons-logging-1.2.jar" />
+		</then>
+	</if>
+	<!-- javax_jms -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="javax_jms_jar" value="javax.jms.jar" />
+		</then>
+	</if>
+	<!-- xalan -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss4"/>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xalan_jar" value="xalan-2.7.2.jar" />
+			<var name="xalan_serializer_jar" value="xalan-2.7.2_serializer.jar" />
+		</then>
+	</if>
+	<!-- xerces -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
+		</then>
+	</if>
+	<!-- jaxp_ri -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+		</then>
+	</if>
+	<!-- ecj_jar -->
+	<if> 
+		<or>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="ecj_jar" value="ecj-4.4.2.jar" />
+		</then>
+	</if>
+	<!-- jsr311-api_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jsr311-api_jar" value="jsr311-api-1.1.1.jar" />
+		</then>
+	</if>
+	<!-- javax_servlet_jsp_jstl_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="javax_servlet_jsp_jstl_jar" value="javax.servlet.jsp.jstl-1.2.1.jar" />
+			<var name="javax_servlet_jsp_jstl_api_jar" value="javax.servlet.jsp.jstl-api-1.2.1.jar" />
+		</then>
+	</if>
+	<!-- jsf_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jsf_impl_jar" value="jsf-impl-1.2_16.jar" />
+			<var name="jsf_api_jar" value="jsf-api-1.2_16.jar" />
+		</then>
+	</if>
+	<!-- el_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="el_impl_jar" value="el-impl-2.2.jar" />
+		</then>
+	</if>
+	<!-- javax_el_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="tomcat5"/>
+		</or>
+		<then>
+			<var name="javax_el_jar" value="javax.el.jar" />
+		</then>
+	</if>
+	
+	<!-- JSF Module -->
+	<if>
+		<and>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<equals arg1="${buildJsfAsModule}" arg2="false"/>
+		</and>
+		<then>
+			<var name="jsf_module_jar" value="*.jar" />
+		</then>
+	</if>
+	<if>
+		<and>
+			<or>
+				<matches string="${as}" pattern="wildfly8"/>
+				<matches string="${as}" pattern="wildfly9"/>
+			</or>
+			<equals arg1="${buildJsfAsModule}" arg2="false"/>
+		</and>
+		<then>
+			<var name="wildfly_module_jar" value="*.jar" />
+		</then>
+	</if>	
+
+	<!-- jboss_classloading -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_classloading" value="jboss-classloading.xml" />
+		</then>
+	</if>
+	<!-- jboss_scanning -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_scanning" value="jboss-scanning.xml" />
+		</then>
+	</if>
+	<!-- jboss_deployment_structure -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
+		</then>
+	</if>
+	
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="axis14/*"/>
+			<exclude name="cxf/javax.servlet-api-3.1.0.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2_jars}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>	
+	
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_govwayMonitorApiRS">
+		<delete dir="${build_govwayMonitorApiRS}" />
+		<delete dir="${build_govwayMonitorApiRS_war}" />
+		<delete dir="build" />
+		<delete dir="${dist_govwayMonitorApiRS}" />
+		<delete dir="${doc_govwayMonitorApiRS}" />
+		<delete dir="${tmp_jboss_conf}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_govwayMonitorApiRS">
+		<mkdir dir="${build_govwayMonitorApiRS}" />
+		<mkdir dir="${build_govwayMonitorApiRS}/tmp" />
+		<mkdir dir="${build_govwayMonitorApiRS}/tmp_css" />
+		<mkdir dir="${build_govwayMonitorApiRS_war}" />
+		<mkdir dir="${dist_govwayMonitorApiRS}" />
+		<mkdir dir="${tmp_jboss_conf}" />
+	</target>
+	
+		
+	<!-- Compilazioni dipendenze -->
+	<target name="compile_dipendenze_apiRS">
+		<if>
+			<istrue value="${buildPddMonitor}"/>
+			<then>
+				<runtarget target="compile_dipendenze_apiRS_invoke" />
+			</then>
+		</if>
+	</target>
+	<target name="compile_dipendenze_apiRS_invoke" depends="compile_users,compile_audit,compile_openspcoop2_govwayMonitor" description="compila le dipendenze" />
+
+	<!-- Compilazione del servizio-->
+	<target name="compile_govwayMonitorApiRS" depends="init_compile_govwayMonitorApiRS,compile_dipendenze_apiRS,compile_openspcoop2_govwayMonitorApiRS" description="compila govwayMonitor"/>
+
+
+	<!-- Creazione del modulo .WAR -->
+	<target name="build_govwayMonitorApiRS" depends="compile_govwayMonitorApiRS,-war_govwayMonitorApiRS" />
+
+	
+	<!-- alias -->
+	<target name="build" depends="build_govwayMonitorApiRS"/>
+	<target name="build_without_dipendencies" depends="compile_openspcoop2_govwayMonitorApiRS,-war_govwayMonitorApiRS"/>
+	<target name="clean" depends="clean_govwayMonitorApiRS"/>
+
+
+
+
+</project>

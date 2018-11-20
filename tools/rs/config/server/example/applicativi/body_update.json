@@ -1,0 +1,7 @@
+{       "nome": "Applicativo_update", 
+    	"modalita_accesso": "http-basic",     
+	"credenziali": {        
+	       	"username": "username_update",         
+		"password": "password_update"     
+	} 
+}

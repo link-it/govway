@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -64,6 +65,10 @@ public class PddHelper extends ConsoleHelper {
 	public PddHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) {
 		super(request, pd,  session);
+	}
+	public PddHelper(ControlStationCore core, HttpServletRequest request, PageData pd, 
+			HttpSession session) {
+		super(core, request, pd,  session);
 	}
 
 	

@@ -70,6 +70,10 @@ public class Costanti {
 	public final static String SEARCH_ENABLED ="on";
 	public final static String SEARCH_DISABLED ="off";
 	
+	public final static String SEARCH_PAGE_SIZE = "pageSize";
+	public final static String SEARCH_INDEX = "index";
+	public final static String SEARCH = "search";
+	
 	
 	/** POSTBACK FUNCTION */
 	

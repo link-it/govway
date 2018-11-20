@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd"
+        >
+
+	<b:import resource="classpath:META-INF/cxf/cxf.xml"/>
+	<b:import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+
+	<!-- 
+		CXF OpenApiFeature 
+		Per avere le interfacce:
+		- http://127.0.0.1:8080/govwayAPIConfig/openapi.json
+		- http://127.0.0.1:8080/govwayAPIConfig/openapi.yaml
+
+		Per utilizzare lo swagger ui (disabilitabile tramite l'opzione sottostante)
+		- http://127.0.0.1:8080/govwayAPIConfig/api-docs?url=/govwayAPIConfig/openapi.json
+	-->
+	<b:bean id="openApiFeature" class="org.apache.cxf.jaxrs.openapi.OpenApiFeature">
+		<!-- customize some of the properties -->
+		<b:property name="configLocation" value="openapi-configuration.json"/>
+		<!-- definito tutto in deploy/config/openapi-configuration.json 
+		     poichè all'interno di tale configurazione e' possibile definire anche il server
+		<b:property name="prettyPrint" value="true"/>
+		<b:property name="supportSwaggerUi" value="true"/>
+		<b:property name="license" value="GPL v3.0"/>
+		<b:property name="licenseUrl" value="https://www.gnu.org/licenses/gpl-3.0.txt"/>
+		<b:property name="contactEmail" value="info@link.it"/>
+		<b:property name="description" value="Servizi per la configurazione di GovWay"/>
+		<b:property name="version" value="1.0.0"/>
+		<b:property name="title" value="GovWay Config API"/>
+		-->
+	</b:bean>
+    
+	<!-- Parameter Converter -->
+	<b:bean id="parameterConverter" class="org.openspcoop2.utils.jaxrs.ParameterConverterProvider"/>
+
+	<!--  Object BodyReader -->
+	<b:bean id="objectMessageBodyReader" class="org.openspcoop2.utils.jaxrs.ObjectMessageBodyReader"/>
+	
+	<!--  Jackson Provider for JSON/XML -->
+	<b:bean id="jacksonJsonProvider" class="org.openspcoop2.utils.jaxrs.JacksonJsonProvider"/>
+	<b:bean id="jacksonXmlProvider" class="org.openspcoop2.utils.jaxrs.JacksonXmlProvider"/>
+	
+	<!-- FaultBean Exception Mapper -->
+	<b:bean id="webApplicationExceptionMapper" class="org.openspcoop2.utils.jaxrs.fault.WebApplicationExceptionMapper"/>
+	
+	<!-- Interceptor -->
+	<b:bean id="dumpReceivedMessageToFileSystemInterceptor" class="org.openspcoop2.utils.jaxrs.DumpReceivedMessageToFileSystemInterceptor"/>
+	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.jaxrs.DumpSendMessageToFileSystemInterceptor"/>
+
+	<!-- JAX-RS Service Impl -->
+	<b:bean id="apiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ApiApiServiceImpl"/>
+	<b:bean id="soggettiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.SoggettiApiServiceImpl"/>
+	<b:bean id="applicativiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ApplicativiApiServiceImpl"/>
+	<b:bean id="ruoliApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.RuoliApiServiceImpl"/>
+	<b:bean id="scopeApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ScopeApiServiceImpl"/>
+	
+
+
+	<!-- CXF Configuration -->
+	<!--
+	<cxf:bus>
+		<cxf:features>
+		    <cxf:logging/>
+		</cxf:features>
+		<cxf:inInterceptors>
+		    <ref bean="dumpReceivedMessageToFileSystemInterceptor"/>
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+		    <ref bean="dumpSendMessageToFileSystemInterceptor"/>
+		</cxf:outInterceptors>
+	</cxf:bus>
+	-->
+    
+
+	<!-- JAX-RS Configuration -->
+	<jaxrs:server id="apiServer" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="apiApiImpl" />
+			<ref bean="soggettiApiImpl" />
+			<ref bean="applicativiApiImpl" />
+			<ref bean="ruoliApiImpl" />
+			<ref bean="scopeApiImpl" />
+		</jaxrs:serviceBeans>  
+		<jaxrs:providers>
+			<ref bean="parameterConverter" />
+			<ref bean="objectMessageBodyReader"/>
+			<ref bean="jacksonJsonProvider"/>
+			<ref bean="jacksonXmlProvider"/>  
+			<ref bean="webApplicationExceptionMapper" />     	        	    
+		</jaxrs:providers>
+		<jaxrs:features>
+		    <ref bean="openApiFeature" />
+		</jaxrs:features>
+	</jaxrs:server>
+	
+	
+</b:beans>

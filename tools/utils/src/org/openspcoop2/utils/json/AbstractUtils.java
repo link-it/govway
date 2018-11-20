@@ -92,6 +92,37 @@ public abstract class AbstractUtils {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	
+	// GET AS OBJECT
+	
+	public <T> T getAsObject(String jsonString, Class<T> c) throws UtilsException {
+		try {
+			return _getObjectMapper().readValue(jsonString, c);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	public <T> T getAsObject(byte[] jsonBytes, Class<T> c) throws UtilsException {
+		try {
+			return _getObjectMapper().readValue(jsonBytes, c);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	public <T> T getAsObject(InputStream jsonStream, Class<T> c) throws UtilsException {
+		try {
+			return _getObjectMapper().readValue(jsonStream, c);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	public <T> T getAsObject(Reader jsonReader, Class<T> c) throws UtilsException {
+		try {
+			return _getObjectMapper().readValue(jsonReader, c);
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 
 	// NEW DOCUMENT
 

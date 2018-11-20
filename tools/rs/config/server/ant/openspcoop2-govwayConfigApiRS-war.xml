@@ -1,0 +1,149 @@
+<project name="openspcoop2-war-govwayConfig-rs-server">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.pdd.config.rs.server
+    </description>
+
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<target name="-war_govwayConfigApiRS">
+		
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.${as}" 
+						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly" 
+						tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+			</then>
+ 		</if>
+	
+		<!-- DataSource Properties -->
+		<delete dir="${build_govwayConfigApiRS}/properties" />
+		<mkdir dir="${build_govwayConfigApiRS}/properties" />
+		<copy file="${properties_govwayConfigApiRS}/rs-api-config.datasource.properties" todir="${build_govwayConfigApiRS}/properties" />
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<concat destfile="${build_govwayConfigApiRS}/properties/rs-api-config.datasource.properties" append="yes" >
+
+# ----- Personalizzazione Tomcat -------------
+				</concat>
+				<antcall target="set_property">
+				    <param name="file" value="${build_govwayConfigApiRS}/properties/rs-api-config.datasource.properties"/>
+					<param name="token" value="db.dataSource"/>
+					<param name="value" value="java:/comp/env/org.govway.datasource"/>
+				</antcall>
+			</then>
+		</if>
+		
+		<war destfile="${dist_govwayConfigApiRS}/govwayAPIConfig.war" webxml="src/WEB-INF/web.xml">
+
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="jbossws-cxf.xml"/>
+				<include name="${jboss_classloading}" />
+			</webinf>
+			<webinf dir="${src_govwayConfigApiRS}/WEB-INF">
+				<include name="${jboss_scanning}" />
+				<include name="applicationContext-*.xml" />
+			</webinf>
+			<webinf dir="${tmp_jboss_conf}">
+				<include name="${jboss_deployment_structure}" />
+			</webinf>
+
+			<lib dir="${openspcoop2.dist}">
+				<include name="openspcoop2_*.jar"/>
+			</lib>
+			<lib dir="${dist_govwayConfigApiRS}">
+				<include name="openspcoop2_*.jar"/>
+				<!-- Risolvere problematiche di deploy? -->
+				<exclude name="openspcoop2_web-govwayConfig*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/cxf">
+				<include name="*.jar"/>
+				<exclude name="cxf-tools-*.jar"/>
+				<exclude name="geronimo-servlet*.jar"/>
+			</lib>
+<!-- Risolvere problematiche di deploy?
+			<lib dir="${openspcoop2.lib}/faces">
+				<include name="richfaces-api-3.3.4.Final.jar"/>
+				<include name="richfaces-ui-3.3.4.Final.jar"/>
+				<include name="richfaces-impl-3.3.4.Final.gw.jar"/>
+				<include name="richfaces-impl-jsf2-3.3.4.Final.jar"/>
+				<include name="javax.faces-2.2.3.jar"/>
+			</lib>
+-->
+			<lib dir="${openspcoop2.lib}/spring">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/spring-security">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/jax">
+				<include name="jaxws-*.jar"/>
+				<include name="${jaxp_ri_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/security">
+				<include name="neethi-3.1.1.jar"/>
+				<include name="xmlsec-2.1.2.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/swagger">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/shared">
+				<include name="reactive-streams-1.0.2.jar"/>
+				<include name="reflections-0.9.11.jar"/>
+				<include name="joda-time-2.10.jar"/>
+				<include name="wsdl4j-1.6.3.jar"/>
+				<include name="guava-26.0-jre.jar"/>
+				<include name="snakeyaml-1.22.jar"/>
+				<include name="javassist-3.12.1.GA.jar"/>
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
+				<include name="${xalan_jar}"/>
+				<include name="${xalan_serializer_jar}"/>	
+			</lib>
+			<lib dir="${openspcoop2.lib}/jackson">
+				<include name="*.jar"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/commons">
+				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-lang3-3.8.jar"/>
+				<include name="commons-beanutils-1.9.3.jar"/>
+				<include name="commons-collections-3.2.2.jar"/>
+				<include name="commons-io-2.6.jar"/>
+				<include name="${commons_logging_jar}"/>
+			</lib>
+			<lib dir="${openspcoop2.lib}/log">
+				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="log4j*.jar"/>
+			</lib>
+			
+			<classes dir="${build_govwayConfigApiRS}/properties">
+				<include name="rs-api-config.datasource.properties"/>
+			</classes>			
+			<classes dir="${properties_govwayConfigApiRS}">
+				<include name="rs-api-config.properties"/>
+				<include name="rs-api-config.users.properties"/>
+				<include name="rs-api-config.log4j2.properties"/>
+				<include name="log4j2.properties"/>
+				<include name="console.audit.log4j2.properties"/>
+			</classes>
+			
+			<classes dir="${deploy_govwayConfigApiRS}/config" />
+		
+		</war>
+
+	</target>
+	
+</project>

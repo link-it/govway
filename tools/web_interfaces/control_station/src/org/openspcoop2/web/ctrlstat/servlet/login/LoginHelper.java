@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -42,6 +43,10 @@ public class LoginHelper extends ConsoleHelper {
 	public LoginHelper(HttpServletRequest request, PageData pd,
 			HttpSession session) throws Exception {
 		super(request, pd, session);
+	}
+	public LoginHelper(ControlStationCore core, HttpServletRequest request, PageData pd,
+			HttpSession session) throws Exception {
+		super(core, request, pd, session);
 	}
 	
 	public boolean loginCheckData(LoginTipologia tipoCheck) throws Exception {

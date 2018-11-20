@@ -1,0 +1,855 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: Servizi per il monitoraggio di GovWay
+  version: 1.0.0
+  title: GovWay Monitor API
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+tags:
+  - name: Monitoraggio
+    description: >-
+      Fornisce operazioni che consentono di recuperare i dettagli diagnostici
+      delle transazioni e degli eventi occorsi su GovWay
+  - name: Reportistica
+    description: >-
+      Fornisce operazioni che consentono di recuperare i report statistici
+      riguardanti le transazioni gestite su GovWay
+paths:
+  /monitoraggio/transazioni:
+    get:
+      tags:
+        - Monitoraggio
+      summary: >-
+        Ricerca semplificata delle transazioni in base ai parametri di uso più
+        comune
+      operationId: baseSearchTransaction
+      description: >-
+        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+        ricercandole in base a parametri di filtro di uso più comune
+      parameters:
+        - in: query
+          name: profilo
+          description: "profilo d'interoperabilità in cui sono state gestite le transazioni ricercate (gw: ApiGateway, spcoop: SPCoop, sdi: Fatturazione Elettronica, edelivery: eDelivery)."
+          schema:
+            type: string
+            default: gw
+            enum:
+              - gw
+              - spcoop
+              - sdi
+              - edelivery
+            example: '2017-07-21T17:32:28Z'
+        - in: query
+          name: dataDa
+          description: data inizio dell'intervallo di ricerca
+          schema:
+            type: string
+            format: date-time
+            example: '2017-07-21T17:32:28Z'
+        - in: query
+          name: dataA
+          description: data fine dell'intervallo di ricerca
+          schema:
+            type: string
+            format: date-time
+            example: '2017-07-21T17:32:28Z'
+        - in: query
+          name: soggettoLocale
+          description: il soggetto locale coinvolto nella transazione
+          schema:
+            type: string
+            example: EnteInterno
+        - in: query
+          name: soggettoRemoto
+          description: il soggetto remoto coinvolto nella transazione
+          schema:
+            type: string
+            example: EnteEsterno
+        - in: query
+          name: servizio
+          description: il servizio oggetto della transazione
+          schema:
+            type: string
+            example: servizio
+        - in: query
+          name: azione
+          description: l'azione relativa al servizio oggetto della transazione
+          schema:
+            type: string
+            example: azione
+        - in: query
+          name: esito
+          description: "indica come sono state gestite le transazioni (ok: completate con successo, error: fallite, fault: fault applicativo)"
+          schema:
+            type: string
+            enum:
+              - ok
+              - error
+              - fault
+            example: ok
+        - in: query
+          name: idApplicativo
+          description: l'identificativo applicativo
+          schema:
+            type: string
+            example: 123abc
+        - in: query
+          name: idMessaggio
+          description: l'identificativo del messaggio
+          schema:
+            type: string
+            example: h54d8538-77f5-44de-879b-82e858zba178x
+        - in: query
+          name: idT
+          description: l'identificativo della transazione
+          schema:
+            type: string
+            example: f54d8638-79f5-45db-878a-82d858ba128e
+        - in: query
+          name: pagina
+          description: Numero di pagina dei risultati
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: risultatiPerPagina
+          description: Numero massimo di risultati nella risposta
+          required: false
+          schema:
+            type: integer
+            default: 25
+            maximum: 200
+        - name: ordinamento
+          in: query
+          description: >-
+            csv dei campi su cui ordinare i risultati, preceduti da + o - per
+            ascendente o discendente (default ascendente) per data di ingresso
+          required: false
+          schema:
+            type: string
+            format: csv
+            default: +nome
+      responses:
+        '200':
+          description: ricerca completata con successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RisultatoRicercaTransazioni'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+  '/monitoraggio/transazioni/{id}':
+    get:
+      tags:
+        - Monitoraggio
+      summary: dettaglio della transazione
+      operationId: getTransazione
+      description: Questa operazione consente di ottenere il dettaglio di una transazione
+      parameters:
+        - in: path
+          name: id
+          description: identificativo della transazione
+          required: true
+          schema:
+            type: string
+            example: f54d8638-79f5-45db-878a-82d858ba128e
+      responses:
+        '200':
+          description: dettaglio transazione restituito correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransazioneDetail'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+        '404':
+          description: Transazione non esistente
+  /transazioni/ricerca:
+    post:
+      tags:
+        - Monitoraggio
+      summary: ricerca transazioni
+      operationId: searchTransazioni
+      description: >-
+        Questa operazione consente di effettuare una ricerca nell'archivio delle
+        transazioni specificando i criteri di filtro
+      parameters:
+        - in: query
+          name: pagina
+          description: Numero di pagina dei risultati
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: risultatiPerPagina
+          description: Numero massimo di risultati nella risposta
+          required: false
+          schema:
+            type: integer
+            default: 25
+            maximum: 200
+        - name: ordinamento
+          in: query
+          description: >-
+            csv dei campi su cui ordinare i risultati, preceduti da + o - per
+            ascendente o discendente (default ascendente)
+             * idEntrata
+          required: false
+          schema:
+            type: string
+            format: csv
+            default: +nome
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransazioneSearchFilter'
+      responses:
+        '201':
+          description: ricerca completata correttamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ListaPaginata'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/TransazioneItem'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+  /statistiche/report:
+    post:
+      tags:
+        - Reportistica
+      summary: genera report statistico
+      operationId: generaReport
+      description: Questa operazione consente di generare un report statistico
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerazioneReport'
+      responses:
+        '201':
+          description: report generato correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportGrafico'
+        '400':
+          description: La richiesta inviata ha prodotto un errore
+          content:
+            application/json:
+              schema:
+                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+components:
+  schemas:
+    ReportGrafico:
+      type: object
+      properties:
+        titolo:
+          type: string
+          example: Distribuzione Esito dei messaggi
+        sottotitolo:
+          type: string
+          example: (dal 01 maggio 2017 al 27 aprile 2018 )
+        yAxisLabel:
+          type: string
+          example: Numero Esiti
+        categorie:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                example: errore
+              label:
+                type: string
+                example: Fallite
+              colore:
+                type: string
+                example: '#CD4A50'
+        dati:
+          type: array
+          items:
+            type: object
+            properties:
+              datoX:
+                type: string
+                example: mag/17
+              datoY:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    datoY_singolo:
+                      type: string
+                      example: '0'
+                    datoY_tooltip:
+                      type: string
+                      example: 'Ok, set/17, 0'
+    Traccia:
+      type: object
+      properties:
+        tipoMittente:
+          type: string
+          example: PROXY
+        nomeMittente:
+          type: string
+          example: EnteInterno
+        codicePortaMittente:
+          type: string
+          example: EnteInternoPdD
+        tipoDestinatario:
+          type: string
+          example: PROXY
+        nomeDestinatario:
+          type: string
+          example: EnteEsterno
+        codicePortaDestinatario:
+          type: string
+          example: EnteEsternoPdD
+        profilo:
+          type: string
+          example: oneway
+        collaborazione:
+          type: string
+          example: idCollab
+        tipoServizio:
+          type: string
+          example: PROXY
+        nomeServizio:
+          type: string
+          example: servizio
+        versioneServizio:
+          type: integer
+          minimum: 1
+          example: 1
+        azione:
+          type: string
+          example: azione
+        idMessaggio:
+          type: string
+          format: uuid
+          example: 0998f497-e05d-420a-a6b0-ff3bb718d2c4
+        riferimentoMessaggio:
+          type: string
+          format: uuid
+          example: df1d0806-80f3-4c53-80b8-330999989798
+        sorgenteTemporale:
+          type: string
+          example: sincronizzato
+        oraRegistrazione:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        scadenza:
+          type: string
+          example: '30'
+    Diagnostico:
+      type: object
+      properties:
+        data:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        severita:
+          type: string
+          enum:
+            - errorIntegration
+            - errorProtocol
+            - infoIntegration
+            - InfoProtocol
+            - debugLow
+            - debugMedium
+            - debugHigh
+          example: errorProtocol
+        funzione:
+          type: string
+          enum:
+            - ricezioneBuste
+            - ricezioneContenutiApplicativi
+            - inoltroBuste
+            - consegnaContenutiApplicativi
+            - imbustamento
+            - sbustamento
+          example: ricezioneBuste
+        messaggio:
+          type: string
+          example: >-
+            Generato messaggio di cooperazione di Errore con identificativo
+            [0998f497-e05d-420a-a6b0-ff3bb718d2c4]
+    TransazioneDetail:
+      type: object
+      properties:
+        datiGenerali:
+          $ref: '#/components/schemas/TransazioneItem'
+        tracciaRichiesta:
+          $ref: '#/components/schemas/Traccia'
+        tracciaRisposta:
+          $ref: '#/components/schemas/Traccia'
+        diagnostici:
+          type: array
+          items:
+            $ref: '#/components/schemas/Diagnostico'
+        faultCooperazione:
+          type: string
+          format: byte
+        faultIntegrazione:
+          type: string
+          format: byte
+    TransazioneItem:
+      type: object
+      required:
+        - id
+        - dataIngressoRichiesta
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: f54d8638-79f5-45db-878a-82d858ba128e
+        dataIngressoRichiesta:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        dataUscitaRichiesta:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        dataIngressoRisposta:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        dataUscitaRisposta:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        tipologia:
+          type: string
+          enum:
+            - fruizione
+            - erogazione
+          example: fruizione
+        esito:
+          type: string
+          example: Errore di Protocollo
+        fruitoreSoggetto:
+          type: string
+          example: EnteInterno
+        erogatoreSoggetto:
+          type: string
+          example: EnteEsterno
+        fruitorePdd:
+          type: string
+          example: EnteInternoSPCoopIT
+        erogatorePdd:
+          type: string
+          example: EnteEsternoSPCoopIT
+        servizio:
+          type: string
+          example: Servizio1
+        azione:
+          type: string
+          example: Azione1
+        versioneServizio:
+          type: integer
+          minimum: 1
+          example: 1
+        protocollo:
+          type: string
+          enum:
+            - trasparente
+            - spcoop
+            - sdi
+            - edelivery
+          example: trasparente
+        contesto:
+          type: string
+          enum:
+            - applicativo
+            - sistema
+          example: applicativo
+        idPdd:
+          type: string
+          example: OpenSPCoopEnterprisePdD
+        soggettoPdd:
+          type: string
+          example: PROXY/OpenSPCoopEnterprise
+        latenzaServizio:
+          type: string
+          example: 8 ms
+        latenzaPorta:
+          type: string
+          example: 12 ms
+        latenzaTotale:
+          type: string
+          example: 20 ms
+        idApplicativoRichiesta:
+          type: string
+          example: AB234
+        idApplicativoRisposta:
+          type: string
+          example: '141'
+        idMessaggioRichiesta:
+          type: string
+        idMessaggioRisposta:
+          type: string
+        profiloCollaborazione:
+          type: string
+          enum:
+            - oneway
+            - sincrono
+            - asincronoAsimmetrico
+            - asincronoSimmetrico
+          example: oneway
+        servizioApplicativo:
+          type: string
+          example: applicativo1
+        dimensioniIngressoRichiesta:
+          type: string
+          example: ''
+        dimensioniUscitaRichiesta:
+          type: string
+          example: ''
+        dimensioniIngressoRisposta:
+          type: string
+          example: ''
+        dimensioniUscitaRisposta:
+          type: string
+          example: ''
+        duplicatiRichiesta:
+          type: string
+          example: ''
+        duplicatiRisposta:
+          type: string
+          example: ''
+        eventi:
+          type: string
+          example: ''
+        stato:
+          type: string
+          example: ''
+        indirizzoClient:
+          type: string
+          example: 127.0.0.1
+        X-Forwarded-For:
+          type: string
+          example: ''
+    TransazioneSearchFilter:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          type: string
+          enum:
+            - intervalloTemporale
+            - identificativoApplicativo
+            - identificativoMessaggio
+            - identificativoTransazione
+          example: intervalloTemporale
+        filtro:
+          oneOf:
+            - $ref: '#/components/schemas/RicercaIntervalloTemporale'
+            - $ref: '#/components/schemas/RicercaIdApplicativo'
+            - $ref: '#/components/schemas/RicercaIdMessaggio'
+            - $ref: '#/components/schemas/RicercaIdTransazione'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              intervalloTemporale: '#/components/schemas/RicercaIntervalloTemporale'
+              identificativoApplicativo: '#/components/schemas/RicercaIdApplicativo'
+              identificativoMessaggio: '#/components/schemas/RicercaIdMessaggio'
+              identificativoTransazione: '#/components/schemas/RicercaIdTransazione'
+    FiltroTemporale:
+      type: object
+      properties:
+        dataDa:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        dataA:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+    FiltroServizio:
+      type: object
+      properties:
+        protocollo:
+          type: string
+          enum:
+            - spcoop
+            - trasparente
+            - sdi
+            - edelivery
+          example: trasparente
+        soggettoLocale:
+          type: string
+          example: EnteInterno
+        soggettoRemoto:
+          type: string
+          example: EnteEsterno
+        applicativo:
+          type: string
+          example: applicativo1
+        servizio:
+          type: string
+          example: servizio1
+        azione:
+          type: string
+          example: azione1
+    FiltroTransazione:
+      type: object
+      properties:
+        tipologia:
+          type: string
+          enum:
+            - fruzione
+            - erogazione
+          example: fruizione
+        esito:
+          type: string
+          enum:
+            - fallite
+            - fault applicativo
+            - completate con successo
+          example: fallite
+        dettaglioEsito:
+          type: string
+          enum:
+            - ok
+            - ok (presenza anomalie
+            - fault applicativo
+            - autenticazione fallita
+            - autorizzazione negata
+            - richiesta client rifiutata
+            - errore di connessione
+            - errore di protocollo
+            - violazione rate limiting
+            - violazione rate limiting warningOnly
+            - superamento limite richieste
+            - superamento limite richieste warningOnly
+            - fault pdd esterna
+            - contenuto richiesta non riconosciuto
+            - contenuto risposta non riconosciuto
+            - connessione client interrotta
+            - fault generato dalla pdd
+            - errore interno pdd
+          example: ok
+        contesto:
+          type: string
+          enum:
+            - applicativo
+            - sistema
+          example: applicativo
+        evento:
+          type: string
+          example: evento1
+    FiltroIdApplicativo:
+      type: object
+      properties:
+        ricercaEsatta:
+          type: boolean
+          example: false
+        caseSensitive:
+          type: boolean
+          example: false
+        idApplicativo:
+          type: string
+          example: abc123
+    FiltroIdMessaggio:
+      type: object
+      properties:
+        tipoMessaggio:
+          type: string
+          enum:
+            - richiesta
+            - risposta
+          example: richiesta
+        idMessaggio:
+          type: string
+          example: abc456
+    FiltroIdTransazione:
+      type: object
+      properties:
+        idTransazione:
+          type: string
+          example: tr123
+    RisultatoRicercaTransazioni:
+      type: object
+      required: 
+        - listaPaginata
+        - transazioni
+      properties:
+        listaPaginata:
+          $ref: '#/components/schemas/ListaPaginata'
+        transazioni:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransazioneItem'
+    RicercaIntervalloTemporale:
+      allOf:
+        - $ref: '#/components/schemas/FiltroTemporale'
+        - $ref: '#/components/schemas/FiltroServizio'
+        - $ref: '#/components/schemas/FiltroTransazione'
+    RicercaIdApplicativo:
+      allOf:
+        - $ref: '#/components/schemas/FiltroTemporale'
+        - $ref: '#/components/schemas/FiltroServizio'
+        - $ref: '#/components/schemas/FiltroTransazione'
+        - $ref: '#/components/schemas/FiltroIdApplicativo'
+    RicercaIdMessaggio:
+      allOf:
+        - $ref: '#/components/schemas/FiltroIdMessaggio'
+    RicercaIdTransazione:
+      allOf:
+        - $ref: '#/components/schemas/FiltroIdTransazione'
+    ListaPaginata:
+      type: object
+      properties:
+        numRisultati:
+          type: integer
+          format: int32
+          example: '100'
+        numPagine:
+          type: integer
+          format: int32
+          example: '4'
+        risultatiPerPagina:
+          type: integer
+          format: int32
+          example: '25'
+        pagina:
+          type: integer
+          format: int32
+          example: '1'
+        prossimiRisultati:
+          type: string
+          format: integer
+          example: /risorsa?pagina=2
+    GenerazioneReport:
+      type: object
+      properties:
+        tipoReport:
+          type: string
+          enum:
+            - Distribuzione Temporale
+            - Distribuzione per Esiti
+            - Distribuzione per Soggetto Remoto
+            - Distribuzione per Soggetto Locale
+            - Distribuzione per Servizio
+            - Distribuzione per Azione
+            - Distribuzione per Servizio Applicativo
+            - Distribuzione Personalizzata
+          example: Distribuzione Temporale
+        dataDa:
+          type: string
+          format: date
+          example: '2017-07-21'
+        dataA:
+          type: string
+          format: date
+          example: '2017-07-21'
+        protocollo:
+          type: string
+          enum:
+            - spcoop
+            - trasparente
+            - sdi
+            - edelivery
+          example: trasparente
+        soggettoLocale:
+          type: string
+          example: EnteInterno
+        soggettoRemoto:
+          type: string
+          example: EnteEsterno
+        servizio:
+          type: string
+          example: servizio1
+        azione:
+          type: string
+          example: azione1
+        tipologia:
+          type: string
+          enum:
+            - fruzione
+            - erogazione
+          example: fruizione
+        esito:
+          type: string
+          enum:
+            - fallite
+            - fault applicativo
+            - completate con successo
+          example: fallite
+        dettaglioEsito:
+          type: string
+          enum:
+            - ok
+            - ok (presenza anomalie
+            - fault applicativo
+            - autenticazione fallita
+            - autorizzazione negata
+            - richiesta client rifiutata
+            - errore di connessione
+            - errore di protocollo
+            - violazione rate limiting
+            - violazione rate limiting warningOnly
+            - superamento limite richieste
+            - superamento limite richieste warningOnly
+            - fault pdd esterna
+            - contenuto richiesta non riconosciuto
+            - contenuto risposta non riconosciuto
+            - connessione client interrotta
+            - fault generato dalla pdd
+            - errore interno pdd
+          example: ok
+        contesto:
+          type: string
+          enum:
+            - applicativo
+            - sistema
+          example: applicativo
+        tipoGrafico:
+          type: string
+          enum:
+            - Line
+            - Pie
+            - Bar
+            - Table
+          example: Line
+        unitaTempo:
+          type: string
+          enum:
+            - orario
+            - giornaliero
+            - settimanale
+            - mensile
+          example: giornaliero
+        visualizza:
+          type: string
+          enum:
+            - numeroTransazioni
+            - occupazioneBanda
+            - TempoMedioRisposta
+          example: numeroTransazioni

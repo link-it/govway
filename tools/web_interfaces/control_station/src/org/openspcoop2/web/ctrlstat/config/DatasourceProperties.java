@@ -93,6 +93,9 @@ public class DatasourceProperties {
 
 		this.reader = new DatasourceInstanceProperties(propertiesReader, this.log, confDir, confPropertyName, confLocalPathPrefix);
 	}
+	public DatasourceProperties(Properties properties) throws Exception {
+		this.reader = new DatasourceInstanceProperties(properties, this.log, "undefined", "undefined", "undefined");
+	}
 
 
 	/**
@@ -104,6 +107,16 @@ public class DatasourceProperties {
 
 		try {
 		    DatasourceProperties.datasourceProperties = new DatasourceProperties(confDir,confPropertyName,confLocalPathPrefix,log);	
+		    return true;
+		}
+		catch(Exception e) {
+			log.error("Inizializzazione fallita: "+e.getMessage(),e);
+		    return false;
+		}
+	}
+	public static boolean initialize(Properties properties,Logger log){
+		try {
+		    DatasourceProperties.datasourceProperties = new DatasourceProperties(properties);	
 		    return true;
 		}
 		catch(Exception e) {
