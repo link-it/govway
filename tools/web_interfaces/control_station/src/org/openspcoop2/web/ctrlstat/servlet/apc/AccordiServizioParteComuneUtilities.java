@@ -27,11 +27,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
 
 
@@ -44,6 +48,24 @@ import org.openspcoop2.web.lib.mvc.Parameter;
  */
 public class AccordiServizioParteComuneUtilities {
 
+	public static void findOggettiDaAggiornare(IDAccordo idAccordoOLD, AccordoServizioParteComune as, AccordiServizioParteComuneCore apcCore, List<Object> listOggettiDaAggiornare) throws Exception {
+		
+		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
+		
+		String newURI = IDAccordoFactory.getInstance().getUriFromAccordo(as);
+
+		// Cerco i servizi in cui devo cambiare la URI dell'accordo
+		List<AccordoServizioParteSpecifica> servizi = apsCore.serviziByAccordoFilterList(idAccordoOLD);
+		if(servizi!=null && servizi.size()>0){
+			while(servizi.size()>0){
+				AccordoServizioParteSpecifica s = servizi.remove(0);
+				s.setAccordoServizioParteComune(newURI);
+				listOggettiDaAggiornare.add(s);
+			}
+		}
+		
+	}
+	
 	public static String getTerminologiaAccordoServizio(String tipo){
 		String termine = null;
 		if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipo)){
