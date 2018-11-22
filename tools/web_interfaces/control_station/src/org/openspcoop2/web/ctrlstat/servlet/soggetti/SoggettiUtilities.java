@@ -22,9 +22,16 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 
 /**
  * SoggettiUtilities
@@ -86,4 +93,58 @@ public class SoggettiUtilities {
 		return soggettoUpdateUtilities.getOggettiDaAggiornare();
 	}
 	
+	public static boolean deleteSoggetto(Soggetto soggettoRegistro, org.openspcoop2.core.config.Soggetto soggettoConfig, String userLogin, 
+			SoggettiCore soggettiCore, SoggettiHelper soggettiHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+		
+		PddCore pddCore = new PddCore(soggettiCore);
+		UtentiCore utentiCore = new UtentiCore(soggettiCore);
+		
+		boolean deleteOperativo = false;
+		
+		IDSoggetto idSoggetto = null;
+		if(soggettiCore.isRegistroServiziLocale()){
+			idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
+			soggettoConfig = soggettiCore.getSoggetto(idSoggetto);
+		}
+		else{
+			idSoggetto = new IDSoggetto(soggettoConfig.getTipo(), soggettoConfig.getNome());
+		}
+		boolean soggettoInUso = false;
+		boolean normalizeObjectIds = !soggettiHelper.isModalitaCompleta();
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		if(soggettiCore.isRegistroServiziLocale()){
+			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso, normalizeObjectIds);
+		}else{
+			soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso, normalizeObjectIds);
+		}
+
+
+		if (soggettoInUso) {
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, newLine, normalizeObjectIds));
+			inUsoMessage.append(newLine);
+
+		} 
+		else if(soggettoConfig.isDominioDefault()) {
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
+			inUsoMessage.append("Il Soggetto '"+soggettiHelper.getLabelNomeSoggetto(protocollo, idSoggetto)+"',  essendo il soggeto predefinito per il profilo '"+
+					soggettiHelper.getLabelProtocollo(protocollo)+"', non è eliminabile");
+			inUsoMessage.append(newLine);
+			inUsoMessage.append(newLine);
+		}
+		else {
+			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
+			soggettiCore.performDeleteOperation(userLogin, soggettiHelper.smista(), sog);
+			if(soggettoRegistro!=null && !pddCore.isPddEsterna(soggettoRegistro.getPortaDominio())) {
+				
+				// sistemo utenze dopo l'aggiornamento
+				IDSoggetto idSoggettoSelezionato = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
+				utentiCore.modificaSoggettoUtilizzatoConsole(idSoggettoSelezionato.toString(), null); // annullo selezione
+				
+				deleteOperativo = true;
+			}
+		}
+		
+		return deleteOperativo;
+		
+	}
 }

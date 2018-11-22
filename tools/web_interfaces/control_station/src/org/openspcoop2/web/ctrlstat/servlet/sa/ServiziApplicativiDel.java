@@ -24,9 +24,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,17 +34,13 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.id.IDServizioApplicativo;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -111,44 +105,21 @@ public final class ServiziApplicativiDel extends Action {
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			
-			boolean isInUso = false;
-			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			String msg = "";
+			StringBuffer inUsoMessage = new StringBuffer();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// idString = de.getValue();
-				// idServApp = Integer.parseInt(idString);
-
 				// Prendo il nome del servizio applicativo
 				ServizioApplicativo sa = saCore.getServizioApplicativo(Long.parseLong(idsToRemove.get(i)));
-				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-				idServizioApplicativo.setNome(sa.getNome());
-				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				
-				// Controllo che il sil non sia in uso
-				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new Hashtable<ErrorsHandlerCostant, List<String>>();
-				boolean normalizeObjectIds = !saHelper.isModalitaCompleta();
-				boolean saInUso  = saCore.isServizioApplicativoInUso(idServizioApplicativo, whereIsInUso, saCore.isRegistroServiziLocale(), normalizeObjectIds);
+				ServiziApplicativiUtilities.deleteServizioApplicativo(sa, userLogin, saCore, saHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				
-				if (saInUso) {
-					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idServizioApplicativo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,normalizeObjectIds);
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-
-				} else {
-
-					// Elimino il sil
-					saCore.performDeleteOperation(userLogin, saHelper.smista(), sa);
-				}
 			}
 
-			if (isInUso) {
-				pd.setMessage(msg);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
 			}
 
 			// Preparo il menu

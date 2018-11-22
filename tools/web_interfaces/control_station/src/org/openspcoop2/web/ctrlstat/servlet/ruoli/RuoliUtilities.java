@@ -22,8 +22,10 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -38,6 +40,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -140,4 +143,18 @@ public class RuoliUtilities {
 		
 	}
 	
+	
+	public static void deleteRuolo(Ruolo ruolo, String userLogin, RuoliCore ruoliCore, RuoliHelper ruoliHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = !ruoliHelper.isModalitaCompleta();
+		boolean ruoloInUso = ruoliCore.isRuoloInUso(ruolo.getNome(),whereIsInUso,normalizeObjectIds);
+		
+		if (ruoloInUso) {
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(new IDRuolo(ruolo.getNome()), whereIsInUso, true, newLine));
+			inUsoMessage.append(newLine);
+
+		} else {
+			ruoliCore.performDeleteOperation(userLogin, ruoliHelper.smista(), ruolo);
+		}
+	}
 }

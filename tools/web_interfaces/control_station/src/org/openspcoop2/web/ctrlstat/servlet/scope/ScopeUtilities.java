@@ -22,8 +22,10 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -32,6 +34,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 
@@ -87,6 +90,20 @@ public class ScopeUtilities {
 			}
 		}
 		
+	}
+	
+	public static void deleteScope(Scope scope, String userLogin, ScopeCore scopeCore, ScopeHelper scopeHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		boolean normalizeObjectIds = !scopeHelper.isModalitaCompleta();
+		boolean scopeInUso = scopeCore.isScopeInUso(scope.getNome(),whereIsInUso,normalizeObjectIds);
+		
+		if (scopeInUso) {
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(new IDScope(scope.getNome()), whereIsInUso, true, newLine));
+			inUsoMessage.append(newLine);
+
+		} else {
+			scopeCore.performDeleteOperation(userLogin, scopeHelper.smista(), scope);
+		}
 	}
 	
 }

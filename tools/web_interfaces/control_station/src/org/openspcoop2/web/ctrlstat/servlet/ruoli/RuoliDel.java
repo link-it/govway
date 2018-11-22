@@ -24,7 +24,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.ruoli;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,9 +34,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
-import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -86,31 +82,18 @@ public final class RuoliDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			RuoliCore ruoliCore = new RuoliCore();
 
-			
-			boolean isInUso = false;
-			
-			String msg = "";
+			StringBuffer inUsoMessage = new StringBuffer();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				Ruolo ruolo = ruoliCore.getRuolo(idsToRemove.get(i));
 				
-				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				boolean normalizeObjectIds = !ruoliHelper.isModalitaCompleta();
-				boolean ruoloInUso = ruoliCore.isRuoloInUso(ruolo.getNome(),whereIsInUso,normalizeObjectIds);
+				RuoliUtilities.deleteRuolo(ruolo, userLogin, ruoliCore, ruoliHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				
-				if (ruoloInUso) {
-					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(new IDRuolo(ruolo.getNome()), whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-
-				} else {
-					ruoliCore.performDeleteOperation(userLogin, ruoliHelper.smista(), ruolo);
-				}
 			}// chiudo for
 
-			if (isInUso) {
-				pd.setMessage(msg);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
 			}
 			
 
