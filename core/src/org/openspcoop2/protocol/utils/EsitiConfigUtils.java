@@ -46,17 +46,21 @@ public class EsitiConfigUtils {
 	}
 	
 	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf) throws Exception{
+		return getRegistrazioneEsiti(esitiConfig, log, bf, getEsitiPropertiesForConfiguration(log));
+	}
+	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf, EsitiProperties esiti) throws Exception{
 		if(esitiConfig==null || "".equals(esitiConfig.trim())){
 			
-			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
-			EsitiProperties esiti = getEsitiPropertiesForConfiguration(log);
+			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads) e delle richieste CORS OPTIONS
 			List<Integer> esitiCodes = esiti.getEsitiCode();
 			
 			if(esitiCodes!=null && esitiCodes.size()>0){
 				List<String> esitiDaRegistrare = new ArrayList<String>();
 				for (Integer esito : esitiCodes) {
 					int esitoMaxThreads = esiti.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS.name());
-					if(esito!=esitoMaxThreads){
+					int esitoCorsGateway = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY.name());
+					int esitoCorsTrasparente = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE.name());
+					if(esito!=esitoMaxThreads && esito!=esitoCorsGateway && esito!=esitoCorsTrasparente){
 						if(bf.length()>0){
 							bf.append(",");
 						}

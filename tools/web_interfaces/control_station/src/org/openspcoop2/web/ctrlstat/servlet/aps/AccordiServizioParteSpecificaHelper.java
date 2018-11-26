@@ -37,12 +37,14 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -2338,8 +2340,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 				}
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
-				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
 				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
+				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
 				if(visualizzaSicurezza) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY);
 				}
@@ -2537,6 +2540,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				
 				if(gestioneConfigurazioni) {
+					
 					// connettore
 					if(this.isModalitaAvanzata()) {
 						DataElement de = new DataElement();
@@ -2560,6 +2564,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
 						}
 						
+						de.allineaTdAlCentro();
+						
 						e.addElement(de);
 					}
 					
@@ -2569,16 +2575,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
 					String statoControlloAccessi = getStatoControlloAccessiPortaApplicativa(paAssociata); 
 					de.setValue(statoControlloAccessi);
+					de.allineaTdAlCentro();
 					e.addElement(de);
-					
-					// validazione contenuti
-					de = new DataElement();
-					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
-					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
-					String statoValidazione = getStatoValidazionePortaApplicativa(paAssociata);
-					de.setValue(statoValidazione);
-					e.addElement(de);
-					
+										
 					// RateLimiting
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST+"?"+
@@ -2593,6 +2592,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					else {
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					}
+					de.allineaTdAlCentro();
+					e.addElement(de);
+					
+					// validazione contenuti
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI, pIdSogg, pIdPorta, pIdAsps);
+					String statoValidazione = getStatoValidazionePortaApplicativa(paAssociata);
+					de.setValue(statoValidazione);
+					de.allineaTdAlCentro();
+					e.addElement(de);
+					
+					// Response Caching
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING, pIdSogg, pIdPorta, pIdAsps);
+					String statoResponseCaching = getStatoResponseCachingPortaApplicativa(paAssociata, false);
+					de.setValue(statoResponseCaching);
+					de.allineaTdAlCentro();
 					e.addElement(de);
 					
 					// message security
@@ -2603,6 +2621,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String statoMessageSecurity = getStatoMessageSecurityPortaApplicativa(paAssociata);
 						
 						de.setValue(statoMessageSecurity);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -2614,6 +2633,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String statoMTOM = getStatoMTOMPortaApplicativa(paAssociata);
 						
 						de.setValue(statoMTOM);	
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -2623,6 +2643,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA, pIdSogg, pIdPorta, pIdNome,pIdAsps);
 						String statoTracciamento = getStatoTracciamentoPortaApplicativa(paAssociata);
 						de.setValue(statoTracciamento);	
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -2630,9 +2651,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSogg, pIdPorta, pIdAsps);
-					String statoDump = getStatoDumpPortaApplicativa(paAssociata);
+					String statoDump = getStatoDumpPortaApplicativa(paAssociata,false);
 					
 					de.setValue(statoDump);
+					de.allineaTdAlCentro();
 					e.addElement(de);
 					
 					// Protocol Properties
@@ -2645,6 +2667,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 	
@@ -2653,6 +2676,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltro);
 						ServletUtils.setDataElementVisualizzaLabel(de);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -2665,6 +2689,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -2704,23 +2729,23 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 
-	public String getStatoDumpPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public String getStatoDumpPortaApplicativa(PortaApplicativa paAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
-		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault(usePrefixDefault) : 
 			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 		return statoDump;
 	}
 	
-	public String getStatoDumpRichiestaPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public String getStatoDumpRichiestaPortaApplicativa(PortaApplicativa paAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
-		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault(usePrefixDefault) : 
 			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione, false) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 		return statoDump;
 	}
 	
-	public String getStatoDumpRispostaPortaApplicativa(PortaApplicativa paAssociata) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public String getStatoDumpRispostaPortaApplicativa(PortaApplicativa paAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
-		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault(usePrefixDefault) : 
 			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione, true) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 		return statoDump;
 	}
@@ -2892,6 +2917,38 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return tipoValidazione;
 	}
 
+	public String getStatoResponseCachingPortaApplicativa(PortaApplicativa paAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		String stato = null;
+		ResponseCachingConfigurazione rc = paAssociata.getResponseCaching();
+		if (rc == null) {
+			stato = this.getResponseCachingLabelDefault(usePrefixDefault);
+		} else {
+			if(rc.getStato()!=null) {
+				stato = rc.getStato().getValue();
+			}
+			else {
+				stato = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+			}
+		}
+		return stato;
+	}
+	
+	public String getStatoGestioneCorsPortaApplicativa(PortaApplicativa paAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		String stato = null;
+		CorsConfigurazione cc = paAssociata.getGestioneCors();
+		if (cc == null) {
+			stato = this.getGestioneCorsLabelDefault(usePrefixDefault);
+		} else {
+			if(cc.getStato()==null || StatoFunzionalita.DISABILITATO.equals(cc.getStato())) {
+				stato = StatoFunzionalita.DISABILITATO.getValue();
+			}
+			else {
+				stato = getLabelTipoGestioneCors(cc.getTipo());
+			}
+		}
+		return stato;
+	}
+	
 
 	public String getStatoControlloAccessiPortaApplicativa(PortaApplicativa paAssociata) {
 		String gestioneToken = null;
@@ -3635,8 +3692,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 				}
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
-				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
 				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI);
+				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
 				if(visualizzaSicurezza) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY);
 				}
@@ -3893,6 +3951,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							}
 							
 						}
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					//}
@@ -3902,15 +3961,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);				
 					String statoControlloAccessi = this.getStatoControlloAccessiPortaDelegata(pdAssociata); 				
 					de.setValue(statoControlloAccessi);
+					de.allineaTdAlCentro();
 					e.addElement(de);
-					
-					// validazione contenuti
-					de = new DataElement();
-					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-					String statoValidazione = this.getStatoValidazionePortaDelegata(pdAssociata);
-					de.setValue(statoValidazione);
-					e.addElement(de);
-									
+														
 					// RateLimiting
 					de = new DataElement();
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST+"?"+
@@ -3925,6 +3978,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					else {
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					}
+					de.allineaTdAlCentro();
+					e.addElement(de);
+					
+					// validazione contenuti
+					de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+					String statoValidazione = this.getStatoValidazionePortaDelegata(pdAssociata);
+					de.setValue(statoValidazione);
+					de.allineaTdAlCentro();
+					e.addElement(de);
+					
+					// Response Caching
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+					String statoResponseCaching = getStatoResponseCachingPortaDelegata(pdAssociata, false);
+					de.setValue(statoResponseCaching);
+					de.allineaTdAlCentro();
 					e.addElement(de);
 					
 					// Message Security
@@ -3944,6 +4015,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String statoMTOM = getStatoMTOMPortaDelegata(pdAssociata);
 						
 						de.setValue(statoMTOM);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 	
@@ -3955,14 +4027,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String statoTracciamento = getStatoTracciamentoPortaDelegata(pdAssociata);
 						
 						de.setValue(statoTracciamento);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
 					// dump
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-					String statoDump = getStatoDumpPortaDelegata(pdAssociata);
+					String statoDump = getStatoDumpPortaDelegata(pdAssociata, false);
 					de.setValue(statoDump);
+					de.allineaTdAlCentro();
 					e.addElement(de);
 					
 					// Protocol Properties
@@ -3975,6 +4049,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 				
@@ -3995,6 +4070,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
+						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
 					
@@ -4028,10 +4104,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 
-	public String getStatoDumpPortaDelegata(PortaDelegata pdAssociata)
+	public String getStatoDumpPortaDelegata(PortaDelegata pdAssociata, boolean usePrefixDefault)
 			throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		DumpConfigurazione dumpConfigurazione = pdAssociata.getDump();
-		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault() : 
+		String statoDump = dumpConfigurazione == null ? this.getDumpLabelDefault(usePrefixDefault) : 
 			(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 		return statoDump;
 	}
@@ -4115,6 +4191,37 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return statoValidazione;
 	}
 
+	public String getStatoResponseCachingPortaDelegata(PortaDelegata pdAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		String stato = null;
+		ResponseCachingConfigurazione rc = pdAssociata.getResponseCaching();
+		if (rc == null) {
+			stato = this.getResponseCachingLabelDefault(usePrefixDefault);
+		} else {
+			if(rc.getStato()!=null) {
+				stato = rc.getStato().getValue();
+			}
+			else {
+				stato = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_DISABILITATO;
+			}
+		}
+		return stato;
+	}
+	
+	public String getStatoGestioneCorsPortaDelegata(PortaDelegata pdAssociata, boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		String stato = null;
+		CorsConfigurazione cc = pdAssociata.getGestioneCors();
+		if (cc == null) {
+			stato = this.getGestioneCorsLabelDefault(usePrefixDefault);
+		} else {
+			if(cc.getStato()==null || StatoFunzionalita.DISABILITATO.equals(cc.getStato())) {
+				stato = StatoFunzionalita.DISABILITATO.getValue();
+			}
+			else {
+				stato = getLabelTipoGestioneCors(cc.getTipo());
+			}
+		}
+		return stato;
+	}
 
 	public String getStatoControlloAccessiPortaDelegata(PortaDelegata pdAssociata) {
 		String gestioneToken = null;

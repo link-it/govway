@@ -90,7 +90,25 @@ CREATE TABLE porte_applicative
 	-- Livello Log Messaggi Diagnostici
 	msg_diag_severita VARCHAR2(255),
 	tracciamento_esiti VARCHAR2(255),
-	-- abilitato/disabilitato
+	-- Gestione CORS
+	cors_stato VARCHAR2(255),
+	cors_tipo VARCHAR2(255),
+	cors_all_allow_origins VARCHAR2(255),
+	cors_allow_credentials VARCHAR2(255),
+	cors_allow_max_age NUMBER,
+	cors_allow_max_age_seconds NUMBER,
+	cors_allow_origins CLOB,
+	cors_allow_headers CLOB,
+	cors_allow_methods CLOB,
+	cors_allow_expose_headers CLOB,
+	-- Response caching
+	response_cache_stato VARCHAR2(255),
+	response_cache_seconds NUMBER,
+	response_cache_max_msg_size NUMBER,
+	response_cache_hash_url VARCHAR2(255),
+	response_cache_hash_headers VARCHAR2(255),
+	response_cache_hash_payload VARCHAR2(255),
+	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR2(255),
 	-- proprietario porta applicativa
 	id_soggetto NUMBER NOT NULL,

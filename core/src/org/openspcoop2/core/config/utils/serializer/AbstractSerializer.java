@@ -73,8 +73,11 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaTracciamento;
+import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
+import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.SystemProperties;
@@ -83,6 +86,8 @@ import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.RouteGateway;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
+import org.openspcoop2.core.config.CorsConfigurazioneMethods;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
@@ -109,6 +114,8 @@ import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.IntegrationManager;
 import org.openspcoop2.core.config.StatoServiziPdd;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -5873,6 +5880,242 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: cors-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazione corsConfigurazione) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazione.class, corsConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazione corsConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazione.class, corsConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazione corsConfigurazione) throws SerializerException {
+		this.objToXml(file, CorsConfigurazione.class, corsConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazione corsConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CorsConfigurazione.class, corsConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazione corsConfigurazione) throws SerializerException {
+		this.objToXml(out, CorsConfigurazione.class, corsConfigurazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazione</var>
+	 * @param corsConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazione corsConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CorsConfigurazione.class, corsConfigurazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param corsConfigurazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazione corsConfigurazione) throws SerializerException {
+		return this.objToXml(CorsConfigurazione.class, corsConfigurazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param corsConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazione corsConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazione.class, corsConfigurazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param corsConfigurazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazione corsConfigurazione) throws SerializerException {
+		return this.objToXml(CorsConfigurazione.class, corsConfigurazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>corsConfigurazione</var> of type {@link org.openspcoop2.core.config.CorsConfigurazione}
+	 * 
+	 * @param corsConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazione corsConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazione.class, corsConfigurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: response-caching-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazione responseCachingConfigurazione) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazione.class, responseCachingConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazione responseCachingConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazione.class, responseCachingConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazione responseCachingConfigurazione) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazione.class, responseCachingConfigurazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazione responseCachingConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazione.class, responseCachingConfigurazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazione responseCachingConfigurazione) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazione.class, responseCachingConfigurazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazione</var>
+	 * @param responseCachingConfigurazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazione responseCachingConfigurazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazione.class, responseCachingConfigurazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param responseCachingConfigurazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazione responseCachingConfigurazione) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazione.class, responseCachingConfigurazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param responseCachingConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazione responseCachingConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazione.class, responseCachingConfigurazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param responseCachingConfigurazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazione responseCachingConfigurazione) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazione.class, responseCachingConfigurazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazione</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazione}
+	 * 
+	 * @param responseCachingConfigurazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazione responseCachingConfigurazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazione.class, responseCachingConfigurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: generic-properties
 	 =================================================================================
 	*/
@@ -6103,6 +6346,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IdServizioApplicativo idServizioApplicativo,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IdServizioApplicativo.class, idServizioApplicativo, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: cors-configurazione-headers
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneHeaders corsConfigurazioneHeaders) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneHeaders corsConfigurazioneHeaders) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneHeaders corsConfigurazioneHeaders) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneHeaders</var>
+	 * @param corsConfigurazioneHeaders Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param corsConfigurazioneHeaders Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneHeaders corsConfigurazioneHeaders) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param corsConfigurazioneHeaders Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param corsConfigurazioneHeaders Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneHeaders corsConfigurazioneHeaders) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneHeaders</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneHeaders}
+	 * 
+	 * @param corsConfigurazioneHeaders Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint).toString();
 	}
 	
 	
@@ -7047,6 +7408,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Configurazione configurazione,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Configurazione.class, configurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: cors-configurazione-origin
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneOrigin corsConfigurazioneOrigin) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneOrigin corsConfigurazioneOrigin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneOrigin corsConfigurazioneOrigin) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneOrigin corsConfigurazioneOrigin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneOrigin corsConfigurazioneOrigin) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneOrigin</var>
+	 * @param corsConfigurazioneOrigin Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneOrigin corsConfigurazioneOrigin,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param corsConfigurazioneOrigin Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneOrigin corsConfigurazioneOrigin) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param corsConfigurazioneOrigin Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneOrigin corsConfigurazioneOrigin,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param corsConfigurazioneOrigin Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneOrigin corsConfigurazioneOrigin) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneOrigin</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneOrigin}
+	 * 
+	 * @param corsConfigurazioneOrigin Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneOrigin corsConfigurazioneOrigin,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneOrigin.class, corsConfigurazioneOrigin, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: cors-configurazione-methods
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneMethods corsConfigurazioneMethods) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CorsConfigurazioneMethods corsConfigurazioneMethods,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneMethods corsConfigurazioneMethods) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param file Xml file to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CorsConfigurazioneMethods corsConfigurazioneMethods,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneMethods corsConfigurazioneMethods) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param out OutputStream to serialize the object <var>corsConfigurazioneMethods</var>
+	 * @param corsConfigurazioneMethods Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CorsConfigurazioneMethods corsConfigurazioneMethods,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CorsConfigurazioneMethods.class, corsConfigurazioneMethods, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param corsConfigurazioneMethods Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneMethods corsConfigurazioneMethods) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneMethods.class, corsConfigurazioneMethods, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param corsConfigurazioneMethods Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CorsConfigurazioneMethods corsConfigurazioneMethods,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneMethods.class, corsConfigurazioneMethods, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param corsConfigurazioneMethods Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneMethods corsConfigurazioneMethods) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneMethods.class, corsConfigurazioneMethods, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>corsConfigurazioneMethods</var> of type {@link org.openspcoop2.core.config.CorsConfigurazioneMethods}
+	 * 
+	 * @param corsConfigurazioneMethods Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CorsConfigurazioneMethods corsConfigurazioneMethods,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CorsConfigurazioneMethods.class, corsConfigurazioneMethods, prettyPrint).toString();
 	}
 	
 	
@@ -10115,6 +10712,242 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(StatoServiziPdd statoServiziPdd,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(StatoServiziPdd.class, statoServiziPdd, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: response-caching-configurazione-generale
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneGenerale</var>
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneGenerale</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale}
+	 * 
+	 * @param responseCachingConfigurazioneGenerale Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneGenerale responseCachingConfigurazioneGenerale,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneGenerale.class, responseCachingConfigurazioneGenerale, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: response-caching-configurazione-hash-generator
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneHashGenerator</var>
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneHashGenerator</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator}
+	 * 
+	 * @param responseCachingConfigurazioneHashGenerator Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneHashGenerator responseCachingConfigurazioneHashGenerator,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneHashGenerator.class, responseCachingConfigurazioneHashGenerator, prettyPrint).toString();
 	}
 	
 	

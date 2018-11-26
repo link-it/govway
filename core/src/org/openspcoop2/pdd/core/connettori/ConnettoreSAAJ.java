@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -78,19 +79,19 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	
 	/* ********  METODI  ******** */
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, true)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
 
 		// analsi i parametri specifici per il connettore
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){

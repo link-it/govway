@@ -65,6 +65,7 @@ import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneBusteConnector;
@@ -94,6 +95,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 
@@ -148,7 +150,7 @@ public class RicezioneBusteService  {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -161,7 +163,7 @@ public class RicezioneBusteService  {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -179,7 +181,7 @@ public class RicezioneBusteService  {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -205,7 +207,7 @@ public class RicezioneBusteService  {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -220,7 +222,7 @@ public class RicezioneBusteService  {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneBusteServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -250,14 +252,24 @@ public class RicezioneBusteService  {
 		}
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherErrorInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
+		ConnectorDispatcherInfo cInfo = RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
 				this.generatoreErrore, serviceIdentificationReader,msgDiag, 
 				context!=null ? context.getPddContext(): null);
 		if(cInfo!=null){
-			RicezioneBusteServiceUtils.emitTransactionError(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneBusteServiceUtils.emitTransaction(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);
+		
+		// CORS
+		if(requestInfo!=null && requestInfo.getProtocolServiceBinding()!=null && 
+				ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && 
+				requestInfo.getProtocolContext()!=null &&
+				HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(requestInfo.getProtocolContext().getRequestType())) {
+			
+			// Preflight Request su Soap
+			
+		}
 		
 		
 		

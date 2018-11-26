@@ -35,7 +35,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
@@ -2070,7 +2072,9 @@ public class GestoreToken {
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
 		connettore.setHttpMethod(msg);
 		
-		boolean send = connettore.send(connettoreMsg);
+		ResponseCachingConfigurazione responseCachingConfigurazione = new ResponseCachingConfigurazione();
+		responseCachingConfigurazione.setStato(StatoFunzionalita.DISABILITATO);
+		boolean send = connettore.send(responseCachingConfigurazione, connettoreMsg);
 		if(send==false) {
 			if(connettore.getEccezioneProcessamento()!=null) {
 				throw new Exception(connettore.getErrore(), connettore.getEccezioneProcessamento());

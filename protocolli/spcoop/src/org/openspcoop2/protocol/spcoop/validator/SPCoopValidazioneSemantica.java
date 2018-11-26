@@ -246,11 +246,11 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 							this.busta.getVersioneServizio());
 					idServizio.setAzione(this.busta.getAzione());
 					try{
-						this.infoServizio = this.registroServiziReader.getInfoServizio(idSoggettoFruitore,idServizio,null,false);//null=allRegistri
+						this.infoServizio = this.registroServiziReader.getInfoServizio(idSoggettoFruitore,idServizio,null,false, true);//null=allRegistri
 					}catch(DriverRegistroServiziNotFound dnot){}
 					if(this.infoServizio==null){
 						try{
-							this.infoServizio = this.registroServiziReader.getInfoServizioCorrelato(soggMitt, idServizio, null);//null=allRegistri
+							this.infoServizio = this.registroServiziReader.getInfoServizioCorrelato(soggMitt, idServizio, null, true);//null=allRegistri
 						}catch(DriverRegistroServiziNotFound dnot){}
 					}
 					if(this.infoServizio==null){

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -47,11 +48,18 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.CorsConfigurazioneMethods;
+import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneBuste;
@@ -64,6 +72,7 @@ import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -71,6 +80,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiErogazioni;
 import org.openspcoop2.web.ctrlstat.costanti.MultitenantSoggettiFruizioni;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -119,7 +129,7 @@ public final class ConfigurazioneGenerale extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 
 			List<IExtendedFormServlet> extendedServletList = confCore.getExtendedServletConfigurazione();
-			
+
 			String inoltromin = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			String stato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO);
 			String controllo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO);
@@ -144,30 +154,87 @@ public final class ConfigurazioneGenerale extends Action {
 			String algoritmocache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG);
 			String idlecache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG);
 			String lifecache_config = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG);
-			
+
 			String statocache_authz = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ);
 			String dimensionecache_authz = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ);
 			String algoritmocache_authz = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ);
 			String idlecache_authz = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ);
 			String lifecache_authz = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ);
-			
+
 			String statocache_authn = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN);
 			String dimensionecache_authn = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN);
 			String algoritmocache_authn = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN);
 			String idlecache_authn = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN);
 			String lifecache_authn = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN);
-			
+
 			String statocache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN);
 			String dimensionecache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN);
 			String algoritmocache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN);
 			String idlecache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN);
 			String lifecache_token = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN);
-			
+
+			String statocache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE);
+			String dimensionecache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE);
+			String algoritmocache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE);
+			String idlecache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE);
+			String lifecache_risposte = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE);
+
 			String multitenantStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO);
 			boolean multitenantEnabled = CostantiConfigurazione.ABILITATO.getValue().equals(multitenantStatoTmp);
 			String multitenantSoggettiFruizioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE);
 			String multitenantSoggettiErogazioni = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI);
+
+			String corsStatoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
+			boolean corsStato = ServletUtils.isCheckBoxEnabled(corsStatoTmp); 
+			String corsTipoTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
+			TipoGestioneCORS corsTipo = corsTipoTmp != null ? TipoGestioneCORS.toEnumConstant(corsTipoTmp) : TipoGestioneCORS.GATEWAY;
+			String corsAllAllowOriginsTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+			boolean corsAllAllowOrigins = ServletUtils.isCheckBoxEnabled(corsAllAllowOriginsTmp);
+			String corsAllowHeaders =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+			String corsAllowOrigins =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
+			String corsAllowMethods =  confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+			String corsAllowCredentialTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+			boolean corsAllowCredential =  ServletUtils.isCheckBoxEnabled(corsAllowCredentialTmp);
+			String corsExposeHeaders = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
+			String corsMaxAgeTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+			boolean corsMaxAge =  ServletUtils.isCheckBoxEnabled(corsMaxAgeTmp);
+			String corsMaxAgeSecondsTmp = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+			int corsMaxAgeSeconds = -1;
+			if(corsMaxAgeSecondsTmp != null) {
+				try {
+					corsMaxAgeSeconds = Integer.parseInt(corsMaxAgeSecondsTmp);
+				}catch(Exception e) {} 
+			}
 			
+			String responseCachingEnabledTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO);
+			boolean responseCachingEnabled = ServletUtils.isCheckBoxEnabled(responseCachingEnabledTmp);
+			
+			String responseCachingSecondsTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
+			int responseCachingSeconds = 1;
+			if(responseCachingSecondsTmp != null) {
+				try {
+					responseCachingSeconds = Integer.parseInt(responseCachingSecondsTmp);
+				}catch(Exception e) {} 
+			}
+			
+			
+			String responseCachingMaxResponseSizeTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
+			boolean responseCachingMaxResponseSize = ServletUtils.isCheckBoxEnabled(responseCachingMaxResponseSizeTmp);
+			
+			String responseCachingMaxResponseSizeBytesTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
+			long responseCachingMaxResponseSizeBytes = 1;
+			if(responseCachingMaxResponseSizeBytesTmp != null) {
+				try {
+					responseCachingMaxResponseSizeBytes = Integer.parseInt(responseCachingMaxResponseSizeBytesTmp);
+				}catch(Exception e) {} 
+			}
+			String responseCachingDigestUrlInvocazioneTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
+			boolean responseCachingDigestUrlInvocazione = ServletUtils.isCheckBoxEnabled(responseCachingDigestUrlInvocazioneTmp);
+			String responseCachingDigestHeadersTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
+			String responseCachingDigestPayloadTmp = confHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
+			boolean responseCachingDigestPayload = ServletUtils.isCheckBoxEnabled(responseCachingDigestPayloadTmp);
+
 			Boolean confPersB = ServletUtils.getConfigurazioniPersonalizzateFromSession(session); 
 			String confPers = confPersB ? "true" : "false";
 			Configurazione configurazione = confCore.getConfigurazioneGenerale();
@@ -175,7 +242,7 @@ public final class ConfigurazioneGenerale extends Action {
 			List<ExtendedInfo> extendedBeanList = new ArrayList<ExtendedInfo>();
 			if(extendedServletList!=null && extendedServletList.size()>0){
 				for (IExtendedFormServlet extendedServlet : extendedServletList) {
-					
+
 					ExtendedInfo ei = new ExtendedInfo();
 					ei.extendedServlet = extendedServlet;
 					DBManager dbManager = null;
@@ -187,7 +254,7 @@ public final class ConfigurazioneGenerale extends Action {
 					}finally{
 						dbManager.releaseConnection(con);
 					}
-					
+
 					ei.extended = false;
 					ei.extendedToNewWindow = false;
 					if(extendedServlet!=null && extendedServlet.showExtendedInfoUpdate(request, session)){
@@ -195,14 +262,14 @@ public final class ConfigurazioneGenerale extends Action {
 						ei.extended = true;
 						ei.extendedToNewWindow = extendedServlet.extendedUpdateToNewWindow(request, session);
 					}
-					
+
 					extendedBeanList.add(ei);
-					
+
 				}
 			}
-			
-			
-			
+
+
+
 			// Preparo il menu
 			confHelper.makeMenu();
 
@@ -212,7 +279,7 @@ public final class ConfigurazioneGenerale extends Action {
 			// Se idhid != null, modifico i dati della porta di dominio nel
 			// db
 			if (!confHelper.isEditModeInProgress()) {
-				
+
 				// Controlli sui campi immessi
 				boolean isOk = confHelper.configurazioneCheckData();
 				if (isOk) {
@@ -240,7 +307,10 @@ public final class ConfigurazioneGenerale extends Action {
 							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 							configurazione.getProtocolli(),
 							multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
-							true);
+							true,
+							corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+							responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
+							responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
 
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -248,28 +318,35 @@ public final class ConfigurazioneGenerale extends Action {
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
-					
+
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHZ,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ,statocache_authz,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ,dimensionecache_authz,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ,algoritmocache_authz,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ,idlecache_authz,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ,lifecache_authz);
-					
+
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHN,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN,statocache_authn,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN,dimensionecache_authn,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN,algoritmocache_authn,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN,idlecache_authn,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN,lifecache_authn);
-					
+
 					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_TOKEN,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN,statocache_token,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN,dimensionecache_token,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN,algoritmocache_token,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN,idlecache_token,
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecache_token);
-					
+
+					confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE,algoritmocache_risposte,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecache_risposte,
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecache_risposte);
+
 					if(extendedBeanList!=null && extendedBeanList.size()>0){
 						for (ExtendedInfo ei : extendedBeanList) {
 							if(ei.extended){
@@ -282,7 +359,7 @@ public final class ConfigurazioneGenerale extends Action {
 							}
 						}
 					}
-					
+
 					pd.setDati(dati);
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -372,7 +449,7 @@ public final class ConfigurazioneGenerale extends Action {
 					t.setStato(StatoFunzionalita.toEnumConstant(registrazioneTracce));
 					newConfigurazione.setTracciamento(t);
 				}
-				
+
 				if (newConfigurazione.getDump() != null) {
 					newConfigurazione.getDump().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
 					newConfigurazione.getDump().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
@@ -401,7 +478,7 @@ public final class ConfigurazioneGenerale extends Action {
 					vca.setAcceptMtomMessage(null);
 					newConfigurazione.setValidazioneContenutiApplicativi(vca);
 				}
-				
+
 				if(newConfigurazione.getAccessoConfigurazione()==null){
 					newConfigurazione.setAccessoConfigurazione(new AccessoConfigurazione());
 				}
@@ -415,7 +492,7 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getAccessoConfigurazione().setCache(null);
 				}
-				
+
 				if(newConfigurazione.getAccessoDatiAutorizzazione()==null){
 					newConfigurazione.setAccessoDatiAutorizzazione(new AccessoDatiAutorizzazione());
 				}
@@ -429,7 +506,7 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getAccessoDatiAutorizzazione().setCache(null);
 				}
-				
+
 				if(newConfigurazione.getAccessoDatiAutenticazione()==null){
 					newConfigurazione.setAccessoDatiAutenticazione(new AccessoDatiAutenticazione());
 				}
@@ -443,7 +520,7 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getAccessoDatiAutenticazione().setCache(null);
 				}
-				
+
 				if(newConfigurazione.getAccessoDatiGestioneToken()==null){
 					newConfigurazione.setAccessoDatiGestioneToken(new AccessoDatiGestioneToken());
 				}
@@ -457,10 +534,24 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					newConfigurazione.getAccessoDatiGestioneToken().setCache(null);
 				}
-				
+
+				if(newConfigurazione.getResponseCaching()==null){
+					newConfigurazione.setResponseCaching(new ResponseCachingConfigurazioneGenerale());
+				}
+				if(statocache_risposte.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)){
+					newConfigurazione.getResponseCaching().setCache(new Cache());
+					newConfigurazione.getResponseCaching().getCache().setDimensione(dimensionecache_risposte);
+					newConfigurazione.getResponseCaching().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_risposte));
+					newConfigurazione.getResponseCaching().getCache().setItemIdleTime(idlecache_risposte);
+					newConfigurazione.getResponseCaching().getCache().setItemLifeSecond(lifecache_risposte);
+				}
+				else{
+					newConfigurazione.getResponseCaching().setCache(null);
+				}
+
 				newConfigurazione.setMultitenant(new ConfigurazioneMultitenant());
 				newConfigurazione.getMultitenant().setStato(multitenantEnabled ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
-				
+
 				MultitenantSoggettiFruizioni multitenantSoggettiFruizioniEnum = null;
 				if(multitenantSoggettiFruizioni!=null && !"".equals(multitenantSoggettiFruizioni)) {
 					multitenantSoggettiFruizioniEnum = MultitenantSoggettiFruizioni.valueOf(multitenantSoggettiFruizioni);
@@ -481,7 +572,7 @@ public final class ConfigurazioneGenerale extends Action {
 				else {
 					newConfigurazione.getMultitenant().setFruizioneSceltaSoggettiErogatori(PortaDelegataSoggettiErogatori.SOGGETTI_ESTERNI); // default
 				}
-				
+
 
 				MultitenantSoggettiErogazioni multitenantSoggettiErogazioniEnum = null;
 				if(multitenantSoggettiErogazioni!=null && !"".equals(multitenantSoggettiErogazioni)) {
@@ -503,26 +594,26 @@ public final class ConfigurazioneGenerale extends Action {
 				else {
 					newConfigurazione.getMultitenant().setErogazioneSceltaSoggettiFruitori(PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI); // default
 				}
-				
+
 				newConfigurazione.setProtocolli(null); // aggiorno i protocolli
-				
+
 				ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
 				MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
 				Enumeration<String> protocolName = mapPFactory.keys();
 				while (protocolName.hasMoreElements()) {
 					String protocollo = (String) protocolName.nextElement();
-										
+
 					String nameP = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_NAME+protocollo);
 					String urlInvocazionePD = null;
 					String urlInvocazionePA = null;
 					if(nameP!=null) {
 						urlInvocazionePD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD+protocollo);
 						urlInvocazionePA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA+protocollo);
-						
+
 						if(newConfigurazione.getProtocolli()==null) {
 							newConfigurazione.setProtocolli(new ConfigurazioneProtocolli());	
 						}
-						
+
 						ConfigurazioneProtocollo configProtocollo = new ConfigurazioneProtocollo();
 						configProtocollo.setNome(nameP);
 						configProtocollo.setUrlInvocazioneServizioPD(urlInvocazionePD);
@@ -530,9 +621,20 @@ public final class ConfigurazioneGenerale extends Action {
 						newConfigurazione.getProtocolli().addProtocollo(configProtocollo);
 					}
 				}
+
+				// cors
+				CorsConfigurazione gestioneCors = confHelper.getGestioneCors(corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge,	corsMaxAgeSeconds);
+				newConfigurazione.setGestioneCors(gestioneCors);
 				
+				// Response Caching
+				ResponseCachingConfigurazione responseCaching = confHelper.getResponseCaching(responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
+				if(newConfigurazione.getResponseCaching()==null) {
+					newConfigurazione.setResponseCaching(new ResponseCachingConfigurazioneGenerale());
+				}
+				newConfigurazione.getResponseCaching().setConfigurazione(responseCaching);
+
 				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
-				
+
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
 						if(ei.extended && !ei.extendedToNewWindow){
@@ -545,15 +647,18 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 					}
 				}
-
+				
 				Vector<DataElement> dati = new Vector<DataElement>();
 
-				dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+				dati = confHelper.addConfigurazioneToDati(inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 						configurazione.getProtocolli(),
 						multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
-						false);
+						false,
+						corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+						responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
 
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -561,28 +666,35 @@ public final class ConfigurazioneGenerale extends Action {
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
-				
+
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHZ,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ,statocache_authz,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ,dimensionecache_authz,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ,algoritmocache_authz,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ,idlecache_authz,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ,lifecache_authz);
-				
+
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHN,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN,statocache_authn,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN,dimensionecache_authn,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN,algoritmocache_authn,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN,idlecache_authn,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN,lifecache_authn);
-				
+
 				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_TOKEN,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN,statocache_token,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN,dimensionecache_token,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN,algoritmocache_token,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN,idlecache_token,
 						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecache_token);
-				
+
+				confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE,algoritmocache_risposte,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecache_risposte,
+						ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecache_risposte);
+
 				if(extendedBeanList!=null && extendedBeanList.size()>0){
 					for (ExtendedInfo ei : extendedBeanList) {
 						if(ei.extended){
@@ -598,23 +710,98 @@ public final class ConfigurazioneGenerale extends Action {
 
 				pd.setDati(dati);
 
-				if(confHelper.isModalitaStandard()) {
-					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO_SOLO_DATI_CONSOLE, Costanti.MESSAGE_TYPE_INFO);
-				}
-				else {
-					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
-				}
+				//				if(confHelper.isModalitaStandard()) {
+				//					pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO_SOLO_DATI_CONSOLE, Costanti.MESSAGE_TYPE_INFO);
+				//				}
+				//				else {
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				//				}
 
 				pd.disableEditMode();
-				
+
 				generalHelper = new GeneralHelper(session);
 				gd = generalHelper.initGeneralData(request); // re-inizializzo per ricalcolare il menu in alto a destra
-				
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_GENERALE,
 						ConfigurazioneCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE_GENERALE);
+			}
+			
+			String postBackElementName = confHelper.getPostBackElementName();
+			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO)){
+					ResponseCachingConfigurazioneGenerale responseCachingGenerale = configurazione.getResponseCaching();
+					ResponseCachingConfigurazione cachingConfigurazione = responseCachingGenerale != null ? responseCachingGenerale.getConfigurazione() : null;
+					
+					if(!confHelper.isResponseCachingAbilitato(cachingConfigurazione) && responseCachingEnabled) {
+						ResponseCachingConfigurazione configurazioneTmp = new ResponseCachingConfigurazione();
+						
+						responseCachingSeconds = configurazioneTmp.getCacheTimeoutSeconds() != null ? configurazioneTmp.getCacheTimeoutSeconds().intValue() : 1;
+						
+						responseCachingMaxResponseSize = false;
+						if(configurazioneTmp.getMaxMessageSize() != null) {
+							responseCachingMaxResponseSize = true;
+							responseCachingMaxResponseSizeBytes = configurazioneTmp.getMaxMessageSize().longValue();
+						}
+						
+						responseCachingDigestUrlInvocazione = false;
+						responseCachingDigestHeaders = false;
+						responseCachingDigestPayload = false;
+						configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
+						if(configurazioneTmp.getHashGenerator() != null) {
+							if(configurazioneTmp.getHashGenerator().getHeaders() != null && configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestHeaders = true;
+							
+							if(configurazioneTmp.getHashGenerator().getRequestUri() != null && configurazioneTmp.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestUrlInvocazione = true;
+							
+							if(configurazioneTmp.getHashGenerator().getPayload() != null && configurazioneTmp.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestPayload = true;
+						}
+					}
+				}
+				
+				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO)){
+					CorsConfigurazione oldConfigurazione = configurazione.getGestioneCors(); 
+					if(!confHelper.isCorsAbilitato(oldConfigurazione) && corsStato) {
+						CorsConfigurazione configurazioneTmp = new CorsConfigurazione();
+						
+						corsTipo = configurazioneTmp.getTipo();
+						if(configurazioneTmp.getTipo() != null && configurazioneTmp.getTipo().equals(TipoGestioneCORS.GATEWAY)) {
+
+							corsAllAllowOrigins = true;
+							if(configurazioneTmp.getAccessControlAllAllowOrigins() != null && configurazioneTmp.getAccessControlAllAllowOrigins().equals(StatoFunzionalita.DISABILITATO)) {
+								corsAllAllowOrigins = false;
+
+								configurazioneTmp.setAccessControlAllowOrigins(new CorsConfigurazioneOrigin());
+								corsAllowOrigins = StringUtils.join(configurazioneTmp.getAccessControlAllowOrigins().getOriginList(), ",");
+							}
+
+							configurazioneTmp.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+							corsAllowHeaders = StringUtils.join(configurazioneTmp.getAccessControlAllowHeaders().getHeaderList(), ",");
+
+							configurazioneTmp.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+							corsAllowMethods = StringUtils.join(configurazioneTmp.getAccessControlAllowMethods().getMethodList(), ",");
+
+							configurazioneTmp.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
+							corsExposeHeaders = StringUtils.join(configurazioneTmp.getAccessControlExposeHeaders().getHeaderList(), ",");
+
+							corsAllowCredential = false;
+							if(configurazioneTmp.getAccessControlAllowCredentials() != null && configurazioneTmp.getAccessControlAllowCredentials().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllowCredential = true;
+							}
+
+							corsMaxAge = false;
+							corsMaxAgeSeconds = -1;
+							if(configurazioneTmp.getAccessControlMaxAge() != null ) {
+								corsMaxAge = true;
+								corsMaxAgeSeconds = configurazioneTmp.getAccessControlMaxAge();
+							}
+						}
+					}
+				}
 			}
 
 			if (inoltromin == null) {
@@ -719,6 +906,18 @@ public final class ConfigurazioneGenerale extends Action {
 				else{
 					statocache_token = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
+				if(configurazione.getResponseCaching()!=null && configurazione.getResponseCaching().getCache()!=null) {
+					statocache_risposte = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					dimensionecache_risposte = configurazione.getResponseCaching().getCache().getDimensione();
+					if(configurazione.getResponseCaching().getCache().getAlgoritmo()!=null){
+						algoritmocache_risposte = configurazione.getResponseCaching().getCache().getAlgoritmo().getValue();
+					}
+					idlecache_risposte = configurazione.getResponseCaching().getCache().getItemIdleTime();
+					lifecache_risposte = configurazione.getResponseCaching().getCache().getItemLifeSecond();
+				}
+				else{
+					statocache_risposte = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+				}
 				if(configurazione.getMultitenant()!=null) {
 					if(configurazione.getMultitenant().getStato()!=null) {
 						multitenantEnabled = StatoFunzionalita.ABILITATO.equals(configurazione.getMultitenant().getStato());
@@ -750,6 +949,83 @@ public final class ConfigurazioneGenerale extends Action {
 						}
 					}
 				}
+
+				corsStato = false;
+				CorsConfigurazione gestioneCors = configurazione.getGestioneCors();
+				if(gestioneCors != null) {
+					if(gestioneCors.getStato() != null && gestioneCors.getStato().equals(StatoFunzionalita.ABILITATO)) {
+						corsStato = true;
+
+						corsTipo = gestioneCors.getTipo();
+						if(gestioneCors.getTipo() != null && gestioneCors.getTipo().equals(TipoGestioneCORS.GATEWAY)) {
+
+							corsAllAllowOrigins = true;
+							if(gestioneCors.getAccessControlAllAllowOrigins() != null && gestioneCors.getAccessControlAllAllowOrigins().equals(StatoFunzionalita.DISABILITATO)) {
+								corsAllAllowOrigins = false;
+
+								if(gestioneCors.getAccessControlAllowOrigins() != null) {
+									corsAllowOrigins = StringUtils.join(gestioneCors.getAccessControlAllowOrigins().getOriginList(), ",");
+								}
+							}
+
+							if(gestioneCors.getAccessControlAllowHeaders() != null) {
+								corsAllowHeaders = StringUtils.join(gestioneCors.getAccessControlAllowHeaders().getHeaderList(), ",");
+							}
+
+							if(gestioneCors.getAccessControlAllowMethods() != null) {
+								corsAllowMethods = StringUtils.join(gestioneCors.getAccessControlAllowMethods().getMethodList(), ",");
+							}
+
+							if(gestioneCors.getAccessControlExposeHeaders() != null) {
+								corsExposeHeaders = StringUtils.join(gestioneCors.getAccessControlExposeHeaders().getHeaderList(), ",");
+							}
+
+							corsAllowCredential = false;
+							if(gestioneCors.getAccessControlAllowCredentials() != null && gestioneCors.getAccessControlAllowCredentials().equals(StatoFunzionalita.ABILITATO)) {
+								corsAllowCredential = true;
+							}
+
+							corsMaxAge = false;
+							corsMaxAgeSeconds = -1;
+							if(gestioneCors.getAccessControlMaxAge() != null ) {
+								corsMaxAge = true;
+								corsMaxAgeSeconds = gestioneCors.getAccessControlMaxAge();
+							}
+						}
+
+					}
+				}
+				
+				ResponseCachingConfigurazioneGenerale responseCachingGenerale = configurazione.getResponseCaching();
+				responseCachingEnabled = false;
+				if(responseCachingGenerale != null) {
+					ResponseCachingConfigurazione responseCaching = responseCachingGenerale.getConfigurazione();
+					if(responseCaching != null && responseCaching.getStato().equals(StatoFunzionalita.ABILITATO)) {
+						responseCachingEnabled = true;
+						
+						responseCachingSeconds = responseCaching.getCacheTimeoutSeconds() != null ? responseCaching.getCacheTimeoutSeconds().intValue() : 1;
+						
+						responseCachingMaxResponseSize = false;
+						if(responseCaching.getMaxMessageSize() != null) {
+							responseCachingMaxResponseSize = true;
+							responseCachingMaxResponseSizeBytes = responseCaching.getMaxMessageSize().longValue();
+						}
+						
+						responseCachingDigestUrlInvocazione = false;
+						responseCachingDigestHeaders = false;
+						responseCachingDigestPayload = false;
+						if(responseCaching.getHashGenerator() != null) {
+							if(responseCaching.getHashGenerator().getHeaders() != null && responseCaching.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestHeaders = true;
+							
+							if(responseCaching.getHashGenerator().getRequestUri() != null && responseCaching.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestUrlInvocazione = true;
+							
+							if(responseCaching.getHashGenerator().getPayload() != null && responseCaching.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
+								responseCachingDigestPayload = true;
+						}
+					}
+				}
 			}
 
 			// preparo i campi
@@ -757,12 +1033,14 @@ public final class ConfigurazioneGenerale extends Action {
 
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-			dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
+			dati = confHelper.addConfigurazioneToDati( inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
 					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 					configurazione.getProtocolli(),
-					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni,
-					true);
+					multitenantEnabled, multitenantSoggettiFruizioni, multitenantSoggettiErogazioni, true, 
+					corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds,
+					responseCachingEnabled,	responseCachingSeconds, responseCachingMaxResponseSize,	responseCachingMaxResponseSizeBytes, 
+					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
 
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONFIG,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONFIG,statocache_config,
@@ -770,28 +1048,35 @@ public final class ConfigurazioneGenerale extends Action {
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONFIG,algoritmocache_config,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG,idlecache_config,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG,lifecache_config);
-			
+
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHZ,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ,statocache_authz,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ,dimensionecache_authz,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ,algoritmocache_authz,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ,idlecache_authz,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ,lifecache_authz);
-			
+
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_AUTHN,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN,statocache_authn,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN,dimensionecache_authn,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN,algoritmocache_authn,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN,idlecache_authn,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN,lifecache_authn);
-			
+
 			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_TOKEN,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN,statocache_token,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN,dimensionecache_token,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN,algoritmocache_token,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN,idlecache_token,
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN,lifecache_token);
-			
+
+			confHelper.setDataElementCache(dati,ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE,statocache_risposte,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE,dimensionecache_risposte,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE,algoritmocache_risposte,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE,idlecache_risposte,
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE,lifecache_risposte);
+
 			if(extendedBeanList!=null && extendedBeanList.size()>0){
 				for (ExtendedInfo ei : extendedBeanList) {
 					if(ei.extended){
@@ -811,7 +1096,7 @@ public final class ConfigurazioneGenerale extends Action {
 			if(msg!=null && !"".equals(msg)){
 				pd.setMessage("Errore durante esportazione: "+msg);
 			}
-			
+
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
@@ -823,15 +1108,14 @@ public final class ConfigurazioneGenerale extends Action {
 		}
 	}
 
-
 }
 
 
 class ExtendedInfo{
-	
+
 	IExtendedBean extendedBean = null;
 	boolean extended = false;
 	boolean extendedToNewWindow = false;
 	IExtendedFormServlet extendedServlet = null;
-	
+
 }

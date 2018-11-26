@@ -98,6 +98,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			String tracciamentoEsitiSelezionePersonalizzataFault = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 			String tracciamentoEsitiSelezionePersonalizzataFallite = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
 			String tracciamentoEsitiSelezionePersonalizzataMax = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
+			String tracciamentoEsitiSelezionePersonalizzataCors = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
 			
 			String statoDiagnostici = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_RIDEFINITO);
 			String severita = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -175,7 +176,7 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 					
 					EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 					
-					List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+					List<Integer> listOk = porteDelegateHelper.getListaEsitiOkSenzaCors(esiti);
 					if(porteDelegateHelper.isCompleteEnabled(attivi, listOk)) {
 						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
 					}
@@ -213,6 +214,17 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 					}	
 					else {
 						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					
+					List<Integer> listCors = porteDelegateHelper.getListaEsitiCors(esiti);
+					if(porteDelegateHelper.isCompleteEnabled(attivi, listCors)) {
+						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+					}
+					else if(porteDelegateHelper.isCompleteDisabled(attivi, listCors)) {
+						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
 				}
@@ -278,7 +290,8 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
+						tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 				
@@ -305,7 +318,8 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 				porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
+						tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 				
@@ -377,7 +391,8 @@ public class PorteDelegateCorrelazioneApplicativa extends Action {
 			porteDelegateHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 					tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
 					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax); 
+					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
+					tracciamentoEsitiSelezionePersonalizzataCors); 
 			
 			porteDelegateHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 			

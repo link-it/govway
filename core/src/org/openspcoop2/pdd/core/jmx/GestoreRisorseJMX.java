@@ -169,6 +169,21 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	/**
+	 * Registrazione del MBean per il salvataggio delle risposte in cache
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanResponseCaching()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineResponseCaching.class, CostantiPdD.JMX_RESPONSE_CACHING);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Response Caching: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	/**
 	 * Registrazione del MBean per il repository dei Messaggi
 	 * 
 	 * @throws RisorseJMXException
@@ -281,6 +296,9 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	public Object getAttributeMBeanGestioneToken(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_TOKEN, nomeAttributo);
 	}
+	public Object getAttributeMBeanResponseCaching(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_RESPONSE_CACHING, nomeAttributo);
+	}
 	public Object getAttributeMBeanMonitoraggioRisorse(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_MONITORAGGIO_RISORSE, nomeAttributo);
 	}
@@ -340,6 +358,13 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	public Object invokeMethodMBeanGestioneToken(String nomeMetodo)throws RisorseJMXException{
 		return invoke(CostantiPdD.JMX_TOKEN, nomeMetodo, null, null);
+	}
+	
+	public Object invokeMethodMBeanResponseCaching(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_RESPONSE_CACHING, nomeMetodo, params, signature);
+	}
+	public Object invokeMethodMBeanResponseCaching(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_RESPONSE_CACHING, nomeMetodo, null, null);
 	}
 	
 	public Object invokeMethodMBeanMonitoraggioRisorse(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{

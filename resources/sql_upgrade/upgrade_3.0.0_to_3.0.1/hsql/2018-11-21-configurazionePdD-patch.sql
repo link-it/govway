@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/configurazionePdD/2018-11-21-patch.sql

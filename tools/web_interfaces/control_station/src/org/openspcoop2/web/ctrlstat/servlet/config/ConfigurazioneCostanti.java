@@ -401,6 +401,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_MULTITENANT = "Multi-Tenant";
 	public final static String LABEL_CONFIGURAZIONE_MULTITENANT_FRUIZIONI = "Fruizioni";
 	public final static String LABEL_CONFIGURAZIONE_MULTITENANT_EROGAZIONI = "Erogazioni";
+	public final static String LABEL_CONFIGURAZIONE_CORS = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
+	public final static String LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL;
+	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI = "Registro dei Servizi";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_REGISTRY = "Cache";
@@ -412,6 +415,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHN = "Cache (Dati di Autenticazione)";
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_TOKEN = "Cache (Gestione dei Token)";
+	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
 	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
@@ -445,6 +450,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "CORS Preflight";
 	
 	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE = "Informazioni Transazione";
 	public final static String LABEL_CONFIGURAZIONE_INFORMAZIONI_TRANSAZIONE_TEMPI_ELABORAZIONE = "Tempi Elaborazione";
@@ -605,6 +611,12 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN = "idlecacheToken";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN = "lifecacheToken";
 	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE = "statocacheRisposte";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE = "dimensionecacheRisposte";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE = "algoritmocacheRisposte";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE = "idlecacheRisposte";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE = "lifecacheRisposte";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
@@ -643,6 +655,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "RecEsitiStatoCORS";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TEMPI = "TransazioneRecTempi";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONE_TOKEN = "TransazioneRecToken";
@@ -791,7 +804,18 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_STATO = "ConfMTStato";
 	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE = "ConfMTFruSoggEro";
 	public final static String PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI = "ConfMTEroSoggFru";
-		
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_STATO = "corsStato";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "corsTipo";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS= "corsAAllOrig";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS = "corsAllOrig";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS = "corsAllHead";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS = "corsAllMeth";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS = "corsAllCred";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS = "corsExpHead";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE = "corsMaxAge";
+	public final static String PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS = "corsMaxAgeSec";
+	
 	/* LABEL PARAMETRI */
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -1072,6 +1096,20 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_FRUIZIONI_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_MULTITENANT_EROGAZIONI_SOGGETTI_FRUITORI = "Soggetti Fruitori";
 	
+	
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_GATEWAY ="Gestito dal Gateway";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO = "Gestito dall'Applicativo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS = "All Allow Origins";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS = "Allow Origins";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS = "Allow Headers";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS = "Allow Methods";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS = "Allow Credentials";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS = "Expose Headers";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE = "Max Age";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS = "Max Age Seconds";
+	
 	/* DEFAULT VALUE PARAMETRI */
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_XML = "xml";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_UDDI = "uddi";
@@ -1157,11 +1195,7 @@ public class ConfigurazioneCostanti {
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("LifeTime");
 	}
 	
-	public final static  String [] STATI = new String[2];
-	static{
-		STATI[0] = StatoFunzionalita.ABILITATO.toString();
-		STATI[1] = StatoFunzionalita.DISABILITATO.toString();
-	}
+	public final static  String [] STATI = CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA; 
 	
 	public final static  String [] STATI_CON_WARNING = new String[3];
 	static{

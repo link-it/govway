@@ -39,7 +39,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
@@ -59,6 +58,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -75,6 +75,9 @@ import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.MessageSecurity;
+import org.openspcoop2.core.config.MessageSecurityFlow;
+import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlow;
@@ -95,6 +98,8 @@ import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -115,9 +120,6 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
 import org.openspcoop2.core.config.ValidazioneBuste;
-import org.openspcoop2.core.config.MessageSecurity;
-import org.openspcoop2.core.config.MessageSecurityFlow;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaRichiestaIdentificazione;
@@ -137,6 +139,7 @@ import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
@@ -158,6 +161,7 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Libreria contenente i metodi di accesso al db e metodi di utilita'
@@ -343,6 +347,14 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(TipoGestioneCORS valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -487,6 +499,14 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		else{
 			return PortaDelegataSoggettiErogatori.toEnumConstant(value);
+		}
+	}
+	public static TipoGestioneCORS getEnumTipoGestioneCORS(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return TipoGestioneCORS.toEnumConstant(value);
 		}
 	}
 	
@@ -1401,6 +1421,86 @@ public class DriverConfigurazioneDB_LIB {
 			tracciamento_esiti = aPD.getTracciamento().getEsiti();
 		}
 		
+		CorsConfigurazione corsConfigurazione = aPD.getGestioneCors();
+		String cors_stato = null;
+		String cors_tipo = null; 
+		String cors_all_allow_origins = null; 
+		String cors_allow_credentials = null; 
+		int cors_allow_max_age = CostantiDB.FALSE;
+		Integer cors_allow_max_age_seconds = null;
+		String cors_allow_origins = null; 
+		String cors_allow_headers = null; 
+		String cors_allow_methods = null; 
+		String cors_allow_expose_headers = null; 
+		if(corsConfigurazione!=null) {
+			cors_stato = getValue(corsConfigurazione.getStato());
+			cors_tipo = getValue(corsConfigurazione.getTipo());
+			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
+				cors_allow_max_age = CostantiDB.TRUE;
+				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
+			}
+			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowOrigins().getOrigin(i));
+				}
+				cors_allow_origins = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowHeaders().getHeader(i));
+				}
+				cors_allow_headers = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowMethods().getMethod(i));
+				}
+				cors_allow_methods = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlExposeHeaders().getHeader(i));
+				}
+				cors_allow_expose_headers = bf.toString();
+			}
+		}
+		
+		ResponseCachingConfigurazione responseCachingConfigurazone = aPD.getResponseCaching();
+		String response_cache_stato = null;
+		Integer response_cache_seconds = null;
+		Long response_cache_max_msg_size = null;
+		String response_cache_hash_url = null;
+		String response_cache_hash_headers = null;
+		String response_cache_hash_payload = null;
+		if(responseCachingConfigurazone!=null) {
+			response_cache_stato = getValue(responseCachingConfigurazone.getStato());
+			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
+			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
+			if(responseCachingConfigurazone.getHashGenerator()!=null) {
+				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
+			}
+		}
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 		
@@ -1525,6 +1625,25 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
+				// cors
+				sqlQueryObject.addInsertField("cors_stato", "?");
+				sqlQueryObject.addInsertField("cors_tipo", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addInsertField("cors_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_headers", "?");
+				sqlQueryObject.addInsertField("cors_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addInsertField("response_cache_stato", "?");
+				sqlQueryObject.addInsertField("response_cache_seconds", "?");
+				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
+				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
@@ -1630,6 +1749,41 @@ public class DriverConfigurazioneDB_LIB {
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
 				
+				// cors
+				stm.setString(index++, cors_stato);
+				stm.setString(index++, cors_tipo);
+				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_allow_credentials);
+				stm.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					stm.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				stm.setString(index++, cors_allow_origins);
+				stm.setString(index++, cors_allow_headers);
+				stm.setString(index++, cors_allow_methods);
+				stm.setString(index++, cors_allow_expose_headers);
+				
+				// responseCaching
+				stm.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					stm.setInt(index++, response_cache_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					stm.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.BIGINT);
+				}
+				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_payload);
+				
 				//idaccordo
 				stm.setLong(index++, aPD.getIdAccordo()!=null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() !=null ? aPD.getIdPortType() : -1L);
@@ -1671,6 +1825,10 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getRicercaPortaAzioneDelegata(),
 								msg_diag_severita,tracciamento_esiti,
 								aPD.getStato(),
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
+								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
+								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
 				stm.close();
@@ -2155,6 +2313,25 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
+				// cors
+				sqlQueryObject.addUpdateField("cors_stato", "?");
+				sqlQueryObject.addUpdateField("cors_tipo", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addUpdateField("cors_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_headers", "?");
+				sqlQueryObject.addUpdateField("cors_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addUpdateField("response_cache_stato", "?");
+				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
+				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
+				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addWhereCondition("id=?");
@@ -2252,6 +2429,40 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStato()) : null);
+				// cors
+				stm.setString(index++, cors_stato);
+				stm.setString(index++, cors_tipo);
+				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_allow_credentials);
+				stm.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					stm.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				stm.setString(index++, cors_allow_origins);
+				stm.setString(index++, cors_allow_headers);
+				stm.setString(index++, cors_allow_methods);
+				stm.setString(index++, cors_allow_expose_headers);
+				
+				// responseCaching
+				stm.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					stm.setInt(index++, response_cache_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					stm.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.BIGINT);
+				}
+				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_payload);
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
@@ -3699,6 +3910,87 @@ public class DriverConfigurazioneDB_LIB {
 			tracciamento_esiti = aPA.getTracciamento().getEsiti();
 		}
 		
+		CorsConfigurazione corsConfigurazione = aPA.getGestioneCors();
+		String cors_stato = null;
+		String cors_tipo = null; 
+		String cors_all_allow_origins = null; 
+		String cors_allow_credentials = null; 
+		int cors_allow_max_age = CostantiDB.FALSE;
+		Integer cors_allow_max_age_seconds = null;
+		String cors_allow_origins = null; 
+		String cors_allow_headers = null; 
+		String cors_allow_methods = null; 
+		String cors_allow_expose_headers = null; 
+		if(corsConfigurazione!=null) {
+			cors_stato = getValue(corsConfigurazione.getStato());
+			cors_tipo = getValue(corsConfigurazione.getTipo());
+			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
+				cors_allow_max_age = CostantiDB.TRUE;
+				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
+			}
+			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowOrigins().getOrigin(i));
+				}
+				cors_allow_origins = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowHeaders().getHeader(i));
+				}
+				cors_allow_headers = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowMethods().getMethod(i));
+				}
+				cors_allow_methods = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlExposeHeaders().getHeader(i));
+				}
+				cors_allow_expose_headers = bf.toString();
+			}
+		}
+		
+		ResponseCachingConfigurazione responseCachingConfigurazone = aPA.getResponseCaching();
+		String response_cache_stato = null;
+		Integer response_cache_seconds = null;
+		Long response_cache_max_msg_size = null;
+		String response_cache_hash_url = null;
+		String response_cache_hash_headers = null;
+		String response_cache_hash_payload = null;
+		if(responseCachingConfigurazone!=null) {
+			response_cache_stato = getValue(responseCachingConfigurazone.getStato());
+			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
+			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
+			if(responseCachingConfigurazone.getHashGenerator()!=null) {
+				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
+				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
+			}
+		}
+		
+		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
 		
@@ -3820,6 +4112,25 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("msg_diag_severita", "?");
 				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
 				sqlQueryObject.addInsertField("stato", "?");
+				// cors
+				sqlQueryObject.addInsertField("cors_stato", "?");
+				sqlQueryObject.addInsertField("cors_tipo", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addInsertField("cors_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_headers", "?");
+				sqlQueryObject.addInsertField("cors_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addInsertField("response_cache_stato", "?");
+				sqlQueryObject.addInsertField("response_cache_seconds", "?");
+				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
+				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQueryObject.addInsertField("scadenza_correlazione_appl", "?");
@@ -3922,6 +4233,41 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
+				
+				// cors
+				stm.setString(index++, cors_stato);
+				stm.setString(index++, cors_tipo);
+				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_allow_credentials);
+				stm.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					stm.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				stm.setString(index++, cors_allow_origins);
+				stm.setString(index++, cors_allow_headers);
+				stm.setString(index++, cors_allow_methods);
+				stm.setString(index++, cors_allow_expose_headers);
+				
+				// responseCaching
+				stm.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					stm.setInt(index++, response_cache_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					stm.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.BIGINT);
+				}
+				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_payload);
 				
 				//idaccordo
 				stm.setLong(index++, aPA.getIdAccordo()!=null ? aPA.getIdAccordo() : -1L);
@@ -4450,6 +4796,25 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("msg_diag_severita", "?");
 				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
+				// cors
+				sqlQueryObject.addUpdateField("cors_stato", "?");
+				sqlQueryObject.addUpdateField("cors_tipo", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addUpdateField("cors_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_headers", "?");
+				sqlQueryObject.addUpdateField("cors_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addUpdateField("response_cache_stato", "?");
+				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
+				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
+				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
@@ -4555,6 +4920,39 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, tracciamento_esiti);
 				// Stato
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStato()) : null);
+				// cors
+				stm.setString(index++, cors_stato);
+				stm.setString(index++, cors_tipo);
+				stm.setString(index++, cors_all_allow_origins);
+				stm.setString(index++, cors_allow_credentials);
+				stm.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					stm.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				stm.setString(index++, cors_allow_origins);
+				stm.setString(index++, cors_allow_headers);
+				stm.setString(index++, cors_allow_methods);
+				stm.setString(index++, cors_allow_expose_headers);				
+				// responseCaching
+				stm.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					stm.setInt(index++, response_cache_seconds);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					stm.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					stm.setNull(index++, java.sql.Types.BIGINT);
+				}
+				stm.setString(index++, response_cache_hash_url);
+				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_payload);
 				// id
 				stm.setLong(index++, aPA.getIdAccordo() !=null ? aPA.getIdAccordo() : -1L);
 				stm.setLong(index++, aPA.getIdPortType() !=null ? aPA.getIdPortType() : -1L);
@@ -6659,7 +7057,9 @@ public class DriverConfigurazioneDB_LIB {
 				config.getIntegrationManager()==null &&
 				config.getStatoServiziPdd()==null &&
 				config.getSystemProperties()==null && 
-				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().size()<=0) ) {
+				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().size()<=0) &&
+				config.getGestioneCors()==null && 
+				config.getResponseCaching()==null ) {
 						
 			// caso speciale extended info
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -6739,6 +7139,105 @@ public class DriverConfigurazioneDB_LIB {
 		Attachments att = config.getAttachments();
 
 		ConfigurazioneMultitenant multitenant = config.getMultitenant();
+		
+		CorsConfigurazione corsConfigurazione = config.getGestioneCors();
+		String cors_stato = null;
+		String cors_tipo = null; 
+		String cors_all_allow_origins = null; 
+		String cors_allow_credentials = null; 
+		int cors_allow_max_age = CostantiDB.FALSE;
+		Integer cors_allow_max_age_seconds = null;
+		String cors_allow_origins = null; 
+		String cors_allow_headers = null; 
+		String cors_allow_methods = null; 
+		String cors_allow_expose_headers = null; 
+		if(corsConfigurazione!=null) {
+			cors_stato = getValue(corsConfigurazione.getStato());
+			cors_tipo = getValue(corsConfigurazione.getTipo());
+			cors_all_allow_origins = getValue(corsConfigurazione.getAccessControlAllAllowOrigins());
+			cors_allow_credentials = getValue(corsConfigurazione.getAccessControlAllowCredentials());
+			if(corsConfigurazione.getAccessControlMaxAge()!=null) {
+				cors_allow_max_age = CostantiDB.TRUE;
+				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
+			}
+			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowOrigins().getOrigin(i));
+				}
+				cors_allow_origins = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowHeaders().getHeader(i));
+				}
+				cors_allow_headers = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlAllowMethods().getMethod(i));
+				}
+				cors_allow_methods = bf.toString();
+			}
+			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(corsConfigurazione.getAccessControlExposeHeaders().getHeader(i));
+				}
+				cors_allow_expose_headers = bf.toString();
+			}
+		}
+		
+		ResponseCachingConfigurazioneGenerale responseCachingConfigurazone = config.getResponseCaching();
+		
+		String response_cache_stato = null;
+		Integer response_cache_seconds = null;
+		Long response_cache_max_msg_size = null;
+		String response_cache_hash_url = null;
+		String response_cache_hash_headers = null;
+		String response_cache_hash_payload = null;
+		if(responseCachingConfigurazone!=null && responseCachingConfigurazone.getConfigurazione()!=null) {
+			response_cache_stato = getValue(responseCachingConfigurazone.getConfigurazione().getStato());
+			response_cache_seconds = responseCachingConfigurazone.getConfigurazione().getCacheTimeoutSeconds();
+			response_cache_max_msg_size = responseCachingConfigurazone.getConfigurazione().getMaxMessageSize();
+			if(responseCachingConfigurazone.getConfigurazione().getHashGenerator()!=null) {
+				response_cache_hash_url = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getRequestUri());
+				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
+				response_cache_hash_payload = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getPayload());
+			}
+		}
+		
+		Cache responseCaching_cache = null;
+		String responseCaching_dimensioneCache = null;
+		String responseCaching_algoritmoCache = null;
+		String responseCaching_idleCache = null;
+		String responseCaching_lifeCache = null;
+		String responseCaching_statoCache = null;
+		if(responseCachingConfigurazone !=null){
+			responseCaching_cache = responseCachingConfigurazone.getCache();
+
+		}
+		responseCaching_statoCache = (responseCaching_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (responseCaching_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			responseCaching_dimensioneCache = responseCaching_cache.getDimensione();
+			responseCaching_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(responseCaching_cache.getAlgoritmo());
+			responseCaching_idleCache = responseCaching_cache.getItemIdleTime();
+			responseCaching_lifeCache = responseCaching_cache.getItemLifeSecond();
+		}
 		
 		String utilizzoIndTelematico = null;
 		if(indirizzoPerRisposta!=null){
@@ -6978,7 +7477,31 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("multitenant_stato", "?");
 				sqlQueryObject.addInsertField("multitenant_fruizioni", "?");
 				sqlQueryObject.addInsertField("multitenant_erogazioni", "?");
-				
+				// cors
+				sqlQueryObject.addInsertField("cors_stato", "?");
+				sqlQueryObject.addInsertField("cors_tipo", "?");
+				sqlQueryObject.addInsertField("cors_all_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_credentials", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age", "?");
+				sqlQueryObject.addInsertField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addInsertField("cors_allow_origins", "?");
+				sqlQueryObject.addInsertField("cors_allow_headers", "?");
+				sqlQueryObject.addInsertField("cors_allow_methods", "?");
+				sqlQueryObject.addInsertField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addInsertField("response_cache_stato", "?");
+				sqlQueryObject.addInsertField("response_cache_seconds", "?");
+				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
+				// responseCaching cache
+				sqlQueryObject.addInsertField("response_cache_statocache", "?");
+				sqlQueryObject.addInsertField("response_cache_dimensionecache", "?");
+				sqlQueryObject.addInsertField("response_cache_algoritmocache", "?");
+				sqlQueryObject.addInsertField("response_cache_idlecache", "?");
+				sqlQueryObject.addInsertField("response_cache_lifecache", "?");
+
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
 
@@ -7040,6 +7563,45 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null);
+				// cors
+				updateStmt.setString(index++, cors_stato);
+				updateStmt.setString(index++, cors_tipo);
+				updateStmt.setString(index++, cors_all_allow_origins);
+				updateStmt.setString(index++, cors_allow_credentials);
+				updateStmt.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					updateStmt.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.INTEGER);
+				}
+				updateStmt.setString(index++, cors_allow_origins);
+				updateStmt.setString(index++, cors_allow_headers);
+				updateStmt.setString(index++, cors_allow_methods);
+				updateStmt.setString(index++, cors_allow_expose_headers);				
+				// responseCaching
+				updateStmt.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					updateStmt.setInt(index++, response_cache_seconds);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					updateStmt.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.BIGINT);
+				}
+				updateStmt.setString(index++, response_cache_hash_url);
+				updateStmt.setString(index++, response_cache_hash_headers);
+				updateStmt.setString(index++, response_cache_hash_payload);
+				// responseCaching cache
+				updateStmt.setString(index++, responseCaching_statoCache);
+				updateStmt.setString(index++, responseCaching_dimensioneCache);
+				updateStmt.setString(index++, responseCaching_algoritmoCache);
+				updateStmt.setString(index++, responseCaching_idleCache);
+				updateStmt.setString(index++, responseCaching_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -7059,7 +7621,13 @@ public class DriverConfigurazioneDB_LIB {
 								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
-								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null)));
+								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
+								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
+								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -7427,6 +7995,30 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("multitenant_stato", "?");
 				sqlQueryObject.addUpdateField("multitenant_fruizioni", "?");
 				sqlQueryObject.addUpdateField("multitenant_erogazioni", "?");
+				// cors
+				sqlQueryObject.addUpdateField("cors_stato", "?");
+				sqlQueryObject.addUpdateField("cors_tipo", "?");
+				sqlQueryObject.addUpdateField("cors_all_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_credentials", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age", "?");
+				sqlQueryObject.addUpdateField("cors_allow_max_age_seconds", "?");
+				sqlQueryObject.addUpdateField("cors_allow_origins", "?");
+				sqlQueryObject.addUpdateField("cors_allow_headers", "?");
+				sqlQueryObject.addUpdateField("cors_allow_methods", "?");
+				sqlQueryObject.addUpdateField("cors_allow_expose_headers", "?");
+				// responseCaching
+				sqlQueryObject.addUpdateField("response_cache_stato", "?");
+				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
+				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
+				// responseCaching cache
+				sqlQueryObject.addUpdateField("response_cache_statocache", "?");
+				sqlQueryObject.addUpdateField("response_cache_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("response_cache_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("response_cache_idlecache", "?");
+				sqlQueryObject.addUpdateField("response_cache_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -7489,7 +8081,46 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getStato()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null);
 				updateStmt.setString(index++, multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null);
-
+				// cors
+				updateStmt.setString(index++, cors_stato);
+				updateStmt.setString(index++, cors_tipo);
+				updateStmt.setString(index++, cors_all_allow_origins);
+				updateStmt.setString(index++, cors_allow_credentials);
+				updateStmt.setInt(index++, cors_allow_max_age);
+				if(cors_allow_max_age_seconds!=null) {
+					updateStmt.setInt(index++, cors_allow_max_age_seconds);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.INTEGER);
+				}
+				updateStmt.setString(index++, cors_allow_origins);
+				updateStmt.setString(index++, cors_allow_headers);
+				updateStmt.setString(index++, cors_allow_methods);
+				updateStmt.setString(index++, cors_allow_expose_headers);				
+				// responseCaching
+				updateStmt.setString(index++, response_cache_stato);
+				if(response_cache_seconds!=null) {
+					updateStmt.setInt(index++, response_cache_seconds);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.INTEGER);
+				}
+				if(response_cache_max_msg_size!=null) {
+					updateStmt.setLong(index++, response_cache_max_msg_size);
+				}
+				else {
+					updateStmt.setNull(index++, java.sql.Types.BIGINT);
+				}
+				updateStmt.setString(index++, response_cache_hash_url);
+				updateStmt.setString(index++, response_cache_hash_headers);
+				updateStmt.setString(index++, response_cache_hash_payload);
+				// responseCaching cache
+				updateStmt.setString(index++, responseCaching_statoCache);
+				updateStmt.setString(index++, responseCaching_dimensioneCache);
+				updateStmt.setString(index++, responseCaching_algoritmoCache);
+				updateStmt.setString(index++, responseCaching_idleCache);
+				updateStmt.setString(index++, responseCaching_lifeCache);
+				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
 								cadenza_inoltro, 
@@ -7509,7 +8140,13 @@ public class DriverConfigurazioneDB_LIB {
 								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache,
 								(multitenant!=null ? getValue(multitenant.getStato()) : null),
 								(multitenant!=null ? getValue(multitenant.getFruizioneSceltaSoggettiErogatori()) : null),
-								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null)));
+								(multitenant!=null ? getValue(multitenant.getErogazioneSceltaSoggettiFruitori()) : null),
+								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
+								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
+								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
+								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();

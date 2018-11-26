@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -109,20 +110,20 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 		return l;
 	}
 	
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
-	@Override
-	public boolean send(ConnettoreMsg request){
 
-		if(this.initialize(request, true)==false){
+	@Override
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
+		
+		return true;
+		
+	}
 	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
 
 		// Lettura Parametri
 		try{
@@ -497,7 +498,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 
 			if(this.debug)
 				this.logger.info("Gestione consegna su file effettuata con successo",false);
-						
+			
 			return true;
 
 		}  catch(Exception e){ 

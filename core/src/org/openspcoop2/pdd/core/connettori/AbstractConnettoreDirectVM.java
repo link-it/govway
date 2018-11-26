@@ -28,6 +28,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Hashtable;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -57,20 +58,20 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	
 	/* ********  METODI  ******** */
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, true)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
 		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
+	
 		// protocol
 		IProtocolFactory<?> pFactory = null;
 		try{
@@ -93,7 +94,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		
 		// Il Validate legge ulteriori proprieta' che poi vengono usate dal buildLocation
 		if(this.validate(request)){	
-			
+					
 			// location
 			try{
 				if(this.debug)

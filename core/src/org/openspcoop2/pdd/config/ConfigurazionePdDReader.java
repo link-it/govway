@@ -43,10 +43,12 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
@@ -62,6 +64,8 @@ import org.openspcoop2.core.config.MtomProcessorFlow;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTable;
@@ -1412,7 +1416,33 @@ public class ConfigurazionePdDReader {
 		else
 			return pd.getAutorizzazioneContenuto();
 	}
+	
+	public CorsConfigurazione getConfigurazioneCORS(Connection connectionPdD, PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		
+		CorsConfigurazione cors = pd.getGestioneCors();
+		if(cors==null) {
+			cors = this.getConfigurazioneCORS(connectionPdD);
+		}
+		return cors;
+	}
 
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(Connection connectionPdD, PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		
+		ResponseCachingConfigurazione c = pd.getResponseCaching();
+		if(c==null) {
+			c = this.getConfigurazioneResponseCaching(connectionPdD);
+		}
+		return c;
+	}
+	
 	protected boolean ricevutaAsincronaSimmetricaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null)
 			return true; // default Abilitata-CNIPA
@@ -2091,8 +2121,33 @@ public class ConfigurazionePdDReader {
 		else
 			return pa.getAutorizzazioneContenuto();
 	}
-	
 
+	public CorsConfigurazione getConfigurazioneCORS(Connection connectionPdD, PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		CorsConfigurazione cors = pa.getGestioneCors();
+		if(cors==null) {
+			cors = this.getConfigurazioneCORS(connectionPdD);
+		}
+		return cors;
+	}
+
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(Connection connectionPdD, PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		ResponseCachingConfigurazione c = pa.getResponseCaching();
+		if(c==null) {
+			c = this.getConfigurazioneResponseCaching(connectionPdD);
+		}
+		return c;
+	}
+	
 	protected boolean ricevutaAsincronaSimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null)
 			return true; // default Abilitata-CNIPA
@@ -4768,6 +4823,35 @@ public class ConfigurazionePdDReader {
 
 	protected void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{
 		this.configurazionePdD.updateSystemPropertiesPdD(systemProperties);
+	}
+	
+	
+	
+	public CorsConfigurazione getConfigurazioneCORS(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		CorsConfigurazione cors = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getGestioneCors();
+		if(cors==null) {
+			return new CorsConfigurazione();
+		}
+		return cors;
+	}
+	
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		ResponseCachingConfigurazioneGenerale c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getResponseCaching();
+		if(c==null) {
+			c = new ResponseCachingConfigurazioneGenerale();
+		}
+		if(c.getConfigurazione()==null) {
+			c.setConfigurazione(new ResponseCachingConfigurazione());
+		}
+		return c.getConfigurazione();
+	}
+	
+	public Cache getConfigurazioneResponseCachingCache(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		ResponseCachingConfigurazioneGenerale c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getResponseCaching();
+		if(c==null) {
+			c = new ResponseCachingConfigurazioneGenerale();
+		}
+		return c.getCache();
 	}
 
 

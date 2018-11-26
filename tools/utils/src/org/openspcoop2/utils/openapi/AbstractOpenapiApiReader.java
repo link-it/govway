@@ -256,8 +256,29 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 					api.addSchema(apiSchema);
 				}
 			}
-			if(!this.openApi.getServers().isEmpty())
-				api.setBaseURL(new URL(this.openApi.getServers().get(0).getUrl()));
+			if(!this.openApi.getServers().isEmpty()) {
+				String server = this.openApi.getServers().get(0).getUrl();
+				URL url = null;
+				try {
+					url = new URL(server);
+				}catch(Exception e) {
+					// provo a verificare se il problema è che non e' stato definito il protocollo (es. in swagger lo 'schemes')
+					if(server!=null && server.startsWith("/")) {
+						server = "http:"+server;
+						try {
+							url = new URL(server);
+						}catch(Exception e2) {
+							// nop
+						}
+					}
+				}
+				if(url!=null) {
+					api.setBaseURL(url);
+				}
+			}
+			if(this.openApi.getInfo()!=null) {
+				api.setDescription(this.openApi.getInfo().getDescription());
+			}
 
 			if(this.openApi.getPaths() != null){
 				for (String pathK : this.openApi.getPaths().keySet()) {

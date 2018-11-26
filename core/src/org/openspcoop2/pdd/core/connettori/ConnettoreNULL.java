@@ -25,6 +25,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 
@@ -41,27 +42,26 @@ import org.openspcoop2.message.constants.MessageRole;
 
 public class ConnettoreNULL extends ConnettoreBase {
 	
-	public final static String LOCATION = "openspcoop2://dev/null";
+	public final static String LOCATION = "govway://dev/null";
     
 	
 
 
 	/* ********  METODI  ******** */
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, false)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, false, responseCachingConfig)==false){
 			return false;
 		}
-
+		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
 		
 		this.codice = 200;
 		

@@ -24,7 +24,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +34,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -77,8 +72,6 @@ public final class AccordiServizioParteComuneDel extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			ApiHelper apcHelper = new ApiHelper(request, pd, session);
@@ -96,31 +89,19 @@ public final class AccordiServizioParteComuneDel extends Action {
 
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 			
-			String msg = "";
-			boolean isInUso = false;
+			StringBuffer inUsoMessage = new StringBuffer();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
-				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
 
 				AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.parseLong(idsToRemove.get(i)));
-				IDAccordo idAccordo = idAccordoFactory.getIDAccordoFromAccordo(as);
-
-				boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
-				if (apcCore.isAccordoInUso(as, whereIsInUso, normalizeObjectIds)) {// accordo in uso
-					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idAccordo, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-				} else {// accordo non in uso
-					apcCore.performDeleteOperation(userLogin, apcHelper.smista(), as);
-				}
+				
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, userLogin, apcCore, apcHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				
 
 			}// chiudo for
 
-			if (isInUso) {
-				pd.setMessage(msg);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
 			}
 
 			// con.commit();

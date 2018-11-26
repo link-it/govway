@@ -24,7 +24,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,17 +34,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
-import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -99,17 +92,14 @@ public final class SoggettiDel extends Action {
 			// String soggInUsoServizioApplicativo = "", soggInUsoServ = "",
 			// soggInUsoPorteDel = "";
 			// String nomeprov = "", tipoprov = "";
-			boolean isInUso = false;
 			
 			soggettiHelper.makeMenu();
 	
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 	
 			SoggettiCore soggettiCore = new SoggettiCore();
-			PddCore pddCore = new PddCore(soggettiCore);
-			UtentiCore utentiCore = new UtentiCore(soggettiCore);
-
-			String msg = "";
+			
+			StringBuffer inUsoMessage = new StringBuffer();
 
 			boolean deleteOperativo = false;
 			
@@ -117,56 +107,19 @@ public final class SoggettiDel extends Action {
 
 				Soggetto soggettoRegistro = null;
 				org.openspcoop2.core.config.Soggetto soggettoConfig = null;
-				IDSoggetto idSoggetto = null;
 				if(soggettiCore.isRegistroServiziLocale()){
 					soggettoRegistro = soggettiCore.getSoggettoRegistro(Long.parseLong(idsToRemove.get(i)));
-					idSoggetto = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
-					soggettoConfig = soggettiCore.getSoggetto(idSoggetto);
 				}
 				else{
 					soggettoConfig = soggettiCore.getSoggetto(Long.parseLong(idsToRemove.get(i)));
-					idSoggetto = new IDSoggetto(soggettoConfig.getTipo(), soggettoConfig.getNome());
 				}
-				boolean soggettoInUso = false;
-				boolean normalizeObjectIds = !soggettiHelper.isModalitaCompleta();
-				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				if(soggettiCore.isRegistroServiziLocale()){
-					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoRegistro, whereIsInUso, normalizeObjectIds);
-				}else{
-					soggettoInUso = soggettiCore.isSoggettoInUso(soggettoConfig, whereIsInUso, normalizeObjectIds);
-				}
-
-
-				if (soggettoInUso) {
-					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, normalizeObjectIds);
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-
-				} 
-				else if(soggettoConfig.isDominioDefault()) {
-					isInUso = true;
-					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
-					msg += "Il Soggetto '"+soggettiHelper.getLabelNomeSoggetto(protocollo, idSoggetto)+"',  essendo il soggeto predefinito per il profilo '"+
-							soggettiHelper.getLabelProtocollo(protocollo)+"', non è eliminabile";
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-				}
-				else {
-					SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
-					soggettiCore.performDeleteOperation(userLogin, soggettiHelper.smista(), sog);
-					if(soggettoRegistro!=null && !pddCore.isPddEsterna(soggettoRegistro.getPortaDominio())) {
-						
-						// sistemo utenze dopo l'aggiornamento
-						IDSoggetto idSoggettoSelezionato = new IDSoggetto(soggettoRegistro.getTipo(), soggettoRegistro.getNome());
-						utentiCore.modificaSoggettoUtilizzatoConsole(idSoggettoSelezionato.toString(), null); // annullo selezione
-						
-						deleteOperativo = true;
-					}
-				}
+				
+				deleteOperativo = SoggettiUtilities.deleteSoggetto(soggettoRegistro, soggettoConfig, userLogin, soggettiCore, soggettiHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				
 			}// chiudo for
 
-			if (isInUso) {
-				pd.setMessage(msg);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
 			}
 
 			// preparo lista

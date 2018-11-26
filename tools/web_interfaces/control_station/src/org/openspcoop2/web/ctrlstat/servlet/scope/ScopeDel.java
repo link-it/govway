@@ -24,7 +24,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.scope;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,9 +34,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
-import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -86,32 +82,19 @@ public final class ScopeDel extends Action {
 			ScopeCore scopeCore = new ScopeCore();
 
 			
-			boolean isInUso = false;
-			
-			String msg = "";
+			StringBuffer inUsoMessage = new StringBuffer();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				Scope scope = scopeCore.getScope(idsToRemove.get(i));
 				
-				HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-				boolean normalizeObjectIds = !scopeHelper.isModalitaCompleta();
-				boolean scopeInUso = scopeCore.isScopeInUso(scope.getNome(),whereIsInUso,normalizeObjectIds);
+				ScopeUtilities.deleteScope(scope, userLogin, scopeCore, scopeHelper, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 				
-				if (scopeInUso) {
-					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(new IDScope(scope.getNome()), whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-
-				} else {
-					scopeCore.performDeleteOperation(userLogin, scopeHelper.smista(), scope);
-				}
 			}// chiudo for
-
-			if (isInUso) {
-				pd.setMessage(msg);
-			}
 			
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+			}
 
 			// Preparo il menu
 			scopeHelper.makeMenu();

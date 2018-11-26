@@ -40,6 +40,7 @@ import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
@@ -66,20 +67,20 @@ public class ConnettoreJMS extends ConnettoreBase {
 
 
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, true)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
 		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
+
 		// location
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
 			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";

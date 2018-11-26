@@ -49,9 +49,9 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
@@ -63,7 +63,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
-import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
@@ -228,7 +228,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherErrorInfo cInfo = null;
+		ConnectorDispatcherInfo cInfo = null;
 		try{
 			cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
 					generatoreErrore, serviceIdentificationReader, msgDiag, 
@@ -254,7 +254,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 		}finally {
 			if(cInfo!=null) {
-				RicezioneContenutiApplicativiServiceUtils.emitTransactionError(context,logCore, idModulo, IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, protocolFactory, requestInfo,
+				RicezioneContenutiApplicativiServiceUtils.emitTransaction(context,logCore, idModulo, IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, protocolFactory, requestInfo,
 						null, dataAccettazioneRichiesta, cInfo);
 			}
 		}

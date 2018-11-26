@@ -121,6 +121,11 @@ public class CostantiPdD {
     /** Nome Porta Invocata originale */
     public final static String NOME_PORTA_INVOCATA = "NOME_PORTA_INVOCATA";
     
+    /** Response Caching */
+    public final static String RESPONSE_CACHE_REQUEST_DIGEST = "RESPONSE_CACHE_REQUEST_DIGEST";
+    /** Response Caching */
+    public final static String RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM = "MD5";
+    
     /** Dati di integresso del messaggio */
     public final static String DATA_ACCETTAZIONE_RICHIESTA = "CONTEXT_DATA_ACCETTAZIONE_RICHIESTA";
     public final static String DATA_INGRESSO_RICHIESTA = "CONTEXT_DATA_INGRESSO_RICHIESTA";
@@ -260,6 +265,8 @@ public class CostantiPdD {
 	/** Timeout per risposta asincrona: 90 secondi */
     public final static long RISPOSTA_ASINCRONA_ATTESA_ATTIVA = 90000;
    
+    /** Return code in gestione CORS */
+   	public final static int GESTIONE_CORS_RETURN_CODE = 200;
      
     /** Timeout per la istanziazione della connessione: inoltro buste */
     public static final int CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE = 10000;
@@ -295,6 +302,8 @@ public class CostantiPdD {
     public static final String JMX_AUTENTICAZIONE = "DatiAutenticazione";
     /** MBean per la gestione dei token */
     public static final String JMX_TOKEN = "GestioneToken";
+    /** MBean per il caching delle risposte */
+    public static final String JMX_RESPONSE_CACHING = "ResponseCaching";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */

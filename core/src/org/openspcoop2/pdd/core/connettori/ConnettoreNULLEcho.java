@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -79,7 +80,7 @@ import org.openspcoop2.utils.date.DateManager;
 
 public class ConnettoreNULLEcho extends ConnettoreBase {
 	
-	public final static String LOCATION = "openspcoop2://echo";
+	public final static String LOCATION = "govway://echo";
     
 
 	
@@ -88,21 +89,20 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 
 	/* ********  METODI  ******** */
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, false)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, false, responseCachingConfig)==false){
 			return false;
 		}
 		
+		return true;
 		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
+
 		boolean generaTrasmissione = false;
 		if(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE)!=null){
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE).trim()))

@@ -53,6 +53,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -142,12 +143,19 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	
 	
 	@Override
-	public boolean send(ConnettoreMsg request) {
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
 		
-		if(this.initialize(request, true)==false){
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
+		
+		return true;
+		
+	}
 	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
+		
 		try{
 			
 			// Creazione URL
@@ -604,8 +612,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.logger.info("Gestione invio/risposta http effettuata con successo",false);
 			
 			return true;			
-			
-			
+						
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
 			String msgErrore = this.readExceptionMessageFromException(e);

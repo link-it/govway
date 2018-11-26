@@ -93,6 +93,9 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = "porteApplicativeDumpConfigurazione";
 	public final static ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = "porteApplicativeGestioneCors";
+	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
+	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = "porteApplicativeWSRequestPropertiesConfig";
 	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = ForwardParams.OTHER("");
 	
@@ -101,6 +104,9 @@ public class PorteApplicativeCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE = "porteApplicativeConfigurazioneChange";
 	public final static ForwardParams TIPO_OPERAZIONEGRUPPO_CAMBIA_NOME = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = "porteApplicativeResponseCaching";
+	public final static ForwardParams TIPO_OPERAZIONE_RESPONSE_CACHING = ForwardParams.OTHER("");
 	
 	/* SERVLET NAME */
 	
@@ -305,6 +311,9 @@ public class PorteApplicativeCostanti {
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE);
 	}
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_GESTIONE_CORS+".do"; 
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING +".do"; 
 	
 	/* LABEL GENERALI */
 	
@@ -544,6 +553,15 @@ public class PorteApplicativeCostanti {
 
 	public final static String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
 	public final static String LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;
+	
+	public final static String LABEL_PORTE_APPLICATIVE_CORS_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO;
+	public final static String LABEL_PORTE_APPLICATIVE_RESPONSE_CACHING_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_RESPONSE_CACHING_MODIFICATA_CON_SUCCESSO;
 	
 	/* DEFAULT VALUE PARAMETRI */
 	

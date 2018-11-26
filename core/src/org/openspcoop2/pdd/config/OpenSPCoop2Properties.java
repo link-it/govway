@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -728,6 +729,9 @@ public class OpenSPCoop2Properties {
 			this.isEnabledValidazioneRFC2047HeaderNameValue_ricezioneBuste();
 			this.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
 			this.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
+			
+			this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi();
+			this.getGestioneCORS_returnCode_ricezioneBuste();
 			
 			
 
@@ -1551,6 +1555,10 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_gestione();
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
 			this.isValidazioneContenutiApplicativi_checkSoapAction();
+			
+			// CachingResponse
+			this.getCachingResponseDigestAlgorithm();
+			this.getCachingResponseHeaderCacheKey();
 			
 			// Gestione Token
 			this.getGestioneToken_iatTimeCheck_milliseconds();
@@ -10620,6 +10628,50 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi;
 	}
 	
+	private static Integer getGestioneCORS_returnCode_ricezioneContenutiApplicativi = null;
+	public int getGestioneCORS_returnCode_ricezioneContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
+					OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi;
+	}
+	
+	private static Integer getGestioneCORS_returnCode_ricezioneBuste = null;
+	public int getGestioneCORS_returnCode_ricezioneBuste() {	
+		if(OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
+					OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste;
+	}
+	
 	
 
 
@@ -13973,6 +14025,59 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction;
 	}
+	
+	
+	/* ------------- Caching Response ---------------------*/
+	
+	private static String getCachingResponseDigestAlgorithm = null;
+	public String getCachingResponseDigestAlgorithm(){
+
+		if(OpenSPCoop2Properties.getCachingResponseDigestAlgorithm==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cachingResponse.digestAlgorithm"); 
+
+				if (value != null){
+					value = value.trim();
+					MessageDigest.getInstance(value); // valida
+					OpenSPCoop2Properties.getCachingResponseDigestAlgorithm = value;
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM);
+					OpenSPCoop2Properties.getCachingResponseDigestAlgorithm = CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.getCachingResponseDigestAlgorithm = CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM;
+			}
+		}
+
+		return OpenSPCoop2Properties.getCachingResponseDigestAlgorithm;
+	}
+	
+	private static Boolean getCachingResponseHeaderCacheKey_read = null;
+	private static String getCachingResponseHeaderCacheKey = null;
+	public String getCachingResponseHeaderCacheKey(){
+
+		if(OpenSPCoop2Properties.getCachingResponseHeaderCacheKey_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cachingResponse.header.cacheKey"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getCachingResponseHeaderCacheKey = value;
+				}
+
+				OpenSPCoop2Properties.getCachingResponseHeaderCacheKey_read = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.header.cacheKey', errore:"+e.getMessage());
+				
+			}
+		}
+
+		return OpenSPCoop2Properties.getCachingResponseHeaderCacheKey;
+	}
+	
 	
 	
 	/* ------------- Gestione Token ---------------------*/

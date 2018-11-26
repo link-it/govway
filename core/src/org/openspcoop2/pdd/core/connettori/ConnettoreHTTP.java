@@ -45,6 +45,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -158,20 +159,20 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 		}
 	}
 	
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
 	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, true)==false){
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+		if(this.initialize(request, true, responseCachingConfig)==false){
 			return false;
 		}
 		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {
+
 		// HTTPS
 		try{
 			this.setSSLContext();
@@ -788,7 +789,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 							}
 						}
 						
-						return this.send(request);
+						return this.send(request); // caching ricorsivo non serve
 						
 					}else{
 						if(this.isSoap) {

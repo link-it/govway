@@ -37,13 +37,13 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConnectorDispatcherErrorInfo {
+public class ConnectorDispatcherErrorInfo extends ConnectorDispatcherInfo {
 
 	public static ConnectorDispatcherErrorInfo getGenericError(OpenSPCoop2Message errorMessage,int status, String contentType, Properties trasporto,
 			RequestInfo requestInfo,IProtocolFactory<?> protocolFactory) throws Exception {
 		ConnectorDispatcherErrorInfo c = new ConnectorDispatcherErrorInfo();
 		EsitoTransazione esito = protocolFactory.createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
-		c.setErrorMessage(errorMessage);
+		c.setMessage(errorMessage);
 		c.setEsitoTransazione(esito);
 		c.setStatus(status);
 		c.setContentType(contentType);
@@ -54,7 +54,7 @@ public class ConnectorDispatcherErrorInfo {
 			RequestInfo requestInfo,IProtocolFactory<?> protocolFactory) throws Exception {
 		ConnectorDispatcherErrorInfo c = new ConnectorDispatcherErrorInfo();
 		EsitoTransazione esito = protocolFactory.createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX);
-		c.setErrorMessage(errorMessage);
+		c.setMessage(errorMessage);
 		c.setEsitoTransazione(esito);
 		c.setStatus(status);
 		c.setContentType(contentType);
@@ -64,42 +64,5 @@ public class ConnectorDispatcherErrorInfo {
 	
 	private ConnectorDispatcherErrorInfo() {
 		
-	}
-
-	private OpenSPCoop2Message errorMessage;
-	private EsitoTransazione esitoTransazione;
-	private int status;
-	private String contentType;
-	private Properties trasporto;
-	
-	public Properties getTrasporto() {
-		return this.trasporto;
-	}
-	public void setTrasporto(Properties trasporto) {
-		this.trasporto = trasporto;
-	}
-	public OpenSPCoop2Message getErrorMessage() {
-		return this.errorMessage;
-	}
-	public void setErrorMessage(OpenSPCoop2Message errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-	public EsitoTransazione getEsitoTransazione() {
-		return this.esitoTransazione;
-	}
-	public void setEsitoTransazione(EsitoTransazione esitoTransazione) {
-		this.esitoTransazione = esitoTransazione;
-	}
-	public int getStatus() {
-		return this.status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	public String getContentType() {
-		return this.contentType;
-	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
 	}
 }

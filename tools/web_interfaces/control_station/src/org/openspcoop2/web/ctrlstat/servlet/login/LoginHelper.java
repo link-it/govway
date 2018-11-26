@@ -91,12 +91,18 @@ public class LoginHelper extends ConsoleHelper {
 			
 			// controllo modalita' associate all'utenza
 			if(trovato) {
+				
+				User uCheck = u;
+				if(uCheck == null) {
+					uCheck = this.utentiCore.getUser(login);
+				}
+				
 				if(this.hasOnlyPermessiDiagnosticaReportistica(this.utentiCore.getUser(login))) {
 					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
 					return false;
 				}
 				
-				if(!u.isConfigurazioneValidaAbilitazioni()) {
+				if(!uCheck.isConfigurazioneValidaAbilitazioni()) {
 					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO,MessageType.ERROR_SINTETICO);
 					return false;
 				}

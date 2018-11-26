@@ -659,7 +659,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						// dump
 						boolean controlloDumpAbilitato = false;
 						for (PortaApplicativa paAssociata : listaPorteApplicativeAssociate) {
-							String statoDump = this.getStatoDumpPortaApplicativa(paAssociata);
+							String statoDump = this.getStatoDumpPortaApplicativa(paAssociata, true);
 							if(!statoDump.startsWith(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT)){
 								controlloDumpAbilitato = true;
 								break;
@@ -858,7 +858,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						// dump
 						boolean controlloDumpAbilitato = false;
 						for (PortaDelegata pdAssociata : listaPorteDelegateAssociate) {
-							String statoDump = this.getStatoDumpPortaDelegata(pdAssociata);
+							String statoDump = this.getStatoDumpPortaDelegata(pdAssociata, true);
 							if(!statoDump.startsWith(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT)){
 								controlloDumpAbilitato = true;
 								break;
@@ -1219,6 +1219,17 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						listParametersConnettore.toArray(new Parameter[1]));
 				dati.addElement(de);
 			}
+			
+			// CORS
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
+			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getStatoGestioneCorsPortaApplicativa(paDefault, false));
+			paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS, paIdSogg, paIdPorta, pIdAsps);
+			dati.addElement(de);
 		}
 		
 		if(gestioneFruitori) {
@@ -1390,6 +1401,16 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				dati.addElement(de);
 			}
+			
+			// CORS
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS);
+			de.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CORS));
+			de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+			de.setType(DataElementType.TEXT);
+			de.setValue(this.getStatoGestioneCorsPortaDelegata(pdDefault, false)); 
+			de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+			dati.addElement(de);
 		}
 		
 
@@ -1573,7 +1594,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de.setType(DataElementType.LINK);
 				de.setUrl(
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,	new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),	pNomeServizio, pTipoServizio, pIdsoggErogatore );
-				de.setValue("Gestione Gruppi");
+				de.setValue("Gruppi");
 				dati.addElement(de);
 
 
@@ -2444,7 +2465,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 
 					// dump
 					boolean controlloDumpAbilitato = false;
-					String statoDump = this.getStatoDumpPortaApplicativa(paAssociata);
+					String statoDump = this.getStatoDumpPortaApplicativa(paAssociata, true);
 					if(!statoDump.startsWith(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT)){
 						controlloDumpAbilitato = true;
 						numeroConfigurazioniAttive ++ ;
@@ -2464,13 +2485,13 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);				
-						de.setValue(this.getStatoDumpRichiestaPortaApplicativa(paAssociata));
+						de.setValue(this.getStatoDumpRichiestaPortaApplicativa(paAssociata, true));
 						gruppoVector.addElement(de);
 
 						de = new DataElement();
 						de.setType(DataElementType.TEXT);
 						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);				
-						de.setValue(this.getStatoDumpRispostaPortaApplicativa(paAssociata));
+						de.setValue(this.getStatoDumpRispostaPortaApplicativa(paAssociata, true));
 						gruppoVector.addElement(de);
 
 						de = new DataElement();

@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -358,7 +359,7 @@ public class ConnectorDispatcherUtils {
 	private static ConnectorDispatcherErrorInfo _doError(RequestInfo requestInfo,ConnectorOutMessage res,Logger log,boolean portaDelegata,
 			ErroreIntegrazione erroreIntegrazione,
 			IntegrationError integrationError, Throwable e, ParseException parseException,
-			OpenSPCoop2Message msgErrore, boolean clientError) throws ConnectorException{
+			OpenSPCoop2Message msg, boolean clientError) throws ConnectorException{
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
@@ -400,17 +401,17 @@ public class ConnectorDispatcherUtils {
 		
 		int status = 200;
 		String contentTypeRisposta = null;
-		if(msgErrore.getForcedResponseCode()!=null){
-			status = Integer.parseInt(msgErrore.getForcedResponseCode());
+		if(msg.getForcedResponseCode()!=null){
+			status = Integer.parseInt(msg.getForcedResponseCode());
 			res.setStatus(status);
 		}
 		
 		// content type
 		// Alcune implementazioni richiedono di aggiornare il Content-Type
 		try{
-			if(msgErrore!=null) {
-				msgErrore.updateContentType();
-				contentTypeRisposta = msgErrore.getContentType();
+			if(msg!=null) {
+				msg.updateContentType();
+				contentTypeRisposta = msg.getContentType();
 				if (contentTypeRisposta != null) {
 					res.setContentType(contentTypeRisposta);
 					trasporto.put(HttpConstants.CONTENT_TYPE, contentTypeRisposta);
@@ -429,9 +430,9 @@ public class ConnectorDispatcherUtils {
 		ConnectorDispatcherErrorInfo errorInfo = null;
 		try{
 			if(clientError) {
-				errorInfo = ConnectorDispatcherErrorInfo.getClientError(msgErrore, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);
+				errorInfo = ConnectorDispatcherErrorInfo.getClientError(msg, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);
 			}else{
-				errorInfo = ConnectorDispatcherErrorInfo.getGenericError(msgErrore, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);	
+				errorInfo = ConnectorDispatcherErrorInfo.getGenericError(msg, status, contentTypeRisposta, trasporto, requestInfo, protocolFactory);	
 			}
 		}catch(Throwable error){
 			log.error("Errore durante la generazione delle informazioni di errore: "+error.getMessage(),error);
@@ -445,7 +446,7 @@ public class ConnectorDispatcherUtils {
 
 		boolean consume = false; // può essere usato nel post out response handler
 		try{
-			res.sendResponse(msgErrore, consume);
+			res.sendResponse(msg, consume);
 		}catch(Throwable error){
 			log.error("Errore durante la serializzazione dell'errore: "+error.getMessage(),error);
 			try{
@@ -457,5 +458,98 @@ public class ConnectorDispatcherUtils {
 		}
 		
 		return errorInfo;
+	}
+	
+	
+	public static void doInfo(ConnectorDispatcherInfo info, RequestInfo requestInfo,ConnectorOutMessage res, Logger log, boolean portaDelegata) throws ConnectorException{
+		
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
+		
+		OpenSPCoop2Message msg = info.getMessage();
+		
+		Properties trasporto = info.getTrasporto();
+		try {
+			UtilitiesIntegrazione utilitiesIntegrazione = null;
+			if(portaDelegata) {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePDResponse(log);
+			}
+			else {
+				utilitiesIntegrazione = UtilitiesIntegrazione.getInstancePAResponse(log);
+			}
+			if(requestInfo!=null && requestInfo.getIdTransazione()!=null) {
+				HeaderIntegrazione hdr = new HeaderIntegrazione(requestInfo.getIdTransazione());
+				utilitiesIntegrazione.setTransportProperties(hdr,trasporto,null);
+			}
+			else {
+				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
+			}
+			if(trasporto.size()>0){
+				java.util.Enumeration<?> en = trasporto.keys();
+		    	while(en.hasMoreElements()){
+		    		String key = (String) en.nextElement();
+		    		String value = null;
+		    		value = trasporto.getProperty(key);
+		    		res.setHeader(key,value);
+		    	}	
+			}
+			
+		}catch(Throwable error){
+			log.error("Errore durante la serializzazione degli headers: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(error.getMessage())
+						.getDescrizione(protocolFactory),error);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(error.getMessage(),error);
+			}
+		}
+		
+		int status = 200;
+		String contentTypeRisposta = null;
+		if(msg!=null && msg.getForcedResponseCode()!=null){
+			status = Integer.parseInt(msg.getForcedResponseCode());
+			res.setStatus(status);
+		}
+		else if(info.getStatus()>0) {
+			status = info.getStatus();
+			res.setStatus(status);
+		}
+		
+		// content type
+		// Alcune implementazioni richiedono di aggiornare il Content-Type
+		try{
+			if(msg!=null) {
+				msg.updateContentType();
+				contentTypeRisposta = msg.getContentType();
+				if (contentTypeRisposta != null) {
+					res.setContentType(contentTypeRisposta);
+					trasporto.put(HttpConstants.CONTENT_TYPE, contentTypeRisposta);
+				}
+			}
+		}catch(Throwable error){
+			log.error("Errore durante la serializzazione del contentType: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(error.getMessage())
+						.getDescrizione(protocolFactory),error);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(error.getMessage(),error);
+			}
+		}
+	
+		boolean consume = false; // può essere usato nel post out response handler
+		try{
+			res.sendResponse(msg, consume);
+		}catch(Throwable error){
+			log.error("Errore durante la serializzazione dell'errore: "+error.getMessage(),error);
+			try{
+				throw new ConnectorException(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(error.getMessage())
+						.getDescrizione(protocolFactory),error);
+			}catch(Throwable eInternal){
+				// rilancio eccezione originale
+				throw new ConnectorException(error.getMessage(),error);
+			}
+		}
+		
 	}
 }

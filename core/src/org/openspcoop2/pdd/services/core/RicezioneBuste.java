@@ -35,13 +35,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -72,6 +77,8 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.CORSFilter;
+import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
@@ -111,6 +118,7 @@ import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.node.NodeTimeoutException;
+import org.openspcoop2.pdd.core.response_caching.HashGenerator;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
@@ -212,6 +220,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 
@@ -1504,6 +1513,43 @@ public class RicezioneBuste {
 		
 		
 		
+		Utilities.printFreeMemory("RicezioneBuste - Raccolta dati Gestione CORS ...");
+		// NOTA: i dati CORS sono memorizzati solamente nella porta principale e non in quelle di eventuali azioni delegate.
+		//       deve quindi essere recuperata prima di sostituire la pa con una più specifica
+		CorsConfigurazione cors = null;
+		HttpServletRequest httpServletRequest = null;
+		boolean effettuareGestioneCORS = false;
+		try {
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+				httpServletRequest = requestInfo.getProtocolContext().getHttpServletRequest();	
+			}
+			
+			if(httpServletRequest!=null && HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
+				if(pa!=null) {
+					cors = configurazionePdDReader.getConfigurazioneCORS(pa);
+				}
+				else {
+					cors = configurazionePdDReader.getConfigurazioneCORS();
+				}
+			}
+			else {
+				cors = new CorsConfigurazione();
+				cors.setStato(StatoFunzionalita.DISABILITATO);
+			}
+		} catch (Exception e) {
+			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+					"configurazionePdDReader.getConfigurazioneCORS(pa)");
+			openspcoopstate.releaseResource();
+			return;
+		}
+		
+		
+		
+		
+		
+		
 		
 		/* ------------ Comprensione Azione  ------------- */	
 		
@@ -1520,19 +1566,35 @@ public class RicezioneBuste {
 				requestInfo.setIdServizio(idServizio);
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
-					ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
-					"identificazioneDinamicaAzionePortaAplicativa");
-			openspcoopstate.releaseResource();
-			return;
+			
+			boolean throwFault = true;
+			if(StatoFunzionalita.ABILITATO.equals(cors.getStato()) && this.msgContext.isGestioneRisposta()) {
+				throwFault = false;
+			}
+			if(throwFault) {
+			
+				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
+						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
+						"identificazioneDinamicaAzionePortaAplicativa");
+				openspcoopstate.releaseResource();
+				return;
+				
+			}
+			else {
+				effettuareGestioneCORS = true;
+			}
+			
 		}
 		
 		
 		
 		
 		
+
 		
-		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Identificazione PA specifica per azione del servizio ...");
+		
+		
+		Utilities.printFreeMemory("RicezioneBuste - Identificazione PA specifica per azione del servizio ...");
 		
 		msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
 		if(idServizio!=null && idServizio.getAzione()!=null && pa!=null) {
@@ -1641,8 +1703,11 @@ public class RicezioneBuste {
 		IDSoggetto soggettoFruitore = null;
 		String id = null;
 		boolean generazioneListaTrasmissioni = false;
+		InformazioniServizioURLMapping is = null;
+		boolean identitaServizioValida = false;
+		String nomeRegistroForSearch = null; // qualsiasi registro
 		try{
-			InformazioniServizioURLMapping is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
+			is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
 					logCore, this.msgContext.getIdModuloAsIDService(),
 					propertiesReader.getCustomContexts());
 			logCore.debug("InformazioniServizioTramiteURLMapping: "+is.toString());		
@@ -1671,7 +1736,6 @@ public class RicezioneBuste {
 			}			
 			
 			// Aggiorno domini dei soggetti se completamente ricostruiti tramite url mapping differente da plugin based
-			String nomeRegistroForSearch = null; // qualsiasi registro
 			if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && soggettoFruitore.getNome()!=null){
 				try {
 					soggettoFruitore.setCodicePorta(registroServiziReader.getDominio(soggettoFruitore, nomeRegistroForSearch, protocolFactory));
@@ -1681,25 +1745,14 @@ public class RicezioneBuste {
 			}
 			requestInfo.setFruitore(soggettoFruitore);
 			
-			// InfoServizio
+			// Check id
 			boolean identitaSoggettoErogatoreValida = idServizio!=null &&
 					idServizio.getSoggettoErogatore()!=null && 
 					idServizio.getSoggettoErogatore().getTipo()!=null &&
 					idServizio.getSoggettoErogatore().getNome()!=null;
-			boolean identitaServizioValida = identitaSoggettoErogatoreValida && 
+			identitaServizioValida = identitaSoggettoErogatoreValida && 
 					idServizio!=null && idServizio.getNome()!=null && idServizio.getTipo()!=null && idServizio.getVersione()!=null;
-			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
-				if(identitaServizioValida) {
-					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true);
-				}
-				else {
-					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
-				}
-			}
-			else{
-				infoServizio = new Servizio();
-			}
-			
+						
 			// ID Protocollo
 			id = null;
 			if(is.isStaticBasedIdentificationMode_IdProtocol()){
@@ -1722,14 +1775,51 @@ public class RicezioneBuste {
 			// Lista trasmissioni
 			generazioneListaTrasmissioni = is.isGenerateListaTrasmissione();
 			
+			// InfoServizio (NOTA: lasciare per ultimo)
+			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
+				if(identitaServizioValida) {
+					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, true);
+				}
+				else {
+					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
+				}
+			}
+			else{
+				infoServizio = new Servizio();
+			}
 		}
 		catch(DriverRegistroServiziAzioneNotFound e){
-			setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
-					ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
-					getErrore423_ServizioConAzioneScorretta("(azione:"+ idServizio.getAzione()+ ") "+ e.getMessage()),e,
-					"readProtocolInfo");
-			openspcoopstate.releaseResource();
-			return;
+			
+			boolean throwFault = true;
+			if(StatoFunzionalita.ABILITATO.equals(cors.getStato()) && this.msgContext.isGestioneRisposta()) {
+				throwFault = false;
+				if(TipoGestioneCORS.TRASPARENTE.equals(cors.getTipo())) {
+					// per poter continuare l'elaborazione ho bisogno dell'id servizio
+					try {
+						if(is.isStaticBasedIdentificationMode_InfoProtocol()){
+							if(identitaServizioValida) {
+								infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false);
+							}
+						}
+					}catch(Exception eGetInfoServizio) {
+						throwFault = true;
+					}
+				}
+			}
+			if(throwFault) {
+			
+				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
+						ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
+						getErrore423_ServizioConAzioneScorretta("(azione:"+ idServizio.getAzione()+ ") "+ e.getMessage()),e,
+						"readProtocolInfo");
+				openspcoopstate.releaseResource();
+				return;
+				
+			}
+			else {
+				effettuareGestioneCORS = true;
+			}
+			
 		}
 		catch(Exception e){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
@@ -1742,6 +1832,39 @@ public class RicezioneBuste {
 		
 		
 		
+		// Gestione CORS
+		
+		if(effettuareGestioneCORS) {
+			
+			if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
+				
+				CORSFilter corsFilter = new CORSFilter(logCore, cors);
+				try {
+					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
+					corsFilter.doCORS(httpServletRequest, res);
+					this.msgContext.setMessageResponse(res.buildMessage());
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
+				}catch(Exception e) {
+					// un eccezione non dovrebbe succedere
+					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+							"gestioneCORS");
+					openspcoopstate.releaseResource();
+					return;
+				}
+				
+				openspcoopstate.releaseResource();
+				return;
+					
+			}
+			else {
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE, "true");
+				
+			}
+			
+		}
 	
 
 		
@@ -5614,7 +5737,47 @@ public class RicezioneBuste {
 
 
 
+		Utilities.printFreeMemory("RicezioneBuste - Recupero configurazione per salvataggio risposta in cache ...");
+		msgDiag.mediumDebug("Recupero configurazione per salvataggio risposta in cache ...");
+		try{
+			ResponseCachingConfigurazione responseCachingConfig = null;
+			if(pa!=null) {
+				responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching(pa);
+			}
+			else {
+				responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching();
+			}
+			if(responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getStato())) {
+				msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
+				
+				HashGenerator hashGenerator = new HashGenerator(propertiesReader.getCachingResponseDigestAlgorithm());
+				String digest = hashGenerator.buildKeyCache(requestMessage, requestInfo, responseCachingConfig);
+				requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
+				
+			}
+		} catch (Exception e){
+			msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");
+			logCore.error("Calcolo Digest Salvataggio Risposta non riuscito: "	+ e);
+			if (this.msgContext.isGestioneRisposta()) {
+				
+				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_561_DIGEST_REQUEST));
 
+				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				
+				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+				sendRispostaBustaErrore(parametriInvioBustaErrore);
+			}
+			openspcoopstate.releaseResource();
+			return;
+		} 
+		
+		
+		
+		
 
 
 

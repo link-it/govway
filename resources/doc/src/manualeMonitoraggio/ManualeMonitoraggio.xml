@@ -487,6 +487,19 @@
                     stata applicata alcuna restrizione poiché è attiva la modalità WarningOnly.
                   </para>
                 </listitem>
+                <listitem>
+                  <para>
+                    <emphasis>CORS Preflight Gestione Gateway</emphasis>: Transazioni che
+                    rappresentano richieste <emphasis>OPTIONS</emphasis> generate da un browser
+                    durante la gestione del <emphasis>cross-origin HTTP request (CORS)</emphasis>.
+                    Questo esito indica che il CORS è stato gestito direttamente da GovWay. </para>
+                </listitem>
+                <listitem>
+                  <para>
+                    <emphasis>CORS Preflight Gestione Applicativa</emphasis>: transazioni simili a
+                    quelle descritti in precedenza dove però il CORS è stato gestito
+                    dall'applicazione. </para>
+                </listitem>
               </itemizedlist>
               <para> Nel caso esito = "Fallite": </para>
               <itemizedlist>
@@ -557,15 +570,15 @@
                 </listitem>
                 <listitem>
                   <para>
-                    <emphasis>Validazione Richiesta Fallita</emphasis>: Esito della
-                    transazioni i cui controlli di validazione del messaggio di richiesta
-                    hanno riportato un errore. </para>
+                    <emphasis>Validazione Richiesta Fallita</emphasis>: Esito della transazioni i
+                    cui controlli di validazione del messaggio di richiesta hanno riportato un
+                    errore. </para>
                 </listitem>
                 <listitem>
                   <para>
-                    <emphasis>Validazione Risposta Fallita</emphasis>: Esito della
-                    transazioni i cui controlli di validazione del messaggio di risposta
-                    hanno riportato un errore. </para>
+                    <emphasis>Validazione Risposta Fallita</emphasis>: Esito della transazioni i cui
+                    controlli di validazione del messaggio di risposta hanno riportato un errore.
+                  </para>
                 </listitem>
                 <listitem>
                   <para>
@@ -1039,7 +1052,7 @@
               <imagedata width="70%" fileref="FIGURE_OUT/TransazioneOK.pdf"/>
             </imageobject>
             <imageobject>
-              <imagedata width="70%%" fileref="FIGURE_OUT/TransazioneOK.png"/>
+              <imagedata width="70%" fileref="FIGURE_OUT/TransazioneOK.png"/>
             </imageobject>
           </mediaobject>
         </figure>

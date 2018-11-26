@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -666,6 +667,20 @@ public class InoltroBuste extends GenericLib{
 		ejbUtils.setOneWayVersione11(oneWayVersione11);
 		msgRequest.setOneWayVersione11(oneWayVersione11);
 		
+		// ResponseCaching 
+		ResponseCachingConfigurazione responseCachingConfig = null;
+		if(functionAsRouter==false){
+			try{		
+				responseCachingConfig = configurazionePdDManager.getConfigurazioneResponseCaching(pd);	
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "getConfigurazioneResponseCaching(pd)");
+				ejbUtils.rollbackMessage("Errore nella lettura della configurazione per il salvataggio della risposta in cache", esito);
+				openspcoopstate.releaseResource();
+				esito.setEsitoInvocazione(false);	
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}
 		
 		//Identificazione del tipo di porta
 		boolean portaDiTipoStateless= false;
@@ -2028,7 +2043,7 @@ public class InoltroBuste extends GenericLib{
 				msgDiag.logPersonalizzato("inoltroInCorso");
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
-				errorConsegna = !connectorSender.send(connettoreMsg);
+				errorConsegna = !connectorSender.send(responseCachingConfig, connettoreMsg);
 				dataTerminataInvocazioneConnettore = DateManager.getDate();
 			}
 			

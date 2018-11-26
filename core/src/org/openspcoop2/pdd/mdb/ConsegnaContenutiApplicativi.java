@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -405,6 +406,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		boolean localForward = false;
 		
+		ResponseCachingConfigurazione responseCachingConfig = null;
+		
 		if(richiestaApplicativa!=null){
 			identitaPdD = richiestaApplicativa.getDominio();
 			soggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
@@ -641,6 +644,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
 			}
+			try{
+				msgDiag.mediumDebug("readResponseCachingConfig(pa)...");
+				responseCachingConfig = configurazionePdDManager.getConfigurazioneResponseCaching(pa);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readResponseCachingConfig(pa)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+			
 		}else{
 			try{
 				msgDiag.mediumDebug("isAllegaBody(pd)...");
@@ -692,6 +705,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "readDumpConfig(pd)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+			try{
+				msgDiag.mediumDebug("readResponseCachingConfig(pd)...");
+				responseCachingConfig = configurazionePdDManager.getConfigurazioneResponseCaching(pd);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readResponseCachingConfig(pd)");
 				esito.setEsitoInvocazione(false); 
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
@@ -1730,7 +1752,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				// utilizzo connettore
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
 				dataPrimaInvocazioneConnettore = DateManager.getDate();
-				errorConsegna = !connectorSender.send(connettoreMsg);
+				errorConsegna = !connectorSender.send(responseCachingConfig, connettoreMsg);
 				dataTerminataInvocazioneConnettore = DateManager.getDate();
 			}
 			

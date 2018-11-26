@@ -118,6 +118,30 @@ CREATE TABLE configurazione
 	multitenant_stato VARCHAR(255),
 	multitenant_fruizioni VARCHAR(255),
 	multitenant_erogazioni VARCHAR(255),
+	-- Gestione CORS
+	cors_stato VARCHAR(255),
+	cors_tipo VARCHAR(255),
+	cors_all_allow_origins VARCHAR(255),
+	cors_allow_credentials VARCHAR(255),
+	cors_allow_max_age INT,
+	cors_allow_max_age_seconds INT,
+	cors_allow_origins CLOB,
+	cors_allow_headers CLOB,
+	cors_allow_methods CLOB,
+	cors_allow_expose_headers CLOB,
+	-- Response caching
+	response_cache_stato VARCHAR(255),
+	response_cache_seconds INT,
+	response_cache_max_msg_size BIGINT,
+	response_cache_hash_url VARCHAR(255),
+	response_cache_hash_headers VARCHAR(255),
+	response_cache_hash_payload VARCHAR(255),
+	-- Cache per il response caching
+	response_cache_statocache VARCHAR(255),
+	response_cache_dimensionecache VARCHAR(255),
+	response_cache_algoritmocache VARCHAR(255),
+	response_cache_idlecache VARCHAR(255),
+	response_cache_lifecache VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints

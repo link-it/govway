@@ -90,9 +90,9 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	
 	public final static String APC_API_LABEL_APS_INFO_GENERALI = "Informazioni Generali";
 	public final static String APC_API_LABEL_PARAMETRO_INTERFACCIA = "Interfaccia";
-	public final static String APC_API_LABEL_GESTIONE_RISORSE = "Gestione Risorse";
-	public final static String APC_API_LABEL_GESTIONE_SERVIZI = "Gestione Servizi";
-	public final static String APC_API_LABEL_GESTIONE_ALLEGATI = "Gestione Allegati";
+	public final static String APC_API_LABEL_GESTIONE_RISORSE = "Risorse";
+	public final static String APC_API_LABEL_GESTIONE_SERVIZI = "Servizi";
+	public final static String APC_API_LABEL_GESTIONE_ALLEGATI = "Allegati";
 	public final static String APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	
 	

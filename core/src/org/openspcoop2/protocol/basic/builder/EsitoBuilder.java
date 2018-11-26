@@ -222,11 +222,19 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			
 			// Emissione diagnostici di livello error
 			boolean emissioneDiagnosticiError = (context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.EMESSI_DIAGNOSTICI_ERRORE));
+			boolean corsPreflightRequestViaGateway = (context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY));
+			boolean corsPreflightRequestTrasparente = (context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE));
 			
 			// Tipo di esito OK
 			EsitoTransazione returnEsitoOk = null;
 			if(emissioneDiagnosticiError){
 				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK_PRESENZA_ANOMALIE, tipoContext); 
+			}
+			else if(corsPreflightRequestViaGateway) {
+				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, tipoContext); 
+			}
+			else if(corsPreflightRequestTrasparente) {
+				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE, tipoContext); 
 			}
 			else {
 				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext);

@@ -1031,7 +1031,7 @@ public class InoltroRisposte extends GenericLib{
 			if(invokerNonSupportato==false){
 				msgDiag.logPersonalizzato("inoltroInCorso");
 				// utilizzo connettore
-				errorConsegna = !connectorSender.send(connettoreMsg);
+				errorConsegna = !connectorSender.send(null, connettoreMsg);
 				motivoErroreConsegna = connectorSender.getErrore();
 				eccezioneProcessamentoConnettore = connectorSender.getEccezioneProcessamento();
 				if(errorConsegna && motivoErroreConsegna==null){

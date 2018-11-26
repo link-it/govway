@@ -65,6 +65,7 @@ import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.DumpRaw;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiConnector;
@@ -147,7 +148,7 @@ public class RicezioneContenutiApplicativiService {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -160,7 +161,7 @@ public class RicezioneContenutiApplicativiService {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 				
@@ -178,7 +179,7 @@ public class RicezioneContenutiApplicativiService {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, null, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, null, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 			
@@ -209,7 +210,7 @@ public class RicezioneContenutiApplicativiService {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA), 
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -224,7 +225,7 @@ public class RicezioneContenutiApplicativiService {
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return;
 		}
 		
@@ -254,11 +255,11 @@ public class RicezioneContenutiApplicativiService {
 		}
 		
 		// Aggiorno RequestInfo
-		ConnectorDispatcherErrorInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
+		ConnectorDispatcherInfo cInfo = RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
 				this.generatoreErrore, serviceIdentificationReader, msgDiag, 
 				context!=null ? context.getPddContext(): null);
 		if(cInfo!=null){
-			RicezioneContenutiApplicativiServiceUtils.emitTransactionError(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+			RicezioneContenutiApplicativiServiceUtils.emitTransaction(context, logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 		req.updateRequestInfo(requestInfo);

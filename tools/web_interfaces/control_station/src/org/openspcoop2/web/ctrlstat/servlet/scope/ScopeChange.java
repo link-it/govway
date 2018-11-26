@@ -35,12 +35,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
-import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
@@ -48,8 +42,6 @@ import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -193,46 +185,7 @@ public final class ScopeChange extends Action {
 				IDScope oldIdScope = scopeNEW.getOldIDScopeForUpdate();
 				oldIdScope.setNome(scope.getNome());
 				
-				
-				// Cerco se utilizzato in porte delegate
-				PorteDelegateCore pdCore = new PorteDelegateCore(scopeCore);
-				FiltroRicercaPorteDelegate filtroRicercaPD = new FiltroRicercaPorteDelegate();
-				filtroRicercaPD.setIdScope(oldIdScope);
-				List<IDPortaDelegata> listPD = pdCore.getAllIdPorteDelegate(filtroRicercaPD);
-				if(listPD!=null && listPD.size()>0){
-					for (IDPortaDelegata idPD : listPD) {
-						PortaDelegata portaDelegata = pdCore.getPortaDelegata(idPD);
-						if(portaDelegata.getScope()!=null){
-							for (org.openspcoop2.core.config.Scope scopeConfig : portaDelegata.getScope().getScopeList()) {
-								if(scopeConfig.getNome().equals(oldIdScope.getNome())){
-									scopeConfig.setNome(scopeNEW.getNome());
-								}
-							}
-						}
-						listOggettiDaAggiornare.add(portaDelegata);
-					}
-				}
-				
-				
-				
-				// Cerco se utilizzato in porte applicative
-				PorteApplicativeCore paCore = new PorteApplicativeCore(scopeCore);
-				FiltroRicercaPorteApplicative filtroRicercaPA = new FiltroRicercaPorteApplicative();
-				filtroRicercaPA.setIdScope(oldIdScope);
-				List<IDPortaApplicativa> listPA = paCore.getAllIdPorteApplicative(filtroRicercaPA);
-				if(listPA!=null && listPA.size()>0){
-					for (IDPortaApplicativa idPA : listPA) {
-						PortaApplicativa portaApplicativa = paCore.getPortaApplicativa(idPA);
-						if(portaApplicativa.getScope()!=null){
-							for (org.openspcoop2.core.config.Scope scopeConfig : portaApplicativa.getScope().getScopeList()) {
-								if(scopeConfig.getNome().equals(oldIdScope.getNome())){
-									scopeConfig.setNome(scopeNEW.getNome());
-								}
-							}
-						}
-						listOggettiDaAggiornare.add(portaApplicativa);
-					}
-				}
+				ScopeUtilities.findOggettiDaAggiornare(oldIdScope, scopeNEW, scopeCore, listOggettiDaAggiornare);
 				
 			}
 			

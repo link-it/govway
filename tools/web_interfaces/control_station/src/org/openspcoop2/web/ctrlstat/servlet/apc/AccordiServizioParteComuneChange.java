@@ -1000,24 +1000,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 			}
 
 			Object[] operazioniDaEffettuare = new Object[1]; // almeno 1, l'accordo esiste!
-			Vector<Object> operazioniList = new Vector<Object>();
+			List<Object> operazioniList = new ArrayList<Object>();
 			operazioniList.add(as);
 
 
 			IDAccordo idNEW = idAccordoFactory.getIDAccordoFromAccordo(as);
 			if(idNEW.equals(idAccordoOLD)==false){
 
-				String newURI = idAccordoFactory.getUriFromAccordo(as);
-
-				// Cerco i servizi in cui devo cambiare la URI dell'accordo
-				List<AccordoServizioParteSpecifica> servizi = apsCore.serviziByAccordoFilterList(idAccordoOLD);
-				if(servizi!=null && servizi.size()>0){
-					while(servizi.size()>0){
-						AccordoServizioParteSpecifica s = servizi.remove(0);
-						s.setAccordoServizioParteComune(newURI);
-						operazioniList.add(s);
-					}
-				}
+				AccordiServizioParteComuneUtilities.findOggettiDaAggiornare(idAccordoOLD, as, apcCore, operazioniList);
 
 			}
 

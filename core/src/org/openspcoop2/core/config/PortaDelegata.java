@@ -59,6 +59,8 @@ import java.util.List;
  * 			&lt;element name="correlazione-applicativa-risposta" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}porta-tracciamento" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -110,7 +112,9 @@ import java.util.List;
   	"correlazioneApplicativa",
   	"correlazioneApplicativaRisposta",
   	"dump",
-  	"tracciamento"
+  	"tracciamento",
+  	"gestioneCors",
+  	"responseCaching"
   }
 )
 
@@ -332,6 +336,22 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setTracciamento(PortaTracciamento tracciamento) {
     this.tracciamento = tracciamento;
+  }
+
+  public CorsConfigurazione getGestioneCors() {
+    return this.gestioneCors;
+  }
+
+  public void setGestioneCors(CorsConfigurazione gestioneCors) {
+    this.gestioneCors = gestioneCors;
+  }
+
+  public ResponseCachingConfigurazione getResponseCaching() {
+    return this.responseCaching;
+  }
+
+  public void setResponseCaching(ResponseCachingConfigurazione responseCaching) {
+    this.responseCaching = responseCaching;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -775,6 +795,12 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="tracciamento",required=false,nillable=false)
   protected PortaTracciamento tracciamento;
+
+  @XmlElement(name="gestione-cors",required=false,nillable=false)
+  protected CorsConfigurazione gestioneCors;
+
+  @XmlElement(name="response-caching",required=false,nillable=false)
+  protected ResponseCachingConfigurazione responseCaching;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

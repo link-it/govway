@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
+import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -901,7 +902,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiAutorizzazione.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autorizzazione");
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 					
@@ -915,7 +916,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiAutorizzazione.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autorizzazione");
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 					
@@ -924,7 +925,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiAutorizzazione.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autorizzazione");
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autorizzazione");
 						}
 					}
 
@@ -952,7 +953,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiAutenticazione.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 					
@@ -966,7 +967,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiAutenticazione.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 					
@@ -975,7 +976,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiAutenticazione.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati di autenticazione");
 						}
 					}
 
@@ -1004,7 +1005,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							dimensioneCache = Integer.parseInt(datiGestioneToken.getCache().getDimensione());
 						}catch(Exception e){
-							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso ai dati dei token");
 						}
 					}
 					
@@ -1018,7 +1019,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							idleTime = Integer.parseInt(datiGestioneToken.getCache().getItemIdleTime());
 						}catch(Exception e){
-							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso ai dati dei token");
 						}
 					}
 					
@@ -1027,7 +1028,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							itemLifeSecond = Integer.parseInt(datiGestioneToken.getCache().getItemLifeSecond());
 						}catch(Exception e){
-							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autenticazione");
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso ai dati dei token");
 						}
 					}
 
@@ -1038,6 +1039,62 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Gestore Token");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			/*----------- Inizializzazione ResponseCaching --------------*/
+			try{
+				GestoreCacheResponseCaching.initialize();
+				
+				org.openspcoop2.core.config.Cache responseCachingCacheConfig = configurazionePdDManager.getConfigurazioneResponseCachingCache();
+				if(responseCachingCacheConfig!=null){
+					
+					int dimensioneCache = -1;
+					if(responseCachingCacheConfig.getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(responseCachingCacheConfig.getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di response caching");
+						}
+					}
+					
+					String algoritmo = null;
+					if(responseCachingCacheConfig.getAlgoritmo()!=null){
+						algoritmo = responseCachingCacheConfig.getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(responseCachingCacheConfig.getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(responseCachingCacheConfig.getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di response caching");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(responseCachingCacheConfig.getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(responseCachingCacheConfig.getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di response caching");
+						}
+					}
+
+					GestoreCacheResponseCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreCacheResponseCaching.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Response Caching");
 				return;
 			}
 			
@@ -1697,6 +1754,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - dati di gestione dei token");
 				}
+				// MBean GestioneResponseCaching
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanResponseCaching();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - risposte salvate in cache");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -1782,6 +1845,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_gestioneTokenDati.setStatoCache(infoGestioneTokenDati.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestioneTokenDati);
+			
+			org.openspcoop2.pdd.core.jmx.EngineResponseCaching infoResponseCaching = new org.openspcoop2.pdd.core.jmx.EngineResponseCaching();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_responseCaching = new InformazioniStatoPortaCache(CostantiPdD.JMX_RESPONSE_CACHING, infoResponseCaching.isCacheAbilitata());
+			if(infoResponseCaching.isCacheAbilitata()){
+				informazioniStatoPortaCache_responseCaching.setStatoCache(infoResponseCaching.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_responseCaching);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());

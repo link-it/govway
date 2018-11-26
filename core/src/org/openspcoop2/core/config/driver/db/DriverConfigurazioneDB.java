@@ -68,6 +68,10 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.CorsConfigurazioneMethods;
+import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -110,6 +114,9 @@ import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -145,6 +152,7 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.BeanUtilities;
@@ -7027,6 +7035,43 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				validazioneBuste.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(val_stato));
 				config.setValidazioneBuste(validazioneBuste);
 
+				// Gestione CORS
+				config.setGestioneCors(new CorsConfigurazione());
+				readConfigurazioneCors(config.getGestioneCors(), rs);
+				
+				// Gestione CacheResponse
+				config.setResponseCaching(new ResponseCachingConfigurazioneGenerale());
+				
+				config.getResponseCaching().setConfigurazione(new ResponseCachingConfigurazione());
+				readResponseCaching(config.getResponseCaching().getConfigurazione(), rs);
+				
+				String tmpCache = rs.getString("response_cache_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					Cache cache = new Cache();
+
+					String tmpDim = rs.getString("response_cache_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("response_cache_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("response_cache_idlecache");
+					String tmpLife = rs.getString("response_cache_lifecache");
+
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					config.getResponseCaching().setCache(cache);
+
+				}
+				
+				
 				ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 				IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();
 				if(extInfoConfigurazioneDriver!=null){
@@ -7139,6 +7184,129 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return config;
 	}
 
+	private void readConfigurazioneCors(CorsConfigurazione configurazione, ResultSet rs) throws SQLException {
+		
+		String corsStato = rs.getString("cors_stato");
+		if(corsStato!=null && !"".equals(corsStato)) {
+			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsStato));
+		}
+		
+		if(StatoFunzionalita.ABILITATO.equals(configurazione.getStato())) {
+			
+			String corsTipo = rs.getString("cors_tipo");
+			if(corsTipo!=null && !"".equals(corsTipo)) {
+				configurazione.setTipo(DriverConfigurazioneDB_LIB.getEnumTipoGestioneCORS(corsTipo));
+			}
+			
+			if(TipoGestioneCORS.GATEWAY.equals(configurazione.getTipo())) {
+				
+				String corsAllAllowOrigins = rs.getString("cors_all_allow_origins");
+				if(corsAllAllowOrigins!=null && !"".equals(corsAllAllowOrigins)) {
+					configurazione.setAccessControlAllAllowOrigins(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllAllowOrigins));
+				}
+				if(StatoFunzionalita.DISABILITATO.equals(configurazione.getAccessControlAllAllowOrigins())) {
+					List<String> l = convertToList(rs.getString("cors_allow_origins"));
+					if(!l.isEmpty()) {
+						configurazione.setAccessControlAllowOrigins(new CorsConfigurazioneOrigin());
+					}
+					for (String v : l) {
+						configurazione.getAccessControlAllowOrigins().addOrigin(v);
+					}
+				}
+			
+				String corsAllowCredentials = rs.getString("cors_allow_credentials");
+				if(corsAllowCredentials!=null && !"".equals(corsAllowCredentials)) {
+					configurazione.setAccessControlAllowCredentials(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(corsAllowCredentials));
+				}
+				
+				int corsAllowMaxAge = rs.getInt("cors_allow_max_age");
+				if(CostantiDB.TRUE == corsAllowMaxAge) {
+					int corsAllowMaxAgeSeconds = rs.getInt("cors_allow_max_age_seconds");
+					configurazione.setAccessControlMaxAge(corsAllowMaxAgeSeconds);
+				}
+				
+				List<String> l = convertToList(rs.getString("cors_allow_headers"));
+				if(!l.isEmpty()) {
+					configurazione.setAccessControlAllowHeaders(new CorsConfigurazioneHeaders());
+				}
+				for (String v : l) {
+					configurazione.getAccessControlAllowHeaders().addHeader(v);
+				}
+				
+				l = convertToList(rs.getString("cors_allow_methods"));
+				if(!l.isEmpty()) {
+					configurazione.setAccessControlAllowMethods(new CorsConfigurazioneMethods());
+				}
+				for (String v : l) {
+					configurazione.getAccessControlAllowMethods().addMethod(v);
+				}
+				
+				l = convertToList(rs.getString("cors_allow_expose_headers"));
+				if(!l.isEmpty()) {
+					configurazione.setAccessControlExposeHeaders(new CorsConfigurazioneHeaders());
+				}
+				for (String v : l) {
+					configurazione.getAccessControlExposeHeaders().addHeader(v);
+				}
+			}
+			
+		}
+		
+	}
+	
+	private void readResponseCaching(ResponseCachingConfigurazione configurazione, ResultSet rs) throws SQLException {
+		
+		String responseCacheStato = rs.getString("response_cache_stato");
+		if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
+			configurazione.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheStato));
+		}
+		
+		if(StatoFunzionalita.ABILITATO.equals(configurazione.getStato())) {
+	
+			int responseCacheSeconds = rs.getInt("response_cache_seconds");
+			if(responseCacheSeconds>0) {
+				configurazione.setCacheTimeoutSeconds(responseCacheSeconds);
+			}
+			
+			long responseCacheMaxMsgBytes = rs.getLong("response_cache_max_msg_size");
+			if(responseCacheMaxMsgBytes>0) {
+				configurazione.setMaxMessageSize(responseCacheMaxMsgBytes);
+			}
+			
+			configurazione.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
+			
+			String responseCacheHashUrl = rs.getString("response_cache_hash_url");
+			if(responseCacheHashUrl!=null && !"".equals(responseCacheHashUrl)) {
+				configurazione.getHashGenerator().setRequestUri(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashUrl));
+			}
+			
+			String responseCacheHashHeaders = rs.getString("response_cache_hash_headers");
+			if(responseCacheHashHeaders!=null && !"".equals(responseCacheHashHeaders)) {
+				configurazione.getHashGenerator().setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashHeaders));
+			}
+			
+			String responseCacheHashPayload = rs.getString("response_cache_hash_payload");
+			if(responseCacheHashPayload!=null && !"".equals(responseCacheHashPayload)) {
+				configurazione.getHashGenerator().setPayload(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashPayload));
+			}
+		}
+
+	}
+			
+	private List<String> convertToList(String v){
+		List<String> l = new ArrayList<>();
+		if(v!=null && !"".equals(v)) {
+			if(v.contains(",")) {
+				String [] tmp = v.split(",");
+				for (int i = 0; i < tmp.length; i++) {
+					l.add(tmp[i].trim());
+				}
+			}else {
+				l.add(v.trim());
+			}
+		}
+		return l;
+	}
 
 	public Object getConfigurazioneExtended(Configurazione config, String idExtendedConfiguration) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
@@ -12942,6 +13110,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("msg_diag_severita");
 			sqlQueryObject.addSelectField("tracciamento_esiti");
 			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("cors_stato");
+			sqlQueryObject.addSelectField("cors_tipo");
+			sqlQueryObject.addSelectField("cors_all_allow_origins");
+			sqlQueryObject.addSelectField("cors_allow_credentials");
+			sqlQueryObject.addSelectField("cors_allow_max_age");
+			sqlQueryObject.addSelectField("cors_allow_max_age_seconds");
+			sqlQueryObject.addSelectField("cors_allow_origins");
+			sqlQueryObject.addSelectField("cors_allow_headers");
+			sqlQueryObject.addSelectField("cors_allow_methods");
+			sqlQueryObject.addSelectField("cors_allow_expose_headers");
+			sqlQueryObject.addSelectField("response_cache_stato");
+			sqlQueryObject.addSelectField("response_cache_seconds");
+			sqlQueryObject.addSelectField("response_cache_max_msg_size");
+			sqlQueryObject.addSelectField("response_cache_hash_url");
+			sqlQueryObject.addSelectField("response_cache_hash_headers");
+			sqlQueryObject.addSelectField("response_cache_hash_payload");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -13289,6 +13473,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pa.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
 				}
 				
+				
+				// Gestione CORS
+				String corsStato = rs.getString("cors_stato");
+				if(corsStato!=null && !"".equals(corsStato)) {
+					pa.setGestioneCors(new CorsConfigurazione());
+					readConfigurazioneCors(pa.getGestioneCors(), rs);
+				}
+				
+				// Gestione CacheResponse
+				String responseCacheStato = rs.getString("response_cache_stato");
+				if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
+					pa.setResponseCaching(new ResponseCachingConfigurazione());
+					readResponseCaching(pa.getResponseCaching(), rs);
+				}
 				
 				rs.close();
 				stm.close();
@@ -13820,7 +14018,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("msg_diag_severita");
 			sqlQueryObject.addSelectField("tracciamento_esiti");
-			sqlQueryObject.addSelectField("stato");
+			sqlQueryObject.addSelectField("stato");		
+			sqlQueryObject.addSelectField("cors_stato");
+			sqlQueryObject.addSelectField("cors_tipo");
+			sqlQueryObject.addSelectField("cors_all_allow_origins");
+			sqlQueryObject.addSelectField("cors_allow_credentials");
+			sqlQueryObject.addSelectField("cors_allow_max_age");
+			sqlQueryObject.addSelectField("cors_allow_max_age_seconds");
+			sqlQueryObject.addSelectField("cors_allow_origins");
+			sqlQueryObject.addSelectField("cors_allow_headers");
+			sqlQueryObject.addSelectField("cors_allow_methods");
+			sqlQueryObject.addSelectField("cors_allow_expose_headers");
+			sqlQueryObject.addSelectField("response_cache_stato");
+			sqlQueryObject.addSelectField("response_cache_seconds");
+			sqlQueryObject.addSelectField("response_cache_max_msg_size");
+			sqlQueryObject.addSelectField("response_cache_hash_url");
+			sqlQueryObject.addSelectField("response_cache_hash_headers");
+			sqlQueryObject.addSelectField("response_cache_hash_payload");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -14180,6 +14394,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pd.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
 				}
 				
+				// Gestione CORS
+				String corsStato = rs.getString("cors_stato");
+				if(corsStato!=null && !"".equals(corsStato)) {
+					pd.setGestioneCors(new CorsConfigurazione());
+					readConfigurazioneCors(pd.getGestioneCors(), rs);
+				}
+				
+				// Gestione CacheResponse
+				String responseCacheStato = rs.getString("response_cache_stato");
+				if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
+					pd.setResponseCaching(new ResponseCachingConfigurazione());
+					readResponseCaching(pd.getResponseCaching(), rs);
+				}
 				
 				rs.close();
 				stm.close();
@@ -14471,6 +14698,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// dump_config
 				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pd.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				pd.setDump(dumpConfig);
+				
+				
 				
 				
 				// *** Aggiungo extInfo ***

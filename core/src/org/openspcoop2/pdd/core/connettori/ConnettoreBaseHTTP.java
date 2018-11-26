@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -78,8 +79,8 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	
 	@Override
-	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired){
-		boolean init = super.initialize(request, connectorPropertiesRequired);
+	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
+		boolean init = super.initialize(request, connectorPropertiesRequired, responseCachingConfig);
 		
 		// Location
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){

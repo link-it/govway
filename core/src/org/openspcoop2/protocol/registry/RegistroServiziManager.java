@@ -180,19 +180,19 @@ public class RegistroServiziManager {
 	
 	/* ********  R I C E R C A   I N F O     S E R V I Z I  ******** */ 
 	
-	public Servizio getInfoServizio(IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato)
+	public Servizio getInfoServizio(IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato, boolean throwAzioneNotFound)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizio(this.getConnection(), idSoggetto, idService, nomeRegistro, verificaEsistenzaServizioAzioneCorrelato);
+		return this.registroServiziReader.getInfoServizio(this.getConnection(), idSoggetto, idService, nomeRegistro, verificaEsistenzaServizioAzioneCorrelato, throwAzioneNotFound);
 	}
 	
-	public Servizio getInfoServizioCorrelato(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro) 
+	public Servizio getInfoServizioCorrelato(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizioCorrelato(this.getConnection(), idSoggetto, idService, nomeRegistro);
+		return this.registroServiziReader.getInfoServizioCorrelato(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
 	}
 	
-	public Servizio getInfoServizioAzioneCorrelata(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro) 
+	public Servizio getInfoServizioAzioneCorrelata(IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return this.registroServiziReader.getInfoServizioAzioneCorrelata(this.getConnection(), idSoggetto, idService, nomeRegistro);
+		return this.registroServiziReader.getInfoServizioAzioneCorrelata(this.getConnection(), idSoggetto, idService, nomeRegistro, throwAzioneNotFound);
 	}
 	
 	public Allegati getAllegati(IDServizio idASPS)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{

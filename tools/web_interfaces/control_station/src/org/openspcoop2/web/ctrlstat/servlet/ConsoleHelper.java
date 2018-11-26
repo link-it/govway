@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -58,6 +59,10 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.CorsConfigurazione;
+import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.CorsConfigurazioneMethods;
+import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
@@ -66,14 +71,19 @@ import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
@@ -143,6 +153,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -5686,7 +5697,7 @@ public class ConsoleHelper {
 			
 			de.setType(DataElementType.SELECT);
 			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
-			String labelsStato [] = {this.getDumpLabelDefault(), CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+			String labelsStato [] = {this.getDumpLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
 			de.setSelected(statoDump);
 			de.setLabels(labelsStato);
 			de.setValues(valuesStato); 
@@ -5901,12 +5912,74 @@ public class ConsoleHelper {
 		}
 	}
 	
-	protected String getDumpLabelDefault() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	protected String getGestioneCorsLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		
+		StringBuffer bf = new StringBuffer();
+		if(usePrefixDefault) {
+			bf.append(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT);
+			bf.append(" (");
+		}
+		CorsConfigurazione cc = this.confCore.getConfigurazioneGenerale().getGestioneCors();
+		if(cc==null || cc.getStato()==null) {
+			bf.append(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		else {
+			if(StatoFunzionalita.DISABILITATO.equals(cc.getStato())) {
+				bf.append(cc.getStato().getValue());
+			}
+			else {
+				bf.append(getLabelTipoGestioneCors(cc.getTipo()));
+			}
+		}
+		if(usePrefixDefault) {
+			bf.append(")");
+		}
+		return bf.toString();
+	}
+	
+	protected String getLabelTipoGestioneCors(TipoGestioneCORS tipo) {
+		if(tipo==null || "".equals(tipo.toString())) {
+			return "undefined";
+		}
+		if(TipoGestioneCORS.GATEWAY.equals(tipo)) {
+			return StatoFunzionalita.ABILITATO.getValue();
+		}
+		else {
+			return StatoFunzionalita.ABILITATO.getValue()+" (applicativo)";
+		}
+	}
+	
+	protected String getResponseCachingLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+		
+		StringBuffer bf = new StringBuffer();
+		if(usePrefixDefault) {
+			bf.append(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT);
+			bf.append(" (");
+		}
+		ResponseCachingConfigurazioneGenerale rg = this.confCore.getConfigurazioneGenerale().getResponseCaching();
+		if(rg==null || rg.getConfigurazione()==null || rg.getConfigurazione().getStato()==null) {
+			bf.append(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		else {
+			bf.append(rg.getConfigurazione().getStato().getValue());
+		}
+		if(usePrefixDefault) {
+			bf.append(")");
+		}
+		return bf.toString();
+	}
+	
+	protected String getDumpLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		String labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT;
 		
 		Dump dConfig = this.confCore.getConfigurazioneGenerale().getDump();
 		if(dConfig==null || dConfig.getConfigurazione()==null) {
-			labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+			if(usePrefixDefault) {
+				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+			}
+			else {
+				labelDefault = "disabilitato";
+			}
 		}
 		else {
 			boolean richiesta = (
@@ -5958,16 +6031,36 @@ public class ConsoleHelper {
 					)
 				;
 			if(richiesta && risposta) {
-				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato)";
+				if(usePrefixDefault) {
+					labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato)";
+				}
+				else {
+					labelDefault = "abilitato";
+				}
 			}
 			else if(richiesta) {
-				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato richiesta)";
+				if(usePrefixDefault) {
+					labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato richiesta)";
+				}
+				else {
+					labelDefault = "abilitato richiesta";
+				}
 			}
 			else if(risposta) {
-				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato risposta)";
+				if(usePrefixDefault) {
+					labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (abilitato risposta)";
+				}
+				else {
+					labelDefault = "abilitato risposta";
+				}
 			}
 			else {
-				labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+				if(usePrefixDefault) {
+					labelDefault = CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT +" (disabilitato)";
+				}
+				else {
+					labelDefault = "disabilitato";
+				}
 			}
 			
 		}
@@ -6552,57 +6645,10 @@ public class ConsoleHelper {
 	}
 	
 	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuffer bf) throws Exception{
-		if(configurazioneEsiti==null ||"".equals(configurazioneEsiti.trim())){
-			
-			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads)
-			EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
-			List<Integer> esitiCodes = esiti.getEsitiCode();
-			
-			int esitoMaxThreads = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
-			
-			if(esitiCodes!=null && esitiCodes.size()>0){
-				List<String> esitiDaRegistrare = new ArrayList<String>();
-				for (Integer esito : esitiCodes) {
-					if(esito!=esitoMaxThreads){
-						if(bf.length()>0){
-							bf.append(",");
-						}
-						bf.append(esito);
-						esitiDaRegistrare.add(esito+"");
-					}
-				}
-				if(esitiDaRegistrare.size()>0){
-					return esitiDaRegistrare;
-				}
-			}
-			
-			return null; // non dovrebbe succedere, degli esiti nell'EsitiProperties dovrebbero esistere
-		}
-		else{
-			
-			String [] tmp = configurazioneEsiti.split(",");
-			if(tmp!=null && tmp.length>0){
-				List<String> esitiDaRegistrare = new ArrayList<String>();
-				for (int i = 0; i < tmp.length; i++) {
-					String t = tmp[i];
-					if(t!=null){
-						t = t.trim();
-						if(!"".equals(t)){
-							if(bf.length()>0){
-								bf.append(",");
-							}
-							bf.append(t);
-							esitiDaRegistrare.add(t);
-						}
-					}
-				}
-				if(esitiDaRegistrare.size()>0){
-					return esitiDaRegistrare;
-				}
-			}
-			
-			return null; // non dovrebbe succedere, si rientra nel ramo then dell'if principale
-		}
+		
+		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
+		return EsitiConfigUtils.getRegistrazioneEsiti(configurazioneEsiti, ControlStationCore.getLog(), bf, esiti);
+		
 	}
 	
 	public boolean isCompleteEnabled(List<String> attivi, List<Integer> listCheck) {
@@ -6642,11 +6688,35 @@ public class ConsoleHelper {
 		return listFalliteSenzaMax;
 	}
 	
+	public List<Integer> getListaEsitiOkSenzaCors(EsitiProperties esiti) throws ProtocolException{
+		List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+		int esitoCorsGateway = esiti.convertoToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
+		int esitoCorsTrasparente = esiti.convertoToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE);
+		List<Integer> listOkSenzaCors = new ArrayList<>(); 
+		int i = 0;
+		for (; i < listOk.size(); i++) {
+			if((listOk.get(i).intValue() != esitoCorsGateway) && (listOk.get(i).intValue() != esitoCorsTrasparente)) {
+				listOkSenzaCors.add(listOk.get(i));
+			}
+		}
+		return listOkSenzaCors;
+	}
+	
+	public List<Integer> getListaEsitiCors(EsitiProperties esiti) throws ProtocolException{
+		int esitoCorsGateway = esiti.convertoToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
+		int esitoCorsTrasparente = esiti.convertoToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE);
+		List<Integer> listCors = new ArrayList<>();
+		listCors.add(esitoCorsGateway);
+		listCors.add(esitoCorsTrasparente);
+		return listCors;
+	}
+	
 	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
 			String tracciamentoEsitiStato,
 			String nuovaConfigurazioneEsiti,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
-			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataMax) throws Exception {
+			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataMax,
+			String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
 		
 	
 		DataElement de = new DataElement();
@@ -6701,7 +6771,7 @@ public class ConsoleHelper {
 			
 			// ok
 			
-			List<Integer> listOk = esiti.getEsitiCodeOk_senzaFaultApplicativo();
+			List<Integer> listOk = getListaEsitiOkSenzaCors(esiti);
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
@@ -6883,6 +6953,62 @@ public class ConsoleHelper {
 				de.setValue("true");
 				dati.addElement(de);
 			}
+			
+			
+			
+			
+			// cors
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+			de.setType(DataElementType.SELECT);
+			de.setValues(values);
+			de.setLabels(values);
+			de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
+			de.setPostBack(true);
+			dati.addElement(de);
+					
+			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+				
+				List<Integer> listCors = this.getListaEsitiCors(esiti);
+				
+				for (Integer esito : listCors) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+	//				de.setNote(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+						if(integrationManagerSpecific && this.isModalitaStandard()) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.addElement(de);
+				}
+			}
+			
 		}
 
 	}
@@ -7072,5 +7198,522 @@ public class ConsoleHelper {
 			return label.substring(0, maxWidth - 3) + "...";
 		}
 		return label;
+	}
+	
+	public void addConfigurazioneCorsPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoCorsPorta, boolean corsStato, TipoGestioneCORS corsTipo,
+			boolean corsAllAllowOrigins, String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
+			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) throws Exception {
+		
+		if(showStato) {
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		// stato generale cors
+		DataElement de = new DataElement();
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO_PORTA); 
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA);
+		if(showStato) {
+			
+			de.setType(DataElementType.SELECT);
+			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO};
+			String labelsStato [] = { this.getGestioneCorsLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA_RIDEFINITO};
+			de.setSelected(statoCorsPorta);
+			de.setLabels(labelsStato);
+			de.setValues(valuesStato); 
+			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statoCorsPorta);
+		}
+		dati.addElement(de);
+		
+		if(!showStato || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
+			this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, false);
+		}
+	}
+			
+	
+	// CORS
+	public void addConfigurazioneCorsToDati(Vector<DataElement> dati, boolean corsStato, TipoGestioneCORS corsTipo,
+			boolean corsAllAllowOrigins, String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods,
+			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
+			boolean addTitle) {
+		
+		DataElement de;
+		if(addTitle) {
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(addTitle ? CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_STATO : "");
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
+		de.setType(DataElementType.SELECT);
+		de.setPostBack(true);
+		de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+		de.setSelected(corsStato ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
+		de.setValue(corsStato ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue());
+		dati.addElement(de);
+		
+		if(corsStato) {
+			
+			String [] corsTipiValues = new String [] { TipoGestioneCORS.GATEWAY.getValue(), TipoGestioneCORS.TRASPARENTE.getValue()};
+			String [] corsTipiLabels = new String [] { 
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_GATEWAY,
+					CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO_GESTITO_APPLICATIVO
+					};
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+			de.setValues(corsTipiValues);
+			de.setLabels(corsTipiLabels);
+			de.setSelected(corsTipo.getValue());
+			de.setValue(corsTipo.getValue());
+			dati.addElement(de);
+			
+			if(TipoGestioneCORS.GATEWAY.equals(corsTipo)) {
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_ACCESS_CONTROL);
+				dati.addElement(de);
+				
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(corsAllAllowOrigins);
+				de.setPostBack(true);
+				dati.addElement(de);
+				
+				if(!corsAllAllowOrigins) {
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
+					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setValue(corsAllowOrigins);
+					de.setRequired(true);
+					de.enableTags();
+					dati.addElement(de);
+				}
+			
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(corsAllowHeaders);
+				de.setRequired(true);
+				de.enableTags();
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(corsAllowMethods);
+				de.setRequired(true);
+				de.enableTags();
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(corsAllowCredential);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
+				if(this.isModalitaStandard()) {
+					de.setType(DataElementType.HIDDEN);
+				}else {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				de.setValue(corsExposeHeaders);
+				de.enableTags();
+				dati.addElement(de);
+				
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+				if(this.isModalitaStandard()) {
+					de.setType(DataElementType.HIDDEN);
+				}else {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(corsMaxAge);
+					de.setPostBack(true);
+				}
+				de.setValue(corsMaxAge+"");
+				dati.addElement(de);
+				
+				if(corsMaxAge) {
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+					de.setValue(corsMaxAgeSeconds+"");
+					if(this.isModalitaStandard()) {
+						de.setType(DataElementType.HIDDEN);
+					}else {
+						de.setType(DataElementType.NUMBER);
+						de.setMinValue(-1);
+						de.setMaxValue(Integer.MAX_VALUE);
+					}
+					dati.addElement(de);
+				}
+			}
+		}
+	}
+	
+	public CorsConfigurazione getGestioneCors(boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins,
+			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, boolean corsAllowCredential,
+			String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds) {
+		CorsConfigurazione gestioneCors = new CorsConfigurazione();
+		gestioneCors.setStato(corsStato ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO); 
+		if(corsStato) {
+			gestioneCors.setTipo(corsTipo);
+
+			if(corsTipo.equals(TipoGestioneCORS.GATEWAY)) {
+				gestioneCors.setAccessControlAllAllowOrigins(corsAllAllowOrigins ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				if(!corsAllAllowOrigins) {
+					CorsConfigurazioneOrigin accessControlAllowOrigins = new CorsConfigurazioneOrigin();
+					accessControlAllowOrigins.setOriginList(Arrays.asList(corsAllowOrigins.split(",")));
+					gestioneCors.setAccessControlAllowOrigins(accessControlAllowOrigins );
+				}
+
+				CorsConfigurazioneHeaders accessControlAllowHeaders = new CorsConfigurazioneHeaders();
+				accessControlAllowHeaders.setHeaderList(Arrays.asList(corsAllowHeaders.split(",")));
+				gestioneCors.setAccessControlAllowHeaders(accessControlAllowHeaders);
+
+				CorsConfigurazioneMethods accessControlAllowMethods = new CorsConfigurazioneMethods();
+				accessControlAllowMethods.setMethodList(Arrays.asList(corsAllowMethods.split(",")));
+				gestioneCors.setAccessControlAllowMethods(accessControlAllowMethods);
+
+				gestioneCors.setAccessControlAllowCredentials(corsAllowCredential ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+
+				CorsConfigurazioneHeaders accessControlExposeHeaders = new CorsConfigurazioneHeaders();
+				accessControlExposeHeaders.setHeaderList(Arrays.asList(corsExposeHeaders.split(",")));
+				gestioneCors.setAccessControlExposeHeaders(accessControlExposeHeaders );
+
+				gestioneCors.setAccessControlMaxAge(corsMaxAge ? corsMaxAgeSeconds : null);
+			}
+		}
+		return gestioneCors;
+	}
+	
+	public boolean checkDataConfigurazioneCorsPorta(TipoOperazione tipoOperazione,boolean showStato, String statoCorsPorta) throws Exception{
+		
+		if(showStato) {
+			if(StringUtils.isEmpty(statoCorsPorta) || !(statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_DEFAULT) || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_CORS_STATO_PORTA));
+				return false;
+			}
+		}
+		
+		if(!showStato || statoCorsPorta.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+			return this.checkDataCors();
+		}
+		
+		return true;
+	}
+	
+	public boolean checkDataCors() throws Exception {
+		String corsStatoTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_STATO);
+		boolean corsStato = ServletUtils.isCheckBoxEnabled(corsStatoTmp);
+		if(corsStato) {
+			String corsTipoTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_TIPO);
+			TipoGestioneCORS corsTipo = corsTipoTmp != null ? TipoGestioneCORS.toEnumConstant(corsTipoTmp) : TipoGestioneCORS.GATEWAY;
+			if(corsTipo.equals(TipoGestioneCORS.GATEWAY)) {
+				String corsAllAllowOriginsTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALL_ALLOW_ORIGINS);
+				boolean corsAllAllowOrigins = ServletUtils.isCheckBoxEnabled(corsAllAllowOriginsTmp);
+				if(!corsAllAllowOrigins) {
+					String corsAllowOrigins =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS);
+					if(StringUtils.isNotEmpty(corsAllowOrigins)) {
+						List<String> asList = Arrays.asList(corsAllowOrigins.split(","));
+						for (String string : asList) {
+							if(string.contains(" ")) {
+								this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   
+								return false;
+							}
+						}
+					} else {
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_ORIGINS));   
+						return false;
+					}
+				}
+				
+				String corsAllowHeaders =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS);
+				if(StringUtils.isNotEmpty(corsAllowHeaders)) {
+					List<String> asList = Arrays.asList(corsAllowHeaders.split(","));
+					for (String string : asList) {
+						if(string.contains(" ")) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+							return false;
+						}
+					}
+				} else {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_HEADERS));   
+					return false;
+				}
+				
+				String corsAllowMethods =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS);
+				if(StringUtils.isNotEmpty(corsAllowMethods)) {
+					List<String> asList = Arrays.asList(corsAllowMethods.split(","));
+					for (String string : asList) {
+						if(string.contains(" ")) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+							return false;
+						}
+						
+						try {
+							// check che HTTP-Method sia supportato
+							Enum.valueOf(HttpRequestMethod.class, string.toUpperCase());
+						} catch(Exception e) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_ALLOW_METHOD_NON_VALIDO, string, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+							return false;
+						}
+					}
+				}else {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_METHODS));   
+					return false;
+				}
+				
+//				String corsAllowCredentialTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_ALLOW_CREDENTIALS);
+//				boolean corsAllowCredential =  ServletUtils.isCheckBoxEnabled(corsAllowCredentialTmp);
+				
+				String corsExposeHeaders = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS);
+				if(StringUtils.isNotEmpty(corsExposeHeaders)) {
+					List<String> asList = Arrays.asList(corsExposeHeaders.split(","));
+					for (String string : asList) {
+						if(string.contains(" ")) {
+							this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_CORS_EXPOSE_HEADERS));   
+							return false;
+						}
+					}
+				}
+				
+				
+//				String corsMaxAgeTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE);
+//				boolean corsMaxAge =  ServletUtils.isCheckBoxEnabled(corsMaxAgeTmp);
+//				if(corsMaxAge) {
+//					String corsMaxAgeSecondsTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_CORS_MAX_AGE_SECONDS);
+//					int corsMaxAgeSeconds = -1;
+//					if(corsMaxAgeSecondsTmp != null) {
+//						try {
+//							corsMaxAgeSeconds = Integer.parseInt(corsMaxAgeSecondsTmp);
+//						}catch(Exception e) {}
+//					}
+//				}
+			}
+		}
+		return true;
+	}
+	
+	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
+			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
+			boolean responseCachingDigestPayload) throws Exception {
+		
+		if(showStato) {
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		// stato generale cors
+		DataElement de = new DataElement();
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO_PORTA); 
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA);
+		if(showStato) {
+			
+			de.setType(DataElementType.SELECT);
+			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO};
+			String labelsStato [] = { this.getResponseCachingLabelDefault(true), CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA_RIDEFINITO};
+			de.setSelected(statoResponseCachingPorta);
+			de.setLabels(labelsStato);
+			de.setValues(valuesStato); 
+			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statoResponseCachingPorta);
+		}
+		dati.addElement(de);
+		
+		if(!showStato || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
+			this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, false);
+		}
+	}
+	
+	public void addResponseCachingToDati(Vector<DataElement> dati, boolean responseCachingEnabled, int responseCachingSeconds,
+			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
+			boolean responseCachingDigestPayload, boolean addTitle) {
+		DataElement de;
+		if(addTitle) {
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setLabel(addTitle ?  CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO : "");
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO);
+		de.setType(DataElementType.SELECT);
+		de.setPostBack(true);
+		de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+		de.setSelected(responseCachingEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+		de.setValue(responseCachingEnabled ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+		dati.addElement(de);
+		
+		if(responseCachingEnabled) {
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_TIMEOUT);
+			de.setValue(responseCachingSeconds+"");
+			de.setType(DataElementType.NUMBER);
+			de.setMinValue(1);
+			de.setMaxValue(Integer.MAX_VALUE);
+			dati.addElement(de);
+			
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(responseCachingMaxResponseSize);
+			de.setPostBack(true);
+			de.setValue(responseCachingMaxResponseSize+"");
+			dati.addElement(de);
+			
+			if(responseCachingMaxResponseSize) {
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_MAX_RESPONSE_SIZE_BYTES);
+				de.setValue(responseCachingMaxResponseSizeBytes+"");
+				de.setType(DataElementType.NUMBER);
+				de.setMinValue(1);
+				de.setMaxValue(Integer.MAX_VALUE);
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_URI_INVOCAZIONE);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			de.setSelected(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			de.setValue(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			dati.addElement(de);
+			
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			de.setSelected(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			de.setValue(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			dati.addElement(de);
+			
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			de.setSelected(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			de.setValue(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			dati.addElement(de);
+			
+		}
+	}
+	
+	public ResponseCachingConfigurazione getResponseCaching(boolean responseCachingEnabled, int responseCachingSeconds, boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,	boolean responseCachingDigestPayload) {
+		
+		ResponseCachingConfigurazione responseCaching  = new ResponseCachingConfigurazione();
+		
+		responseCaching.setStato(responseCachingEnabled ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO); 
+		if(responseCachingEnabled) {
+			responseCaching.setCacheTimeoutSeconds(responseCachingSeconds);
+			
+			if(responseCachingMaxResponseSize) {
+				responseCaching.setMaxMessageSize(responseCachingMaxResponseSizeBytes);
+			}
+			
+			if(responseCachingDigestUrlInvocazione || responseCachingDigestHeaders || responseCachingDigestPayload) {
+				ResponseCachingConfigurazioneHashGenerator hashGenerator = new ResponseCachingConfigurazioneHashGenerator();
+				
+				hashGenerator.setPayload(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				hashGenerator.setRequestUri(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				hashGenerator.setHeaders(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				
+				responseCaching.setHashGenerator(hashGenerator);
+			}
+		}
+		
+		return responseCaching;
+	}
+	
+	public boolean isResponseCachingAbilitato(ResponseCachingConfigurazione configurazione) {
+		boolean abilitato = false;
+		
+		if(configurazione == null)
+			return false;
+		
+		if(configurazione.getStato().equals(StatoFunzionalita.ABILITATO))
+			return true;
+		
+		
+		return abilitato;
+	}
+	
+	public boolean isCorsAbilitato(CorsConfigurazione configurazione) {
+		boolean abilitato = false;
+		
+		if(configurazione == null)
+			return false;
+		
+		if(configurazione.getStato().equals(StatoFunzionalita.ABILITATO))
+			return true;
+		
+		
+		return abilitato;
+	}
+	
+	public boolean checkDataConfigurazioneResponseCachingPorta(TipoOperazione tipoOperazione,boolean showStato, String statoResponseCachingPorta) throws Exception{
+		
+		if(showStato) {
+			if(StringUtils.isEmpty(statoResponseCachingPorta) || 
+					!(statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_DEFAULT) || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_RESPONSE_CACHING_STATO_PORTA));
+				return false;
+			}
+		}
+		
+		if(!showStato || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO)) {
+			return this.checkDataResponseCaching();
+		}
+		
+		return true;
+	}
+	
+	public boolean checkDataResponseCaching() throws Exception {
+		return true;
 	}
 }

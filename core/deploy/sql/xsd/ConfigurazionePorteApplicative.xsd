@@ -781,6 +781,184 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="cors_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la gestione CORS è abilitata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>      
+                                <linkit:sql-column-comment><![CDATA[Gestione CORS]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_tipo" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo di gestione CORS. Nel caso di modalità trasparente le richieste OPTIONS vengono inoltrate all'applicativo (gateway/trasparente)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_all_allow_origins" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_all_allow_origins"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se ogni origin, nella gestione CORS, è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_credentials" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_credentials"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le credenziali, nella gestione CORS, sono abilitate (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_max_age" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_max_age"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'indicazione sul tempo di caching delle informazioni, nella gestione CORS, sono abilitate (1=true, 0=false)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_max_age_seconds" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_max_age_seconds"/>
+                                <linkit:sql-ddl-column-comment>Indicazione della durata delle informazioni, nella gestione CORS. Un valore minore abilita una durata infinita</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_origins" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_origins"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sugli origins abilitati, nella gestione CORS. Gli origin sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_headers" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_headers"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sugli header http abilitati, nella gestione CORS. Gli header sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_methods" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_methods"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sui metodi abilitati, nella gestione CORS. I metodi sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cors_allow_expose_headers" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cors_allow_expose_headers"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sugli header "expose" abilitati, nella gestione CORS. Gli header sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_stato"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il response caching è abilitato (abilitato/disabilitato)</linkit:sql-ddl-column-comment>     
+                                <linkit:sql-column-comment><![CDATA[Response caching]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_seconds" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_seconds"/>
+                                <linkit:sql-ddl-column-comment>Indicazione della durata delle informazioni salvate in cache, in secondi</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_max_msg_size" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_max_msg_size"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sulla dimensione massima del messaggio di risposta, esperssa in bytes, memorizzabile in cache</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_hash_url" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_url"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching viene considerata l'url di invocazione (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_hash_headers" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_headers"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching vengono considerati gli header (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_hash_payload" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_payload"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching viene considerato il payload (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="stato" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -788,7 +966,7 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la porta è abilitata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Stato della porta: abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -56,6 +56,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -104,6 +105,7 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.xml.XPathExpressionEngine;
@@ -2021,6 +2023,28 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			if(this.datiAutenticazioneCheckDataCache()==false){
+				return false;
+			}
+			
+			if(this.datiGestioneTokenCheckDataCache()==false){
+				return false;
+			}
+			
+			if(this.datiResponseCachingCheckDataCache()==false){
+				return false;
+			}
+			
+			// validazione Cors
+			if(!this.checkDataCors()) {
+				return false;
+			}
+			
+			// validazione caching risposta
+			if(!this.checkDataResponseCaching()) {
+				return false;
+			}
+			
 			return true;
 
 		} catch (Exception e) {
@@ -2077,6 +2101,42 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN);
 
 			return checkDatiCache(CostantiPdD.JMX_AUTENTICAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiGestioneTokenCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN);
+
+			return checkDatiCache(CostantiPdD.JMX_TOKEN, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiResponseCachingCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_RISPOSTE);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_RISPOSTE);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_RISPOSTE);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE);
+
+			return checkDatiCache(CostantiPdD.JMX_RESPONSE_CACHING, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -2909,7 +2969,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
 			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli,
 			boolean multitenantEnabled, String multitenantSoggettiFruizioni, String multitenantSoggettiErogazioni,
-			boolean editModeEnabled
+			boolean editModeEnabled,
+			boolean corsStato, TipoGestioneCORS corsTipo, boolean corsAllAllowOrigins,	
+			String corsAllowHeaders, String corsAllowOrigins, String corsAllowMethods, 
+			boolean corsAllowCredential, String corsExposeHeaders, boolean corsMaxAge, int corsMaxAgeSeconds,
+			boolean responseCachingEnabled,	int responseCachingSeconds, boolean responseCachingMaxResponseSize,	long responseCachingMaxResponseSizeBytes, 
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders, boolean responseCachingDigestPayload
 			) throws Exception {
 		DataElement de = new DataElement();
 
@@ -2955,7 +3020,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-
+ 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN);
 			de.setValue(inoltromin);
@@ -3347,8 +3412,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
 		MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
 		Enumeration<String> protocolName = mapPFactory.keys();
+		List<String> protocolliDispondibili = new ArrayList<>();
 		while (protocolName.hasMoreElements()) {
 			String protocollo = (String) protocolName.nextElement();
+			protocolliDispondibili.add(protocollo);
+		}
+		for (String protocollo : ProtocolUtils.orderProtocolli(protocolliDispondibili)) {
 			IProtocolFactory<?> pFactory = mapPFactory.get(protocollo);
 			String context = "";
 			if(pFactory.getManifest().getWeb().sizeContextList()>0) {
@@ -3444,6 +3513,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.addElement(de);
 			}
 		}
+
+		// Configuriazione CORS
+		this.addConfigurazioneCorsToDati(dati, corsStato, corsTipo, corsAllAllowOrigins, corsAllowHeaders, corsAllowOrigins, corsAllowMethods, corsAllowCredential, corsExposeHeaders, corsMaxAge, corsMaxAgeSeconds, true);
+		
+		// Configurazione Response Caching
+		this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize,		responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders,
+				responseCachingDigestPayload, true);
 		
 		if (!this.isModalitaStandard()) {
 			de = new DataElement();
@@ -3498,7 +3574,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		return dati;
 	}
-
+	
 	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
 		DataElement de = new DataElement();
 		

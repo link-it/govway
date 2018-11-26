@@ -82,6 +82,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CorsConfigurazioneHeaders }
+     */
+    public CorsConfigurazioneHeaders createCorsConfigurazioneHeaders() {
+        return new CorsConfigurazioneHeaders();
+    }
+
+    /**
      * Create an instance of {@link MessaggiDiagnostici }
      */
     public MessaggiDiagnostici createMessaggiDiagnostici() {
@@ -474,6 +481,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CorsConfigurazioneMethods }
+     */
+    public CorsConfigurazioneMethods createCorsConfigurazioneMethods() {
+        return new CorsConfigurazioneMethods();
+    }
+
+    /**
      * Create an instance of {@link OpenspcoopSorgenteDati }
      */
     public OpenspcoopSorgenteDati createOpenspcoopSorgenteDati() {
@@ -492,6 +506,13 @@ public class ObjectFactory {
      */
     public MessageSecurityFlowParameter createMessageSecurityFlowParameter() {
         return new MessageSecurityFlowParameter();
+    }
+
+    /**
+     * Create an instance of {@link CorsConfigurazioneOrigin }
+     */
+    public CorsConfigurazioneOrigin createCorsConfigurazioneOrigin() {
+        return new CorsConfigurazioneOrigin();
     }
 
     /**
@@ -551,6 +572,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ResponseCachingConfigurazioneHashGenerator }
+     */
+    public ResponseCachingConfigurazioneHashGenerator createResponseCachingConfigurazioneHashGenerator() {
+        return new ResponseCachingConfigurazioneHashGenerator();
+    }
+
+    /**
      * Create an instance of {@link AccessoConfigurazione }
      */
     public AccessoConfigurazione createAccessoConfigurazione() {
@@ -607,6 +635,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CorsConfigurazione }
+     */
+    public CorsConfigurazione createCorsConfigurazione() {
+        return new CorsConfigurazione();
+    }
+
+    /**
      * Create an instance of {@link RispostaAsincrona }
      */
     public RispostaAsincrona createRispostaAsincrona() {
@@ -632,6 +667,13 @@ public class ObjectFactory {
      */
     public RoutingTableDestinazione createRoutingTableDestinazione() {
         return new RoutingTableDestinazione();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazione }
+     */
+    public ResponseCachingConfigurazione createResponseCachingConfigurazione() {
+        return new ResponseCachingConfigurazione();
     }
 
     /**
@@ -688,6 +730,13 @@ public class ObjectFactory {
      */
     public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
         return new PortaDelegataSoggettoErogatore();
+    }
+
+    /**
+     * Create an instance of {@link ResponseCachingConfigurazioneGenerale }
+     */
+    public ResponseCachingConfigurazioneGenerale createResponseCachingConfigurazioneGenerale() {
+        return new ResponseCachingConfigurazioneGenerale();
     }
 
     /**

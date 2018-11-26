@@ -252,7 +252,8 @@ for (int i = 0; i < dati.size(); i++) {
 								    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
 								    			</div><%
 								    	} else {
-								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>">
+								    		String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> >
 								      	<%
 								    	}
 								      	%>
@@ -371,7 +372,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 		                               							} else {
 		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
-													String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
+																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
 		                               								
 		                          									%><select name="<%= deName  %>" <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
@@ -407,8 +408,9 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							} else {
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
+			                               								String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
 			                               								
-			                          									%><select name="<%= deName  %>" <%= selSize %> <%= selEvtOnChange %> class="<%= classInput %>" multiple ><%
+			                          									%><select name="<%= deName  %>" <%= selSize %> <%= selEvtOnChange %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
 			                            									String [] labels = de.getLabels();

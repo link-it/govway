@@ -34,9 +34,11 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
+import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
@@ -44,6 +46,7 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
@@ -363,6 +366,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getAutorizzazioneContenuto(pd);
 	}
 	
+	public CorsConfigurazione getConfigurazioneCORS(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneCORS(this.getConnection(), pd);
+	}
+	
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneResponseCaching(this.getConnection(), pd);
+	}
+	
 	public boolean ricevutaAsincronaSimmetricaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(pd);
 	}
@@ -561,6 +572,14 @@ public class ConfigurazionePdDManager {
 	
 	public String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getAutorizzazioneContenuto(pa);
+	}
+	
+	public CorsConfigurazione getConfigurazioneCORS(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneCORS(this.getConnection(), pa);
+	}
+	
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneResponseCaching(this.getConnection(), pa);
 	}
 	
 	public boolean ricevutaAsincronaSimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -927,6 +946,18 @@ public class ConfigurazionePdDManager {
 	
 	public void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{
 		this.configurazionePdDReader.updateSystemPropertiesPdD(systemProperties);
+	}
+	
+	public CorsConfigurazione getConfigurazioneCORS() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneCORS(this.getConnection());
+	}
+	
+	public ResponseCachingConfigurazione getConfigurazioneResponseCaching() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneResponseCaching(this.getConnection());
+	}
+	
+	public Cache getConfigurazioneResponseCachingCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneResponseCachingCache(this.getConnection());
 	}
 	
 	public List<Object> getExtendedInfoConfigurazione() throws DriverConfigurazioneException{

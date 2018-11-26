@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -36,11 +38,14 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
+import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
+import org.openspcoop2.pdd.core.response_caching.ResponseCached;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -62,6 +67,8 @@ import org.openspcoop2.utils.resources.Loader;
  */
 public abstract class ConnettoreBase extends AbstractCore implements IConnettore {
 
+	public final static String LOCATION_CACHED = "govway://responseCaching";
+	
 	/** Proprieta' del connettore */
 	protected java.util.Hashtable<String,String> properties;
 	
@@ -139,6 +146,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** RequestInfo */
 	protected RequestInfo requestInfo;
+	
+	/** Caching Response */
+	private boolean responseAlready = false;
+	private ResponseCachingConfigurazione responseCachingConfig = null;
+	private String responseCachingDigest = null;
 
 	protected Date dataAccettazioneRisposta;
     @Override
@@ -153,7 +165,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.creationDate = DateManager.getDate();
 	}
 	
-	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired){
+	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
 		
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		this.loader = Loader.getInstance();
@@ -248,10 +260,121 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			}
 		}
 		
+		// Cache Response
+		this.responseCachingConfig = responseCachingConfig;
+		if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato())) {
+			if(this.requestMsg!=null) {
+				Object digestO = this.requestMsg.getContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST);
+				if(digestO!=null) {
+					this.responseCachingDigest = (String) digestO;
+					try{
+						ResponseCached responseCached =  GestoreCacheResponseCaching.getInstance().readByDigest(this.responseCachingDigest);
+						if(responseCached!=null) {
+						
+							OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(this.openspcoopProperties.getAttachmentsProcessingMode(),
+									this.openspcoopProperties.getCachingResponseHeaderCacheKey());
+													
+							this.responseMsg = msgResponse;
+							
+							this.dataAccettazioneRisposta = DateManager.getDate();
+							
+							org.openspcoop2.utils.transport.TransportResponseContext transportResponseContenxt = msgResponse.getTransportResponseContext();
+							
+							if(transportResponseContenxt!=null && transportResponseContenxt.getCodiceTrasporto()!=null){
+								try {
+									this.codice = Integer.parseInt(transportResponseContenxt.getCodiceTrasporto());
+								}catch(Exception e) {
+									this.logger.error("Errore durante la conversione del codice di trasporto ["+transportResponseContenxt.getCodiceTrasporto()+"]");
+									this.codice = 200;
+								}
+							}
+							else {
+								this.codice = 200;
+							}
+							
+							if(transportResponseContenxt!=null) {
+								this.propertiesTrasportoRisposta = transportResponseContenxt.getParametersTrasporto();
+							}
+							
+							this.contentLength = responseCached.getMessageLength();
+							
+							this.location = LOCATION_CACHED;
+							
+							this.responseAlready = true;
+						}
+					}catch(Exception e){
+						this.eccezioneProcessamento = e;
+						this.logger.error("Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e),e);
+						this.errore = "Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e);
+						return false;
+					}
+				}
+			}
+		}
+
 		return true;
 	}
 	
+	private void saveResponseInCache() {
+		try {
+			if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato()) &&
+					this.responseMsg!=null) { // jms, null ha la response null
+				boolean saveInCache = true;
+				Long kbMax = this.responseCachingConfig.getMaxMessageSize();
+				long byteMax = -1;
+				if(kbMax!=null) {
+					byteMax = kbMax.longValue() * 1024;
+					if(this.contentLength>0) {
+						if(this.contentLength>byteMax) {
+							this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+this.contentLength+ 
+									" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+							saveInCache = false;
+						}
+					}
+				}
+				
+				if(saveInCache) {
+					ResponseCached responseCached = ResponseCached.toResponseCached(this.responseMsg, this.responseCachingConfig.getCacheTimeoutSeconds().intValue());
+					if(kbMax!=null && this.contentLength<=0) {
+						// ricontrollo poichè non era disponibile l'informazione
+						if(responseCached.getMessageLength()>byteMax) {
+							this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+responseCached.getMessageLength()+ 
+									" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+							saveInCache = false;
+						}
+					}
+					if(saveInCache) {
+						GestoreCacheResponseCaching.getInstance().save(this.responseCachingDigest, responseCached);
+					}
+				}
+			}
+		}catch(Throwable e){
+			this.logger.error("Errore durante il salvataggio nella cache delle risposte: "+this.readExceptionMessageFromException(e),e);
+		}
+	}
 	
+	protected abstract boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request);
+	
+	protected abstract boolean send(ConnettoreMsg request);
+	
+	@Override
+	public boolean send(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request){
+		
+		if(this.initializePreSend(responseCachingConfig, request)==false){
+			return false;
+		}
+		
+		// caching response
+		if(this.responseAlready) {
+			return true;
+		}
+		
+		boolean returnEsitoSend = send(request);
+		if(returnEsitoSend) {
+			saveResponseInCache();
+		}
+		return returnEsitoSend;
+	}
 	
 	/**
 	 * In caso di avvenuto errore in fase di consegna, questo metodo ritorna il motivo dell'errore.

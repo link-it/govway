@@ -99,6 +99,62 @@
 				errore.</para>
 
 		</sect2>
+		<sect2 id="RL3.0.1_URLInvocazione">
+			<title>Revisione delle url di invocazione di una erogazione o fruizione</title>
+			<para> Sono state adottate le seguenti revisioni nelle url di invocazione di una
+				erogazione e fruizione nel profilo 'API Gateway' al fine di semplificarle ed
+				adeguarle agli standard di mercato. <itemizedlist>
+					<listitem>
+						<para><emphasis>erogazione</emphasis>: non è più obbligatorio specificare il
+							protocollo <emphasis>'api'</emphasis> ed il canale di inbound
+								<emphasis>'in'</emphasis>. La versione indicata nel path presenta
+							inoltre il prefisso 'v'. <itemizedlist>
+								<listitem>
+									<para><emphasis>precedente</emphasis>:
+											http://host/govway/<emphasis role="strong"
+											>api/in/</emphasis>Ente/API/1</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>nuova</emphasis>:
+											http://host/govway/Ente/API/<emphasis role="strong"
+											>v</emphasis>1</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>fruizione</emphasis>: sono state adottate le medesime
+							revisioni dell'erogazione fatta eccezione per il canale di outbound
+								<emphasis>'out'</emphasis> che rimane obbligatorio. <itemizedlist>
+								<listitem>
+									<para><emphasis>precedente</emphasis>:
+											http://host/govway/<emphasis role="strong"
+											>api/</emphasis>out/Ente/EnteEsterno/API/1</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>nuova</emphasis>:
+											http://host/govway/out/Ente/EnteEsterno/API/<emphasis
+											role="strong">v</emphasis>1</para>
+								</listitem>
+							</itemizedlist>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</sect2>
+		<sect2 id="RL3.0.1_GestioneCORS">
+			<title>Nuova funzionalit&agrave; Gestione CORS</title>
+			<para>In GovWay è ora possibile gestire il <emphasis>cross-origin HTTP request
+					(CORS)</emphasis> sia globalmente, in modo che sia valido per tutte le APIs, che
+				singolarmente sulla singola erogazione o fruizione. </para>
+		</sect2>
+		<sect2 id="RL3.0.1_ResponseCaching">
+			<title>Nuova funzionalit&agrave; Caching della Risposta</title>
+			<para>Per le API è adesso possibile abilitare la funzionalità di caching delle risposte
+				in modo che successive richieste, con le medesimi caratteristiche (uri, http header,
+				payload), vengono servite direttamente da GovWay. Per ogni api deve essere definito
+				l'intervallo di tempo per cuì una risposta salvata in cache viene mantenuta. </para>
+		</sect2>
 		<sect2 id="RL3.0.1_MiglioramentiAutenticazioneAutorizzazione">
 			<title>Nuove funzionalit&agrave; di Identificazione e Autorizzazione</title>
 			<para>Per le API erogate da Soggetti interni è ora permesso l'accesso anche da parte di

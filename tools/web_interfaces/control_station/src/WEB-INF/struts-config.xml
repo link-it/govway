@@ -1476,6 +1476,26 @@
             <forward name="porteDelegateConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateConfigurazioneChangeError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Porte Delegate (Gestione Cors) -->
+    
+    	<action path="/porteDelegateGestioneCors" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateGestioneCors"
+            scope="request" validate="true">
+            <forward name="porteDelegateGestioneCorsForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCorsOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateGestioneCorsError" path="/jsplib/info.jsp"/>
+        </action>
+        
+      <!-- Porte Delegate (Response Caching) -->
+    
+    	<action path="/porteDelegateResponseCaching" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateResponseCaching"
+            scope="request" validate="true">
+            <forward name="porteDelegateResponseCachingForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateResponseCachingOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateResponseCachingCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateResponseCachingError" path="/jsplib/info.jsp"/>
+        </action>
 		    
     	<!--  Porte Applicative -->
     
@@ -1959,7 +1979,26 @@
             <forward name="porteApplicativeConfigurazioneChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConfigurazioneChangeError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Porte Applicative (Gestione Cors) -->
     
+    	<action path="/porteApplicativeGestioneCors" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeGestioneCors"
+            scope="request" validate="true">
+            <forward name="porteApplicativeGestioneCorsForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCorsOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCorsCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeGestioneCorsError" path="/jsplib/info.jsp"/>
+        </action>
+    
+       	<!-- Porte Applicative (Response Caching) -->
+    
+    	<action path="/porteApplicativeResponseCaching" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeResponseCaching"
+            scope="request" validate="true">
+            <forward name="porteApplicativeResponseCachingForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Configurazione (Generale) -->

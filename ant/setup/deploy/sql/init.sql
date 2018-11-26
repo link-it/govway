@@ -49,3 +49,25 @@ UPDATE configurazione set authn_statocache='abilitato';
 UPDATE configurazione set authn_dimensionecache='5000';
 UPDATE configurazione set authn_algoritmocache='lru';
 UPDATE configurazione set authn_lifecache='7200';
+
+-- Configurazione Cache Dati GestioneToken
+UPDATE configurazione set token_statocache='abilitato';
+UPDATE configurazione set token_dimensionecache='5000';
+UPDATE configurazione set token_algoritmocache='lru';
+UPDATE configurazione set token_lifecache='600';
+
+-- Configurazione CORS
+UPDATE configurazione set cors_stato='abilitato';
+UPDATE configurazione set cors_tipo='gateway';
+UPDATE configurazione set cors_all_allow_origins='abilitato';
+UPDATE configurazione set cors_allow_headers='Authorization,Content-Type,SOAPAction';
+UPDATE configurazione set cors_allow_methods='GET,PUT,POST,DELETE,PATCH';
+
+-- Configurazione Cache Response
+UPDATE configurazione set response_cache_stato='disabilitato';
+
+-- Configurazione Cache ResponseCache
+UPDATE configurazione set response_cache_statocache='abilitato';
+UPDATE configurazione set response_cache_dimensionecache='10000';
+UPDATE configurazione set response_cache_algoritmocache='lru';
+UPDATE configurazione set response_cache_lifecache='1800';

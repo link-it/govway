@@ -96,6 +96,7 @@ public class HttpConstants {
 	/** CORS Response */
 	public final static String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
 	public final static String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+	public final static String ALLOW_HEADERS = "Allow";
 	public final static String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
 	public final static String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 	public final static String ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE = "*";

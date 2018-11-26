@@ -60,6 +60,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new Field("correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-applicativa",PortaApplicativa.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new Field("tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-applicativa",PortaApplicativa.class));
+		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new Field("gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
+		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new Field("response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -108,6 +110,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new ComplexField(father,"correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-applicativa",PortaApplicativa.class));
 		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.TRACCIAMENTO = new org.openspcoop2.core.config.model.PortaTracciamentoModel(new ComplexField(father,"tracciamento",org.openspcoop2.core.config.PortaTracciamento.class,"porta-applicativa",PortaApplicativa.class));
+		this.GESTIONE_CORS = new org.openspcoop2.core.config.model.CorsConfigurazioneModel(new ComplexField(father,"gestione-cors",org.openspcoop2.core.config.CorsConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
+		this.RESPONSE_CACHING = new org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel(new ComplexField(father,"response-caching",org.openspcoop2.core.config.ResponseCachingConfigurazione.class,"porta-applicativa",PortaApplicativa.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-applicativa",PortaApplicativa.class);
@@ -171,6 +175,10 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.DumpConfigurazioneModel DUMP = null;
 	 
 	public org.openspcoop2.core.config.model.PortaTracciamentoModel TRACCIAMENTO = null;
+	 
+	public org.openspcoop2.core.config.model.CorsConfigurazioneModel GESTIONE_CORS = null;
+	 
+	public org.openspcoop2.core.config.model.ResponseCachingConfigurazioneModel RESPONSE_CACHING = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

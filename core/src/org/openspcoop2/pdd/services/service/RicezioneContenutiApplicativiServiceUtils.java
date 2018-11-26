@@ -25,11 +25,17 @@ package org.openspcoop2.pdd.services.service;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
@@ -37,6 +43,8 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CORSFilter;
+import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -46,7 +54,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.pdd.services.connector.ConnectorDispatcherErrorInfo;
+import org.openspcoop2.pdd.services.connector.ConnectorDispatcherInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
@@ -59,11 +67,14 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -75,7 +86,7 @@ import org.slf4j.Logger;
  */
 public class RicezioneContenutiApplicativiServiceUtils {
 
-	public static ConnectorDispatcherErrorInfo updatePortaDelegataRequestInfo(RequestInfo requestInfo, Logger logCore, 
+	public static ConnectorDispatcherInfo updatePortaDelegataRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore,
 			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag, PdDContext pddContextNullable) throws ConnectorException{
@@ -90,6 +101,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
 		
 		IDPortaDelegata idPD = null;
+		PortaDelegata pdDefault = null;
 		try{
 			idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
 		}catch(RegistryNotFound notFound){
@@ -133,6 +145,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 							IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
 				}
 			}
+			
 			if(idServizio!=null){
 				
 				// provo a leggere anche l'azione
@@ -143,10 +156,15 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					logCore.debug("Azione non trovata: "+e.getMessage(),e);
 				}
 				
+				// PortaDelegata Default
+				try{
+					pdDefault = ConfigurazionePdDManager.getInstance().getPortaDelegata(idPD);
+				}catch(Exception e){
+					logCore.debug("Recupero porta default fallita: "+e.getMessage(),e);
+				}
 				try{
 					if(idServizio.getAzione()!=null) {
-						PortaDelegata pd = ConfigurazionePdDManager.getInstance().getPortaDelegata(idPD);
-						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, null, pd);
+						IdentificazionePortaDelegata identificazione = new IdentificazionePortaDelegata(logCore, pf, null, pdDefault);
 						if(identificazione.find(idServizio.getAzione())) {
 							IDPortaDelegata idPD_action = identificazione.getIDPortaDelegata(idServizio.getAzione());
 							if(idPD_action!=null) {
@@ -240,16 +258,95 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				}
 			}
 		}
+			
+			
+		if(requestInfo!=null && requestInfo.getProtocolServiceBinding()!=null && 
+				ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && 
+				requestInfo.getProtocolContext()!=null &&
+				HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(requestInfo.getProtocolContext().getRequestType())) {
+			
+			// Gestione CORS
+			try{
+				CorsConfigurazione cors = null;
+				HttpServletRequest httpServletRequest = null;
+				if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+					httpServletRequest = requestInfo.getProtocolContext().getHttpServletRequest();	
+				}
+				
+				if(httpServletRequest!=null) {
+					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
+					if(pdDefault!=null) {
+						cors = configurazionePdDManager.getConfigurazioneCORS(pdDefault);
+					}
+					else {
+						cors = configurazionePdDManager.getConfigurazioneCORS();
+					}
+				}
+				else {
+					cors = new CorsConfigurazione();
+					cors.setStato(StatoFunzionalita.DISABILITATO);
+				}
+				
+				if(StatoFunzionalita.ABILITATO.equals(cors.getStato())) {
+					if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
+						
+						CORSFilter corsFilter = new CORSFilter(logCore, cors);
+						CORSWrappedHttpServletResponse resCORS = new CORSWrappedHttpServletResponse(false);
+						corsFilter.doCORS(httpServletRequest, resCORS);
+						OpenSPCoop2Message msgCORSResponse = resCORS.buildMessage();
+						EsitoTransazione esito = 
+								requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),
+										EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY);
+						ConnectorDispatcherInfo c = ConnectorDispatcherInfo.getGeneric(msgCORSResponse, 
+								resCORS.getStatus(), null, resCORS.getHeader(), esito);
+						if(pddContextNullable!=null) {
+							pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
+						}
+						ConnectorDispatcherUtils.doInfo(c, requestInfo, res, logCore, true);
+						return c;
+						
+					}
+					else {
+						
+						if(pddContextNullable!=null) {
+							pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE, "true");
+						}
+						
+						requestInfo.setIntegrationServiceBinding(ServiceBinding.REST);
+						requestInfo.setProtocolServiceBinding(ServiceBinding.REST);
+						generatoreErrore.updateServiceBinding(ServiceBinding.REST);
+						
+						requestInfo.setIntegrationRequestMessageType(MessageType.BINARY);
+						requestInfo.setProtocolRequestMessageType(MessageType.BINARY);
+						generatoreErrore.updateRequestMessageType(MessageType.BINARY);
+					}
+				}
+				
+			}catch(Exception error){
+				
+				if(res!=null) {
+					logCore.error("Gestione CORS fallita: "+error.getMessage(),error);
+					msgDiag.addKeywordErroreProcessamento(error);
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
+					return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Gestione CORS fallita"),
+							IntegrationError.INTERNAL_ERROR, error, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
+				}
+				return null;
+				
+			}
+		}
+		
 		
 		return null;
 	}
 	
-	public static void emitTransactionError(Logger logCore, ConnectorInMessage req, PdDContext pddContext, Date dataAccettazioneRichiesta,
-			ConnectorDispatcherErrorInfo info) {
-		emitTransactionError(null, logCore, req, pddContext, dataAccettazioneRichiesta, info);
+	public static void emitTransaction(Logger logCore, ConnectorInMessage req, PdDContext pddContext, Date dataAccettazioneRichiesta,
+			ConnectorDispatcherInfo info) {
+		emitTransaction(null, logCore, req, pddContext, dataAccettazioneRichiesta, info);
 	}
-	public static void emitTransactionError(RicezioneContenutiApplicativiContext context,Logger logCore, ConnectorInMessage req, PdDContext pddContext, Date dataAccettazioneRichiesta,
-			ConnectorDispatcherErrorInfo info) {
+	public static void emitTransaction(RicezioneContenutiApplicativiContext context,Logger logCore, ConnectorInMessage req, PdDContext pddContext, Date dataAccettazioneRichiesta,
+			ConnectorDispatcherInfo info) {
 		try {
 			String idModulo = req.getIdModulo();
 			IDService idModuloAsService = req.getIdModuloAsIDService();
@@ -271,15 +368,15 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				}
 			}
 			
-			emitTransactionError(context,logCore, idModulo, idModuloAsService, protocolFactory, requestInfo, pddContext, dataAccettazioneRichiesta, info);
+			emitTransaction(context,logCore, idModulo, idModuloAsService, protocolFactory, requestInfo, pddContext, dataAccettazioneRichiesta, info);
 		}catch(Throwable e){
-			logCore.error("postOutResponse, registrazione errore fallita: "+e.getMessage(),e);
+			logCore.error("postOutResponse, registrazione fallita: "+e.getMessage(),e);
 		}
 	}
 	
-	public static void emitTransactionError(RicezioneContenutiApplicativiContext context,Logger logCore,String idModulo,IDService idModuloAsService, IProtocolFactory<?> protocolFactory, RequestInfo requestInfo,
+	public static void emitTransaction(RicezioneContenutiApplicativiContext context,Logger logCore,String idModulo,IDService idModuloAsService, IProtocolFactory<?> protocolFactory, RequestInfo requestInfo,
 			PdDContext pddContext, Date dataAccettazioneRichiesta,
-			ConnectorDispatcherErrorInfo info) {
+			ConnectorDispatcherInfo info) {
 		
 		try {
 		
@@ -314,11 +411,11 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				postOutResponseContext.getPropertiesRispostaTrasporto().put(HttpConstants.CONTENT_TYPE, info.getContentType());
 			}
 					
-			if(info.getErrorMessage()!=null){
+			if(info.getMessage()!=null){
 				
-				postOutResponseContext.setOutputResponseMessageSize(info.getErrorMessage().getOutgoingMessageContentLength());
+				postOutResponseContext.setOutputResponseMessageSize(info.getMessage().getOutgoingMessageContentLength());
 				
-				postOutResponseContext.setMessaggio(info.getErrorMessage());
+				postOutResponseContext.setMessaggio(info.getMessage());
 			}
 	
 			MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA,idModulo);
@@ -327,7 +424,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			GestoreHandlers.postOutResponse(postOutResponseContext, msgDiag, logCore);
 			
 		}catch(Throwable e){
-			logCore.error("postOutResponse, registrazione errore fallita: "+e.getMessage(),e);
+			logCore.error("postOutResponse, registrazione fallita: "+e.getMessage(),e);
 		}
 	
 	}

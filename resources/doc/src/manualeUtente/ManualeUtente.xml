@@ -97,11 +97,11 @@
 					<title>Selezione del profilo di interoperabilità</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/profiloInteroperabilita.png"
+							<imagedata width="60%" fileref="FIGURE_OUT/profiloInteroperabilita.png"
 							/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/profiloInteroperabilita.pdf"
+							<imagedata width="60%" fileref="FIGURE_OUT/profiloInteroperabilita.pdf"
 							/>
 						</imageobject>
 					</mediaobject>
@@ -347,10 +347,10 @@
 					<title>Elenco delle API</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/API-list.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/API-list.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/API-list.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/API-list.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -370,10 +370,10 @@
 				<title>Definizione di una API</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/API-new.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/API-new.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/API-new.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/API-new.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -438,10 +438,10 @@
 				<title>Registrazione di una Erogazione</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/Erogazione-new.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Erogazione-new.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/Erogazione-new.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Erogazione-new.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -541,10 +541,10 @@
 						<title>Elenco Erogazioni presenti nel registro</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="70%" fileref="FIGURE_OUT/ListaErogazioni.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ListaErogazioni.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="70%" fileref="FIGURE_OUT/ListaErogazioni.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ListaErogazioni.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -563,10 +563,10 @@
 						<title>Filtro delle Erogazioni presenti nel registro</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/FiltroErogazioni.pdf"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/FiltroErogazioni.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/FiltroErogazioni.png"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/FiltroErogazioni.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -579,11 +579,11 @@
 						<title>Dettaglio dell'erogazione</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/DettaglioErogazione.pdf"
+								<imagedata width="60%" fileref="FIGURE_OUT/DettaglioErogazione.pdf"
 								/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/DettaglioErogazione.png"
+								<imagedata width="60%" fileref="FIGURE_OUT/DettaglioErogazione.png"
 								/>
 							</imageobject>
 						</mediaobject>
@@ -633,10 +633,9 @@
 										<para>
 											<emphasis>API senza WSDL</emphasis>: l'operation viene
 											identificata inserendo il relativo identificativo nella
-											URL di invocazione:
-											<itemizedlist>
+											URL di invocazione: <itemizedlist>
 												<listitem>
-													<para>&lt;URL_Invocazione&gt;/&lt;Azione&gt;</para>
+												<para>&lt;URL_Invocazione&gt;/&lt;Azione&gt;</para>
 												</listitem>
 											</itemizedlist>
 										</para>
@@ -766,10 +765,10 @@
 					<title>Registrazione di una Fruizione</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/Fruizione-new.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Fruizione-new.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/Fruizione-new.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Fruizione-new.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -888,12 +887,28 @@
 -->
 			<sect3 id="gw-erogazione-connettore">
 				<title>Connettore</title>
-				<para> È possibile modificare le impostazioni del connettore al servizio
-					erogato/fruito (ad esempio per modificare l'endpoint o aggiungere il proxy)
-					seguendo il collegamento presente nella colonna <emphasis>Connettore</emphasis>
-					in corrispondenza della voce di erogazione/fruizione presente in elenco. I campi
-					del form sono uguali a quelli già descritti per la fase di creazione
-					dell'erogazione (<xref linkend="gw-erogazione"/>). </para>
+				<para> È possibile modificare le impostazioni del connettore (ad esempio per
+					modificare l'endpoint o aggiungere il proxy) seguendo il collegamento presente
+					nella riga <emphasis>Connettore</emphasis> del dettaglio di una erogazione o
+					fruizione. I campi del form sono uguali a quelli già descritti per la fase di
+					creazione dell'erogazione (<xref linkend="gw-erogazione"/>). </para>
+			</sect3>
+			<sect3 id="gw-erogazione-cors">
+				<title>Gestione CORS</title>
+				<para>Si parla di <emphasis>cross-origin HTTP request (CORS)</emphasis> quando un
+					client richiede l'accesso ad una risorsa di un differente dominio, protocollo o
+					porta. Per default i web browsers utilizzano una policy
+						'<emphasis>same-origin</emphasis>' per evitare interazioni tra domini
+					differenti. Il CORS definisce un modo nel quale un browser ed un server possono
+					interagire per abilitare interazioni attraverso differenti domini. </para>
+				<para>In GovWay è possibile abilitare la gestione del CORS sia globalmente, in modo
+					che sia valida per tutte le APIs, che singolarmente sulla singola erogazione o
+					fruizione. </para>
+				<para> È possibile modificare le impostazioni CORS seguendo il collegamento presente
+					nella riga <emphasis>Gestione CORS</emphasis> del dettaglio di una erogazione o
+					fruizione. L'impostazione permette di ridefinire la configurazione globale; i
+					campi del form sono i medesimi descritti nella configurazione globale (<xref
+						linkend="configurazione-cors"/>). </para>
 			</sect3>
 			<sect3 id="gw-erogazione-config">
 				<title>Differenziare le configurazioni specifiche per risorsa/azione</title>
@@ -943,10 +958,10 @@
 					<title>Aggiunta di un gruppo di configurazioni</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Config-new.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Config-new.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Config-new.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Config-new.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -992,10 +1007,10 @@
 					<title>Controllo degli Accessi</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ControlloAccessi.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ControlloAccessi.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ControlloAccessi.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ControlloAccessi.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -1017,10 +1032,10 @@
 							<title>Configurazione della gestione token</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/GestioneToken.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/GestioneToken.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/GestioneToken.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/GestioneToken.png"/>
 								</imageobject>
 							</mediaobject>
 						</figure> Supponendo che la policy copra tutti gli aspetti disponibili, le
@@ -1105,10 +1120,10 @@
 							<title>Configurazione dell'autenticazione del servizio</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Autenticazione.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Autenticazione.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Autenticazione.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Autenticazione.png"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -1231,10 +1246,10 @@
 						<title>Creazione di un soggetto</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Soggetto-new.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Soggetto-new.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Soggetto-new.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Soggetto-new.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -1280,10 +1295,10 @@
 							<title>Assegnazione di ruoli ad un soggetto</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/SoggettoRuoli.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/SoggettoRuoli.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/SoggettoRuoli.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/SoggettoRuoli.png"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -1301,10 +1316,10 @@
 						<title>Creazione di un applicativo</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Applicativo-new.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Applicativo-new.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Applicativo-new.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Applicativo-new.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -1353,10 +1368,10 @@
 						<title>Registrazione di un ruolo</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Ruoli-new.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Ruoli-new.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Ruoli-new.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/Ruoli-new.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -1413,11 +1428,11 @@
 							<title>Attribuzione di un ruolo ad un soggetto</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/addRuoloSoggetto.pdf"
+									<imagedata width="60%" fileref="FIGURE_OUT/addRuoloSoggetto.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/addRuoloSoggetto.jpg"
+									<imagedata width="60%" fileref="FIGURE_OUT/addRuoloSoggetto.jpg"
 									/>
 								</imageobject>
 							</mediaobject>
@@ -1432,10 +1447,10 @@
 							<title>Attribuzione di un ruolo ad un applicativo</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/addRuoloSA.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/addRuoloSA.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/addRuoloSA.jpg"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/addRuoloSA.jpg"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -1452,10 +1467,10 @@
 							<title>Registrazione di una XACML-Policy per l'erogazione</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/xacmlPolicyAdd.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/xacmlPolicyAdd.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/xacmlPolicyAdd.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/xacmlPolicyAdd.png"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -1666,10 +1681,10 @@
 							<title>Creazione di uno Scope</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/AggiungiScope.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/AggiungiScope.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/AggiungiScope.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/AggiungiScope.png"/>
 								</imageobject>
 							</mediaobject>
 						</figure> I dati da fornire sono: <itemizedlist>
@@ -1697,74 +1712,6 @@
 						</itemizedlist>
 					</para>
 				</sect4>
-			</sect3>
-			<sect3 id="gw-erogazione-validazione">
-				<title>Validazione dei messaggi</title>
-				<para> Per attivare la validazione dei messaggi in transito sul gateway si accede al
-					collegamento presente nella colonna <emphasis>Validazione</emphasis> presente
-					tra gli elementi di configurazione della specifica erogazione/fruizione. <figure
-						id="gw-erogazione-validazione-fig">
-						<title>Validazione dei messaggi</title>
-						<mediaobject>
-							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Validazione.pdf"/>
-							</imageobject>
-							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/Validazione.png"/>
-							</imageobject>
-						</mediaobject>
-					</figure> Compilare il form di configurazione (<xref
-						linkend="gw-erogazione-validazione-fig"/>): <itemizedlist>
-						<listitem>
-							<para><emphasis>Stato</emphasis>: Consente di abilitare/disabilitare la
-								funzionalità di validazione sulla voce di configurazione scelta.
-								L'opzione <emphasis>warnignOnly</emphasis> consente di attivare la
-								funzionalità di validazione evitando però che, se tale fase non
-								viene superata, venga bloccato il messaggio e restituito un errore.
-								In quest'ultimo caso, gli errori di validazione verranno segnalati
-								solo tramite l'emissione di opportuni messaggi diagnostici dal
-								servizio di tracciamento.</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>Tipo</emphasis>: Nel caso si sia abilitato il servizio
-								di validazione, questo campo consente di selezionare la metodologia
-								che si vuole utilizzare. I valori selezionabili da questo elenco
-								cambiano in base alla tipologia delle API cui fa riferimento
-								l'erogazione/fruizione.</para>
-						</listitem>
-					</itemizedlist> I tipi di validazione previsti sono: <itemizedlist>
-						<listitem>
-							<para>
-								<emphasis>Schemi XSD</emphasis>, la validazione si basa sugli schemi
-								xsd allegati alle API. Utilizzato per la validazione sintattica dei
-								messaggi XML sia nel caso Soap che Rest.</para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>Wsdl</emphasis>, la validazione si basa sull'interfaccia
-								wsdl fornita con la API. Questo tipo di validazione è più rigorosa
-								in quanto controlla non solo la conformità sintattica ma viene
-								validato il messaggio in transito verificando che sia idoneo al
-								PortType e Operation in uso. Questo tipo di validazione è
-								applicabile solo al caso Soap.</para>
-							<para>
-								<emphasis>Swagger 2.0 o OpenAPI 3.0</emphasis>, nei casi in cui si è
-								fornito un descrittore formale per una API Rest, la validazione sarà
-								effettuata utilizzando gli strumenti associati allo specifico
-								formato.</para>
-						</listitem>
-					</itemizedlist>
-				</para>
-				<para>Nel caso di servizi Soap, se i messaggi che transitanto sulla porta di dominio
-					possiedono il formato MTOM, per poterli validare è necessario attivare l'opzione
-						<emphasis>Accetta MTOM</emphasis>. Tale opzione normalizza i messaggi prima
-					di effettuarne la validazione e ripristina il formato originale una volta
-					completato il processo di validazione. <note>
-						<para> Si tenga presente che attivando la validazione dei messaggi, questa
-							riguarderà sia le richieste, inviate al servizio, che le conseguenti
-							risposte. </para>
-					</note>
-				</para>
 			</sect3>
 			<sect3 id="gw-erogazione-ratelimiting">
 				<title>Rate Limiting</title>
@@ -1838,11 +1785,11 @@
 						<title>Attivazione di una policy di Rate Limiting</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/ErogazioneRateLimiting_Aggiungi.png"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/ErogazioneRateLimiting_Aggiungi.pdf"/>
 							</imageobject>
 						</mediaobject>
@@ -2115,6 +2062,87 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					</itemizedlist>
 				</para>
 			</sect3>
+			<sect3 id="gw-erogazione-validazione">
+				<title>Validazione dei messaggi</title>
+				<para> Per attivare la validazione dei messaggi in transito sul gateway si accede al
+					collegamento presente nella colonna <emphasis>Validazione</emphasis> presente
+					tra gli elementi di configurazione della specifica erogazione/fruizione. <figure
+						id="gw-erogazione-validazione-fig">
+						<title>Validazione dei messaggi</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%" fileref="FIGURE_OUT/Validazione.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%" fileref="FIGURE_OUT/Validazione.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure> Compilare il form di configurazione (<xref
+						linkend="gw-erogazione-validazione-fig"/>): <itemizedlist>
+						<listitem>
+							<para><emphasis>Stato</emphasis>: Consente di abilitare/disabilitare la
+								funzionalità di validazione sulla voce di configurazione scelta.
+								L'opzione <emphasis>warnignOnly</emphasis> consente di attivare la
+								funzionalità di validazione evitando però che, se tale fase non
+								viene superata, venga bloccato il messaggio e restituito un errore.
+								In quest'ultimo caso, gli errori di validazione verranno segnalati
+								solo tramite l'emissione di opportuni messaggi diagnostici dal
+								servizio di tracciamento.</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Tipo</emphasis>: Nel caso si sia abilitato il servizio
+								di validazione, questo campo consente di selezionare la metodologia
+								che si vuole utilizzare. I valori selezionabili da questo elenco
+								cambiano in base alla tipologia delle API cui fa riferimento
+								l'erogazione/fruizione.</para>
+						</listitem>
+					</itemizedlist> I tipi di validazione previsti sono: <itemizedlist>
+						<listitem>
+							<para>
+								<emphasis>Schemi XSD</emphasis>, la validazione si basa sugli schemi
+								xsd allegati alle API. Utilizzato per la validazione sintattica dei
+								messaggi XML sia nel caso Soap che Rest.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Wsdl</emphasis>, la validazione si basa sull'interfaccia
+								wsdl fornita con la API. Questo tipo di validazione è più rigorosa
+								in quanto controlla non solo la conformità sintattica ma viene
+								validato il messaggio in transito verificando che sia idoneo al
+								PortType e Operation in uso. Questo tipo di validazione è
+								applicabile solo al caso Soap.</para>
+							<para>
+								<emphasis>Swagger 2.0 o OpenAPI 3.0</emphasis>, nei casi in cui si è
+								fornito un descrittore formale per una API Rest, la validazione sarà
+								effettuata utilizzando gli strumenti associati allo specifico
+								formato.</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<para>Nel caso di servizi Soap, se i messaggi che transitanto sulla porta di dominio
+					possiedono il formato MTOM, per poterli validare è necessario attivare l'opzione
+						<emphasis>Accetta MTOM</emphasis>. Tale opzione normalizza i messaggi prima
+					di effettuarne la validazione e ripristina il formato originale una volta
+					completato il processo di validazione. <note>
+						<para> Si tenga presente che attivando la validazione dei messaggi, questa
+							riguarderà sia le richieste, inviate al servizio, che le conseguenti
+							risposte. </para>
+					</note>
+				</para>
+			</sect3>
+			<sect3 id="gw-erogazione-response-caching">
+				<title>Caching Risposta</title>
+				<para>In GovWay è possibile abilitare il salvataggio delle risposte in una cache sia
+					globalmente, in modo che sia attivo per tutte le APIs, che singolarmente sulla
+					singola erogazione o fruizione. Questa funzionalità permette ad un backend
+					server di non dover riprocessare le stesse richieste più volte. </para>
+				<para> Tramite il collegamento <emphasis>Caching Risposta</emphasis>, presente nella
+					sezione di configurazione della specifica erogazione/fruizione, è possibile
+					agire sulla configurazione di tale funzionalità. L'impostazione permette di
+					ridefinire la configurazione globale; i campi del form sono i medesimi descritti
+					nella configurazione globale (<xref linkend="configurazione-response-caching"
+					/>). </para>
+			</sect3>
 			<sect3 id="gw-erogazione-security">
 				<title>Sicurezza a livello del messaggio</title>
 				<para>Tramite il collegamento <emphasis>Sicurezza Messaggio</emphasis>, presente
@@ -2130,10 +2158,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<title>Abilitazione Sicurezza Messaggio</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/SicurezzaMessaggio.png"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/SicurezzaMessaggio.png"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/SicurezzaMessaggio.pdf"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/SicurezzaMessaggio.pdf"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -2359,11 +2387,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<title>Tracciamento per la singola erogazione/fruizione</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/TracciamentoServizio.png"
+								<imagedata width="60%" fileref="FIGURE_OUT/TracciamentoServizio.png"
 								/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/TracciamentoServizio.pdf"
+								<imagedata width="60%" fileref="FIGURE_OUT/TracciamentoServizio.pdf"
 								/>
 							</imageobject>
 						</mediaobject>
@@ -2419,11 +2447,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/CorrelazioneApplicativa-new.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/CorrelazioneApplicativa-new.png"/>
 							</imageobject>
 						</mediaobject>
@@ -2670,11 +2698,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				<title>Configurazione delle Base URL eDelivery per il soggetto interno</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-BaseURL-SoggettoInterno.pdf"
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-BaseURL-SoggettoInterno.pdf"
 						/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-BaseURL-SoggettoInterno.png"
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-BaseURL-SoggettoInterno.png"
 						/>
 					</imageobject>
 				</mediaobject>
@@ -2698,10 +2726,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				<title>Configurazione delle proprietà eDelivery per il soggetto interno</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-DatiSoggettoInterno.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-DatiSoggettoInterno.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-DatiSoggettoInterno.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-DatiSoggettoInterno.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -2747,10 +2775,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				<title>Registrazione API eDelivery - Proprietà specifiche</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-api-props.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-api-props.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/edev-api-props.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/edev-api-props.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -2790,10 +2818,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Proprietà eDelivery relative alle azioni delle API</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-api-azione.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-api-azione.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-api-azione.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-api-azione.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> I valori da impostare nel form sono: <itemizedlist>
@@ -2816,10 +2844,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Proprietà eDelivery relative all'erogazione del servizio</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-erogazione.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-erogazione.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-erogazione.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-erogazione.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> L'unica impostazione eDelivery da fornire in questo contesto è: <itemizedlist>
@@ -2891,10 +2919,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Esportazione del PMODE</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-pmode.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-pmode.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/edev-pmode.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/edev-pmode.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -2940,10 +2968,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Creazione Accordo di Servizio SPCoop</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiAccordoSPCoop.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiAccordoSPCoop.png"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiAccordoSPCoop.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiAccordoSPCoop.pdf"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -2957,10 +2985,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Aggiunta Servizio SPCoop</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiPortTypeSPCoop.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiPortTypeSPCoop.png"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiPortTypeSPCoop.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiPortTypeSPCoop.pdf"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -2980,10 +3008,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Creazione erogazione SPCoop</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ErogazioneSPCoop.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ErogazioneSPCoop.png"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ErogazioneSPCoop.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ErogazioneSPCoop.pdf"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -3001,10 +3029,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<title>Correlazione Asincrona Simmetrica</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/asCorrelazione.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/asCorrelazione.png"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/asCorrelazione.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/asCorrelazione.pdf"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -3022,10 +3050,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Elenco dei Servizi Applicativi (Risposta Asincrona)</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/asSA.jpg"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/asSA.jpg"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/asSA.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/asSA.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure> 
@@ -3034,10 +3062,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Definizione del connettore per la Risposta Asincrona</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/asSA2.jpg"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/asSA2.jpg"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/asSA2.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/asSA2.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -3061,10 +3089,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<title>Correlazione Asincrona Asimmetrica</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/aaCorrelazione.png"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/aaCorrelazione.png"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/aaCorrelazione.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/aaCorrelazione.pdf"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -3089,10 +3117,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Elenco dei Servizi Applicativi (Risposta Asincrona)</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/aaSA.jpg"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/aaSA.jpg"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/aaSA.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/aaSA.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure> Di seguito un esempio di configurazione della risposta asincrona.
@@ -3100,10 +3128,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Definizione del connettore per la Risposta Asincrona</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/aaSA2.jpg"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/aaSA2.jpg"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/aaSA2.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/aaSA2.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -3178,10 +3206,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Maschera di importazione di package</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ImportazioneAS.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ImportazioneAS.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ImportazioneAS.jpg"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ImportazioneAS.jpg"/>
 						</imageobject>
 					</mediaobject>
 				</figure> Durante la fase di caricamento del file e successiva importazione del
@@ -3427,12 +3455,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%"
+							<imagedata width="60%"
 								fileref="FIGURE_OUT/funzionalitaEGovDeprecate.pdf"/>
 						</imageobject>
 
 						<imageobject>
-							<imagedata width="80%"
+							<imagedata width="60%"
 								fileref="FIGURE_OUT/funzionalitaEGovDeprecate.jpg"/>
 						</imageobject>
 					</mediaobject>
@@ -3665,11 +3693,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				semplificare l'attività di configurazione di GovWay. I passi da eseguire sono i
 				seguenti: <orderedlist>
 					<listitem>
-						<para> Scaricare il govlet per la fatturazione passiva al seguente indirizzo:
-							<itemizedlist>
+						<para> Scaricare il govlet per la fatturazione passiva al seguente
+							indirizzo: <itemizedlist>
 								<listitem>
-									<para><ulink url="http://www.govway.org/govlets/fatturazione-passiva.zip"
-									/></para>
+									<para><ulink
+											url="http://www.govway.org/govlets/fatturazione-passiva.zip"
+										/></para>
 								</listitem>
 							</itemizedlist>
 						</para>
@@ -3733,21 +3762,21 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 			</para>
 			<sect3 id="ricezioneFatturazionePassiva">
 				<title>Ricezione Fatture e Notifiche di Decorrenza Termini</title>
-				<para>
-					Allo SdI, per raggiunge il servizio di RicezioneFatture su Govway, dovrà essere comunicata la seguente URL:
+				<para> Allo SdI, per raggiunge il servizio di RicezioneFatture su Govway, dovrà
+					essere comunicata la seguente URL:
 					<screen>https://&lt;host-govway&lt;/govway/sdi/in/&lt;SoggettoSDI>/RicezioneFatture/v1</screen>
-					Le fatture e le notifiche saranno consegnati all'applicativo dell'ente secondo le modalità specificate durante l'esecuzione del Govlet.
-					In fase di consegna delle fatture e delle notifiche verranno generati rispettivamente gli header descritti nella tabella <xref linkend="headerRicezioneFattura"/>
-					e nella tabella <xref linkend="headerRicezioneNotificaDT"/>.
-				</para>
+					Le fatture e le notifiche saranno consegnati all'applicativo dell'ente secondo
+					le modalità specificate durante l'esecuzione del Govlet. In fase di consegna
+					delle fatture e delle notifiche verranno generati rispettivamente gli header
+					descritti nella tabella <xref linkend="headerRicezioneFattura"/> e nella tabella
+						<xref linkend="headerRicezioneNotificaDT"/>. </para>
 			</sect3>
 			<sect3 id="invocazioneFatturazionePassiva">
 				<title>Invio della Notifica di Esito Committente</title>
-				<para> Per l'invio della Notifica di Esito Committente l'applicativo deve utilizzare:
-					<itemizedlist>
+				<para> Per l'invio della Notifica di Esito Committente l'applicativo deve
+					utilizzare: <itemizedlist>
 						<listitem>
-							<para>Una URL così
-								composta:
+							<para>Una URL così composta:
 								<screen>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviNotifica/v1?NomeFile=&lt;NomeFileFattura&gt;&amp;IdentificativoSdI=&lt;identificativoSDI&gt;</screen>
 								dove: <itemizedlist>
 									<listitem>
@@ -3757,39 +3786,42 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>SoggettoSDI</emphasis>: il soggetto interno destinatario
-											delle fatture, come configurato durante l'esecuzione del govlet di
-											fatturazione passiva. </para>
+											<emphasis>SoggettoSDI</emphasis>: il soggetto interno
+											destinatario delle fatture, come configurato durante
+											l'esecuzione del govlet di fatturazione passiva. </para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>NomeFileFattura</emphasis>: è il nome del file che
-											contiene la fattura cui fa riferimento la notifica EC. </para>
+											<emphasis>NomeFileFattura</emphasis>: è il nome del file
+											che contiene la fattura cui fa riferimento la notifica
+											EC. </para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>identificativoSDI</emphasis>: è l'identificativo SDI che
-											fa riferimento al lotto della fattura ricevuta. </para>
+											<emphasis>identificativoSDI</emphasis>: è
+											l'identificativo SDI che fa riferimento al lotto della
+											fattura ricevuta. </para>
 									</listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
 						<listitem>
-							<para>L'invocazione deve essere corredata dalle credenziali che sono state
-								indicate durante la configurazione tramite il relativo govlet.
+							<para>L'invocazione deve essere corredata dalle credenziali che sono
+								state indicate durante la configurazione tramite il relativo govlet.
 							</para>
 						</listitem>
 						<listitem>
-							<para>Utilizzare l'header http <emphasis>Content-Type</emphasis> valorizzato con <emphasis>text/xml</emphasis> o <emphasis>application/xml</emphasis>
+							<para>Utilizzare l'header http <emphasis>Content-Type</emphasis>
+								valorizzato con <emphasis>text/xml</emphasis> o
+									<emphasis>application/xml</emphasis>
 							</para>
 						</listitem>
-					</itemizedlist>
-					Un esempio di invio di una fattura viene fornito tramite il seguente comando curl:
-					<note>
+					</itemizedlist> Un esempio di invio di una fattura viene fornito tramite il
+					seguente comando curl: <note>
 						<title>Soggetto Interno al Dominio</title>
-						<para>In questo esempio si suppone che il nome del soggetto (riferito precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito
-							durante la fase di installazione di GovWay sia
-							<emphasis>Ente</emphasis>.</para>
+						<para>In questo esempio si suppone che il nome del soggetto (riferito
+							precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito durante
+							la fase di installazione di GovWay sia <emphasis>Ente</emphasis>.</para>
 					</note>
 					<screen>curl -X POST -basic --user SdIRiceviNotifica:123456 \
 --data-binary @IT01234567890_11111_EC_001.xml \
@@ -3907,10 +3939,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 				semplificare l'attività di configurazione di GovWay. I passi da eseguire sono i
 				seguenti: <orderedlist>
 					<listitem>
-						<para> Scaricare il govlet per la fatturazione attiva al seguente indirizzo
-							<itemizedlist>
+						<para> Scaricare il govlet per la fatturazione attiva al seguente indirizzo <itemizedlist>
 								<listitem>
-									<para><ulink url="http://www.govway.org/govlets/fatturazione-attiva.zip"/></para>
+									<para><ulink
+											url="http://www.govway.org/govlets/fatturazione-attiva.zip"
+										/></para>
 								</listitem>
 							</itemizedlist>
 						</para>
@@ -3966,11 +3999,9 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 			</para>
 			<sect3 id="invioFatturazioneAttiva">
 				<title>Invio della fattura</title>
-				<para> Per l'invio della fattura l'applicativo mittente deve utilizzare:
-					<itemizedlist>
+				<para> Per l'invio della fattura l'applicativo mittente deve utilizzare: <itemizedlist>
 						<listitem>
-							<para>Una URL così
-								composta:
+							<para>Una URL così composta:
 								<screen>http://&lt;host-govway&gt;/govway/sdi/out/xml2soap/&lt;SoggettoSDI&gt;/CentroServiziFatturaPA/SdIRiceviFile/v1?Versione=&lt;VersioneFatturaPA&gt;&amp;TipoFile=&lt;TipoFile&gt;&amp;IdPaese=&lt;IdPaese&gt;&amp;IdCodice=&lt;IdCodice&gt;</screen>
 								dove: <itemizedlist>
 									<listitem>
@@ -3980,41 +4011,48 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>SoggettoSDI</emphasis>: il soggetto interno al dominio come configurato durante l'esecuzione del govlet di
-											fatturazione passiva. </para>
+											<emphasis>SoggettoSDI</emphasis>: il soggetto interno al
+											dominio come configurato durante l'esecuzione del govlet
+											di fatturazione passiva. </para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>Versione</emphasis>: versione della fattura che si sta
-											inviando: FPA12 (Fattura 1.2 per Pubbliche Amministrazione), FPR12
-											(Fattura 1.2 per Privati), SDI11 e SDI10 (Fattura per Pubblica
-											amministrazione versione 1.1. e 1.0). </para>
+											<emphasis>Versione</emphasis>: versione della fattura
+											che si sta inviando: FPA12 (Fattura 1.2 per Pubbliche
+											Amministrazione), FPR12 (Fattura 1.2 per Privati), SDI11
+											e SDI10 (Fattura per Pubblica amministrazione versione
+											1.1. e 1.0). </para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>TipoFile</emphasis>: tipo di fattura: XML (Fattura firmata XADES), P7M (Fattura firmata CADES) o ZIP (archivio di fatture). </para>
+											<emphasis>TipoFile</emphasis>: tipo di fattura: XML
+											(Fattura firmata XADES), P7M (Fattura firmata CADES) o
+											ZIP (archivio di fatture). </para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>IdPaese e IdCodice</emphasis>: dati del trasmittente della
-											fattura. </para>
+											<emphasis>IdPaese e IdCodice</emphasis>: dati del
+											trasmittente della fattura. </para>
 									</listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
 						<listitem>
-							<para>L'invocazione deve essere corredata dalle credenziali che sono state
-								indicate durante la configurazione tramite il relativo govlet.
+							<para>L'invocazione deve essere corredata dalle credenziali che sono
+								state indicate durante la configurazione tramite il relativo govlet.
 							</para>
 						</listitem>
 						<listitem>
-							<para>A seconda del tipo di fattura deve essere utilizzato il corretto header http <emphasis>Content-Type</emphasis>:
-								<itemizedlist>
+							<para>A seconda del tipo di fattura deve essere utilizzato il corretto
+								header http <emphasis>Content-Type</emphasis>: <itemizedlist>
 									<listitem>
-										<para>XML: è possibile utilizzare <emphasis>text/xml</emphasis> o <emphasis>application/xml</emphasis></para>
+										<para>XML: è possibile utilizzare
+												<emphasis>text/xml</emphasis> o
+												<emphasis>application/xml</emphasis></para>
 									</listitem>
 									<listitem>
-										<para>P7M: <emphasis>application/pkcs7-mime</emphasis></para>
+										<para>P7M:
+											<emphasis>application/pkcs7-mime</emphasis></para>
 									</listitem>
 									<listitem>
 										<para>XML: <emphasis>application/zip</emphasis></para>
@@ -4022,13 +4060,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 								</itemizedlist>
 							</para>
 						</listitem>
-					</itemizedlist>
-					Un esempio di invio di una fattura viene fornito tramite il seguente comando curl:
-					<note>
+					</itemizedlist> Un esempio di invio di una fattura viene fornito tramite il
+					seguente comando curl: <note>
 						<title>Soggetto Interno al Dominio</title>
-						<para>In questo esempio si suppone che il nome del soggetto (riferito precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito
-							durante la fase di installazione di GovWay sia
-							<emphasis>Ente</emphasis>.</para>
+						<para>In questo esempio si suppone che il nome del soggetto (riferito
+							precedentemente come <emphasis>SoggettoSDI</emphasis>) fornito durante
+							la fase di installazione di GovWay sia <emphasis>Ente</emphasis>.</para>
 					</note>
 					<screen>curl -X POST -basic --user SdIRiceviFile:123456 \
 --data-binary @IT01234567890_11111.xml.p7m \
@@ -4038,10 +4075,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 			</sect3>
 			<sect3 id="ricezioneFatturazioneAttiva">
 				<title>Ricezione delle Notifiche dallo Sdi</title>
-				<para>Allo Sdi dovrà essere comunicata la seguente url che utilizzerà per inoltrare le notifiche:
+				<para>Allo Sdi dovrà essere comunicata la seguente url che utilizzerà per inoltrare
+					le notifiche:
 					<screen>https://&lt;host-govway&lt;/govway/sdi/in/&lt;SoggettoSDI>/TrasmissioneFatture/v1</screen>
-						Le notifiche ricevute verranno consegnate secondo le modalità specificate durante l'esecuzione del Govlet. 
-						In fase di consegna verranno generati gli header descritti nella tabella <xref linkend="headerRicezioneNotifiche"/>
+					Le notifiche ricevute verranno consegnate secondo le modalità specificate
+					durante l'esecuzione del Govlet. In fase di consegna verranno generati gli
+					header descritti nella tabella <xref linkend="headerRicezioneNotifiche"/>
 				</para>
 			</sect3>
 		</sect2>
@@ -4182,11 +4221,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingQuerySearch.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingQuerySearch.pdf"/>
 					</imageobject>
 
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingQuerySearch.jpg"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingQuerySearch.jpg"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -4328,10 +4367,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Risultato della ricerca dei dati di auditing</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AuditingQueryResult.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AuditingQueryResult.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AuditingQueryResult.jpg"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AuditingQueryResult.jpg"/>
 						</imageobject>
 					</mediaobject>
 				</figure> Ciascun elemento della lista riporta i dati principali che identificano
@@ -4343,10 +4382,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Dettaglio di una traccia di auditing</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/AuditingQueryDetail.pdf"/>
+							<imagedata width="50%" fileref="FIGURE_OUT/AuditingQueryDetail.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/AuditingQueryDetail.jpg"/>
+							<imagedata width="50%" fileref="FIGURE_OUT/AuditingQueryDetail.jpg"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -4373,22 +4412,31 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<para> Configurare i profili fornendo i riferimenti ai servizi di base per
 							l'elaborazione dei messaggi ed al soggetto interno </para>
 					</listitem>
+					<listitem>
+						<para> Configurare la gestione del CORS (<emphasis>cross-origin HTTP request
+								(CORS)</emphasis>) a livello globale valido per tutte le APIs
+						</para>
+					</listitem>
+					<listitem>
+						<para>Configurare il Caching Risposta a livello globale valido per tutte le
+							APIs</para>
+					</listitem>
 				</itemizedlist>
 				<figure id="config-generale-fig">
 					<title>Maschera per l'impostazione dei parametri di configurazione
 						generale</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ConfigurazioneGenerale.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConfigurazioneGenerale.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ConfigurazioneGenerale.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConfigurazioneGenerale.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
 			</para>
 			<sect3>
-				<title>Multi-tenant</title>
+				<title>Multi-Tenant</title>
 				<para> Per abilitare la modalità multi-tenant è sufficiente selezionare il valore
 					"abilitato" sull'elemento Stato. </para>
 				<para> Dopo aver abilitato l'opzione multi-tenant è possibile creare nuovi soggetti
@@ -4424,6 +4472,122 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					</itemizedlist>
 				</para>
 			</sect3>
+			<sect3 id="configurazione-cors">
+				<title>Gestione CORS</title>
+				<para>In GovWay è possibile abilitare la gestione del CORS (<emphasis>cross-origin
+						HTTP request (CORS)</emphasis>) globalmente in modo che sia valido per tutte
+					le APIs. </para>
+				<para> La configurazione permette di specificare i seguenti parametri: <itemizedlist>
+						<listitem>
+							<para>
+								<emphasis>Stato</emphasis>: Indicazione se la gestione del CORS è
+								abilitata o meno globalmente su GovWay. </para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Tipo</emphasis>: Se la gestione del CORS è abilitata,
+								questa può essere attuata da GovWay, tramite la configurazione di
+								seguito descritta, o può essere demandata all'applicativo. </para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Access Control</emphasis>: tutti i parametri seguenti
+								permettono di configurare il CORS. Per il dettaglio su cosa
+								significa ogni singola voce si rimanda alla specifica CORS
+									<emphasis>https://www.w3.org/TR/cors/</emphasis>. <itemizedlist>
+									<listitem>
+										<para><emphasis>All Allow Origins</emphasis>: se abilitato
+											viene impostato nell'header http
+											'Access-Control-Allow-Origin' il valore '*'</para>
+									</listitem>
+									<listitem>
+										<para><emphasis>Allow Origins</emphasis>: nel caso non viene
+											abilitato il parametro precedente, in questo campo è
+											possibile indicare una lista di origin che vengono
+											impostate nell'header http
+											'Access-Control-Allow-Origin'</para>
+									</listitem>
+									<listitem>
+										<para><emphasis>Allow Headers</emphasis>: nomi di header
+											inseriti nell'header http
+											'Access-Control-Allow-Headers'</para>
+									</listitem>
+									<listitem>
+										<para><emphasis>Allow Methods</emphasis>: metodi inseriti
+											nell'header http 'Access-Control-Allow-Methods'</para>
+									</listitem>
+									<listitem>
+										<para><emphasis>Allow Credentials</emphasis>: se abilitato o
+											disabilitato viene impostato relativemente il valore
+											true o false nell'header
+											'Access-Control-Allow-Credentials'</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<figure id="config-generale-cors">
+					<title>Maschera di configurazione generale del CORS</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConfigurazioneCORS.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConfigurazioneCORS.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</sect3>
+			<sect3 id="configurazione-response-caching">
+				<title>Caching Risposta</title>
+				<para>In GovWay è possibile abilitare il salvataggio delle risposte in una cache
+					globalmente in modo che sia attivo per tutte le APIs. Questa funzionalità
+					permette ad un backend server di non dover riprocessare le stesse richieste più
+					volte. </para>
+				<para> La configurazione permette di specificare i seguenti parametri: <itemizedlist>
+						<listitem>
+							<para>
+								<emphasis>Stato</emphasis>: Indicazione se il salvataggio delle
+								risposte in cache è abilitata o meno globalmente su GovWay. </para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Cache Timeout (secondi)</emphasis>: intervallo di tempo,
+								definito in secondi, per il quale la risposta salvata in cache viene
+								utilizzata come risposte a successive richieste di un client.
+							</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Dimensione Max Risposta</emphasis>: se abilitato deve
+								essere definita la dimensione massima (in kb) che una risposta può
+								avere per essere salvata in cache.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Generazione Hash</emphasis>: ad ogni risposta salvata in
+								cache viene associato un valore hash calcolato rispetto ai dati
+								della richiesta quali url di invocazione, header di trasporto e
+								payload (se disponibile). E' possibile configurare quali parametri
+								della richiesta utilizzare per generare il valore hash; per default
+								vengono utilizzati tutti. </para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<figure id="config-generale-response-caching">
+					<title>Maschera di configurazione per il Caching della Risposta</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="60%"
+								fileref="FIGURE_OUT/ConfigurazioneCachingRisposta.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="60%"
+								fileref="FIGURE_OUT/ConfigurazioneCachingRisposta.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</sect3>
 		</sect2>
 		<sect2 id="config-tracciamento">
 			<title>Tracciamento</title>
@@ -4455,10 +4619,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Configurazione del servizio di tracciamento</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Tracciamento.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Tracciamento.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Tracciamento.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Tracciamento.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> Vediamo il significato delle sezioni di questa pagina: <itemizedlist>
@@ -4552,10 +4716,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						traffico</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/ControlloTraffico.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ControlloTraffico.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/ControlloTraffico.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ControlloTraffico.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> La configurazione della funzionalità di controllo del traffico (<xref
@@ -4741,11 +4905,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						<title>Configurazione della soglia di congestionamento</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/ControlloTraffico-Congestione.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%"
+								<imagedata width="60%"
 									fileref="FIGURE_OUT/ControlloTraffico-Congestione.png"/>
 							</imageobject>
 						</mediaobject>
@@ -4827,12 +4991,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 								registro</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-RegistroPolicy-list.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-RegistroPolicy-list.png"
 									/>
 								</imageobject>
@@ -4844,12 +5008,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Maschera per la creazione di una policy di Rate Limiting</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-RegistroPolicy-new.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-RegistroPolicy-new.png"
 									/>
 								</imageobject>
@@ -5167,7 +5331,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 												nel database di monitoraggio. L'accuratezza dei
 												dati utilizzati per la valutazione è subordinata
 												alla frequenza di aggiornamento dei dati
-												statistici sul database. In questa modalità: <orderedlist>
+												statistici sul database. Inoltre tale modalità
+												richiede il tracciamento delle transazioni sulle
+												quali viene poi calcolata la statisticha (vedi
+												<xref linkend="config-tracciamento"/>). In questa
+												modalità: <orderedlist>
 												<listitem>
 												<para> L'indicatore utilizzato per il confronto
 												con la soglia della policy è sempre complessivo
@@ -5462,12 +5630,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 											limiting</title>
 										<mediaobject>
 											<imageobject>
-												<imagedata width="70%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Applicabilita.pdf"
 												/>
 											</imageobject>
 											<imageobject>
-												<imagedata width="70%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Applicabilita.png"
 												/>
 											</imageobject>
@@ -5497,11 +5665,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Elenco delle policy di Rate Limiting attivate</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-Policy-list.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-Policy-list.png"/>
 								</imageobject>
 							</mediaobject>
@@ -5515,11 +5683,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 								Limiting</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-Policy-new.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-Policy-new.png"/>
 								</imageobject>
 							</mediaobject>
@@ -5804,12 +5972,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 											rate limiting</title>
 										<mediaobject>
 											<imageobject>
-												<imagedata width="80%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Filtro.pdf"
 												/>
 											</imageobject>
 											<imageobject>
-												<imagedata width="80%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Filtro.png"
 												/>
 											</imageobject>
@@ -5927,12 +6095,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 											rate limiting</title>
 										<mediaobject>
 											<imageobject>
-												<imagedata width="80%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Collezionamento.pdf"
 												/>
 											</imageobject>
 											<imageobject>
-												<imagedata width="80%"
+												<imagedata width="60%"
 												fileref="FIGURE_OUT/ControlloTraffico-Collezionamento.png"
 												/>
 											</imageobject>
@@ -5955,12 +6123,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 							<title>Dati statistici relativi ad una policy di rate limiting</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-StatistichePolicy.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%"
+									<imagedata width="60%"
 										fileref="FIGURE_OUT/ControlloTraffico-StatistichePolicy.png"
 									/>
 								</imageobject>
@@ -6065,10 +6233,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					<title>Informazioni generali di una Token Policy</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/TokenPolicy-generale.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/TokenPolicy-generale.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/TokenPolicy-generale.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/TokenPolicy-generale.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> Inizialmente si inseriscono i dati identificativi: <itemizedlist>
@@ -6202,10 +6370,10 @@ Host: server.example.com
 						<title>Dati di configurazione della validazione JWT</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ValidazioneJWT.pdf"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/ValidazioneJWT.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ValidazioneJWT.png"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/ValidazioneJWT.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure> I dati da inserire sono: <itemizedlist>
@@ -6255,10 +6423,10 @@ Host: server.example.com
 						<title>Dati di puntamento al servizio di Token Instrospection</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/TokenIntrospection.pdf"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/TokenIntrospection.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/TokenIntrospection.png"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/TokenIntrospection.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure> Per il corretto puntamento al servizio di Token Introspection devono
@@ -6352,12 +6520,12 @@ Host: server.example.com
 												Token Instrospection</title>
 												<mediaobject>
 												<imageobject>
-												<imagedata width="80%"
+												<imagedata width="50%"
 												fileref="FIGURE_OUT/TokenIntrospectionCustom.pdf"
 												/>
 												</imageobject>
 												<imageobject>
-												<imagedata width="80%"
+												<imagedata width="50%"
 												fileref="FIGURE_OUT/TokenIntrospectionCustom.png"
 												/>
 												</imageobject>
@@ -6419,10 +6587,10 @@ Host: server.example.com
 						<title>Dati di puntamento al servizio di UserInfo</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/OIDCUserInfo.pdf"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/OIDCUserInfo.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/OIDCUserInfo.png"/>
+								<imagedata width="50%" fileref="FIGURE_OUT/OIDCUserInfo.png"/>
 							</imageobject>
 						</mediaobject>
 					</figure> Per il corretto puntamento al servizio di UserInfo devono essere
@@ -6741,10 +6909,10 @@ GovWay-Token-EMail
 					<title>Creazione nuovo utente</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiUtente.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiUtente.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiUtente.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiUtente.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> Le informazioni da inserire sono: <itemizedlist>
@@ -6820,10 +6988,10 @@ GovWay-Token-EMail
 					<title>Lista degli utenti</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ElencoUtenti.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ElencoUtenti.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ElencoUtenti.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ElencoUtenti.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -6884,10 +7052,10 @@ GovWay-Token-EMail
 					<title>Importazione di entità nel registro</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Importazione.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Importazione.png"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/Importazione.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/Importazione.pdf"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -6906,10 +7074,10 @@ GovWay-Token-EMail
 							<title>Esportazione di singole entità del registro</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione.png"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -6937,10 +7105,10 @@ GovWay-Token-EMail
 							<title>Esportazione di entità nel registro</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione2.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione2.png"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione2.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione2.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -6952,10 +7120,10 @@ GovWay-Token-EMail
 							<title>Esportazione di entità nel registro</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione3.png"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione3.png"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="80%" fileref="FIGURE_OUT/Esportazione3.pdf"/>
+									<imagedata width="60%" fileref="FIGURE_OUT/Esportazione3.pdf"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -7021,11 +7189,11 @@ GovWay-Token-EMail
 
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupDisabled.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupDisabled.pdf"/>
 					</imageobject>
 
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupDisabled.jpg"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupDisabled.jpg"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -7038,11 +7206,11 @@ GovWay-Token-EMail
 
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupEnabled.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupEnabled.pdf"/>
 					</imageobject>
 
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupEnabled.jpg"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupEnabled.jpg"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -7099,11 +7267,11 @@ GovWay-Token-EMail
 
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupFilter.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupFilter.pdf"/>
 					</imageobject>
 
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/AuditingSetupFilter.jpg"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/AuditingSetupFilter.jpg"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -7246,10 +7414,10 @@ GovWay-Token-EMail
 					<title>Aggiunta di un servizio alla API SOAP</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiPortType.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiPortType.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiPortType.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiPortType.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> I dati da fornire sono i seguenti: <itemizedlist>
@@ -7280,10 +7448,10 @@ GovWay-Token-EMail
 					<title>Aggiunta di un'azione alla API SOAP</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiAzione.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiAzione.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiAzione.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiAzione.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> I dati da fornire sono i seguenti: <itemizedlist>
@@ -7304,10 +7472,10 @@ GovWay-Token-EMail
 					<title>Aggiunta di una risorsa alla API REST</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiRisorsaREST.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiRisorsaREST.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/AggiungiRisorsaREST.png"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/AggiungiRisorsaREST.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> I dati da fornire sono i seguenti: <itemizedlist>
@@ -7489,10 +7657,10 @@ GovWay-Token-EMail
 				<title>Elementi di configurazione della modalità multi-tenant</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/Multi-Tenant-Config.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Multi-Tenant-Config.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/Multi-Tenant-Config.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Multi-Tenant-Config.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -7507,10 +7675,10 @@ GovWay-Token-EMail
 				<title>Selezione del soggetto operativo in modalità multi-tenant</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/Multi-Tenant.pdf"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Multi-Tenant.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="80%" fileref="FIGURE_OUT/Multi-Tenant.png"/>
+						<imagedata width="60%" fileref="FIGURE_OUT/Multi-Tenant.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -9269,10 +9437,10 @@ GovWay-Token-EMail
 						<title>Dati di configurazione di un'autenticazione Http</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/AutenticazioneHTTP.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/AutenticazioneHTTP.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/AutenticazioneHTTP.jpg"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/AutenticazioneHTTP.jpg"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -9303,10 +9471,10 @@ GovWay-Token-EMail
 						<title>Dati di configurazione di un'autenticazione Https</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreHTTPS.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreHTTPS.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreHTTPS.jpg"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreHTTPS.jpg"/>
 							</imageobject>
 						</mediaobject>
 					</figure> Facendo riferimento alla maschera raffigurata in <xref
@@ -9421,10 +9589,10 @@ GovWay-Token-EMail
 						<title>Dati di configurazione di un Proxy Http</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ProxyHTTP.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ProxyHTTP.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ProxyHTTP.jpg"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ProxyHTTP.jpg"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -9442,11 +9610,11 @@ GovWay-Token-EMail
 						<title>Configurazione http avanzata</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/OpzioniAvanzateHttp.pdf"
+								<imagedata width="60%" fileref="FIGURE_OUT/OpzioniAvanzateHttp.pdf"
 								/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/OpzioniAvanzateHttp.jpg"
+								<imagedata width="60%" fileref="FIGURE_OUT/OpzioniAvanzateHttp.jpg"
 								/>
 							</imageobject>
 						</mediaobject>
@@ -9538,10 +9706,10 @@ GovWay-Token-EMail
 						<title>Debug</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/DebugConnettore.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/DebugConnettore.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/DebugConnettore.jpg"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/DebugConnettore.jpg"/>
 							</imageobject>
 						</mediaobject>
 					</figure>
@@ -9558,11 +9726,11 @@ GovWay-Token-EMail
 
 					<mediaobject>
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreJMS.pdf"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreJMS.pdf"/>
 						</imageobject>
 
 						<imageobject>
-							<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreJMS.jpg"/>
+							<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreJMS.jpg"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -9654,10 +9822,10 @@ GovWay-Token-EMail
 						<title>Dati di configurazione di un connettore File</title>
 						<mediaobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreFILE.pdf"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreFILE.pdf"/>
 							</imageobject>
 							<imageobject>
-								<imagedata width="80%" fileref="FIGURE_OUT/ConnettoreFILE.jpg"/>
+								<imagedata width="60%" fileref="FIGURE_OUT/ConnettoreFILE.jpg"/>
 							</imageobject>
 						</mediaobject>
 					</figure> Facendo riferimento alla maschera raffigurata in <xref

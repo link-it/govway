@@ -102,6 +102,8 @@ public class DataElement {
 	private Integer minValue = null, maxValue= null;
 	
 	private List<String> icon, url,toolTip, target = null;
+	
+	private Map<String, String> dataAttributes = null;
 
 	public String getIdToRemove() {
 		return this.idToRemove;
@@ -133,7 +135,7 @@ public class DataElement {
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
 		this.labelStyleClass = null;
 		this.labelRight = null;
-		
+		this.dataAttributes = new HashMap<>();
 	}
 
 	public void setId(int i) {
@@ -578,6 +580,11 @@ public class DataElement {
 		} else 
 			return null;
 	}
+	
+	public void allineaTdAlCentro() {
+		String styleAllinaCentro = "text-align : center;";
+		this.setStyle(styleAllinaCentro); 
+	}
 
 	/**
 	 * Imposta la larghezza dell'elemento
@@ -641,5 +648,24 @@ public class DataElement {
 	
 	public void addIcon(String icon) {
 		this.icon.add(icon);
+	}
+
+	public Map<String, String> getDataAttributesMap() {
+		return this.dataAttributes;
+	}
+	
+	public String getDataAttributes() {
+		StringBuffer sb = new StringBuffer();
+		
+		if(!this.dataAttributes.isEmpty()) {
+			for (String key : this.dataAttributes.keySet()) {
+				sb.append("data-").append(key).append("=\"").append(this.dataAttributes.get(key)).append("\"");
+			}
+		}
+		
+		return sb.toString();
+	}
+	public void enableTags() {
+		this.getDataAttributesMap().put("role", "tagsinput");
 	}
 }

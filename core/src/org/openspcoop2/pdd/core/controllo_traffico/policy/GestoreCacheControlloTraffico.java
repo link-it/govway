@@ -187,20 +187,20 @@ public class GestoreCacheControlloTraffico {
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
 			try{
-				String msg = "Dimensione della cache (Dump) impostata al valore: "+dimensioneCache;
+				String msg = "Dimensione della cache (ControlloTraffico) impostata al valore: "+dimensioneCache;
 				alog.info(msg);
 				cache.setCacheSize(dimensioneCache);
 			}catch(Exception error){
-				String msg = "Parametro errato per la dimensione della cache (Dump): "+error.getMessage();
+				String msg = "Parametro errato per la dimensione della cache (ControlloTraffico): "+error.getMessage();
 				alog.error(msg);
 				throw new Exception(msg,error);
 			}
 		}
 		
 		// algoritno
-		String msg = "Algoritmo di cache (Dump) impostato al valore: LRU";
+		String msg = "Algoritmo di cache (ControlloTraffico) impostato al valore: LRU";
 		if(!algoritmoCacheLRU){
-			msg = "Algoritmo di cache (Dump) impostato al valore: MRU";
+			msg = "Algoritmo di cache (ControlloTraffico) impostato al valore: MRU";
 		}
 		alog.info(msg);
 		if(!algoritmoCacheLRU)
@@ -212,11 +212,11 @@ public class GestoreCacheControlloTraffico {
 		// idle time
 		if(itemIdleTime!=null && itemIdleTime>0){
 			try{
-				msg = "Attributo 'IdleTime' (Dump) impostato al valore: "+itemIdleTime;
+				msg = "Attributo 'IdleTime' (ControlloTraffico) impostato al valore: "+itemIdleTime;
 				alog.info(msg);
 				cache.setItemIdleTime(itemIdleTime);
 			}catch(Exception error){
-				msg = "Parametro errato per l'attributo 'IdleTime' (Dump): "+error.getMessage();
+				msg = "Parametro errato per l'attributo 'IdleTime' (ControlloTraffico): "+error.getMessage();
 				alog.error(msg);
 				throw new Exception(msg,error);
 			}
@@ -225,11 +225,11 @@ public class GestoreCacheControlloTraffico {
 		// LifeSecond
 		if(itemLifeSecond!=null && itemLifeSecond>0){
 			try{
-				msg = "Attributo 'MaxLifeSecond' (Dump) impostato al valore: "+itemLifeSecond;
+				msg = "Attributo 'MaxLifeSecond' (ControlloTraffico) impostato al valore: "+itemLifeSecond;
 				alog.info(msg);
 				cache.setItemLifeTime(itemLifeSecond);
 			}catch(Exception error){
-				msg = "Parametro errato per l'attributo 'MaxLifeSecond' (Dump): "+error.getMessage();
+				msg = "Parametro errato per l'attributo 'MaxLifeSecond' (ControlloTraffico): "+error.getMessage();
 				alog.error(msg);
 				throw new Exception(msg,error);
 			}

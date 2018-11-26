@@ -62,6 +62,8 @@ import java.util.List;
  * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="system-properties" type="{http://www.openspcoop2.org/core/config}system-properties" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -97,7 +99,9 @@ import java.util.List;
   	"integrationManager",
   	"statoServiziPdd",
   	"systemProperties",
-  	"genericProperties"
+  	"genericProperties",
+  	"gestioneCors",
+  	"responseCaching"
   }
 )
 
@@ -345,6 +349,22 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     return this.genericProperties.size();
   }
 
+  public CorsConfigurazione getGestioneCors() {
+    return this.gestioneCors;
+  }
+
+  public void setGestioneCors(CorsConfigurazione gestioneCors) {
+    this.gestioneCors = gestioneCors;
+  }
+
+  public ResponseCachingConfigurazioneGenerale getResponseCaching() {
+    return this.responseCaching;
+  }
+
+  public void setResponseCaching(ResponseCachingConfigurazioneGenerale responseCaching) {
+    this.responseCaching = responseCaching;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -489,5 +509,11 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
   public int sizeGenericProperties() {
   	return this.genericProperties.size();
   }
+
+  @XmlElement(name="gestione-cors",required=false,nillable=false)
+  protected CorsConfigurazione gestioneCors;
+
+  @XmlElement(name="response-caching",required=false,nillable=false)
+  protected ResponseCachingConfigurazioneGenerale responseCaching;
 
 }

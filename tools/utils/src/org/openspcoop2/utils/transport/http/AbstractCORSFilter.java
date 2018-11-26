@@ -90,9 +90,15 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		if(accessControlRequestHeaders!=null) {
 			if(config.allowRequestHeader!=null && config.allowRequestHeader) {
 				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, accessControlRequestHeaders);
+				if(config.generateAllowHeader) {
+					res.addHeader(HttpConstants.ALLOW_HEADERS, accessControlRequestHeaders);
+				}
 			}
 			else if(!config.allowHeaders.isEmpty()) {
 				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+				if(config.generateAllowHeader) {
+					res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+				}
 			}
 			else {
 				if(config.throwExceptionIfNotFoundConfig) {
@@ -108,6 +114,9 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		else {
 			if(!config.allowHeaders.isEmpty()) {
 				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+				if(config.generateAllowHeader) {
+					res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+				}
 			}
 		}
 

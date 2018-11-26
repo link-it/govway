@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Date;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.ICore;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -53,11 +54,12 @@ public interface IConnettore extends ICore {
     /**
      * Si occupa di effettuare la consegna.
      *
+     * @param responseCachingConfig Configurazione per il response caching
      * @param request Messaggio da consegnare.
      * @return true in caso di consegna con successo, false altrimenti
      * 
      */
-    public boolean send(ConnettoreMsg request);
+    public boolean send(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request);
     
     
     

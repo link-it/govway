@@ -34,16 +34,21 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
+import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -74,6 +79,8 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.CORSFilter;
+import org.openspcoop2.pdd.core.CORSWrappedHttpServletResponse;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -112,6 +119,7 @@ import org.openspcoop2.pdd.core.integrazione.OutResponsePDMessage;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.node.NodeTimeoutException;
+import org.openspcoop2.pdd.core.response_caching.HashGenerator;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
@@ -182,6 +190,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -1069,7 +1078,10 @@ public class RicezioneContenutiApplicativi {
 		}
 
 		// Raccolgo dati
-		IDSoggetto soggettoFruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+		IDSoggetto soggettoFruitore = null;
+		if(portaDelegata!=null) {
+			soggettoFruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+		}
 		try {
 			soggettoFruitore.setCodicePorta(configurazionePdDReader.getIdentificativoPorta(soggettoFruitore, protocolFactory));
 		} catch (Exception e) {
@@ -1203,6 +1215,54 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
+		
+		
+		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Raccolta dati Gestione CORS ...");
+		// NOTA: i dati CORS sono memorizzati solamente nella porta principale e non in quelle di eventuali azioni delegate.
+		//       deve quindi essere recuperata prima di sostituire la pd con una più specifica
+		CorsConfigurazione cors = null;
+		HttpServletRequest httpServletRequest = null;
+		boolean effettuareGestioneCORS = false;
+		try {
+			if(requestInfo!=null && requestInfo.getProtocolContext()!=null) {
+				httpServletRequest = requestInfo.getProtocolContext().getHttpServletRequest();	
+			}
+			
+			if(httpServletRequest!=null && HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
+				if(portaDelegata!=null) {
+					cors = configurazionePdDReader.getConfigurazioneCORS(portaDelegata);
+				}
+				else {
+					cors = configurazionePdDReader.getConfigurazioneCORS();
+				}
+			}
+			else {
+				cors = new CorsConfigurazione();
+				cors.setStato(StatoFunzionalita.DISABILITATO);
+			}
+		} catch (Exception e) {
+			msgDiag.logErroreGenerico(e, "configurazionePdDReader.getConfigurazioneCORS(pd)");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR, 
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
+			}
+			return;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Lettura servizio associato alla PD invocata...");
 		
 		
@@ -1218,9 +1278,10 @@ public class RicezioneContenutiApplicativi {
 		RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
 				identificativoPortaDelegata, null,
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
+		IDServizio idServizio = null;
 		try {
 			IDSoggetto soggettoErogatore = new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(),portaDelegata.getSoggettoErogatore().getNome());
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
 					soggettoErogatore, portaDelegata.getServizio().getVersione());
 			if(requestInfo.getIdServizio()!=null && requestInfo.getIdServizio().getAzione()!=null){
 				// gia identificata
@@ -1234,6 +1295,41 @@ public class RicezioneContenutiApplicativi {
 				idServizio.setAzione(configurazionePdDReader.getAzione(portaDelegata, urlProtocolContext, requestMessage, 
 						headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), protocolFactory));
 			}
+
+		} catch (IdentificazioneDinamicaException e) {
+			
+			boolean throwFault = true;
+			if(StatoFunzionalita.ABILITATO.equals(cors.getStato()) && this.msgContext.isGestioneRisposta()) {
+				throwFault = false;
+			}
+			if(throwFault) {
+			
+				msgDiag.addKeywordErroreProcessamento(e);
+				msgDiag.logPersonalizzato("identificazioneDinamicaAzioneNonRiuscita");
+				openspcoopstate.releaseResource();
+				if (this.msgContext.isGestioneRisposta()) {
+					this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
+							ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,null)));
+				}
+				return;
+			}
+			else {
+				effettuareGestioneCORS = true;
+			}
+				
+		} catch (Exception e) {
+			msgDiag.addKeywordErroreProcessamento(e);
+			msgDiag.logPersonalizzato("identificazioneDinamicaServizioNonRiuscita");
+			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaServizioNonRiuscita"),e);
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
+			}
+			return;
+		}
+		try {
 			if(idServizio.getSoggettoErogatore().getCodicePorta()==null) {
 				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory));
 			}
@@ -1259,20 +1355,10 @@ public class RicezioneContenutiApplicativi {
 				// per profilo asincrono asimmetrico e simmetrico
 				headerIntegrazioneRisposta.getBusta().setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
 			}
-
-		} catch (IdentificazioneDinamicaException e) {
-			msgDiag.addKeywordErroreProcessamento(e);
-			msgDiag.logPersonalizzato("identificazioneDinamicaAzioneNonRiuscita");
-			openspcoopstate.releaseResource();
-			if (this.msgContext.isGestioneRisposta()) {
-				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
-						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,null)));
-			}
-			return;
 		} catch (Exception e) {
 			msgDiag.addKeywordErroreProcessamento(e);
-			msgDiag.logPersonalizzato("identificazioneDinamicaServizioNonRiuscita");
-			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaServizioNonRiuscita"),e);
+			msgDiag.logPersonalizzato("LetturaDatiServizioServizioNonRiuscita");
+			logCore.error(msgDiag.getMessaggio_replaceKeywords("LetturaDatiServizioServizioNonRiuscita"),e);
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
@@ -1283,6 +1369,83 @@ public class RicezioneContenutiApplicativi {
 		}
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 		msgDiag.addKeywords(richiestaDelegata.getIdServizio());
+		
+		
+		
+		
+		
+		// Gestione CORS
+		
+		if(!effettuareGestioneCORS && StatoFunzionalita.ABILITATO.equals(cors.getStato()) &&
+				richiestaDelegata!=null && richiestaDelegata.getIdServizio()!=null &&
+				richiestaDelegata.getIdServizio().getAzione()==null) {
+			if(ServiceBinding.REST.equals(requestInfo.getIntegrationServiceBinding())) {
+				// in rest una risorsa deve essere riconsociuta
+				if(StatoFunzionalita.ABILITATO.equals(cors.getStato()) && this.msgContext.isGestioneRisposta()) {
+					effettuareGestioneCORS = true;
+				}
+			}
+			else {
+				boolean azioneErrata = false;
+				Servizio infoServizio = null;
+				try {
+					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, richiestaDelegata.getIdServizio(),null,false, true);
+				} catch (DriverRegistroServiziAzioneNotFound e) {
+					azioneErrata = true;
+				} catch (Throwable e) {
+					// ignore
+				}
+				if (infoServizio == null) {
+					try {
+						infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,richiestaDelegata.getIdServizio(),null, true);
+					} catch (DriverRegistroServiziAzioneNotFound e) {
+						azioneErrata = true;
+					} catch (Throwable e) {
+						// ignore
+					}
+				}
+				if(azioneErrata) {
+					effettuareGestioneCORS = true;
+				}
+			}
+		}
+		
+		boolean corsTrasparente = false;
+		if(effettuareGestioneCORS) {
+			
+			if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
+				
+				CORSFilter corsFilter = new CORSFilter(logCore, cors);
+				try {
+					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
+					corsFilter.doCORS(httpServletRequest, res);
+					this.msgContext.setMessageResponse(res.buildMessage());
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
+				}catch(Exception e) {
+					// un eccezione non dovrebbe succedere
+					msgDiag.logErroreGenerico(e, "gestioneCORS(pd)");
+					openspcoopstate.releaseResource();
+					if (this.msgContext.isGestioneRisposta()) {
+						this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR, 
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
+					}
+					return;
+				}
+				
+				openspcoopstate.releaseResource();
+				return;
+					
+			}
+			else {
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE, "true");
+				corsTrasparente = true;
+				
+			}
+			
+		}
+		
 		
 		
 		
@@ -2608,7 +2771,7 @@ public class RicezioneContenutiApplicativi {
 		  * --------- Informazioni protocollo ----------
 		 */
 		IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder(openspcoopstate.getStatoRichiesta());
-		IDServizio idServizio = richiestaDelegata.getIdServizio();	
+		idServizio = richiestaDelegata.getIdServizio();	
 		this.msgContext.getProtocol().setFruitore(soggettoFruitore);	
 		this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());		
 		this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
@@ -2798,11 +2961,11 @@ public class RicezioneContenutiApplicativi {
 						// utilizzo l'informazione come integrazione asincrona SOLO se il servizio e' correlato.
 						Servizio infoServizioTmpVerificaCorrelato = null;
 						try{
-							infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch);
+							infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, true);
 						}catch(Exception e){
 							logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato, fallita: "+e.getMessage());
 							try{
-								infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch);
+								infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch, true);
 							}catch(Exception eCorrelato){
 								logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato rispetto all'azione, fallita: "+e.getMessage());
 							}
@@ -2845,11 +3008,21 @@ public class RicezioneContenutiApplicativi {
 				// Ricerca come servizio correlato
 				msgDiag.mediumDebug("Ricerca servizio correlato ...");
 				try {
-					infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch);
+					infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, true);
 					isServizioCorrelato = true;
 				} catch (DriverRegistroServiziAzioneNotFound e) {
-					invocazioneAzioneErrata = e.getMessage();
-					throw e;
+					boolean throwFault = true;
+					if(corsTrasparente) {
+						try {
+							infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, false);
+							isServizioCorrelato = true;
+							throwFault = false;
+						}catch(Throwable ignore) {}
+					}
+					if(throwFault) {
+						invocazioneAzioneErrata = e.getMessage();
+						throw e;
+					}
 				} catch (DriverRegistroServiziNotFound e) {
 					erroreRicerca = "\nRicerca come servizio correlato-> "+ e.getMessage();
 				}
@@ -2859,11 +3032,21 @@ public class RicezioneContenutiApplicativi {
 				if (infoServizio == null && (idServizio.getAzione() != null)) {
 					msgDiag.mediumDebug("Ricerca servizio con azione correlata...");
 					try {
-						infoServizio = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch);
+						infoServizio = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch, true);
 						isServizioCorrelato = true;
 					} catch (DriverRegistroServiziAzioneNotFound e) {
-						invocazioneAzioneErrata = e.getMessage();
-						throw e;
+						boolean throwFault = true;
+						if(corsTrasparente) {
+							try {
+								infoServizio = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch, false);
+								isServizioCorrelato = true;
+								throwFault = false;
+							}catch(Throwable ignore) {}
+						}
+						if(throwFault) {
+							invocazioneAzioneErrata = e.getMessage();
+							throw e;
+						}
 					} catch (DriverRegistroServiziNotFound e) {
 						erroreRicerca = erroreRicerca+ "\nRicerca come servizio correlato -> "+ e.getMessage();
 					}
@@ -2887,10 +3070,19 @@ public class RicezioneContenutiApplicativi {
 				// Ricerca come servizio
 				msgDiag.mediumDebug("Ricerca servizio ...");
 				try {
-					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true);
+					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, true);
 				} catch (DriverRegistroServiziAzioneNotFound e) {
-					invocazioneAzioneErrata = e.getMessage();
-					throw e;
+					boolean throwFault = true;
+					if(corsTrasparente) {
+						try {
+							infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false);
+							throwFault = false;
+						}catch(Throwable ignore) {}
+					}
+					if(throwFault) {
+						invocazioneAzioneErrata = e.getMessage();
+						throw e;
+					}
 				} catch (DriverRegistroServiziNotFound e) {
 					erroreRicerca = "\nRicerca come servizio -> "+ e.getMessage();
 				}
@@ -2899,11 +3091,21 @@ public class RicezioneContenutiApplicativi {
 				if (infoServizio == null) {
 					msgDiag.mediumDebug("Ricerca servizio correlato...");
 					try {
-						infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch);
+						infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, true);
 						isServizioCorrelato = true;
 					} catch (DriverRegistroServiziAzioneNotFound e) {
-						invocazioneAzioneErrata = e.getMessage();
-						throw e;
+						boolean throwFault = true;
+						if(corsTrasparente) {
+							try {
+								infoServizio = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch, false);
+								isServizioCorrelato = true;
+								throwFault = false;
+							}catch(Throwable ignore) {}
+						}
+						if(throwFault) {
+							invocazioneAzioneErrata = e.getMessage();
+							throw e;
+						}
 					} catch (DriverRegistroServiziNotFound e) {
 						erroreRicerca = erroreRicerca+ "\nRicerca come servizio correlato -> "+ e.getMessage();
 					}
@@ -3643,6 +3845,37 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Recupero configurazione per salvataggio risposta in cache ...");
+		msgDiag.mediumDebug("Recupero configurazione per salvataggio risposta in cache ...");
+		try{
+			ResponseCachingConfigurazione responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching(portaDelegata);
+			if(responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getStato())) {
+				msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
+				
+				HashGenerator hashGenerator = new HashGenerator(propertiesReader.getCachingResponseDigestAlgorithm());
+				String digest = hashGenerator.buildKeyCache(requestMessage, requestInfo, responseCachingConfig);
+				requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
+				
+			}
+		} catch (Exception e){
+			msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_561_DIGEST_REQUEST),e,null)));
+			}
+			return;
+		} 
 		
 		
 		

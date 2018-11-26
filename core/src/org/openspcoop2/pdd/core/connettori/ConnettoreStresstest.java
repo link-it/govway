@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -98,19 +99,19 @@ public class ConnettoreStresstest extends ConnettoreBase {
 	
 	/* ********  METODI  ******** */
 
-	/**
-	 * Si occupa di effettuare la consegna.
-	 *
-	 * @param request Messaggio da Consegnare
-	 * @return true in caso di consegna con successo, false altrimenti
-	 * 
-	 */
-	@Override
-	public boolean send(ConnettoreMsg request){
-
-		if(this.initialize(request, false)==false){
+    @Override
+	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
+		
+    	if(this.initialize(request, false, responseCachingConfig)==false){
 			return false;
 		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	protected boolean send(ConnettoreMsg request) {	
 		
 		// - Header Applicativo nella risposta
 		boolean headerApplicativoRisposta = false;

@@ -76,6 +76,10 @@ var path = '<%= request.getContextPath()%>';
 <script type="text/javascript" src="js/ui.core.js"></script>
 <script type="text/javascript" src="js/ui.dialog.js"></script>
 <script type="text/javascript" src="js/ui.slider.js"></script>
+
+<style type="text/css">@import url(css/bootstrap-tagsinput.css);</style>
+<script type="text/javascript" src="js/jquery-on.js"></script>
+<script type="text/javascript" src="js/bootstrap-tagsinput.js"></script>
 <script>
 var nr = 0;
 function CheckDati() {
@@ -96,7 +100,7 @@ function CheckDati() {
                 $(":input[name='datainizio']").datepicker({dateFormat: 'yy-mm-dd'});
                 $(":input[name='datafine']").datepicker({dateFormat: 'yy-mm-dd'});
 
-                showSlider($("select[name^='percentuale']:not([type=hidden])"));
+                showSlider($("select[name*='percentuale']:not([type=hidden])"));
                 
                 var numInputs = document.querySelectorAll('input[type=number]');
 
@@ -110,6 +114,18 @@ function CheckDati() {
                	         e.target.value = e.target.min;
                	    	} else {
                	    		e.target.value = 0;
+               	    	}
+               	    } else {
+               	    	if(e.target.min){
+               	    		if(parseInt(e.target.min) > parseInt(e.target.value)){
+               	    			e.target.value = e.target.min;
+               	    		}
+               	    	}
+               	    	
+               	    	if(e.target.max){
+               	    		if(parseInt(e.target.max) < parseInt(e.target.value)){
+               	    			e.target.value = e.target.max;
+               	    		}
                	    	}
                	    }
                	}

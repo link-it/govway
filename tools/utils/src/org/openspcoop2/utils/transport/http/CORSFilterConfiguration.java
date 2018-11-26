@@ -64,6 +64,11 @@ public class CORSFilterConfiguration {
 	protected List<String> allowHeaders = new ArrayList<>(); 
 	
 	/*
+	 * Oltre all'header Access-Control-Allow-Headers response header viene generato anche l'header Allow con medesimi valori
+	 */
+	protected boolean generateAllowHeader = false;
+	
+	/*
 	 * The Access-Control-Request-Method request header is used when issuing a preflight request to let the server know which HTTP method will be used when the actual request is made. 
 	 * This header is necessary as the preflight request is always an OPTIONS and doesn't use the same method as the actual request.
 	 **/
@@ -250,6 +255,13 @@ public class CORSFilterConfiguration {
 		this.allowHeaders.add(header);
 	}
 	
+	public boolean isGenerateAllowHeader() {
+		return this.generateAllowHeader;
+	}
+	public void setGenerateAllowHeader(boolean generateAllowHeader) {
+		this.generateAllowHeader = generateAllowHeader;
+	}
+	
 	public Boolean getAllowRequestMethod() {
 		return this.allowRequestMethod;
 	}
@@ -281,8 +293,8 @@ public class CORSFilterConfiguration {
 	public List<String> getAllowOrigins() {
 		return this.allowOrigins;
 	}
-	public void setAllowOrigins(List<String> allowOrigins) {
-		this.allowOrigins = allowOrigins;
+	public void addAllowOrigin(String origin) {
+		this.allowOrigins.add(origin);
 	}
 	
 	public List<String> getExposeHeaders() {

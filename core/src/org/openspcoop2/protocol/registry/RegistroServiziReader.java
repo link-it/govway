@@ -905,9 +905,9 @@ public class RegistroServiziReader {
 	 * @param nomeRegistro nome del registro su cui effettuare la ricerca (null per effettuare una ricerca su tutti i registri)
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.id.IDServizio}
 	 */
-	protected Servizio getInfoServizio(Connection connectionPdD,IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato)
+	protected Servizio getInfoServizio(Connection connectionPdD,IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato, boolean throwAzioneNotFound)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return getInfoServizio(connectionPdD,false,false,idSoggetto,idService,nomeRegistro,verificaEsistenzaServizioAzioneCorrelato);
+		return getInfoServizio(connectionPdD,false,false,idSoggetto,idService,nomeRegistro,verificaEsistenzaServizioAzioneCorrelato, throwAzioneNotFound);
 	}
 
 	/**
@@ -925,9 +925,9 @@ public class RegistroServiziReader {
 	 * @param nomeRegistro nome del registro su cui effettuare la ricerca (null per effettuare una ricerca su tutti i registri)
 	 * @return l'oggetto di tipo {@link org.openspcoop2.protocol.sdk.Servizio} 
 	 */
-	protected Servizio getInfoServizioCorrelato(Connection connectionPdD,IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro) 
+	protected Servizio getInfoServizioCorrelato(Connection connectionPdD,IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return getInfoServizio(connectionPdD,true,false,idSoggetto,idService,nomeRegistro,false);
+		return getInfoServizio(connectionPdD,true,false,idSoggetto,idService,nomeRegistro,false, throwAzioneNotFound);
 	}
 	
 	/**
@@ -941,9 +941,9 @@ public class RegistroServiziReader {
 	 * @throws DriverRegistroServiziNotFound
 	 * @throws DriverRegistroServiziAzioneNotFound
 	 */
-	protected Servizio getInfoServizioAzioneCorrelata(Connection connectionPdD,IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro) 
+	protected Servizio getInfoServizioAzioneCorrelata(Connection connectionPdD,IDSoggetto idSoggetto,IDServizio idService,String nomeRegistro, boolean throwAzioneNotFound) 
 		throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
-		return getInfoServizio(connectionPdD,false,true,idSoggetto,idService,nomeRegistro,false);
+		return getInfoServizio(connectionPdD,false,true,idSoggetto,idService,nomeRegistro,false, throwAzioneNotFound);
 	}
 
 	/**
@@ -962,7 +962,8 @@ public class RegistroServiziReader {
 	 * @param nomeRegistro nome del registro su cui effettuare la ricerca (null per effettuare una ricerca su tutti i registri)
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.id.IDServizio}
 	 */
-	private Servizio getInfoServizio(Connection connectionPdD,boolean servizioCorrelato,boolean azioneCorrelata,IDSoggetto idSoggetto, IDServizio idService,String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato)
+	private Servizio getInfoServizio(Connection connectionPdD,boolean servizioCorrelato,boolean azioneCorrelata,IDSoggetto idSoggetto, IDServizio idService,
+			String nomeRegistro, boolean verificaEsistenzaServizioAzioneCorrelato, boolean throwAzioneNotFound)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound,DriverRegistroServiziAzioneNotFound,DriverRegistroServiziPortTypeNotFound,DriverRegistroServiziCorrelatoNotFound{
 
 		Servizio infoServizio = new Servizio();
@@ -971,33 +972,33 @@ public class RegistroServiziReader {
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio = null;
 		servizio = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro,idService);
 		if(servizio == null){
-			throw new DriverRegistroServiziNotFound("getInfoServizio, servizio non definito");
+			throw new DriverRegistroServiziNotFound("Servizio non definito");
 		}
 		TipologiaServizio tipologiaServizio = servizio.getTipologiaServizio();
 		if(servizioCorrelato){
 			if(!TipologiaServizio.CORRELATO.equals(tipologiaServizio)){
-				throw new DriverRegistroServiziNotFound("getInfoServizio, servizio ["+idService.toString()+"] (tipologiaServizio:"+tipologiaServizio+") non e' di tipologia correlata");
+				throw new DriverRegistroServiziNotFound("Servizio ["+idService.toString()+"] (tipologia:"+tipologiaServizio+") non è di tipologia correlata");
 			}
 		}else{
 			if(!TipologiaServizio.NORMALE.equals(tipologiaServizio)){
-				throw new DriverRegistroServiziNotFound("getInfoServizio, servizio ["+idService.toString()+"] (tipologiaServizio:"+tipologiaServizio+") e' di tipologia normale");
+				throw new DriverRegistroServiziNotFound("Servizio ["+idService.toString()+"] (tipologia:"+tipologiaServizio+") è di tipologia normale");
 			}
 		}
 
 		String azione = idService.getAzione();
 
 		if(azioneCorrelata && (azione==null) ){
-			throw new DriverRegistroServiziException("getInfoServizio, azione e' obbligatoria in questa modalita' di ricerca");
+			throw new DriverRegistroServiziException("Azione obbligatoria in questa modalità di ricerca");
 		}
 
 		String uriAccordo = servizio.getAccordoServizioParteComune();
 		if(uriAccordo == null){
-			throw new DriverRegistroServiziException("URIAccordo del servizio is null");
+			throw new DriverRegistroServiziException("Identificativo dell'API non definito nel servizio");
 		}
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(uriAccordo);
 		org.openspcoop2.core.registry.AccordoServizioParteComune as = this.registroServizi.getAccordoServizioParteComune(connectionPdD,nomeRegistro,idAccordo);
 		if (as == null){
-			throw new DriverRegistroServiziNotFound("getInfoServizio, accordo di servizio ["+uriAccordo+"] non definito (o non registrato)");
+			throw new DriverRegistroServiziNotFound("API '"+uriAccordo+"' non trovata");
 		}
 		infoServizio.setIdAccordo(idAccordo);
 		ServiceBinding serviceBinding = as.getServiceBinding();
@@ -1009,20 +1010,22 @@ public class RegistroServiziReader {
 			return this._getInfoServizioSOAP(idService, servizio, 
 					idAccordo, as, uriAccordo, 
 					azione, infoServizio, idSoggetto, 
-					verificaEsistenzaServizioAzioneCorrelato, servizioCorrelato, azioneCorrelata, nomeRegistro, connectionPdD);
+					verificaEsistenzaServizioAzioneCorrelato, servizioCorrelato, azioneCorrelata, nomeRegistro, connectionPdD, throwAzioneNotFound);
 		}
 		else {
-			return this._getInfoServizioREST(as, uriAccordo, azione, infoServizio);
+			return this._getInfoServizioREST(as, uriAccordo, azione, infoServizio, throwAzioneNotFound);
 		}
 		
 	}
 	
 	private Servizio _getInfoServizioREST(org.openspcoop2.core.registry.AccordoServizioParteComune as, String uriAccordo,
-			String azione, Servizio infoServizio) throws DriverRegistroServiziAzioneNotFound {
+			String azione, Servizio infoServizio, boolean throwAzioneNotFound) throws DriverRegistroServiziAzioneNotFound {
 		
 		org.openspcoop2.core.registry.Resource resource = null;
 		if(azione==null){
-			throw new DriverRegistroServiziAzioneNotFound("invocazione senza la definizione di una azione non permessa per l'accordo di servizio "+uriAccordo);
+			if(throwAzioneNotFound) {
+				throw new DriverRegistroServiziAzioneNotFound("La richiesta effettuata non è associabile a nessuna risorsa definita nell'API "+uriAccordo);
+			}
 		}else{
 			// Controllo esistenza azione
 			boolean find = false;
@@ -1035,7 +1038,9 @@ public class RegistroServiziReader {
 				}
 			}
 			if(find==false){
-				throw new DriverRegistroServiziAzioneNotFound("Risorsa ["+azione+"] non trovata nell'accordo di servizio "+uriAccordo);
+				if(throwAzioneNotFound) {
+					throw new DriverRegistroServiziAzioneNotFound("Risorsa '"+azione+"' non trovata nell'API "+uriAccordo);
+				}
 			}
 		}
 		
@@ -1210,7 +1215,8 @@ public class RegistroServiziReader {
 	private Servizio _getInfoServizioSOAP(IDServizio idService, org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizio,
 			IDAccordo idAccordo, org.openspcoop2.core.registry.AccordoServizioParteComune as, String uriAccordo,
 			String azione, Servizio infoServizio, IDSoggetto idSoggetto,
-			boolean verificaEsistenzaServizioAzioneCorrelato, boolean servizioCorrelato,boolean azioneCorrelata, String nomeRegistro, Connection connectionPdD) throws DriverRegistroServiziPortTypeNotFound, DriverRegistroServiziAzioneNotFound, DriverRegistroServiziCorrelatoNotFound, DriverRegistroServiziNotFound {
+			boolean verificaEsistenzaServizioAzioneCorrelato, boolean servizioCorrelato,boolean azioneCorrelata, String nomeRegistro, 
+			Connection connectionPdD, boolean throwAzioneNotFound) throws DriverRegistroServiziPortTypeNotFound, DriverRegistroServiziAzioneNotFound, DriverRegistroServiziCorrelatoNotFound, DriverRegistroServiziNotFound {
 		
 		org.openspcoop2.core.registry.PortType pt = null;
 		// search port type
@@ -1221,7 +1227,7 @@ public class RegistroServiziReader {
 				}
 			}
 			if(pt==null){
-				throw new DriverRegistroServiziPortTypeNotFound("Port-Type ["+servizio.getPortType()+"] associato al servizio non definito nell'accordo di servizio "+uriAccordo);
+				throw new DriverRegistroServiziPortTypeNotFound("Servizio '"+servizio.getPortType()+"' non definito nell'API "+uriAccordo);
 			}
 		}
 		
@@ -1231,10 +1237,14 @@ public class RegistroServiziReader {
 			// controllo possibilita di utilizzare il servizio senza azione
 			if(pt!=null){
 				// se e' definito un port-type non ha senso che si possa invocare il servizio (port-type) senza azione (operation).
-				throw new DriverRegistroServiziAzioneNotFound("invocazione senza la definizione di una azione non permessa per il port-type "+pt.getNome() +" dell'accordo di servizio "+uriAccordo);
+				if(throwAzioneNotFound) {
+					throw new DriverRegistroServiziAzioneNotFound("La richiesta effettuata non è associabile a nessuna azione (servizio: "+pt.getNome() +") dell'API "+uriAccordo);
+				}
 			}else{
 				if(as.getUtilizzoSenzaAzione()==false){
-					throw new DriverRegistroServiziAzioneNotFound("invocazione senza la definizione di una azione non permessa per l'accordo di servizio "+uriAccordo);
+					if(throwAzioneNotFound) {
+						throw new DriverRegistroServiziAzioneNotFound("La richiesta effettuata non è associabile a nessuna azione dell'API "+uriAccordo+ " (invocazione senza la definizione di una azione non permessa)");
+					}
 				}
 			}
 		}else{
@@ -1250,7 +1260,9 @@ public class RegistroServiziReader {
 					}
 				}
 				if(find==false){
-					throw new DriverRegistroServiziAzioneNotFound("azione ["+azione+"] non trovata nel port-type ["+pt.getNome()+"] dell'accordo di servizio "+uriAccordo);
+					if(throwAzioneNotFound) {
+						throw new DriverRegistroServiziAzioneNotFound("Azione '"+azione+"' non trovata per il servizio ["+pt.getNome()+"] dell'API "+uriAccordo);
+					}
 				}
 			}else{
 				// search in accordo
@@ -1262,7 +1274,9 @@ public class RegistroServiziReader {
 					}
 				}
 				if(find==false){
-					throw new DriverRegistroServiziAzioneNotFound("azione ["+azione+"] non trovata nell'accordo di servizio "+uriAccordo);
+					if(throwAzioneNotFound) {
+						throw new DriverRegistroServiziAzioneNotFound("Azione '"+azione+"' non trovata nell'API "+uriAccordo);
+					}
 				}
 			}
 		}

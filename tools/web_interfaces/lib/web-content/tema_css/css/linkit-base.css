@@ -1214,7 +1214,7 @@ div.prop-slider{
 	background-color: ${input.slider.background.color};	
 	background-image: none !important;
 	color: ${input.slider.color};
-	margin: 2px 0px 2px 170px;
+	margin: 2px 0px 2px 232px;
 	border:  1px solid ${input.slider.border.color};
 	height: 10px;
 	border-radius: 0px;

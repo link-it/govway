@@ -78,6 +78,8 @@ public class Costanti {
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";
 	public final static String EXTENDED_INFO_TRANSAZIONE = "EXTENDED_INFO_TRANSAZIONE";
+	public final static String CORS_PREFLIGHT_REQUEST_VIA_GATEWAY = "CORS_PREFLIGHT_REQUEST_VIA_GATEWAY";
+	public final static String CORS_PREFLIGHT_REQUEST_TRASPARENTE = "CORS_PREFLIGHT_REQUEST_TRASPARENTE";
 	
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,

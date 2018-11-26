@@ -22,16 +22,23 @@
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Parameter;
 
 
@@ -44,6 +51,40 @@ import org.openspcoop2.web.lib.mvc.Parameter;
  */
 public class AccordiServizioParteComuneUtilities {
 
+	public static void findOggettiDaAggiornare(IDAccordo idAccordoOLD, AccordoServizioParteComune as, AccordiServizioParteComuneCore apcCore, List<Object> listOggettiDaAggiornare) throws Exception {
+		
+		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
+		
+		String newURI = IDAccordoFactory.getInstance().getUriFromAccordo(as);
+
+		// Cerco i servizi in cui devo cambiare la URI dell'accordo
+		List<AccordoServizioParteSpecifica> servizi = apsCore.serviziByAccordoFilterList(idAccordoOLD);
+		if(servizi!=null && servizi.size()>0){
+			while(servizi.size()>0){
+				AccordoServizioParteSpecifica s = servizi.remove(0);
+				s.setAccordoServizioParteComune(newURI);
+				listOggettiDaAggiornare.add(s);
+			}
+		}
+		
+	}
+	
+	public static void deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+		
+		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+		
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+
+		boolean normalizeObjectIds = !apcHelper.isModalitaCompleta();
+		if (apcCore.isAccordoInUso(as, whereIsInUso, normalizeObjectIds)) {// accordo in uso
+			inUsoMessage.append(DBOggettiInUsoUtils.toString(idAccordo, whereIsInUso, true, newLine, normalizeObjectIds));
+			inUsoMessage.append(newLine);
+		} else {// accordo non in uso
+			apcCore.performDeleteOperation(userLogin, apcHelper.smista(), as);
+		}
+		
+	}
+	
 	public static String getTerminologiaAccordoServizio(String tipo){
 		String termine = null;
 		if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipo)){

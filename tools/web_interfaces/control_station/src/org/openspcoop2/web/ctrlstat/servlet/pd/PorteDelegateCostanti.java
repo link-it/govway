@@ -97,6 +97,12 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE = "porteDelegateConfigurazioneChange";
 	public final static ForwardParams TIPO_OPERAZIONEGRUPPO_CAMBIA_NOME = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_GESTIONE_CORS = "porteDelegateGestioneCors";
+	public final static ForwardParams TIPO_OPERAZIONE_GESTIONE_CORS = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING = "porteDelegateResponseCaching";
+	public final static ForwardParams TIPO_OPERAZIONE_RESPONSE_CACHING = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -281,6 +287,9 @@ public class PorteDelegateCostanti {
 	static{
 		PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE);
 	}
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_GESTIONE_CORS +".do"; 
+	public final static String SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING +".do"; 
 	
 	
 	/* LABEL GENERALI */
@@ -526,7 +535,15 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
 	public final static String LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO = CostantiControlStation.LABEL_NESSUNO;
-
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORS_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORS_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_CORS_DI;
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI;
+	
+	public final static String LABEL_PORTE_DELEGATE_CORS_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_CORS_MODIFICATA_CON_SUCCESSO;
+	public final static String LABEL_PORTE_DELEGATE_RESPONSE_CACHING_CON_SUCCESSO = CostantiControlStation.LABEL_GESTIONE_RESPONSE_CACHING_MODIFICATA_CON_SUCCESSO;
 	
 	/* DEFAULT VALUE PARAMETRI */
 	

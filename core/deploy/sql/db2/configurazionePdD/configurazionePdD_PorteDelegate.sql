@@ -99,7 +99,25 @@ CREATE TABLE porte_delegate
 	-- Livello Log Messaggi Diagnostici
 	msg_diag_severita VARCHAR(255),
 	tracciamento_esiti VARCHAR(255),
-	-- abilitato/disabilitato
+	-- Gestione CORS
+	cors_stato VARCHAR(255),
+	cors_tipo VARCHAR(255),
+	cors_all_allow_origins VARCHAR(255),
+	cors_allow_credentials VARCHAR(255),
+	cors_allow_max_age INT,
+	cors_allow_max_age_seconds INT,
+	cors_allow_origins CLOB,
+	cors_allow_headers CLOB,
+	cors_allow_methods CLOB,
+	cors_allow_expose_headers CLOB,
+	-- Response caching
+	response_cache_stato VARCHAR(255),
+	response_cache_seconds INT,
+	response_cache_max_msg_size BIGINT,
+	response_cache_hash_url VARCHAR(255),
+	response_cache_hash_headers VARCHAR(255),
+	response_cache_hash_payload VARCHAR(255),
+	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto BIGINT NOT NULL,

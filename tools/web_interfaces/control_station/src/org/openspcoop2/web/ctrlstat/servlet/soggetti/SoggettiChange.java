@@ -745,50 +745,9 @@ public final class SoggettiChange extends Action {
 			sog.setOldNomeForUpdate(oldnomeprov);
 			sog.setOldTipoForUpdate(oldtipoprov);
 
-			// Oggetti da modificare (per riflettere la modifica sul connettore)
-			SoggettoUpdateUtilities soggettoUpdateUtilities = 
-					new SoggettoUpdateUtilities(soggettiCore, oldnomeprov, this.nomeprov, oldtipoprov, this.tipoprov, sog);
-
-			// Soggetto
-			// aggiungo il soggetto da aggiornare
-			soggettoUpdateUtilities.addSoggetto();
-
-			// Servizi Applicativi
-			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi applicativi
-			// poiche il cambio si riflette sul nome dei connettori del servizio applicativo
-			soggettoUpdateUtilities.checkServiziApplicativi();
-
-			// Accordi di Cooperazione
-			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di cooperazione:
-			// - soggetto referente
-			// - soggetti partecipanti
-			soggettoUpdateUtilities.checkAccordiCooperazione();
-
-			// Accordi di Servizio Parte Comune
-			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di servizio 
-			// poiche il cambio si riflette sul soggetto gestore
-			soggettoUpdateUtilities.checkAccordiServizioParteComune();
-
-			// Accordi di Servizio Parte Specifica
-			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi 
-			// poiche il cambio si riflette sul nome dei connettori del servizio 
-			soggettoUpdateUtilities.checkAccordiServizioParteSpecifica();
-
-			// Porte Delegate
-			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica delle porte delegate
-			// poiche il cambio si riflette sul nome della porta delegata
-			soggettoUpdateUtilities.checkPorteDelegate();
-
-			// Porte Applicative
-			// Se e' cambiato il tipo o il nome del soggetto virtuale devo effettuare la modifica delle porte applicative
-			// poiche il cambio si riflette all'interno delle informazioni delle porte applicative
-			soggettoUpdateUtilities.checkPorteApplicative();	
-
-			// Fruitori nei servizi 
-			soggettoUpdateUtilities.checkFruitori();
-			
 			// eseguo l'aggiornamento
-			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoUpdateUtilities.getOggettiDaAggiornare().toArray());
+			List<Object> listOggettiDaAggiornare = SoggettiUtilities.getOggettiDaAggiornare(soggettiCore, oldnomeprov, this.nomeprov, oldtipoprov, this.tipoprov, sog);
+			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), listOggettiDaAggiornare.toArray());
 
 			// sistemo utenze dopo l'aggiornamento
 			// se la pdd è diventata esterna o se sono cambiati i dati identificativi

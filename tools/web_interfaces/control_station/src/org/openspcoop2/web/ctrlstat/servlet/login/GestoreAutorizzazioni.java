@@ -248,6 +248,8 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_MESSAGE_SECURITY_PROPERTIES_CONFIG);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CONFIGURAZIONE_CHANGE);
+		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS);
+		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING);
 		
 		/** Permessi associati alla gestione delle porte delegate */
 		this.permessiPorteDelegate = new PermessiUtente();
@@ -280,7 +282,10 @@ public class GestoreAutorizzazioni {
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO);
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
 		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG);
-		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE);
+		this.servletPorteApplicative.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONFIGURAZIONE_CHANGE);
+		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_GESTIONE_CORS);
+		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING);
+		
 		/** Permessi associati alla gestione delle porte applicative */
 		this.permessiPorteApplicative = new PermessiUtente();
 		this.permessiPorteApplicative.setServizi(true);
