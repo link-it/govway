@@ -137,6 +137,10 @@ select.inputLinkLong {
 	width: 422px;
 }
 
+select[multiple] {
+       overflow-x: auto;
+}
+
 .inputLinkLong {
 	background-color: ${input.background.color} ;	
 	background-image: none !important;

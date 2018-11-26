@@ -4901,6 +4901,7 @@ public class ConsoleHelper {
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_AZIONI);
+		de.setRows(15);
 		de.setRequired(true); 
 		dati.addElement(de);
 		
