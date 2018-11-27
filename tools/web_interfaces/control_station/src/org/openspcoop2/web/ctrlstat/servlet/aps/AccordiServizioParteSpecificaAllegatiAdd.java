@@ -43,6 +43,8 @@ import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
@@ -125,6 +127,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			}
 			
 			String tipoProtocollo = apsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			
 			String tmpTitle = null;
 			if(gestioneFruitori) {
@@ -256,7 +259,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			documento.setIdProprietarioDocumento(asps.getId());
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,ff,documento);
+			boolean isOk = apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,ff,documento,pf);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParam );

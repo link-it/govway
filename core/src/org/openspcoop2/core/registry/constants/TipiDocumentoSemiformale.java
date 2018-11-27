@@ -37,7 +37,9 @@ public enum TipiDocumentoSemiformale {
 	UML ("UML"),
 	HTML ("HTML"),
 	XML ("XML"),
+	XSD ("XSD"),
 	JSON ("JSON"),
+	YAML ("YAML"),
 	LINGUAGGIO_NATURALE ("Linguaggio Naturale");
 	
 	private final String nome;
@@ -87,8 +89,12 @@ public enum TipiDocumentoSemiformale {
 			res = TipiDocumentoSemiformale.UML;
 		}else if(TipiDocumentoSemiformale.XML.toString().equals(val)){
 			res = TipiDocumentoSemiformale.XML;
+		}else if(TipiDocumentoSemiformale.XSD.toString().equals(val)){
+			res = TipiDocumentoSemiformale.XSD;
 		}else if(TipiDocumentoSemiformale.JSON.toString().equals(val)){
 			res = TipiDocumentoSemiformale.JSON;
+		}else if(TipiDocumentoSemiformale.YAML.toString().equals(val)){
+			res = TipiDocumentoSemiformale.YAML;
 		}
 		
 		return res;

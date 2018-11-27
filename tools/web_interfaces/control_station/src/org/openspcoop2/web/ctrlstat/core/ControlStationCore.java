@@ -1345,12 +1345,19 @@ public class ControlStationCore {
 
 	/* --- COSTRUTTORI --- */
 
+	protected boolean usedByApi = false;
+	public boolean isUsedByApi() {
+		return this.usedByApi;
+	}
+	
 	public ControlStationCore() throws Exception {
 		this(false,null,null);
 	}
 	
 	public ControlStationCore(boolean initForApi, String confDir, String protocolloDefault) throws Exception {
 
+		this.usedByApi = initForApi;
+		
 		if(initForApi) {
 			ControlStationCore.log = LoggerWrapperFactory.getLogger(ControlStationCore.class);
 		}

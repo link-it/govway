@@ -1960,6 +1960,10 @@ public class ConsoleHelper {
 	 */
 	public boolean smista() throws Exception {
 		try {
+			if(this.core.isUsedByApi()) {
+				return false;
+			}
+			
 			boolean usaSmistatore = true;
 			Boolean singlePdD = this.core.isSinglePdD();
 			if (singlePdD)

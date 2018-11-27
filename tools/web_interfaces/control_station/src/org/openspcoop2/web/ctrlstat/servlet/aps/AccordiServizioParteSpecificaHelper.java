@@ -1046,7 +1046,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 
-	public boolean serviziAllegatiCheckData(TipoOperazione tipoOp,FormFile formFile,Documento documento)
+	public boolean serviziAllegatiCheckData(TipoOperazione tipoOp,FormFile formFile,Documento documento, IProtocolFactory<?> pf)
 			throws Exception {
 
 		try{
@@ -1080,20 +1080,52 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				return false;
 			}
 
-			if(this.archiviCore.existsDocumento(documento,ProprietariDocumento.servizio)){
+			boolean documentoUnivocoIndipendentementeTipo = true;
+			if(this.archiviCore.existsDocumento(documento,ProprietariDocumento.servizio,documentoUnivocoIndipendentementeTipo)){
 
+				String tipo = documento.getTipo();
+				String ruoloDoc = documento.getRuolo();
+				String allegatoMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI;
+				String specificaMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO;
+				if(documentoUnivocoIndipendentementeTipo) {
+					tipo = null;
+					ruoloDoc = null;
+					allegatoMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI_SENZA_TIPO;
+					specificaMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_SENZA_TIPO;
+				}
+				
 				//check se stesso documento
-				Documento existing = this.archiviCore.getDocumento(documento.getFile(),documento.getTipo(),documento.getRuolo(),documento.getIdProprietarioDocumento(),false,ProprietariDocumento.servizio);
-				if(existing.getId() == documento.getId())
+				Documento existing = this.archiviCore.getDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),false,ProprietariDocumento.servizio);
+				if(existing.getId().longValue() == documento.getId().longValue())
 					return true;
 
-				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()))
-					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI,
-							documento.getFile(), documento.getTipo()));
-				else
-					this.pd.setMessage(MessageFormat.format(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO, documento.getRuolo(),
-							documento.getFile(), documento.getTipo()));
+				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo) {
+					if(documentoUnivocoIndipendentementeTipo) {
+						this.pd.setMessage(MessageFormat.format(allegatoMsg,
+								documento.getFile()));
+					}
+					else {
+						this.pd.setMessage(MessageFormat.format(allegatoMsg,
+								documento.getFile(), documento.getTipo()));
+					}
+				}else {
+					if(documentoUnivocoIndipendentementeTipo) {
+						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
+								documento.getFile()));
+					}
+					else {
+						this.pd.setMessage(MessageFormat.format(specificaMsg, documento.getRuolo(),
+								documento.getFile(), documento.getTipo()));
+					}
+				}
+				
+				return false;
+			}
+			
 
+			ValidazioneResult valida = pf.createValidazioneDocumenti().valida (documento);
+			if(!valida.isEsito()) {
+				this.pd.setMessage(valida.getMessaggioErrore());
 				return false;
 			}
 

@@ -1808,9 +1808,14 @@ public class RicezioneBuste {
 			}
 			if(throwFault) {
 			
+				String azione = "";
+				if(idServizio.getAzione()!=null) {
+					azione = "(azione:"+ idServizio.getAzione()+ ") ";
+				}
+				
 				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
-						getErrore423_ServizioConAzioneScorretta("(azione:"+ idServizio.getAzione()+ ") "+ e.getMessage()),e,
+						getErrore423_ServizioConAzioneScorretta(azione+ e.getMessage()),e,
 						"readProtocolInfo");
 				openspcoopstate.releaseResource();
 				return;

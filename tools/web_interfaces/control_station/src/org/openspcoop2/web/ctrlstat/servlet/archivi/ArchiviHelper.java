@@ -79,6 +79,7 @@ import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -2616,7 +2617,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	
 	
-	public boolean accordiAllegatiCheckData(TipoOperazione tipoOperazione,FormFile formFile,Documento documento,ProprietariDocumento proprietario)
+	public boolean accordiAllegatiCheckData(TipoOperazione tipoOperazione,FormFile formFile,Documento documento,ProprietariDocumento proprietario, IProtocolFactory<?> pf)
 			throws Exception {
 
 		try{
@@ -2648,20 +2649,36 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 
-			if(this.archiviCore.existsDocumento(documento,proprietario)){
+			boolean documentoUnivocoIndipendentementeTipo = true;
+			if(this.archiviCore.existsDocumento(documento,proprietario,documentoUnivocoIndipendentementeTipo)){
 
-				Documento existing = this.archiviCore.getDocumento(documento.getFile(),documento.getTipo(),documento.getRuolo(),documento.getIdProprietarioDocumento(),false,proprietario);
-				if(existing.getId() == documento.getId())
+				String tipo = documento.getTipo();
+				String ruoloDoc = documento.getRuolo();
+				String msgTipo = "(tipo: "+documento.getTipo()+") ";
+				if(documentoUnivocoIndipendentementeTipo) {
+					tipo = null;
+					ruoloDoc = null;
+					msgTipo = "";
+				}
+				
+				Documento existing = this.archiviCore.getDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),false,proprietario);
+				if(existing.getId().longValue() == documento.getId().longValue())
 					return true;
 
-				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()))
-					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") è già presente nella API.");
+				if(RuoliDocumento.allegato.toString().equals(documento.getRuolo()) || documentoUnivocoIndipendentementeTipo)
+					this.pd.setMessage("L'allegato con nome "+documento.getFile()+" "+msgTipo+"è già presente nella API.");
 				else
-					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" (tipo: "+documento.getTipo()+") è già presente nella API.");
+					this.pd.setMessage("La specifica semiformale con nome "+documento.getFile()+" "+msgTipo+"è già presente nella API.");
 
 				return false;
 			}
 
+			ValidazioneResult valida = pf.createValidazioneDocumenti().valida (documento);
+			if(!valida.isEsito()) {
+				this.pd.setMessage(valida.getMessaggioErrore());
+				return false;
+			}
+			
 			return true;
 
 		} catch (Exception e) {

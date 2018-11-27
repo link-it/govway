@@ -147,7 +147,7 @@ public enum ErroriIntegrazione {
 	ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA("I bytes inviati al servizio di ricezione contenuti applicativi non sono utilizzabili per formare un messaggio SOAP tramite la funzionalità di imbustamento SOAP: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA),
 			
-	ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA("L'azione richiesta tramite la porta, e associata al servizio indicato, non risulta corretta: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+	ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA("Azione richiesta non corretta: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA),
 			
 	ERRORE_424_ALLEGA_BODY("La funzionalità 'allega body' non è riuscita ad utilizzare il messaggio ricevuto: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,

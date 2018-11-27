@@ -3158,8 +3158,14 @@ public class RicezioneContenutiApplicativi {
 			ErroreIntegrazione erroreIntegrazione = null;
 			IntegrationError integrationError = null;
 			if (invocazioneAzioneErrata != null) {
+				
+				String azione = "";
+				if(idServizio.getAzione()!=null) {
+					azione = "(azione:"+ idServizio.getAzione()+ ") ";
+				}
+				
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
-						getErrore423_ServizioConAzioneScorretta("(azione:"+ idServizio.getAzione()+ ") "+ invocazioneAzioneErrata);
+						getErrore423_ServizioConAzioneScorretta(azione+ invocazioneAzioneErrata);
 				integrationError = IntegrationError.BAD_REQUEST;
 			} else if (portTypeErrato != null) {
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

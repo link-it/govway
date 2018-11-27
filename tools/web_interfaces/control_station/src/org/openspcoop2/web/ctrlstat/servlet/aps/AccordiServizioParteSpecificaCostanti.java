@@ -329,7 +329,9 @@ public class AccordiServizioParteSpecificaCostanti {
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTORIZZAZIONE_XX = "Indicare un nome per l''autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_AUTENTICAZIONE_XX = "Indicare un nome per l''autenticazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO = "La {0} con nome {1} (tipo: {2}) &egrave; gi&agrave; presente nel servizio.";
-	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L'allegato con nome {0} (tipo: {1}) &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_LA_SPECIFICA_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_SENZA_TIPO = "La {0} con nome {1} &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI = "L''allegato con nome {0} (tipo: {1}) &egrave; gi&agrave; presente nel servizio.";
+	public static final String MESSAGGIO_ERRORE_ALLEGATO_CON_NOME_TIPO_GIA_PRESENTE_NEL_SERVIZIO_CON_PARAMETRI_SENZA_TIPO = "L''allegato con nome {0} &egrave; gi&agrave; presente nel servizio.";
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA_DIMENSIONE_ESTENSIONE_TROPPO_LUNGA = "L'estensione del documento non &egrave; valida. La dimensione dell'estensione &egrave; troppo lunga.";
 	public static final String MESSAGGIO_ERRORE_ESTENSIONE_DEL_DOCUMENTO_NON_VALIDA = "L'estensione del documento non &egrave; valida.";
 	public static final String MESSAGGIO_ERRORE_DOCUMENTO_SELEZIONATO_NON_PUO_ESSERE_VUOTO = "Il documento selezionato non pu&ograve; essere vuoto.";

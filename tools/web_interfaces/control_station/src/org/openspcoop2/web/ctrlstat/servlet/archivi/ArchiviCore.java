@@ -379,7 +379,7 @@ public class ArchiviCore extends ControlStationCore {
 		}
 	}
 
-	public boolean existsDocumento(Documento documento,ProprietariDocumento proprietarioDocumento) throws DriverRegistroServiziException {
+	public boolean existsDocumento(Documento documento,ProprietariDocumento proprietarioDocumento, boolean documentoUnivocoIndipendentementeTipo) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "existsDocumento";
 		DriverControlStationDB driver = null;
@@ -389,7 +389,15 @@ public class ArchiviCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverRegistroServiziDB().existsDocumento(documento.getFile(),documento.getTipo(),documento.getRuolo(),documento.getIdProprietarioDocumento(),proprietarioDocumento);
+			
+			String tipo = documento.getTipo();
+			String ruoloDoc = documento.getRuolo();
+			if(documentoUnivocoIndipendentementeTipo) {
+				tipo = null;
+				ruoloDoc = null;
+			}
+			
+			return driver.getDriverRegistroServiziDB().existsDocumento(documento.getFile(),tipo,ruoloDoc,documento.getIdProprietarioDocumento(),proprietarioDocumento);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

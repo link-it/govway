@@ -51,6 +51,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiReaderConfig;
@@ -77,12 +79,16 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 	protected AbstractXMLUtils xmlUtils = null;
 	protected XSDUtils xsdUtils = null;
 	protected WSDLUtilities wsdlUtilities = null;
-
+	protected JSONUtils jsonUtils = null;
+	protected YAMLUtils yamlUtils = null;
+	
 	public ValidazioneDocumenti(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
 		this.xmlUtils = XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
+		this.jsonUtils = JSONUtils.getInstance();
+		this.yamlUtils = YAMLUtils.getInstance();
 	}
 
 	@Override
@@ -534,6 +540,78 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 						}
 					}
 					
+				}catch(Exception e){
+					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
+					result.setException(e);
+					return result;
+				}
+			}
+			else if(TipiDocumentoSemiformale.XSD.toString().toLowerCase().equals(documento.getTipo().toLowerCase())){
+				// Valido che sia un documento XSD corretto.
+				try{
+					
+					byte[]doc = null;
+					if(documento.getByteContenuto()!=null){
+						doc = documento.getByteContenuto();
+					}
+					else if(documento.getFile()!=null){
+						doc = this.readDocumento(documento.getFile());		
+					}
+					if(doc!=null){
+						// Verifico che sia un documento valido
+						this.xmlUtils.newDocument(doc);
+						if(this.xsdUtils.isXSDSchema(doc)==false) {
+							throw new Exception("non riconosciuto come documento xsd");
+						}
+					}	
+				}catch(Exception e){
+					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
+					result.setException(e);
+					return result;
+				}
+			}
+			else if(TipiDocumentoSemiformale.JSON.toString().toLowerCase().equals(documento.getTipo().toLowerCase())){
+				// Valido che sia un documento JSON corretto.
+				try{
+					
+					byte[]doc = null;
+					if(documento.getByteContenuto()!=null){
+						doc = documento.getByteContenuto();
+					}
+					else if(documento.getFile()!=null){
+						doc = this.readDocumento(documento.getFile());		
+					}
+					if(doc!=null){
+						// Verifico che sia un documento valido
+						this.jsonUtils.getAsNode(doc);
+						if(this.jsonUtils.isJson(doc)==false) {
+							throw new Exception("non riconosciuto come documento json");
+						}
+					}	
+				}catch(Exception e){
+					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
+					result.setException(e);
+					return result;
+				}
+			}
+			else if(TipiDocumentoSemiformale.YAML.toString().toLowerCase().equals(documento.getTipo().toLowerCase())){
+				// Valido che sia un documento YAML corretto.
+				try{
+					
+					byte[]doc = null;
+					if(documento.getByteContenuto()!=null){
+						doc = documento.getByteContenuto();
+					}
+					else if(documento.getFile()!=null){
+						doc = this.readDocumento(documento.getFile());		
+					}
+					if(doc!=null){
+						// Verifico che sia un documento valido
+						this.yamlUtils.getAsNode(doc);
+						if(this.yamlUtils.isYaml(doc)==false) {
+							throw new Exception("non riconosciuto come documento yaml");
+						}
+					}	
 				}catch(Exception e){
 					result.setMessaggioErrore("Documento "+documento.getFile()+" (ruolo:"+documento.getRuolo()+") non valido: "+e.getMessage());
 					result.setException(e);

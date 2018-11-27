@@ -42,6 +42,8 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
@@ -113,6 +115,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			// Prendo il nome
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(idAccordoInt));
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(ac.getSoggettoReferente().getTipo());
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
 			
@@ -161,7 +164,7 @@ public final class AccordiCooperazioneAllegatiChange extends Action {
 			toCheck.setOraRegistrazione(new Date());
 			toCheck.setId(doc.getId());
 			// Controlli sui campi immessi
-			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.CHANGE,ff,toCheck,ProprietariDocumento.accordoCooperazione);
+			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.CHANGE,ff,toCheck,ProprietariDocumento.accordoCooperazione, pf);
 			if (!isOk) {
 				 
 				// setto la barra del titolo

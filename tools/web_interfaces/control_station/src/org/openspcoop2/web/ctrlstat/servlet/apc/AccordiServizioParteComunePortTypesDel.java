@@ -25,7 +25,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,21 +35,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -91,9 +82,6 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 		
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
-			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 			
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
@@ -120,104 +108,15 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			IDPortType idPT = new IDPortType();
 			idPT.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
 			
-			String nomept = "";
-			boolean modificaAS_effettuata = false;
-			StringBuffer errori = new StringBuffer();
-			for (int i = 0; i < ptsToRemove.size(); i++) {
-
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nomept = de.getValue();
-				nomept = ptsToRemove.get(i);
-
-				idPT.setNome(nomept);
-				List<IDServizio> idServizi = null;
-				try{
-					idServizi = apsCore.getIdServiziWithPortType(idPT);
-				}catch(DriverRegistroServiziNotFound dNotF){}
-				
-				if(idServizi==null || idServizi.size()<=0){
-				
-					// Check che il port type non sia correlato da altri porttype.
-					Vector<String> tmp = new Vector<String>();
-					for (int j = 0; j < as.sizePortTypeList(); j++) {
-						PortType pt = as.getPortType(j);
-						if(pt.getNome().equals(nomept)==false){
-							for (int check = 0; check < pt.sizeAzioneList(); check++) {
-								Operation opCheck = pt.getAzione(check);
-								if(opCheck.getCorrelataServizio()!=null && nomept.equals(opCheck.getCorrelataServizio())){
-									tmp.add("azione "+opCheck.getNome()+" del servizio "+pt.getNome());
-								}
-							}
-						}
-					}
-					if(tmp.size()>0){
-						if(errori.length()>0) {
-							errori.append("<BR>");
-						}
-						errori.append("Servizio ["+nomept+"] non rimosso poichè correlato da azioni di altri servizi della API: <br>");
-						for(int j=0; j<tmp.size();j++){
-							errori.append("- "+tmp.get(j).toString()+"<br>");
-						}
-						continue;
-					}
-					
-					// Effettuo eliminazione
-					for (int j = 0; j < as.sizePortTypeList(); j++) {
-						PortType pt = as.getPortType(j);
-						if (nomept.equals(pt.getNome())) {
-							modificaAS_effettuata = true;
-							as.removePortType(j);
-							break;
-						}
-					}
-					
-				}else{
-					
-					// Se esiste un mapping segnalo l'errore specifico
-					List<MappingErogazionePortaApplicativa> lPA = porteApplicativeCore.getMapping(idServizi, true, false);
-					if(lPA!=null && !lPA.isEmpty()) {
-						if(errori.length()>0) {
-							errori.append("<BR>");
-						}
-						errori.append("Servizio "+nomept+" non rimuovibile poichè implementato nell'erogazione del servizio: <BR>");
-						for(int j=0;j<lPA.size();j++){
-							errori.append("- "+lPA.get(j).getIdServizio()+"<BR>");
-						}
-						continue;
-					}
-					List<MappingFruizionePortaDelegata> lPD = porteDelegateCore.getMapping(idServizi, true, false);
-					if(lPD!=null && !lPD.isEmpty()) {
-						if(errori.length()>0) {
-							errori.append("<BR>");
-						}
-						errori.append("Servizio "+nomept+" non rimuovibile poichè implementato nella fruizione del servizio: <BR>");
-						for(int j=0;j<lPD.size();j++){
-							errori.append("- "+lPD.get(j).getIdServizio()+" (fruitore: "+lPD.get(j).getIdFruitore()+")<BR>");
-						}
-						continue;
-					}
-					
-					// Altrimenti segnalo l'errore più generico sull'accordo
-					if(errori.length()>0) {
-						errori.append("<BR>");
-					}
-					errori.append("Servizio ["+nomept+"] non rimosso poichè viene implementato dai seguenti servizi: <br>");
-					for(int j=0; j<idServizi.size();j++){
-						errori.append("- "+idServizi.get(j).toString()+"<br>");
-					}
-					//continue;
-					
-				}
-			}
+			StringBuffer inUsoMessage = new StringBuffer();
+			
+			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, userLogin, apcCore, apcHelper, 
+					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, idPT, ptsToRemove);
 			
 			// imposto msg di errore se presente
-			if(errori.length()>0)
-				pd.setMessage(errori.toString());
-
-			// effettuo le operazioni
-			if(modificaAS_effettuata)
-				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+			}
 
 			// Verifico stato
 			apcHelper.setMessageWarningStatoConsistenzaAccordo(false, as);

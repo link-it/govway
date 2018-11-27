@@ -934,17 +934,26 @@ public class DBUtils {
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("id_proprietario = ?");
 			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.addWhereCondition("tipo = ?");
-			sqlQueryObject.addWhereCondition("ruolo = ?");
+			if(tipo!=null) {
+				sqlQueryObject.addWhereCondition("tipo = ?");
+			}
+			if(ruolo!=null) {
+				sqlQueryObject.addWhereCondition("ruolo = ?");
+			}
 			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
-			stm.setLong(1, idProprietario);
-			stm.setString(2, nome);
-			stm.setString(3, tipo);
-			stm.setString(4, ruolo);
-			stm.setString(5, tipoProprietario);
+			int index = 1;
+			stm.setLong(index++, idProprietario);
+			stm.setString(index++, nome);
+			if(tipo!=null) {
+				stm.setString(index++, tipo);
+			}
+			if(ruolo!=null) {
+				stm.setString(index++, ruolo);
+			}
+			stm.setString(index++, tipoProprietario);
 			rs = stm.executeQuery();
 			if (rs.next())
 				idDoc = rs.getLong("id");

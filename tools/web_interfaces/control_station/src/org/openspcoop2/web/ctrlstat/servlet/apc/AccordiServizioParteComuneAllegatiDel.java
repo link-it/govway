@@ -36,11 +36,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -96,54 +95,19 @@ public final class AccordiServizioParteComuneAllegatiDel extends Action {
 			apcHelper.makeMenu();
 
 			AccordoServizioParteComune as = null;
+			List<Long> idAllegati = new ArrayList<>();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				long idAllegato = Long.parseLong(idsToRemove.get(i));
+				idAllegati.add(idAllegato);
 				
-				Documento doc = archiviCore.getDocumento(idAllegato, false);
-				
-				if(as==null)
+				if(as==null) {
+					Documento doc = archiviCore.getDocumento(idAllegato, false);
 					as = apcCore.getAccordoServizio(doc.getIdProprietarioDocumento());
-				
-				switch (RuoliDocumento.valueOf(doc.getRuolo())) {
-					case allegato:
-						//rimuovo il vecchio doc dalla lista
-						for (int j = 0; j < as.sizeAllegatoList(); j++) {
-							Documento documento = as.getAllegato(j);						
-							if(documento.getFile().equals(doc.getFile()))
-								as.removeAllegato(j);
-						}
-						
-						break;
-
-					case specificaSemiformale:
-						
-						for (int j = 0; j < as.sizeSpecificaSemiformaleList(); j++) {
-							Documento documento = as.getSpecificaSemiformale(j);						
-							if(documento.getFile().equals(doc.getFile()))
-								as.removeSpecificaSemiformale(j);
-						}
-						break;
-					
-					case specificaCoordinamento:
-						if(as.getServizioComposto()!=null){
-							for (int j = 0; j < as.getServizioComposto().sizeSpecificaCoordinamentoList(); j++) {
-								Documento documento = as.getServizioComposto().getSpecificaCoordinamento(j);						
-								if(documento.getFile().equals(doc.getFile()))
-									as.getServizioComposto().removeSpecificaCoordinamento(j);
-							}
-						}
-						break;
-					case specificaLivelloServizio:
-						break;
-					case specificaSicurezza:
-						break;
 				}
-				
 			}
-
-			// effettuo le operazioni
-			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+				
+			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(as, userLogin, apcCore, apcHelper, idAllegati);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

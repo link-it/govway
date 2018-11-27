@@ -20213,16 +20213,25 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("id_proprietario = ?");
 			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
 			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.addWhereCondition("tipo = ?");
-			sqlQueryObject.addWhereCondition("ruolo = ?");
+			if(tipo!=null) {
+				sqlQueryObject.addWhereCondition("tipo = ?");
+			}
+			if(ruolo!=null) {
+				sqlQueryObject.addWhereCondition("ruolo = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
-			stm.setLong(1, idProprietario);
-			stm.setString(2, proprietarioDocumento.toString());
-			stm.setString(3, nome);
-			stm.setString(4, tipo);
-			stm.setString(5, ruolo);
+			int index = 1;
+			stm.setLong(index++, idProprietario);
+			stm.setString(index++, proprietarioDocumento.toString());
+			stm.setString(index++, nome);
+			if(tipo!=null) {
+				stm.setString(index++, tipo);
+			}
+			if(ruolo!=null) {
+				stm.setString(index++, ruolo);
+			}
 			rs = stm.executeQuery();
 			if (rs.next())
 				exist = true;

@@ -37,13 +37,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
@@ -124,6 +125,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 			Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAccordo);
 			Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(as.getSoggettoReferente().getTipo());
 			
 			Boolean isModalitaVistaApiCustom = ServletUtils.getBooleanAttributeFromSession(ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API, session, false);
 			List<Parameter> listaParams = apcHelper.getTitoloApc(TipoOperazione.ADD, as, tipoAccordo, labelASTitle, null, false);
@@ -176,7 +178,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			toCheck.setId(doc.getId());
 			
 			// Controlli sui campi immessi
-			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.CHANGE,ff,toCheck,ProprietariDocumento.accordoServizio);
+			boolean isOk = archiviHelper.accordiAllegatiCheckData(TipoOperazione.CHANGE,ff,toCheck,ProprietariDocumento.accordoServizio, pf);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -198,48 +200,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_ALLEGATI, ForwardParams.CHANGE());
 			}
 
-			
-
-			switch (RuoliDocumento.valueOf(doc.getRuolo())) {
-				case allegato:
-					//rimuovo il vecchio doc dalla lista
-					for (int i = 0; i < as.sizeAllegatoList(); i++) {
-						Documento documento = as.getAllegato(i);						
-						if(documento.getId().equals(doc.getId()))
-							as.removeAllegato(i);
-					}
-					//aggiungo il nuovo
-					as.addAllegato(toCheck);
-					
-					break;
-
-				case specificaSemiformale:
-					
-					for (int i = 0; i < as.sizeSpecificaSemiformaleList(); i++) {
-						Documento documento = as.getSpecificaSemiformale(i);						
-						if(documento.getId().equals(doc.getId())){
-							as.removeSpecificaSemiformale(i);
-							break;
-						}
-					}
-					//aggiungo il nuovo
-					as.addSpecificaSemiformale(toCheck);
-					break;
-					
-				case specificaCoordinamento:
-					AccordoServizioParteComuneServizioComposto assc = as.getServizioComposto();
-					for (int i = 0; i < assc.sizeSpecificaCoordinamentoList(); i++) {
-						Documento documento = assc.getSpecificaCoordinamento(i);						
-						if(documento.getId().equals(doc.getId())){
-							assc.removeSpecificaCoordinamento(i);
-							break;
-						}
-					}
-					assc.addSpecificaCoordinamento(toCheck);
-					as.setServizioComposto(assc);
-					break;
-			}
-			
+			AccordiServizioParteComuneUtilities.updateAccordoServizioParteComuneAllegati(as, doc, toCheck);			
 
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
