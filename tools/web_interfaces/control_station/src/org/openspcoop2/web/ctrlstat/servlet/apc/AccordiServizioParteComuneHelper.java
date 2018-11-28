@@ -3102,7 +3102,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// Service Binding
 		boolean forceHiddenServiceBinding = !gestioneInformazioniGenerali;
 		boolean usedCheckForServiceBinding = used;
-		if( gestioneInformazioniGenerali ) {
+		if( gestioneInformazioniGenerali && TipoOperazione.CHANGE.equals(tipoOperazione)  ) {
 			usedCheckForServiceBinding = true; // forzo l'indicazione in modo che il tipo rest/soap in change informazioni generali non sia modificabile
 		}
 		de = this.getServiceBindingDataElement(protocolFactory, usedCheckForServiceBinding, serviceBinding, forceHiddenServiceBinding);
