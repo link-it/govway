@@ -25,10 +25,8 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +37,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
@@ -488,88 +485,13 @@ public final class SoggettiChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
+			boolean isOk = SoggettiUtilities.soggettiCheckData(
+					soggettiCore, soggettiHelper,
+					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
+					oldnomeprov, oldtipoprov, this.privato,
+					tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter,
 					soggettoRegistry, isSupportatoAutenticazioneSoggetti, this.descr);
 
-			if(isOk){
-				// check change tipo/nome con gestione workflow abilitata
-				if(soggettiCore.isRegistroServiziLocale() && soggettiHelper.isShowGestioneWorkflowStatoDocumenti()){
-					if( (oldnomeprov.equals(this.nomeprov)==false) || (oldtipoprov.equals(this.tipoprov)==false) ){
-						HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-						if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoRegistry, whereIsInUso)) {
-							Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-							String tipoNome = soggettoRegistry.getTipo() + "/" + soggettoRegistry.getNome();
-							StringBuffer bf = new StringBuffer();
-							bf.append("Tipo o Nome del soggetto ");
-							bf.append(tipoNome);
-							bf.append(" non modificabile poiche' :<br>");
-							for (ErrorsHandlerCostant key : keys) {
-								String msg = whereIsInUso.get(key);
-
-								if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
-									bf.append("- erogatore di Servizi in uno stato finale: " + msg + "<BR>");
-								}
-								else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
-									bf.append("- fruitore in uno stato finale: " + msg + "<BR>");
-								}
-								else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
-									bf.append("- referente di un accordo di servizio in uno stato finale: " + msg + "<BR>");
-								}
-								else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
-									bf.append("- referente di un accordo di cooperazione in uno stato finale: " + msg + "<BR>");
-								}
-								else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
-									bf.append("- soggetto partecipante di un accordo di cooperazione in uno stato finale: " + msg + "<BR>");
-								}
-
-							}// chiudo for
-
-							bf.append("<br>");
-							isOk = false;
-							pd.setMessage(bf.toString(), Costanti.MESSAGE_TYPE_INFO);
-						} 
-					}
-				}
-			}
-
-			if(isOk){
-				// check visibilita
-				if (soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && this.privato) {
-					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-					if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoRegistry, whereIsInUso)) {
-						Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-						String tipoNome = soggettoRegistry.getTipo() + "/" + soggettoRegistry.getNome();
-						StringBuffer bf = new StringBuffer();
-						bf.append("Visibilita' del soggetto ");
-						bf.append(tipoNome);
-						bf.append(" non impostabile a privata poiche' :<br>");
-						for (ErrorsHandlerCostant key : keys) {
-							String msg = whereIsInUso.get(key);
-
-							if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
-								bf.append("- erogatore di Servizi con visibilita' pubblica: " + msg + "<BR>");
-							}
-							else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
-								bf.append("- fruitore di servizi con visibilita' pubblica: " + msg + "<BR>");
-							}
-							else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
-								bf.append("- referente di un accordo di servizio con visibilita' pubblica: " + msg + "<BR>");
-							}
-							else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
-								bf.append("- referente di un accordo di cooperazione con visibilita' pubblica: " + msg + "<BR>");
-							}
-							else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
-								bf.append("- soggetto partecipante di un accordo di cooperazione con visibilita' pubblica: " + msg + "<BR>");
-							}
-
-						}// chiudo for
-
-						bf.append("<br>");
-						isOk = false;
-						pd.setMessage(bf.toString(),Costanti.MESSAGE_TYPE_INFO);
-					} 
-				}
-			}
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{

@@ -38,7 +38,7 @@ import org.slf4j.Logger;
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
- */
+ **/
 @SuppressWarnings("rawtypes")
 public class DumpReceivedMessageToFileSystemInterceptor extends AbstractPhaseInterceptor {
 

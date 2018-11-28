@@ -647,7 +647,11 @@ public class RicezioneBusteService  {
 				if(errore==null) {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Generale(richiesta)");
 				}
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,errore,e);
+				IntegrationError integrationError = he.getIntegrationError();
+				if(integrationError==null) {
+					integrationError = IntegrationError.BAD_REQUEST;
+				}
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(integrationError,errore,e);
 				he.customized(responseMessage);
 			}
 			else{

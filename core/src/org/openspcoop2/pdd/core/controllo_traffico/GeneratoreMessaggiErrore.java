@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -193,6 +194,7 @@ public class GeneratoreMessaggiErrore {
 		he.setCustomizedResponse(true);
 		he.setCustomizedResponseAs4xxCode(true);
 		he.setCustomizedResponseCode(MAX_THREADS_VIOLATED_CODE);
+		he.setIntegrationError(IntegrationError.TOO_MANY_REQUESTS);
 						
 		return he;
 	} 
@@ -307,8 +309,13 @@ public class GeneratoreMessaggiErrore {
 		return bf.toString();
 	}
 	
-	public static void configureHandlerExceptionByTipoErrore(HandlerException he, TipoErrore tipoErrore,boolean includiDescrizioneErrore) {
+	public static void configureHandlerExceptionByTipoErrore(ServiceBinding serviceBinding, HandlerException he, TipoErrore tipoErroreParam,boolean includiDescrizioneErrore) {
 
+		TipoErrore tipoErrore = tipoErroreParam;
+		if(ServiceBinding.REST.equals(serviceBinding)) {
+			tipoErrore = TipoErrore.FAULT; // in rest il codice http viene auto-gestito correttamente
+		}
+		
 		switch (tipoErrore) {
 		case HTTP_429:
 			if(includiDescrizioneErrore) {

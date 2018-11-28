@@ -4716,10 +4716,10 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						traffico</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="60%" fileref="FIGURE_OUT/ControlloTraffico.pdf"/>
+							<imagedata width="40%" fileref="FIGURE_OUT/ControlloTraffico.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="60%" fileref="FIGURE_OUT/ControlloTraffico.png"/>
+							<imagedata width="40%" fileref="FIGURE_OUT/ControlloTraffico.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure> La configurazione della funzionalità di controllo del traffico (<xref
@@ -4793,11 +4793,12 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 						</listitem>
 						<listitem>
 							<para>
-								<emphasis>Tipologia Errore</emphasis> e <emphasis>Includi
-									Descrizione Errore</emphasis>: Imposta il tipo di errore
-								restituito al chiamante nel caso di rifiuto dell'elaborazione per
-								superamento della soglia del numero massimo di richieste simultanee.
-								Le opzioni possibili sono le seguenti: <itemizedlist>
+								<emphasis>Tipo Errore per API SOAP</emphasis> e <emphasis>Includi
+									Descrizione Errore</emphasis> (Opzioni presenti solo con console
+								in modalità avanzata): Imposta il tipo di errore restituito al
+								chiamante nel caso di rifiuto dell'elaborazione per superamento
+								della soglia del numero massimo di richieste simultanee. Le opzioni
+								possibili sono le seguenti: <itemizedlist>
 									<listitem>
 										<para>
 											<emphasis>Fault</emphasis>: viene generato un messaggio
@@ -4922,10 +4923,11 @@ org.openspcoop2.pdd.controlloTraffico.rateLimiting.test=&lt;fully qualified clas
 					traffico. Gli elementi di configurazione presenti sono: <itemizedlist>
 						<listitem>
 							<para>
-								<emphasis>Tipologia Errore</emphasis> e <emphasis>Includi
-									Descrizione Errore</emphasis>: Imposta il tipo di errore
-								restituito al chiamante nel caso venga rilevata una violazione delle
-								policy configurate: <itemizedlist>
+								<emphasis>Tipo Errore per API SOAP</emphasis> e <emphasis>Includi
+									Descrizione Errore</emphasis> (Opzioni presenti solo con console
+								in modalità avanzata): Imposta il tipo di errore restituito al
+								chiamante nel caso venga rilevata una violazione delle policy
+								configurate: <itemizedlist>
 									<listitem>
 										<para>
 											<emphasis>Fault</emphasis>: viene generato un messaggio

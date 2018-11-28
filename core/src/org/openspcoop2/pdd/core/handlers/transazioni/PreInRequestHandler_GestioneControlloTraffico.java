@@ -21,10 +21,12 @@
  */
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
@@ -60,6 +62,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 		TipoErrore tipoErrore = TipoErrore.FAULT;
 		boolean includiDescrizioneErrore = true;
 		Logger logControlloTraffico = null;
+		ServiceBinding serviceBinding = ServiceBinding.REST;
 		try{
 		
 			// Prelevo la configurazione del Controllo del Traffico
@@ -69,6 +72,18 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico();
 			if(configurazioneGenerale.getControlloTraffico()==null){
 				throw new Exception("Impostazione maxThreads non corretta?? ControlloTraffico is null");
+			}
+			
+			if(context!=null && context.getTipoPorta()!=null && context.getRequestInfo()!=null) {
+				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())) {
+					if(context.getRequestInfo().getIntegrationServiceBinding()!=null) {
+						serviceBinding = context.getRequestInfo().getIntegrationServiceBinding();
+					}
+				}else {
+					if(context.getRequestInfo().getProtocolServiceBinding()!=null) {
+						serviceBinding = context.getRequestInfo().getProtocolServiceBinding();
+					}
+				}
 			}
 			
 			// Indicazione se il sistema di controllo dei max threads risulta attivo
@@ -122,7 +137,7 @@ public class PreInRequestHandler_GestioneControlloTraffico {
 				}
 			
 				// registro nuovo in thread in ingresso
-				gestore.addThread(maxThreads,threshold,maxThreadsWarningOnly,context.getPddContext(),msgDiag,tipoErrore,includiDescrizioneErrore);
+				gestore.addThread(serviceBinding, maxThreads,threshold,maxThreadsWarningOnly,context.getPddContext(),msgDiag,tipoErrore,includiDescrizioneErrore);
 			
 				// se il metodo precedente non ha sollevato una eccezione registro nel contesto che è stato registrato il thread
 				context.getPddContext().addObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO, true);	

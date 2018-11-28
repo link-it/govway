@@ -71,3 +71,7 @@ UPDATE configurazione set response_cache_statocache='abilitato';
 UPDATE configurazione set response_cache_dimensionecache='10000';
 UPDATE configurazione set response_cache_algoritmocache='lru';
 UPDATE configurazione set response_cache_lifecache='1800';
+
+-- Configurazione ControlloTraffico
+UPDATE ct_config set max_threads_tipo_errore='http429';
+UPDATE ct_config set rt_tipo_errore='http429';

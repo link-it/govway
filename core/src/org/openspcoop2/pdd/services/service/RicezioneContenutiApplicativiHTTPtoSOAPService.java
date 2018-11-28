@@ -572,7 +572,11 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(errore==null) {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento("Generale(richiesta)");
 				}
-				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,errore,e,null);
+				IntegrationError integrationError = he.getIntegrationError();
+				if(integrationError==null) {
+					integrationError = IntegrationError.BAD_REQUEST;
+				}
+				responseMessage = this.generatoreErrore.build(integrationError,errore,e,null);
 				he.customized(responseMessage);
 			}
 			else{

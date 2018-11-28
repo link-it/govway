@@ -5389,20 +5389,39 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 	
-		
+				
+		// messaggio di errore
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		if(!this.isModalitaStandard() && controlloTraffico.isControlloMaxThreadsEnabled() && (controlloTraffico.isControlloMaxThreadsWarningOnly() == false)) {
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(controlloTraffico.isControlloMaxThreadsTipoErroreIncludiDescrizione());
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(controlloTraffico.isControlloMaxThreadsTipoErroreIncludiDescrizione()+"");
+		}
+		dati.addElement(de);
+			
 		// tipo errore
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE);
 		if(controlloTraffico.isControlloMaxThreadsEnabled() && (controlloTraffico.isControlloMaxThreadsWarningOnly() == false)) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
-			de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
-			if(controlloTraffico.getControlloMaxThreadsTipoErrore()!=null) {
-				TipoErrore tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getControlloMaxThreadsTipoErrore());
-				if(tipoErroEnum!=null) {
-					de.setSelected(tipoErroEnum.getValue());
+			if(this.isModalitaStandard()) {
+				de.setType(DataElementType.HIDDEN);
+			}
+			else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
+				de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
+				if(controlloTraffico.getControlloMaxThreadsTipoErrore()!=null) {
+					TipoErrore tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getControlloMaxThreadsTipoErrore());
+					if(tipoErroEnum!=null) {
+						de.setSelected(tipoErroEnum.getValue());
+					}
 				}
 			}
 		}
@@ -5417,20 +5436,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		dati.addElement(de);
 		
-		// messaggio di errore
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_NUM_MASSIMO_RICHIESTE_SIMULTANEE_TIPOLOGIA_ERRORE_DESCRIZIONE);
-		if(controlloTraffico.isControlloMaxThreadsEnabled() && (controlloTraffico.isControlloMaxThreadsWarningOnly() == false)) {
-			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(controlloTraffico.isControlloMaxThreadsTipoErroreIncludiDescrizione());
-		}
-		else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(controlloTraffico.isControlloMaxThreadsTipoErroreIncludiDescrizione()+"");
-		}
-		dati.addElement(de);
-			
 		if(controlloTraffico.isControlloMaxThreadsEnabled()) {
 			
 			// Link visualizza stato 
@@ -5522,29 +5527,44 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
+				
+		// messaggio di errore
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		if(this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione()+"");
+		}
+		else {
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione());
+		}
+		dati.addElement(de);
 		
 		// tipo errore
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE);
-		de.setType(DataElementType.SELECT);
-		de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
-		de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
+		TipoErrore tipoErroEnum = null;
 		if(controlloTraffico.getRateLimiting().getTipoErrore()!=null) {
-			TipoErrore tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getRateLimiting().getTipoErrore());
+			tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getRateLimiting().getTipoErrore());
+		}	
+		if(this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+			if(tipoErroEnum!=null) {
+				de.setValue(tipoErroEnum.getValue());
+			}
+		}
+		else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
+			de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
 			if(tipoErroEnum!=null) {
 				de.setSelected(tipoErroEnum.getValue());
 			}
 		}
-		dati.addElement(de);
-		
-		// messaggio di errore
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE);
-		de.setType(DataElementType.CHECKBOX);
-		de.setSelected(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione());
 		dati.addElement(de);
 		
 		de = new DataElement();

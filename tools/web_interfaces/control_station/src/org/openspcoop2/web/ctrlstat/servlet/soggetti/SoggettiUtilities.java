@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -32,6 +33,8 @@ import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
+import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 /**
  * SoggettiUtilities
@@ -146,5 +149,98 @@ public class SoggettiUtilities {
 		
 		return deleteOperativo;
 		
+	}
+	
+	public static boolean soggettiCheckData(SoggettiCore soggettiCore, SoggettiHelper soggettiHelper,
+			String newLine,
+			String oldnomeprov, String oldtipoprov, boolean privato,
+			TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter,
+			Soggetto soggettoOld, boolean isSupportatoAutenticazioneSoggetti, String descrizione) throws Exception {
+		
+		// Controlli sui campi immessi
+		boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, id, tipoprov, nomeprov, codiceIpa, pd_url_prefix_rewriter, pa_url_prefix_rewriter,
+				soggettoOld, isSupportatoAutenticazioneSoggetti, descrizione);
+
+		if(isOk){
+			// check change tipo/nome con gestione workflow abilitata
+			if(soggettiCore.isRegistroServiziLocale() && soggettiHelper.isShowGestioneWorkflowStatoDocumenti()){
+				if( (oldnomeprov.equals(nomeprov)==false) || (oldtipoprov.equals(tipoprov)==false) ){
+					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
+					if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoOld, whereIsInUso)) {
+						Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+						String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
+						StringBuffer bf = new StringBuffer();
+						bf.append("Tipo o Nome del soggetto ");
+						bf.append(tipoNome);
+						bf.append(" non modificabile poiche' :"+newLine);
+						for (ErrorsHandlerCostant key : keys) {
+							String msg = whereIsInUso.get(key);
+
+							if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
+								bf.append("- erogatore di Servizi in uno stato finale: " + msg + newLine);
+							}
+							else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
+								bf.append("- fruitore in uno stato finale: " + msg + newLine);
+							}
+							else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
+								bf.append("- referente di un accordo di servizio in uno stato finale: " + msg + newLine);
+							}
+							else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
+								bf.append("- referente di un accordo di cooperazione in uno stato finale: " + msg + newLine);
+							}
+							else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
+								bf.append("- soggetto partecipante di un accordo di cooperazione in uno stato finale: " + msg + newLine);
+							}
+
+						}// chiudo for
+
+						bf.append(newLine);
+						isOk = false;
+						soggettiHelper.getPd().setMessage(bf.toString(), Costanti.MESSAGE_TYPE_INFO);
+					} 
+				}
+			}
+		}
+
+		if(isOk){
+			// check visibilita
+			if (soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && privato) {
+				HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
+				if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoOld, whereIsInUso)) {
+					Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+					String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
+					StringBuffer bf = new StringBuffer();
+					bf.append("Visibilita' del soggetto ");
+					bf.append(tipoNome);
+					bf.append(" non impostabile a privata poichè :"+newLine);
+					for (ErrorsHandlerCostant key : keys) {
+						String msg = whereIsInUso.get(key);
+
+						if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
+							bf.append("- erogatore di Servizi con visibilita' pubblica: " + msg + newLine);
+						}
+						else if (ErrorsHandlerCostant.POSSIEDE_FRUITORI.toString().equals(key.toString())) {
+							bf.append("- fruitore di servizi con visibilita' pubblica: " + msg + newLine);
+						}
+						else if (ErrorsHandlerCostant.IS_REFERENTE.toString().equals(key.toString())) {
+							bf.append("- referente di un accordo di servizio con visibilita' pubblica: " + msg + newLine);
+						}
+						else if (ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE.toString().equals(key.toString())) {
+							bf.append("- referente di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
+						}
+						else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
+							bf.append("- soggetto partecipante di un accordo di cooperazione con visibilita' pubblica: " + msg + newLine);
+						}
+
+					}// chiudo for
+
+					bf.append("<br>");
+					isOk = false;
+					soggettiHelper.getPd().setMessage(bf.toString(),Costanti.MESSAGE_TYPE_INFO);
+				} 
+			}
+		}
+		
+		return isOk;
 	}
 }

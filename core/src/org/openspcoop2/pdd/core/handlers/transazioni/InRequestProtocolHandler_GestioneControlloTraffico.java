@@ -44,6 +44,7 @@ import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -97,6 +98,8 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 		
 		Logger log = null;
 		
+		ServiceBinding serviceBinding = ServiceBinding.REST;
+		
 		boolean registerThread = true;
 		OpenSPCoop2Properties op2Properties = null;
 		try{
@@ -113,6 +116,10 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 			registerThread = InterceptorPolicyUtilities.checkRegisterThread(datiTransazione);
 			// Se registerThread == false, sicuramente la richiesta non verra' veicolata fuori e terminerà con un errore all'interno della PdD.
 
+			if(context!=null && context.getMessaggio()!=null && context.getMessaggio().getServiceBinding()!=null) {
+				serviceBinding = context.getMessaggio().getServiceBinding();
+			}
+			
 			if(registerThread){				
 											
 				// Prelevo la configurazione del Controllo del Traffico per quanto concerne le policy attive
@@ -521,7 +528,7 @@ public class InRequestProtocolHandler_GestioneControlloTraffico {
 						HandlerException he = GeneratoreMessaggiErrore.getControlloTrafficoPolicyViolated(policyBloccanti,
 								ConfigurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());
 						he.setEmettiDiagnostico(false);
-						GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(he, tipoErrore, includiDescrizioneErrore);
+						GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore);
 						throw he;
 					}
 					else if(policyViolateWarningOnly>0){

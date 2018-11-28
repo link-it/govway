@@ -555,12 +555,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 							<title>Selezione del Soggetto</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata
+									<imagedata width="30%"
 										fileref="FIGURE_OUT/apiGateway_multitenant_selezione_soggetto.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata
+									<imagedata width="30%"
 										fileref="FIGURE_OUT/apiGateway_multitenant_selezione_soggetto.png"
 									/>
 								</imageobject>

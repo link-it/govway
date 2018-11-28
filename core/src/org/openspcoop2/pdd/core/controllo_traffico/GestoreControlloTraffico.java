@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.util.Date;
 
 import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -73,7 +74,7 @@ public class GestoreControlloTraffico {
 			return stato;
 		}
 	}
-	public void addThread(Long maxThreads, Integer threshold, Boolean warningOnly, PdDContext pddContext, MsgDiagnostico msgDiag, 
+	public void addThread(ServiceBinding serviceBinding, Long maxThreads, Integer threshold, Boolean warningOnly, PdDContext pddContext, MsgDiagnostico msgDiag, 
 			TipoErrore tipoErrore, boolean includiDescrizioneErrore) throws Exception{
 		
 		boolean emettiDiagnosticoMaxThreadRaggiunto = false;
@@ -117,7 +118,7 @@ public class GestoreControlloTraffico {
 							this.erroreGenerico, pddContext
 							);
 					he.setEmettiDiagnostico(false);
-					GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(he, tipoErrore, includiDescrizioneErrore);
+					GeneratoreMessaggiErrore.configureHandlerExceptionByTipoErrore(serviceBinding, he, tipoErrore, includiDescrizioneErrore);
 					if(warningOnly == false) {
 						throw he;
 					}

@@ -132,10 +132,10 @@
 							<title>Introduzione</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr0.pdf"/>
+									<imagedata width="50%" fileref="FIGURE_OUT/installer-scr0.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="70%" fileref="FIGURE_OUT/installer-scr0.jpg"/>
+									<imagedata width="50%" fileref="FIGURE_OUT/installer-scr0.jpg"/>
 								</imageobject>
 							</mediaobject>
 						</figure>
@@ -174,11 +174,11 @@
 								<title>Informazioni Preliminari</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr1.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr1.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -224,11 +224,11 @@
 								<title>Informazioni Accesso Database</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr2.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr2.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -277,11 +277,11 @@
 								<title>Informazioni Utenza Amministratore</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr3.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr3.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -300,16 +300,17 @@
 						</para>
 					</listitem>
 					<listitem>
-						<para> Al passo successivo si dovranno inserire i dati relativi alle
-							modalità operative da supportare: <figure id="menu-modalita-operativa">
-								<title>Modalità Operativa</title>
+						<para> Al passo successivo si dovranno inserire i dati relativi ai profili
+							di interoperabilità supportati dal gateway: <figure
+								id="menu-modalita-operativa">
+								<title>Profili di Interoperabilità</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr4.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr4.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -317,10 +318,9 @@
 							<itemizedlist>
 								<listitem>
 									<para>
-										<emphasis>Modalità</emphasis>: contrassegnare con un flag le
-										modalità che saranno gestite da GovWay, scelti tra quelli
-										offerti built-in dal prodotto. Allo stato attuale le
-										modalità operative supportate sono: <itemizedlist>
+										<emphasis>Profilo</emphasis>: contrassegnare con un flag i
+										profili che saranno gestite da GovWay, scelti tra quelli
+										offerti built-in dal prodotto: <itemizedlist>
 											<listitem>
 												<para><emphasis>API Gateway</emphasis></para>
 											</listitem>
@@ -351,11 +351,11 @@
 								<title>Configurazione eDelivery</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr5.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr5.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -410,11 +410,11 @@
 								<title>Configurazione eDelivery (DBMS)</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr6.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr6.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -481,11 +481,11 @@
 								<title>Installazione</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr8.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr8.jpg"/>
 									</imageobject>
 								</mediaobject>
@@ -507,11 +507,11 @@
 								<title>Scelta versione precedente</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr9.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr9.png"/>
 									</imageobject>
 								</mediaobject>
@@ -527,11 +527,11 @@
 									provenienza</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr10.pdf"/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="70%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/installer-scr10.png"/>
 									</imageobject>
 								</mediaobject>
@@ -804,11 +804,11 @@
 							<title>Verifica Installazione: govwayConsole</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="70%"
+									<imagedata width="50%"
 										fileref="FIGURE_OUT/govwayConsole_login.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="70%"
+									<imagedata width="50%"
 										fileref="FIGURE_OUT/govwayConsole_login.png"/>
 								</imageobject>
 							</mediaobject>
@@ -829,11 +829,11 @@
 							<title>Verifica Installazione: govwayMonitor</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="70%"
+									<imagedata width="50%"
 										fileref="FIGURE_OUT/govwayMonitor_login.pdf"/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="70%"
+									<imagedata width="50%"
 										fileref="FIGURE_OUT/govwayMonitor_login.png"/>
 								</imageobject>
 							</mediaobject>
@@ -847,95 +847,367 @@
 			</orderedlist>
 		</para>
 	</sect1>
-	<sect1 id="cluster">
-		<title>Configurazione in Load Balancing</title>
-		<para> Per realizzare un'installazione in load balancing è necessario predisporre più
-			istanze dell'Application Server, ognuna con una propria installazione del software. Sarà
-			inoltre necessario: <orderedlist>
+	<sect1 id="finalizzazione">
+		<title>Finalizzazione dell'Installazione</title>
+		<para> Terminati i passi descritti nelle precedenti sezioni, GovWay è pienamente operativo e
+			può essere utilizzato per proteggere le proprie API. Il prodotto viene dispiegato con
+			dei parametri di configurazione che possiedono dei valori di default relativamente alle
+			seguenti tematiche: <orderedlist>
 				<listitem>
-					<para>Che tutte le istanze di GovWay siano configurate per condividere lo stesso
-						DB.</para>
+					<para><emphasis>URL di Invocazione</emphasis></para>
+					<para> Per conoscere l'url di invocazione di una API protetta da GovWay è
+						possibile accedere al dettaglio di una erogazione o fruizione tramite la
+						govwayConsole. L'url fornita avrà un prefisso
+							<emphasis>http://localhost:8080/govway</emphasis>. </para>
+					<para> Se il gateway è stato dispiegato in modo da essere raggiungibile tramite
+						un host, porta o contesto differente è possibile configurare tale prefisso
+						seguendo le indicazioni descritte nella sezione <xref
+							linkend="urlInvocazione"/></para>
 				</listitem>
 				<listitem>
-					<para>Che esista un Load Balancer in grado di bilanciare il flusso di richieste
-						in arrivo sulle varie istanze di AS ospitanti il software GovWay.</para>
+					<para><emphasis>Multi-Tenant</emphasis></para>
+					<para>I processi di configurazione e monitoraggio attuabili tramite le console
+						sono ottimizzati nell'ottica di gestire sempre un unico dominio
+						rappresentato da un soggetto interno il cui nome è stato fornito durante
+						l'esecuzione dell'installer (<xref linkend="menu-modalita-operativa"/>). </para>
+					<para> Per estendere l'ambito delle configurazioni e del monitoraggio tramite
+						console a più di un soggetto interno al dominio seguire le indicazioni
+						presenti nella sezione <xref linkend="multiTenant"/></para>
 				</listitem>
 				<listitem>
-					<para>Che GovWay sia opportunamente configurato con un identificatore unico che
-						contraddistingua lo specifico nodo.</para>
+					<para><emphasis>Gestione CORS</emphasis></para>
+					<para> Nella configurazione di default di GovWay è abilitata la gestione del
+							<emphasis>cross-origin HTTP request (CORS)</emphasis>; è possibile
+						modificarne la configurazione seguendo le indicazioni presenti nella sezione
+							<xref linkend="cors"/></para>
 				</listitem>
-			</orderedlist> In particolare per realizzare la configurazione descritta al punto 3, è
-			necessario: <orderedlist numeration="loweralpha">
 				<listitem>
-					<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
-						aggiungendo la seguente riga:
-						<screen>
+					<para><emphasis>Rate Limiting - Numero Complessivo Richieste
+							Simultanee</emphasis></para>
+					<para> GovWay permette definire un rate limiting sulle singole erogazioni o
+						fruizioni di API. Le metriche utilizzabili riguardano il numero di richieste
+						all'interno di un intervallo temporale, l'occupazione di banda, il tempo di
+						risposta etc. </para>
+					<para> Oltre al rate limiting GovWay consente di fissare un numero limite
+						complessivo, indipendente dalle APIs, riguardo alle richieste gestibili
+						simultaneamente dal gateway, bloccando le richieste in eccesso. </para>
+					<para> Per default GovWay è configurato per gestire simultaneamente al massimo
+						200 richieste. Per modificare tale configurazione seguire le indicazioni
+						presenti nella sezione <xref linkend="maxRequests"/></para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Tempi Risposta</emphasis></para>
+					<para> GovWay è preconfigurato con dei parametri di timeout per
+						quanto concerne la gestione delle connessioni verso gli applicativi interni
+						(erogazioni) o esterni (fruizioni) dal dominio di gestione. Per effettuare
+						un tuning di tali parametri seguire le indicazioni descritte nella sezione
+							<xref linkend="tempiRisposta"/></para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Load Balancing</emphasis></para>
+					<para>Il prodotto è preconfigurato per funzionare su di una singola istanza. Per
+						realizzare un'installazione in load balancing seguire le indicazioni
+						descritte nella sezione <xref linkend="cluster"/></para>
+				</listitem>
+			</orderedlist>
+		</para>
+		<sect2 id="urlInvocazione">
+			<title>Url di Invocazione</title>
+			<para>Per scoprire quale sia la url di una API protetta da GovWay da fornire ai client
+				esterni, il gestore può utilizzare la govwayConsole, la quale fornisce nella
+				visualizzazione del dettaglio di una erogazione o fruizione di API la url di
+				invocazione (es. <xref linkend="configurazione-erogazione-urlInvocazione"/>). </para>
+			<figure id="configurazione-erogazione-urlInvocazione">
+				<title>Url di Invocazione di una Erogazione</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%"
+							fileref="FIGURE_OUT/govwayConsole_erogazione_urlInvocazione.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%"
+							fileref="FIGURE_OUT/govwayConsole_erogazione_urlInvocazione.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+			<para> L'url fornita ha per default un prefisso
+					<emphasis>http://localhost:8080/govway</emphasis> che può non andar bene se il
+				gateway è stato dispiegato in modo da essere raggiungibile tramite un host, porta o
+				contesto differente. </para>
+			<para> Per modificare i prefissi delle url di invocazioni accedere alla voce
+					<emphasis>'Configurazione - Generale'</emphasis> del menù. Nella sezione
+					<emphasis>'Gestione Profilo'</emphasis> è possibile configurare i prefissi di
+				una erogazione e di una fruizione per ogni profilo. <figure
+					id="configurazione-urlInvocazione">
+					<title>Configurazione prefissi per le Url di Invocazione</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_urlInvocazione.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_urlInvocazione.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+		</sect2>
+		<sect2 id="multiTenant">
+			<title>Multi-Tenant</title>
+			<para>I processi di configurazione e monitoraggio attuabili tramite le console sono
+				ottimizzati nell'ottica di gestire sempre un unico dominio rappresentato da un
+				soggetto interno il cui nome è stato fornito durante l'esecuzione dell'installer
+					(<xref linkend="menu-modalita-operativa"/>). In tal senso, le fruizioni e le
+				erogazioni si intendono sempre in soggettiva riguardo un singolo soggetto interno
+				amministrato dall'utente in sessione. </para>
+			<para> La funzionalità Multi-Tenant è un'opzione che consente di estendere l'ambito
+				delle configurazioni prodotte dalla govwayConsole a più di un soggetto interno al
+				dominio. Tale opzione si attiva accedendo alla voce <emphasis>'Configurazione -
+					Generale'</emphasis> del menù, sezione <emphasis>'Multi-Tenant'</emphasis>.
+					<figure id="configurazione-multiTenant">
+					<title>Abilitazione Multi-Tenant</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+			<para>Una volta abilitato accedere alla voce <emphasis>'Soggetti'</emphasis> del menù e
+				selezionare il pulsante <emphasis>'Aggiungi'</emphasis> per registrare un nuovo
+				soggetto interno (nuovo dominio). <figure id="configurazione-multiTenant-soggetto">
+					<title>Registrazione nuovo Soggetto</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant_soggetto.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant_soggetto.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+			<para>Terminata la registrazione del nuovo soggetto sia nella console di gestione
+					(<emphasis>govwayConsole</emphasis>) che nella console di monitoraggio
+					(<emphasis>govwayMonitor</emphasis>) prima di procedere con qualsiasi operazione
+				è adesso possibile selezionare il soggetto per cui si intende gestire il dominio
+				attraverso l'apposito menù situato in alto a destra nell'intestazione delle console.
+					<figure id="apiGateway_multitenant_selezione_soggetto">
+					<title>Selezione del Soggetto</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="30%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant_selezione_soggetto.pdf"
+							/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="30%"
+								fileref="FIGURE_OUT/govwayConsole_multiTenant_selezione_soggetto.png"
+							/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+		</sect2>
+		<sect2 id="cors">
+			<title>Gestione CORS</title>
+			<para>In GovWay è possibile abilitare la gestione del <emphasis>cross-origin HTTP
+					request (CORS)</emphasis> sia globalmente, in modo che sia valida per tutte le
+				APIs, che singolarmente sulla singola erogazione o fruizione. </para>
+			<para> Nell'installazione di default è abilitata la gestione del CORS globalmente per
+				tutte le API. Tale configurazione è modificabile accedendo alla voce
+					<emphasis>'Configurazione - Generale'</emphasis> del menù, sezione
+					<emphasis>'Gestione CORS'</emphasis>. <figure id="configurazione-cors">
+					<title>Gestione CORS</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_cors.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_cors.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+		</sect2>
+		<sect2 id="maxRequests">
+			<title>Rate Limiting - Numero Complessivo Richieste Simultanee</title>
+			<para> GovWay consente di fissare un numero limite complessivo, indipendente dalle
+				singole APIs, riguardo alle richieste gestibili simultaneamente dal gateway,
+				bloccando le richieste in eccesso. Nell'installazione di default tale limite è
+				fissato a 200 richieste simultanee. </para>
+			<para> Il limite deve essere allineato rispetto al numero di connessioni simultanee
+				consentite dal frontend web e/o dall'application server. Ad esempio su tomcat tale
+				parametro è configurabile all'interno del file <emphasis>conf/server.xml</emphasis>
+				nell'attributo <emphasis>maxThreads</emphasis> degli elementi
+					<emphasis>connector</emphasis>. </para>
+			<para> Per modificare la configurazione sul numero limite di richieste simultanee
+				accedere alla voce <emphasis>'Configurazione - Controllo Traffico'</emphasis> del
+				menù, sezione <emphasis>'Limitazione Numero di Richieste Complessive'</emphasis>.
+					<figure id="configurazione-maxThreads">
+					<title>Numero Richieste Simultanee</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_maxThreads.pdf"
+							/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_maxThreads.png"
+							/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+		</sect2>
+		<sect2 id="tempiRisposta">
+			<title>Tempi Risposta</title>
+			<para> GovWay è preconfigurato con dei valori di timeout riguarndati i tempi di risposta
+				dei servizi con cui il gateway interagisce durante l'elaborazione delle richieste.
+				Nel caso delle erogazioni, si tratta dei tempi di risposta dei servizi interni al
+				dominio, successivamente ad una richiesta di erogazione dall'esterno. Nel caso delle
+				fruizioni, si tratta dei tempi di risposta dei servizi esterni, successivamente ad
+				una richiesta di fruizione da parte di un client interno al dominio. I tempi
+				configurabili sono: <itemizedlist>
+					<listitem>
+						<para>
+							<emphasis>Connection Timeout (ms)</emphasis>: Intervallo di tempo
+							atteso, sulle comunicazioni in uscita, prima di sollevare l'errore
+							Connection Timeout (scadenza del tempo di attesa per stabilire una
+							connessione). </para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Read Timeout (ms)</emphasis>: Intervallo di tempo atteso, dopo
+							aver stabilito una connessione in uscita, prima di sollevare l'errore di
+							Read Timeout (scadenza del tempo di attesa per ricevere il payload
+							dall'interlocutore). </para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Tempo Medio di Risposta (ms)</emphasis>: Valore di soglia del
+							tempo medio di risposta al fine di valutare la situazione di
+								<emphasis>Degrado Prestazionale</emphasis>, condizione per
+							l'applicabilità di eventuali politiche restrittive di rate limiting (per
+							ulteriori dettagli si rimanda alla guida utente). </para>
+					</listitem>
+				</itemizedlist>
+				<figure id="configurazione-tempiRisposta">
+					<title>Tempi Risposta</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_tempiRisposta.pdf"
+							/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_tempiRisposta.png"
+							/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+			</para>
+		</sect2>
+		<sect2 id="cluster">
+			<title>Configurazione in Load Balancing</title>
+			<para> Per realizzare un'installazione in load balancing è necessario predisporre più
+				istanze dell'Application Server, ognuna con una propria installazione del software.
+				Sarà inoltre necessario: <orderedlist>
+					<listitem>
+						<para>Che tutte le istanze di GovWay siano configurate per condividere lo
+							stesso DB.</para>
+					</listitem>
+					<listitem>
+						<para>Che esista un Load Balancer in grado di bilanciare il flusso di
+							richieste in arrivo sulle varie istanze di AS ospitanti il software
+							GovWay.</para>
+					</listitem>
+					<listitem>
+						<para>Che GovWay sia opportunamente configurato con un identificatore unico
+							che contraddistingua lo specifico nodo.</para>
+					</listitem>
+				</orderedlist> In particolare per realizzare la configurazione descritta al punto 3,
+				è necessario: <orderedlist numeration="loweralpha">
+					<listitem>
+						<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
+							aggiungendo la seguente riga:
+							<screen>
 						# Identificativo univoco della macchina 
 						org.govway.pdd.cluster_id=#IDGW#
 						</screen>
-						inserendo al posto di #IDGW# l'identificatore unico associato alla specifica
-						istanza che si sta configurando. Scegliere un identificativo con cui si
-						possa facilmente riconoscere la macchina, ad esempio l'hostname. </para>
-				</listitem>
-				<listitem>
-					<para>Nel caso del protocollo SPCoop, editare il file
-						&lt;directory-lavoro&gt;/spcoop_local.properties aggiungendo le seguenti
-						righe:
-						<screen>
+							inserendo al posto di #IDGW# l'identificatore unico associato alla
+							specifica istanza che si sta configurando. Scegliere un identificativo
+							con cui si possa facilmente riconoscere la macchina, ad esempio
+							l'hostname. </para>
+					</listitem>
+					<listitem>
+						<para>Nel caso del protocollo SPCoop, editare il file
+							&lt;directory-lavoro&gt;/spcoop_local.properties aggiungendo le seguenti
+							righe:
+							<screen>
 						# Tipo di generazione dell'identificativo
 						org.govway.protocol.spcoop.id.tipo=static
 						# Prefisso dell'identificativo (opzionale)
 						org.govway.protocol.spcoop.id.prefix=#NUMERO#
 						</screen>
-						inserendo al posto di #NUMERO# l'identificatore unico associato a quella
-						istanza (da 0 a 99). Scegliere un identificativo numerico progressivo, a
-						partire da 0, per ciascuna istanza del software GovWay nel cluster. </para>
-				</listitem>
-				<listitem>
-					<para>Effettuata la modifica dei files è necessario un riavvio dell'Application
-						Server per rendere operative le modifiche.</para>
-				</listitem>
-			</orderedlist>
-		</para>
-		<para> NOTA: La directory '&lt;directory-lavoro&gt;' è la directory contenente tutti i files
-			di configurazione. Verificare quale directory è stata indicata durante l'esecuzione del
-			setup (vedi Esecuzione dell'Installer). </para>
-		<sect2 id="cluster-console">
-			<title>Configurazione delle Console</title>
-			<para> La configurazione del Load Balancing si completa fornendo ulteriori dati di
-				configurazione alle console grafiche. Queste configurazioni consentono alle console
-				di avere i corretti riferimenti ai nodi presenti in modo da poter dettagliare questo
-				aspetto nelle proprie maschere ed inoltre poter propagare eventuali modifiche su
-				ogni nodo senza attendere il timeout della cache o richiedere riavvii
-				dell'AS.</para>
-			<para> A tale scopo sarà necessario: <orderedlist>
+							inserendo al posto di #NUMERO# l'identificatore unico associato a quella
+							istanza (da 0 a 99). Scegliere un identificativo numerico progressivo, a
+							partire da 0, per ciascuna istanza del software GovWay nel cluster.
+						</para>
+					</listitem>
 					<listitem>
-						<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
-							aggiungendo le seguenti righe su ogni PdD in Load Balancing:
-							<screen>
+						<para>Effettuata la modifica dei files è necessario un riavvio
+							dell'Application Server per rendere operative le modifiche.</para>
+					</listitem>
+				</orderedlist>
+			</para>
+			<para> NOTA: La directory '&lt;directory-lavoro&gt;' è la directory contenente tutti i
+				files di configurazione. Verificare quale directory è stata indicata durante
+				l'esecuzione del setup (vedi Esecuzione dell'Installer). </para>
+			<sect3 id="cluster-console">
+				<title>Configurazione delle Console</title>
+				<para> La configurazione del Load Balancing si completa fornendo ulteriori dati di
+					configurazione alle console grafiche. Queste configurazioni consentono alle
+					console di avere i corretti riferimenti ai nodi presenti in modo da poter
+					dettagliare questo aspetto nelle proprie maschere ed inoltre poter propagare
+					eventuali modifiche su ogni nodo senza attendere il timeout della cache o
+					richiedere riavvii dell'AS.</para>
+				<para> A tale scopo sarà necessario: <orderedlist>
+						<listitem>
+							<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
+								aggiungendo le seguenti righe su ogni PdD in Load Balancing:
+								<screen>
 					# JMX Resources
 					org.govway.pdd.checkPdD.readJMXResources.enabled=true
 					org.govway.pdd.checkPdD.readJMXResources.username=#USERNAME#
 					org.govway.pdd.checkPdD.readJMXResources.password=#PASSWORD#
 					</screen>
-							inserendo al posto di #USERNAME# e #PASSWORD# le credenziali che
-							dovranno essere utilizzate dalle console e che dovranno essere
-							configurate nei punti successivi di questo paragrafo. </para>
-					</listitem>
-					<listitem>
-						<para> Editare il file &lt;directory-lavoro&gt;/console_local.properties
-							aggiungendo le seguenti righe al fine di configurare la govwayConsole:
-							<screen>
+								inserendo al posto di #USERNAME# e #PASSWORD# le credenziali che
+								dovranno essere utilizzate dalle console e che dovranno essere
+								configurate nei punti successivi di questo paragrafo. </para>
+						</listitem>
+						<listitem>
+							<para> Editare il file &lt;directory-lavoro&gt;/console_local.properties
+								aggiungendo le seguenti righe al fine di configurare la
+								govwayConsole:
+								<screen>
 						# Configurazione gateway in Load Balancing
 						risorseJmxPdd.tipoAccesso=openspcoop
 						risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#						
 						</screen>
-							Devono essere elencati tutti gli identificativi, di ogni nodo gateway in
-							Load Balancing, descritti in precedenza e registrati nella proprietà:
-							<screen>'org.govway.pdd.cluster_id' del file govway_local.properties</screen> Per
-							ogni identificativo devono inoltre essere fornite le seguenti
-							informazioni:
-							<screen>
+								Devono essere elencati tutti gli identificativi, di ogni nodo
+								gateway in Load Balancing, descritti in precedenza e registrati
+								nella proprietà:
+								<screen>'org.govway.pdd.cluster_id' del file govway_local.properties</screen>
+								Per ogni identificativo devono inoltre essere fornite le seguenti
+								informazioni:
+								<screen>
 						# Configurazione IDGW1
 						#IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
 						#IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/GovWay/checkPdD
@@ -948,38 +1220,40 @@
 						#IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
 						#IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
-							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
-							le credenziali utilizzate in precedenza nel file
-							<screen>govway_local.properties, proprietà
+								Devono essere elencati inserendo al posto di #USERNAMEGW# e
+								#PASSWORDGW# le credenziali utilizzate in precedenza nel file
+								<screen>govway_local.properties, proprietà
 							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>  </para>
-						<para> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
-							porta con cui è raggiungibile GovWay. Infine deve anche essere fornita
-							una descrizione per ogni nodo in Load Balancing al posto di
-							#DESCRIZIONEGW#. </para>
-					</listitem>
-					<listitem>
-						<para> Editare il file &lt;directory-lavoro&gt;/monitor_local.properties
-							Disabilitare la configurazione per la singola istanza commentando la
-							proprietà statoPdD.sonde.standard.Gateway.url:
-							<screen>
+							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
+							</para>
+							<para> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
+								porta con cui è raggiungibile GovWay. Infine deve anche essere
+								fornita una descrizione per ogni nodo in Load Balancing al posto di
+								#DESCRIZIONEGW#. </para>
+						</listitem>
+						<listitem>
+							<para> Editare il file &lt;directory-lavoro&gt;/monitor_local.properties
+								Disabilitare la configurazione per la singola istanza commentando la
+								proprietà statoPdD.sonde.standard.Gateway.url:
+								<screen>
 						# Configurazione PdD in Singola Istanza
 						statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/checkPdD?forceInvocationDisablePdD=true
 						</screen>
-							Aggiungere le seguenti righe al fine di configurare la govwayMonitor per
-							il Load Balancing:
-							<screen>
+								Aggiungere le seguenti righe al fine di configurare la govwayMonitor
+								per il Load Balancing:
+								<screen>
 						# Configurazione PdD in Load Balancing
 						configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
 						configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
 						statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
 						transazioni.idCluster.useSondaPdDList=true
 						</screen>
-							Devono essere elencati tutti gli identificativi, di ogni PdD in Load
-							Balancing, registrati nel file govway_local.properties nella proprietà
-							'org.govway.pdd.cluster_id' come descritto in precedenza. Per ogni
-							identificativo devono inoltre essere fornite le seguenti informazioni:
-							<screen>
+								Devono essere elencati tutti gli identificativi, di ogni PdD in Load
+								Balancing, registrati nel file govway_local.properties nella
+								proprietà 'org.govway.pdd.cluster_id' come descritto in precedenza.
+								Per ogni identificativo devono inoltre essere fornite le seguenti
+								informazioni:
+								<screen>
 						# Configurazione IDGW1
 						statoPdD.sonde.pddOE.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/SondaPdD/check?forceInvocationDisablePdD=true
 						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http:// #HOSTGW1# : #PORTGW1
@@ -995,15 +1269,17 @@
 						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
 						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
-							Devono essere elencati inserendo al posto di #USERNAMEGW# e #PASSWORDGW#
-							le credenziali utilizzate in precedenza nel file
-							<screen>govway_local.properties, proprietà
+								Devono essere elencati inserendo al posto di #USERNAMEGW# e
+								#PASSWORDGW# le credenziali utilizzate in precedenza nel file
+								<screen>govway_local.properties, proprietà
 							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password'</screen> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname
-							e la porta con cui è raggiungibile GovWay. </para>
-					</listitem>
-				</orderedlist>
-			</para>
+							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
+								Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
+								porta con cui è raggiungibile GovWay. </para>
+						</listitem>
+					</orderedlist>
+				</para>
+			</sect3>
 		</sect2>
 	</sect1>
 	<appendix id="setupDB">
