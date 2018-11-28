@@ -897,11 +897,11 @@
 				</listitem>
 				<listitem>
 					<para><emphasis>Tempi Risposta</emphasis></para>
-					<para> GovWay è preconfigurato con dei parametri di timeout per
-						quanto concerne la gestione delle connessioni verso gli applicativi interni
-						(erogazioni) o esterni (fruizioni) dal dominio di gestione. Per effettuare
-						un tuning di tali parametri seguire le indicazioni descritte nella sezione
-							<xref linkend="tempiRisposta"/></para>
+					<para> GovWay è preconfigurato con dei parametri di timeout per quanto concerne
+						la gestione delle connessioni verso gli applicativi interni (erogazioni) o
+						esterni (fruizioni) dal dominio di gestione. Per effettuare un tuning di
+						tali parametri seguire le indicazioni descritte nella sezione <xref
+							linkend="tempiRisposta"/></para>
 				</listitem>
 				<listitem>
 					<para><emphasis>Load Balancing</emphasis></para>
@@ -1103,12 +1103,12 @@
 					<title>Tempi Risposta</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_tempiRisposta.pdf"
-							/>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_tempiRisposta.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="50%" fileref="FIGURE_OUT/govwayConsole_tempiRisposta.png"
-							/>
+							<imagedata width="50%"
+								fileref="FIGURE_OUT/govwayConsole_tempiRisposta.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
