@@ -1952,10 +1952,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2216,10 +2216,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2402,7 +2402,7 @@ public class Integrazione {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [GOVWAY_ORG_423]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:BEGIN-ID__END-ID) azione [BEGIN-ID__END-ID] non trovata nell'accordo di servizio ASRichiestaStatoAvanzamento:1";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2414,7 +2414,7 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			throw new Exception("Attesa eccezione GOVWAY_ORG_405 che non e' avvenuta");
+			throw new Exception("Attesa eccezione "+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"405 che non e' avvenuta");
 			
 		}catch(Exception e){
 			throw e;
@@ -2582,7 +2582,7 @@ public class Integrazione {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]:  faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -2594,7 +2594,7 @@ public class Integrazione {
 				dbComponentFruitore.close();
 			}
 			
-			throw new Exception("Attesa eccezione GOVWAY_ORG_405 che non e' avvenuta");
+			throw new Exception("Attesa eccezione "+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"405 che non e' avvenuta");
 			
 		}catch(Exception e){
 			throw e;
@@ -3094,10 +3094,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
@@ -3353,10 +3353,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_423] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_423]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_SERVIZIO_ERRATO;
 				// Ci sono 2 occorrenze di azione
@@ -3447,10 +3447,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
 				Reporter.log("Controllo fault string ["+MSG_ERRORE+"]");
 				Assert.assertTrue(MSG_ERRORE.equals(error.getFaultString()));
@@ -3534,10 +3534,10 @@ public class Integrazione {
 			}
 			try {
 				client.run();
-				throw new Exception("Errore atteso [GOVWAY_ORG_403] non si e' verificato...");
+				throw new Exception("Errore atteso ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403] non si e' verificato...");
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
-				Reporter.log("Controllo fault code [GOVWAY_ORG_403]");
+				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");

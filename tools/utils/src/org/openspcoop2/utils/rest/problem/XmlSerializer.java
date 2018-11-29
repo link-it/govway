@@ -42,6 +42,7 @@ public class XmlSerializer {
 
 	/** RFC 7807 Problem Details for HTTP APIs */
 	public static final String XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE = "urn:ietf:rfc:7807";
+	public static final String XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME = "problem";
 	
 	private boolean generateTypeBlank = false;
 	private XMLUtils xmlUtils;
@@ -118,7 +119,7 @@ public class XmlSerializer {
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
-		Element xmlProblem = document.createElementNS(XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE, "problem");
+		Element xmlProblem = document.createElementNS(XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE, XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME);
 		
 		if(problem.getType()!=null) {
 			Element child = document.createElement("type");

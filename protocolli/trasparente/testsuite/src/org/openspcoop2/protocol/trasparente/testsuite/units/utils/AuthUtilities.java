@@ -53,6 +53,7 @@ import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.testsuite.units.utils.ErroreApplicativoUtilities;
 import org.openspcoop2.testsuite.units.utils.OpenSPCoopDetailsUtilities;
+import org.openspcoop2.testsuite.units.utils.ProblemUtilities;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -279,21 +280,22 @@ public class AuthUtilities {
 						Assert.assertTrue(error.getFaultString().contains(erroreAtteso));
 					}
 					
+					boolean erroreApplicativo = ErroreApplicativoUtilities.existsErroreApplicativo(error);
+					boolean problem = ProblemUtilities.existsProblem(error);
 					
-					// errore applicativo
-					Assert.assertTrue(ErroreApplicativoUtilities.existsErroreApplicativo(error)); // vengono generati in caso di 5XX
-					
-					List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
-							new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
-						org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-						ecc.setCodice(Utilities.toString(codiceErroreIntegrazione));
-						ecc.setDescrizione(erroreAtteso);
-						ecc.setCheckDescrizioneTramiteMatchEsatto(ricercaEsatta);
-						eccezioni.add(ecc);
-					
+					Assert.assertTrue(erroreApplicativo || problem); // vengono generati in caso di 5XX
+									
+					if(erroreApplicativo) {
 						ErroreApplicativoUtilities.verificaFaultErroreApplicativo(error, 
 							fruitore,tipoPdD,modulo, 
 							codiceErroreIntegrazione, erroreAtteso, ricercaEsatta);
+					}
+					else {
+						ProblemUtilities.verificaProblem(error, 
+								fruitore,tipoPdD,modulo, 
+								codiceErroreIntegrazione, erroreAtteso, ricercaEsatta,
+								returnCodeAtteso);
+					}
 					
 					
 				}
@@ -303,50 +305,81 @@ public class AuthUtilities {
 					modulo = RicezioneBusteConnector.ID_MODULO;
 					Reporter.log("Modulo ["+modulo+"]");
 					
-					Reporter.log("Controllo actor code is null,  found["+error.getFaultActor()+"]");
-					Assert.assertTrue(error.getFaultActor()==null);
+					boolean erroreApplicativo = ErroreApplicativoUtilities.existsErroreApplicativo(error);
+					boolean problem = ProblemUtilities.existsProblem(error);
+					Assert.assertTrue(erroreApplicativo || problem);  // vengono generati in caso di 5XX
 					
-					Reporter.log("Controllo fault code [Client], found["+error.getFaultCode().getLocalPart().trim()+"]");
-					Assert.assertTrue("Client".equals(error.getFaultCode().getLocalPart().trim()));
-					
-					Reporter.log("Controllo fault string ["+MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString()+"], found["+error.getFaultString()+"]");
-					Assert.assertTrue(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString().equals(error.getFaultString()));
-					
-					
-					// errore applicativo
-					Assert.assertTrue(ErroreApplicativoUtilities.existsErroreApplicativo(error)); // vengono generati in caso di 5XX
-					
-					List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioni = 
-							new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
-						org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail ecc = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-						ecc.setCodice(Utilities.toString(codiceErroreCooperazone));
-						ecc.setDescrizione(erroreAtteso);
-						ecc.setCheckDescrizioneTramiteMatchEsatto(ricercaEsatta);
-						eccezioni.add(ecc);
-					
+					if(problem) {
+						Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"] found["+error.getFaultActor()+"]");
+						Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
+											
+						if(codiceErroreIntegrazione!=null) {
+							Reporter.log("Controllo fault code integrazione ["+Utilities.toString(codiceErroreIntegrazione)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
+							Assert.assertTrue(Utilities.toString(codiceErroreIntegrazione).equals(error.getFaultCode().getLocalPart()));
+						}
+						else {
+							Reporter.log("Controllo fault code cooperazione ["+Utilities.toString(codiceErroreCooperazone)+"], found["+error.getFaultCode().getLocalPart().trim()+"]");
+							Assert.assertTrue(Utilities.toString(codiceErroreCooperazone).equals(error.getFaultCode().getLocalPart()));
+						}
+						
+						Reporter.log("Controllo fault string ["+erroreAtteso+"], found["+error.getFaultString()+"]");
+						if(ricercaEsatta) {
+							Assert.assertTrue(erroreAtteso.equals(error.getFaultString()));
+						}
+						else {
+							Assert.assertTrue(error.getFaultString().contains(erroreAtteso));
+						}
+					}
+					else {
+						Reporter.log("Controllo actor code is null,  found["+error.getFaultActor()+"]");
+						Assert.assertTrue(error.getFaultActor()==null);
+						
+						Reporter.log("Controllo fault code [Client], found["+error.getFaultCode().getLocalPart().trim()+"]");
+						Assert.assertTrue("Client".equals(error.getFaultCode().getLocalPart().trim()));
+						
+						Reporter.log("Controllo fault string ["+MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString()+"], found["+error.getFaultString()+"]");
+						Assert.assertTrue(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE.toString().equals(error.getFaultString()));
+					}
+						
+					if(erroreApplicativo) {
 						ErroreApplicativoUtilities.verificaFaultErroreApplicativo(error, 
 							erogatore,tipoPdD,
 							"PortaApplicativa",//modulo, 
 							codiceErroreCooperazone, erroreAtteso, ricercaEsatta);
-					
-					
-					if(checkOpenSPCoopDetail){
 						
-						// openspcoop detail
 						
-						Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
-						
-						List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioniOD = 
-								new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
-							org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail eccOD = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
-							eccOD.setCodice(Utilities.toString(codiceErroreCooperazone));
-							eccOD.setDescrizione(erroreAtteso);
-							eccOD.setCheckDescrizioneTramiteMatchEsatto(ricercaEsatta);
-							eccezioniOD.add(eccOD);
-						
-						OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-								erogatore,TipoPdD.APPLICATIVA,modulo, 
-								eccezioniOD, null);
+						if(checkOpenSPCoopDetail){
+							
+							// openspcoop detail
+							
+							Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
+							
+							List<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail> eccezioniOD = 
+									new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>();
+								org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail eccOD = new org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail();
+								eccOD.setCodice(Utilities.toString(codiceErroreCooperazone));
+								eccOD.setDescrizione(erroreAtteso);
+								eccOD.setCheckDescrizioneTramiteMatchEsatto(ricercaEsatta);
+								eccezioniOD.add(eccOD);
+							
+							OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
+									erogatore,TipoPdD.APPLICATIVA,modulo, 
+									eccezioniOD, null);
+						}
+					}
+					else {
+						if(codiceErroreIntegrazione!=null) {
+							ProblemUtilities.verificaProblem(error, 
+									fruitore,tipoPdD,modulo, 
+									codiceErroreIntegrazione, erroreAtteso, ricercaEsatta,
+									returnCodeAtteso);
+						}
+						else {
+							ProblemUtilities.verificaProblem(error, 
+									fruitore,tipoPdD,modulo, 
+									codiceErroreCooperazone, erroreAtteso, ricercaEsatta,
+									returnCodeAtteso);
+						}
 					}
 
 				}	

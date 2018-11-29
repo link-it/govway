@@ -82,17 +82,18 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
 		IDServizioApplicativo idServizioApplicativo = null;
 		try {
-			if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
+			if(idSoggetto==null && this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
 				idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
 						getIdServizioApplicativoByCredenzialiPrincipal(principal);
 				if(idServizioApplicativo!=null) {
 					if(idSoggetto==null) {
 						idSoggetto = idServizioApplicativo.getIdSoggettoProprietario();
 					}
-					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggetto)==false) {
-						throw new Exception("Identificato sia un soggetto che un applicativo. Il soggetto ["+idSoggetto+
-								"] identificato è differente dal proprietario dell'applicativo identificato ["+idServizioApplicativo.getIdSoggettoProprietario()+"]");
-					}
+					// Non ha senso poter identificare entrambi con le stesse credenziali
+//					else if(idServizioApplicativo.getIdSoggettoProprietario().equals(idSoggetto)==false) {
+//						throw new Exception("Identificato sia un soggetto che un applicativo. Il soggetto ["+idSoggetto+
+//								"] identificato è differente dal proprietario dell'applicativo identificato ["+idServizioApplicativo.getIdSoggettoProprietario()+"]");
+//					}
 				}
 			}
 		}

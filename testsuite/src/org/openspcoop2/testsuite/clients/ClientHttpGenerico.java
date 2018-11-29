@@ -650,14 +650,6 @@ public class ClientHttpGenerico extends ClientCore{
 											DynamicNamespaceContext dnc = dncFactory.getNamespaceContextFromSoapEnvelope11(this.receivedMessage.getSOAPEnvelope());
 											AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine();
 											
-											/*
-											 *   <env:Code>
-										            <env:Value>env:Sender</env:Value>
-										            <env:Subcode>
-										               <env:Value xmlns:gwIntegration="http://govway.org/integration/fault">gwIntegration:GOVWAY_ORG_429</env:Value>
-										            </env:Subcode>
-										         </env:Code>
-											 */
 											// Axis1.4 non supporta correttamente la struttura soap1.2
 											// workaroung portando in bytes il messaggio
 											String xml = org.openspcoop2.utils.xml.XMLUtils.getInstance().toString(node,true);

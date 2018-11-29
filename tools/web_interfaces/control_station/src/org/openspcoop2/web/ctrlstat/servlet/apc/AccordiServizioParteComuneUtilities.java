@@ -44,11 +44,14 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
@@ -818,4 +821,41 @@ public class AccordiServizioParteComuneUtilities {
 			return null;
 	}
 
+	public static void mapppingAutomaticoInterfaccia(AccordoServizioParteComune as, AccordiServizioParteComuneCore apcCore,
+			boolean enableAutoMapping, boolean validazioneDocumenti, boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes, boolean facilityUnicoWSDL_interfacciaStandard,
+			String tipoProtocollo, 
+			InterfaceType interfaceType) throws Exception{
+		if(as.getByteWsdlConcettuale() != null || as.getByteWsdlLogicoErogatore() != null || as.getByteWsdlLogicoFruitore() != null) {
+			apcCore.mappingAutomatico(tipoProtocollo, as, validazioneDocumenti);
+			if(enableAutoMapping_estraiXsdSchemiFromWsdlTypes && InterfaceType.WSDL_11.equals(interfaceType)){
+				Hashtable<String, byte[]> schemiAggiuntiInQuestaOperazione = new Hashtable<String, byte[]>();
+				if(as.getByteWsdlConcettuale() != null){ 
+					apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlConcettuale(),AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE, schemiAggiuntiInQuestaOperazione);
+				}
+				if(facilityUnicoWSDL_interfacciaStandard){
+					// è stato utilizzato il concettuale. Lo riporto nel logico
+					if(as.getByteWsdlConcettuale()!=null){
+						as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
+					}
+				}
+				else{
+					if(as.getByteWsdlLogicoErogatore() != null){
+						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlLogicoErogatore(),AccordiServizioParteComuneCostanti.TIPO_WSDL_EROGATORE, schemiAggiuntiInQuestaOperazione);
+					}
+					if(as.getByteWsdlLogicoFruitore() != null){
+						apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, as.getByteWsdlLogicoFruitore(),AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE, schemiAggiuntiInQuestaOperazione);
+					}
+				}
+			}
+			try{
+				// Se ho fatto il mapping controllo la validita' di quanto prodotto
+				as.setStatoPackage(StatiAccordo.operativo.toString());
+				boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+				apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
+			}catch(ValidazioneStatoPackageException validazioneException){
+				// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
+				as.setStatoPackage(StatiAccordo.bozza.toString());
+			}
+		}
+	}
 }

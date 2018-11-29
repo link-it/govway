@@ -48,6 +48,30 @@ public class XmlDeserializer extends AbstractDeserializer {
 		this.xmlUtils = XMLUtils.getInstance();
 	}
 	
+	public boolean isProblemRFC7807(String problemString) {
+		Element problemNode = null;
+		try {
+			problemNode = this.xmlUtils.newElement(problemString.getBytes());
+		}catch(Exception e) {
+			return false;
+		}
+		return this.isProblemRFC7807(problemNode);
+	}
+	public boolean isProblemRFC7807(byte[] problemByteArray) {
+		Element problemNode = null;
+		try {
+			problemNode = this.xmlUtils.newElement(problemByteArray);
+		}catch(Exception e) {
+			return false;
+		}
+		return this.isProblemRFC7807(problemNode);
+	}
+	public boolean isProblemRFC7807(Node problemNode) {
+		return problemNode!=null && 
+				XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME.equals(problemNode.getLocalName()) &&
+				XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI());
+	}
+	
 	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
 		Element problemNode = null;
 		try {
@@ -66,7 +90,7 @@ public class XmlDeserializer extends AbstractDeserializer {
 		}
 		return this.fromNode(problemNode);
 	}
-	public ProblemRFC7807 fromNode(Element problemNode) throws UtilsException {
+	public ProblemRFC7807 fromNode(Node problemNode) throws UtilsException {
 		
 		ProblemRFC7807 problem = new ProblemRFC7807();
 		

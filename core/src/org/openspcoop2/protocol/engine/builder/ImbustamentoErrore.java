@@ -609,7 +609,15 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						}
 					}
 					
+					boolean elementoDettaglio = false;
 					if(!erroreValidazione && dettaglioEccezione!=null && generazioneDettaglioEccezione){
+						elementoDettaglio = true;
+					}
+					else if(useProblemRFC7807 && dettaglioEccezione!=null) {
+						elementoDettaglio = true;
+					}
+					
+					if(elementoDettaglio){
 						Detail d = fault.addDetail();
 						Element e = null;
 						if(rfc7807!=null) {

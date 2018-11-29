@@ -160,6 +160,9 @@
 		<fileset dir="${openspcoop2_lib}/spring" >
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="${openspcoop2_lib}/jackson" >
+			<include name="*.jar"/>
+		</fileset>
 
 	</path>
 	

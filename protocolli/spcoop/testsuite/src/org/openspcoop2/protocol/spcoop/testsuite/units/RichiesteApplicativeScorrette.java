@@ -104,7 +104,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Porta delegata non esistente
-	 * "GOVWAY_ORG_401";
+	 * "401";
 	 */
 	@DataProvider (name="porteDelegateInesistenti")
 	public Object[][] porteDelegateInesistenti(){
@@ -193,7 +193,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "GOVWAY_ORG_402";
+	 * "402";
 	 * 
 	 * messaggio: credenziali non fornite
 	 */
@@ -270,7 +270,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "GOVWAY_ORG_402";
+	 * "402";
 	 * 
 	 * messaggio: credenziali fornite non corrette
 	 */
@@ -343,7 +343,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione fallita
-	 * "GOVWAY_ORG_402";
+	 * "402";
 	 * 
 	 * messaggio: identità del servizio applicativo fornita non esiste nella configurazione
 	 */
@@ -410,7 +410,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Pattern Ricerca Porta Delegata Non Validi
-	 * "GOVWAY_ORG_403";
+	 * "403";
 	 */
 	
 	// CONTENT-BASED
@@ -622,7 +622,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autorizzazione Fallita
-	 * "GOVWAY_ORG_404";
+	 * "404";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".404"})
 	public void testAutorizzazioneFallita() throws Exception{
@@ -691,7 +691,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio SPCoop abbinato alla Porta Delegata Inesistente
-	 * "GOVWAY_ORG_405";
+	 * "405";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".405"})
 	public void testServizioSPCoopNonEsistente() throws Exception{
@@ -752,7 +752,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Nessun Messaggio disponibile per il Servizio Applicativo (Integration Manager)
-	 * "GOVWAY_ORG_406";
+	 * "406";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".406"})
 	public void testIM_messaggiNonDisponibili() throws Exception{
@@ -835,7 +835,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Messaggio Richiesto Inesistente (Integration Manager)
-	 * "GOVWAY_ORG_407";
+	 * "407";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".407"})
 	public void testIM_messaggioNonEsistente() throws Exception{
@@ -902,7 +902,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio Correlato associato ad un Servizio Asincrono non esistente
-	 * "GOVWAY_ORG_408";
+	 * "408";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".408"})
 	public void testServizioCorrelatoNonEsistenteAS() throws Exception{
@@ -1009,7 +1009,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Risposta/RichiestaStato asincrona non correlata ad una precedente richiesta
-	 * "GOVWAY_ORG_409";
+	 * "409";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".409"})
 	public void testRispostaAsincronaSimmetricaNonGenerabile() throws Exception{
@@ -1165,7 +1165,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autenticazione richiesta per l'invocazione della Porta Delegata
-	 * "GOVWAY_ORG_410";
+	 * "410";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".410"})
 	public void testAutenticazioneRichiestaServizioApplicativoAsincronoSimmetrico() throws Exception{
@@ -1226,7 +1226,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Elemento Risposta Asincrona richiesto per l'invocazione della Porta Delegata
-	 * "GOVWAY_ORG_411";
+	 * "411";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".411"})
 	public void testElementoRispostaAsincronaNonPresente() throws Exception{
@@ -1287,7 +1287,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Porta Delegata invocabile dal servizio applicativo solo per riferimento
-	 * "GOVWAY_ORG_412";
+	 * "412";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".412"})
 	public void testInvioPerRiferimento() throws Exception{
@@ -1352,7 +1352,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Porta Delegata invocabile dal servizio applicativo solo senza riferimento
-	 * "GOVWAY_ORG_413";
+	 * "413";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".413"})
 	public void testInvioPerRiferimentoNonAutorizzato() throws Exception{
@@ -1429,7 +1429,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Consegna in ordine utilizzabile sono con profilo Oneway
-	 * "GOVWAY_ORG_414";
+	 * "414";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".414"})
 	public void testConsegnaOrdineProfiloSincrono() throws Exception{
@@ -1495,7 +1495,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Consegna in ordine non utilizzabile per mancanza di dati necessari
-	 * "GOVWAY_ORG_415";
+	 * "415";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".415"})
 	public void testConsegnaOrdineConfigurazioneErrata_confermaRicezioneMancante() throws Exception{
@@ -1656,7 +1656,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Correlazione Applicativa non riuscita
-	 * "GOVWAY_ORG_416";
+	 * "416";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".416"})
 	public void testCorrelazioneApplicativaErrata() throws Exception{
@@ -1733,7 +1733,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Impossibile istanziare un validatore: XSD non valido o mancante
-	 * "GOVWAY_ORG_417";
+	 * "417";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".417"})
 	public void testValidazioneApplicativaSenzaXsd_tipoXSD() throws Exception{
@@ -1924,7 +1924,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Validazione del messaggio di richiesta fallita
-	 * "GOVWAY_ORG_418";
+	 * "418";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".418"})
 	public void testValidazioneApplicativaRichiestaFallita() throws Exception{
@@ -2007,7 +2007,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Validazione del messaggio di risposta fallita
-	 * "GOVWAY_ORG_419";
+	 * "419";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".419"})
 	public void testValidazioneApplicativaRispostaFallita() throws Exception{
@@ -2098,7 +2098,7 @@ public class RichiesteApplicativeScorrette {
 
 	/**
 	 * Busta E-Gov presente nel messaggio di richiesta
-	 * "GOVWAY_ORG_420";
+	 * "420";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".420"})
 	public void TestBustaEGovInviataVersoPortaDelegata() throws Exception{
@@ -2181,7 +2181,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Il messaggio di richiesta utilizzato con IM per invocare la Porta Delegata non rispetta il formato SOAP
-	 * "GOVWAY_ORG_421";
+	 * "421";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".421"})
 	public void testInvioMessaggioNonSOAPConXML() throws Exception{
@@ -2241,7 +2241,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Il messaggio di richiesta utilizzato con il tunnel SOAP e  con IM per invocare la Porta Delegata non e' imbustabile
-	 * "GOVWAY_ORG_422";
+	 * "422";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".422"})
 	public void testInvioMessaggioTramiteTunnelSOAP_nonImbustabileInSOAP() throws Exception{
@@ -2376,7 +2376,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Servizio SPCoop invocato con azione non corretta
-	 * "GOVWAY_ORG_423";
+	 * "423";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".423"})
 	public void testInvocazioneServizioSenzaAzione() throws Exception{
@@ -2439,7 +2439,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Funzione "Allega Body" non riuscita sul messaggio di richiesta
-	 * "GOVWAY_ORG_424";
+	 * "424";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".424"})
 	public void testAllegaBodyNonRiuscito() throws Exception{
@@ -2502,7 +2502,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Funzione "Scarta Body" non riuscita sul messaggio di richiesta
-	 * "GOVWAY_ORG_425";
+	 * "425";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".425"})
 	public void testScartaBodyNonRiuscito() throws Exception{
@@ -2564,7 +2564,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento SOAP del messaggio di richiesta 
-	 * "GOVWAY_ORG_426";
+	 * "426";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".426"})
 	public void testSoapEngineFallito_errore_processamento() throws Exception{
@@ -2656,7 +2656,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Impossibile processare header SOAP in messaggio con opzione mustUnderstand
-	 * "GOVWAY_ORG_427";
+	 * "427";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".427"})
 	public void testMustUnderstad() throws Exception{
@@ -2715,7 +2715,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Autorizzazione basata sul contenuto fallita
-	 * "GOVWAY_ORG_428";
+	 * "428";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".428"})
 	public void testAutorizzazioneContenutoKO() throws Exception{
@@ -2775,7 +2775,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * L'header HTTP riporta un Content-Type non previsto in SOAP 1.1
-	 * "GOVWAY_ORG_429";
+	 * "429";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".429"})
 	public void testContentTypeErrato() throws Exception{
@@ -2835,7 +2835,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Envelope con Namespace non previsto in SOAP 1.1
-	 * "GOVWAY_ORG_430";
+	 * "430";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".430"})
 	public void testNamespaceEnvelopeErrato() throws Exception{
@@ -2934,7 +2934,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Test Errore Configurazione del GEstoreCredenziali
-	 * "GOVWAY_ORG_431";
+	 * "431";
 	 **/
 	Repository repositoryLetturaCredenzialeERRORE_CONFIGURAZIONE_PD=new Repository();
 	Date dataLetturaCredenzialeERRORE_CONFIGURAZIONE_PD = null;
@@ -3029,7 +3029,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento SOAP del messaggio di richiesta 
-	 * "GOVWAY_ORG_432";
+	 * "432";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".432"})
 	public void testSoapEngineFallito_ricostruzioneMessaggioNonRiuscito() throws Exception{
@@ -3128,7 +3128,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento content type non presente
-	 * "GOVWAY_ORG_433";
+	 * "433";
 	 */
 	// LA LIBRERIA CLIENT HTTP GENERICO NON PERMETTE UNA INVOCAZIONE SENZA CONTENT TYPE
 //	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".433"})
@@ -3200,7 +3200,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/**
 	 * Errore di processamento correlazione applicativa risposta
-	 * "GOVWAY_ORG_434";
+	 * "434";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".434"})
 	public void testCorrelazioneApplicativaRispostaErrata() throws Exception{
@@ -3291,7 +3291,7 @@ public class RichiesteApplicativeScorrette {
 	
 	/***
 	 * LocalForward configErrata
-	 * "GOVWAY_ORG_435";
+	 * "435";
 	 */
 	@Test(groups={RichiesteApplicativeScorrette.ID_GRUPPO,RichiesteApplicativeScorrette.ID_GRUPPO+".435"})
 	public void localForward_invokePD_ASINCRONI() throws TestSuiteException, Exception{
@@ -3354,13 +3354,13 @@ public class RichiesteApplicativeScorrette {
 	
 	/*
 	
-	GOVWAY_ORG_436: Tipo del Soggetto Fruitore non supportato dal Protocollo
+	436: Tipo del Soggetto Fruitore non supportato dal Protocollo
 
-	GOVWAY_ORG_437: Tipo del Soggetto Erogatore non supportato dal Protocollo
+	437: Tipo del Soggetto Erogatore non supportato dal Protocollo
 
-	GOVWAY_ORG_438: Tipo di Servizio non supportato dal Protocollo
+	438: Tipo di Servizio non supportato dal Protocollo
 
-	GOVWAY_ORG_439: Funzionalità non supportato dal Protocollo (es. profiloAsincrono sul protocollo trasparente
+	439: Funzionalità non supportato dal Protocollo (es. profiloAsincrono sul protocollo trasparente
 	
 	NON VERIFICABILI
 	
