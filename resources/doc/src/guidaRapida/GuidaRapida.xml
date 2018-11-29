@@ -1202,10 +1202,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 						l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 						Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Gestione Gruppi Risorse'</emphasis> dove vengono visualizzati
-						i gruppi in cui sono state classificate le risorse. Per default è presente
-						un solo gruppo <emphasis>Predefinito</emphasis> a cui sono associate tutte
-						le risorse (vedi figura <xref
+							<emphasis>'Gruppi Risorse'</emphasis> dove vengono visualizzati i gruppi
+						in cui sono state classificate le risorse. Per default è presente un solo
+						gruppo <emphasis>Predefinito</emphasis> a cui sono associate tutte le
+						risorse (vedi figura <xref
 							linkend="apiGateway_gruppiRisorseHelloWorld_predefinito"/>). <figure
 							id="apiGateway_gruppiRisorseHelloWorld_predefinito">
 							<title>Situazione iniziale con unico gruppo 'Predefinito'</title>
@@ -1344,9 +1344,9 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						</figure>
 					</para>
 					<para> Sempre dal dettaglio dell'erogazione, accedere alla sezione
-							<emphasis>'Gestione Configurazione'</emphasis> dove vengono visualizzati
-						i tre gruppi. In questa sezione sarà possibile configurare per ogni gruppo
-						le funzionalità descritte nelle successive sezioni della guida (es. <xref
+							<emphasis>'Configurazione'</emphasis> dove vengono visualizzati i tre
+						gruppi. In questa sezione sarà possibile configurare per ogni gruppo le
+						funzionalità descritte nelle successive sezioni della guida (es. <xref
 							linkend="controlloAccesso"/>, <xref linkend="rateLimiting"/>, <xref
 							linkend="validazione"/> ...). Si può notare come i due gruppi creati per
 						l'esempio possiedano un <emphasis>Controllo Accessi</emphasis> abilitato,
@@ -1403,7 +1403,7 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<para>Effettuando una richiesta di un animale tramite http method
 							<emphasis>GET</emphasis> si può vedere come la richiesta completa con
 						successo:
-						<screen>curl -v -X GET "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet/545646489" \
+						<screen>curl -v -X GET "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet/1" \
 -H "accept: application/json"</screen>
 					</para>
 					<para> L'esito dell'aggiornamento viene confermato con un codice http 200 e una
@@ -1419,9 +1419,9 @@ GovWay-Message-ID: 84e1d9a4-c181-436f-b7f0-4cabf55c370d
 GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 
 {
-	"id":545646489,
+	"id":1,
 	"category": { "id":1, "name":"Akuke" },
-	"name":"African Dwarf Dog",
+	"name":"roy",
 	"photoUrls":["https://goo.gl/images/fxk2BX"],
 	"tags":[{"id":0,"name":"Naughty Dog"}],"
 	status":"available"
@@ -1702,12 +1702,12 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 		</para>
 		<para> Per sospendere una erogazione o fruizione di API, utilizzando la console
 				<emphasis>govwayConsole</emphasis> dal dettaglio dell'erogazione o della fruizione
-			accedere alla sezione <emphasis>'Gestione Configurazione'</emphasis>. Cliccando
-			sull'icona di stato verde comparirà una finestra di dialogo dove viene richiesto di
-			confermare la sospensione. La figura <xref
-				linkend="apiGateway_sospensione_disattivazione"/> mostra una sospensione in corso
-			dell'erogazione registrata nella sezione <xref linkend="apiGateway_restHelloWorld"/>.
-				<figure id="apiGateway_sospensione_disattivazione">
+			accedere alla sezione <emphasis>'Configurazione'</emphasis>. Cliccando sull'icona di
+			stato verde comparirà una finestra di dialogo dove viene richiesto di confermare la
+			sospensione. La figura <xref linkend="apiGateway_sospensione_disattivazione"/> mostra
+			una sospensione in corso dell'erogazione registrata nella sezione <xref
+				linkend="apiGateway_restHelloWorld"/>. <figure
+				id="apiGateway_sospensione_disattivazione">
 				<title>Sospensione di una erogazione</title>
 				<mediaobject>
 					<imageobject>
