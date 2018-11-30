@@ -50,7 +50,6 @@ import org.openspcoop2.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.core.Utilities;
-import org.openspcoop2.testsuite.core.UtilitiesGestioneMessaggiSoap;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseProperties;
 
@@ -151,6 +150,18 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 			
 			msg = new Message(messaggio);
 		}
+				
+		/*
+		try {
+			java.io.ByteArrayOutputStream out =  new java.io.ByteArrayOutputStream();
+			msg.writeTo(out);
+			out.flush();
+			out.close();
+			this.log.info("Messaggio inviare: "+out.toString());
+		} catch (Throwable e1) {
+			this.log.error("Errore nella fase di debug [AsincronoSimmetrico_modalitaSincrono]",e1);
+		}*/
+		
 		SOAPHeader header = null;
 		try {
 			header = msg.getSOAPHeader();
@@ -274,7 +285,7 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 					this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la ricezione del messaggio (non conforme ad openspcoopPresaInCarico.xsd)");
 	
 			} catch (Exception e) {
-				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione del client per l'invocazione della porta delegata ("+url+"): "+e.getMessage());
+				this.log.error("[AsincronoSimmetrico_modalitaAsincrona] Errore durante la creazione del client per l'invocazione della porta delegata ("+url+"): "+e.getMessage(),e);
 			} 
 		}
 		
@@ -285,13 +296,33 @@ public class ServerAsincronoSimmetricoThreadConsegnaRisposta extends Thread{
 	
 	public void generazioneRispostaAsincrona_modalitaSincrona(byte[] messaggio,String id,boolean hasAttachment, String protocol){
 		Message msg=null;
+		
+		this.log.info("NEWWWWW ["+new String(messaggio)+"]");
+		
 		if(hasAttachment){
-			UtilitiesGestioneMessaggiSoap ser=new UtilitiesGestioneMessaggiSoap();
-			msg=ser.createMessage(messaggio);
+			// UtilitiesGestioneMessaggiSoap ser=new UtilitiesGestioneMessaggiSoap();
+			// msg=ser.createMessage(messaggio);	
+			try{
+				msg = Axis14SoapUtils.build(messaggio, false);
+			}catch(Exception e){
+				this.log.error("Errore nella fase di costruzione della risposta [AsincronoSimmetrico_modalitaAsincrona]",e);
+			}
 		}
 		else{
 			msg=new Message(messaggio);
 		}
+		
+		/*
+		try {
+			java.io.ByteArrayOutputStream out =  new java.io.ByteArrayOutputStream();
+			msg.writeTo(out);
+			out.flush();
+			out.close();
+			this.log.info("Messaggio inviare: "+out.toString());
+		} catch (Throwable e1) {
+			this.log.error("Errore nella fase di debug [AsincronoSimmetrico_modalitaSincrono]",e1);
+		}*/
+		
 		SOAPHeader header = null;
 		try {
 			header = msg.getSOAPHeader();

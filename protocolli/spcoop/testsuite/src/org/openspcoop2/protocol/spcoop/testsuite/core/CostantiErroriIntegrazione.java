@@ -151,9 +151,11 @@ public class CostantiErroriIntegrazione {
 	
 	/** String che contiene un codice di errore OpenSPCoop2: ServizioNonInvocabile con l'azione specificata in msg*/
 	public final static String MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX =  
-			"L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: ";
+			"Azione richiesta non corretta: ";
+	public final static String MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_API_TEMPLATE =  
+			"NOME_API_INVOCATA";
 	public final static String MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA =  
-			MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX+"(azione:null) invocazione senza la definizione di una azione non permessa per l'accordo di servizio ";
+			MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX+"La richiesta effettuata non è associabile a nessuna azione dell'API "+MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_API_TEMPLATE+" (invocazione senza la definizione di una azione non permessa)";
 	
 	
 	/** String che contiene un codice di errore OpenSPCoop2: ServizioNonInvocabile con l'azione specificata in msg*/

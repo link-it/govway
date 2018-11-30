@@ -56,8 +56,11 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
     	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
-    	IDSoggetto soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
-    	
+    	IDSoggetto soggettoFruitore = null;
+    	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
+    		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	}
+    		
 		String user = credenziali.getUsername();
 		String password = credenziali.getPassword();
 
@@ -84,6 +87,9 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
 						getIdServizioApplicativoByCredenzialiBasic(user, password);
+			if(idServizioApplicativo!=null && soggettoFruitore==null) {
+				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
+			}
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
 			

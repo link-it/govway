@@ -328,7 +328,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 		this.collaborazioneSPCoopBase.asincronoSimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_ASINCRONA_LINEE_GUIDA,
-				"profiloAsincrono_richiestaAsincrona","123456",
+				"profiloAsincrono_richiestaAsincrona_lineeGuida","123456",
 				this.repositoryConsegnaRisposteAsincroneSimmetriche_modalitaAsincrona, 
 				this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,addIDUnivoco);
 	}
@@ -449,7 +449,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 		this.collaborazioneSPCoopBase.asincronoSimmetrico_modalitaAsincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_LINEE_GUIDA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_ASINCRONA_LINEE_GUIDA_STATEFUL,
-				"profiloAsincrono_richiestaAsincrona_Stateful","123456",
+				"profiloAsincrono_richiestaAsincrona_lineeGuida_Stateful","123456",
 				this.repositoryConsegnaRisposteAsincroneSimmetriche_modalitaAsincrona_Stateful, 
 				this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona_Stateful,addIDUnivoco);
 	}
@@ -572,7 +572,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 		this.collaborazioneSPCoopBase.asincronoSimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_LINEE_GUIDA,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA_LINEE_GUIDA,
-				"profiloAsincrono_richiestaSincrona","123456",
+				"profiloAsincrono_richiestaSincrona_lineeGuida","123456",
 				this.repositoryConsegnaRisposteAsincroneSimmetriche_modalitaSincrona, this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaSincrona,addIDUnivoco);
 	}
 	@DataProvider (name="AsincronoSimmetrico_ModalitaSincrona")
@@ -687,7 +687,7 @@ public class ProfiliDiCollaborazioneLineeGuida11 {
 		this.collaborazioneSPCoopBase.asincronoSimmetrico_modalitaSincrona(
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_LINEE_GUIDA_STATEFUL,
 				CostantiTestSuite.PORTA_DELEGATA_PROFILO_ASINCRONO_SIMMETRICO_CORRELATO_MODALITA_SINCRONA_LINEE_GUIDA_STATEFUL,
-				"profiloAsincrono_richiestaSincrona_Stateful","123456",
+				"profiloAsincrono_richiestaSincrona_lineeGuida_Stateful","123456",
 				this.repositoryConsegnaRisposteAsincroneSimmetriche_modalitaSincrona_Stateful, 
 				this.repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaSincrona_Stateful,addIDUnivoco);
 	}

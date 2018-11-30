@@ -171,20 +171,28 @@ public abstract class MessageSecurityContext{
 	public boolean processIncoming(OpenSPCoop2Message message, Busta busta, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
-			tempiElaborazione.startSicurezzaMessaggioRichiesta();
+			if(tempiElaborazione!=null) {
+				tempiElaborazione.startSicurezzaMessaggioRichiesta();
+			}
 		}
 		else {
-			tempiElaborazione.startSicurezzaMessaggioRisposta();
+			if(tempiElaborazione!=null) {
+				tempiElaborazione.startSicurezzaMessaggioRisposta();
+			}
 		}
 		try {
 			return this.processIncoming(message, busta, ctx);
 		}
 		finally {
 			if(MessageRole.REQUEST.equals(messageRole)) {
-				tempiElaborazione.endSicurezzaMessaggioRichiesta();
+				if(tempiElaborazione!=null) {
+					tempiElaborazione.endSicurezzaMessaggioRichiesta();
+				}
 			}
 			else {
-				tempiElaborazione.endSicurezzaMessaggioRisposta();
+				if(tempiElaborazione!=null) {
+					tempiElaborazione.endSicurezzaMessaggioRisposta();
+				}
 			}
 		}
 	}
@@ -194,20 +202,28 @@ public abstract class MessageSecurityContext{
 	public boolean processOutgoing(OpenSPCoop2Message message, Hashtable<String, Object> ctx, TempiElaborazione tempiElaborazione) {
 		MessageRole messageRole = message.getMessageRole();
 		if(MessageRole.REQUEST.equals(messageRole)) {
-			tempiElaborazione.startSicurezzaMessaggioRichiesta();
+			if(tempiElaborazione!=null) {
+				tempiElaborazione.startSicurezzaMessaggioRichiesta();
+			}
 		}
 		else {
-			tempiElaborazione.startSicurezzaMessaggioRisposta();
+			if(tempiElaborazione!=null) {
+				tempiElaborazione.startSicurezzaMessaggioRisposta();
+			}
 		}
 		try {
 			return this.processOutgoing(message, ctx);
 		}
 		finally {
 			if(MessageRole.REQUEST.equals(messageRole)) {
-				tempiElaborazione.endSicurezzaMessaggioRichiesta();
+				if(tempiElaborazione!=null) {
+					tempiElaborazione.endSicurezzaMessaggioRichiesta();
+				}
 			}
 			else {
-				tempiElaborazione.endSicurezzaMessaggioRisposta();
+				if(tempiElaborazione!=null) {
+					tempiElaborazione.endSicurezzaMessaggioRisposta();
+				}
 			}
 		}
 	}

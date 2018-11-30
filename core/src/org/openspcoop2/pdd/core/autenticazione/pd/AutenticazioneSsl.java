@@ -48,7 +48,10 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 
     	EsitoAutenticazionePortaDelegata esito = new EsitoAutenticazionePortaDelegata();
     	
-    	IDSoggetto soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	IDSoggetto soggettoFruitore = null;
+    	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
+    		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	}
     	    	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
 		
@@ -71,6 +74,9 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
 						getIdServizioApplicativoByCredenzialiSsl(subject);
+			if(idServizioApplicativo!=null && soggettoFruitore==null) {
+				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
+			}
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSsl non riuscita",e);
 			

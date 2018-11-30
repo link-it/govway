@@ -50,7 +50,10 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
     	
     	Credenziali credenziali = datiInvocazione.getInfoConnettoreIngresso().getCredenziali();
     	
-    	IDSoggetto soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	IDSoggetto soggettoFruitore = null;
+    	if(datiInvocazione!=null && datiInvocazione.getPd()!=null) {
+    		soggettoFruitore = new IDSoggetto(datiInvocazione.getPd().getTipoSoggettoProprietario(), datiInvocazione.getPd().getNomeSoggettoProprietario());
+    	}
     	
     	String principal = credenziali.getPrincipal();
 
@@ -70,6 +73,9 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		try{
 			idServizioApplicativo = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
 						getIdServizioApplicativoByCredenzialiPrincipal(principal);
+			if(idServizioApplicativo!=null && soggettoFruitore==null) {
+				soggettoFruitore = idServizioApplicativo.getIdSoggettoProprietario();
+			}
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazionePrincipal non riuscita",e);
 			

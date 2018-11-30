@@ -71,6 +71,8 @@ public class UtilitiesGestioneMessaggiSoap {
 	Vector<byte[]> attachments;
 	/** Identificativi degli attachments */
 	Vector<String> idAttachments;
+	/** Identificativi degli headers */
+	Vector<String> contentTypeAttachments;
 	/** MimeBoundary in presenza di attachments */
 	String mimeBoundary; // rappresentazionezione del boundary senza --
 
@@ -82,6 +84,7 @@ public class UtilitiesGestioneMessaggiSoap {
 		this.contentLength = 0;
 		this.withAttachments=false;
 		this.idAttachments=new Vector<String>();
+		this.contentTypeAttachments=new Vector<String>();
 		this.attachments=new Vector<byte[]>();
 		this.cursoreHttpInputStream=0;
 		this.testsuiteProperties = TestSuiteProperties.getInstance();
@@ -467,7 +470,8 @@ public class UtilitiesGestioneMessaggiSoap {
 			}
 			else{
 				String str=new String(by);
-				if(str!=null && str.length()>="content-id".length()){
+				//System.out.println("CHECK: "+str);
+				if(str!=null && str.toLowerCase().contains("content-id") && str.length()>="content-id".length()){
 					String checkContentId = str.substring(0, "content-id".length());
 					if(checkContentId.equalsIgnoreCase("content-id")){
 						String[] contentID=str.split(":",2);
@@ -476,6 +480,16 @@ public class UtilitiesGestioneMessaggiSoap {
 						id=id.substring(1, id.length()-1);
 						//System.out.println("--------- ID("+id+") ------------");
 						this.idAttachments.add(id);
+					}
+				}
+				else if(str!=null && str.toLowerCase().contains("content-type") && str.length()>="content-type".length()){
+					String checkContentType = str.substring(0, "content-type".length());
+					if(checkContentType.equalsIgnoreCase("content-type")){
+						String[] contentType=str.split(":",2);
+						String rightSide=contentType[1];
+						String ct=rightSide.trim();
+						//System.out.println("--------- CT("+ct+") ------------");
+						this.contentTypeAttachments.add(ct);
 					}
 				}
 			}
@@ -577,7 +591,8 @@ public class UtilitiesGestioneMessaggiSoap {
 		for(int i=1;i<this.attachments.size();i++){
 			AttachmentPart att=(AttachmentPart) msg.createAttachmentPart();	
 			byte[] attach=(byte[])this.attachments.get(i);
-			att.setContent(new ByteArrayInputStream(attach), "text/xml");
+			String contentType=(String) this.contentTypeAttachments.get(i);
+			att.setContent(new ByteArrayInputStream(attach), contentType);
 			String id=(String) this.idAttachments.get(i);
 			att.setContentId(id);
 			msg.addAttachmentPart(att);
@@ -618,6 +633,7 @@ public class UtilitiesGestioneMessaggiSoap {
 		getBoundary(b);
 		while(this.cursoreHttpInputStream<b.length-1){
 			getID(b);
+			getContentType(b);
 			byte[] line=readLine(b);
 			String str=new String(line);
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -655,6 +671,24 @@ public class UtilitiesGestioneMessaggiSoap {
 					String id=arr[1].trim();
 					id=id.substring(1, id.length()-1);
 					this.idAttachments.add(id);
+				}
+			}
+		}
+	}
+	
+	private void getContentType(byte[]b){
+		boolean toExit=false;
+		while(!toExit){
+			byte[] temp=readLine(b);
+			String line=new String(temp);
+			if(line.equals("\r"))toExit=true;
+			if(line!=null && line.length()>="content-type".length()){
+				String str = line.substring(0, "content-type".length());
+				if(str.equalsIgnoreCase("content-type")){
+					String[] arr=line.split(":",2);
+					String id=arr[1].trim();
+					id=id.substring(1, id.length()-1);
+					this.contentTypeAttachments.add(id);
 				}
 			}
 		}

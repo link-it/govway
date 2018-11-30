@@ -480,8 +480,13 @@ public class Utilities {
 			byte[] attach1 = org.openspcoop2.utils.Utilities.getAsByteArray(hand.getInputStream());
 			if(att.getContentType()!=null && HttpConstants.CONTENT_TYPE_TEXT_XML.equals(att.getContentType())) {
 				// normalizzo per non tenere conto delle istruzioni <?
-				Document d = xmlUtils.newDocument(attach1);
-				attach1 = xmlUtils.toByteArray(d, true);
+				try {
+					Document d = xmlUtils.newDocument(attach1);
+					attach1 = xmlUtils.toByteArray(d, true);
+				}catch(Exception e) {
+					System.out.println("a1 normalizzazione non riuscita ["+att.getContentId()+"]["+att.getContentType()+"]: "+new String(attach1));
+					throw e;
+				}
 			}
 			BufferedInputStream buff1=new BufferedInputStream(new ByteArrayInputStream(attach1));
 						
@@ -491,8 +496,13 @@ public class Utilities {
 			byte[] attach2 = org.openspcoop2.utils.Utilities.getAsByteArray(hand2.getInputStream());
 			if(att2.getContentType()!=null && HttpConstants.CONTENT_TYPE_TEXT_XML.equals(att2.getContentType())) {
 				// normalizzo per non tenere conto delle istruzioni <?
-				Document d = xmlUtils.newDocument(attach2);
-				attach2 = xmlUtils.toByteArray(d, true);
+				try {
+					Document d = xmlUtils.newDocument(attach2);
+					attach2 = xmlUtils.toByteArray(d, true);
+				}catch(Exception e) {
+					System.out.println("a2 normalizzazione non riuscita ["+att2.getContentId()+"]["+att2.getContentType()+"]: "+new String(attach2));
+					throw e;
+				}
 			}
 			BufferedInputStream buff2=new BufferedInputStream(new ByteArrayInputStream(attach2));
 					

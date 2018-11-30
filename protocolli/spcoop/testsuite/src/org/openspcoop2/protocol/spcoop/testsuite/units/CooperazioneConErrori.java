@@ -293,6 +293,9 @@ public class CooperazioneConErrori {
 					else
 						Assert.assertTrue(error.getFaultCode()==null);
 					Reporter.log("Controllo fault string ["+param.getFaultString()+"] con ["+error.getFaultString()+"]");
+					//System.out.println("["+error.getFaultString()+"]");
+					//System.out.println("["+param.getFaultString()+"]");
+					//System.out.println("INDEXOF ["+error.getFaultString().indexOf(param.getFaultString())+"]");
 					boolean faultStringOK = error.getFaultString().indexOf(param.getFaultString())>=0;
 					if(!faultStringOK){
 						if(param.getFaultString_alternativoConfigurazioneDB()!=null){
@@ -1975,12 +1978,12 @@ public class CooperazioneConErrori {
 		int indexMessage = 0;
 		
 		ParametriCooperazioneConErrori param = null;
-	
+		
 		// Test errore processamento per profilo oneway
 		param = new ParametriCooperazioneConErrori();
 		param.setInvocazioneOK(true);
 		if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (protocol) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
+			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (integration) con codice [GOVWAY-451], descrizione errore: Sistema non disponibile"});
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setMotivoErroreProcessamento_alternativoConfigurazioneDB(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione GRAVE con codice [EGOV_IT_300] - Sbustamento_ErroreProcessamentoMessaggioSPCoop, descrizione errore: La porta applicativa richiesta dalla busta eGov non esiste"});
 		}
@@ -2002,7 +2005,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_SINCRONO,
@@ -2031,7 +2034,7 @@ public class CooperazioneConErrori {
 			param.setVerificaRollbackProcessamento(false);
 			param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 			param.setFaultCodeAtteso("EGOV_IT_300");
-			param.setFaultString("Errore nel processamento del messaggio SPCoop");
+			param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 			invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
@@ -2063,7 +2066,7 @@ public class CooperazioneConErrori {
 			param.setVerificaRollbackProcessamento(false);
 			param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 			param.setFaultCodeAtteso("EGOV_IT_300");
-			param.setFaultString("Errore nel processamento del messaggio SPCoop");
+			param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 			invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
@@ -2088,7 +2091,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ONEWAY_STATELESS,
@@ -2106,7 +2109,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_SINCRONO_STATELESS,
@@ -2122,7 +2125,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -2137,7 +2140,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
@@ -2152,7 +2155,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATELESS,
@@ -2167,14 +2170,14 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR);
 		param.setFaultCodeAtteso("EGOV_IT_300");
-		param.setFaultString("Errore nel processamento del messaggio SPCoop");
+		param.setFaultString("spc/SoggettoConfigurazionePdDErrata ha rilevato le seguenti eccezioni:");
 		// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 		//param.setFaultString_alternativoConfigurazioneDB("La porta applicativa richiesta dalla busta eGov non esiste");
 		invocaServizio(this.repositoryErroreProcessamento,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_PROCESSAMENTO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATELESS,
 				null,null,param);
 		
 		try{
-			Thread.sleep(3000);
+			Thread.sleep(10000);
 		}catch(Exception e){}
 	}
 	@DataProvider (name="ErroreProcessamento")
@@ -2200,6 +2203,9 @@ public class CooperazioneConErrori {
 			
 				IDSoggetto soggettoPdDDefault = new IDSoggetto(Utilities.testSuiteProperties.getIdentitaDefault_tipo(), Utilities.testSuiteProperties.getIdentitaDefault_nome(), Utilities.testSuiteProperties.getIdentitaDefault_dominio());
 				
+				IDSoggetto soggettoPdDDefaultSenzaCodicePorta = soggettoPdDDefault.clone();
+				soggettoPdDDefaultSenzaCodicePorta.setCodicePorta(null);
+				
 				if(i==0){
 					// Test Oneway
 					if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
@@ -2213,7 +2219,9 @@ public class CooperazioneConErrori {
 								CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
 								null, null,
 								SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY,null,
-								new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+								new IDSoggetto[] {soggettoPdDDefault,
+										soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+										this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 					}else{
 						this.controllaTracciamentoRichiesta(id,data,this.collaborazioneSPCoopBaseErroreProcessamento, 
 								CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, 
@@ -2234,7 +2242,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
 							null, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				else if(i==2){
 					// Test Asincrono Simmetrico modalita asincrona
@@ -2249,7 +2259,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 					/*}else{
 						this.controllaTracciamentoRichiesta(id,data,this.collaborazioneSPCoopBaseErroreProcessamento, 
 								CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO, 
@@ -2270,7 +2282,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				else if(i==4){
 					// Test Asincrono Asimmetrico modalita asincrona
@@ -2285,7 +2299,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 					/*}else{
 						this.controllaTracciamentoRichiesta(id,data,this.collaborazioneSPCoopBaseErroreProcessamento, 
 								CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO, 
@@ -2306,7 +2322,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				
 				else if(i==6){
@@ -2322,7 +2340,9 @@ public class CooperazioneConErrori {
 								CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
 								null, null,
 								SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY,null,
-								new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+								new IDSoggetto[] {soggettoPdDDefault,
+										soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+										this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 					}else{
 						this.controllaTracciamentoRichiesta(id,data,this.collaborazioneSPCoopBaseErroreProcessamento, 
 								CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, 
@@ -2344,7 +2364,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO, 
 							null, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				
 				else if(i==8){
@@ -2359,7 +2381,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_ASINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				
 				else if(i==9){
@@ -2374,7 +2398,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_SIMMETRICO_AZIONE_MODALITA_SINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				
 				else if(i==10){
@@ -2389,7 +2415,9 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_AZIONE_MODALITA_ASINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 				
 				else if(i==11){
@@ -2404,7 +2432,10 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO, 
 							CostantiTestSuite.SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_AZIONE_MODALITA_SINCRONA, null,
 							SPCoopCostanti.PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO,null,
-							new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+							new IDSoggetto[] {
+									soggettoPdDDefault,
+									soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+									this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 				}
 			}
 		}catch(Exception e){
@@ -2477,7 +2508,7 @@ public class CooperazioneConErrori {
 		param.setIndexIdMessaggioDaEliminare(2);
 		param.setVerificaRollbackProcessamento(false);
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA,
-				"profiloAsincrono_richiestaAsincrona","123456",param);
+				"profiloAsincrono_richiestaAsincrona_lineeGuida","123456",param);
 		
 		// Test errore validazione per profilo asincrono simmetrico modalita sincrona
 		param = new ParametriCooperazioneConErrori();
@@ -2490,7 +2521,7 @@ public class CooperazioneConErrori {
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
-				"profiloAsincrono_richiestaSincrona","123456",param);
+				"profiloAsincrono_richiestaSincrona_lineeGuida","123456",param);
 		
 		// Test errore validazione per profilo asincrono asimmetrico modalita asincrona
 		param = new ParametriCooperazioneConErrori();
@@ -2561,7 +2592,7 @@ public class CooperazioneConErrori {
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
-				"profiloAsincrono_richiestaAsincrona","123456",param);
+				"profiloAsincrono_richiestaAsincrona_lineeGuida","123456",param);
 
 		// Test errore validazione per profilo asincrono simmetrico modalita sincrona (Stateless)
 		param = new ParametriCooperazioneConErrori();
@@ -2574,7 +2605,7 @@ public class CooperazioneConErrori {
 		param.setFaultCodeAtteso("EGOV_IT_001");
 		param.setFaultString("[EGOV_IT_113] ProfiloTrasmissione/inoltro");
 		invocaServizio(this.repositoryErroreValidazione,CostantiTestSuite.PORTA_DELEGATA_ERRORE_SPCOOP_VALIDAZIONE_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
-				"profiloAsincrono_richiestaSincrona","123456",param);
+				"profiloAsincrono_richiestaSincrona_lineeGuida","123456",param);
 		
 		// Test errore validazione per profilo asincrono asimmetrico modalita asincrona (Stateless)
 		param = new ParametriCooperazioneConErrori();
@@ -2877,7 +2908,7 @@ public class CooperazioneConErrori {
 		param.setEliminaMessaggioErogatore(false);
 		param.setIndexIdMessaggioDaEliminare(4);
 		if(Utilities.testSuiteProperties.isNewConnectionForResponse()==false){
-			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (protocol) GRAVE con codice [EGOV_IT_300] - ErroreProcessamentoMessaggioSPCoop, descrizione errore: Errore nel processamento del messaggio SPCoop"});
+			param.setMotivoErroreProcessamento(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione (integration) con codice [GOVWAY-451], descrizione errore: Sistema non disponibile"});
 			// Visto che ora il motivo generico e' abilitato, dovrebbe sempre bastare il motivo sopra.
 			//param.setMotivoErroreProcessamento_alternativoConfigurazioneDB(new String[]{"[spedizione n.1] Consegna [http] con errore: Eccezione GRAVE con codice [EGOV_IT_300] - Sbustamento_ErroreProcessamentoMessaggioSPCoop, descrizione errore: La porta applicativa richiesta dalla busta eGov non esiste"});
 			param.setVerificaRollbackProcessamento(true);
@@ -2963,6 +2994,9 @@ public class CooperazioneConErrori {
 			
 				IDSoggetto soggettoPdDDefault = new IDSoggetto(Utilities.testSuiteProperties.getIdentitaDefault_tipo(), Utilities.testSuiteProperties.getIdentitaDefault_nome(), Utilities.testSuiteProperties.getIdentitaDefault_dominio());
 								
+				IDSoggetto soggettoPdDDefaultSenzaCodicePorta = soggettoPdDDefault.clone();
+				soggettoPdDDefaultSenzaCodicePorta.setCodicePorta(null);
+								
 				if(i==0){
 					// Test Oneway, connettore errato PdD Destinazione
 					Reporter.log("Controllo tracciamento richiesta non sia effettuata con id: " +id);
@@ -3008,7 +3042,9 @@ public class CooperazioneConErrori {
 								CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY, 
 								null, null,
 								SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY,null,
-								new IDSoggetto[] {soggettoPdDDefault,this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
+								new IDSoggetto[] {soggettoPdDDefault,
+										soggettoPdDDefaultSenzaCodicePorta, // non viene generato il codice porta nella lista trasmissione del fruitore in questo caso
+										this.collaborazioneSPCoopBaseErroreProcessamento.getDestinatario()}); // getDestinatario serve per configurazione su database
 					}else{
 						this.controllaTracciamentoRichiesta(id,data,this.collaborazioneSPCoopBaseErroreProcessamento, 
 								CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY, 

@@ -2411,7 +2411,8 @@ public class RichiesteApplicativeScorrette {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA), 
-						CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
+						CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA.replace(CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_API_TEMPLATE, "ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"), 
+						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();

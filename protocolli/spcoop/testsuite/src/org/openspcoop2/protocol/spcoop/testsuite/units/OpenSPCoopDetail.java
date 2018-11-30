@@ -32,7 +32,6 @@ import java.util.Vector;
 import org.apache.axis.AxisFault;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
@@ -525,7 +524,8 @@ public class OpenSPCoopDetail {
 		
 		// dati generali
 		IDSoggetto dominio = CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE;
-		String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+		//String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+		String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 		String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 		boolean equalsMatch = true;
 		
@@ -713,7 +713,8 @@ public class OpenSPCoopDetail {
 		
 		// dati generali
 		IDSoggetto dominio = CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE;
-		String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+		//String codice = Utilities.toString(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO);
+		String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
 		String msg = CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE;
 		boolean equalsMatch = true;
 		

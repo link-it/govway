@@ -10791,9 +10791,9 @@
         
         
         <!-- Servizi Applicativi che possiedono una definizione di RispostaAsincrona -->
-        <servizio-applicativo nome="ProfiloAsincrono_richiestaSincrona" >
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaSincrona_lineeGuida" >
             <invocazione-porta >
-                <credenziali tipo="basic" user="profiloAsincrono_richiestaSincrona" password="123456" />
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaSincrona_lineeGuida" password="123456" />
             </invocazione-porta>
             <risposta-asincrona get-message="abilitato" >
                 <connettore tipo="http" nome="tracer">
@@ -10801,9 +10801,9 @@
                 </connettore>
             </risposta-asincrona> 
         </servizio-applicativo>
-        <servizio-applicativo nome="ProfiloAsincrono_richiestaAsincrona" >
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaAsincrona_lineeGuida" >
             <invocazione-porta >
-                <credenziali tipo="basic" user="profiloAsincrono_richiestaAsincrona" password="123456" />
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaAsincrona_lineeGuida" password="123456" />
             </invocazione-porta>
             <risposta-asincrona get-message="abilitato" >
                 <connettore tipo="http" nome="tracer">
@@ -10813,9 +10813,9 @@
         </servizio-applicativo>
         
         <!-- Servizi applicativi per risposte asincroni, gestione stateful -->
-        <servizio-applicativo nome="ProfiloAsincrono_richiestaSincrona_Stateful" >
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaSincrona_lineeGuida_Stateful" >
             <invocazione-porta >
-                <credenziali tipo="basic" user="profiloAsincrono_richiestaSincrona_Stateful" password="123456" />
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaSincrona_lineeGuida_Stateful" password="123456" />
             </invocazione-porta>
             <risposta-asincrona get-message="abilitato" >
                 <connettore tipo="http" nome="tracer">
@@ -10823,9 +10823,9 @@
                 </connettore>
             </risposta-asincrona> 
         </servizio-applicativo>
-        <servizio-applicativo nome="ProfiloAsincrono_richiestaAsincrona_Stateful" >
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaAsincrona_lineeGuida_Stateful" >
             <invocazione-porta >
-                <credenziali tipo="basic" user="profiloAsincrono_richiestaAsincrona_Stateful" password="123456" />
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaAsincrona_lineeGuida_Stateful" password="123456" />
             </invocazione-porta>
             <risposta-asincrona get-message="abilitato" >
                 <connettore tipo="http" nome="tracer">
@@ -11548,8 +11548,8 @@
         </servizio-applicativo>
     </soggetto>
     <soggetto tipo="spc" nome="TestUrlPrefixRewriter3" 
-        pd-url-prefix-rewriter="http://localhost:8080/govway/testPD" 
-        pa-url-prefix-rewriter="http://localhost:8080/govway/testPA" >
+        pd-url-prefix-rewriter="http://localhost:8080/govwayTestPD" 
+        pa-url-prefix-rewriter="http://localhost:8080/govwayTestPA" >
         <porta-delegata gestione-manifest="abilitato" nome="TestUrlPrefixRewriter3" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />

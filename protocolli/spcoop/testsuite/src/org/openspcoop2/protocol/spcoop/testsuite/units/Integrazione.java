@@ -124,7 +124,8 @@ public class Integrazione {
 	//private static final String MSG_ERRORE_SERVIZIO="Servizio richiesto con la porta delegata non trovato nel Registro dei Servizi";
 	private static final String MSG_ERRORE_IDENTIFICAZIONE_AZIONE="Identificazione dinamica dell'azione associata alla porta delegata fallita";
 	//private static final String MSG_ERRORE_IDENTIFICAZIONE_SERVIZIO="Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
-	private static final String MSG_ERRORE_SERVIZIO_ERRATO = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:@AZIONE@) azione [@AZIONE@] non trovata nell'accordo di servizio @ACCORDO_SERVIZIO@";
+	private static final String MSG_ERRORE_SERVIZIO_ERRATO = "Azione richiesta non corretta: (azione:@AZIONE@) Azione '@AZIONE@' non trovata nell'API @ACCORDO_SERVIZIO@";
+	
 	
 	public static void checkHttpRisposta(CooperazioneBase collaborazioneSPCoopBase,Properties risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
 		if(risposta==null){
@@ -2404,7 +2405,7 @@ public class Integrazione {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"423]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:BEGIN-ID__END-ID) azione [BEGIN-ID__END-ID] non trovata nell'accordo di servizio ASRichiestaStatoAvanzamento:1";
+				String msgErrore = "Azione richiesta non corretta: (azione:BEGIN-ID__END-ID) Azione 'BEGIN-ID__END-ID' non trovata nell'API ASRichiestaStatoAvanzamento:1";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
