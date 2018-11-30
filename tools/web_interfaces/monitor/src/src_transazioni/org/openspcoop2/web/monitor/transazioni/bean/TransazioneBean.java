@@ -621,7 +621,7 @@ public class TransazioneBean extends Transazione{
 				return null;
 			}
 		}catch(Exception e) {
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il processamento dei tempi di elaborazione ["+tempiElaborazione+"]");
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il processamento dei tempi di elaborazione ["+tempiElaborazione+"]",e);
 			return null;
 		}
 	}

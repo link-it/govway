@@ -697,6 +697,31 @@
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" />
 							<h:outputText id="outTempiElaborazioneAutorizzazioneContenuti" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" 
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" />
+
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_maxRequests" value="Controllo Traffico (Richieste Complessive)" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
+							<h:outputText id="outTempiElaborazioneControlloTraffico_maxRequests" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_rateLimiting" value="ControlloTraffico (Rate Limiting)" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
+							<h:outputText id="outTempiElaborazioneControlloTraffico_rateLimiting" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
+								
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingCalcoloDigest" value="Caching Risposta (Calcolo Digest)" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" />
+							<h:outputText id="outTempiElaborazioneResponseCachingCalcoloDigest" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" />
+								
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingReadFromCache" value="Caching Risposta (Lettura Cache)" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" />
+							<h:outputText id="outTempiElaborazioneResponseCachingReadFromCache" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" />
+								
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingSaveInCache" value="Caching Risposta (Scrittura Cache)" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" />
+							<h:outputText id="outTempiElaborazioneResponseCachingSaveInCache" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" 
+								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" />
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneValidazioneRichiesta" value="Validazione (Richiesta)" 
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRichiesta}" />
@@ -707,17 +732,7 @@
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" />
 							<h:outputText id="outTempiElaborazioneValidazioneRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" 
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" />
-							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_maxRequests" value="Controllo Traffico (Richieste Complessive)" 
-								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
-							<h:outputText id="outTempiElaborazioneControlloTraffico_maxRequests" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" 
-								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
-							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_rateLimiting" value="ControlloTraffico (Rate Limiting)" 
-								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
-							<h:outputText id="outTempiElaborazioneControlloTraffico_rateLimiting" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" 
-								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
-							
+														
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneSicurezzaMessaggioRichiesta" value="Sicurezza Messaggio (Richiesta)" 
 								rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRichiesta}" />
 							<h:outputText id="outTempiElaborazioneSicurezzaMessaggioRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRichiesta}" 

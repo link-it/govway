@@ -51,7 +51,7 @@ public class TempiElaborazioneUtils implements Serializable {
 	/*
 	 * NOTA: Spazio massimo occupato.
 	 * Ogni informazione occupa  'yyyyMMddHHmmssSSS' + '-' + 'yyyyMMddHHmmssSSS' + ' ' = 36
-	 * Per ora siamo a 26 informazioni raccolte (token, autenticazione, ...), quindi 26*36=936.
+	 * Per ora siamo a 29 informazioni raccolte (token, autenticazione, ...), quindi 29*36=1044.
 	 * Attenzione a non superare 4000 che è la larghezza massima.
 	 * 
 	 **/
@@ -104,7 +104,10 @@ public class TempiElaborazioneUtils implements Serializable {
 		bf.append(_convertToDBValue(tempiElaborazione.dumpBinarioRichiestaUscita)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.dumpBinarioRispostaIngresso)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.dumpBinarioRispostaUscita)).append(TEMPI_SEPARATOR);
-		bf.append(_convertToDBValue(tempiElaborazione.dumpIntegrationManager));
+		bf.append(_convertToDBValue(tempiElaborazione.dumpIntegrationManager)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.responseCachingCalcoloDigest)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.responseCachingReadFromCache)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.responseCachingSaveInCache)).append(TEMPI_SEPARATOR);
 		
 		return bf.toString();
 	}
@@ -161,10 +164,13 @@ public class TempiElaborazioneUtils implements Serializable {
 		
 			String tempo = tempi[i];
 			TempiElaborazioneFunzionalita funzionalita = _convertFromDBValue(tempo);
+			if(funzionalita==null) {
+				continue;
+			}
 			if(funzionalita!=null && tempiElaborazione==null) {
 				tempiElaborazione = new TempiElaborazione();
 			}
-			
+						
 			if(i==0) {
 				tempiElaborazione.token = funzionalita;
 			}
@@ -242,6 +248,15 @@ public class TempiElaborazioneUtils implements Serializable {
 			}
 			else if(i==25) {
 				tempiElaborazione.dumpIntegrationManager = funzionalita;
+			}
+			else if(i==26) {
+				tempiElaborazione.responseCachingCalcoloDigest = funzionalita;
+			}
+			else if(i==27) {
+				tempiElaborazione.responseCachingReadFromCache = funzionalita;
+			}
+			else if(i==28) {
+				tempiElaborazione.responseCachingSaveInCache = funzionalita;
 			}
 
 		}
