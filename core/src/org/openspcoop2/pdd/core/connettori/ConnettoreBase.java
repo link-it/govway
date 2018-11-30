@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -46,6 +47,8 @@ import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.response_caching.ResponseCached;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -266,6 +269,25 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			if(this.requestMsg!=null) {
 				Object digestO = this.requestMsg.getContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST);
 				if(digestO!=null) {
+					
+					Transaction transactionNullable = null;
+					try{
+						if(this.getPddContext()!=null) {
+							Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
+							String idTransazione = null;
+							if(oIdTransazione!=null && (oIdTransazione instanceof String)){
+								idTransazione = (String) oIdTransazione;
+							}
+							transactionNullable = TransactionContext.getTransaction(idTransazione);
+						}
+					}catch(Throwable e){
+						// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+					}
+					
+					if(transactionNullable!=null) {
+						transactionNullable.getTempiElaborazione().startResponseCachingReadFromCache();
+					}
+					
 					this.responseCachingDigest = (String) digestO;
 					try{
 						ResponseCached responseCached =  GestoreCacheResponseCaching.getInstance().readByDigest(this.responseCachingDigest);
@@ -307,6 +329,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						this.logger.error("Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e),e);
 						this.errore = "Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e);
 						return false;
+					}finally {
+						if(transactionNullable!=null) {
+							transactionNullable.getTempiElaborazione().endResponseCachingReadFromCache();
+						}
 					}
 				}
 			}
@@ -316,6 +342,25 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	}
 	
 	private void saveResponseInCache() {
+		
+		Transaction transactionNullable = null;
+		try{
+			if(this.getPddContext()!=null) {
+				Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
+				String idTransazione = null;
+				if(oIdTransazione!=null && (oIdTransazione instanceof String)){
+					idTransazione = (String) oIdTransazione;
+				}
+				transactionNullable = TransactionContext.getTransaction(idTransazione);
+			}
+		}catch(Throwable e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
+		}
+		
+		if(transactionNullable!=null) {
+			transactionNullable.getTempiElaborazione().startResponseCachingSaveInCache();
+		}
+		
 		try {
 			if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato()) &&
 					this.responseMsg!=null) { // jms, null ha la response null
@@ -350,6 +395,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			}
 		}catch(Throwable e){
 			this.logger.error("Errore durante il salvataggio nella cache delle risposte: "+this.readExceptionMessageFromException(e),e);
+		}finally {
+			if(transactionNullable!=null) {
+				transactionNullable.getTempiElaborazione().endResponseCachingSaveInCache();
+			}
 		}
 	}
 	

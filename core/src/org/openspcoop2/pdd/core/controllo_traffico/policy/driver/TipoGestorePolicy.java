@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
+import org.openspcoop2.generic_project.exception.NotFoundException;
+
 /**     
  * TipoGestorePolicy
  *
@@ -43,4 +45,24 @@ public enum TipoGestorePolicy {
 		this.tipo = tipo;
 	}
 	
+	public static TipoGestorePolicy toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoGestorePolicy toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		TipoGestorePolicy res = null;
+		for (TipoGestorePolicy tmp : values()) {
+			if(tmp.getTipo().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
+		}
+		return res;
+	}
 }

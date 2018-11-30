@@ -190,4 +190,16 @@ public class TempiElaborazioneBean extends TempiElaborazione {
 		return this._getInfoTempiElaborazione(this.dumpIntegrationManager);
 	}
 	
+	public String getInfoTempiElaborazioneResponseCachingCalcoloDigest() {
+		return this._getInfoTempiElaborazione(this.responseCachingCalcoloDigest);
+	}
+	
+	public String getInfoTempiElaborazioneResponseCachingReadFromCache() {
+		return this._getInfoTempiElaborazione(this.responseCachingReadFromCache);
+	}
+	
+	public String getInfoTempiElaborazioneResponseCachingSaveInCache() {
+		return this._getInfoTempiElaborazione(this.responseCachingSaveInCache);
+	}
+	
 }

@@ -66,6 +66,9 @@ public class TempiElaborazione implements Serializable {
 	protected TempiElaborazioneFunzionalita dumpBinarioRispostaIngresso;
 	protected TempiElaborazioneFunzionalita dumpBinarioRispostaUscita;
 	protected TempiElaborazioneFunzionalita dumpIntegrationManager;
+	protected TempiElaborazioneFunzionalita responseCachingCalcoloDigest;
+	protected TempiElaborazioneFunzionalita responseCachingReadFromCache;
+	protected TempiElaborazioneFunzionalita responseCachingSaveInCache;
 	
 	
 	public TempiElaborazioneFunzionalita getToken() {
@@ -453,6 +456,49 @@ public class TempiElaborazione implements Serializable {
 	}
 	public void endDumpIntegrationManager() {
 		this.dumpIntegrationManager.setDataUscita(DateManager.getDate());
+	}
+	
+	
+	public TempiElaborazioneFunzionalita getResponseCachingCalcoloDigest() {
+		return this.responseCachingCalcoloDigest;
+	}
+	public void setResponseCachingCalcoloDigest(TempiElaborazioneFunzionalita responseCachingCalcoloDigest) {
+		this.responseCachingCalcoloDigest = responseCachingCalcoloDigest;
+	}
+	public void startResponseCachingCalcoloDigest() {
+		this.responseCachingCalcoloDigest = new TempiElaborazioneFunzionalita();
+		this.responseCachingCalcoloDigest.setDataIngresso(DateManager.getDate());
+	}
+	public void endResponseCachingCalcoloDigest() {
+		this.responseCachingCalcoloDigest.setDataUscita(DateManager.getDate());
+	}
+	
+	public TempiElaborazioneFunzionalita getResponseCachingReadFromCache() {
+		return this.responseCachingReadFromCache;
+	}
+	public void setResponseCachingReadFromCache(TempiElaborazioneFunzionalita responseCachingReadFromCache) {
+		this.responseCachingReadFromCache = responseCachingReadFromCache;
+	}
+	public void startResponseCachingReadFromCache() {
+		this.responseCachingReadFromCache = new TempiElaborazioneFunzionalita();
+		this.responseCachingReadFromCache.setDataIngresso(DateManager.getDate());
+	}
+	public void endResponseCachingReadFromCache() {
+		this.responseCachingReadFromCache.setDataUscita(DateManager.getDate());
+	}
+	
+	public TempiElaborazioneFunzionalita getResponseCachingSaveInCache() {
+		return this.responseCachingSaveInCache;
+	}
+	public void setResponseCachingSaveInCache(TempiElaborazioneFunzionalita responseCachingSaveInCache) {
+		this.responseCachingSaveInCache = responseCachingSaveInCache;
+	}
+	public void startResponseCachingSaveInCache() {
+		this.responseCachingSaveInCache = new TempiElaborazioneFunzionalita();
+		this.responseCachingSaveInCache.setDataIngresso(DateManager.getDate());
+	}
+	public void endResponseCachingSaveInCache() {
+		this.responseCachingSaveInCache.setDataUscita(DateManager.getDate());
 	}
 	
 }

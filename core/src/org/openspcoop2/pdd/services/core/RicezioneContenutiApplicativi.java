@@ -3865,12 +3865,19 @@ public class RicezioneContenutiApplicativi {
 		try{
 			ResponseCachingConfigurazione responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching(portaDelegata);
 			if(responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getStato())) {
-				msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
 				
-				HashGenerator hashGenerator = new HashGenerator(propertiesReader.getCachingResponseDigestAlgorithm());
-				String digest = hashGenerator.buildKeyCache(requestMessage, requestInfo, responseCachingConfig);
-				requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
+				transaction.getTempiElaborazione().startResponseCachingCalcoloDigest();
+				try {
 				
+					msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
+					
+					HashGenerator hashGenerator = new HashGenerator(propertiesReader.getCachingResponseDigestAlgorithm());
+					String digest = hashGenerator.buildKeyCache(requestMessage, requestInfo, responseCachingConfig);
+					requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
+				
+				}finally {
+					transaction.getTempiElaborazione().endResponseCachingCalcoloDigest();
+				}
 			}
 		} catch (Exception e){
 			msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");

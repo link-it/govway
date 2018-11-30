@@ -140,6 +140,7 @@
 				<delete file="${dist}/cfg/loader_local.properties"/>
 			</then>
 		</if>
+		<replace file="${dist}/cfg/govway_local.jcs.properties" token="/etc/govway/indexed-disk-cache" value="${work_dir}"/>
 		
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>

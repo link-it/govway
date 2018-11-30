@@ -16829,7 +16829,7 @@ public class OpenSPCoop2Properties {
 				}
 				else {
 					name = name.trim();
-					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyTipo = TipoGestorePolicy.valueOf(name);
+					OpenSPCoop2Properties.isControlloTrafficoGestorePolicyTipo = TipoGestorePolicy.toEnumConstant(name, true);
 				}
 			} catch(java.lang.Exception e) {
 				TipoGestorePolicy gestoreDefault = TipoGestorePolicy.IN_MEMORY;
