@@ -858,4 +858,57 @@ public class AccordiServizioParteComuneUtilities {
 			}
 		}
 	}
+	
+	public static boolean createPortTypeOperation(boolean enableAutoMapping, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper,
+			AccordoServizioParteComune as, PortType pt, String userLogin) throws Exception{
+		boolean updateAccordo = false;
+		try{
+			if(enableAutoMapping) {
+				if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
+					// Se ho aggiunto la prima operazione
+					if(pt.sizeAzioneList()==1) {
+						as.setStatoPackage(StatiAccordo.operativo.toString());
+						boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+						apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
+						updateAccordo = true;
+					}
+				}
+			}
+		}catch(ValidazioneStatoPackageException validazioneException){
+		}
+		
+		if(updateAccordo) {			
+			// effettuo le operazioni
+			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);			
+		}		
+		else {				
+			// effettuo le operazioni
+			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);				
+		}
+		return updateAccordo;
+	}
+	
+	public static void createResource(boolean enableAutoMapping, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper,
+			AccordoServizioParteComune as, String userLogin) throws Exception{
+	
+		try{
+			if(enableAutoMapping) {
+				if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
+					// Se ho aggiunto la prima risorsa
+					if(as.sizeResourceList()==1) {
+						as.setStatoPackage(StatiAccordo.operativo.toString());
+						boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
+						apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
+					}
+				}
+			}
+		}catch(ValidazioneStatoPackageException validazioneException){
+			// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
+			as.setStatoPackage(StatiAccordo.bozza.toString());
+		}
+		
+		// effettuo le operazioni
+		apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+		
+	}
 }

@@ -49,9 +49,7 @@ import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
-import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -632,30 +630,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			//imposto properties custom
 			newOp.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
 			
-			boolean updateAccordo = false;
-			try{
-				if(apcCore.isEnableAutoMappingWsdlIntoAccordo()) {
-					if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
-						// Se ho aggiunto la prima operazione
-						if(pt.sizeAzioneList()==1) {
-							as.setStatoPackage(StatiAccordo.operativo.toString());
-							boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-							apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
-							updateAccordo = true;
-						}
-					}
-				}
-			}catch(ValidazioneStatoPackageException validazioneException){
-			}
-			
-			if(updateAccordo) {			
-				// effettuo le operazioni
-				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);			
-			}		
-			else {				
-				// effettuo le operazioni
-				apcCore.performUpdateOperation(userLogin, apcHelper.smista(), pt);				
-			}
+			boolean updateAccordo = 
+					AccordiServizioParteComuneUtilities.createPortTypeOperation(apcCore.isEnableAutoMappingWsdlIntoAccordo(), apcCore, apcHelper, as, pt, userLogin);
 			
 			// cancello i file temporanei
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);

@@ -42,10 +42,8 @@ import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.HttpMethod;
-import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
@@ -387,24 +385,7 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			//imposto properties custom
 			newRes.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
 
-			try{
-				if(apcCore.isEnableAutoMappingWsdlIntoAccordo()) {
-					if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
-						// Se ho aggiunto la prima risorsa
-						if(as.sizeResourceList()==1) {
-							as.setStatoPackage(StatiAccordo.operativo.toString());
-							boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-							apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
-						}
-					}
-				}
-			}catch(ValidazioneStatoPackageException validazioneException){
-				// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
-				as.setStatoPackage(StatiAccordo.bozza.toString());
-			}
-			
-			// effettuo le operazioni
-			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
+			AccordiServizioParteComuneUtilities.createResource(apcCore.isEnableAutoMappingWsdlIntoAccordo(), apcCore, apcHelper, as, userLogin);
 			
 			// cancello i file temporanei
 			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
