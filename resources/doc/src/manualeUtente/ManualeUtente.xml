@@ -895,12 +895,12 @@
 			</sect3>
 			<sect3 id="gw-erogazione-cors">
 				<title>Gestione CORS</title>
-				<para>Si parla di <emphasis>cross-origin HTTP request (CORS)</emphasis> quando un
-					client richiede l'accesso ad una risorsa di un differente dominio, protocollo o
-					porta. Per default i web browsers utilizzano una policy
-						'<emphasis>same-origin</emphasis>' per evitare interazioni tra domini
-					differenti. Il CORS definisce un modo nel quale un browser ed un server possono
-					interagire per abilitare interazioni attraverso differenti domini. </para>
+				<para> Quando un'applicazione client in esecuzione su un browser (es. codice
+					javascript) richiede l'accesso ad una risorsa di un differente dominio,
+					protocollo o porta tale richiesta viene gestita dal browser tramite una politica
+					di <emphasis>cross-origin HTTP request (CORS)</emphasis>. Il CORS definisce un
+					modo nel quale un browser ed un server (o il gateway) possono interagire per
+					abilitare interazioni attraverso differenti domini. </para>
 				<para>In GovWay è possibile abilitare la gestione del CORS sia globalmente, in modo
 					che sia valida per tutte le APIs, che singolarmente sulla singola erogazione o
 					fruizione. </para>

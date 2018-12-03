@@ -904,12 +904,6 @@
 							linkend="tempiRisposta"/></para>
 				</listitem>
 				<listitem>
-					<para><emphasis>Load Balancing</emphasis></para>
-					<para>Il prodotto è preconfigurato per funzionare su di una singola istanza. Per
-						realizzare un'installazione in load balancing seguire le indicazioni
-						descritte nella sezione <xref linkend="cluster"/></para>
-				</listitem>
-				<listitem>
 					<para><emphasis>Caching della Risposta - Disk Cache</emphasis></para>
 					<para>In GovWay è possibile abilitare il salvataggio delle risposte in una cache
 						sia globalmente, in modo che sia attivo per tutte le APIs, che singolarmente
@@ -924,6 +918,12 @@
 						da aggiungere una memoria secondaria dove salvare gli elementi in eccesso.
 						Per abilitare la memoria secondaria seguire le indicazioni descritte nella
 						sezione <xref linkend="cachingRisposta"/></para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Load Balancing</emphasis></para>
+					<para>Il prodotto è preconfigurato per funzionare su di una singola istanza. Per
+						realizzare un'installazione in load balancing seguire le indicazioni
+						descritte nella sezione <xref linkend="cluster"/></para>
 				</listitem>
 			</orderedlist>
 		</para>
@@ -1130,6 +1130,44 @@
 				</figure>
 			</para>
 		</sect2>
+		<sect2 id="cachingRisposta">
+			<title>Caching della Risposta - Disk Cache</title>
+			<para>In GovWay è possibile abilitare il salvataggio delle risposte in una cache. Questa
+				funzionalità permette ad un backend server di non dover riprocessare le stesse
+				richieste più volte. </para>
+			<para>La configurazione di default prevede di salvare in una cache, che risiede in
+				memoria RAM, fino a 5.000 risposte (ogni risposta comporta il salvataggio di due
+				elementi in cache). In caso venga superato il numero massimo di elementi che possano
+				risiedere in cache, vengono eliminate le risposte meno recenti secondo una politica
+					<emphasis>LRU</emphasis>. </para>
+			<para> Per modificare la configurazione della cache in modo da aggiungere una memoria
+				secondaria dove salvare gli elementi in eccesso è possibile agire sul file
+					<emphasis>&lt;directory-lavoro&gt;/govway_local.jcs.properties</emphasis>
+				scommentando le seguenti:
+				<screen>
+jcs.region.responseCaching=responseCachingDiskCache
+jcs.region.responseCaching.elementattributes.IsSpool=true					
+						</screen>
+				Per ulteriori dettagli sui parametri di configurazione della memoria secondaria si
+				rimanda alla documentazione della cache <ulink
+					url="http://commons.apache.org/proper/commons-jcs/IndexedDiskCacheProperties.html"
+					>http://commons.apache.org/proper/commons-jcs/IndexedDiskCacheProperties.html</ulink>. </para>
+			<para> La libreria di caching utilizzata da GovWay, (<emphasis>JCS</emphasis>: <ulink
+					url="http://commons.apache.org/proper/commons-jcs/"
+					>http://commons.apache.org/proper/commons-jcs/</ulink>) consente di definire
+				diversi tipi di memoria secondaria. Per ulteriori dettagli su come abilitare i vari
+				tipi di memoria si rimanda alla documentazione: <ulink
+					url="http://commons.apache.org/proper/commons-jcs/JCSPlugins.html"
+					>http://commons.apache.org/proper/commons-jcs/JCSPlugins.html</ulink>. </para>
+			<note>
+				<title>Configurazione della cache in memoria RAM</title>
+				<para>Accedendo alla sezione <emphasis>'Configurazione - Generale', tramite
+						l'utilizzo della <emphasis>govwayConsole</emphasis> in modalità
+						avanzata</emphasis>, è possibile modificare i parametri di configurazione
+					(numero di elementi e politica di svecchiamento) della cache che risiede in
+					memoria RAM tramite la sezione <emphasis>'Cache (Risposte)'</emphasis>. </para>
+			</note>
+		</sect2>
 		<sect2 id="cluster">
 			<title>Configurazione in Load Balancing</title>
 			<para> Per realizzare un'installazione in load balancing è necessario predisporre più
@@ -1154,8 +1192,8 @@
 						<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
 							aggiungendo la seguente riga:
 							<screen>
-						# Identificativo univoco della macchina 
-						org.govway.pdd.cluster_id=#IDGW#
+# Identificativo univoco della macchina 
+org.govway.pdd.cluster_id=#IDGW#
 						</screen>
 							inserendo al posto di #IDGW# l'identificatore unico associato alla
 							specifica istanza che si sta configurando. Scegliere un identificativo
@@ -1167,10 +1205,10 @@
 							&lt;directory-lavoro&gt;/spcoop_local.properties aggiungendo le seguenti
 							righe:
 							<screen>
-						# Tipo di generazione dell'identificativo
-						org.govway.protocol.spcoop.id.tipo=static
-						# Prefisso dell'identificativo (opzionale)
-						org.govway.protocol.spcoop.id.prefix=#NUMERO#
+# Tipo di generazione dell'identificativo
+org.govway.protocol.spcoop.id.tipo=static
+# Prefisso dell'identificativo (opzionale)
+org.govway.protocol.spcoop.id.prefix=#NUMERO#
 						</screen>
 							inserendo al posto di #NUMERO# l'identificatore unico associato a quella
 							istanza (da 0 a 99). Scegliere un identificativo numerico progressivo, a
@@ -1199,10 +1237,10 @@
 							<para>Editare il file &lt;directory-lavoro&gt;/govway_local.properties
 								aggiungendo le seguenti righe su ogni PdD in Load Balancing:
 								<screen>
-					# JMX Resources
-					org.govway.pdd.checkPdD.readJMXResources.enabled=true
-					org.govway.pdd.checkPdD.readJMXResources.username=#USERNAME#
-					org.govway.pdd.checkPdD.readJMXResources.password=#PASSWORD#
+# JMX Resources
+org.govway.pdd.checkPdD.readJMXResources.enabled=true
+org.govway.pdd.checkPdD.readJMXResources.username=#USERNAME#
+org.govway.pdd.checkPdD.readJMXResources.password=#PASSWORD#
 					</screen>
 								inserendo al posto di #USERNAME# e #PASSWORD# le credenziali che
 								dovranno essere utilizzate dalle console e che dovranno essere
@@ -1213,9 +1251,9 @@
 								aggiungendo le seguenti righe al fine di configurare la
 								govwayConsole:
 								<screen>
-						# Configurazione gateway in Load Balancing
-						risorseJmxPdd.tipoAccesso=openspcoop
-						risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#						
+# Configurazione gateway in Load Balancing
+risorseJmxPdd.tipoAccesso=openspcoop
+risorseJmxPdd.aliases=#IDGW1#,..,#IDGWN#						
 						</screen>
 								Devono essere elencati tutti gli identificativi, di ogni nodo
 								gateway in Load Balancing, descritti in precedenza e registrati
@@ -1224,23 +1262,23 @@
 								Per ogni identificativo devono inoltre essere fornite le seguenti
 								informazioni:
 								<screen>
-						# Configurazione IDGW1
-						#IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
-						#IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/GovWay/checkPdD
-						#IDGW1#.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
-						#IDGW1#.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
-						...
-						# Configurazione IDGWN
-						#IDGWN#.risorseJmxPdd.descrizione=#DESCRIZIONEGWN#
-						#IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/GovWay/checkPdD
-						#IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
-						#IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
+# Configurazione IDGW1
+#IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
+#IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/GovWay/checkPdD
+#IDGW1#.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
+#IDGW1#.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
+...
+# Configurazione IDGWN
+#IDGWN#.risorseJmxPdd.descrizione=#DESCRIZIONEGWN#
+#IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/GovWay/checkPdD
+#IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
+#IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
 								Devono essere elencati inserendo al posto di #USERNAMEGW# e
-								#PASSWORDGW# le credenziali utilizzate in precedenza nel file
+								#PASSWORDGW# le credenziali utilizzate in precedenza nel file:
 								<screen>govway_local.properties, proprietà
-							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
+'org.govway.pdd.checkPdD.readJMXResources.username' e
+'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
 							</para>
 							<para> Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
 								porta con cui è raggiungibile GovWay. Infine deve anche essere
@@ -1252,17 +1290,17 @@
 								Disabilitare la configurazione per la singola istanza commentando la
 								proprietà statoPdD.sonde.standard.Gateway.url:
 								<screen>
-						# Configurazione PdD in Singola Istanza
-						statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/checkPdD?forceInvocationDisablePdD=true
+# Configurazione PdD in Singola Istanza
+statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/checkPdD?forceInvocationDisablePdD=true
 						</screen>
 								Aggiungere le seguenti righe al fine di configurare la govwayMonitor
 								per il Load Balancing:
 								<screen>
-						# Configurazione PdD in Load Balancing
-						configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
-						configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
-						statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
-						transazioni.idCluster.useSondaPdDList=true
+# Configurazione PdD in Load Balancing
+configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
+configurazioni.risorseJmxPdd.aliases=IDGW1,..,IDGWN
+statoPdD.sonde.standard.nodi=IDGW1,..,IDGWN
+transazioni.idCluster.useSondaPdDList=true
 						</screen>
 								Devono essere elencati tutti gli identificativi, di ogni PdD in Load
 								Balancing, registrati nel file govway_local.properties nella
@@ -1270,71 +1308,32 @@
 								Per ogni identificativo devono inoltre essere fornite le seguenti
 								informazioni:
 								<screen>
-						# Configurazione IDGW1
-						statoPdD.sonde.pddOE.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/SondaPdD/check?forceInvocationDisablePdD=true
-						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http:// #HOSTGW1# : #PORTGW1
-						# /govway/checkPdD
-						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
-						#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
-						...
-						# Configurazione IDGWN
-						statoPdD.sonde.pddOE.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/SondaPdD/check?forceInvocationDisablePdD=true
-						#IDGWN#.configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
-						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN
-						#/govway/checkPdD
-						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
-						#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
+# Configurazione IDGW1
+statoPdD.sonde.pddOE.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/SondaPdD/check?forceInvocationDisablePdD=true
+#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http:// #HOSTGW1# : #PORTGW1
+# /govway/checkPdD
+#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
+#IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
+...
+# Configurazione IDGWN
+statoPdD.sonde.pddOE.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/SondaPdD/check?forceInvocationDisablePdD=true
+#IDGWN#.configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
+#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN
+#/govway/checkPdD
+#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
+#IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
 						</screen>
 								Devono essere elencati inserendo al posto di #USERNAMEGW# e
-								#PASSWORDGW# le credenziali utilizzate in precedenza nel file
+								#PASSWORDGW# le credenziali utilizzate in precedenza nel file:
 								<screen>govway_local.properties, proprietà
-							'org.govway.pdd.checkPdD.readJMXResources.username' e
-							'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
+'org.govway.pdd.checkPdD.readJMXResources.username' e
+'org.govway.pdd.checkPdD.readJMXResources.password'</screen>
 								Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
 								porta con cui è raggiungibile GovWay. </para>
 						</listitem>
 					</orderedlist>
 				</para>
 			</sect3>
-			<sect2 id="cachingRisposta">
-				<title>Caching della Risposta - Disk Cache</title>
-				<para>In GovWay è possibile abilitare il salvataggio delle risposte in una cache.
-					Questa funzionalità permette ad un backend server di non dover riprocessare le
-					stesse richieste più volte. </para>
-				<para>La configurazione di default prevede di salvare in una cache, che risiede in
-					memoria RAM, fino a 5.000 risposte (ogni risposta comporta il salvataggio di due
-					elementi in cache). In caso venga superato il numero massimo di elementi che
-					possano risiedere in cache, vengono eliminate le risposte meno recenti secondo
-					una politica <emphasis>LRU</emphasis>. </para>
-				<para> Per modificare la configurazione della cache in modo da aggiungere una
-					memoria secondaria dove salvare gli elementi in eccesso è possibile agire sul
-					file <emphasis>&lt;directory-lavoro&gt;/govway_local.jcs.properties</emphasis>
-					scommentando le seguenti:
-					<screen>
-jcs.region.responseCaching=responseCachingDiskCache
-jcs.region.responseCaching.elementattributes.IsSpool=true					
-						</screen>
-					Per ulteriori dettagli sui parametri di configurazione della memoria secondaria
-					si rimanda alla documentazione della cache <ulink
-						url="http://commons.apache.org/proper/commons-jcs/IndexedDiskCacheProperties.html"
-						>http://commons.apache.org/proper/commons-jcs/IndexedDiskCacheProperties.html</ulink>. </para>
-				<para> La libreria di caching utilizzata da GovWay, (<emphasis>JCS</emphasis>:
-						<ulink url="http://commons.apache.org/proper/commons-jcs/"
-						>http://commons.apache.org/proper/commons-jcs/</ulink>) consente di definire
-					diversi tipi di memoria secondaria. Per ulteriori dettagli su come abilitare i
-					vari tipi di memoria si rimanda alla documentazione: <ulink
-						url="http://commons.apache.org/proper/commons-jcs/JCSPlugins.html"
-						>http://commons.apache.org/proper/commons-jcs/JCSPlugins.html</ulink>. </para>
-				<note>
-					<title>Configurazione della cache in memoria RAM</title>
-					<para>Accedendo alla sezione <emphasis>'Configurazione - Generale', tramite
-							l'utilizzo della <emphasis>govwayConsole</emphasis> in modalità
-							avanzata</emphasis>, è possibile modificare i parametri di
-						configurazione (numero di elementi e politica di svecchiamento) della cache
-						che risiede in memoria RAM tramite la sezione <emphasis>'Cache
-							(Risposte)'</emphasis>. </para>
-				</note>
-			</sect2>
 		</sect2>
 	</sect1>
 	<appendix id="setupDB">
@@ -1344,28 +1343,28 @@ jcs.region.responseCaching.elementattributes.IsSpool=true
 				<listitem>
 					<para> Creazione Utente
 						<screen>
-							[user@localhost]$ su
-							Parola d'ordine: XXX
-							[root@localhost]# su - postgres
-							-bash-3.1$ createuser -P
-							Enter name of role to add: govway
-							Enter password for new role: govway
-							Conferma password: govway
-							Shall the new role be a superuser? (y/n) n
-							Shall the new role be allowed to create databases? (y/n) n
-							Shall the new role be allowed to create more new roles? (y/n) n
-							CREATE ROLE
+[user@localhost]$ su
+Parola d'ordine: XXX
+[root@localhost]# su - postgres
+-bash-3.1$ createuser -P
+Enter name of role to add: govway
+Enter password for new role: govway
+Conferma password: govway
+Shall the new role be a superuser? (y/n) n
+Shall the new role be allowed to create databases? (y/n) n
+Shall the new role be allowed to create more new roles? (y/n) n
+CREATE ROLE
 						</screen>
 					</para>
 				</listitem>
 				<listitem>
 					<para> Creazione Database
 						<screen>
-							[user@localhost]$ su
-							Parola d'ordine: XXX
-							[root@localhost]# su - postgres
-							-bash-3.1$createdb -O govway govway
-							CREATE DATABASE
+[user@localhost]$ su
+Parola d'ordine: XXX
+[root@localhost]# su - postgres
+-bash-3.1$createdb -E UTF8 -O govway govway
+CREATE DATABASE
 						</screen>
 					</para>
 				</listitem>
@@ -1376,8 +1375,8 @@ jcs.region.responseCaching.elementattributes.IsSpool=true
 						utente). Abilitiamo quindi l'utente govway ad accedere al db govway,
 						aggiungendo le seguenti righe al file:
 						<screen>
-							local govway govway md5
-							host govway govway 127.0.0.1 255.255.255.255 md5
+local govway govway md5
+host govway govway 127.0.0.1 255.255.255.255 md5
 						</screen>
 					</para>
 				</listitem>

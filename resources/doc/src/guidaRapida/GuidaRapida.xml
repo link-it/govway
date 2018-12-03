@@ -1320,10 +1320,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<para>
 						<emphasis role="strong">Verifica Gruppi Esistenti</emphasis>
 					</para>
-					<para> Dal dettaglio dell'erogazione, accedere alla sezione <emphasis>'Gestione
-							Gruppi Risorse'</emphasis> dove adesso verranno visualizzati tre gruppi,
-						i due gruppi creati in precedenza ed il gruppo predefinito che adesso
-						contiene solamente le risorse con metodo http GET (vedi figura <xref
+					<para> Dal dettaglio dell'erogazione, accedere alla sezione <emphasis>'Gruppi
+							Risorse'</emphasis> dove adesso verranno visualizzati tre gruppi, i due
+						gruppi creati in precedenza ed il gruppo predefinito che adesso contiene
+						solamente le risorse con metodo http GET (vedi figura <xref
 							linkend="apiGateway_gruppiRisorseHelloWorld_predefinito_verifica"/>). In
 						questa sezione sarà possibile agire sui gruppi anche in un secondo momento
 						aggiungendo o eliminando risorse da un gruppo o creandone di nuovi. <figure
@@ -1853,7 +1853,204 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 
 	<sect1 id="gestioneCORS">
 		<title>Gestione CORS</title>
-		<para>TODO</para>
+		<para> Quando un'applicazione client in esecuzione su un browser (es. codice javascript)
+			richiede l'accesso ad una risorsa di un differente dominio, protocollo o porta tale
+			richiesta viene gestita dal browser tramite una politica di <emphasis>cross-origin HTTP
+				request (CORS)</emphasis>. Il CORS definisce un modo nel quale un browser ed un
+			server (o il gateway) possono interagire per abilitare interazioni attraverso differenti
+			domini. </para>
+		<para>In GovWay è possibile abilitare la gestione del CORS sia globalmente, in modo che sia
+			valida per tutte le APIs, che singolarmente sulla singola erogazione o fruizione.</para>
+		<para> Una rappresentazione di questo scenario è mostrata nella figura <xref
+				linkend="apiGateway_cors"/>. <figure id="apiGateway_cors">
+				<title>Scenario cross-origin HTTP request (CORS)</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="70%" fileref="FIGURE_OUT/cors.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="70%" fileref="FIGURE_OUT/cors.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		<para>In GovWay è abilitata per default una gestione globale del CORS. I dettagli sulla
+			configurazione globale sono accedibili tramite la voce del menù
+				<emphasis>'Configurazione - Generale'</emphasis> all'interno della sezione
+				<emphasis>'Gestione CORS'</emphasis>. Per il dettaglio sul significa di ogni voce si
+			rimanda alla specifica CORS <emphasis>https://www.w3.org/TR/cors/</emphasis>. Sono
+			abilitati per default: <itemizedlist>
+				<listitem>
+					<para><emphasis>Access-Control-Allow-Origins</emphasis>: Qualsiasi origine
+						(*)</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Access-Control-Allow-Methods</emphasis>: i metodi http POST,
+						PUT, GET, DELETE e PATCH</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Access-Control-Allow-Headers</emphasis>: gli header http
+						'Authorization', 'Content-Type' e 'SOAPAction'</para>
+				</listitem>
+			</itemizedlist> La figura <xref linkend="apiGateway_cors_confGlobale"/> mostra la
+			configurazione globale attiva per default. <figure id="apiGateway_cors_confGlobale">
+				<title>CORS - Configurazione di default</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsConfDefault.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsConfDefault.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		<para> Tramite il tool on-line disponibile all'indirizzo <ulink
+				url="https://www.test-cors.org/">https://www.test-cors.org/</ulink> è possibile
+			verificare il funzionamento dello scenario descritto nella figura <xref
+				linkend="apiGateway_cors"/>. Configurare il tool con i seguenti parametri per
+			utilizzare il servizio descritto nella sezione <xref linkend="apiGateway_restHelloWorld"
+			/>: <itemizedlist>
+				<listitem>
+					<para><emphasis>HTTP Method</emphasis>: PUT</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Request Headers</emphasis>: <itemizedlist>
+							<listitem>
+								<para>accept: application/json</para>
+							</listitem>
+							<listitem>
+								<para>Content-Type: application/json</para>
+							</listitem>
+						</itemizedlist>
+					</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Request Content</emphasis>:
+						<screen>{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}</screen>
+					</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Remote URL</emphasis>:
+						http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para> Se si attiva la modalità <emphasis>Developers Tool</emphasis> (es. su Chrome 'More
+			Tools - Developers Tool') è possibile vedere le richieste effettuate dal browser oltre
+			agli header http scambiati. </para>
+		<para>Nella figura <xref linkend="apiGateway_cors_test1"/> è possibile vedere come siano
+			state effettuate due richieste http di cui la prima è stata iniziata dal browser
+			(Initiator: corsclient.js). <figure id="apiGateway_cors_test1">
+				<title>Verifica CORS</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_1.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_1.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		<para> La figura <xref linkend="apiGateway_cors_test2"/> evidenzia gli header scambiati
+			nella prima richiesta OPTIONS; tra gli header della risposta vi sono gli header relativi
+			alla configurazione di default del CORS di GovWay tra cui l'header
+			'Access-Control-Allow-Origins' impostato al valore '*'.<figure
+				id="apiGateway_cors_test2">
+				<title>Verifica CORS: richiesta OPTIONS</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_2.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_2.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		<!--
+		<para>
+			La figura 
+			<xref linkend="apiGateway_cors_test3"/> evidenzia invece gli header scambiati nella seconda richiesta PUT che rappresenta la richiesta originale.<figure
+				id="apiGateway_cors_test3">
+				<title>Verifica CORS: richiesta PUT</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_3.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_3.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		-->
+		<para>Vediamo adesso come modificare la gestione del CORS di una singola una erogazione o
+			fruizione di API utilizzando la console <emphasis>govwayConsole</emphasis>. Per farlo
+			accedere al dettaglio di un'erogazione o di una fruizione e cliccare sull'icona di
+			modifica presente nella riga relativa alla gestione del CORS. <figure
+				id="apiGateway_cors_api">
+				<title>Personalizzazione Gestione CORS di una erogazione</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsErogazioneModifica.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsErogazioneModifica.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+		<para>Impostare il campo <emphasis>Stato</emphasis> al valore
+				<emphasis>Ridefinito</emphasis>. La maschera di configurazione si aggiornerà
+			presentando i dati relativi alla configurazione globale di default. Deselezionare a
+			questo punto la voce <emphasis>'All Allow Origins'</emphasis> ed impostare un'origine
+			specifica nel campo <emphasis>'Allow Origins'</emphasis>. Ad esempio utilizzare il
+			valore <emphasis>'https://www.test-cors.org'</emphasis> relativo al tool di test
+			descritto in precedenza. <figure id="apiGateway_cors_api2">
+				<title>Personalizzazione Gestione CORS: definizione di uno specifico
+					'origin'</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsErogazioneModifica2.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsErogazioneModifica2.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+
+		<para> Effettuando un nuovo test tramite il tool on-line <emphasis>test-cors</emphasis> è
+			possibile vedere nella prima richiesta OPTIONS, che tra gli header della risposta non vi
+			è più l'header 'Access-Control-Allow-Origins' impostato al valore '*' ma bensì con il
+			nuovo valore configurato. <note>
+				<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+				<para> Le configurazioni accedute da GovWay vengono mantenute in una cache dopo il
+					primo accesso per 2 ore, è quindi necessario forzare un reset della cache. Per
+					farlo accedere alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
+					selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+			</note>
+			<figure id="apiGateway_cors_test_origin">
+				<title>Verifica CORS: definizione di uno specifico 'origin'</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_origin.pdf"/>
+					</imageobject>
+					<imageobject>
+						<imagedata width="50%" fileref="FIGURE_OUT/corsTest_origin.png"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
 	</sect1>
 
 	<sect1 id="controlloAccesso">
