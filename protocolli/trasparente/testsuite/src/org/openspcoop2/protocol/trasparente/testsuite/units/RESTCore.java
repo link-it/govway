@@ -386,6 +386,8 @@ public class RESTCore {
 			// invocazione
 			HttpResponse httpResponse = HttpUtilities.httpInvoke(request);
 			
+			Reporter.log("Atteso ["+returnCodeAtteso+"] ritornato ["+httpResponse.getResultHTTPOperation()+"], raccolgo id ...");
+			
 			// Raccolgo identificativo per verifica traccia
 			String idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
 			Assert.assertTrue(idMessaggio!=null);
