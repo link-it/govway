@@ -42,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.audit.log.Operation;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -112,6 +113,8 @@ public   class Auditing extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				pd.setDati(dati);
 
+				pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, 
@@ -139,6 +142,8 @@ public   class Auditing extends Action {
 				
 				pd.setDati(dati);
 
+				pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
+				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
@@ -169,6 +174,8 @@ public   class Auditing extends Action {
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
+			pd.setLabelBottoneInvia(Costanti.LABEL_MONITOR_BUTTON_FILTRA);
+			
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping,
 					AuditCostanti.OBJECT_NAME_AUDITING, AuditCostanti.TIPO_OPERAZIONE_AUDITING);
 

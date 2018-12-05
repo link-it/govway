@@ -41,6 +41,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FormUrlEncodedFilter implements Filter {
 
+	/*
+	 * NOTA: da Wilfdly 8.1 questo filtro deve essere abilitato nella configurazione:
+	 * In the standalone/configuration/standalone.xml file change the servlet-container XML element so that it has the attribute allow-non-standard-wrappers="true".
+	 * 
+	 *  <servlet-container name="default" allow-non-standard-wrappers="true">
+     *           ...
+     *  </servlet-container>
+	 **/
+	
 	@Override
 	public void destroy() {
 	}

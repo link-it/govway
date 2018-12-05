@@ -50,6 +50,15 @@ import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
  */
 public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest {
 
+	/*
+	 * NOTA: da Wilfdly 8.1 questa servlet deve essere abilitata nella configurazione:
+	 * In the standalone/configuration/standalone.xml file change the servlet-container XML element so that it has the attribute allow-non-standard-wrappers="true".
+	 * 
+	 *  <servlet-container name="default" allow-non-standard-wrappers="true">
+     *           ...
+     *  </servlet-container>
+	 **/
+	
 	private final static String CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 	
 	public static boolean isFormUrlEncodedRequest(HttpServletRequest httpServletRequest) {
@@ -120,6 +129,12 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 			String nomeProperty = (String)en.nextElement();
 			String valueProperty = httpServletRequest.getParameter(nomeProperty);
 			this.properties.put(nomeProperty, valueProperty);
+		}
+		if(this.properties.isEmpty() && this.content!=null && this.content.length>0) {
+			// su wildfly non vengono ritornati i parameters name
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(this.content)) {
+				this.properties.load(bin);
+			}catch(Throwable t) {}
 		}
 	}
 	

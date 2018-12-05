@@ -224,7 +224,7 @@
 			<item type="hidden" name="validazioneJwtTruststoreFileGoogle" value="/google.jwk">
 			    <property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="hidden" name="validazioneJwtTruststoreCertificateAliasGoogle" value="7ddf54d3032d1f0d48c3618892ca74c1ac30ad77">
+			<item type="hidden" name="validazioneJwtTruststoreCertificateAliasGoogle" value="certificate_google">
 			    <property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
 			</item>
 

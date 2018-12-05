@@ -182,6 +182,9 @@ public class BasicTokenParser implements ITokenParser {
 
 	@Override
 	public String getUsername() {
+		
+		// NOTA: e' importante per le ricerche, quindi va bene anche nome e cognome se non c'è username
+		
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:
 			return null; // unsupported
@@ -189,11 +192,16 @@ public class BasicTokenParser implements ITokenParser {
 			return getClaimAsString(this.claims,Claims.INTROSPECTION_RESPONSE_RFC_7662_USERNAME);
 		case OIDC_ID_TOKEN:
 			String tmp = getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_PREFERRED_USERNAME);
-			/*if(tmp==null) {
-				tmp = getClaimAsString(this.claims,Claims.OIDC_ID_CLAIMS_NICKNAME);
-			}*/
+			if(tmp==null) {
+				if(this.getUserInfoParser()!=null) {
+					return this.getUserInfoParser().getFullName();
+				}
+			}
 			return tmp;
 		case GOOGLE:
+			if(this.getUserInfoParser()!=null) {
+				return this.getUserInfoParser().getFullName();
+			}
 			return null;
 		case CUSTOM:
 			return null;
