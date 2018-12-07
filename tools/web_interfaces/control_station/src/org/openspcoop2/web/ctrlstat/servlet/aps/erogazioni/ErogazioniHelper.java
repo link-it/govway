@@ -962,8 +962,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		DataElement de = new DataElement();
 		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 		String labelServizio = gestioneFruitori ? this.getLabelIdServizioSenzaErogatore(idServizio) :  this.getLabelIdServizioSenzaErogatore(idServizio);
+		String labelServizioConPortType = labelServizio;
+		if(asps.getPortType()!=null && !"".equals(asps.getPortType()) && !asps.getNome().equals(asps.getPortType())) {
+			labelServizioConPortType = labelServizioConPortType +" ("+asps.getPortType()+")";
+		}
 		de.setLabel(ErogazioniCostanti.LABEL_ASPS_MODIFICA_SERVIZIO_NOME);
-		de.setValue(labelServizio);
+		de.setValue(labelServizioConPortType);
 		de.setType(DataElementType.TEXT);
 		List<Parameter> listParametersServizio = new ArrayList<>();
 		listParametersServizio.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""));

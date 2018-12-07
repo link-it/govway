@@ -137,6 +137,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_APS_DOWNLOAD = "Download";
 	public final static String LABEL_APS_INFO_GENERALI = "Informazioni Generali";
 	public final static String LABEL_APS_SERVIZIO = "Servizio";
+	public final static String LABEL_APS_SERVIZIO_SOAP = "Servizio ("+CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP+")";
 	public final static String LABEL_APS_RICERCA_SERVIZIO_SOGGETTO = "Servizio / Soggetto";
 	public final static String LABEL_APS_RICERCA_API_SOGGETTO = "API / Soggetto Erogatore";
 	public final static String LABEL_APS_ALLEGATI = "Allegati";

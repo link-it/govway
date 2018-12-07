@@ -65,7 +65,7 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_DATI_INVOCAZIONE = PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE;
 	public final static String LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
 	public final static String LABEL_ASPS_GESTIONE_CONFIGURAZIONI = "Configurazione";
-	public final static String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi {0}";
+	public final static String LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO = "Gruppi"; // il codice è già agganciato, riscommentare il seguente codice per avere risorse/azioni:  "Gruppi {0}";
 	
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_ATTIVE = "nConfAttive";
 	public final static String ASPS_EROGAZIONI_PARAMETRO_NUMERO_CONFIGURAZIONI_DISPONIBILI = "nConfDisponibili";

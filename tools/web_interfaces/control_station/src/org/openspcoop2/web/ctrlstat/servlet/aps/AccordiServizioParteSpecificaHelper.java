@@ -4814,7 +4814,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-					if(showModificaAPIErogazioniFruizioniView==null || showModificaAPIErogazioniFruizioniView) {
+					if(showInformazioniGeneraliErogazioniFruizioniView==null || showInformazioniGeneraliErogazioniFruizioniView) {
+						if(showInformazioniGeneraliErogazioniFruizioniView!=null) {
+							de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_SOAP);				
+						}
 						de.setType(DataElementType.SELECT);
 						de.setValues(ptList);
 						de.setLabels(ptList);
@@ -4825,7 +4828,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 					}
 					else {
-						de.setType(DataElementType.HIDDEN);
+						if(showModificaAPIErogazioniFruizioniView!=null && showModificaAPIErogazioniFruizioniView) {
+							de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO_SOAP);				
+							de.setType(DataElementType.TEXT);
+						}
+						else {
+							de.setType(DataElementType.HIDDEN);
+						}
 						de.setValue(portType);
 					}
 					dati.addElement(de);
