@@ -546,6 +546,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 				listParametersApi.get(0).setValue("");
 				de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_LIST, listParametersApi.toArray(new Parameter[1]));
 				de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_RISORSE);
+				de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_RISORSE);
 				dati.addElement(de);
 			break;
 		case SOAP:
@@ -556,6 +557,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			listParametersApi.get(0).setValue("");
 			de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST, listParametersApi.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_SERVIZI);
+			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_SERVIZI);
 			dati.addElement(de);
 			break;
 		
@@ -567,6 +569,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		listParametersApi.get(0).setValue("");
 		de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_ALLEGATI_LIST, listParametersApi.toArray(new Parameter[1]));
 		de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_ALLEGATI);
+		de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_ALLEGATI);
 		dati.addElement(de);
 		
 		// 3. opzioni avanzate
@@ -576,6 +579,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE);
 			de.addUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, listParametersApi.toArray(new Parameter[1]));
 			de.setValue(ApiCostanti.APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE);
+			de.setIcon(ApiCostanti.APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE);
 			dati.addElement(de);
 		}
 		

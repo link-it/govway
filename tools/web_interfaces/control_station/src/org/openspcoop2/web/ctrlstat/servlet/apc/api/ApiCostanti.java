@@ -103,4 +103,9 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE = "apiGestioneSpecificaInterfacce";
 	public final static String VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE = "apiOpzioniAvanzate";
 	public final static String VALORE_PARAMETRO_APC_API_GESTIONE_PARZIALE_WSDL_CHANGE = "apiWsdlChange";
+	
+	public final static String APC_API_ICONA_GESTIONE_RISORSE = "&#xE896;";
+	public final static String APC_API_ICONA_GESTIONE_SERVIZI = "&#xE896;";
+	public final static String APC_API_ICONA_GESTIONE_ALLEGATI = "&#xE2BC;";
+	public final static String APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE = "&#xE8B8;";
 }

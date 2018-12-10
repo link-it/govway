@@ -1515,6 +1515,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	
 					pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore,pConfigurazioneTrue,pGruppiFalse,pTipoSoggettoFruitore,pNomeSoggettoFruitore);
 		de.setValue(ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI);
+		de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_GESTIONE_CONFIGURAZIONI);
 		dati.addElement(de);
 		
 		// Gestione Gruppi
@@ -1526,7 +1527,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		if(gestioneFruitori)
 			de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST,	
 					pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pIdFruitore, pConfigurazioneFalse, pGruppiTrue,pTipoSoggettoFruitore,pNomeSoggettoFruitore);
-		de.setValue(MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding))); 
+		de.setValue(MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)));
+		de.setIcon(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_GESTIONE_GRUPPI_CON_PARAMETRO);
 		dati.addElement(de);
 
 		if(visualizzaGruppi)

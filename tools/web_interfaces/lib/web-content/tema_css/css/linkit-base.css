@@ -1558,14 +1558,40 @@ div.propRiepilogo label, span.spanLink{
 	
 }
 
+td.riepilogo-spacer {
+	 padding: 8px;
+}
+
 .tdTextRiepilogo.riepilogo-links{
     padding: 8px 0px;
 }
 
 .riepilogo-links {
 	display: flex;
+	flex-wrap: wrap;
 }
 
-.riepilogo-links-pipe {
-    padding: 0px 8px;
+.riepilogo-links > div {
+/*   width: 120px; */
+  margin: 12px;
+  text-align: center;
+  height: 80px;
 }
+
+.riepilogo-links-button {
+    position: relative;
+    text-decoration: none;
+}
+
+
+.riepilogo-links-button-text {
+    /* position: absolute; */
+    display: block;
+    white-space: nowrap;
+    text-decoration: none;
+    margin-top: 12px;
+}
+
+
+
+

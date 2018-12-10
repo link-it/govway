@@ -107,5 +107,8 @@ public class ErogazioniCostanti extends AccordiServizioParteSpecificaCostanti {
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_ABILITATE_TOOLTIP = "Abilitato";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_PARZIALMENTE_ABILITATE_TOOLTIP = "Alcuni gruppi sono disabilitati";
 	public final static String ASPS_EROGAZIONI_ICONA_STATO_CONFIGURAZIONI_TUTTE_DISABILITATE_TOOLTIP = "Disabilitato";
+	
+	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_CONFIGURAZIONI = "&#xE8B8;";
+	public final static String ASPS_EROGAZIONI_ICONA_GESTIONE_GRUPPI_CON_PARAMETRO = "&#xE02F;";
 }
 

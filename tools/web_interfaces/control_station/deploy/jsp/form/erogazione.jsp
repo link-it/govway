@@ -223,10 +223,6 @@
 						    		} // end else hidden
 				        		} %>	
 								
-								<tr class="riepilogo-spacer">
-									<td colspan="2" class="tdTextRiepilogo">&nbsp;</td>
-								</tr>
-								
 								<tr>
 									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px;">
 										<div class="riepilogo-links">
@@ -240,15 +236,16 @@
 											  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
 											  	String classInput= de.getStyleClass();
 											  	String labelStyleClass= de.getLabelStyleClass();
+											  	String iconLink =  de.getIcon();
 											  	
 											  	if (type.equals("link")){
-											  		if(i > 0){
-											  			%>
-								            				<span class="riepilogo-links-pipe">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-								            			<%
-												  	}
 							        				%>
-							            				<span><a href="<%= de.getUrl() %>" <%= deTip %> ><%= de.getValue() %></a></span>
+							        					<div class="riepilogo-links-button-div">
+							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button">
+									            				<i class="material-icons md-36"><%=iconLink %></i>							            				
+									            				<span class="riepilogo-links-button-text"><%= de.getValue() %></span>
+								            				</a>
+							            				</div>
 							            			<%
 							            		}
 											} // for
