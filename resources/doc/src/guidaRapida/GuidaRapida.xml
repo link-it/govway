@@ -1063,7 +1063,7 @@ Date: Thu, 15 Nov 2018 13:34:22 GMT
 								l'<emphasis>url di invocazione</emphasis> che deve essere comunicata
 							ai client che desiderano invocare l'API. <figure
 								id="apiGateway_restHelloWorld_fruizione_urlInvocazione">
-								<title>URL di Invocazione dell'API erogata</title>
+								<title>URL di Invocazione dell'API fruita</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
@@ -1202,7 +1202,7 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 						l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 						Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Gruppi Risorse'</emphasis> dove vengono visualizzati i gruppi
+							<emphasis>'Gruppi'</emphasis> dove vengono visualizzati i gruppi
 						in cui sono state classificate le risorse. Per default è presente un solo
 						gruppo <emphasis>Predefinito</emphasis> a cui sono associate tutte le
 						risorse (vedi figura <xref
@@ -1657,7 +1657,7 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 				predefinito per mostrare la funzionalità. Per tale motivo si consiglia di
 				ripristinare la situazione iniziale eliminando i due gruppi creati in questa sezione
 				accedendo al dettaglio dell'erogazione dell'API <emphasis>PetStore</emphasis> nella
-				sezione <emphasis>'Gestione Gruppi Risorse'</emphasis>. </para>
+				sezione <emphasis>'Gruppi'</emphasis>. </para>
 		</note>
 	</sect1>
 
@@ -2058,98 +2058,123 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 
 		<sect2 id="controlloAccesso_token">
 			<title>OAuth</title>
-			<para>GovWay permette di proteggere le erogazioni e/o fruizioni di API tramite il protocollo <emphasis>OAuth2</emphasis>. 
-				Una API può essere configurata in modo che ogni sua invocazione debba essere accompagnata da un <emphasis>access token</emphasis> valido rilasciato da uno degli <emphasis>Authorization Server</emphasis> censiti.
-			</para>
-			<para>
-				La figura <xref linkend="oauth_scenario"/> mette in evidenza tutte le comunicazioni e gli attori coinvolti per riuscire a porta a termine l'invocazione dello scenario
-				descritto nella sezione <xref linkend="apiGateway_restHelloWorld"/> dove però l'api viene protetta tramite <emphasis>OAuth</emphasis>.
-			</para>
+			<para>GovWay permette di proteggere le erogazioni e/o fruizioni di API tramite il
+				protocollo <emphasis>OAuth2</emphasis>. Una API può essere configurata in modo che
+				ogni sua invocazione debba essere accompagnata da un <emphasis>access
+					token</emphasis> valido rilasciato da uno degli <emphasis>Authorization
+					Server</emphasis> censiti. </para>
+			<para> La figura <xref linkend="oauth_scenario"/> mette in evidenza tutte le
+				comunicazioni e gli attori coinvolti per riuscire a porta a termine l'invocazione
+				dello scenario descritto nella sezione <xref linkend="apiGateway_restHelloWorld"/>
+				dove però l'api viene protetta tramite <emphasis>OAuth</emphasis>. </para>
 			<para>
 				<orderedlist>
 					<listitem>
 						<para><emphasis>Acquisizione Access Token</emphasis></para>
-						<para>
-							Un client deve richiedere un <emphasis>access token</emphasis> direttamente all'<emphasis>Authorization Server</emphasis> secondo le modalità supportate. 
-							In OAuth esistono diverse modalità alcune delle quali richiedono anche il coinvolgimento dell'utente al quale verrà richiesto di autenticarsi e
-							poi di autorizzare le operazioni che il client intende eseguire. (<ulink url="https://tools.ietf.org/html/rfc6749">RFC 6749</ulink>)
-						</para>
+						<para> Un client deve richiedere un <emphasis>access token</emphasis>
+							direttamente all'<emphasis>Authorization Server</emphasis> secondo le
+							modalità supportate. In OAuth esistono diverse modalità alcune delle
+							quali richiedono anche il coinvolgimento dell'utente al quale verrà
+							richiesto di autenticarsi e poi di autorizzare le operazioni che il
+							client intende eseguire. (<ulink
+								url="https://tools.ietf.org/html/rfc6749">RFC 6749</ulink>) </para>
 					</listitem>
 					<listitem>
 						<para><emphasis>Richiesta di servizio con Access Token</emphasis></para>
-						<para>
-							Un client ottenuto l'<emphasis>access token</emphasis> deve spenderlo all'interno della richiesta inoltrata a GovWay già descritta nella sezione  <xref linkend="apiGateway_restHelloWorld"/>.
-							Un <emphasis>access token</emphasis> può essere incluso nella richiesta tramite diverse modalità definite dalla specifica <ulink url="https://tools.ietf.org/html/rfc6750">RFC 6750</ulink>.				
-							Nello scenario di esempio è stato utilizzato l'header http <emphasis>Authorization</emphasis> utilizzando la modalità <emphasis>Bearer</emphasis>.
-						</para>
+						<para> Un client ottenuto l'<emphasis>access token</emphasis> deve spenderlo
+							all'interno della richiesta inoltrata a GovWay già descritta nella
+							sezione <xref linkend="apiGateway_restHelloWorld"/>. Un <emphasis>access
+								token</emphasis> può essere incluso nella richiesta tramite diverse
+							modalità definite dalla specifica <ulink
+								url="https://tools.ietf.org/html/rfc6750">RFC 6750</ulink>. Nello
+							scenario di esempio è stato utilizzato l'header http
+								<emphasis>Authorization</emphasis> utilizzando la modalità
+								<emphasis>Bearer</emphasis>. </para>
 					</listitem>
 					<listitem>
 						<para><emphasis>Validazione Access Token</emphasis></para>
-						<para>
-							GovWay verifica che la richiesta contenga un <emphasis>access token</emphasis> valido. Per effettuare tale validazione GovWay supporta differenti modalità:
-							<itemizedlist>
+						<para> GovWay verifica che la richiesta contenga un <emphasis>access
+								token</emphasis> valido. Per effettuare tale validazione GovWay
+							supporta differenti modalità: <itemizedlist>
 								<listitem>
-									<para><emphasis>Servizio di Introspection</emphasis>: se l'<emphasis>access token</emphasis> è '<emphasis>opaco</emphasis>' l'unica maniera per validarlo
-										è accedere al servizio di introspection che deve essere disponibile sull'<emphasis>Authorization Server</emphasis>. Tale servizio viene definito
-										dalla specifica <ulink url="https://tools.ietf.org/html/rfc7662">RFC 7662</ulink></para>
+									<para><emphasis>Servizio di Introspection</emphasis>: se
+											l'<emphasis>access token</emphasis> è
+											'<emphasis>opaco</emphasis>' l'unica maniera per
+										validarlo è accedere al servizio di introspection che deve
+										essere disponibile sull'<emphasis>Authorization
+											Server</emphasis>. Tale servizio viene definito dalla
+										specifica <ulink url="https://tools.ietf.org/html/rfc7662"
+											>RFC 7662</ulink></para>
 								</listitem>
 								<listitem>
-									<para><emphasis>Validazione JWT</emphasis>: se l'<emphasis>access token</emphasis> è un token '<emphasis>JWT</emphasis>' (<ulink url="https://tools.ietf.org/html/rfc7519">RFC 7519</ulink>)
-										GovWay può essere configurato per validarlo secondo la specifica JWS (<ulink url="https://tools.ietf.org/html/rfc7515"> RFC 7515</ulink>) o JWE (<ulink url="https://tools.ietf.org/html/rfc7516">RFC 7516</ulink>).
-										direttamente sul gateway senza accedere ad alcun servizio remoto.</para>
+									<para><emphasis>Validazione JWT</emphasis>: se
+											l'<emphasis>access token</emphasis> è un token
+											'<emphasis>JWT</emphasis>' (<ulink
+											url="https://tools.ietf.org/html/rfc7519">RFC
+											7519</ulink>) GovWay può essere configurato per
+										validarlo secondo la specifica JWS (<ulink
+											url="https://tools.ietf.org/html/rfc7515"> RFC
+											7515</ulink>) o JWE (<ulink
+											url="https://tools.ietf.org/html/rfc7516">RFC
+											7516</ulink>). direttamente sul gateway senza accedere
+										ad alcun servizio remoto.</para>
 								</listitem>
 							</itemizedlist>
 						</para>
 					</listitem>
 					<listitem>
 						<para><emphasis>Forward Claims dell'Access Token</emphasis></para>
-						<para>
-							Effettuata la validazione dell'<emphasis>access token</emphasis> GovWay può fornire all'applicativo erogatore le varie informazioni acquisite durante la validazione del token, ad esempio sotto forma di header http.
-						</para>
+						<para> Effettuata la validazione dell'<emphasis>access token</emphasis>
+							GovWay può fornire all'applicativo erogatore le varie informazioni
+							acquisite durante la validazione del token, ad esempio sotto forma di
+							header http. </para>
 					</listitem>
 				</orderedlist>
 				<figure id="oauth_scenario">
-				<title>Scenario OAuth</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.pdf"/>
-					</imageobject>
-					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.png"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
+					<title>Scenario OAuth</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
 			</para>
-			<para>
-				Come si evince dalla figura <xref linkend="oauth_scenario"/> la creazione del token non è gestita da GovWay, ma da un qualunque Authorization Server esterno.
-				GovWay è preconfigurato per poter utilizzare Google come Authorization Server nell'installazione di base e 
-				quindi un applicativo può ottenere il token da Google e poi spenderlo all'interno delle richieste applicative spedite verso GovWay.	
-			</para>
-			<para>
-				Lo scenario istanziato su Google sarà utilizzato in tutte le successive sotto-sezioni per descrivere tutte le funzionalità inerenti <emphasis>OAuth2</emphasis> attivabili su GovWay.
-			</para>
+			<para> Come si evince dalla figura <xref linkend="oauth_scenario"/> la creazione del
+				token non è gestita da GovWay, ma da un qualunque Authorization Server esterno.
+				GovWay è preconfigurato per poter utilizzare Google come Authorization Server
+				nell'installazione di base e quindi un applicativo può ottenere il token da Google e
+				poi spenderlo all'interno delle richieste applicative spedite verso GovWay. </para>
+			<para> Lo scenario istanziato su Google sarà utilizzato in tutte le successive
+				sotto-sezioni per descrivere tutte le funzionalità inerenti
+					<emphasis>OAuth2</emphasis> attivabili su GovWay. </para>
 			<note>
 				<title>Requisito: account gmail</title>
-				<para>
-					Per provare gli scenari descritti nelle successive sotto-sezioni è necessario avere un account su gmail.
-				</para>
+				<para> Per provare gli scenari descritti nelle successive sotto-sezioni è necessario
+					avere un account su gmail. </para>
 			</note>
-			
+
 			<sect3 id="controlloAccesso_token_introspection">
 				<title>Validazione tramite Introspection</title>
-				<para>In questa sezione viene descritto come realizzare lo scenario raffigurato nella figura <xref linkend="oauth_scenario"/> 
-					dove GovWay utilizza il servizio Introspection dell'<emphasis>Authorization Server di Google</emphasis> per validare l'<emphasis>access token</emphasis> ricevuto.</para>
+				<para>In questa sezione viene descritto come realizzare lo scenario raffigurato
+					nella figura <xref linkend="oauth_scenario"/> dove GovWay utilizza il servizio
+					Introspection dell'<emphasis>Authorization Server di Google</emphasis> per
+					validare l'<emphasis>access token</emphasis> ricevuto.</para>
 				<itemizedlist>
 					<listitem>
-						<para><emphasis role="strong">Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le funzionalità attive. 
-							Per abilitare una protezione dell'api basata su <emphasis>OAuth</emphasis> cliccare sulla voce presente nella colonna '<emphasis>Controllo Accessi</emphasis>' 
-							e procedere con la seguente configurazione all'interno della sezione <emphasis>'Gestione Token'</emphasis>:
-							<itemizedlist>
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Per abilitare una protezione dell'api basata su
+								<emphasis>OAuth</emphasis> cliccare sulla voce presente nella
+							colonna '<emphasis>Controllo Accessi</emphasis>' e procedere con la
+							seguente configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
 								<listitem>
 									<para><emphasis>Stato</emphasis>: abilitato</para>
 								</listitem>
@@ -2168,24 +2193,20 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 								<listitem>
 									<para><emphasis>Token Forward</emphasis>: abilitato</para>
 								</listitem>
-							</itemizedlist>
-							Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
-							<figure
-									id="apiGateway_oauth_introspection_config">
-									<title>Configurazione OAuth2 per PetStore</title>
-									<mediaobject>
-										<imageobject>
-											<imagedata width="50%"
-												fileref="FIGURE_OUT/oauthIntrospectionConfig.pdf"
-											/>
-										</imageobject>
-										<imageobject>
-											<imagedata width="50%"
-												fileref="FIGURE_OUT/oauthIntrospectionConfig.png"
-											/>
-										</imageobject>
-									</mediaobject>
-								</figure>
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure id="apiGateway_oauth_introspection_config">
+								<title>Configurazione OAuth2 per PetStore</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthIntrospectionConfig.pdf"/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthIntrospectionConfig.png"/>
+									</imageobject>
+								</mediaobject>
+							</figure>
 						</para>
 					</listitem>
 
@@ -2194,14 +2215,18 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 							<emphasis role="strong">Invocazione API senza un access token</emphasis>
 						</para>
 						<note>
-						<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
-						<para> Le configurazioni accedute da GovWay vengono mantenute in una cache dopo il
-							primo accesso per 2 ore, è quindi necessario forzare un reset della cache. Per
-							farlo accedere alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-							selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
-							</note>
-						<para>Al termine di questi passi di configurazione il servizio REST sarà invocabile solamente se viene fornito un <emphasis>access token</emphasis>.
-							Con il seguente comando è possibile constatare come una richiesta che non possieda l'<emphasis>access token</emphasis> viene rifiutata da GovWay.
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para>Al termine di questi passi di configurazione il servizio REST sarà
+							invocabile solamente se viene fornito un <emphasis>access
+								token</emphasis>. Con il seguente comando è possibile constatare
+							come una richiesta che non possieda l'<emphasis>access token</emphasis>
+							viene rifiutata da GovWay.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -2236,52 +2261,63 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Consultazione Tracce in errore</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile consultare lo
-							storico delle transazioni che sono transitate nel gateway. Dalla figura <xref
-								linkend="apiGateway_oauth_introspection_error"/> si può vedere come le transazioni
-							generate dopo la configurazione sopra indicata sono terminate con errore con esito <emphasis>Gestione Token Fallita</emphasis>. 
-							<figure id="apiGateway_oauth_introspection_error">
-									<title>Tracce delle invocazioni terminate con errore 'Gestione Token Fallita'</title>
-									<mediaobject>
-										<imageobject>
-											<imagedata width="50%"
-												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.pdf"/>
-										</imageobject>
-										<imageobject>
-											<imagedata width="50%"
-												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.png"/>
-										</imageobject>
-									</mediaobject>
-								</figure>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_oauth_introspection_error"/> si
+							può vedere come le transazioni generate dopo la configurazione sopra
+							indicata sono terminate con errore con esito <emphasis>Gestione Token
+								Fallita</emphasis>. <figure
+								id="apiGateway_oauth_introspection_error">
+								<title>Tracce delle invocazioni terminate con errore 'Gestione Token
+									Fallita'</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
 						</para>
 					</listitem>
 					<listitem>
 						<para><emphasis role="strong">Acquisizione Access Token</emphasis></para>
-						<para>
-							Per simulare l'acquisizione di un token è possibile utilizzare l'applicazione <emphasis>Playground</emphasis>, disponibile all'indirizzo <ulink url="https://developers.google.com/oauthplayground/"></ulink>,
-							che consente di richiedere un <emphasis>access token</emphasis> all'<emphasis>Authorization Server di Google</emphasis>. 
-						</para>
-						<para>
-							L'applicazione <emphasis>Playground</emphasis> consente agevolmente di ottenere l'<emphasis>access token</emphasis>:
-							<orderedlist>
+						<para> Per simulare l'acquisizione di un token è possibile utilizzare
+							l'applicazione <emphasis>Playground</emphasis>, disponibile
+							all'indirizzo <ulink
+								url="https://developers.google.com/oauthplayground/"/>, che consente
+							di richiedere un <emphasis>access token</emphasis>
+								all'<emphasis>Authorization Server di Google</emphasis>. </para>
+						<para> L'applicazione <emphasis>Playground</emphasis> consente agevolmente
+							di ottenere l'<emphasis>access token</emphasis>: <orderedlist>
 								<listitem>
 									<para><emphasis>Selezione scope</emphasis></para>
-									<para>Devono essere selezionati gli <emphasis>scope</emphasis> che un'applicazione client necessita per invocare poi effettivamente le API di Google.
-										Ad esempio selezioniamo lo scope <emphasis>'https://www.googleapis.com/auth/plus.me'</emphasis> che permette all'applicazione di conoscere l'identità di un utente su google.
-										Cliccando infine sul pulsante <emphasis>'Authorize APIs'</emphasis> si verrà rediretti alla pagina di autenticazione in google dove si dovrà procedere ad autenticarsi. 
-									</para>
-									<figure
-										id="apiGateway_oauth_introspection_playground_step1">
+									<para>Devono essere selezionati gli <emphasis>scope</emphasis>
+										che un'applicazione client necessita per invocare poi
+										effettivamente le API di Google. Ad esempio selezioniamo lo
+										scope
+											<emphasis>'https://www.googleapis.com/auth/plus.me'</emphasis>
+										che permette all'applicazione di conoscere l'identità di un
+										utente su google. Cliccando infine sul pulsante
+											<emphasis>'Authorize APIs'</emphasis> si verrà rediretti
+										alla pagina di autenticazione in google dove si dovrà
+										procedere ad autenticarsi. </para>
+									<figure id="apiGateway_oauth_introspection_playground_step1">
 										<title>Ottenimento Token: Playground Google, Step 1</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep1.pdf"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep1.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep1.png"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep1.png"
 												/>
 											</imageobject>
 										</mediaobject>
@@ -2289,20 +2325,22 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</listitem>
 								<listitem>
 									<para><emphasis>Authorization Code</emphasis></para>
-									<para>Effettuata l'autenticazione in Google si viene rediretti alla seconda fase prevista dall'applicazione <emphasis>Playground</emphasis> denominata <emphasis>'Exchange authorization code for tokens'</emphasis>.
-									</para>
-									<figure
-										id="apiGateway_oauth_introspection_playground_step2">
+									<para>Effettuata l'autenticazione in Google si viene rediretti
+										alla seconda fase prevista dall'applicazione
+											<emphasis>Playground</emphasis> denominata
+											<emphasis>'Exchange authorization code for
+											tokens'</emphasis>. </para>
+									<figure id="apiGateway_oauth_introspection_playground_step2">
 										<title>Ottenimento Token: Playground Google, Step 2</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep2.pdf"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep2.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep2.png"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep2.png"
 												/>
 											</imageobject>
 										</mediaobject>
@@ -2310,21 +2348,21 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</listitem>
 								<listitem>
 									<para><emphasis>Access Token</emphasis></para>
-									<para>Cliccando sul pulsante <emphasis>'Exchange authorization code for tokens'</emphasis> si ottiene infine un <emphasis>access token</emphasis> 
-										da estrarre nella risposta http visualizzata sulla destra dell'applicazione.
-									</para>
-									<figure
-										id="apiGateway_oauth_introspection_playground_step3">
+									<para>Cliccando sul pulsante <emphasis>'Exchange authorization
+											code for tokens'</emphasis> si ottiene infine un
+											<emphasis>access token</emphasis> da estrarre nella
+										risposta http visualizzata sulla destra dell'applicazione. </para>
+									<figure id="apiGateway_oauth_introspection_playground_step3">
 										<title>Ottenimento Token: Playground Google, Step 3</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep3red.pdf"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep3red.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep3red.png"
+												fileref="FIGURE_OUT/oauthIntrospectionPlaygroundStep3red.png"
 												/>
 											</imageobject>
 										</mediaobject>
@@ -2337,12 +2375,14 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Invocazione API con un access token</emphasis>
 						</para>
-						<para>Con il seguente comando è possibile effettuare una richiesta che possiede l'<emphasis>access token</emphasis> ottenuto nella precedente fase.
-							<note>
+						<para>Con il seguente comando è possibile effettuare una richiesta che
+							possiede l'<emphasis>access token</emphasis> ottenuto nella precedente
+							fase. <note>
 								<title>Bearer Token Usage</title>
-								<para>
-									Un <emphasis>access token</emphasis> può essere incluso nella richiesta tramite una delle modalità definite dalla specifica <ulink url="https://tools.ietf.org/html/rfc6750">RFC 6750</ulink>.				
-								</para>
+								<para> Un <emphasis>access token</emphasis> può essere incluso nella
+									richiesta tramite una delle modalità definite dalla specifica
+										<ulink url="https://tools.ietf.org/html/rfc6750">RFC
+										6750</ulink>. </para>
 							</note>
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
 -H "accept: application/json" \
@@ -2382,35 +2422,45 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Consultazione Tracce</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile adesso vedere che le richieste transitano con successo sul gateway.
-							Accedendo al dettaglio di una transazione, tra le varie informazioni presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
-							sono presenti le informazioni principali estratte dal token (es. Subject presente nel claim 'sub'). 
-							<figure id="apiGateway_oauth_introspection_ok_info">
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							adesso vedere che le richieste transitano con successo sul gateway.
+							Accedendo al dettaglio di una transazione, tra le varie informazioni
+							presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
+							sono presenti le informazioni principali estratte dal token (es. Subject
+							presente nel claim 'sub'). <figure
+								id="apiGateway_oauth_introspection_ok_info">
 								<title>Traccia di una invocazione terminata con successo</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce <emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims presenti nel token,
-							tra cui è possibile constatare la presenza del cliam <emphasis>scope</emphasis> valorizzato con quanto richiesto tramite l'applicazione Playground. 
-							<figure id="apiGateway_oauth_introspection_ok_tokeInfo">
+						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce
+								<emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims
+							presenti nel token, tra cui è possibile constatare la presenza del cliam
+								<emphasis>scope</emphasis> valorizzato con quanto richiesto tramite
+							l'applicazione Playground. <figure
+								id="apiGateway_oauth_introspection_ok_tokeInfo">
 								<title>Informazioni ottenute tramite Introspection del Token</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
@@ -2418,10 +2468,13 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis role="strong">Invocazione API con un access token non valido</emphasis>
+							<emphasis role="strong">Invocazione API con un access token non
+								valido</emphasis>
 						</para>
-						<para>GovWay utilizza il servizio Introspection di Google per validatore l'<emphasis>access token</emphasis> ricevuto. 
-							E' possibile ottenere un errore di validazione attendendo che l'access token scada o falsificandolo modificando ad esempio i primi caratteri.
+						<para>GovWay utilizza il servizio Introspection di Google per validatore
+								l'<emphasis>access token</emphasis> ricevuto. E' possibile ottenere
+							un errore di validazione attendendo che l'access token scada o
+							falsificandolo modificando ad esempio i primi caratteri.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ERR_ACCESS_TOKEN" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -2456,20 +2509,25 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Forward Token Info all'Applicativo</emphasis>
 						</para>
-						<para>La configurazione descritta precedentemente indicava di abilitare la funzionalità <emphasis>'Token Forward'</emphasis> all'interno della sezione <emphasis>'Gestione Token'</emphasis>
-							(vedi <xref linkend="apiGateway_oauth_introspection_config"/>). Tale configurazione fa sì che GovWay inoltri all'applicativo interno al dominio 
-							(nel nostro esempio il servizio <emphasis>PetStore</emphasis>) le informazioni inerenti il token ricevuto sotto forma di header http.
-							Differenti modalità di consegna di tali informazioni vengono descritte nella sezione <xref linkend="controlloAccesso_token_forward"/>.
-						</para>
-						<para>
-							Per vedere quali header vengono effettivamente prodotti utilizziamo la funzionalità <emphasis>'Registrazione Messaggi'</emphasis> descritta nel dettaglio nella sezione <xref linkend="dump"/>.
-							Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
-							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
-							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le funzionalità attive. 
-							Per abilitare la registrazione degli header cliccare sulla voce presente nella colonna '<emphasis>Registrazione Messaggi</emphasis>' 
-							e procedere con la seguente configurazione.
-							<itemizedlist>
+						<para>La configurazione descritta precedentemente indicava di abilitare la
+							funzionalità <emphasis>'Token Forward'</emphasis> all'interno della
+							sezione <emphasis>'Gestione Token'</emphasis> (vedi <xref
+								linkend="apiGateway_oauth_introspection_config"/>). Tale
+							configurazione fa sì che GovWay inoltri all'applicativo interno al
+							dominio (nel nostro esempio il servizio <emphasis>PetStore</emphasis>)
+							le informazioni inerenti il token ricevuto sotto forma di header http.
+							Differenti modalità di consegna di tali informazioni vengono descritte
+							nella sezione <xref linkend="controlloAccesso_token_forward"/>. </para>
+						<para> Per vedere quali header vengono effettivamente prodotti utilizziamo
+							la funzionalità <emphasis>'Registrazione Messaggi'</emphasis> descritta
+							nel dettaglio nella sezione <xref linkend="dump"/>. Accedere alla
+							sezione <emphasis>'Erogazioni'</emphasis> e selezionare l'API
+							precedentemente registrata <emphasis>'PetStore v2'</emphasis>. Dopodichè
+							accedere, dal dettaglio dell'erogazione, alla sezione
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Per abilitare la registrazione degli header
+							cliccare sulla voce presente nella colonna '<emphasis>Registrazione
+								Messaggi</emphasis>' e procedere con la seguente configurazione. <itemizedlist>
 								<listitem>
 									<para><emphasis>'Generale - Stato'</emphasis>: ridefinito</para>
 								</listitem>
@@ -2477,18 +2535,22 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 									<para><emphasis>'Richiesta - Stato'</emphasis>: abilitato</para>
 								</listitem>
 								<listitem>
-									<para><emphasis>'Richiesta - Ingresso'</emphasis>: disabilitare tutte le voci</para>
+									<para><emphasis>'Richiesta - Ingresso'</emphasis>: disabilitare
+										tutte le voci</para>
 								</listitem>
 								<listitem>
-									<para><emphasis>'Richiesta - Uscita'</emphasis>: abilitare solo la voce relativa agli header</para>
+									<para><emphasis>'Richiesta - Uscita'</emphasis>: abilitare solo
+										la voce relativa agli header</para>
 								</listitem>
 								<listitem>
-									<para><emphasis>'Risposta - Stato'</emphasis>: disabilitato</para>
+									<para><emphasis>'Risposta - Stato'</emphasis>:
+										disabilitato</para>
 								</listitem>
-							</itemizedlist>
-							Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
-							<figure id="apiGateway_oauth_introspection_dump_config">
-								<title>Configurazione Registrazione Messaggi per visualizzare Header HTTP</title>
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure
+								id="apiGateway_oauth_introspection_dump_config">
+								<title>Configurazione Registrazione Messaggi per visualizzare Header
+									HTTP</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
@@ -2501,36 +2563,46 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</mediaobject>
 							</figure>
 						</para>
-						<para>
-							Prima di procedere con una nuova richiesta effettuare il reset della cache delle configurazioni accedendo alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-							selezionare la voce <emphasis>'ResetAllCaches'</emphasis>.
-						</para>
-						<para>
-							Effettuare quindi una nuova invocazione contenente un <emphasis>access token</emphasis> valido e successivamente consultare il dettaglio della transazione tramite la <emphasis>govWayMonitor</emphasis>.
-							Nel dettaglio sarà adesso disponibile la voce <emphasis>'Contenuti Uscita'</emphasis> (<xref linkend="apiGateway_oauth_introspection_dump_visualizza_header"/>) che permette di vedere gli header http prodotti da GovWay (<xref linkend="apiGateway_oauth_introspection_dump_headers"/>). 
-							<figure id="apiGateway_oauth_introspection_dump_visualizza_header">
+						<para> Prima di procedere con una nuova richiesta effettuare il reset della
+							cache delle configurazioni accedendo alla sezione <emphasis>'Strumenti'
+								- 'Runtime'</emphasis> e selezionare la voce
+								<emphasis>'ResetAllCaches'</emphasis>. </para>
+						<para> Effettuare quindi una nuova invocazione contenente un
+								<emphasis>access token</emphasis> valido e successivamente
+							consultare il dettaglio della transazione tramite la
+								<emphasis>govWayMonitor</emphasis>. Nel dettaglio sarà adesso
+							disponibile la voce <emphasis>'Contenuti Uscita'</emphasis> (<xref
+								linkend="apiGateway_oauth_introspection_dump_visualizza_header"/>)
+							che permette di vedere gli header http prodotti da GovWay (<xref
+								linkend="apiGateway_oauth_introspection_dump_headers"/>). <figure
+								id="apiGateway_oauth_introspection_dump_visualizza_header">
 								<title>Dettaglio della transazione con contenuti</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.pdf"/>
+											fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.png"/>
+											fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 							<figure id="apiGateway_oauth_introspection_dump_headers">
-								<title>Header HTTP prodotti da GovWay contenenti le informazioni sul Token</title>
+								<title>Header HTTP prodotti da GovWay contenenti le informazioni sul
+									Token</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.pdf"/>
+											fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.png"/>
+											fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
@@ -2541,9 +2613,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 
 			<sect3 id="controlloAccesso_token_jwt">
 				<title>Validazione JWT</title>
-				<para>In questa sezione viene descritto uno scenario in cui GovWay non interagisce con un servizio di Introspection per validare l'<emphasis>access token</emphasis> ricevuto ma 
-					lo valida direttamente secondo la specifica JWS (<ulink url="https://tools.ietf.org/html/rfc7515"> RFC 7515</ulink>).
-				</para>
+				<para>In questa sezione viene descritto uno scenario in cui GovWay non interagisce
+					con un servizio di Introspection per validare l'<emphasis>access
+						token</emphasis> ricevuto ma lo valida direttamente secondo la specifica JWS
+						(<ulink url="https://tools.ietf.org/html/rfc7515"> RFC 7515</ulink>). </para>
 				<figure id="oauth_scenarioJWT">
 					<title>Scenario OAuth con validazione JWT</title>
 					<mediaobject>
@@ -2555,29 +2628,37 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						</imageobject>
 					</mediaobject>
 				</figure>
-				<para>
-					Per simulare lo scenario utilizzeremo sempre il servizio <emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di Google</emphasis> 
-					descritto nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/> utilizzando però impropriamente come <emphasis>access token</emphasis>
-					l'<emphasis>'id token'</emphasis> ottenuto insieme all'access token. 
-					L'id token contiene le informazioni sull'utente strutturate all'interno di un <emphasis>JWT</emphasis> (per ulteriori dettagli si rimanda <ulink url="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">OIDC Connect - IDToken</ulink>).
-				</para>
+				<para> Per simulare lo scenario utilizzeremo sempre il servizio
+						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
+						Google</emphasis> descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_introspection"/> utilizzando però
+					impropriamente come <emphasis>access token</emphasis> l'<emphasis>'id
+						token'</emphasis> ottenuto insieme all'access token. L'id token contiene le
+					informazioni sull'utente strutturate all'interno di un <emphasis>JWT</emphasis>
+					(per ulteriori dettagli si rimanda <ulink
+						url="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">OIDC
+						Connect - IDToken</ulink>). </para>
 				<note>
 					<title>Utilizzo improprio dell'id token</title>
-					<para>L'utilizzo dell'<emphasis>'id token'</emphasis> come <emphasis>access token</emphasis> è da considerarsi solo a titolo di esempio per mostrare la funzionalità di validazione di un token JWT disponibile su GovWay 
-						che potrebbe essere utilizzata negli scenari reali quando effettivamente l'<emphasis>access token</emphasis> non è opaco ma possieda una struttura JWT.
-					</para>
+					<para>L'utilizzo dell'<emphasis>'id token'</emphasis> come <emphasis>access
+							token</emphasis> è da considerarsi solo a titolo di esempio per mostrare
+						la funzionalità di validazione di un token JWT disponibile su GovWay che
+						potrebbe essere utilizzata negli scenari reali quando effettivamente
+							l'<emphasis>access token</emphasis> non è opaco ma possieda una
+						struttura JWT. </para>
 				</note>
 				<itemizedlist>
 					<listitem>
-						<para><emphasis role="strong">Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le funzionalità attive. 
-							Cliccare sulla voce presente nella colonna '<emphasis>Controllo Accessi</emphasis>' 
-							e procedere con la seguente configurazione all'interno della sezione <emphasis>'Gestione Token'</emphasis>:
-							<itemizedlist>
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la seguente
+							configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
 								<listitem>
 									<para><emphasis>Stato</emphasis>: abilitato</para>
 								</listitem>
@@ -2596,21 +2677,17 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<listitem>
 									<para><emphasis>Token Forward</emphasis>: abilitato</para>
 								</listitem>
-							</itemizedlist>
-							Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
-							<figure
-								id="apiGateway_oauth_validazioneJWT_config">
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure id="apiGateway_oauth_validazioneJWT_config">
 								<title>Configurazione OAuth2 - Validazione JWT</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthValidazioneJWTConfig.pdf"
-										/>
+											fileref="FIGURE_OUT/oauthValidazioneJWTConfig.pdf"/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthValidazioneJWTConfig.png"
-										/>
+											fileref="FIGURE_OUT/oauthValidazioneJWTConfig.png"/>
 									</imageobject>
 								</mediaobject>
 							</figure>
@@ -2618,39 +2695,40 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					</listitem>
 					<listitem>
 						<para><emphasis role="strong">Acquisizione Access Token</emphasis></para>
-						<para>
-							Per simulare l'acquisizione di un token in formato JWT utilizzare l'applicazione <emphasis>Playground</emphasis> come descritto 
-							nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/>. 
-							In fondo alla procedura, dopo aver cliccato sul pulsante <emphasis>'Exchange authorization code for tokens'</emphasis>,
-							estrarre dalla risposta http visualizzata sulla destra dell'applicazione l'<emphasis>id token</emphasis>.
-									</para>
-									<figure
-										id="apiGateway_oauth_validazioneJWT_playground_step3">
-										<title>Ottenimento Token: Playground Google, Step 3</title>
-										<mediaobject>
-											<imageobject>
-												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthValidazioneJWTPlaygroundStep3red.pdf"
-												/>
-											</imageobject>
-											<imageobject>
-												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthValidazioneJWTPlaygroundStep3red.png"
-												/>
-											</imageobject>
-										</mediaobject>
-									</figure>
+						<para> Per simulare l'acquisizione di un token in formato JWT utilizzare
+							l'applicazione <emphasis>Playground</emphasis> come descritto nella
+							precedente sezione <xref linkend="controlloAccesso_token_introspection"
+							/>. In fondo alla procedura, dopo aver cliccato sul pulsante
+								<emphasis>'Exchange authorization code for tokens'</emphasis>,
+							estrarre dalla risposta http visualizzata sulla destra dell'applicazione
+								l'<emphasis>id token</emphasis>. </para>
+						<figure id="apiGateway_oauth_validazioneJWT_playground_step3">
+							<title>Ottenimento Token: Playground Google, Step 3</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="50%"
+										fileref="FIGURE_OUT/oauthValidazioneJWTPlaygroundStep3red.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="50%"
+										fileref="FIGURE_OUT/oauthValidazioneJWTPlaygroundStep3red.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
 					</listitem>
 					<listitem>
 						<para>
 							<emphasis role="strong">Invocazione API con un access token</emphasis>
 						</para>
-						<para>Con il seguente comando è possibile effettuare una richiesta che possiede l'<emphasis>id token</emphasis> ottenuto nella precedente fase.
-							<note>
+						<para>Con il seguente comando è possibile effettuare una richiesta che
+							possiede l'<emphasis>id token</emphasis> ottenuto nella precedente fase. <note>
 								<title>Bearer Token Usage</title>
-								<para>
-									Un <emphasis>access token</emphasis> può essere incluso nella richiesta tramite una delle modalità definite dalla specifica <ulink url="https://tools.ietf.org/html/rfc6750">RFC 6750</ulink>.				
-								</para>
+								<para> Un <emphasis>access token</emphasis> può essere incluso nella
+									richiesta tramite una delle modalità definite dalla specifica
+										<ulink url="https://tools.ietf.org/html/rfc6750">RFC
+										6750</ulink>. </para>
 							</note>
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ID_TOKEN" \
 -H "accept: application/json" \
@@ -2690,35 +2768,45 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Consultazione Tracce</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile adesso vedere che le richieste transitano con successo sul gateway.
-							Accedendo al dettaglio di una transazione, tra le varie informazioni presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
-							sono presenti le informazioni principali estratte dal token (es. Subject presente nel claim 'sub'). 
-							<figure id="apiGateway_oauth_validazioneJWT_ok_info">
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							adesso vedere che le richieste transitano con successo sul gateway.
+							Accedendo al dettaglio di una transazione, tra le varie informazioni
+							presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
+							sono presenti le informazioni principali estratte dal token (es. Subject
+							presente nel claim 'sub'). <figure
+								id="apiGateway_oauth_validazioneJWT_ok_info">
 								<title>Traccia di una invocazione terminata con successo</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk_validazioneJWT.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk_validazioneJWT.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk_validazioneJWT.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOk_validazioneJWT.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce <emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims presenti nel token,
-							tra cui è possibile constatare la presenza del cliam <emphasis>scope</emphasis> valorizzato con quanto richiesto tramite l'applicazione Playground. 
-							<figure id="apiGateway_oauth_validazioneJWT_ok_tokeInfo">
+						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce
+								<emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims
+							presenti nel token, tra cui è possibile constatare la presenza del cliam
+								<emphasis>scope</emphasis> valorizzato con quanto richiesto tramite
+							l'applicazione Playground. <figure
+								id="apiGateway_oauth_validazioneJWT_ok_tokeInfo">
 								<title>Informazioni presenti in un Token JWT</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
@@ -2729,69 +2817,93 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 
 			<sect3 id="controlloAccesso_token_userInfo">
 				<title>Autenticazione e OIDC UserInfo</title>
-				<para>
-					Nelle precedenti sezioni è stato mostrato come proteggere un'api in modo che ogni richiesta debba possedere un  <emphasis>access token</emphasis> valido rilasciato da un <emphasis>Authorization Server</emphasis> censito su GovWay, nell'esempio Google.
-					La verifica di un <emphasis>access token</emphasis>, se opaco tramite il servizio di Introspection (descritto nella sezione <xref linkend="controlloAccesso_token_introspection"/>), 
-					altrimenti tramite la validazione JWT (sezione <xref linkend="controlloAccesso_token_jwt"/>) permette a GovWay di conoscere i claims associati al token come ad esempio il subject ('sub'),
-					l'issuer ('iss') etc e salvarli nella traccia come è stato mostrato nelle figura <xref linkend="apiGateway_oauth_introspection_ok_tokeInfo"/> e <xref linkend="apiGateway_oauth_validazioneJWT_ok_tokeInfo"/>. 		
-				</para>
-				<para>
-					GovWay può essere configurato per verificare che un <emphasis>access token</emphasis> presenti al suo interno alcuni claims che identificano i seguenti attori principali nello scenario OAuth:
-					<itemizedlist>
+				<para> Nelle precedenti sezioni è stato mostrato come proteggere un'api in modo che
+					ogni richiesta debba possedere un <emphasis>access token</emphasis> valido
+					rilasciato da un <emphasis>Authorization Server</emphasis> censito su GovWay,
+					nell'esempio Google. La verifica di un <emphasis>access token</emphasis>, se
+					opaco tramite il servizio di Introspection (descritto nella sezione <xref
+						linkend="controlloAccesso_token_introspection"/>), altrimenti tramite la
+					validazione JWT (sezione <xref linkend="controlloAccesso_token_jwt"/>) permette
+					a GovWay di conoscere i claims associati al token come ad esempio il subject
+					('sub'), l'issuer ('iss') etc e salvarli nella traccia come è stato mostrato
+					nelle figura <xref linkend="apiGateway_oauth_introspection_ok_tokeInfo"/> e
+						<xref linkend="apiGateway_oauth_validazioneJWT_ok_tokeInfo"/>. </para>
+				<para> GovWay può essere configurato per verificare che un <emphasis>access
+						token</emphasis> presenti al suo interno alcuni claims che identificano i
+					seguenti attori principali nello scenario OAuth: <itemizedlist>
 						<listitem>
-							<para><emphasis>Issuer</emphasis> (claim 'iss'): identifica l'Authorization Server che ha generato il token (es. https://accounts.google.com).</para>
+							<para><emphasis>Issuer</emphasis> (claim 'iss'): identifica
+								l'Authorization Server che ha generato il token (es.
+								https://accounts.google.com).</para>
 						</listitem>
 						<listitem>
-							<para><emphasis>ClientId</emphasis> (claim 'client_id' o 'azp'): rappresenta l'applicazione, censita sull'Authorization Server, a cui è stato rilasciato il token (es. client Playground).</para>
+							<para><emphasis>ClientId</emphasis> (claim 'client_id' o 'azp'):
+								rappresenta l'applicazione, censita sull'Authorization Server, a cui
+								è stato rilasciato il token (es. client Playground).</para>
 						</listitem>
 						<listitem>
-							<para><emphasis>Subject</emphasis> (claim 'sub'): identifica l'utente, censito sull'Authorization Server (o IDP associato), che ha confermato le informazioni richiesti dall'applicazione e presenti nel token.
-								Il Subject è presente se il rilascio di un token viene effettuato tramite dei flussi che prevedono l'interazione con l'utente il quale dovrà autenticarsi 
-								ed eventualmente autorizzare gli scope richiesti dall'applicazione. Il Subject è una informazione codificata (stringa o URI) che identifica univocamente l'utente nel dominio dell'Authorization Server (Issuer).
-							</para>
+							<para><emphasis>Subject</emphasis> (claim 'sub'): identifica l'utente,
+								censito sull'Authorization Server (o IDP associato), che ha
+								confermato le informazioni richiesti dall'applicazione e presenti
+								nel token. Il Subject è presente se il rilascio di un token viene
+								effettuato tramite dei flussi che prevedono l'interazione con
+								l'utente il quale dovrà autenticarsi ed eventualmente autorizzare
+								gli scope richiesti dall'applicazione. Il Subject è una informazione
+								codificata (stringa o URI) che identifica univocamente l'utente nel
+								dominio dell'Authorization Server (Issuer). </para>
 						</listitem>
 						<listitem>
-							<para><emphasis>Username</emphasis> (claim 'username', 'preferred_username' o 'name'): fornisce una rappresentazione 'human-readable' dell'utente.</para>
+							<para><emphasis>Username</emphasis> (claim 'username',
+								'preferred_username' o 'name'): fornisce una rappresentazione
+								'human-readable' dell'utente.</para>
 						</listitem>
 						<listitem>
-							<para><emphasis>eMail</emphasis> (claim 'email'): identifica l'indirizzo e-mail dell'utente.</para>
+							<para><emphasis>eMail</emphasis> (claim 'email'): identifica l'indirizzo
+								e-mail dell'utente.</para>
 						</listitem>
-					</itemizedlist>
-					Se viene abilitato un controllo e GovWay non rileva il claim dopo la verifica dell'access token, la transazione termina con errore.	
-				</para>
-				<para>
-					Le informazioni riguardanti l'<emphasis>Username</emphasis> e l'<emphasis>eMail</emphasis> potrebbero non essere disponibili dopo la semplice validazione dell'access token (sia introspection che jwt),
-					e per ottenerle potrebbe essere necessario richiedere maggiori informazioni sull'utente tramite il servizio <emphasis>OIDC UserInfo</emphasis> dell'<emphasis>Authorization Server</emphasis>.
-					Per maggiori informazioni a riguardo si rimanda alla specifica <ulink url="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">OIDC Connect - UserInfo</ulink>.
-				</para>
+					</itemizedlist> Se viene abilitato un controllo e GovWay non rileva il claim
+					dopo la verifica dell'access token, la transazione termina con errore. </para>
+				<para> Le informazioni riguardanti l'<emphasis>Username</emphasis> e
+						l'<emphasis>eMail</emphasis> potrebbero non essere disponibili dopo la
+					semplice validazione dell'access token (sia introspection che jwt), e per
+					ottenerle potrebbe essere necessario richiedere maggiori informazioni
+					sull'utente tramite il servizio <emphasis>OIDC UserInfo</emphasis>
+						dell'<emphasis>Authorization Server</emphasis>. Per maggiori informazioni a
+					riguardo si rimanda alla specifica <ulink
+						url="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">OIDC
+						Connect - UserInfo</ulink>. </para>
 				<figure id="oauth_scenarioUserInfo">
 					<title>Scenario OAuth con accesso servizio UserInfo</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.pdf"/>
+							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.pdf"
+							/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.png"/>
+							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.png"
+							/>
 						</imageobject>
 					</mediaobject>
 				</figure>
-				<para>
-					Per simulare lo scenario utilizzeremo sempre il servizio <emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di Google</emphasis> 
-					descritto nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/>. 
-					Faremo un primo test in cui il Gateway non accede al servizio <emphasis>User Info</emphasis> e vedremo come non è disponibile l'informazione sull'utente sotto forma 'human-readable'
-					che invece verrà recuperata abilitando l'interazione con tale servizio.
-				</para>
+				<para> Per simulare lo scenario utilizzeremo sempre il servizio
+						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
+						Google</emphasis> descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_introspection"/>. Faremo un primo test in
+					cui il Gateway non accede al servizio <emphasis>User Info</emphasis> e vedremo
+					come non è disponibile l'informazione sull'utente sotto forma 'human-readable'
+					che invece verrà recuperata abilitando l'interazione con tale servizio. </para>
 				<itemizedlist>
 					<listitem>
-						<para><emphasis role="strong">Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le funzionalità attive. 
-							Cliccare sulla voce presente nella colonna '<emphasis>Controllo Accessi</emphasis>' 
-							e procedere con la seguente configurazione all'interno della sezione <emphasis>'Gestione Token'</emphasis>:
-							<itemizedlist>
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la seguente
+							configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
 								<listitem>
 									<para><emphasis>Stato</emphasis>: abilitato</para>
 								</listitem>
@@ -2810,11 +2922,11 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<listitem>
 									<para><emphasis>Token Forward</emphasis>: abilitato</para>
 								</listitem>
-							</itemizedlist>
-							Procedere inoltre con la seguente configurazione all'interno della sezione <emphasis>'Autenticazione'</emphasis>:
-							<itemizedlist>
+							</itemizedlist> Procedere inoltre con la seguente configurazione
+							all'interno della sezione <emphasis>'Autenticazione'</emphasis>: <itemizedlist>
 								<listitem>
-									<para><emphasis>Trasporto - Stato</emphasis>: disabilitato</para>
+									<para><emphasis>Trasporto - Stato</emphasis>:
+										disabilitato</para>
 								</listitem>
 								<listitem>
 									<para><emphasis>Token - Issuer</emphasis>: disabilitato</para>
@@ -2831,41 +2943,39 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<listitem>
 									<para><emphasis>Token - eMail</emphasis>: disabilitato</para>
 								</listitem>
-							</itemizedlist>
-							Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
-							<figure
-								id="apiGateway_oauth_userInfo_config">
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure id="apiGateway_oauth_userInfo_config">
 								<title>Configurazione OAuth2 - Autenticazione</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutenticazioneConfig.pdf"
-										/>
+											fileref="FIGURE_OUT/oauthAutenticazioneConfig.pdf"/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutenticazioneConfig.png"
-										/>
+											fileref="FIGURE_OUT/oauthAutenticazioneConfig.png"/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
 					</listitem>
-					
+
 					<listitem>
 						<para>
 							<emphasis role="strong">Invocazione API</emphasis>
 						</para>
 						<note>
 							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
-							<para> Le configurazioni accedute da GovWay vengono mantenute in una cache dopo il
-								primo accesso per 2 ore, è quindi necessario forzare un reset della cache. Per
-								farlo accedere alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-								selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
 						</note>
-						<para>
-							Per effettuare il test acquisire un token utilizzando l'applicazione <emphasis>Playground</emphasis> come descritto 
-							nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/> e procedere con il seguente comando.
+						<para> Per effettuare il test acquisire un token utilizzando l'applicazione
+								<emphasis>Playground</emphasis> come descritto nella precedente
+							sezione <xref linkend="controlloAccesso_token_introspection"/> e
+							procedere con il seguente comando.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -2900,95 +3010,109 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Consultazione Tracce in errore</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile consultare lo
-							storico delle transazioni che sono transitate nel gateway. Dalla figura <xref
-								linkend="apiGateway_oauth_userInfo_error"/> si può vedere come le transazioni
-							generate dopo la configurazione sopra indicata sono terminate con errore con esito <emphasis>Autenticazione Fallita</emphasis>. 
-							<figure id="apiGateway_oauth_userInfo_error">
-								<title>Tracce delle invocazioni terminate con errore 'Autenticazione Fallita'</title>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_oauth_userInfo_error"/> si può
+							vedere come le transazioni generate dopo la configurazione sopra
+							indicata sono terminate con errore con esito <emphasis>Autenticazione
+								Fallita</emphasis>. <figure id="apiGateway_oauth_userInfo_error">
+								<title>Tracce delle invocazioni terminate con errore 'Autenticazione
+									Fallita'</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>Accedendo al dettaglio di una transazione terminata in errore, e visualizzandone i diagnostici è possibile comprendere l'errore che come atteso
-							risulta essere la mancanza dell'informazione <emphasis>Username</emphasis> richiesta obbligatoriamente tramite la sezione <emphasis>'Autenticazione'</emphasis> 
-							precedentemente configurata</para>
-							<figure id="apiGateway_oauth_userInfo_diagnostici_ko">
-								<title>Diagnostici di una invocazione terminata con errore</title>
-								<mediaobject>
-									<imageobject>
-										<imagedata width="60%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo_diagnostici.pdf"/>
-									</imageobject>
-									<imageobject>
-										<imagedata width="60%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo_diagnostici.png"/>
-									</imageobject>
-								</mediaobject>
-							</figure>
-						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce <emphasis>'Token Info'</emphasis> è possibile comunque vedere tutti i claims presenti nel token,
-							dove si denota come non sia presente uno dei claim che rappresenta l'informazione 'Username'. 
-							<figure id="apiGateway_oauth_userInfo_ko_tokeInfo">
+						<para>Accedendo al dettaglio di una transazione terminata in errore, e
+							visualizzandone i diagnostici è possibile comprendere l'errore che come
+							atteso risulta essere la mancanza dell'informazione
+								<emphasis>Username</emphasis> richiesta obbligatoriamente tramite la
+							sezione <emphasis>'Autenticazione'</emphasis> precedentemente
+							configurata</para>
+						<figure id="apiGateway_oauth_userInfo_diagnostici_ko">
+							<title>Diagnostici di una invocazione terminata con errore</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo_diagnostici.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo_diagnostici.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce
+								<emphasis>'Token Info'</emphasis> è possibile comunque vedere tutti
+							i claims presenti nel token, dove si denota come non sia presente uno
+							dei claim che rappresenta l'informazione 'Username'. <figure
+								id="apiGateway_oauth_userInfo_ko_tokeInfo">
 								<title>Informazioni presenti nel Token</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						
+
 					</listitem>
-					
+
 					<listitem>
-						<para><emphasis role="strong">Abilitazione UserInfo in Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
-							dell'API <emphasis>'PetStore v2'</emphasis> ed abilitare stavolta anche il servizio <emphasis>'User Info'</emphasis>.
-							<figure
+						<para><emphasis role="strong">Abilitazione UserInfo in Configurazione
+								Controllo degli Accessi</emphasis></para>
+						<para> Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente
+							alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
+							dell'API <emphasis>'PetStore v2'</emphasis> ed abilitare stavolta anche
+							il servizio <emphasis>'User Info'</emphasis>. <figure
 								id="apiGateway_oauth_userInfo_config2">
 								<title>Configurazione OAuth2 - Autenticazione</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutenticazioneConfig2red.pdf"
-										/>
+											fileref="FIGURE_OUT/oauthAutenticazioneConfig2red.pdf"/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutenticazioneConfig2red.png"
-										/>
+											fileref="FIGURE_OUT/oauthAutenticazioneConfig2red.png"/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
 					</listitem>
-					
+
 					<listitem>
 						<para>
 							<emphasis role="strong">Nuova invocazione API</emphasis>
 						</para>
 						<note>
 							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
-							<para> Effettuare il reset della cache accedendo alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-								selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+							<para> Effettuare il reset della cache accedendo alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
 						</note>
-						<para>
-							Per effettuare il test acquisire un token utilizzando l'applicazione <emphasis>Playground</emphasis> come descritto 
-							nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/> e procedere con il seguente comando.
+						<para> Per effettuare il test acquisire un token utilizzando l'applicazione
+								<emphasis>Playground</emphasis> come descritto nella precedente
+							sezione <xref linkend="controlloAccesso_token_introspection"/> e
+							procedere con il seguente comando.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -3001,73 +3125,85 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
         "status": "available"
 }'</screen>
 						</para>
-						<para> L'esito dell'aggiornamento termina stavolta con successo con un codice http 200 e
-							una risposta json equivalente alla richiesta.
-						</para>
+						<para> L'esito dell'aggiornamento termina stavolta con successo con un
+							codice http 200 e una risposta json equivalente alla richiesta. </para>
 					</listitem>
-					
+
 					<listitem>
 						<para>
 							<emphasis role="strong">Consultazione Tracce</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile adesso vedere che le richieste transitano con successo sul gateway.
-							Accedendo al dettaglio di una transazione, tra le varie informazioni presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
-							sono presenti tutte e tre le informazioni principali attese: ClientId, Subject e Username.
-							<figure id="apiGateway_oauth_userInfo_ok_info">
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							adesso vedere che le richieste transitano con successo sul gateway.
+							Accedendo al dettaglio di una transazione, tra le varie informazioni
+							presenti nella sezione <emphasis>'Informazioni Mittente'</emphasis>,
+							sono presenti tutte e tre le informazioni principali attese: ClientId,
+							Subject e Username. <figure id="apiGateway_oauth_userInfo_ok_info">
 								<title>Traccia di una invocazione terminata con successo</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfo.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfo.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfo.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfo.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce <emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims presenti nel token,
-							tra cui è possibile constatare la presenza dei claims estratti grazie all'invocazione del servizio <emphasis>'User Info'</emphasis>. 
-							<figure id="apiGateway_oauth_userInfo_ok_tokeInfo">
+						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce
+								<emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims
+							presenti nel token, tra cui è possibile constatare la presenza dei
+							claims estratti grazie all'invocazione del servizio <emphasis>'User
+								Info'</emphasis>. <figure id="apiGateway_oauth_userInfo_ok_tokeInfo">
 								<title>Informazioni presenti in un Token JWT</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
 					</listitem>
-					
+
 				</itemizedlist>
 			</sect3>
 
 			<sect3 id="controlloAccesso_token_autorizzazione_scope">
 				<title>Autorizzazione per Scope</title>
-				<para>
-					La verifica di un <emphasis>access token</emphasis>, se opaco tramite il servizio di Introspection (descritto nella sezione <xref linkend="controlloAccesso_token_introspection"/>), 
-					altrimenti tramite la validazione JWT (sezione <xref linkend="controlloAccesso_token_jwt"/>), permette a GovWay di conoscere i claims associati al token ed in particolare
-					quali sono gli scope autorizzati dall'utente.
-				</para>
-				<para>
-					Gli scope permettono di definire delle "funzioni applicative" il cui utilizzo da parte di un'applicazione deve essere autorizzato da un utente. 
-				</para>
-				<para>
-					Per simulare lo scenario utilizzeremo sempre il servizio <emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di Google</emphasis> 
-					descritto nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/> dove però verranno richiesti altri scope rispetto a quello utilizzato nel precedente scenario.
-					Simuleremo di aver bisogno di accedere alle API Calendar di Google e quindi dovremo richiedere tali scope che devono essere autorizzati una volta che ci siamo autenticati su Google.
-				</para>
-				<para>
-					Su GovWay è possibile registrare gli scope disponibili su di un <emphasis>Authorization Server</emphasis> ed utilizzarli per definire politiche di autorizzazione
-					rispetto agli scope presenti nell'access token. Lo scenario descritto in questa sezione mostra un esempio di registrazione degli scope <emphasis>'API Calendar'</emphasis> di Google
-					dove si configura a titolo esemplificativo che tali scope sono necessari per poter invocare il servizio <emphasis>PetStore</emphasis>.
-				</para>
+				<para> La verifica di un <emphasis>access token</emphasis>, se opaco tramite il
+					servizio di Introspection (descritto nella sezione <xref
+						linkend="controlloAccesso_token_introspection"/>), altrimenti tramite la
+					validazione JWT (sezione <xref linkend="controlloAccesso_token_jwt"/>), permette
+					a GovWay di conoscere i claims associati al token ed in particolare quali sono
+					gli scope autorizzati dall'utente. </para>
+				<para> Gli scope permettono di definire delle "funzioni applicative" il cui utilizzo
+					da parte di un'applicazione deve essere autorizzato da un utente. </para>
+				<para> Per simulare lo scenario utilizzeremo sempre il servizio
+						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
+						Google</emphasis> descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_introspection"/> dove però verranno
+					richiesti altri scope rispetto a quello utilizzato nel precedente scenario.
+					Simuleremo di aver bisogno di accedere alle API Calendar di Google e quindi
+					dovremo richiedere tali scope che devono essere autorizzati una volta che ci
+					siamo autenticati su Google. </para>
+				<para> Su GovWay è possibile registrare gli scope disponibili su di un
+						<emphasis>Authorization Server</emphasis> ed utilizzarli per definire
+					politiche di autorizzazione rispetto agli scope presenti nell'access token. Lo
+					scenario descritto in questa sezione mostra un esempio di registrazione degli
+					scope <emphasis>'API Calendar'</emphasis> di Google dove si configura a titolo
+					esemplificativo che tali scope sono necessari per poter invocare il servizio
+						<emphasis>PetStore</emphasis>. </para>
 				<figure id="oauth_scenarioScope">
 					<title>Scenario OAuth con autorizzazione per Scope</title>
 					<mediaobject>
@@ -3079,22 +3215,24 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						</imageobject>
 					</mediaobject>
 				</figure>
-			
+
 				<itemizedlist>
-					
+
 					<listitem>
-						<para><emphasis role="strong">Acquisizione Access Token con scope API Calendar</emphasis></para>
-						<para>
-							Per simulare l'acquisizione di un token è possibile utilizzare l'applicazione <emphasis>Playground</emphasis>, disponibile all'indirizzo <ulink url="https://developers.google.com/oauthplayground/"></ulink>,
-							che consente di richiedere un <emphasis>access token</emphasis> all'<emphasis>Authorization Server di Google</emphasis>. 
-						</para>
-						<para>
-							L'applicazione <emphasis>Playground</emphasis> consente agevolmente di ottenere l'<emphasis>access token</emphasis> con gli scope richiesti dall'esempio:
-							<orderedlist>
+						<para><emphasis role="strong">Acquisizione Access Token con scope API
+								Calendar</emphasis></para>
+						<para> Per simulare l'acquisizione di un token è possibile utilizzare
+							l'applicazione <emphasis>Playground</emphasis>, disponibile
+							all'indirizzo <ulink
+								url="https://developers.google.com/oauthplayground/"/>, che consente
+							di richiedere un <emphasis>access token</emphasis>
+								all'<emphasis>Authorization Server di Google</emphasis>. </para>
+						<para> L'applicazione <emphasis>Playground</emphasis> consente agevolmente
+							di ottenere l'<emphasis>access token</emphasis> con gli scope richiesti
+							dall'esempio: <orderedlist>
 								<listitem>
 									<para><emphasis>Selezione scope</emphasis></para>
-									<para>Devono essere selezionati gli <emphasis>scope</emphasis>:
-										<itemizedlist>
+									<para>Devono essere selezionati gli <emphasis>scope</emphasis>: <itemizedlist>
 											<listitem>
 												<para>https://www.googleapis.com/auth/calendar.events.readonly</para>
 											</listitem>
@@ -3104,43 +3242,46 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 											<listitem>
 												<para>https://www.googleapis.com/auth/calendar.settings.readonly</para>
 											</listitem>
-										</itemizedlist>
-										Cliccando infine sul pulsante <emphasis>'Authorize APIs'</emphasis> si verrà rediretti alla pagina di autenticazione in google dove si dovrà procedere ad autenticarsi. 
-									</para>
-									<figure
-										id="apiGateway_oauth_scope_playground_step1">
-										<title>Ottenimento Token: Playground Google, scelta scope API Calendar</title>
+										</itemizedlist> Cliccando infine sul pulsante
+											<emphasis>'Authorize APIs'</emphasis> si verrà rediretti
+										alla pagina di autenticazione in google dove si dovrà
+										procedere ad autenticarsi. </para>
+									<figure id="apiGateway_oauth_scope_playground_step1">
+										<title>Ottenimento Token: Playground Google, scelta scope
+											API Calendar</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep1.pdf"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep1.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep1.png"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep1.png"
 												/>
 											</imageobject>
 										</mediaobject>
 									</figure>
 								</listitem>
 								<listitem>
-									<para><emphasis>Autorizzazione scope API Calendar</emphasis></para>
-									<para>Effettuata l'autenticazione in Google si viene rediretti ad una pagina dove è richiesto all'utente di autorizzare l'applicazione Playground 
-									all'utilizzo degli scope API Calendar.
-									</para>
-									<figure
-										id="apiGateway_oauth_scope_playground_step2">
-										<title>Ottenimento Token: Playground Google, autorizzazione scope API Calendar</title>
+									<para><emphasis>Autorizzazione scope API
+										Calendar</emphasis></para>
+									<para>Effettuata l'autenticazione in Google si viene rediretti
+										ad una pagina dove è richiesto all'utente di autorizzare
+										l'applicazione Playground all'utilizzo degli scope API
+										Calendar. </para>
+									<figure id="apiGateway_oauth_scope_playground_step2">
+										<title>Ottenimento Token: Playground Google, autorizzazione
+											scope API Calendar</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="30%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep2.pdf"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep2.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="30%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep2.png"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep2.png"
 												/>
 											</imageobject>
 										</mediaobject>
@@ -3148,23 +3289,25 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</listitem>
 								<listitem>
 									<para><emphasis>Access Token</emphasis></para>
-									<para>Autorizzati gli scope si viene rediretti alla seconda fase prevista dall'applicazione <emphasis>Playground</emphasis> 
-										denominata <emphasis>'Exchange authorization code for tokens'</emphasis>. 
-										Cliccando sul pulsante <emphasis>'Exchange authorization code for tokens'</emphasis> si ottiene infine un <emphasis>access token</emphasis> 
-										da estrarre nella risposta http visualizzata sulla destra dell'applicazione.
-									</para>
-									<figure
-										id="apiGateway_oauth_scope_playground_step3">
+									<para>Autorizzati gli scope si viene rediretti alla seconda fase
+										prevista dall'applicazione <emphasis>Playground</emphasis>
+										denominata <emphasis>'Exchange authorization code for
+											tokens'</emphasis>. Cliccando sul pulsante
+											<emphasis>'Exchange authorization code for
+											tokens'</emphasis> si ottiene infine un <emphasis>access
+											token</emphasis> da estrarre nella risposta http
+										visualizzata sulla destra dell'applicazione. </para>
+									<figure id="apiGateway_oauth_scope_playground_step3">
 										<title>Ottenimento Token: Playground Google, Step 3</title>
 										<mediaobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep3red.pdf"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep3red.pdf"
 												/>
 											</imageobject>
 											<imageobject>
 												<imagedata width="50%"
-													fileref="FIGURE_OUT/oauthScopePlaygroundStep3red.png"
+												fileref="FIGURE_OUT/oauthScopePlaygroundStep3red.png"
 												/>
 											</imageobject>
 										</mediaobject>
@@ -3175,13 +3318,16 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					</listitem>
 
 					<listitem>
-						<para><emphasis role="strong">Registrazione degli scope su GovWay</emphasis></para>
-						<para>
-							Accedere alla sezione <emphasis>'Scope'</emphasis> della <emphasis>govwayConsole</emphasis> per registrare gli scope relativi ad <emphasis>API Calendar</emphasis>.
-							Per registrare un nuovo scope cliccare sul pulsante '<emphasis>Aggiungi</emphasis>'. 
-							Effettuare la registrazione degli scopes richiesti precedentemente tramite Playground 
-							ed anche un ulteriore scope (API Google Driver), non richiesto durante l'acquisizione del token, che verrà utilizzato nei test descritti in questa sezione. 
-							<table>
+						<para><emphasis role="strong">Registrazione degli scope su
+							GovWay</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Scope'</emphasis> della
+								<emphasis>govwayConsole</emphasis> per registrare gli scope relativi
+							ad <emphasis>API Calendar</emphasis>. Per registrare un nuovo scope
+							cliccare sul pulsante '<emphasis>Aggiungi</emphasis>'. Effettuare la
+							registrazione degli scopes richiesti precedentemente tramite Playground
+							ed anche un ulteriore scope (API Google Driver), non richiesto durante
+							l'acquisizione del token, che verrà utilizzato nei test descritti in
+							questa sezione. <table>
 								<title>Registrazione scope</title>
 								<tgroup align="left" cols="3" colsep="1" rowsep="1">
 									<colspec colname="c1"/>
@@ -3218,26 +3364,22 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 									</tbody>
 								</tgroup>
 							</table>
-							<figure
-								id="apiGateway_oauth_scope_config">
+							<figure id="apiGateway_oauth_scope_config">
 								<title>Configurazione OAuth2 - Registrazione Scope</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthScopeRegistrazioneConfig.pdf"
-										/>
+											fileref="FIGURE_OUT/oauthScopeRegistrazioneConfig.pdf"/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthScopeRegistrazioneConfig.png"
-										/>
+											fileref="FIGURE_OUT/oauthScopeRegistrazioneConfig.png"/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>
-							Terminata la registrazione gli scope è possibile specificarli all'interno del Controllo degli Accessi di una API.
-							<figure
+						<para> Terminata la registrazione gli scope è possibile specificarli
+							all'interno del Controllo degli Accessi di una API. <figure
 								id="apiGateway_oauth_scope_config_list">
 								<title>Configurazione OAuth2 - Lista degli Scope registrati</title>
 								<mediaobject>
@@ -3255,17 +3397,18 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 							</figure>
 						</para>
 					</listitem>
-					
+
 					<listitem>
-						<para><emphasis role="strong">Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le funzionalità attive. 
-							Cliccare sulla voce presente nella colonna '<emphasis>Controllo Accessi</emphasis>' 
-							e procedere con la seguente configurazione all'interno della sezione <emphasis>'Gestione Token'</emphasis>:
-							<itemizedlist>
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la seguente
+							configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
 								<listitem>
 									<para><emphasis>Stato</emphasis>: abilitato</para>
 								</listitem>
@@ -3284,21 +3427,22 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<listitem>
 									<para><emphasis>Token Forward</emphasis>: abilitato</para>
 								</listitem>
-							</itemizedlist>
-							Procedere inoltre con la seguente configurazione all'interno della sezione <emphasis>'Autorizzazione'</emphasis>:
-							<itemizedlist>
+							</itemizedlist> Procedere inoltre con la seguente configurazione
+							all'interno della sezione <emphasis>'Autorizzazione'</emphasis>: <itemizedlist>
 								<listitem>
-									<para><emphasis>Autorizzazione - Stato</emphasis>: abilitato</para>
+									<para><emphasis>Autorizzazione - Stato</emphasis>:
+										abilitato</para>
 								</listitem>
 								<listitem>
-									<para><emphasis>Autorizzazione per Scope - Stato</emphasis>: abilitato</para>
+									<para><emphasis>Autorizzazione per Scope - Stato</emphasis>:
+										abilitato</para>
 								</listitem>
 								<listitem>
-									<para><emphasis>Autorizzazione per Scope - Scope Richiesti</emphasis>: tutti</para>
+									<para><emphasis>Autorizzazione per Scope - Scope
+											Richiesti</emphasis>: tutti</para>
 								</listitem>
-							</itemizedlist>
-							Effettuata la configurazione salvarla cliccando sul pulsante 'Salva'.
-							<figure
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure
 								id="apiGateway_oauth_scope_config_controlloAccessi">
 								<title>Configurazione OAuth2 - Autorizzazione</title>
 								<mediaobject>
@@ -3315,11 +3459,11 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</mediaobject>
 							</figure>
 						</para>
-						<para>
-							Salvata la configurazione si deve nuovamente accedere al <emphasis>Controllo Accessi</emphasis> dove
-							nella sezione <emphasis>'Autorizzazione'</emphasis> è adesso disponibile un link <emphasis>'Scope (0)'</emphasis> che permette
-							di registrare gli scope che un token deve possedere quando invoca l'api PetStore.
-							<figure
+						<para> Salvata la configurazione si deve nuovamente accedere al
+								<emphasis>Controllo Accessi</emphasis> dove nella sezione
+								<emphasis>'Autorizzazione'</emphasis> è adesso disponibile un link
+								<emphasis>'Scope (0)'</emphasis> che permette di registrare gli
+							scope che un token deve possedere quando invoca l'api PetStore. <figure
 								id="apiGateway_oauth_scope_config_controlloAccessiLinkScope">
 								<title>Configurazione OAuth2 - Autorizzazione - Scope</title>
 								<mediaobject>
@@ -3336,9 +3480,8 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								</mediaobject>
 							</figure>
 						</para>
-						<para>
-							Tramite il pulsante <emphasis>'Aggiungi'</emphasis> aggiungere tutti e 4 gli scope precedentemente registrati su GovWay.
-							<figure
+						<para> Tramite il pulsante <emphasis>'Aggiungi'</emphasis> aggiungere tutti
+							e 4 gli scope precedentemente registrati su GovWay. <figure
 								id="apiGateway_oauth_scope_config_controlloAccessiScopeRegistrati">
 								<title>Configurazione OAuth2 - Autorizzazione - Elenco Scope</title>
 								<mediaobject>
@@ -3356,20 +3499,21 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 							</figure>
 						</para>
 					</listitem>
-			
+
 					<listitem>
 						<para>
 							<emphasis role="strong">Invocazione API</emphasis>
 						</para>
 						<note>
 							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
-							<para> Le configurazioni accedute da GovWay vengono mantenute in una cache dopo il
-								primo accesso per 2 ore, è quindi necessario forzare un reset della cache. Per
-								farlo accedere alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-								selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
 						</note>
-						<para>
-							Per effettuare il test utilizzare il token, contenente gli scope API Calendar, precedentemente ottenuto.
+						<para> Per effettuare il test utilizzare il token, contenente gli scope API
+							Calendar, precedentemente ottenuto.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -3404,95 +3548,109 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 						<para>
 							<emphasis role="strong">Consultazione Tracce in errore</emphasis>
 						</para>
-						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile consultare lo
-							storico delle transazioni che sono transitate nel gateway. Dalla figura <xref
-								linkend="apiGateway_oauth_scope_error"/> si può vedere come le transazioni
-							generate dopo la configurazione sopra indicata sono terminate con errore con esito <emphasis>Autorizzazione Negata</emphasis>. 
-							<figure id="apiGateway_oauth_scope_error">
-								<title>Tracce delle invocazioni terminate con errore 'Autorizzazione Negata'</title>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_oauth_scope_error"/> si può
+							vedere come le transazioni generate dopo la configurazione sopra
+							indicata sono terminate con errore con esito <emphasis>Autorizzazione
+								Negata</emphasis>. <figure id="apiGateway_oauth_scope_error">
+								<title>Tracce delle invocazioni terminate con errore 'Autorizzazione
+									Negata'</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						<para>Accedendo al dettaglio di una transazione terminata in errore, e visualizzandone i diagnostici è possibile comprendere l'errore che come atteso
-							risulta essere la mancanza dello scope <emphasis>https://www.googleapis.com/auth/drive</emphasis> richiesto 
-							poichè nella sezione <emphasis>'Autorizzazione'</emphasis> è stato indicato che gli scope registrati devono essere tutti presente nell'access token.</para>
+						<para>Accedendo al dettaglio di una transazione terminata in errore, e
+							visualizzandone i diagnostici è possibile comprendere l'errore che come
+							atteso risulta essere la mancanza dello scope
+								<emphasis>https://www.googleapis.com/auth/drive</emphasis> richiesto
+							poichè nella sezione <emphasis>'Autorizzazione'</emphasis> è stato
+							indicato che gli scope registrati devono essere tutti presente
+							nell'access token.</para>
 						<figure id="apiGateway_oauth_scope_diagnostici_ko">
 							<title>Diagnostici di una invocazione terminata con errore</title>
 							<mediaobject>
 								<imageobject>
 									<imagedata width="60%"
-										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope_diagnostici.pdf"/>
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope_diagnostici.pdf"
+									/>
 								</imageobject>
 								<imageobject>
 									<imagedata width="60%"
-										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope_diagnostici.png"/>
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope_diagnostici.png"
+									/>
 								</imageobject>
 							</mediaobject>
 						</figure>
-						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce <emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims presenti nel token,
-							dove si possono vedere gli scope richiesti tramite Playground. 
-							<figure id="apiGateway_oauth_scope_ko_tokeInfo">
+						<para>Cliccando sul link <emphasis>'Visualizza'</emphasis> della voce
+								<emphasis>'Token Info'</emphasis> è possibile vedere tutti i claims
+							presenti nel token, dove si possono vedere gli scope richiesti tramite
+							Playground. <figure id="apiGateway_oauth_scope_ko_tokeInfo">
 								<title>Scope presenti nel Token</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScopeKoInfo.pdf"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScopeKoInfo.pdf"
+										/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="40%"
-											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScopeKoInfo.png"/>
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScopeKoInfo.png"
+										/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
-						
+
 					</listitem>
-					
+
 					<listitem>
-						<para><emphasis role="strong">Modifica controllo degli scope (Almeno uno) in Configurazione Controllo degli Accessi</emphasis></para>
-						<para>
-							Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
-							dell'API <emphasis>'PetStore v2'</emphasis>; all'interno della sezione <emphasis>'Autorizzare'</emphasis> modificare il tipo di controllo '<emphasis>Scope Richiesti</emphasis>'
-							dal valore <emphasis>'tutti'</emphasis> al valore <emphasis>'almeno uno'</emphasis>.
-							<figure
-								id="apiGateway_oauth_scope_config2">
-								<title>Configurazione OAuth2 - Autorizzazione degli scope con opzione 'Almeno uno'</title>
+						<para><emphasis role="strong">Modifica controllo degli scope (Almeno uno) in
+								Configurazione Controllo degli Accessi</emphasis></para>
+						<para> Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente
+							alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
+							dell'API <emphasis>'PetStore v2'</emphasis>; all'interno della sezione
+								<emphasis>'Autorizzare'</emphasis> modificare il tipo di controllo
+								'<emphasis>Scope Richiesti</emphasis>' dal valore
+								<emphasis>'tutti'</emphasis> al valore <emphasis>'almeno
+								uno'</emphasis>. <figure id="apiGateway_oauth_scope_config2">
+								<title>Configurazione OAuth2 - Autorizzazione degli scope con
+									opzione 'Almeno uno'</title>
 								<mediaobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutorizzazioneConfig2red.pdf"
-										/>
+											fileref="FIGURE_OUT/oauthAutorizzazioneConfig2red.pdf"/>
 									</imageobject>
 									<imageobject>
 										<imagedata width="50%"
-											fileref="FIGURE_OUT/oauthAutorizzazioneConfig2red.png"
-										/>
+											fileref="FIGURE_OUT/oauthAutorizzazioneConfig2red.png"/>
 									</imageobject>
 								</mediaobject>
 							</figure>
 						</para>
 					</listitem>
-					
+
 					<listitem>
 						<para>
 							<emphasis role="strong">Nuova invocazione API</emphasis>
 						</para>
 						<note>
 							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
-							<para> Effettuare il reset della cache accedendo alla sezione <emphasis>'Strumenti' - 'Runtime'</emphasis> e
-								selezionare la voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+							<para> Effettuare il reset della cache accedendo alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
 						</note>
-						<para>
-							Effettuare una nuova invocazione del test.
+						<para> Effettuare una nuova invocazione del test.
 							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
 -H "accept: application/json" \
 -H "Content-Type: application/json" \
@@ -3505,31 +3663,34 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
         "status": "available"
 }'</screen>
 						</para>
-						<para> L'esito dell'aggiornamento termina stavolta con successo con un codice http 200 e
-							una risposta json equivalente alla richiesta.
-						</para>
+						<para> L'esito dell'aggiornamento termina stavolta con successo con un
+							codice http 200 e una risposta json equivalente alla richiesta. </para>
 					</listitem>
-			
+
 				</itemizedlist>
-			
+
 			</sect3>
 
 			<sect3 id="controlloAccesso_token_autorizzazione_claims">
 				<title>Autorizzazione sui Claims</title>
-				<para>
-					Oltre ad una autorizzazione sugli scope, descritta nello scenario <xref linkend="controlloAccesso_token_autorizzazione_scope"/>, GovWay 
-					può essere configurato per verificare ulteriori claims ottenuti tramite la validazione dell'access token.
-					La validazione che verrà descritta in questa sezione consiste in una validazione semplice la cui logica si basa sulla semplice constatazione che uno o più claim siano stati
-					riscontrati all'interno del token e possiedano il valore atteso. Per validazione più complesse si rimanda all'utilizzo di una policy XACML descritta nello scenario <xref linkend="controlloAccesso_token_xacml"/>.
-				</para>
-				<para>
-					TODO!
-				</para>
-				<para>
-					Per simulare lo scenario utilizzeremo sempre il servizio <emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di Google</emphasis> 
-					descritto nella precedente sezione <xref linkend="controlloAccesso_token_introspection"/> dove però verranno richiesti altri scope rispetto a quello utilizzato nel precedente scenario.
-					Simuleremo di aver bisogno di accedere alle API Calendar di Google e quindi dovremo richiedere tali scope che devono essere autorizzati una volta che ci siamo autenticati su Google.
-				</para>
+				<para> Oltre ad una autorizzazione sugli scope, descritta nello scenario <xref
+						linkend="controlloAccesso_token_autorizzazione_scope"/>, GovWay può essere
+					configurato per verificare ulteriori claims ottenuti tramite la validazione
+					dell'access token. La validazione che verrà descritta in questa sezione consiste
+					in una validazione semplice la cui logica si basa sulla semplice constatazione
+					che uno o più claim siano stati riscontrati all'interno del token e possiedano
+					il valore atteso. Per validazione più complesse si rimanda all'utilizzo di una
+					policy XACML descritta nello scenario <xref
+						linkend="controlloAccesso_token_xacml"/>. </para>
+				<para> TODO! </para>
+				<para> Per simulare lo scenario utilizzeremo sempre il servizio
+						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
+						Google</emphasis> descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_introspection"/> dove però verranno
+					richiesti altri scope rispetto a quello utilizzato nel precedente scenario.
+					Simuleremo di aver bisogno di accedere alle API Calendar di Google e quindi
+					dovremo richiedere tali scope che devono essere autorizzati una volta che ci
+					siamo autenticati su Google. </para>
 
 			</sect3>
 
@@ -3537,12 +3698,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 				<title>Autorizzazione XACML</title>
 				<para>TODO </para>
 			</sect3>
-			
+
 			<sect3 id="controlloAccesso_token_forward">
 				<title>Token Forward</title>
 				<para>Indicare sia come passare il token originale e/o le altre modalità </para>
 			</sect3>
-			
+
 			<sect3 id="controlloAccesso_registrazioneAuthServer">
 				<title>Registrazione Authorization Server</title>
 				<para>TODO</para>

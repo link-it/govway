@@ -23,9 +23,11 @@
 
 package org.openspcoop2.utils.security;
 
+import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
 
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jws.JwsCompactConsumer;
 import org.apache.cxf.rs.security.jose.jws.JwsHeaders;
 import org.apache.cxf.rs.security.jose.jws.JwsJsonConsumer;
@@ -45,16 +47,41 @@ public class JsonVerifySignature {
 
 	private JwsSignatureVerifier provider;
 	private JOSERepresentation representation;
+	private Properties dynamicProvider;
 	
 	private String decodedPayload;
 	private byte[] decodedPayloadAsByte;
 
 	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+			if(JOSERepresentation.COMPACT.equals(representation) && JsonUtils.isDynamicProvider(props)) {
+				this.dynamicProvider = props;
+			}
+			else {
+				this.provider = loadProviderFromProperties(props);
+			}
 			this.representation = representation;
 		}catch(Throwable t) {
 			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
+		}
+	}
+	
+	private JwsSignatureVerifier loadProviderFromProperties(Properties props) throws Exception {
+		File fTmp = null;
+		try {
+			fTmp = JsonUtils.normalizeProperties(props); // in caso di url http viene letta la risorsa remota e salvata in tmp
+			/*java.util.Enumeration<?> en = props.keys();
+			while (en.hasMoreElements()) {
+				String key = (String) en.nextElement();
+				System.out.println("- ["+key+"] ["+props.getProperty(key)+"]");
+			}*/
+			return JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders());
+		}finally {
+			try {
+				if(fTmp!=null) {
+					fTmp.delete();
+				}
+			}catch(Throwable t) {}
 		}
 	}
 	
@@ -117,9 +144,20 @@ public class JsonVerifySignature {
 	}
 
 	
-	private boolean verifyCompact(String jsonString) {
+	private boolean verifyCompact(String jsonString) throws Exception {
+		
+		JwsSignatureVerifier provider = this.provider;
+		if(this.dynamicProvider!=null) {
+			String alias = JsonUtils.readAlias(jsonString);
+			Properties pNew = new Properties();
+			pNew.putAll(this.dynamicProvider);
+			//System.out.println("ALIAS ["+alias+"]");
+			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
+			provider = loadProviderFromProperties(pNew);
+		}
+		
 		JwsCompactConsumer consumer = new JwsCompactConsumer(jsonString);
-		boolean result = consumer.verifySignatureWith(this.provider);
+		boolean result = consumer.verifySignatureWith(provider);
 		this.decodedPayload = consumer.getDecodedJwsPayload();
 		this.decodedPayloadAsByte = consumer.getDecodedJwsPayloadBytes();
 		return result;

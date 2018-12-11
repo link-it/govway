@@ -25,22 +25,30 @@ package org.openspcoop2.utils.transport.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeTypes;
@@ -550,6 +558,71 @@ public class HttpUtilities {
 	}
 	
 	
+	public static byte[] requestHTTPSFile(String path,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return requestHTTPSFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType);
+	}
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return requestHTTPSFile(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType);
+	}
+	public static byte[] requestHTTPSFile(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return requestHTTPSFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType);
+	}	
+	public static byte[] requestHTTPSFile(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		HttpResponse res = getHTTPSResponse(path, readTimeout, connectTimeout, username, password,
+				trustStore, trustStorePassword, trustStoreType);
+		return res.getContent();
+	}
+	public static HttpResponse getHTTPSResponse(String path,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null,
+				trustStore, trustStorePassword, trustStoreType);
+	}
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return getHTTPSResponse(path, readTimeout, connectTimeout, null, null,
+				trustStore, trustStorePassword, trustStoreType);
+	}
+	public static HttpResponse getHTTPSResponse(String path,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		return getHTTPSResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password,
+				trustStore, trustStorePassword, trustStoreType);
+	}	
+	public static HttpResponse getHTTPSResponse(String path,int readTimeout,int connectTimeout,String username,String password,
+			String trustStore, String trustStorePassword, String trustStoreType) throws UtilsException{
+		
+		HttpRequest httpRequest = new HttpRequest();
+		httpRequest.setUrl(path);
+		httpRequest.setReadTimeout(readTimeout);
+		httpRequest.setConnectTimeout(connectTimeout);
+		httpRequest.setUsername(username);
+		httpRequest.setPassword(password);
+		httpRequest.setMethod(HttpRequestMethod.GET);
+		
+		httpRequest.setTrustStore(trustStore);
+		httpRequest.setTrustStorePassword(trustStorePassword);
+		httpRequest.setTrustStoreType(trustStoreType);
+		
+		HttpResponse response = null;
+		try{
+			response = httpInvoke(httpRequest);
+			
+		}catch(Exception e){
+			throw new UtilsException("Utilities.requestHTTPFile error "+e.getMessage(),e);
+		}
+		if(response.getResultHTTPOperation()==404){
+			throw new UtilsException("404");
+		}
+		return response;
+		
+	}
+	
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		
 		String path = request.getUrl();
@@ -576,13 +649,52 @@ public class HttpUtilities {
 		
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
-		try{
+		InputStream finTrustStore = null;
+		try {
+			SSLContext sslContext = null;
+			if(request.getTrustStore()!=null){
+				
+				if(request.getTrustStoreType()==null) {
+					throw new UtilsException("Ssl TrustStore type required");
+				}
+				if(request.getTrustStorePassword()==null) {
+					throw new UtilsException("Ssl TrustStore password required");
+				}
+				
+				sslContext = SSLContext.getInstance(SSLUtilities.getSafeDefaultProtocol()); // ritorna l'ultima versione disponibile
+				KeyManager[] km = null;
+				TrustManager[] tm = null;
+				KeyStore truststore = KeyStore.getInstance(request.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
+				File file = new File(request.getTrustStore());
+				if(file.exists()) {
+					finTrustStore = new FileInputStream(file);
+				}
+				else {
+					finTrustStore = SSLUtilities.class.getResourceAsStream(request.getTrustStore());
+				}
+				if(finTrustStore == null) {
+					throw new Exception("Keystore ["+request.getTrustStore()+"] not found");
+				}		
+				truststore.load(finTrustStore, request.getTrustStorePassword().toCharArray());
+				TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+				trustManagerFactory.init(truststore);
+				tm = trustManagerFactory.getTrustManagers();
+				sslContext.init(km, tm, null);	
+			}
+			
 			if(request.getUrl()==null){
 				throw new UtilsException("Url required");
 			}
 			URL url = new URL(request.getUrl());
 			URLConnection connection = url.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) connection;
+			if(sslContext!=null) {
+				
+				HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
+				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
+				SSLHostNameVerifierDisabled disabilitato = new SSLHostNameVerifierDisabled(LoggerWrapperFactory.getLogger(HttpUtilities.class));
+				httpsConn.setHostnameVerifier(disabilitato);
+			}
 
 			if(request.getContentType()!=null){
 				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,request.getContentType());
@@ -703,6 +815,13 @@ public class HttpUtilities {
 					outResponse.close();
 			}catch(Exception eis){}
 			throw new UtilsException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				if(finTrustStore!=null){
+					finTrustStore.close();
+				}
+			}catch(Exception e){}
 		}
 	}
 

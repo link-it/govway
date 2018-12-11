@@ -43,6 +43,9 @@ public class HttpRequest extends AbstractHttp {
 	
 	private Boolean followRedirects;
 	
+	private String trustStore;
+	private String trustStorePassword;
+	private String trustStoreType;
 	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
@@ -98,5 +101,29 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setMethod(HttpRequestMethod method) {
 		this.method = method;
+	}
+	
+	public String getTrustStore() {
+		return this.trustStore;
+	}
+
+	public void setTrustStore(String trustStore) {
+		this.trustStore = trustStore;
+	}
+
+	public String getTrustStorePassword() {
+		return this.trustStorePassword;
+	}
+
+	public void setTrustStorePassword(String trustStorePassword) {
+		this.trustStorePassword = trustStorePassword;
+	}
+
+	public String getTrustStoreType() {
+		return this.trustStoreType;
+	}
+
+	public void setTrustStoreType(String trustStoreType) {
+		this.trustStoreType = trustStoreType;
 	}
 }

@@ -22,14 +22,25 @@
 
 package org.openspcoop2.utils.security;
 
+import java.io.File;
+import java.util.Properties;
+
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwe.JweException;
 import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * JsonUtils
@@ -137,5 +148,77 @@ public class JsonUtils {
 			bf.append(messaggio);
 		}
 		return new UtilsException(bf.toString(),t);
+	}
+	
+	public static File normalizeProperties(Properties props) throws Exception {
+		File fTmp = null;
+		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
+		String path = props.getProperty(propertyKeystoreName);
+		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
+			HttpResponse httpResponse = null;
+			String trustStoreProperty =  JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
+			String trustStorePasswordProperty =  JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+			String trustStoreTypeProperty =  JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+			String trustStore = props.getProperty(trustStoreProperty);
+			String trustStorePassword = props.getProperty(trustStorePasswordProperty);
+			String trustStoreType = props.getProperty(trustStoreTypeProperty);
+			if(trustStore!=null) {
+				if(trustStorePassword==null) {
+					throw new Exception("TrustStore ssl password undefined");
+				}
+				if(trustStoreType==null) {
+					throw new Exception("TrustStore ssl type undefined");
+				}
+			}
+			if( (path.startsWith("https:") && trustStore==null) || path.startsWith("http:") ) {
+				//System.out.println("http");
+				httpResponse = HttpUtilities.getHTTPResponse(path, 60000, 10000);
+			}
+			else {
+				//System.out.println("https");
+				httpResponse = HttpUtilities.getHTTPSResponse(path, 60000, 10000, trustStore, trustStorePassword, trustStoreType);
+			}
+			if(httpResponse==null || httpResponse.getContent()==null) {
+				throw new Exception("Keystore '"+path+"' unavailable");
+			}
+			if(httpResponse.getResultHTTPOperation()!=200) {
+				throw new Exception("Retrieve keystore '"+path+"' failed (returnCode:"+httpResponse.getResultHTTPOperation()+")");
+			}
+			String tipo = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			if(tipo==null) {
+				tipo = "jks";
+			}
+			fTmp = File.createTempFile("keystore", "."+tipo);
+			FileSystemUtilities.writeFile(fTmp, httpResponse.getContent());
+			props.remove(propertyKeystoreName);
+			props.put(propertyKeystoreName, fTmp.getAbsolutePath());
+		}
+		return fTmp;
+	}
+	
+	public static boolean isDynamicProvider(Properties props) throws Exception {
+		String alias = props.getProperty(JoseConstants.RSSEC_KEY_STORE_ALIAS);
+		if("*".equalsIgnoreCase(alias)) {
+			props.remove(JoseConstants.RSSEC_KEY_STORE_ALIAS);
+			return true;
+		}
+		return false;
+	}
+	
+	public static String readAlias(String jsonString) throws Exception {
+		if(jsonString.contains(".")==false) {
+			throw new Exception("Invalid format (expected COMPACT)");
+		}
+		String [] tmp = jsonString.split("\\.");
+		byte[] header = Base64Utilities.decode(tmp[0].trim());
+		JsonNode node = JSONUtils.getInstance().getAsNode(header).get("kid");
+		if(node==null) {
+			throw new Exception("Claim 'kid' not found");
+		}
+		String kid = node.asText();
+		if(kid==null) {
+			throw new Exception("Claim 'kid' without value");
+		}
+		return kid;
 	}
 }

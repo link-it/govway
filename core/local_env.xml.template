@@ -63,7 +63,6 @@
 
 	<!-- Directory per il deploy -->
 	<property name="deploy_jks_dir" location="deploy/jks" />
-	<property name="deploy_jwk_dir" location="deploy/jwk" />
 	<property name="deploy_preLoading_dir" location="deploy/preloading" />
 	<property name="deploy_web_dir" location="deploy/deploy_web" />
 	<property name="deploy_threads_web_dir" location="deploy/threads" />

@@ -221,11 +221,20 @@
 			<item type="hidden" name="validazioneJwtTruststoreTypeGoogle" value="jwk">
 				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="hidden" name="validazioneJwtTruststoreFileGoogle" value="/google.jwk">
+			<item type="hidden" name="validazioneJwtTruststoreFileGoogle" value="https://www.googleapis.com/oauth2/v3/certs">
 			    <property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="hidden" name="validazioneJwtTruststoreCertificateAliasGoogle" value="certificate_google">
+			<item type="hidden" name="validazioneJwtTruststoreCertificateAliasGoogle" value="*">
 			    <property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="hidden" name="validazioneJwtTruststoreTypeGoogleSSL" value="jks">
+				<property name="rs.security.keystore.type.ssl" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="hidden" name="validazioneJwtTruststoreFileGoogleSSL" value="/Token.jks">
+			    <property name="rs.security.keystore.file.ssl" properties="signatureVerificationPropRefId" />
+			</item>
+			<item type="hidden" name="validazioneJwtTruststorePasswordGoogleSSL" value="123456">
+			    <property name="rs.security.keystore.password.ssl" properties="signatureVerificationPropRefId" />
 			</item>
 
 		</subsection>
