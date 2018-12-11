@@ -26,7 +26,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -48,12 +47,9 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.constants.FormatoSpecifica;
-import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -384,10 +380,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			this.wsblservcorr = new BinaryParameter();
 
 			// il wsdl definitorio rimane fuori dal nuovo comportamento quindi il flusso della pagina continua come prima
-			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
-				as.setByteWsdlDefinitorio(this.wsdl.getBytes());
-			}
-			else {
+			if (!this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
 				// se sono state definiti dei port type ed e' la prima volta che ho passato i controlli 
 				//Informo l'utente che potrebbe sovrascrivere i servizi definiti tramite l'aggiornamento del wsdl
 				// Questa Modalita' e' controllata tramite la proprieta' isenabledAutoMappingWsdlIntoAccordo
@@ -450,147 +443,15 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 									AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 						}
 					} 
-
-					// Arrivo qui quando l'utente ha schiacciato Ok nella maschera di conferma, oppure l'accordo non aveva servizi 
-
-					if((this.wsdl != null) && !this.wsdl.trim().replaceAll("\n", "").equals("") ){
-						AccordoServizioParteComune asNuovo = new AccordoServizioParteComune();
-						asNuovo.setFormatoSpecifica(as.getFormatoSpecifica());
-						asNuovo.setServiceBinding(as.getServiceBinding());
-
-						boolean fillXsd = false;
-						String tipo = null;
-						
-						// decodifico quale wsdl/wsbl sto aggiornando
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
-							as.setByteWsdlConcettuale(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
-							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
-							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-							asNuovo.setByteWsdlConcettuale(this.wsdl.getBytes());
-							
-							fillXsd = true;
-							tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE;
-						}
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
-							as.setByteWsdlLogicoErogatore(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
-							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
-							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-							asNuovo.setByteWsdlLogicoErogatore(this.wsdl.getBytes());
-							
-							fillXsd = true;
-							if(facilityUnicoWSDL_interfacciaStandard){
-								tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_CONCETTUALE;
-							}
-							else{
-								tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_EROGATORE;
-							}
-							
-						}
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
-							as.setByteWsdlLogicoFruitore(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneConcettuale(as.getByteSpecificaConversazioneConcettuale());
-							asNuovo.setByteSpecificaConversazioneErogatore(as.getByteSpecificaConversazioneErogatore());
-							asNuovo.setByteSpecificaConversazioneFruitore(as.getByteSpecificaConversazioneFruitore());
-							asNuovo.setByteWsdlLogicoFruitore(this.wsdl.getBytes());
-							
-							fillXsd = true;
-							tipo=AccordiServizioParteComuneCostanti.TIPO_WSDL_FRUITORE;
-						}
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
-							as.setByteSpecificaConversazioneConcettuale(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneConcettuale(this.wsdl.getBytes());
-							asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
-							asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
-							asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
-						}
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
-							as.setByteSpecificaConversazioneErogatore(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneErogatore(this.wsdl.getBytes());
-							asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
-							asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
-							asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
-						}
-						if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
-							as.setByteSpecificaConversazioneFruitore(this.wsdl.getBytes());
-
-							asNuovo.setByteSpecificaConversazioneFruitore(this.wsdl.getBytes());
-							asNuovo.setByteWsdlConcettuale(as.getByteWsdlConcettuale());
-							asNuovo.setByteWsdlLogicoErogatore(as.getByteWsdlLogicoErogatore());
-							asNuovo.setByteWsdlLogicoFruitore(as.getByteWsdlLogicoFruitore());
-						}
-
-						// Genero la nuova definizione
-						apcCore.mappingAutomatico(tipoProtocollo, asNuovo, this.validazioneDocumenti);
-
-						// se l'aggiornamento ha creato nuovi oggetti o aggiornato i vecchi aggiorno la configurazione
-						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(as.getServiceBinding())) {
-							apcCore.popolaResourceDaUnAltroASPC(as,asNuovo);
-						}
-						else {
-							apcCore.popolaPorttypeOperationDaUnAltroASPC(as,asNuovo);
-						}
-						
-						// popolo gli allegati
-						if(fillXsd && enableAutoMapping_estraiXsdSchemiFromWsdlTypes && FormatoSpecifica.WSDL_11.equals(as.getFormatoSpecifica())){
-							apcCore.estraiSchemiFromWSDLTypesAsAllegati(as, this.wsdl.getBytes(), tipo, new Hashtable<String, byte[]> ());
-							if(facilityUnicoWSDL_interfacciaStandard){
-								// è stato utilizzato il concettuale. Lo riporto nel logico
-								as.setByteWsdlLogicoErogatore(as.getByteWsdlConcettuale());
-							}
-						}
-						
-						try{
-							if(StatiAccordo.bozza.toString().equals(as.getStatoPackage())) {
-								// Se ho fatto il mapping controllo la validita' di quanto prodotto
-								as.setStatoPackage(StatiAccordo.operativo.toString());
-								boolean utilizzoAzioniDiretteInAccordoAbilitato = apcCore.isShowAccordiColonnaAzioni();
-								apcCore.validaStatoAccordoServizio(as, utilizzoAzioniDiretteInAccordoAbilitato, false);
-							}
-						}catch(ValidazioneStatoPackageException validazioneException){
-							// Se l'automapping non ha prodotto ne porttype ne operatin rimetto lo stato a bozza
-							as.setStatoPackage(StatiAccordo.bozza.toString());
-						}
-						
-					}
-				}else {
-					// vecchio comportamento sovrascrivo i wsdl
-					// Modifico i dati del wsdl dell'accordo nel db
-					// anche in caso di reset del wsdl
-
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE)) {
-						as.setByteWsdlConcettuale(this.wsdl.getBytes());
-					}
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE)) {
-						as.setByteWsdlLogicoErogatore(this.wsdl.getBytes());
-					}
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE)) {
-						as.setByteWsdlLogicoFruitore(this.wsdl.getBytes());
-					}
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE)) {
-						as.setByteSpecificaConversazioneConcettuale(this.wsdl.getBytes());
-					}
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE)) {
-						as.setByteSpecificaConversazioneErogatore(this.wsdl.getBytes());
-					}
-					if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE)) {
-						as.setByteSpecificaConversazioneFruitore(this.wsdl.getBytes());
-					}
-
-				} 
+				}
 			}
-
-			// Se un utente ha impostato solo il logico erogatore (avviene automaticamente nel caso non venga visualizzato il campo concettuale)
-			// imposto lo stesso wsdl anche per il concettuale. Tanto Rappresenta la stessa informazione, ma e' utile per lo stato dell'accordo
-			if(as.getByteWsdlLogicoErogatore()!=null && as.getByteWsdlLogicoFruitore()==null && as.getByteWsdlConcettuale()==null){
-				as.setByteWsdlConcettuale(as.getByteWsdlLogicoErogatore());
-			}
+			
+			// Arrivo qui quando l'utente ha schiacciato Ok nella maschera di conferma, oppure l'accordo non aveva servizi, o sono in un wsdl definitorio.
+			
+			AccordiServizioParteComuneUtilities.updateInterfacciaAccordoServizioParteComune(this.tipo, this.wsdl, as,
+					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard,
+					tipoProtocollo, 
+					apcCore);
 			
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
