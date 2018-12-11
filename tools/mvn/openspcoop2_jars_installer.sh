@@ -6,7 +6,7 @@ then
 	IS_SNAPSHOT="$1"
 fi
 
-OPENSPCOOP_VERSION="3.0"
+OPENSPCOOP_VERSION="3.1"
 #utilizzare per le versioni di svn >= 1.8
 #OPENSPCOOP_VERSION="$(svn info | grep 'URL: svn' | cut -d '/' -f 7)"
 
@@ -24,6 +24,40 @@ fi
 VERSIONE_DISTRIB=$(cat build.number  | grep "build\.number" | cut -d '=' -f 2)
 
 MVN_VERSION="$OPENSPCOOP_VERSION.$VERSIONE_DISTRIB$SNAPSHOT_SUFFIX"
+
+
+
+echo "Installazione JAR SwaggerCodeGen nel repository Link.it in corso..."
+
+rm -rf SWAGGER_CODE_GEN
+mkdir SWAGGER_CODE_GEN
+
+SWAGGER_CODE_JAR=../../lib/swagger-codegen/swagger-codegen-cli-3.0.0.jar
+SWAGGER_CODE_JAR_TEMPLATE=${PWD}/../../lib/swagger-codegen/swagger-codegen-cli-3.0.0-templates.gw.jar
+rm -rf /tmp/SW_COD_GEN_TMP
+unzip -q ${SWAGGER_CODE_JAR} -d /tmp/SW_COD_GEN_TMP
+pushd /tmp/SW_COD_GEN_TMP
+unzip -qo ${SWAGGER_CODE_JAR_TEMPLATE}
+jar -cfM swagger-codegen-cli-3.0.0-rebuild.jar *
+popd
+cp /tmp/SW_COD_GEN_TMP/swagger-codegen-cli-3.0.0-rebuild.jar SWAGGER_CODE_GEN
+
+SWAGGER_CODE_GEN=swagger-codegen-cli-3.0.0-gw
+
+echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
+        <artifactId>$SWAGGER_CODE_GEN</artifactId><groupId>org.openspcoop2</groupId><version>$MVN_VERSION</version>
+	<modelVersion>4.0.0</modelVersion>
+        <name>Openspcoop2 Swagger CodeGen</name></project>" > "SWAGGER_CODE_GEN/${SWAGGER_CODE_GEN}_${MVN_VERSION}.pom"
+
+mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=SWAGGER_CODE_GEN/$SWAGGER_CODE_GEN"_"$MVN_VERSION.pom -Dfile=SWAGGER_CODE_GEN/swagger-codegen-cli-3.0.0-rebuild.jar -Durl=$URL_REPOSITORY
+
+rm -rf SWAGGER_CODE_GEN
+
+echo "Installazione JAR SwaggerCodeGen nel repository Link.it in corso terminato"
+
+
+
 
 echo "Installazione JAR Openspcoop2 nel repository Link.it in corso..."
 
@@ -54,6 +88,11 @@ echo "Generazione dei JAR completa."
 
 
 
+
+
+
+
+
 echo "Deploy del JAR $UTILS_JAR in corso..."
 
 echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
@@ -69,7 +108,7 @@ echo "Deploy del JAR $UTILS_JAR completato."
 
 
 
-LIST_PACKAGE_UTILS="beans cache checksum crypt csv datasource date dch digest id io jaxb jdbc jmx json logger mail mime openapi properties regexp resources rest security semaphore serialization sonde sql threads transport wadl wsdl xacml xml2json xml"
+LIST_PACKAGE_UTILS="beans cache checksum crypt csv datasource date dch digest id io jaxb jaxrs jdbc jmx json logger mail mime openapi properties regexp resources rest security semaphore serialization sonde sql threads transport wadl wsdl xacml xml2json xml"
 
 for packageName in ${LIST_PACKAGE_UTILS}
 do
