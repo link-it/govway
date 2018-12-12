@@ -5343,7 +5343,12 @@ public class ConsoleHelper {
 	}
 	
 	public void setFilterSelectedProtocol(ISearch ricerca, int idLista) throws Exception{
-		List<String> protocolli = this.core.getProtocolli(this.session);
+		List<String> protocolli = null;
+		if(this.core.isUsedByApi()) {
+			protocolli = ProtocolFactoryManager.getInstance().getProtocolNamesAsList();
+		}else {
+			protocolli = this.core.getProtocolli(this.session);
+		}
 		if(protocolli!=null && protocolli.size()>0) {
 			if(protocolli.size()==1) {
 				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, protocolli.get(0));
