@@ -317,8 +317,12 @@ public final class ServiziApplicativiAdd extends Action {
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
 			// Prendo la lista di soggetti
+			String soggettoMultitenantSelezionato = null;
+			if(!useIdSogg && saHelper.isSoggettoMultitenantSelezionato()) {
+				soggettoMultitenantSelezionato = saHelper.getSoggettoMultitenantSelezionato();
+			}
 			ServiziApplicativiGeneralInfo generalInfo = ServiziApplicativiUtilities.getGeneralInfo(useIdSogg, provider, listaTipiProtocollo, 
-					saCore, saHelper, superUser, singlePdD);
+					saCore, saHelper, superUser, singlePdD, soggettoMultitenantSelezionato);
 					
 			String[] soggettiList = generalInfo.getSoggettiList();
 			String[] soggettiListLabel = generalInfo.getSoggettiListLabel();

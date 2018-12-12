@@ -75,7 +75,8 @@ public class ServiziApplicativiUtilities {
 	}
 	
 	public static ServiziApplicativiGeneralInfo getGeneralInfo(boolean useIdSogg, String provider, List<String> listaTipiProtocollo,
-			ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, String superUser, boolean singlePdD) throws Exception {
+			ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, String superUser, boolean singlePdD,
+			String soggettoMultitenantSelezionato) throws Exception {
 		
 		SoggettiCore soggettiCore = new SoggettiCore(saCore);
 		PddCore pddCore = new PddCore(saCore);
@@ -111,8 +112,8 @@ public class ServiziApplicativiUtilities {
 			
 			if(saCore.isRegistroServiziLocale()){
 				List<Soggetto> list = null;
-				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
+				if(soggettoMultitenantSelezionato!=null && !"".equals(soggettoMultitenantSelezionato)) {
+					IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(soggettoMultitenantSelezionato);
 					list = new ArrayList<>();
 					try {
 						list.add(soggettiCore.getSoggettoRegistro(idSoggettoSelezionato));
@@ -160,8 +161,8 @@ public class ServiziApplicativiUtilities {
 			}
 			else{
 				List<org.openspcoop2.core.config.Soggetto> list = null;
-				if(saHelper.isSoggettoMultitenantSelezionato()) {
-					IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
+				if(soggettoMultitenantSelezionato!=null && !"".equals(soggettoMultitenantSelezionato)) {
+					IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(soggettoMultitenantSelezionato);
 					list = new ArrayList<>();
 					try {
 						list.add(soggettiCore.getSoggetto(idSoggettoSelezionato));
