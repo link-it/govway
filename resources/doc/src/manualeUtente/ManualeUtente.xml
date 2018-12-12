@@ -6672,14 +6672,14 @@ Host: server.example.com
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>Header HTTP</emphasis>: : Il token viene
+											<emphasis>Header HTTP</emphasis>: Il token viene
 											inoltrato al destinatario utilizzando un header HTTP il
 											cui nome deve essere specificato nel campo seguente.
 										</para>
 									</listitem>
 									<listitem>
 										<para>
-											<emphasis>Parametro URL</emphasis> Il token viene
+											<emphasis>Parametro URL</emphasis>: Il token viene
 											inoltrato al destinatario utilizzando un parametro della
 											Query String il cui nome deve essere specificato nel
 											campo seguente. </para>

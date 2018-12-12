@@ -37,10 +37,10 @@
 					<title>Selezione del profilo <emphasis>API Gateway</emphasis></title>
 					<mediaobject>
 						<imageobject>
-							<imagedata fileref="FIGURE_OUT/sceltaModalita.pdf"/>
+							<imagedata width="25%" fileref="FIGURE_OUT/sceltaModalita.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata fileref="FIGURE_OUT/sceltaModalita.png"/>
+							<imagedata width="25%" fileref="FIGURE_OUT/sceltaModalita.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -191,10 +191,10 @@ Connection: keep-alive
 				<title>Erogazione di una API Rest tramite GovWay</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/erogazioneRESTBase.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/erogazioneRESTBase.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/erogazioneRESTBase.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/erogazioneRESTBase.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -416,12 +416,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<title>Tracce delle invocazioni transitate sul Gateway</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/erogazioneRESTBaseConsoltazioneStoricoTransazioni.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/erogazioneRESTBaseConsoltazioneStoricoTransazioni.png"
 										/>
 									</imageobject>
@@ -431,12 +431,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<title>Dettaglio di una invocazione transitata sul Gateway</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="30%"
+										<imagedata width="40%"
 											fileref="FIGURE_OUT/erogazioneRESTBaseConsoltazioneStoricoTransazioniDettaglio.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="30%"
+										<imagedata width="40%"
 											fileref="FIGURE_OUT/erogazioneRESTBaseConsoltazioneStoricoTransazioniDettaglio.png"
 										/>
 									</imageobject>
@@ -461,10 +461,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<title>Scenario Multi-Tenant</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/multitenant.pdf"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/multitenant.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/multitenant.png"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/multitenant.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -688,10 +688,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 				<title>Erogazione di una API SOAP tramite GovWay</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/erogazioneSOAPBase.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/erogazioneSOAPBase.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/erogazioneSOAPBase.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/erogazioneSOAPBase.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -949,10 +949,10 @@ Date: Thu, 15 Nov 2018 13:34:22 GMT
 				<title>Fruizione di una API tramite GovWay</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/fruizioneRESTBase.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/fruizioneRESTBase.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/fruizioneRESTBase.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/fruizioneRESTBase.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -1184,10 +1184,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 				<title>Configurazioni differenti per gruppi di risorse di una API</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/gruppiRisorseRESTBase.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/gruppiRisorseRESTBase.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/gruppiRisorseRESTBase.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/gruppiRisorseRESTBase.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -1202,12 +1202,11 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
 						l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
 						Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
-							<emphasis>'Gruppi'</emphasis> dove vengono visualizzati i gruppi
-						in cui sono state classificate le risorse. Per default è presente un solo
-						gruppo <emphasis>Predefinito</emphasis> a cui sono associate tutte le
-						risorse (vedi figura <xref
-							linkend="apiGateway_gruppiRisorseHelloWorld_predefinito"/>). <figure
-							id="apiGateway_gruppiRisorseHelloWorld_predefinito">
+							<emphasis>'Gruppi'</emphasis> dove vengono visualizzati i gruppi in cui
+						sono state classificate le risorse. Per default è presente un solo gruppo
+							<emphasis>Predefinito</emphasis> a cui sono associate tutte le risorse
+						(vedi figura <xref linkend="apiGateway_gruppiRisorseHelloWorld_predefinito"
+						/>). <figure id="apiGateway_gruppiRisorseHelloWorld_predefinito">
 							<title>Situazione iniziale con unico gruppo 'Predefinito'</title>
 							<mediaobject>
 								<imageobject>
@@ -1484,12 +1483,12 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 							<title>Tracce delle invocazioni transitate sul Gateway</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="50%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioni.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="50%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioni.png"
 									/>
 								</imageobject>
@@ -1499,12 +1498,12 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 							<title>Dettaglio di una invocazione fallita bloccata dal Gateway</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="30%"
+									<imagedata width="40%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioniDettaglio.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="30%"
+									<imagedata width="40%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioniDettaglio.png"
 									/>
 								</imageobject>
@@ -1634,12 +1633,12 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 							<title>Tracce delle invocazioni transitate sul Gateway</title>
 							<mediaobject>
 								<imageobject>
-									<imagedata width="50%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioni2.pdf"
 									/>
 								</imageobject>
 								<imageobject>
-									<imagedata width="50%"
+									<imagedata width="70%"
 										fileref="FIGURE_OUT/gruppiRisorseRESTBaseGruppoConsoltazioneStoricoTransazioni2.png"
 									/>
 								</imageobject>
@@ -1692,10 +1691,10 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 				<title>Sospensione di una API</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/sospensioneBase.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/sospensioneBase.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/sospensioneBase.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/sospensioneBase.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -1798,11 +1797,11 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 				<title>Tracce delle invocazioni transitate sul Gateway</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="50%"
+						<imagedata width="70%"
 							fileref="FIGURE_OUT/sospensioneConsoltazioneStoricoTransazioni.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="50%"
+						<imagedata width="70%"
 							fileref="FIGURE_OUT/sospensioneConsoltazioneStoricoTransazioni.png"/>
 					</imageobject>
 				</mediaobject>
@@ -1866,10 +1865,10 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 				<title>Scenario cross-origin HTTP request (CORS)</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/cors.pdf"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/cors.pdf"/>
 					</imageobject>
 					<imageobject>
-						<imagedata width="70%" fileref="FIGURE_OUT/cors.png"/>
+						<imagedata width="90%" fileref="FIGURE_OUT/cors.png"/>
 					</imageobject>
 				</mediaobject>
 			</figure>
@@ -2134,10 +2133,10 @@ Date: Thu, 15 Nov 2018 16:07:10 GMT
 					<title>Scenario OAuth</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.pdf"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario.png"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -2272,12 +2271,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 									Fallita'</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErrore.png"
 										/>
 									</imageobject>
@@ -2518,10 +2517,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 							le informazioni inerenti il token ricevuto sotto forma di header http.
 							Differenti modalità di consegna di tali informazioni vengono descritte
 							nella sezione <xref linkend="controlloAccesso_token_forward"/>. </para>
-						<para> Per vedere quali header vengono effettivamente prodotti utilizziamo
-							la funzionalità <emphasis>'Registrazione Messaggi'</emphasis> descritta
-							nel dettaglio nella sezione <xref linkend="dump"/>. Accedere alla
-							sezione <emphasis>'Erogazioni'</emphasis> e selezionare l'API
+						<para> Per vedere quali header vengono effettivamente prodotti possiamo
+							utilizzare la funzionalità <emphasis>'Registrazione Messaggi'</emphasis>
+							descritta nel dettaglio nella sezione <xref linkend="dump"/>. Accedere
+							alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare l'API
 							precedentemente registrata <emphasis>'PetStore v2'</emphasis>. Dopodichè
 							accedere, dal dettaglio dell'erogazione, alla sezione
 								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
@@ -2621,10 +2620,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<title>Scenario OAuth con validazione JWT</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_jwt.pdf"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_jwt.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_jwt.png"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_jwt.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -2799,12 +2798,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<title>Informazioni presenti in un Token JWT</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniOkTokenInfo_validazioneJWT.png"
 										/>
 									</imageobject>
@@ -2876,11 +2875,11 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<title>Scenario OAuth con accesso servizio UserInfo</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.pdf"
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_userInfo.pdf"
 							/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_userInfo.png"
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_userInfo.png"
 							/>
 						</imageobject>
 					</mediaobject>
@@ -3020,12 +3019,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 									Fallita'</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfo.png"
 										/>
 									</imageobject>
@@ -3061,12 +3060,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<title>Informazioni presenti nel Token</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreUserInfoKoInfo.png"
 										/>
 									</imageobject>
@@ -3162,12 +3161,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 								<title>Informazioni presenti in un Token JWT</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="40%"
+										<imagedata width="50%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniUserInfoOkInfoDettaglio.png"
 										/>
 									</imageobject>
@@ -3208,10 +3207,10 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					<title>Scenario OAuth con autorizzazione per Scope</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_scope.pdf"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_scope.pdf"/>
 						</imageobject>
 						<imageobject>
-							<imagedata width="70%" fileref="FIGURE_OUT/oauth_scenario_scope.png"/>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_scope.png"/>
 						</imageobject>
 					</mediaobject>
 				</figure>
@@ -3558,12 +3557,12 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 									Negata'</title>
 								<mediaobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.pdf"
 										/>
 									</imageobject>
 									<imageobject>
-										<imagedata width="50%"
+										<imagedata width="70%"
 											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreScope.png"
 										/>
 									</imageobject>
@@ -3682,31 +3681,1140 @@ GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
 					il valore atteso. Per validazione più complesse si rimanda all'utilizzo di una
 					policy XACML descritta nello scenario <xref
 						linkend="controlloAccesso_token_xacml"/>. </para>
-				<para> TODO! </para>
 				<para> Per simulare lo scenario utilizzeremo sempre il servizio
 						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
 						Google</emphasis> descritto nella precedente sezione <xref
-						linkend="controlloAccesso_token_introspection"/> dove però verranno
-					richiesti altri scope rispetto a quello utilizzato nel precedente scenario.
-					Simuleremo di aver bisogno di accedere alle API Calendar di Google e quindi
-					dovremo richiedere tali scope che devono essere autorizzati una volta che ci
-					siamo autenticati su Google. </para>
+						linkend="controlloAccesso_token_introspection"/>. </para>
+				<para> Verrà configurato GovWay al fine di effettuare le seguenti verifiche
+					all'interno del token: <itemizedlist>
+						<listitem>
+							<para><emphasis>Audience</emphasis> (claim 'aud'): contenga
+								l'identificativo dell'applicazione <emphasis>Playground</emphasis>
+								come destinatario del token</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Applicazione Client</emphasis> (claim 'azp'):
+								controlleremo che il client appartenga ad uno delle applicazioni
+								conosciute. Nell'elenco, inseriremo l'identificativo di
+									<emphasis>Playground</emphasis> in modo da completare con
+								successo la verifica.</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+
+				<figure id="oauth_scenarioClaim">
+					<title>Scenario OAuth con autorizzazione sui Claims</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_claim.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_claim.jpg"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+
+				<itemizedlist>
+
+					<listitem>
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
+							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la seguente
+							configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
+								<listitem>
+									<para><emphasis>Stato</emphasis>: abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Policy</emphasis>: Google</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Validazione JWT</emphasis>: disabilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Introspection</emphasis>: abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>User Info</emphasis>: disabilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Token Forward</emphasis>: abilitato</para>
+								</listitem>
+							</itemizedlist> Procedere inoltre con la seguente configurazione
+							all'interno della sezione <emphasis>'Autorizzazione'</emphasis>: <itemizedlist>
+								<listitem>
+									<para><emphasis>Autorizzazione - Stato</emphasis>:
+										abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Autorizzazione per Token Claims -
+											Stato</emphasis>: abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Claims</emphasis>, configuriamo l'identificativo
+										dell'applicazione Playground come valore atteso per il claim
+										'aud', mentre forniamo una lista di valori tra i quali non è
+										presente l'applicazione Playground per il claim 'azp': <note>
+											<title>Per conoscere l'identificativo dell'applicazione
+												Playground</title>
+											<para> E' possibile vedere una precedente transazione
+												terminata con successo per conoscere l'esatto valore
+												associato all'applicazione
+												<emphasis>Playground</emphasis> (es. <xref
+												linkend="apiGateway_oauth_introspection_ok_tokeInfo"
+												/>). </para>
+										</note>
+										<itemizedlist>
+											<listitem>
+												<para>aud=407408718192.apps.googleusercontent.com</para>
+											</listitem>
+											<listitem>
+												<para>azp=client1, client2</para>
+											</listitem>
+										</itemizedlist>
+									</para>
+								</listitem>
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure
+								id="apiGateway_oauth_claim_config_controlloAccessi">
+								<title>Configurazione OAuth2 - Autorizzazione</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneClaimConfigControlloAccessi.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneClaimConfigControlloAccessi.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+
+					<listitem>
+						<para>
+							<emphasis role="strong">Invocazione API</emphasis>
+						</para>
+						<note>
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para> Per effettuare il test utilizzare il token ottenuto come descritto
+							nella sezione <xref linkend="controlloAccesso_token_introspection"/>.
+							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina con un codice di errore http 403 e
+							una risposta problem+json che riporta la motivazione:
+							<screen>HTTP/1.1 403 Forbidden
+WWW-Authenticate: Bearer realm="Google", error="insufficient_scope", error_description="The request requires higher privileges than provided by the access token"
+Content-Type: application/problem+json
+Transfer-Encoding: chunked
+Server: GovWay
+GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
+
+{
+	"type":"https://httpstatuses.com/403",
+	"title":"Forbidden",
+	"status":403,
+	"detail":"La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+	"govway_status":"protocol:GOVWAY-1368"
+}</screen>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis role="strong">Consultazione Tracce in errore</emphasis>
+						</para>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_oauth_claim_error"/> si può
+							vedere come le transazioni generate dopo la configurazione sopra
+							indicata sono terminate con errore con esito <emphasis>Autorizzazione
+								Negata</emphasis>. <figure id="apiGateway_oauth_claim_error">
+								<title>Tracce delle invocazioni terminate con errore 'Autorizzazione
+									Negata'</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreClaim.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreClaim.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>Accedendo al dettaglio di una transazione terminata in errore, e
+							visualizzandone i diagnostici è possibile comprendere l'errore che come
+							atteso risulta essere un valore sconosciuto per quanto concerne il claim
+							'azp'.</para>
+						<figure id="apiGateway_oauth_claim_diagnostici_ko">
+							<title>Diagnostici di una invocazione terminata con errore</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreClaim_diagnostici.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreClaim_diagnostici.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+
+					</listitem>
+
+					<listitem>
+						<para><emphasis role="strong">Registrazione ClientId corretto in Controllo
+								degli Accessi</emphasis></para>
+						<para> Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente
+							alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
+							dell'API <emphasis>'PetStore v2'</emphasis>; all'interno della sezione
+								<emphasis>'Autorizzare'</emphasis> modificare il valore del claim
+							'azp' aggiungendo l'applicazione <emphasis>Playground</emphasis>: <itemizedlist>
+								<listitem>
+									<para>aud=407408718192.apps.googleusercontent.com</para>
+								</listitem>
+								<listitem>
+									<para>azp=client1, client2,
+										407408718192.apps.googleusercontent.com</para>
+								</listitem>
+							</itemizedlist>. <figure id="apiGateway_oauth_claim_config2">
+								<title>Configurazione OAuth2 - Autorizzazione dei claims
+									corretta</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneConfigClaim2red.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneConfigClaim2red.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+
+					<listitem>
+						<para>
+							<emphasis role="strong">Nuova invocazione API</emphasis>
+						</para>
+						<note>
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Effettuare il reset della cache accedendo alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para> Effettuare una nuova invocazione del test.
+							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina stavolta con successo con un
+							codice http 200 e una risposta json equivalente alla richiesta. </para>
+					</listitem>
+
+				</itemizedlist>
 
 			</sect3>
 
 			<sect3 id="controlloAccesso_token_xacml">
 				<title>Autorizzazione XACML</title>
-				<para>TODO </para>
+				<para> GovWay può essere configurato per effettuare verifiche, dei claims ottenuti
+					tramite la validazione dell'access token, più complesse rispetto a quelle
+					descritte nei precedenti paragrafi. Per farlo si deve utilizzare una policy
+					XACML. </para>
+				<para> Per simulare lo scenario utilizzeremo sempre il servizio
+						<emphasis>Playground</emphasis> e l'<emphasis>Authorization Server di
+						Google</emphasis> descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_introspection"/>. </para>
+				<para> Per l'autorizzazione verrà caricata su GovWay una XACML Policy, di seguito
+					descritta, che non possiede una vera logica autorizzativa ma serve solo a titolo
+					di esempio per descrivere la funzionalità. </para>
+
+				<figure id="oauth_scenarioXACMLPolicy">
+					<title>Scenario OAuth con autorizzazione XACMLPoliy</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_xacml.pdf"/>
+						</imageobject>
+						<imageobject>
+							<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_xacml.png"/>
+						</imageobject>
+					</mediaobject>
+				</figure>
+
+				<para>In fase di autorizzazione, il gateway costruisce una XACMLRequest contenente
+					tutti i parametri della richiesta, comprese le informazioni relative al
+					chiamante (credenziali ed eventuali ruoli) e le informazioni presenti nel token.
+					Nella tabella seguente vengono forniti i dettagli sui nomi dei parametri.
+						<informaltable id="xacmlRequestParams">
+						<tgroup align="left" cols="2" colsep="1" rowsep="1">
+							<colspec colname="c1"/>
+							<colspec colname="c2"/>
+							<thead>
+								<row>
+									<entry>Nome</entry>
+									<entry>Descrizione</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry align="left" nameend="c2" namest="c1">
+										<emphasis>Sezione 'Action'</emphasis>
+									</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:token:audience</entry>
+									<entry>Destinatario del token</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:token:scope</entry>
+									<entry>Lista di scopes</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:token:jwt:claim:&lt;nome&gt;=&lt;valore&gt;</entry>
+									<entry>Tutti i claims presenti nel jwt validato</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:token:introspection:claim:&lt;nome&gt;=&lt;valore&gt;</entry>
+									<entry>Tutti i claims presenti nella risposta del servizio di
+										introspection</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:provider</entry>
+									<entry>Indica il soggetto erogatore del servizio</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:service</entry>
+									<entry>Indica il servizio nel formato tipo/nome</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:action</entry>
+									<entry>Nome dell'operazione del servizio invocata</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:url</entry>
+									<entry>Url di invocazione utilizzata dal mittente</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:url:parameter:NOME_PARAM</entry>
+									<entry>Tutti i parametri presenti nell'url di invocazione
+										saranno inseriti nella XACMLRequest con questo
+										formato</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:transport:header:NOME_HDR</entry>
+									<entry>Tutti gli header http presenti nell'url di invocazione
+										saranno inseriti nella XACMLRequest con questo
+										formato</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:soapAction</entry>
+									<entry>Valore della SOAPAction</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:gwService</entry>
+									<entry>Ruolo della transazione (inbound/outbound)</entry>
+								</row>
+								<row>
+									<entry>org:govway:action:protocol</entry>
+									<entry>Profilo di utilizzo associata al servizio richiesto (es.
+										spcoop)</entry>
+								</row>
+								<row>
+									<entry align="left" nameend="c2" namest="c1">
+										<emphasis>Sezione 'Subject'</emphasis>
+									</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:issuer</entry>
+									<entry>Issuer del token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:subject</entry>
+									<entry>Subject del token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:username</entry>
+									<entry>Username dell'utente cui è associato il token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:clientId</entry>
+									<entry>Identificativo del client che ha negoziato il
+										token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:fullName</entry>
+									<entry>Nome completo dell'utente cui è associato il
+										token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:firstName</entry>
+									<entry>Nome dell'utente cui è associato il token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:middleName</entry>
+									<entry>Secondo nome (o nomi aggiuntivi) dell'utente cui è
+										associato il token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:familyName</entry>
+									<entry>Cognome dell'utente cui è associato il token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:eMail</entry>
+									<entry>Email dell'utente cui è associato il token</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:token:userInfo:claim:&lt;nome&gt;=&lt;valore&gt;</entry>
+									<entry>Tutti i claims presenti nella risposta del servizio di
+										UserInfo</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:organization</entry>
+									<entry>Indica il soggetto fruitore</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:client</entry>
+									<entry>Identificativo del servizio applicativo client</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:credential</entry>
+									<entry>Rappresenta la credenziale di accesso (username, subject
+										o il principal) utilizzata dal client per richiedere il
+										servizio</entry>
+								</row>
+								<row>
+									<entry>org:govway:subject:role</entry>
+									<entry>Elenco dei ruoli che possiede il client che ha richiesto
+										il servizio</entry>
+								</row>
+							</tbody>
+						</tgroup>
+					</informaltable>
+				</para>
+				<para> Di seguito un esempio di XACMLPolicy che traduce in policy l'esempio
+					descritto nella precedente sezione <xref
+						linkend="controlloAccesso_token_autorizzazione_claims"/>. La verifica che
+					andiamo a definire è la seguente: <itemizedlist>
+						<listitem>
+							<para><emphasis>Audience</emphasis> (claim 'aud'): contenga
+								l'identificativo dell'applicazione <emphasis>Playground</emphasis>
+								come destinatario del token</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Applicazione Client</emphasis> (claim 'azp'):
+								controlleremo che il client appartenga ad uno delle applicazioni
+								conosciute. Nell'elenco, non inseriremo immediatamente
+								l'identificativo di <emphasis>Playground</emphasis> in modo che
+								l'autorizzazione fallisca in un primo test. </para>
+						</listitem>
+					</itemizedlist>
+					<note>
+						<title>Per conoscere l'identificativo dell'applicazione Playground</title>
+						<para> E' possibile vedere una precedente transazione terminata con successo
+							per conoscere l'esatto valore associato all'applicazione
+								<emphasis>Playground</emphasis> (es. <xref
+								linkend="apiGateway_oauth_introspection_ok_tokeInfo"/>). </para>
+					</note>
+					<screen>
+&lt;Policy PolicyId="Policy"
+	RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides"
+	xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os http://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-policy-schema-os.xsd">
+	&lt;Target />
+	&lt;Rule Effect="Permit" RuleId="ok">
+		&lt;Condition>
+			&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+				&lt;Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					&lt;<emphasis>ActionAttributeDesignator</emphasis>
+						AttributeId="<emphasis role="strong">org:govway:action:token:audience</emphasis>"
+						DataType="http://www.w3.org/2001/XMLSchema#string" />
+					&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">407408718192.apps.googleusercontent.com</emphasis>&lt;/AttributeValue>
+					&lt;/Apply>
+				&lt;/Apply>
+
+				&lt;Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					&lt;<emphasis>SubjectAttributeDesignator</emphasis>
+						AttributeId="<emphasis role="strong">org:govway:subject:token:clientId</emphasis>"
+						DataType="http://www.w3.org/2001/XMLSchema#string" />
+					&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">client1</emphasis>&lt;/AttributeValue>
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">client2</emphasis>&lt;/AttributeValue>
+					&lt;/Apply>
+				&lt;/Apply>
+
+			&lt;/Apply>
+		&lt;/Condition>
+	&lt;/Rule>
+	&lt;Rule Effect="Deny" RuleId="ko" />
+&lt;/Policy>
+		</screen>
+				</para>
+
+				<itemizedlist>
+
+					<listitem>
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para> Accedere alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare
+							l'API precedentemente registrata <emphasis>'PetStore v2'</emphasis>.
+							Dopodichè accedere, dal dettaglio dell'erogazione, alla sezione
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la seguente
+							configurazione all'interno della sezione <emphasis>'Gestione
+								Token'</emphasis>: <itemizedlist>
+								<listitem>
+									<para><emphasis>Stato</emphasis>: abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Policy</emphasis>: Google</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Validazione JWT</emphasis>: disabilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Introspection</emphasis>: abilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>User Info</emphasis>: disabilitato</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Token Forward</emphasis>: abilitato</para>
+								</listitem>
+							</itemizedlist> Procedere inoltre con la seguente configurazione
+							all'interno della sezione <emphasis>'Autorizzazione'</emphasis>: <itemizedlist>
+								<listitem>
+									<para><emphasis>Autorizzazione - Stato</emphasis>:
+										xacml-Policy</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Policy</emphasis>: caricare la xacml policy
+										descritta precedentemente</para>
+								</listitem>
+							</itemizedlist> Effettuata la configurazione salvarla cliccando sul
+							pulsante 'Salva'. <figure
+								id="apiGateway_oauth_xacml_config_controlloAccessi">
+								<title>Configurazione OAuth2 - Autorizzazione XACML Policy</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneXACMLConfigControlloAccessi.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthAutorizzazioneXACMLConfigControlloAccessi.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+
+					<listitem>
+						<para>
+							<emphasis role="strong">Invocazione API</emphasis>
+						</para>
+						<note>
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para> Per effettuare il test utilizzare il token ottenuto come descritto
+							nella sezione <xref linkend="controlloAccesso_token_introspection"/>.
+							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina con un codice di errore http 403 e
+							una risposta problem+json che riporta la motivazione:
+							<screen>HTTP/1.1 403 Forbidden
+Content-Type: application/problem+json
+Transfer-Encoding: chunked
+Server: GovWay
+GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
+
+{
+	"type":"https://httpstatuses.com/403",
+	"title":"Forbidden",
+	"status":403,
+	"detail":"Il mittente non è autorizzato ad invocare il servizio gw/PetStore (versione:2) erogato da gw/Ente (result-1 DENY code:urn:oasis:names:tc:xacml:1.0:status:ok)",
+	"govway_status":"protocol:GOVWAY-1352"
+}</screen>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis role="strong">Consultazione Tracce in errore</emphasis>
+						</para>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_oauth_xacml_error"/> si può
+							vedere come le transazioni generate dopo la configurazione sopra
+							indicata sono terminate con errore con esito <emphasis>Autorizzazione
+								Negata</emphasis>. <figure id="apiGateway_oauth_xacml_error">
+								<title>Tracce delle invocazioni terminate con errore 'Autorizzazione
+									Negata'</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreXACML.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreXACML.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>Accedendo al dettaglio di una transazione terminata in errore, e
+							visualizzandone i diagnostici è possibile comprendere che l'errore è
+							dovuto ad una decisione 'deny' ottenuta dopo la valutazione della
+							policy: <emphasis>'(result-1 DENY
+								code:urn:oasis:names:tc:xacml:1.0:status:ok)'</emphasis>.</para>
+						<figure id="apiGateway_oauth_xacml_diagnostici_ko">
+							<title>Diagnostici di una invocazione terminata con errore</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreXACML_diagnostici.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreXACML_diagnostici.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+
+					</listitem>
+
+					<listitem>
+						<para><emphasis role="strong">Registrazione ClientId corretto nella
+								XACMLPolicy</emphasis></para>
+						<para> Di seguito un esempio di XACMLPolicy nella quale tra i valori
+							consentiti per l'applicazione client viene aggiunto l'identificativo di
+								<emphasis>Playground</emphasis> in modo che l'autorizzazione termini
+							con successo.
+							<screen>
+&lt;Policy PolicyId="Policy"
+	RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides"
+	xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os http://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-policy-schema-os.xsd">
+	&lt;Target />
+	&lt;Rule Effect="Permit" RuleId="ok">
+		&lt;Condition>
+			&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+				&lt;Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					&lt;<emphasis>ActionAttributeDesignator</emphasis>
+						AttributeId="<emphasis role="strong">org:govway:action:token:audience</emphasis>"
+						DataType="http://www.w3.org/2001/XMLSchema#string" />
+					&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">407408718192.apps.googleusercontent.com</emphasis>&lt;/AttributeValue>
+					&lt;/Apply>
+				&lt;/Apply>
+
+				&lt;Apply
+					FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+					&lt;<emphasis>SubjectAttributeDesignator</emphasis>
+						AttributeId="<emphasis role="strong">org:govway:subject:token:clientId</emphasis>"
+						DataType="http://www.w3.org/2001/XMLSchema#string" />
+					&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">client1</emphasis>&lt;/AttributeValue>
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">client2</emphasis>&lt;/AttributeValue>
+						&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"><emphasis role="strong">407408718192.apps.googleusercontent.com</emphasis>&lt;/AttributeValue>
+					&lt;/Apply>
+				&lt;/Apply>
+
+			&lt;/Apply>
+		&lt;/Condition>
+	&lt;/Rule>
+	&lt;Rule Effect="Deny" RuleId="ko" />
+&lt;/Policy>
+		</screen>
+						</para>
+					</listitem>
+
+					<listitem>
+						<para><emphasis role="strong">Aggiornamento XACMLPolicy in Controllo degli
+								Accessi</emphasis></para>
+						<para> Tramite la <emphasis>govwayConsole</emphasis> accedere nuovamente
+							alla maschera di configurazione '<emphasis>Controllo Accessi</emphasis>'
+							dell'API <emphasis>'PetStore v2'</emphasis>; all'interno della sezione
+								<emphasis>'Autorizzare'</emphasis> caricare la policy aggiornata.
+						</para>
+					</listitem>
+
+					<listitem>
+						<para>
+							<emphasis role="strong">Nuova invocazione API</emphasis>
+						</para>
+						<note>
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Effettuare il reset della cache accedendo alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para> Effettuare una nuova invocazione del test.
+							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet?access_token=ACCESS_TOKEN" \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina stavolta con successo con un
+							codice http 200 e una risposta json equivalente alla richiesta. </para>
+					</listitem>
+
+				</itemizedlist>
 			</sect3>
 
 			<sect3 id="controlloAccesso_token_forward">
 				<title>Token Forward</title>
-				<para>Indicare sia come passare il token originale e/o le altre modalità </para>
+				<para>Tutte le configurazioni descritte nei precedente paragrafi indicavano di
+					abilitare la funzionalità <emphasis>'Token Forward'</emphasis> all'interno della
+					sezione <emphasis>'Gestione Token'</emphasis> (vedi ad es. <xref
+						linkend="apiGateway_oauth_introspection_config"/>). Tale configurazione fa
+					sì che GovWay inoltri all'applicativo interno al dominio (nel nostro esempio il
+					servizio <emphasis>PetStore</emphasis>) le informazioni inerenti il token
+					ricevuto sotto forma di header http. </para>
+				<para> Per vedere quali header vengono effettivamente prodotti possiamo utilizzare
+					la funzionalità <emphasis>'Registrazione Messaggi'</emphasis> descritta nel
+					dettaglio nella sezione <xref linkend="dump"/>. Accedere alla sezione
+						<emphasis>'Erogazioni'</emphasis> e selezionare l'API precedentemente
+					registrata <emphasis>'PetStore v2'</emphasis>. Dopodichè accedere, dal dettaglio
+					dell'erogazione, alla sezione <emphasis>'Configurazione'</emphasis> dove vengono
+					visualizzate le funzionalità attive. Per abilitare la registrazione degli header
+					cliccare sulla voce presente nella colonna '<emphasis>Registrazione
+						Messaggi</emphasis>' e procedere con la seguente configurazione. <itemizedlist>
+						<listitem>
+							<para><emphasis>'Generale - Stato'</emphasis>: ridefinito</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>'Richiesta - Stato'</emphasis>: abilitato</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>'Richiesta - Ingresso'</emphasis>: disabilitare tutte le
+								voci</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>'Richiesta - Uscita'</emphasis>: abilitare solo la voce
+								relativa agli header</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>'Risposta - Stato'</emphasis>: disabilitato</para>
+						</listitem>
+					</itemizedlist> Effettuata la configurazione salvarla cliccando sul pulsante
+					'Salva'. <figure id="apiGateway_oauth_forward_dump_config">
+						<title>Configurazione Registrazione Messaggi per visualizzare Header
+							HTTP</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDump.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDump.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+				</para>
+				<para> Prima di procedere con una nuova richiesta effettuare il reset della cache
+					delle configurazioni accedendo alla sezione <emphasis>'Strumenti' -
+						'Runtime'</emphasis> e selezionare la voce
+						<emphasis>'ResetAllCaches'</emphasis>. </para>
+				<para> Effettuare quindi una nuova invocazione contenente un <emphasis>access
+						token</emphasis> valido e successivamente consultare il dettaglio della
+					transazione tramite la <emphasis>govWayMonitor</emphasis>. Nel dettaglio sarà
+					adesso disponibile la voce <emphasis>'Contenuti Uscita'</emphasis> (<xref
+						linkend="apiGateway_oauth_forward_dump_visualizza_header"/>) che permette di
+					vedere gli header http prodotti da GovWay (<xref
+						linkend="apiGateway_oauth_forward_dump_headers"/>). <figure
+						id="apiGateway_oauth_forward_dump_visualizza_header">
+						<title>Dettaglio della transazione con contenuti</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.pdf"
+								/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDumpVisualizzaHeader.png"
+								/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+					<figure id="apiGateway_oauth_forward_dump_headers">
+						<title>Header HTTP prodotti da GovWay contenenti le informazioni sul
+							Token</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneDumpHeaders.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+				</para>
+				<para> Le informazioni, inerenti il token ricevuto, trasmesse sotto forma di header
+					http all'applicativo dietro il Gateway, rappresenta la modalità di default di
+					GovWay per quanto concerne la Token Policy 'Google'. GovWay supporta anche
+					differenti modalità di consegna di tali informazioni che possono essere attivate
+					accendendo alla voce del menù <emphasis>'Configurazione - Token
+						Policy'</emphasis>, selezionando una policy (es. Google) e accedendo alla
+					sezione <emphasis>'Token Forward'</emphasis>. Le modalità si suddividono tra
+					inoltro del token originale (<xref
+						linkend="apiGateway_oauth_forward_tokenPolicy2"/>) e inoltre delle
+					informazioni raccolte durante la validazione del token (<xref
+						linkend="apiGateway_oauth_forward_tokenPolicy1"/>). <figure
+						id="apiGateway_oauth_forward_tokenPolicy1">
+						<title>Modalità di Forward delle Informazioni Raccolte</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneTokenPolicy1.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneTokenPolicy1.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+					<figure id="apiGateway_oauth_forward_tokenPolicy2">
+						<title>Modalità di Forward del Token Originale</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneTokenPolicy2.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="50%"
+									fileref="FIGURE_OUT/oauthConfigurazioneTokenPolicy2.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+				</para>
+
+				<para> Di seguito vengono descritte le varie modalità di consegna supportate: <itemizedlist>
+						<listitem>
+							<para><emphasis>Inoltro del token originale</emphasis>: il token
+								originale dopo essere stato validato dal gateway viene comunque
+								inoltrato all'applicativo. E' possibile configurare la modalità di
+								inoltro tra le seguenti opzioni: <itemizedlist>
+									<listitem>
+										<para>
+											<emphasis>Come è stato ricevuto</emphasis>: Il token
+											viene inoltrato al destinatario utilizzando lo stesso
+											metodo con cui è stato ricevuto dal gateway. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>RFC 6750 - Bearer Token Usage (Authorization
+												Request Header Field)</emphasis>: Il token viene
+											inoltrato al destinatario utilizzando l'header
+											Authorization presente nella richiesta HTTP. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>RFC 6750 - Bearer Token Usage (URI Query
+												Parameter)</emphasis>: Il token viene inoltrato al
+											destinatario tramite parametro access_token della Query
+											String. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>Header HTTP</emphasis>: Il token viene
+											inoltrato al destinatario utilizzando un header HTTP il
+											cui nome deve essere specificato. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>Parametro URL</emphasis>: Il token viene
+											inoltrato al destinatario utilizzando un parametro della
+											Query String il cui nome deve essere specificato.
+										</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Inoltro delle Informazioni Raccolte</emphasis>: consente
+								di veicolare i dati inerenti il token ricevuto tramite una delle
+								seguenti modalità: <itemizedlist>
+									<listitem>
+										<para>
+											<emphasis>GovWay Headers</emphasis> (utilizzato nella
+											token policy 'Google' delle sezioni precedenti): I dati
+											raccolti dal token vengono inseriti nei seguenti header
+											HTTP:
+											<screen>
+GovWay-Token-Issuer
+GovWay-Token-Subject
+GovWay-Token-Username
+GovWay-Token-Audience
+GovWay-Token-ClientId
+GovWay-Token-IssuedAt
+GovWay-Token-Expire
+GovWay-Token-NotToBeUsedBefore
+GovWay-Token-Scopes
+GovWay-Token-FullName
+GovWay-Token-FirstName
+GovWay-Token-MiddleName
+GovWay-Token-FamilyName
+GovWay-Token-EMail
+</screen>
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>GovWay JSON</emphasis>: I dati raccolti dal
+											token vengono inseriti in un oggetto JSON, il cui
+											JsonSchema è il seguente:
+											<screen>
+{
+    "required" : [ "id" ],
+    "properties": {
+        "id": {"type": "string"},
+        "issuer": {"type": "string"},
+	"subject": {"type": "string"},
+	"username": {"type": "string"},
+	"audience": {"type": "string"},
+	"clientId": {"type": "string"},
+	"iat": {
+            "type": "string",
+            "format": "date-time"
+        },
+	"expire": {
+            "type": "string",
+            "format": "date-time"
+        },
+	"expire": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "roles": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "scope": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+	"userInfo": {
+		"type": "object",
+		"properties": {
+			"fullName": {"type": "string"},
+			"firstName": {"type": "string"},
+			"middleName": {"type": "string"},
+			"familyName": {"type": "string"},
+			"email": {"type": "string"},
+		},
+		"additionalProperties": false
+	}
+    },
+    "additionalProperties": false
+}
+</screen>
+											Il JSON risultante viene inserito nell'Header HTTP
+												<emphasis>GovWay-Token</emphasis>. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>GovWay JWS</emphasis>: I dati raccolti dal
+											token vengono inseriti in un oggetto JSON, come
+											descritto al punto precedente. In questo caso il token
+											JSON viene inserito successivamente in un JWT e quindi
+											firmato. Il JWS risultante viene inserito nell'Header
+											HTTP <emphasis>GovWay-JWT</emphasis>. </para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>JSON</emphasis>: Le informazioni ottenute dai
+											servizi di introspection, userinfo o il json estratto
+											dal token jwt dopo la validazione, vengono inseriti
+											negli header http o proprietà delle url indicati. <note>
+												<para>Le informazioni sono esattamente quelle
+												recuperate dai servizi originali (o presenti nel
+												token originale nel caso di validazione
+												jwt).</para>
+											</note>
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>JWS/JWE</emphasis>: Uguale alla modalità JSON
+											con la differenza che negli header http, o nelle
+											proprietà delle url, vengono inseriti dei JWT firmati
+											(caso JWS) o cifrati (caso JWE) contenenti al loro
+											interno il JSON. </para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</itemizedlist>
+				</para>
 			</sect3>
 
 			<sect3 id="controlloAccesso_registrazioneAuthServer">
 				<title>Registrazione Authorization Server</title>
-				<para>TODO</para>
+				<para> Per poter definire politiche di controllo degli accessi basate sui Token è
+					necessario creare delle Token Policy da riferire nel <emphasis>'Controllo degli
+						Accessi'</emphasis> delle specifiche erogazioni e fruizioni come è stato
+					descritto nei precedenti paragrafi (vedi ad es. <xref
+						linkend="apiGateway_oauth_introspection_config"/>). </para>
+				<para> Ogni Token Policy definisce la configurazione necessaria al Gateway per
+					interagire con uno specifico Authorization Server. All'interno di una Token
+					Policy vengono definite: <itemizedlist>
+						<listitem>
+							<para><emphasis>Posizione Token</emphasis>: indica dove il gateway si
+								attende di ricevere il token.</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Validazione JWT</emphasis>: indica se la validazione di
+								un token '<emphasis>JWT</emphasis>' (<ulink
+									url="https://tools.ietf.org/html/rfc7519">RFC 7519</ulink>) è
+								utilizzabile e nel caso tutti i parametri (es. keystore, claim
+								parser) necessari a validarlo secondo la specifica JWS (<ulink
+									url="https://tools.ietf.org/html/rfc7515"> RFC 7515</ulink>) o
+								JWE (<ulink url="https://tools.ietf.org/html/rfc7516">RFC
+									7516</ulink>).</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Token Introspection</emphasis>: indica se la validazione
+								di un token tramite il servizio Introspection (definito dalla
+								specifica <ulink url="https://tools.ietf.org/html/rfc7662">RFC
+									7662</ulink>) è utilizzabile. Poichè tale servizio deve essere
+								disponibile sull'<emphasis>Authorization Server</emphasis> devono
+								essere forniti i parametri necessari all'invocazione (endpoint,
+								configurazione ssl ...).</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>OIDC - UserInfo</emphasis>: le informazioni riguardanti
+								ad esempio l'<emphasis>Username</emphasis> e
+									l'<emphasis>eMail</emphasis> potrebbero non essere disponibili
+								dopo la semplice validazione dell'access token (sia introspection
+								che jwt), e per ottenerle è necessario richiedere maggiori
+								informazioni sull'utente tramite il servizio <emphasis>OIDC
+									UserInfo</emphasis> (definito dalla specifica <ulink
+									url="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+									>OIDC Connect - UserInfo</ulink>). Anche per questo servizio,
+								che deve essere disponibile sull'<emphasis>Authorization
+									Server</emphasis>, devono essere forniti i parametri necessari
+								alla sua invocazione (endpoint, configurazione ssl ...). </para>
+						</listitem>
+						<listitem>
+							<para><emphasis>Token Forward</emphasis>: definisce come le informazioni
+								raccolte durante la validazione del token e/o il token originale
+								vengono inoltrate all'applicativo. Per maggiori dettagli vedere la
+								sezione <xref linkend="controlloAccesso_token_forward"/></para>
+						</listitem>
+					</itemizedlist>
+				</para>
+				<para> Per modificare una Token Policy esistente (es. Google), o crearne di nuove,
+					cliccare sul menù nella voce <emphasis>'Configurazione - Token
+						Policy'</emphasis> della govwayConsole. Per creare una nuova policy si
+					utilizza il pulsante <emphasis>Aggiungi</emphasis> mentre per modificarne una
+					esistente si deve cliccare sul nome della Policy. <figure
+						id="tokenpolicy-generale-fig">
+						<title>Token Policy di esempio: Google (1/2)</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="60%"
+									fileref="FIGURE_OUT/TokenPolicy-google-parte1.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="60%"
+									fileref="FIGURE_OUT/TokenPolicy-google-parte1.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+					<figure id="tokenpolicy-generale-fig2">
+						<title>Token Policy di esempio: Google (2/2)</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="60%"
+									fileref="FIGURE_OUT/TokenPolicy-google-parte2.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="60%"
+									fileref="FIGURE_OUT/TokenPolicy-google-parte2.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+				</para>
 			</sect3>
 
 		</sect2>

@@ -23,7 +23,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -52,13 +51,10 @@ import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -69,7 +65,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -111,7 +106,6 @@ public final class ServiziApplicativiAdd extends Action {
 			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
-			PddCore pddCore = new PddCore(saCore);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
@@ -322,128 +316,15 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
-			// Prendo la lista di soggetti e la metto in un array
-			String[] soggettiList = null;
-			String[] soggettiListLabel = null;
-			
-			String tipoProtocollo = null;
-			String tipoENomeSoggetto = "";
-			if(useIdSogg) {
-				org.openspcoop2.core.config.Soggetto soggetto = soggettiCore.getSoggetto(Long.parseLong(provider)); 
-				if(tipoProtocollo == null){
-					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
-				}
-				tipoENomeSoggetto = saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
-				
-				soggettiList = new String[1];
-				soggettiList[0] = soggetto.getId().toString();
-				soggettiListLabel = new String[1];
-				soggettiListLabel[0] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
-			}
-			else {
-				tipoProtocollo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO);
-				if(tipoProtocollo == null){
-					tipoProtocollo = saCore.getProtocolloDefault(session, listaTipiProtocollo);
-				}
-			
-				List<String> tipiSoggettiCompatibiliGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
-				long providerTmp = -1;
-				
-				Search searchSoggetti = new Search(true);
-				saHelper.setFilterSelectedProtocol(searchSoggetti, Liste.SOGGETTI);
-				
-				if(saCore.isRegistroServiziLocale()){
-					List<Soggetto> list = null;
-					if(saHelper.isSoggettoMultitenantSelezionato()) {
-						IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
-						list = new ArrayList<>();
-						try {
-							list.add(soggettiCore.getSoggettoRegistro(idSoggettoSelezionato));
-						}catch(DriverRegistroServiziNotFound notFound) {}
-					}
-					else {
-						if(saCore.isVisioneOggettiGlobale(superUser)){
-							list = soggettiCore.soggettiRegistroList(null,searchSoggetti);
-						}else{
-							list = soggettiCore.soggettiRegistroList(superUser,searchSoggetti); 
-						}
-					}
+			// Prendo la lista di soggetti
+			ServiziApplicativiGeneralInfo generalInfo = ServiziApplicativiUtilities.getGeneralInfo(useIdSogg, provider, listaTipiProtocollo, 
+					saCore, saHelper, superUser, singlePdD);
 					
-					// Filtro per pdd esterne
-					if(singlePdD){
-						List<Soggetto> listFiltrata = new ArrayList<Soggetto>();
-						for (Soggetto soggetto : list) {
-							boolean pddEsterna = pddCore.isPddEsterna(soggetto.getPortaDominio());
-							if(!pddEsterna){
-								listFiltrata.add(soggetto);
-							}
-						}
-						list = listFiltrata;
-					}
-					if (list.size() > 0) {
-						List<Soggetto> listFiltrataCompatibileProtocollo =  new ArrayList<Soggetto>();
-						for (Soggetto soggetto : list) {
-							if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
-								listFiltrataCompatibileProtocollo.add(soggetto);
-								if(providerTmp < 0)
-									providerTmp = soggetto.getId();
-							}
-						}
-						if (listFiltrataCompatibileProtocollo.size() > 0) {
-							soggettiList = new String[listFiltrataCompatibileProtocollo.size()];
-							soggettiListLabel = new String[listFiltrataCompatibileProtocollo.size()];
-							int i = 0;
-							for (Soggetto soggetto : listFiltrataCompatibileProtocollo) {
-								soggettiList[i] = soggetto.getId().toString();
-								soggettiListLabel[i] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
-								i++;
-							}
-						}
-					}
-				}
-				else{
-					List<org.openspcoop2.core.config.Soggetto> list = null;
-					if(saHelper.isSoggettoMultitenantSelezionato()) {
-						IDSoggetto idSoggettoSelezionato = soggettiCore.convertSoggettoSelezionatoToID(saHelper.getSoggettoMultitenantSelezionato());
-						list = new ArrayList<>();
-						try {
-							list.add(soggettiCore.getSoggetto(idSoggettoSelezionato));
-						}catch(DriverConfigurazioneNotFound notFound) {}
-					}
-					else {
-						if(saCore.isVisioneOggettiGlobale(superUser)){
-							list = soggettiCore.soggettiList(null,searchSoggetti);
-						}else{
-							list = soggettiCore.soggettiList(superUser,searchSoggetti); 
-						}
-					}
-					
-					List<org.openspcoop2.core.config.Soggetto> listFiltrataCompatibileProtocollo =  new ArrayList<org.openspcoop2.core.config.Soggetto>();
-					for (org.openspcoop2.core.config.Soggetto soggetto : list) {
-						if(tipiSoggettiCompatibiliGestitiProtocollo.contains(soggetto.getTipo())){
-							listFiltrataCompatibileProtocollo.add(soggetto);
-							if(providerTmp < 0)
-								providerTmp = soggetto.getId();
-						}
-					}
-					
-					if (listFiltrataCompatibileProtocollo.size() > 0) {
-						soggettiList = new String[listFiltrataCompatibileProtocollo.size()];
-						soggettiListLabel = new String[listFiltrataCompatibileProtocollo.size()];
-						int i = 0;
-						for (org.openspcoop2.core.config.Soggetto soggetto : listFiltrataCompatibileProtocollo) {
-							soggettiList[i] = soggetto.getId().toString();
-							soggettiListLabel[i] =saHelper.getLabelNomeSoggetto(tipoProtocollo, soggetto.getTipo() , soggetto.getNome());
-							i++;
-						}
-					}
-				}
-				
-				if(provider == null){
-					provider = providerTmp +"";
-				}
-			}
-			
+			String[] soggettiList = generalInfo.getSoggettiList();
+			String[] soggettiListLabel = generalInfo.getSoggettiListLabel();
+			String tipoProtocollo = generalInfo.getTipoProtocollo();
+			String tipoENomeSoggetto = generalInfo.getTipoENomeSoggetto();
+			provider = generalInfo.getProvider();
 
 			String labelApplicativi = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
 			String labelApplicativiDi = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI;
