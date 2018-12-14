@@ -24,6 +24,9 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 - Mailing list: [Utenti GovWay](https://govway.org/mailing)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
 
+## Docker
+Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un'ambiente di prova per GovWay funzionante, containerizzato in formato Docker.
+
 # Le funzionalità principali
 ## Standard di Mercato
 Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
