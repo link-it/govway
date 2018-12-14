@@ -2348,6 +2348,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				break;
 			}
 			
+			boolean showConnettoreLink = true;
+			if(gestioneConfigurazioni && this.isModalitaStandard()) {
+				showConnettoreLink = false;
+				
+				Iterator<MappingErogazionePortaApplicativa> it = lista.iterator();
+				MappingErogazionePortaApplicativa mapping= null;
+				while (it.hasNext()) {
+					mapping = it.next();
+					if(!mapping.isDefault()) {
+						PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mapping.getIdPortaApplicativa());
+						PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
+						if(portaApplicativaServizioApplicativo.getNome().equals(paAssociata.getNome())) { 
+							showConnettoreLink = true;
+							break;
+						}
+					}
+				}
+			}
+			
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<String>();
 
@@ -2368,7 +2387,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			if(gestioneConfigurazioni) { 
-				if(this.isModalitaAvanzata()) {
+				if(showConnettoreLink) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 				}
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
@@ -2574,7 +2593,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(gestioneConfigurazioni) {
 					
 					// connettore
-					if(this.isModalitaAvanzata()) {
+					if(showConnettoreLink) {
 						DataElement de = new DataElement();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
@@ -3622,6 +3641,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				visualizzaCorrelazione = true;
 				break;
 			}
+			
 
 			// Prendo il nome e il tipo del soggetto fruitore
 			Soggetto soggFruitore = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggFruitoreDelServizio));
@@ -3659,6 +3679,45 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			
 			Parameter pIdFruitore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idFruzione+ "");
+			
+			
+			boolean showConnettoreLink = true;
+			if(gestioneConfigurazioni && this.isModalitaStandard()) {
+				showConnettoreLink = false;
+				
+				Iterator<MappingFruizionePortaDelegata> it = lista.iterator();
+				MappingFruizionePortaDelegata mapping = null;
+				while (it.hasNext()) {
+					mapping = it.next();
+					
+					if(!mapping.isDefault()) {
+						PortaDelegata pdAssociata = this.porteDelegateCore.getPortaDelegata(mapping.getIdPortaDelegata());
+
+						List<String> listaAzioniPDAssociataMappingNonDefault = pdAssociata.getAzione().getAzioneDelegataList();
+						
+						String azioneConnettore =  null;
+						if(listaAzioniPDAssociataMappingNonDefault!=null && listaAzioniPDAssociataMappingNonDefault.size()>0) {
+							azioneConnettore = listaAzioniPDAssociataMappingNonDefault.get(0);
+						}
+						
+						boolean ridefinito = false;
+						if(azioneConnettore!=null && !"".equals(azioneConnettore)) {
+							for (ConfigurazioneServizioAzione check : fru.getConfigurazioneAzioneList()) {
+								if(check.getAzioneList().contains(azioneConnettore)) {
+									ridefinito = true;
+									break;
+								}
+							}
+						}
+						if(ridefinito) {
+							showConnettoreLink = true;
+							break;
+						}
+					}
+				}
+
+			}
+			
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
@@ -3720,7 +3779,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			if(gestioneConfigurazioni) {
-				if(this.isModalitaAvanzata() && !connettoreStatic) {
+				if(showConnettoreLink && !connettoreStatic) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE);
 				}
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI);
@@ -3929,7 +3988,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 					//if(gestioneFruitori) {
 					// connettore	
-					if(this.isModalitaAvanzata() && !connettoreStatic) {
+					if(showConnettoreLink && !connettoreStatic) {
 						DataElement de = new DataElement();
 						if(!gestioneFruitori && mapping.isDefault()) {
 							de.setValue("-");
