@@ -43,6 +43,10 @@ Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita
 Gestione dell'autorizzazione delle richieste applicative, tramite registrazione dei fruitori delle API gestite e dei loro ruoli, o tramite integrazione con sistemi esterni di Identity Management. Supporto dei protocolli di Autorizzazione Oauth2 e XACML, con la possibilità di gestire la valutazione delle policy XACML localmente o utilizzando un Policy Decision Point esterno.
 ##  Validazione
 Validazione dei contenuti delle richieste applicative, con verifica dei messaggi XML per i servizi SOAP e JSON o XML per i servizi REST. La validazione viene effettuata rispetto alle descrizioni delle API (OpenAPI, Swagger, WSDL, JSON Schema, XSD) registrate in fase di configurazione del servizio.
+## Caching della Risposta
+Per ogni API è possibile abilitare la funzionalità di caching delle risposte in modo che successive richieste, con le medesimi caratteristiche (uri, http header, payload), vengono servite direttamente dal gateway.
+## Gestione CORS
+Il gateway permette di gestire il cross-origin HTTP request (CORS) sia globalmente, in modo che sia valido per tutte le APIs, che singolarmente perfezionandolo sulla singola erogazione o fruizione.
 ## Tracciamento
 Emissione di tracce conformi alle normative per ogni richiesta applicativa gestita. Oltre ai metadati riguardanti la richiesta di servizio (id transazione, mittente, destinatario, ...) è possibile riportare nelle tracce elementi identificativi estratti dai messaggi in transito; la modalità di estrazione supportate dal prodotto sono: XPath, Espressioni Regolari e JSONPath.
 ## Sicurezza dei contenuti
