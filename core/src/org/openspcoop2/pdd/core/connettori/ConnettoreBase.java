@@ -40,6 +40,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
@@ -708,16 +709,44 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	if(this.dynamicMap==null) {
     		this.dynamicMap = new Hashtable<String, Object>();
     	}
-    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT)==false) {
-    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
-    	}
-    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT)==false && connettoreMsg!=null && connettoreMsg.getBusta()!=null) {
-    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, connettoreMsg.getBusta());
-    	}
-    	if(this.dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT)==false && this.getPddContext()!=null && this.getPddContext().getContext()!=null) {
-    		this.dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, this.getPddContext().getContext());
-    	}
+    	fillDynamicMap(this.dynamicMap, connettoreMsg, this.getPddContext());
 		return this.dynamicMap;
+    }
+    public static void fillDynamicMap(Map<String, Object> dynamicMap, ConnettoreMsg connettoreMsg, PdDContext pddContext) {
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT)==false) {
+    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
+    	}
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT)==false && connettoreMsg!=null && connettoreMsg.getBusta()!=null) {
+    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, connettoreMsg.getBusta());
+    	}
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT)==false && pddContext!=null && pddContext.getContext()!=null) {
+    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, pddContext.getContext());
+    	}
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_HEADER)==false && connettoreMsg!=null && 
+    			connettoreMsg.getPropertiesTrasporto()!=null && !connettoreMsg.getPropertiesTrasporto().isEmpty()) {
+    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_HEADER, connettoreMsg.getPropertiesTrasporto());
+    	}
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_QUERY_PARAMETER)==false && connettoreMsg!=null && 
+    			connettoreMsg.getPropertiesUrlBased()!=null && !connettoreMsg.getPropertiesUrlBased().isEmpty()) {
+    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_QUERY_PARAMETER, connettoreMsg.getPropertiesUrlBased());
+    	}
+    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_PROPERTY)==false && connettoreMsg!=null && 
+    			connettoreMsg.getBusta()!=null && connettoreMsg.getBusta().sizeProperties()>0) {
+    		Properties propertiesBusta = new Properties();
+			String[] pNames = connettoreMsg.getBusta().getPropertiesNames();
+			if(pNames!=null && pNames.length>0) {
+				for (int j = 0; j < pNames.length; j++) {
+					String pName = pNames[j];
+					String pValue = connettoreMsg.getBusta().getProperty(pName);
+					if(pValue!=null) {
+						propertiesBusta.setProperty(pName, pValue);
+					}
+				}
+			}
+			if(!propertiesBusta.isEmpty()) {
+				dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_PROPERTY, propertiesBusta);
+			}
+    	}
     }
     
     protected String getDynamicProperty(String tipoConnettore,boolean required,String name,Map<String,Object> dynamicMap) throws ConnettoreException{

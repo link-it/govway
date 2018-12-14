@@ -44,7 +44,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -140,9 +139,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			// Costruisco Mappa per dynamic name
 			Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-			dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
-			dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, this.busta);
-			dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, this.getPddContext().getContext());
+			fillDynamicMap(dynamicMap, request, this.getPddContext());
 			
 			
 			// Identificativo modulo

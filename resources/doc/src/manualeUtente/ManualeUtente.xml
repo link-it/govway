@@ -9950,6 +9950,47 @@ GovWay-Token-EMail
                       informazioni presenti nel contesto della richiesta. Ad esempio per ottenere il
                       protocollo di gestione {context:PROTOCOLLO}.</para>
                   </listitem> -->
+									<listitem>
+										<para>
+											<emphasis role="bold">{header:NAME}</emphasis> permette
+											di utilizzare informazioni, relative alla transazione in
+											corso, inserite negli header http generati da GovWay
+											(maggiori dettagli in <xref
+												linkend="header-integrazione"/>). Il valore 'NAME'
+											indica il nome dell'header da utilizzare. Ad esempio per
+											utilizzare il nome del mittente è possibile usare
+											{header:GovWay-Sender}. Un altro esempio valido nello
+											scenario della fatturazione elettronica (<xref
+												linkend="sdi"/>) potrebbe essere quello di
+											utilizzare il nome originale del file fattura
+											utilizzando la sintassi
+											{header:GovWay-SDI-NomeFile}</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis role="bold">{query:NAME}</emphasis> permette
+											di utilizzare informazioni, relative alla transazione in
+											corso, inserite nei query parameter aggiunti
+											all'endpoint da GovWay (maggiori dettagli in <xref
+												linkend="header-integrazione"/>). Il valore 'NAME'
+											indica il nome della proprietà da utilizzare. Ad esempio
+											per utilizzare il nome del mittente è possibile usare
+											{query:govway_sender}.</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis role="bold">{property:NAME}</emphasis>
+											permette di utilizzare informazioni, relative alla
+											transazione in corso, specifiche della sezione relativa
+											al profilo utilizzato all'interno della traccia (es.
+											sezione 'Informazioni Fatturazione Elettronica'). Il
+											valore 'NAME' indica il nome della proprietà da
+											utilizzare. Un esempio valido nello scenario della
+											fatturazione elettronica (<xref linkend="sdi"/>)
+											potrebbe essere quello di utilizzare l'identificativo
+											sdi utilizzando la sintassi
+											{property:IdentificativoSdI}</para>
+									</listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
