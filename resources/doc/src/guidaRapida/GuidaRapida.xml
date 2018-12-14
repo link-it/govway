@@ -20,10 +20,10 @@
 			<email>e-mail: info@link.it</email>
 		</address>
 	</articleinfo>
-	<sect1 id="intro">
+	<!-- <sect1 id="intro">
 		<title>Introduzione</title>
 		<para> In questa sezione trovi una guida rapida per l'utilizzo di GovWay. TODO. </para>
-	</sect1>
+	</sect1> -->
 	<sect1 id="apiGateway">
 		<title>Profilo API Gateway</title>
 		<para> Gli scenari che descriviamo in questa sezione mostrano come configurare l'API Gateway
@@ -4821,16 +4821,779 @@ GovWay-Token-EMail
 
 		<sect2 id="controlloAccesso_autenticazione">
 			<title>Autenticazione</title>
-			<para>TODO: Descrizione generica scenario </para>
-
-			<sect3 id="controlloAccesso_autenticazione_basic">
-				<title>Autenticazione Http Basic</title>
-				<para>TODO </para>
-			</sect3>
+			<para> GovWay può essere configurata per autenticare i mittenti che invocano una
+				erogazione o fruizione di API attraverso una delle seguenti modalità: <itemizedlist>
+					<listitem>
+						<para><emphasis>https</emphasis>: l'invocazione del client deve essere
+							avvenuta su canale ssl e deve aver inviato un proprio certificato client
+							validato dal front-end https. La terminazione ssl può essere gestita
+							direttamente sull'application server (es. wildfly, tomcat) o può essere
+							gestita da un frontend web (es. apache) il quale deve però inoltrare le
+							informazioni ssl all'application server (es. via mod_jk). Un esempio
+							viene descritto nella sezione <xref
+								linkend="controlloAccesso_autenticazione_ssl"/>. </para>
+					</listitem>
+					<listitem>
+						<para><emphasis>http-basic</emphasis>: il client deve inoltrare a GovWay
+							delle credenziali di tipo <emphasis>BASIC</emphasis> (vedi specifica
+								<ulink url="https://tools.ietf.org/html/rfc7617">RFC 7617</ulink>).
+							L'username e la password fornita deve corrispondere ad un applicativo o
+							ad un soggetto registrato. Un esempio viene descritto nella sezione
+								<xref linkend="controlloAccesso_autenticazione_basic"/>. </para>
+					</listitem>
+					<listitem>
+						<para><emphasis>principal</emphasis>: questa configurazione richiede che
+							l'autenticazione sia delegata al container via jaas in modo da
+							permettere a GovWay di accedere al principal tramite la api
+								<emphasis>HttpServletRequest.getUserPrincipal()</emphasis>. Un
+							esempio viene descritto nella sezione <xref
+								linkend="controlloAccesso_autenticazione_principal"/>. </para>
+					</listitem>
+				</itemizedlist>
+			</para>
 
 			<sect3 id="controlloAccesso_autenticazione_ssl">
 				<title>Autenticazione Https</title>
-				<para>TODO </para>
+				<para> Per tutte le richieste verso una erogazione o fruizione è possibile abilitare
+					l'autenticazione <emphasis>'ssl'</emphasis> del client in modo da accettare
+					solamente richieste in cui il client ha inviato il proprio certificato. </para>
+				<para> La terminazione ssl, con la configurazione dei certificati trusted, può
+					essere gestita direttamente sull'application server (es. wildfly, tomcat) o può
+					essere gestita da un frontend web (es. apache) il quale deve però inoltrare le
+					informazioni sui certificati client validati all'application server (es. via
+					mod_jk). <figure id="ssl_scenario">
+						<title>Scenario con autenticazione Https</title>
+						<mediaobject>
+							<imageobject>
+								<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_ssl.pdf"/>
+							</imageobject>
+							<imageobject>
+								<imagedata width="90%" fileref="FIGURE_OUT/oauth_scenario_ssl.png"/>
+							</imageobject>
+						</mediaobject>
+					</figure>
+				</para>
+
+				<itemizedlist>
+
+					<listitem>
+						<para><emphasis role="strong">Configurazione Controllo degli
+								Accessi</emphasis></para>
+						<para>Per abilitare l'autenticazione <emphasis>'ssl'</emphasis> accedere
+							alla sezione <emphasis>'Erogazioni'</emphasis> e selezionare l'API
+							precedentemente registrata <emphasis>'PetStore v2'</emphasis>. Dopodichè
+							accedere, dal dettaglio dell'erogazione, alla sezione
+								<emphasis>'Configurazione'</emphasis> dove vengono visualizzate le
+							funzionalità attive. Cliccare sulla voce presente nella colonna
+								'<emphasis>Controllo Accessi</emphasis>' e procedere con la modifica
+							dello stato relativo all'<emphasis>'Autenticazione'</emphasis> con il
+							valore <emphasis>'https'</emphasis>. Effettuata la configurazione
+							salvarla cliccando sul pulsante 'Salva'. <figure
+								id="apiGateway_ssl_config_controlloAccessi">
+								<title>Configurazione Autenticazione Https</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/autenticazioneSSLControlloAccessi.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/autenticazioneSSLControlloAccessi.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+
+						<note>
+							<title>Reset Cache delle Configurazioni prima di un nuovo test</title>
+							<para> Le configurazioni accedute da GovWay vengono mantenute in una
+								cache dopo il primo accesso per 2 ore, è quindi necessario forzare
+								un reset della cache. Per farlo accedere alla sezione
+									<emphasis>'Strumenti' - 'Runtime'</emphasis> e selezionare la
+								voce <emphasis>'ResetAllCaches'</emphasis>. </para>
+						</note>
+						<para> Di seguito replichiamo le invocazioni descritte nello scenario <xref
+								linkend="ssl_scenario"/> e contestualmente vengono mostrate le
+							funzionalità specifiche fornite da GovWay.</para>
+					</listitem>
+
+					<listitem>
+						<para>
+							<emphasis role="strong">Invocazione con certificato client
+								ssl</emphasis>
+						</para>
+
+						<para>Per effettuare una invocazione fornendo un certificato client è
+							possibile utilizzare il seguente comando: <note>
+								<title>Docker</title>
+								<para> Nell'esempio si suppone di utilizzare l'installazione di
+									GovWay realizzata tramite <emphasis>'govway-docker'</emphasis>
+									disponibile su github all'indirizzo <ulink
+										url="https://github.com/link-it/govway-docker"
+										>https://github.com/link-it/govway-docker</ulink>. </para>
+								<para> La directory indicata nei comandi
+										<emphasis>'DOCKER_DIR'</emphasis> corrisponde a quella
+									indicata nel comando utilizzato per avviare il docker come
+									descritto nel README del progetto. </para>
+								<para> La password <emphasis>'PASSWORD_CHIAVE_PRIVATA'</emphasis>
+									utilizzata nel comando deve corrispondere a quella presente nel
+									file
+									'DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.README.txt'
+								</para>
+							</note>
+							<screen>curl --resolve test.govway.org:8443:127.0.0.1 -v -X PUT "https://test.govway.org:8443/govway/Ente/PetStore/v2/pet" \
+--cacert DOCKER_DIR/pki/esempi/test_Client_1/ca_test.cert.pem \
+--pass 'PASSWORD_CHIAVE_PRIVATA' \
+--key DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.key.pem \
+--key-type PEM \
+--cert DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.cert.pem \
+--cert-type PEM \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina con successo con un codice http
+							200 e una risposta json equivalente alla richiesta. </para>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Accedendo al dettaglio di una transazione, come mostrato dalla figura
+								<xref linkend="apiGateway_ssl_info"/> si può vedere come il subject
+							del certificato client utilizzato dal chiamante sia stato associato alla
+							traccia. <figure id="apiGateway_ssl_info">
+								<title>Traccia dell'invocazione contenente il subject del
+									certificato client</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfo.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="40%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfo.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>Sempre attraverso la console <emphasis>govwayMonitor</emphasis> è
+							possibile ricercare tutte le transazioni che sono transitate sul gateway
+							relative ad uno specifico certificato client. Per farlo si deve
+							modificare i parametri relativi alla sezione 'Filtro Dati Mittente'
+							presenti nel filtro di ricerca dello storico delle transazioni
+							indicando: <itemizedlist>
+								<listitem>
+									<para><emphasis>Tipo</emphasis>: selezionare l'opzione
+										'Identificativo Autenticato'</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Autenticazione</emphasis>: selezionare l'opzione
+										'https'</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Ricerca Esatta</emphasis>: se la ricerca la si
+										vuole effettuare fornendo l'intero subject indicare 'si', se
+										invece si fornisce una informazione parziale del subject
+										indicare 'no'.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Case Sensitive</emphasis>: indica se la ricerca
+										deve essere effettuata considerando le maiuscole e
+										minuscole.</para>
+								</listitem>
+								<listitem>
+									<para><emphasis>Identificativo</emphasis>: subject complessivo o
+										porzione del subject da cercare</para>
+								</listitem>
+							</itemizedlist> I criteri di ricerca descritti nella figura <xref
+								linkend="apiGateway_ssl_search_subject_intero"/> ricercano le
+							transazioni che contengono il subject utilizzato nell'esempio
+							precedente. Per estrarre il subject dal certificato client è possibile
+							utilizzare ad esempio il seguente comando:
+							<screen>
+openssl x509 -in DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.cert.pem -text -noout
+										</screen>
+							e si ottiene un output simile al seguente dove è possibile recuperare il
+							subject <emphasis>'C=it, O=govway.org, CN=test Client 1'</emphasis>: <screen>
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 203 (0xcb)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=it, O=govway.org, CN=GovWay CA
+        Validity
+            Not Before: Dec 14 09:07:37 2018 GMT
+            Not After : Dec  3 09:07:37 2020 GMT
+        Subject: C=it, O=govway.org, CN=test Client 1
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)	
+                	....
+										</screen>
+							<figure id="apiGateway_ssl_search_subject_intero">
+								<title>Ricerca di transazioni con mittente identificato fornendo
+									l'intero subject del certificato client</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSubjectIntero.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSubjectIntero.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para> I criteri di ricerca descritti nella figura <xref
+								linkend="apiGateway_ssl_search_subject_parziale"/> effettuano invece
+							una ricerca che consente di ottenere le transazioni relative al subject
+							utilizzato nell'esempio precedente, fornendo come criterio solamente il
+							valore del 'CN'. <figure id="apiGateway_ssl_search_subject_parziale">
+								<title>Ricerca di transazioni con mittente identificato fornendo una
+									parte del subject del certificato client</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSubjectParziale.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="50%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSubjectParziale.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+					</listitem>
+
+					<listitem>
+						<para><emphasis>Invocazione senza certificato ssl</emphasis>. </para>
+						<para> Con il seguente comando invochiamo sempre in https senza però fornire
+							un certificato client e si otterrà un errore di autenticazione:
+							<screen>curl --resolve test.govway.org:8443:127.0.0.1 -v -X PUT "https://test.govway.org:8443/govway/Ente/PetStore/v2/pet" \
+--cacert DOCKER_DIR/pki/esempi/test_Client_1/ca_test.cert.pem \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina con un codice di errore http 401 e
+							una risposta problem+json che riporta la motivazione:
+							<screen>HTTP/1.1 401 Unauthorized
+Content-Type: application/problem+json
+Transfer-Encoding: chunked
+Server: GovWay
+GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
+
+{
+	"type":"https://httpstatuses.com/401",
+	"title":"Unauthorized",
+	"status":401,
+	"detail":"Autenticazione fallita, credenziali non fornite",
+	"govway_status":"protocol:GOVWAY-109"
+}</screen>
+						</para>
+						<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è possibile
+							consultare lo storico delle transazioni che sono transitate nel gateway.
+							Dalla figura <xref linkend="apiGateway_ssl_error"/> si può vedere come
+							le transazioni generate dopo la configurazione sopra indicata sono
+							terminate con errore con esito <emphasis>Autenticazione
+								Fallita</emphasis>. <figure id="apiGateway_ssl_error">
+								<title>Tracce delle invocazioni terminate con errore 'Autenticazione
+									Fallita'</title>
+								<mediaobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreHttps.pdf"
+										/>
+									</imageobject>
+									<imageobject>
+										<imagedata width="70%"
+											fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreHttps.png"
+										/>
+									</imageobject>
+								</mediaobject>
+							</figure>
+						</para>
+						<para>Accedendo al dettaglio di una transazione terminata in errore, e
+							visualizzandone i diagnostici è possibile comprendere l'errore che come
+							atteso risulta essere riconducibile al fatto che non sono disponibili le
+							credenziali del client.</para>
+						<figure id="apiGateway_ssl_diagnostici_ko">
+							<title>Diagnostici di una invocazione terminata con errore</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreHttps_diagnostici.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="60%"
+										fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniErroreHttps_diagnostici.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</listitem>
+
+					<listitem>
+						<para><emphasis>Invocazione in http</emphasis>. </para>
+						<para> Con il seguente comando invochiamo il servizio utilizzando http
+							invece che https e si ottiene comunque un errore di autenticazione (sia
+							che vengano generate o meno credenziali basic):
+							<screen>curl -v -X PUT "http://127.0.0.1:8080/govway/Ente/PetStore/v2/pet" --basic --user test:123456  \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+						</para>
+						<para> L'esito dell'aggiornamento termina con un codice di errore http 401 e
+							una risposta problem+json che riporta la motivazione:
+							<screen>HTTP/1.1 401 Unauthorized
+Content-Type: application/problem+json
+Transfer-Encoding: chunked
+Server: GovWay
+GovWay-Transaction-ID: 6c13b9ac-3d60-45a6-9130-297a4d832824
+
+{
+	"type":"https://httpstatuses.com/401",
+	"title":"Unauthorized",
+	"status":401,
+	"detail":"Autenticazione fallita, credenziali non fornite",
+	"govway_status":"protocol:GOVWAY-109"
+}</screen>
+						</para>
+					</listitem>
+
+				</itemizedlist>
+
+				<sect4 id="controlloAccesso_autenticazione_ssl_identificazione_mittenti">
+					<title>Identificazione dei Mittenti</title>
+
+					<para> Il subject ottenuto grazie all'autenticazione 'https' può essere
+						utilizzato da GovWay per identificare un soggetto (client esterno al dominio
+						di gestione) o un applicativo (client interno al dominio di gestione)
+						registrato tramite la <emphasis>'govwayConsole'</emphasis>. Al momento della
+						registrazione, ad un soggetto o ad un applicativo gli viene associato il
+						subject. </para>
+					<para> L'identificazione puntuale di un mittente su GovWay permette di
+						beneficiare delle seguenti funzionalità: <itemizedlist>
+							<listitem>
+								<para><emphasis>Tracciamento</emphasis>: accedendo al dettaglio di
+									una transazione, oltre alle credenziali utilizzate dal client
+									verrà riportato l'identificativo con cui è stato registrato su
+									GovWay.</para>
+							</listitem>
+							<listitem>
+								<para><emphasis>Ricerca</emphasis>: nello storico delle transazioni
+									è possibile cercare tutte le transazioni che possiedono il
+									soggetto o l'applicativo mittente registrato su GovWay.</para>
+							</listitem>
+							<listitem>
+								<para><emphasis>Informazioni Statistiche</emphasis>: sarà possibile
+									ottenere distribuzioni temporali e reports statistici relativi
+									ai soggetti o applicativi registrati (per maggiori dettagli vedi
+									sezione <xref linkend="stats"/>).</para>
+							</listitem>
+						</itemizedlist> Nella figura <xref linkend="ssl_scenario_identificazione"/>
+						viene mostrato un esempio di registrazione sia di un soggetto, che
+						rappresenta un client esterno al dominio di gestione, sia di un applicativo
+						interno al dominio gestito. <figure id="ssl_scenario_identificazione">
+							<title>Scenario con autenticazione Https e identificazione dei
+								mittenti</title>
+							<mediaobject>
+								<imageobject>
+									<imagedata width="90%"
+										fileref="FIGURE_OUT/oauth_scenario_ssl_identificazione.pdf"
+									/>
+								</imageobject>
+								<imageobject>
+									<imagedata width="90%"
+										fileref="FIGURE_OUT/oauth_scenario_ssl_identificazione.png"
+									/>
+								</imageobject>
+							</mediaobject>
+						</figure>
+					</para>
+					<para> Di seguito viene descritto come realizzare lo <xref
+							linkend="ssl_scenario_identificazione"/>: <itemizedlist>
+
+							<listitem>
+								<para>
+									<emphasis role="strong">Registrazione nuovo Soggetto del dominio
+										esterno</emphasis>
+								</para>
+								<para>Accedere alla sezione <emphasis>'Soggetti'</emphasis> e
+									selezionare il pulsante <emphasis>'Aggiungi'</emphasis>. Fornire
+									i seguenti dati: <itemizedlist>
+										<listitem>
+											<para>
+												<emphasis>Dominio</emphasis>: selezionare la voce
+												<emphasis>'Esterno'</emphasis>. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Nome</emphasis>: indicare il nome del
+												Soggetto che rappresenta il nuovo dominio esterno,
+												ad esempio <emphasis>'SoggettoEsterno1'</emphasis>.
+											</para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Tipologia</emphasis>: selezionare la voce
+												<emphasis>'Fruitore'</emphasis>. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Descrizione</emphasis>: opzionalmente è
+												possibile fornire una descrizione generica del
+												soggetto. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Modalità Accesso - tipo</emphasis>:
+												indicare 'https'. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Modalità Accesso - subject</emphasis>:
+												deve essere indicato il Subject del certificato che
+												il client esterno al dominio utilizzerà per invocare
+												GovWay. </para>
+											<para>Nel nostro esempio si suppone di utilizzare il
+												certificato disponibile in
+												<emphasis>'DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.cert.pem'</emphasis>.
+												Per estrarre il subject dal certificato client è
+												possibile utilizzare ad esempio il seguente comando:
+												<screen>
+openssl x509 -in DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.cert.pem -text -noout
+										</screen>
+												e si ottiene un output simile al seguente dove è
+												possibile recuperare il subject <emphasis>'C=it,
+												O=govway.org, CN=test Client 1'</emphasis>:
+												<screen>
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 203 (0xcb)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=it, O=govway.org, CN=GovWay CA
+        Validity
+            Not Before: Dec 14 09:07:37 2018 GMT
+            Not After : Dec  3 09:07:37 2020 GMT
+        Subject: C=it, O=govway.org, CN=test Client 1
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)	
+                	....
+										</screen>
+											</para>
+										</listitem>
+									</itemizedlist>
+									<figure id="apiGateway_autenticazioneHttps_soggetto">
+										<title>Registrazione nuovo Soggetto</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/autenticazioneHttpsRegistrazioneSoggetto.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/autenticazioneHttpsRegistrazioneSoggetto.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+							</listitem>
+
+							<listitem>
+								<para>
+									<emphasis role="strong">Registrazione Applicativo interno al
+										dominio</emphasis>
+								</para>
+								<para>Accedere alla sezione <emphasis>'Applicativi'</emphasis> e
+									selezionare il pulsante <emphasis>'Aggiungi'</emphasis>. Fornire
+									i seguenti dati: <itemizedlist>
+										<listitem>
+											<para>
+												<emphasis>Nome</emphasis>: indicare il nome
+												dell'applicativo che rappresenta l'applicazione
+												client interna al dominio di gestione, ad esempio
+												<emphasis>'Applicativo1'</emphasis>. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Modalità Accesso - tipo</emphasis>:
+												indicare 'https'. </para>
+										</listitem>
+										<listitem>
+											<para>
+												<emphasis>Modalità Accesso - subject</emphasis>:
+												deve essere indicato il Subject del certificato che
+												il client interno al dominio utilizzerà per invocare
+												GovWay. </para>
+											<para>Nel nostro esempio si suppone di utilizzare il
+												certificato disponibile in
+												<emphasis>'DOCKER_DIR/pki/esempi/test_Client_2/ee_test_Client_2.cert.pem'</emphasis>.
+												Per estrarre il subject dal certificato client è
+												possibile utilizzare ad esempio il seguente comando:
+												<screen>
+openssl x509 -in DOCKER_DIR/pki/esempi/test_Client_2/ee_test_Client_2.cert.pem -text -noout
+										</screen>
+												e si ottiene un output simile al seguente dove è
+												possibile recuperare il subject <emphasis>'C=it,
+												O=govway.org, CN=test Client 2'</emphasis>:
+												<screen>
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 203 (0xcb)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=it, O=govway.org, CN=GovWay CA
+        Validity
+            Not Before: Dec 14 09:07:37 2018 GMT
+            Not After : Dec  3 09:07:37 2020 GMT
+        Subject: C=it, O=govway.org, CN=test Client 2
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)	
+                	....
+										</screen>
+											</para>
+										</listitem>
+									</itemizedlist>
+									<figure id="apiGateway_autenticazioneHttps_applicativo">
+										<title>Registrazione nuovo Soggetto</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/autenticazioneHttpsRegistrazioneApplicativo.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/autenticazioneHttpsRegistrazioneApplicativo.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+							</listitem>
+
+							<listitem>
+								<para><emphasis>Invocazione con certificato ssl 'test Client
+										1'</emphasis>. </para>
+								<para> Simuliamo l'invocazione dell'api
+										<emphasis>PetStore</emphasis> protetta da GovWay tramite
+									autenticazione <emphasis>'https'</emphasis> tramite il seguente
+									comando:
+									<screen>curl --resolve test.govway.org:8443:127.0.0.1 -v -X PUT "https://test.govway.org:8443/govway/Ente/PetStore/v2/pet" \
+--cacert DOCKER_DIR/pki/esempi/test_Client_1/ca_test.cert.pem \
+--pass 'PASSWORD_CHIAVE_PRIVATA' \
+--key DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.key.pem \
+--key-type PEM \
+--cert DOCKER_DIR/pki/esempi/test_Client_1/ee_test_Client_1.cert.pem \
+--cert-type PEM \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+								</para>
+								<para> L'esito dell'aggiornamento termina con successo con un codice
+									http 200 e una risposta json equivalente alla richiesta. </para>
+								<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è
+									possibile consultare lo storico delle transazioni che sono
+									transitate nel gateway. Accedendo al dettaglio di una
+									transazione, come mostrato dalla figura <xref
+										linkend="apiGateway_ssl_soggetto_info"/> si può vedere come
+									oltre al subject del certificato client utilizzato dal
+									chiamante, alla traccia sia stato associato come mittente il
+									soggetto identificato 'SoggettoEsterno1'. <figure
+										id="apiGateway_ssl_soggetto_info">
+										<title>Traccia dell'invocazione contenente il soggetto
+											mittente</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfoSoggetto.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfoSoggetto.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+								<para>Sempre attraverso la console
+										<emphasis>govwayMonitor</emphasis> è possibile ricercare
+									tutte le transazioni che sono transitate sul gateway relative ad
+									uno specifico soggetto mittente. Per farlo si deve modificare i
+									parametri relativi alla sezione 'Filtro Dati API' presenti nel
+									filtro di ricerca dello storico delle transazioni indicando come
+									soggetto mittente il soggetto 'SoggettoEsterno1'. <figure
+										id="apiGateway_ssl_search_soggetto">
+										<title>Ricerca di transazioni di un soggetto
+											mittente</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSoggetto.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaSoggetto.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+							</listitem>
+
+							<listitem>
+								<para><emphasis>Invocazione con certificato ssl 'test Client
+										2'</emphasis>. </para>
+								<para> Simuliamo l'invocazione dell'api
+										<emphasis>PetStore</emphasis> protetta da GovWay tramite
+									autenticazione <emphasis>'https'</emphasis> tramite il seguente
+									comando:
+									<screen>curl --resolve test.govway.org:8443:127.0.0.1 -v -X PUT "https://test.govway.org:8443/govway/Ente/PetStore/v2/pet" \
+--cacert DOCKER_DIR/pki/esempi/test_Client_2/ca_test.cert.pem \
+--pass 'PASSWORD_CHIAVE_PRIVATA' \
+--key DOCKER_DIR/pki/esempi/test_Client_2/ee_test_Client_2.key.pem \
+--key-type PEM \
+--cert DOCKER_DIR/pki/esempi/test_Client_2/ee_test_Client_2.cert.pem \
+--cert-type PEM \
+-H "accept: application/json" \
+-H "Content-Type: application/json" \
+-d '{
+        "id": 3,
+        "category": { "id": 22, "name": "dog" },
+        "name": "doggie",
+        "photoUrls": [ "http://image/dog.jpg" ],
+        "tags": [ { "id": 23, "name": "white" } ],
+        "status": "available"
+}'</screen>
+								</para>
+								<para> La password <emphasis>'PASSWORD_CHIAVE_PRIVATA'</emphasis>
+									utilizzata nel comando deve corrispondere a quella presente nel
+									file
+									'DOCKER_DIR/pki/esempi/test_Client_2/ee_test_Client_2.README.txt' </para>
+								<para> L'esito dell'aggiornamento termina con successo con un codice
+									http 200 e una risposta json equivalente alla richiesta. </para>
+								<para>Attraverso la console <emphasis>govwayMonitor</emphasis> è
+									possibile consultare lo storico delle transazioni che sono
+									transitate nel gateway. Accedendo al dettaglio di una
+									transazione, come mostrato dalla figura <xref
+										linkend="apiGateway_ssl_applicativo_info"/> si può vedere
+									come oltre al subject del certificato client utilizzato dal
+									chiamante, alla traccia sia stato associato l'applicativo
+									mittente identificato come 'Applicativo1'. <figure
+										id="apiGateway_ssl_applicativo_info">
+										<title>Traccia dell'invocazione contenente l'applicativo
+											mittente</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="40%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfoApplicativo.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="40%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslInfoApplicativo.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+								<para>Sempre attraverso la console
+										<emphasis>govwayMonitor</emphasis> è possibile ricercare
+									tutte le transazioni che sono transitate sul gateway relative ad
+									uno specifico applicativo mittente. Per farlo si deve modificare
+									i parametri relativi alla sezione 'Filtro Dati Mittente'
+									presenti nel filtro di ricerca dello storico delle transazioni
+									indicando: <itemizedlist>
+										<listitem>
+											<para><emphasis>Tipo</emphasis>: selezionare l'opzione
+												'Applicativo'</para>
+										</listitem>
+										<listitem>
+											<para><emphasis>Soggetto Fruitore</emphasis> (sezione
+												'Filtro Dati API'): selezionare il soggetto del
+												dominio gestito</para>
+										</listitem>
+										<listitem>
+											<para><emphasis>Applicativo</emphasis>: selezionare
+												l'applicativo mittente delle transazioni che si
+												desidera ricercare</para>
+										</listitem>
+									</itemizedlist>
+									<figure id="apiGateway_ssl_search_applicativo">
+										<title>Ricerca di transazioni di un applicativo
+											mittente</title>
+										<mediaobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaApplicativo.pdf"
+												/>
+											</imageobject>
+											<imageobject>
+												<imagedata width="50%"
+												fileref="FIGURE_OUT/oauthConsoltazioneStoricoTransazioniSslRicercaApplicativo.png"
+												/>
+											</imageobject>
+										</mediaobject>
+									</figure>
+								</para>
+							</listitem>
+
+
+
+
+						</itemizedlist>
+					</para>
+				</sect4>
+
+			</sect3>
+
+			<sect3 id="controlloAccesso_autenticazione_basic">
+				<title>Autenticazione Http Basic</title>
+				<para> </para>
 			</sect3>
 
 			<sect3 id="controlloAccesso_autenticazione_principal">
@@ -5060,7 +5823,7 @@ GovWay-Token-EMail
 
 	</sect1>
 
-	<sect1>
+	<sect1 id="stats">
 		<title>Analisi Statistica</title>
 
 		<para>TODO: Descrizione generica </para>
