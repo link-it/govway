@@ -2,7 +2,7 @@
 mtom=true
 
 # Busta (se scommentato aggiunge una busta eGov)
-busta=spcoopFiles/riceviFile.xml
+#busta=spcoopFiles/riceviFile.xml
 
 # Endpoint
 endpoint=http://localhost:8888/ricevi_file

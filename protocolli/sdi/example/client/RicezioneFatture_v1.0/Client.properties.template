@@ -11,7 +11,7 @@ mtom=true
 # PdD
 # -- SDICOOP --
 pdd=https://localhost:8444/govway/sdi/in
-pa=ENTE/RicezioneFatture/1
+pa=ENTE/RicezioneFatture/v1
 # -- SPCOOP --
 #pdd=https://localhost:8444/govway/spcoop/in
 #pa=

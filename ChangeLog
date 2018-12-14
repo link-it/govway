@@ -1,3 +1,51 @@
+2018-12-14  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.0.1
+
+2018-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-795
+	Durante l'operazione di ripulitura degli elementi "toccati" dalla firma WSSecurity,
+	se i messaggi dichiarano dei prefissi ('xsi' e 'xsd') all'interno del SOAP Body,
+	il gateway terminava con errore segnalando un 'java.lang.NullPointerException' simile al seguente:
+	Caused by: java.lang.NullPointerException
+		at com.sun.xml.messaging.saaj.util.NamespaceContextIterator.findNext(NamespaceContextIterator.java:89)
+		at com.sun.xml.messaging.saaj.util.NamespaceContextIterator.hasNext(NamespaceContextIterator.java:108)
+		at com.sun.xml.messaging.saaj.soap.impl.ElementImpl$1.findNext(ElementImpl.java:617)
+		at com.sun.xml.messaging.saaj.soap.impl.ElementImpl$1.hasNext(ElementImpl.java:627
+		at org.openspcoop2.message.OpenSPCoop2Message_11_impl.cleanWSSDirtyElements(OpenSPCoop2Message_11_impl.java:494)
+		...
+	Il problema è stato risolto.
+
+2018-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-799
+	(https://github.com/link-it/govway/issues/16)
+	Se tramite la 'modalità avanzata' della govwayConsole era stato ridefinito un connettore per un gruppo,
+	tornando alla 'modalità standard' la gestione dei connettori sui gruppi non era più utilizzabile, 
+	e nello stesso tempo non era più possibile configurare il connettore globalmente sull'erogazione/fruizione.
+	Con il fix, nel caso uno dei gruppi possieda una ridefinizione del connettore, 
+	la gestione dei connettori nei gruppi risulta abilitata anche con un utilizzo in 'modalità standard' della govwayConsole.
+
+2018-12-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-797
+	(https://github.com/link-it/govway/issues/17)
+	Estese le informazioni dinamiche utilizzabili nel connettore di tipo 'file':
+	- {header:NAME} permette di utilizzare informazioni, relative alla transazione in corso, inserite negli header http generati da GovWay. 
+	  Ad esempio per utilizzare il nome del mittente è possibile usare {header:GovWay-Sender}. 
+	  Un altro esempio valido nello scenario della fatturazione elettronica è quello di utilizzare il nome originale del file fattura 
+	  utilizzando la sintassi {header:GovWay-SDI-NomeFile}
+	- {query:NAME} permette di utilizzare informazioni, relative alla transazione in corso, inserite nei query parameter aggiunti all’endpoint da GovWay. 		  Il valore 'NAME' indica il nome della proprietà da utilizzare.
+	Ad esempio per utilizzare il nome del mittente è possibile usare {query:govway_sender}.
+	- {property:NAME} permette di utilizzare informazioni, relative alla transazione in corso, 
+	  specifiche della sezione relativa al profilo utilizzato all’interno della traccia (es. sezione ’Informazioni Fatturazione Elettronica’). 
+	  Il valore 'NAME' indica il nome della proprietà da utilizzare. 
+	  Un esempio valido nello scenario della fatturazione elettronica è quello di utilizzare l’identificativo sdi: {property:IdentificativoSdI}
+
 2018-11-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

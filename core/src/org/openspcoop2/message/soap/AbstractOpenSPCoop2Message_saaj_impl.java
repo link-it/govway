@@ -636,17 +636,20 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 									elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 								}
 							}
-										
+								
+							List<String> prefixesToRemoveContent = new ArrayList<String>();
 							Iterator<?> prefixes = elementToClean.getNamespacePrefixes();
 							while(prefixes.hasNext()){
 								String prefix = (String) prefixes.next();
 								String namespace = elementToClean.getNamespaceURI(prefix);
 								if(namespace.equals(WSS4JConstants.WSU_NS)) {
 									if(removeIdRefSignature){
-										elementToClean.removeNamespaceDeclaration(prefix);
+										prefixesToRemoveContent.add(prefix);
 									}
 								}
 							}
+							for(int y=0; y<prefixesToRemoveContent.size(); y++)
+								elementToClean.removeNamespaceDeclaration(prefixesToRemoveContent.get(y));
 						}
 						break;
 		
@@ -682,17 +685,20 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 								elementToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 							}
 						}
-											
+							
+						prefixesToRemoveContent = new ArrayList<String>();
 						prefixesContent = elementToClean.getNamespacePrefixes();
 						while(prefixesContent.hasNext()){
 							String prefix = (String) prefixesContent.next();
 							String namespace = elementToClean.getNamespaceURI(prefix);
 							if(namespace.equals(WSS4JConstants.WSU_NS)) {
 								if(removeIdRefEncContent){
-									elementToClean.removeNamespaceDeclaration(prefix);
+									prefixesToRemoveContent.add(prefix);
 								}
 							}
 						}
+						for(int y=0; y<prefixesToRemoveContent.size(); y++)
+							elementToClean.removeNamespaceDeclaration(prefixesToRemoveContent.get(y));
 						break;
 						
 					case ElementReference.TYPE_ENCRYPT_ELEMENT:
@@ -736,17 +742,20 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 										childToClean.removeAttributeNS(WSS4JConstants.WSU_NS, "Id");
 									}
 								}
-													
+									
+								prefixesToRemoveElement = new ArrayList<String>();
 								prefixesElement = childToClean.getNamespacePrefixes();
 								while(prefixesElement.hasNext()){
 									String prefix = (String) prefixesElement.next();
 									String namespace = childToClean.getNamespaceURI(prefix);
 									if(namespace.equals(WSS4JConstants.WSU_NS)) {
 										if(removeIdRefEncElement){
-											childToClean.removeNamespaceDeclaration(prefix);
+											prefixesToRemoveElement.add(prefix);
 										}
 									}
 								}
+								for(int y=0; y<prefixesToRemoveElement.size(); y++)
+									childToClean.removeNamespaceDeclaration(prefixesToRemoveElement.get(y));
 							}
 						}
 						break;
