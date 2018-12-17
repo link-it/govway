@@ -1,0 +1,57 @@
+function usage()
+{
+    echo "FindAll"
+    echo ""
+    echo "$0 entityname"
+    echo -e "\t-o=offset"
+    echo -e "\t-q=query"
+    echo -e "\t-l=limit"
+    echo ""
+}
+
+query_params=""
+entity="scope"
+
+if [ $1 ];	then
+	entity=$1
+	shift
+fi
+
+#Parso i parametri
+#TODO: Migliorarla, facciamo che uno passa i parametri con - o con -- e automaticamente grabbo le coppie chiave valore
+#	da passare alla query, invece di prevedere un set di chiavi predeterminato come ora(contesto, fonte ecc..)
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+    case $PARAM in
+        -h | --help)
+            usage
+            exit
+            ;;
+        -o)
+			query_params="$query_params""offset=$VALUE&"
+            ;;
+        -l)
+			query_params="$query_params""limit=$VALUE&"
+            ;;
+		-q)
+			query_params="$query_params""q=$VALUE&"
+			;;
+		--contesto)
+			query_params="$query_params""contesto=$VALUE&"
+			;;
+		--fonte)
+			query_params="$query_params""fonte=$VALUE&"
+    		;;
+        *)
+			query_params="$query_params""$PARAM=$VALUE&"
+            ;;
+    esac
+    shift
+done
+
+query_params="?"$query_params
+
+echo $query_params
+
+curl --user amministratore:123456 -i -H "Content-Type: application/json" -X GET "http://127.0.0.1:8080/govwayAPIConfig/$entity${query_params}"

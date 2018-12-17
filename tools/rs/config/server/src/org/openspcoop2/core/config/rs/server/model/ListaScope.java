@@ -2,14 +2,14 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.ListaPaginata;
+import org.openspcoop2.core.config.rs.server.model.Lista;
 import org.openspcoop2.core.config.rs.server.model.ScopeItem;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ListaScope extends ListaPaginata {
+public class ListaScope extends Lista {
   
   @Schema(required = true, description = "")
   private List<ScopeItem> items = new ArrayList<ScopeItem>();

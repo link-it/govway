@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Scope  {
   
-  @Schema(example = "AccessoSolaLettura", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione dello scope", description = "")
@@ -43,7 +43,7 @@ public class Scope  {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
-  public String getDescrizione() {
+ @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
 
@@ -61,7 +61,7 @@ public class Scope  {
    * @return identificativoEsterno
   **/
   @JsonProperty("identificativo_esterno")
-  public String getIdentificativoEsterno() {
+ @Size(max=255)  public String getIdentificativoEsterno() {
     return this.identificativoEsterno;
   }
 

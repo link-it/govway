@@ -1,7 +1,7 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.BaseSoggettoItem;
-import org.openspcoop2.core.config.rs.server.model.StatoApi;
+import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import javax.validation.constraints.*;
 
@@ -10,29 +10,47 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApiItem extends BaseSoggettoItem {
   
+  @Schema(description = "")
+  private String referente = null;
+  
   @Schema(required = true, description = "")
   private TipoApiEnum tipo = null;
   
-  @Schema(example = "PetStore", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione API", description = "")
   private String descrizione = null;
   
-  @Schema(example = "1", required = true, description = "")
+  @Schema(required = true, description = "")
   private Integer versione = null;
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
   private Object formato = null;
   
-  @Schema(description = "")
-  private byte[] interfaccia = null;
-  
   @Schema(required = true, description = "")
-  private StatoApi stato = null;
+  private StatoApiEnum stato = null;
   
   @Schema(required = true, description = "")
   private String statoDescrizione = null;
+ /**
+   * Get referente
+   * @return referente
+  **/
+  @JsonProperty("referente")
+  public String getReferente() {
+    return this.referente;
+  }
+
+  public void setReferente(String referente) {
+    this.referente = referente;
+  }
+
+  public ApiItem referente(String referente) {
+    this.referente = referente;
+    return this;
+  }
+
  /**
    * Get tipo
    * @return tipo
@@ -76,7 +94,7 @@ public class ApiItem extends BaseSoggettoItem {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
-  public String getDescrizione() {
+ @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
 
@@ -91,12 +109,11 @@ public class ApiItem extends BaseSoggettoItem {
 
  /**
    * Get versione
-   * minimum: 1
    * @return versione
   **/
   @JsonProperty("versione")
   @NotNull
- @Min(1)  public Integer getVersione() {
+  public Integer getVersione() {
     return this.versione;
   }
 
@@ -129,38 +146,20 @@ public class ApiItem extends BaseSoggettoItem {
   }
 
  /**
-   * Get interfaccia
-   * @return interfaccia
-  **/
-  @JsonProperty("interfaccia")
-  public byte[] getInterfaccia() {
-    return this.interfaccia;
-  }
-
-  public void setInterfaccia(byte[] interfaccia) {
-    this.interfaccia = interfaccia;
-  }
-
-  public ApiItem interfaccia(byte[] interfaccia) {
-    this.interfaccia = interfaccia;
-    return this;
-  }
-
- /**
    * Get stato
    * @return stato
   **/
   @JsonProperty("stato")
   @NotNull
-  public StatoApi getStato() {
+  public StatoApiEnum getStato() {
     return this.stato;
   }
 
-  public void setStato(StatoApi stato) {
+  public void setStato(StatoApiEnum stato) {
     this.stato = stato;
   }
 
-  public ApiItem stato(StatoApi stato) {
+  public ApiItem stato(StatoApiEnum stato) {
     this.stato = stato;
     return this;
   }
@@ -190,12 +189,12 @@ public class ApiItem extends BaseSoggettoItem {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiItem {\n");
     sb.append("    ").append(ApiItem.toIndentedString(super.toString())).append("\n");
+    sb.append("    referente: ").append(ApiItem.toIndentedString(this.referente)).append("\n");
     sb.append("    tipo: ").append(ApiItem.toIndentedString(this.tipo)).append("\n");
     sb.append("    nome: ").append(ApiItem.toIndentedString(this.nome)).append("\n");
     sb.append("    descrizione: ").append(ApiItem.toIndentedString(this.descrizione)).append("\n");
     sb.append("    versione: ").append(ApiItem.toIndentedString(this.versione)).append("\n");
     sb.append("    formato: ").append(ApiItem.toIndentedString(this.formato)).append("\n");
-    sb.append("    interfaccia: ").append(ApiItem.toIndentedString(this.interfaccia)).append("\n");
     sb.append("    stato: ").append(ApiItem.toIndentedString(this.stato)).append("\n");
     sb.append("    statoDescrizione: ").append(ApiItem.toIndentedString(this.statoDescrizione)).append("\n");
     sb.append("}");

@@ -1,0 +1,23 @@
+#!/bin/bash
+path="ruoli/Ruolo1"
+
+if [ $1 ]; then
+    path=$1
+fi
+
+shift
+
+query_params=""
+#Parso gli argomenti della query
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+
+	query_params="$query_params""$PARAM=$VALUE&"
+	shift
+done
+
+echo $query_params
+
+curl --user amministratore:123456 -i -H "Content-Type: application/json" -X DELETE "http://127.0.0.1:8080/govwayAPIConfig/$path?$query_params"
+

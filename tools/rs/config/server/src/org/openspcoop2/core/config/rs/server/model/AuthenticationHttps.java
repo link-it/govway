@@ -15,7 +15,7 @@ public class AuthenticationHttps  {
   **/
   @JsonProperty("subject")
   @NotNull
-  public String getSubject() {
+ @Size(max=255)  public String getSubject() {
     return this.subject;
   }
 

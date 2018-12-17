@@ -120,6 +120,23 @@
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
+	</path>
+	<path id="classpath_run_openapi_dist" >
+		<fileset dir="${required_lib}/jackson" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/json" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/swagger" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/shared">
+			<include name="snakeyaml-1.22.jar"/>
+		</fileset>
+		<fileset dir="${required_lib}/commons">
+			<include name="commons-lang3-3.8.jar"/>
+		</fileset>
 	</path>	
 		
 	<target name="runKeyGeneratorTest">
@@ -243,6 +260,55 @@
 				<arg value="${timeWaitMs}" /> <!-- opzionale -->
 		        <classpath>
 		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
+	</target>
+
+	<target name="runUniqueInterfaceGeneratorOpenAPI">
+		<if>
+			<equals arg1="${versioneOpenAPI}" arg2="$${versioneOpenAPI}"/>
+			<then>
+				<fail message="Parametro versioneOpenAPI non fornito"/>
+			</then>
+		</if>
+		<if>
+			<not>
+				<or>
+					<equals arg1="${versioneOpenAPI}" arg2="SWAGGER_2"/>
+					<equals arg1="${versioneOpenAPI}" arg2="OPEN_API_3"/>
+				</or>
+			</not>
+			<then>
+				<fail message="Parametro versioneOpenAPI non valido, valori supportati: SWAGGER_2, OPEN_API_3"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${destFile}" arg2="$${destFile}"/>
+			<then>
+				<fail message="Parametro destFile non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${master}" arg2="$${master}"/>
+			<then>
+				<fail message="Parametro master non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${attachmentsDir}" arg2="$${attachmentsDir}"/>
+			<then>
+				<fail message="Parametro attachmentsDir non fornito"/>
+			</then>
+		</if>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.openapi.UniqueInterfaceGenerator" fork="true">
+	        	<arg value="${versioneOpenAPI}" />
+			<arg value="${destFile}" />
+			<arg value="${master}" />
+			<arg value="${attachmentsDir}" /> 
+		        <classpath>
+	        		<path refid="classpath_run_dist" />
+				<path refid="classpath_run_openapi_dist" />
 		        </classpath>
 		</java>
 	</target>

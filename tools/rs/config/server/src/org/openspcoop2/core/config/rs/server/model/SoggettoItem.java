@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SoggettoItem extends BaseItem {
   
-  @Schema(example = "EnteEsterno", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(required = true, description = "")

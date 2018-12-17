@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Soggetto extends BaseCredenziali {
   
-  @Schema(example = "EnteEsterno", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(description = "")
@@ -63,7 +63,7 @@ public class Soggetto extends BaseCredenziali {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
-  public String getDescrizione() {
+ @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
 

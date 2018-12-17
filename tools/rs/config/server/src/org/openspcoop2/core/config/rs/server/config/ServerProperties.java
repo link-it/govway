@@ -165,6 +165,29 @@ public class ServerProperties  {
 	public String getProtocolloDefault() throws UtilsException {
 		return this.readProperty(true, "protocolloDefault");
 	}
+	
+	
+	public boolean isMultitenant() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "multitenant"));
+	}
+	
+	
+	public boolean isEnabledAutoMapping() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "enableAutoMapping"));
+	}
+	
+	public boolean isEnabledAutoMappingEstraiXsdSchemiFromWsdlTypes() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "enableAutoMapping_estraiXsdSchemiFromWsdlTypes"));
+	}
+	
+	public boolean isValidazioneDocumenti() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
+	}
+	
+	
+	
+	
+	
 	public String getSoggettoDefault(String protocollo) throws UtilsException {
 		String p = this.readProperty(false, protocollo+".soggetto");
 		if(p!=null) {

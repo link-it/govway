@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Applicativo extends BaseCredenziali {
   
-  @Schema(example = "sa1", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "[\"ruolo1\",\"ruolo2\"]", description = "")

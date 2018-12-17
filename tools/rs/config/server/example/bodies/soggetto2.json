@@ -1,0 +1,10 @@
+{
+ 	"nome": "SoggettoJson2",
+   	"modalita_accesso": "https",
+   	"credenziali": {
+       		"subject": "cn=esterno"
+	},
+	"dominio": "esterno",
+	"descrizione": "Descrizione Soggetto Json2",
+	"ruoli": [ "RuoloDemo" ]
+}

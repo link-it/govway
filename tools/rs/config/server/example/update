@@ -1,0 +1,34 @@
+#!/bin/bash
+
+endpoint="ruoli"
+body="bodies/ruolo1.json"
+
+if [ $1 ]; then
+	endpoint=$1
+fi
+
+shift 
+
+if [ $1 ]; then
+	body=$1
+fi
+
+shift
+
+query_params=""
+#Parso gli argomenti della query
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+
+	query_params="$query_params""$PARAM=$VALUE&"
+	shift
+done
+
+# Rimuovo un eventuale backslash iniziale
+endpoint=`echo $endpoint | sed -e 's/^\///g'`
+
+url="http://127.0.0.1:8080/govwayAPIConfig/$endpoint?$query_params"
+
+echo $url
+curl --user amministratore:123456 -i -H "Content-Type: application/json" -X PUT --data @$body $url

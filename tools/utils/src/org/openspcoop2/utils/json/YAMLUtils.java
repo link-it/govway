@@ -22,6 +22,7 @@
 
 package org.openspcoop2.utils.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -72,9 +73,10 @@ public class YAMLUtils extends AbstractUtils {
 	private synchronized static void initMapper()  {
 		if(mapper==null){
 			mapper = new YAMLMapper();
+			mapper.setSerializationInclusion(Include.NON_NULL);
 		}
 	}
-	private static YAMLMapper getObjectMapper() {
+	public static YAMLMapper getObjectMapper() {
 		if(mapper==null){
 			initMapper();
 		}
@@ -83,11 +85,14 @@ public class YAMLUtils extends AbstractUtils {
 	
 	private static ObjectWriter writer;
 	private synchronized static void initWriter()  {
+		if(mapper==null){
+			initMapper();
+		}
 		if(writer==null){
 			writer = mapper.writer();
 		}
 	}
-	private static ObjectWriter getObjectWriter() {
+	public static ObjectWriter getObjectWriter() {
 		if(writer==null){
 			initWriter();
 		}
@@ -96,11 +101,14 @@ public class YAMLUtils extends AbstractUtils {
 	
 	private static ObjectWriter writerPrettyPrint;
 	private synchronized static void initWriterPrettyPrint()  {
+		if(mapper==null){
+			initMapper();
+		}
 		if(writerPrettyPrint==null){
 			writerPrettyPrint = mapper.writer().withDefaultPrettyPrinter();
 		}
 	}
-	private static ObjectWriter getObjectWriterPrettyPrint() {
+	public static ObjectWriter getObjectWriterPrettyPrint() {
 		if(writerPrettyPrint==null){
 			initWriterPrettyPrint();
 		}

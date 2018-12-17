@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 
+import org.slf4j.Logger;
+
 /**	
  * WebApplicationExceptionMapper
  *
@@ -37,10 +39,12 @@ import javax.ws.rs.ext.ExceptionMapper;
 public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.rs.WebApplicationException> {
 
 	private boolean excludeFaultBean;
+	private Logger log = org.openspcoop2.utils.LoggerWrapperFactory.getLogger(WebApplicationExceptionMapper.class);
 	
 	@Override
 	public Response toResponse(javax.ws.rs.WebApplicationException e) {
 		if(e.getResponse()==null || e.getResponse().getEntity()==null || !(e.getResponse().getEntity() instanceof Problem)) {
+			this.log.error(e.getMessage(),e);
 			return FaultCode.RICHIESTA_NON_VALIDA.toFaultResponse(e);
 		}
 		else {

@@ -1,18 +1,21 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BaseItem  {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private ProfiloEnum profilo = null;
  /**
    * Get profilo
    * @return profilo
   **/
   @JsonProperty("profilo")
+  @NotNull
   public ProfiloEnum getProfilo() {
     return this.profilo;
   }

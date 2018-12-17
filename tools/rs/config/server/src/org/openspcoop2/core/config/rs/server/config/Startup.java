@@ -29,7 +29,9 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -136,6 +138,14 @@ public class Startup implements ServletContextListener {
 			}catch(Exception e) {
 				Startup.log.error("Inizializzazione database console fallita: "+e.getMessage(),e);
 			}
+			
+			Startup.log.info("Inizializzazione ExtendedInfoManager in corso...");
+			try{
+				ExtendedInfoManager.initialize(new Loader(), null, null, null);
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

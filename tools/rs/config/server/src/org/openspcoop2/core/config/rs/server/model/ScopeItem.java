@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScopeItem  {
   
-  @Schema(example = "AccessoSolaLettura", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(required = true, description = "")

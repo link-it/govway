@@ -15,7 +15,7 @@ public class AuthenticationPrincipal  {
   **/
   @JsonProperty("userid")
   @NotNull
-  public String getUserid() {
+ @Size(max=255)  public String getUserid() {
     return this.userid;
   }
 

@@ -94,7 +94,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		this.schemas = new ArrayList<>();
 	}
 
-	private void parseResult(Logger log, SwaggerParseResult pr) throws ProcessingException {
+	protected static OpenAPI parseResult(Logger log, SwaggerParseResult pr) throws ProcessingException {
 		if(pr==null) {
 			throw new ProcessingException("Parse result undefined");
 		}
@@ -107,8 +107,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				bfMessage.append(msg);
 			}
 		}
+		OpenAPI openApi = null;
 		if(pr.getOpenAPI()!=null) {
-			this.openApi = pr.getOpenAPI();
+			openApi = pr.getOpenAPI();
 			if(bfMessage.length()>0) {
 				log.debug(bfMessage.toString());
 			}
@@ -121,6 +122,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				throw new ProcessingException("Parse failed");
 			}
 		}
+		return openApi;
 	}
 	
 	
@@ -141,7 +143,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 			else {
 				pr = new OpenAPIV3Parser().readContents(content, null, this.parseOptions);
 			}
-			this.parseResult(log, pr);
+			this.openApi = parseResult(log, pr);
 					
 			if(schema!=null && schema.length>0) {
 				for (int i = 0; i < schema.length; i++) {

@@ -18,7 +18,7 @@ public class AuthenticationHttpBasic  {
   **/
   @JsonProperty("username")
   @NotNull
-  public String getUsername() {
+ @Size(max=255)  public String getUsername() {
     return this.username;
   }
 

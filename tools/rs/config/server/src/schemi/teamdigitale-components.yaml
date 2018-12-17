@@ -159,6 +159,18 @@ components:
             $ref: '#/components/schemas/Problem'
 
     # Codice di errore aggiunto per API GovWay
+    401Unauthorized:
+      description: Non sono state fornite le credenziali necessarie
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    403Forbidden:
+      description: Autorizzazione non concessa per l'operazione richiesta
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
     409Conflict:
       description: Conflict (L'entità che si vuole creare risulta già esistente)
       content:
@@ -166,25 +178,6 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
   schemas:
-    SampleEntry:
-      description: |-
-        This entry shows a set of common fields to be used
-        with their proper format and description.
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: |-
-            The unique and opaque identifier for the entry, which:
-              * is unique in its context;
-              * will not be reused in time;
-              * is not a number.
-        created:
-          type: date-time
-          description: The object creation time.
-        modified:
-          type: date-time
-          description: The object modification time.
     Problem:
       type: object
       properties:

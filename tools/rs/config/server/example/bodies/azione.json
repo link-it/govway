@@ -1,0 +1,7 @@
+{
+	"nome": "AzioneJson",
+	"profilo_ridefinito": true,
+	"profilo_collaborazione": "sincrono",
+	"id_collaborazione": true,
+	"riferimento_id_richiesta": true
+}

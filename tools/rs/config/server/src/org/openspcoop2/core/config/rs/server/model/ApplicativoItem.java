@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApplicativoItem extends BaseSoggettoItem {
   
-  @Schema(example = "applicativo1", required = true, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "3", description = "")

@@ -1,18 +1,21 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.BaseItem;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BaseSoggettoItem extends BaseItem {
   
-  @Schema(example = "EnteInterno", description = "")
+  @Schema(required = true, description = "")
   private String soggetto = null;
  /**
    * Get soggetto
    * @return soggetto
   **/
   @JsonProperty("soggetto")
+  @NotNull
   public String getSoggetto() {
     return this.soggetto;
   }

@@ -1,0 +1,9 @@
+{
+	"descrizione": "DescrizioneRisorsaJson",
+	"http_method": "GET",
+	"path":	"motore/azione",
+	"nome": "RisorsaJson",
+	"id_collaborazione": true,
+	"riferimento_id_richiesta": true
+}
+

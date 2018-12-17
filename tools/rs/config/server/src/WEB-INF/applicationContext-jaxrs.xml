@@ -56,11 +56,11 @@
 	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.jaxrs.DumpSendMessageToFileSystemInterceptor"/>
 
 	<!-- JAX-RS Service Impl -->
-	<b:bean id="apiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ApiApiServiceImpl"/>
-	<b:bean id="soggettiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.SoggettiApiServiceImpl"/>
-	<b:bean id="applicativiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ApplicativiApiServiceImpl"/>
-	<b:bean id="ruoliApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.RuoliApiServiceImpl"/>
-	<b:bean id="scopeApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ScopeApiServiceImpl"/>
+	<b:bean id="apiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.api.ApiApiServiceImpl"/>
+	<b:bean id="soggettiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.soggetti.SoggettiApiServiceImpl"/>
+	<b:bean id="applicativiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiServiceImpl"/>
+	<b:bean id="ruoliApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ruoli.RuoliApiServiceImpl"/>
+	<b:bean id="scopeApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.scope.ScopeApiServiceImpl"/>
 	
 
 

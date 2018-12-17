@@ -1,7 +1,9 @@
-{       "nome": "Applicativo_update", 
-    	"modalita_accesso": "http-basic",     
+{
+	"nome": "Applicativo", 
+    "modalita_accesso": "http-basic",     
 	"credenziali": {        
-	       	"username": "username_update",         
+		"username": "username_update",         
 		"password": "password_update"     
-	} 
+	},
+	"ruoli": ["RuoloJson2"]
 }

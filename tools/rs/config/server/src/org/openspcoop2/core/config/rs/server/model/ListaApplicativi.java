@@ -3,13 +3,13 @@ package org.openspcoop2.core.config.rs.server.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
-import org.openspcoop2.core.config.rs.server.model.ListaPaginata;
+import org.openspcoop2.core.config.rs.server.model.Lista;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ListaApplicativi extends ListaPaginata {
+public class ListaApplicativi extends Lista {
   
   @Schema(required = true, description = "")
   private List<ApplicativoItem> items = new ArrayList<ApplicativoItem>();

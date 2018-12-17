@@ -1,0 +1,235 @@
+UTILIZZO GENERALE:
+
+	"./comando PATH PARAMETRI"
+
+ESEMPIO:
+	"./findall soggetti limit=1 offset=4"
+
+=========================================================
+APPLICATIVI
+	+ CREATE: 
+		
+		./add applicativi bodies/applicativo.json
+
+	+ DELETE: 
+		
+		./rem applicativi/Applicativo
+	
+	+ FIND:
+
+		./findall applicativi
+
+	+ GET:
+
+		./get applicativi/Applicativo
+
+	+ UPDATE:
+		./update soggetti/SoggettoJson1 bodies/soggetto2.json
+
+
+=========================================================
+RUOLI
+	+ CREATE: 
+		
+		./add ruoli bodies/ruolo1.json
+
+
+	+ DELETE: 
+		./rem ruoli/RuoloJson1   
+	
+	+ FIND:
+
+		./findall ruoli
+
+	+ GET:
+
+		./get ruoli/RuoloJson1
+
+	+ UPDATE:
+		./update ruoli/RuoloJson1 bodies/ruolo2.json
+
+
+=========================================================
+SCOPE
+	+ CREATE: 
+		
+		./add scope bodies/scope.json
+
+	+ DELETE: 
+		
+		./rem scope/ScopeJson1
+	
+	+ FIND:
+
+		./findall scope
+
+	+ GET:
+		
+		./get scope/Scope1
+
+	+ UPDATE:
+		./update scope/ScopeJson1 bodies/scope1.json
+
+
+=========================================================
+SOGGETTI
+
+	+ CREATE: 
+		
+		./add soggetti bodies/soggetto1.json
+
+	+ DELETE: 
+		
+		./rem soggetti/SoggettoJson1
+	
+	+ FIND:
+
+		./findall soggetti
+
+	+ GET:
+
+		./get soggetti/SoggettoJson1
+
+	+ UPDATE:
+	
+		./update soggetti/SoggettoJson1 bodies/soggetto2.json
+
+
+	
+
+=========================================================
+API
+	+ CREATE: 
+
+		./add api bodies/api.json
+
+	+ DELETE: 
+
+		./rem api/PetStore/1 	
+	
+	+ FIND:
+
+		./findall api
+
+	+ GET:
+
+		./get api/PetStore/1
+
+		./get api/PetStore/1/interfaccia
+
+		./get api/PetStore/1/interfaccia/download
+
+	+ UPDATE:
+
+		./update api/PetStore/1/interfaccia bodies/interfaccia_petstore.json
+		
+		./update api/PetStore/1/informazioni bodies/api_info_generali.json
+
+		./update api/PetStore/1/descrizione bodies/api_descrizione.json
+
+=========================================================
+ALLEGATI
+
+	+ CREATE
+
+		./add api/PetStore/1/allegati bodies/allegato.json
+
+	+ DELETE
+
+		./rem api/PetStore/1/allegati/AllegatoJson1.txt
+	
+	+ FINDALL
+
+		./findall api/PetStore/1/allegati
+
+	+ GET
+
+		./get api/PetStore/1/allegati/AllegatoJson1.txt
+	
+		./get api/PetStore/1/allegati/AllegatoJson1.txt/download
+
+	+ UPDATE
+
+		./update api/PetStore/1/allegati/AllegatoJson1.txt  bodies/allegato_specificasemiformale.json	
+		
+
+
+=========================================================
+
+
+SERVIZI
+
+	+ CREATE: 
+		
+		./add api/ApiDemoSoap/2/servizi bodies/servizio.json
+
+
+	+ DELETE: 		
+
+		./rem api/ApiDemoSoap/2/servizi/ServizioJson
+
+		
+	+ FIND:
+
+		./findall api/ApiDemoSoap/2/servizi
+
+	+ GET:
+
+		./get api/ApiDemoSoap/2/servizi/ServizioJson
+
+	+ UPDATE:
+
+		./update api/ApiDemoSoap/2/servizi/ServizioJson bodies/servizio1.json
+				
+
+
+=========================================================
+AZIONI
+	+ CREATE: 
+		
+		./add api/ApiDemoSoap/2/servizi/ServizioJson/azioni bodies/azione.json
+
+	+ DELETE: 
+		
+		./rem api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson
+		
+	+ FIND:
+		
+		./findall api/ApiDemoSoap/2/servizi/ServizioJson/azioni		
+
+	+ GET:
+		
+		./get api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson
+
+	+ UPDATE:
+
+		./update api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson bodies/azione1.json
+
+
+=========================================================
+RISORSE
+
+	+ CREATE: 
+		
+		./add api/ApiRest/1/risorse bodies/risorsa.json
+
+	+ DELETE: 
+		
+		./rem api/ApiRest/1/risorse/RisorsaJson
+
+	+ FIND:
+		
+		./findall api/ApiRest/1/risorse limit=1	
+
+	+ GET:
+
+		./get api/ApiRest/1/risorse/RisorsaJson
+
+	+ UPDATE:
+
+		./update api/ApiRest/1/risorse/RisorsaJson bodies/risorsa1.json
+
+
+
+
+	
