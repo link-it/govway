@@ -24,6 +24,9 @@ Dall’esperienza della Porta di Dominio italiana, l’API Gateway conforme alle
 - Mailing list: [Utenti GovWay](https://govway.org/mailing)
 - Segnalazioni: [GitHub Issues](https://github.com/link-it/GovWay/issues)
 
+## Docker
+Il progetto [govway-docker](https://github.com/link-it/govway-docker) fornisce tutto il necessario per produrre un'ambiente di prova per GovWay funzionante, containerizzato in formato Docker.
+
 # Le funzionalità principali
 ## Standard di Mercato
 Supporto API conformi ai protocolli standard di mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o semplici dati binari su Http. L'integrazione avviene sempre tramite le API applicative native, indipendentemente dai profili di interoperabilità adottati, gestiti in maniera trasparente dal gateway.
@@ -43,6 +46,10 @@ Gestione dell'autenticazione delle richieste applicative in ingresso e in uscita
 Gestione dell'autorizzazione delle richieste applicative, tramite registrazione dei fruitori delle API gestite e dei loro ruoli, o tramite integrazione con sistemi esterni di Identity Management. Supporto dei protocolli di Autorizzazione Oauth2 e XACML, con la possibilità di gestire la valutazione delle policy XACML localmente o utilizzando un Policy Decision Point esterno.
 ##  Validazione
 Validazione dei contenuti delle richieste applicative, con verifica dei messaggi XML per i servizi SOAP e JSON o XML per i servizi REST. La validazione viene effettuata rispetto alle descrizioni delle API (OpenAPI, Swagger, WSDL, JSON Schema, XSD) registrate in fase di configurazione del servizio.
+## Caching della Risposta
+Per ogni API è possibile abilitare la funzionalità di caching delle risposte in modo che successive richieste, con le medesimi caratteristiche (uri, http header, payload), vengono servite direttamente dal gateway.
+## Gestione CORS
+Il gateway permette di gestire il cross-origin HTTP request (CORS) sia globalmente, in modo che sia valido per tutte le APIs, che singolarmente perfezionandolo sulla singola erogazione o fruizione.
 ## Tracciamento
 Emissione di tracce conformi alle normative per ogni richiesta applicativa gestita. Oltre ai metadati riguardanti la richiesta di servizio (id transazione, mittente, destinatario, ...) è possibile riportare nelle tracce elementi identificativi estratti dai messaggi in transito; la modalità di estrazione supportate dal prodotto sono: XPath, Espressioni Regolari e JSONPath.
 ## Sicurezza dei contenuti
