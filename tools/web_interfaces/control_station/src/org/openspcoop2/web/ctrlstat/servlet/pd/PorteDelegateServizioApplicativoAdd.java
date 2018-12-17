@@ -195,7 +195,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, oldSilList.size(),true);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, oldSilList.size(),true, true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -245,7 +245,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true, true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, id, idsogg, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);

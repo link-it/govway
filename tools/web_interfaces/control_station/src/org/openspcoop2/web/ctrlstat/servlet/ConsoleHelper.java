@@ -2159,7 +2159,7 @@ public class ConsoleHelper {
 	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
-			boolean addMsgServiziApplicativoNonDisponibili) {
+			boolean addMsgServiziApplicativoNonDisponibili, boolean addTitle) {
 		
 		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
 		
@@ -2168,12 +2168,14 @@ public class ConsoleHelper {
 				labelApplicativo = CostantiControlStation.LABEL_PARAMETRO_APPLICATIVO;
 			}
 			
-			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(labelApplicativo);
-			dati.addElement(de);
+			if(addTitle) {
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(labelApplicativo);
+				dati.addElement(de);
+			}
 			
-			de = new DataElement();
+			DataElement de = new DataElement();
 			de.setLabel( CostantiControlStation.LABEL_PARAMETRO_NOME );
 			de.setType(DataElementType.SELECT);
 			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
@@ -2198,16 +2200,18 @@ public class ConsoleHelper {
 	
 	public Vector<DataElement> addPorteSoggettoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
-				boolean addMsgSoggettiNonDisponibili) {
+				boolean addMsgSoggettiNonDisponibili, boolean addTitle) {
 			
 			if(soggettiList!=null && soggettiList.length>0){
 			
-				DataElement de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
-				dati.addElement(de);
+				if(addTitle) {
+					DataElement de = new DataElement();
+					de.setType(DataElementType.TITLE);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SOGGETTO);
+					dati.addElement(de);
+				}
 				
-				de = new DataElement();
+				DataElement de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
 				de.setType(DataElementType.SELECT);
 				de.setName(CostantiControlStation.PARAMETRO_SOGGETTO);
@@ -3979,7 +3983,7 @@ public class ConsoleHelper {
 							if(autenticati!=null && autenticati.size()>0){
 								saArray = autenticati.toArray(new String[1]);
 							}
-							this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
+							this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false, false);
 						}
 	//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
 						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
@@ -3991,7 +3995,7 @@ public class ConsoleHelper {
 									soggettiLabelList = autenticatiLabel.toArray(new String[1]);
 								}
 							}
-							this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false);
+							this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false, false);
 						}
 					}
 				}

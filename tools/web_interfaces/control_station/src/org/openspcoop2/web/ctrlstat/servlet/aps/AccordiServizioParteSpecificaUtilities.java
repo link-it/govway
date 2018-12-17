@@ -27,14 +27,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -49,23 +57,39 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.Implementation;
+import org.openspcoop2.protocol.sdk.config.Subscription;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**	
  * AccordiServizioParteSpecificaUtilities
@@ -76,6 +100,305 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public class AccordiServizioParteSpecificaUtilities {
 
+	public static boolean [] getPermessiUtente(AccordiServizioParteSpecificaHelper apsHelper) {
+		PermessiUtente pu = null;
+		if(apsHelper.getCore().isUsedByApi()) {
+			pu = new PermessiUtente();
+			pu.setServizi(true);
+			pu.setAccordiCooperazione(false);
+		}
+		else {
+			pu = ServletUtils.getUserFromSession(apsHelper.getSession()).getPermessi();
+		}
+		boolean [] permessi = new boolean[2];
+		permessi[0] = pu.isServizi();
+		permessi[1] = pu.isAccordiCooperazione();		
+		return permessi;
+	}
+	
+	public static List<AccordoServizioParteComune> getListaAPI(String tipoProtocollo, String userLogin, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+		
+		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+		
+		Search searchAccordi = new Search(true);
+		searchAccordi.addFilter(Liste.ACCORDI, Filtri.FILTRO_PROTOCOLLO, tipoProtocollo);
+		List<AccordoServizioParteComune> listaTmp =  
+				AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, searchAccordi, 
+						getPermessiUtente(apsHelper));
+		
+		List<AccordoServizioParteComune> listaAPI = null;
+		if(apsHelper.isModalitaCompleta()) {
+			listaAPI = listaTmp;
+		}
+		else {
+			// filtro accordi senza risorse o senza pt/operation
+			listaAPI = new ArrayList<AccordoServizioParteComune>();
+			for (AccordoServizioParteComune accordoServizioParteComune : listaTmp) {
+				if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(accordoServizioParteComune.getServiceBinding())) {
+					if(accordoServizioParteComune.sizeResourceList()>0) {
+						listaAPI.add(accordoServizioParteComune);	
+					}
+				}
+				else {
+					boolean ptValido = false;
+					for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
+						if(pt.sizeAzioneList()>0) {
+							ptValido = true;
+							break;
+						}
+					}
+					if(ptValido) {
+						listaAPI.add(accordoServizioParteComune);	
+					}
+				}
+			}
+		}
+		return listaAPI;
+	}
+	
+	public static List<PortType> getListaPortTypes(AccordoServizioParteComune as, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception{
+		
+		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
+		
+		List<PortType> portTypesTmp = apcCore.accordiPorttypeList(as.getId().intValue(), new Search(true));
+		List<PortType> portTypes = null;
+		
+		if(apsHelper.isModalitaCompleta()) {
+			portTypes = portTypesTmp;
+		}
+		else {
+			// filtro pt senza op
+			portTypes = new ArrayList<PortType>();
+			for (PortType portType : portTypesTmp) {
+				if(portType.sizeAzioneList()>0) {
+					portTypes.add(portType);
+				}
+			}
+		}
+		
+		return portTypes; 
+	}
+	
+	public static boolean isSoggettoOperativo(IDSoggetto idSoggettoErogatore, AccordiServizioParteSpecificaCore apsCore) throws Exception {
+		SoggettiCore soggettiCore = new SoggettiCore(apsCore);
+		PddCore pddCore = new PddCore(apsCore);
+		Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoErogatore );
+		if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
+			return false;
+		}
+		return true;
+	}
+	
+	public static void create(AccordoServizioParteSpecifica asps,boolean alreadyExists,
+			IDServizio idServizio, IDSoggetto idFruitore, String tipoProtocollo, ServiceBinding serviceBinding,
+			long idProv, // id del database relativo al soggetto. 
+			Connettore connettore,		
+			boolean generaPortaApplicativa, boolean generaPortaDelegata,
+			String autenticazione, String autenticazioneOpzionale,
+			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
+			String servizioApplicativo, String ruolo, String soggettoAutenticato, 
+			String autorizzazione_tokenOptions,
+			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String gestioneToken, 
+			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
+			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
+			ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType,
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper) throws Exception {
+		
+		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+		if(!alreadyExists) {
+			listaOggettiDaCreare.add(asps);
+		}
+
+		// Creo Porta Applicativa (opzione??)
+		if(generaPortaApplicativa){
+			
+			AccordiServizioParteSpecificaUtilities.generaPortaApplicativa(listaOggettiDaCreare, idServizio,tipoProtocollo, serviceBinding, 
+					idProv, connettore, 
+					autenticazione, autenticazioneOpzionale,
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
+					servizioApplicativo, ruolo,soggettoAutenticato,
+					autorizzazione_tokenOptions,
+					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					gestioneToken,
+					gestioneTokenPolicy,  gestioneTokenOpzionale,
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
+					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					apsCore, apsHelper);
+					
+		}
+		
+		if(generaPortaDelegata){
+			
+			AccordiServizioParteSpecificaUtilities.generaPortaDelegata(listaOggettiDaCreare, 
+					idFruitore, idServizio, tipoProtocollo, serviceBinding, 
+					idProv, 
+					autenticazione, autenticazioneOpzionale,
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch,
+					servizioApplicativo, ruolo,
+					autorizzazione_tokenOptions,
+					autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					gestioneToken, 
+					gestioneTokenPolicy,  gestioneTokenOpzionale,
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
+					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					apsCore);
+			
+		}
+
+		//imposto properties custom
+		if(!alreadyExists) {
+			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(protocolProperties, consoleOperationType,null));
+		}
+
+		if(alreadyExists) {
+			apsCore.performUpdateOperation(asps.getSuperUser(), apsHelper.smista(), asps); // aggiorno aps
+		}
+		apsCore.performCreateOperation(asps.getSuperUser(), apsHelper.smista(), listaOggettiDaCreare.toArray());
+	}
+	
+	public static void generaPortaApplicativa(List<Object> listaOggettiDaCreare,
+			IDServizio idServizio, String tipoProtocollo, ServiceBinding serviceBinding,
+			long idProv, // id del database relativo al soggetto. 
+			Connettore connettore,			
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
+			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
+			String nomeSA, String erogazioneRuolo, String erogazioneSoggettoAutenticato, 
+			String autorizzazione_tokenOptions,
+			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String gestioneToken, 
+			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
+			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper) throws Exception {
+		
+		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
+			
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+		
+
+		Implementation implementationDefault = protocolFactory.createProtocolIntegrationConfiguration().
+				createDefaultImplementation(serviceBinding, idServizio);
+		
+		PortaApplicativa portaApplicativa = implementationDefault.getPortaApplicativa();
+		MappingErogazionePortaApplicativa mappingErogazione = implementationDefault.getMapping();
+		portaApplicativa.setIdSoggetto((long) idProv);
+		
+		IDSoggetto idSoggettoAutenticatoErogazione = null;
+		if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
+			String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
+			if(splitSoggetto != null) {
+				idSoggettoAutenticatoErogazione = new IDSoggetto();
+				if(splitSoggetto.length == 2) {
+					idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
+					idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
+				} else {
+					idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
+				}
+			}
+		}
+		
+		String nomeServizioApplicativoErogatore = nomeSA;
+		ServizioApplicativo sa = null;
+		
+		if(apsHelper.isModalitaCompleta()==false) {
+			// Creo il servizio applicativo
+			
+			nomeServizioApplicativoErogatore = portaApplicativa.getNome();
+			
+			sa = new ServizioApplicativo();
+			sa.setNome(nomeServizioApplicativoErogatore);
+			sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
+			sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+			sa.setIdSoggetto((long) idProv);
+			sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
+			sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
+			
+			RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
+			rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+			rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
+			sa.setRispostaAsincrona(rispostaAsinc);
+			
+			InvocazioneServizio invServizio = new InvocazioneServizio();
+			invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+			invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
+			invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
+			sa.setInvocazioneServizio(invServizio);
+			
+			listaOggettiDaCreare.add(sa);
+		}
+			
+		porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
+				erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
+				erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
+				nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
+				autorizzazione_tokenOptions,
+				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+		
+		porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, 
+				gestioneTokenPolicy,  gestioneTokenOpzionale,
+				gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
+				autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+				autorizzazione_tokenOptions
+				);
+		
+		listaOggettiDaCreare.add(portaApplicativa);						
+		listaOggettiDaCreare.add(mappingErogazione);
+	
+	}
+	
+	public static void crea() {
+		
+	}
+	
+	public static void generaPortaDelegata(List<Object> listaOggettiDaCreare,
+			IDSoggetto idFruitore, IDServizio idServizio, String tipoProtocollo, ServiceBinding serviceBinding,
+			long idProv, // id del database relativo al soggetto. 
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
+			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
+			String fruizioneServizioApplicativo, String fruizioneRuolo, 
+			String autorizzazione_tokenOptions,
+			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String gestioneToken, 
+			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
+			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
+			AccordiServizioParteSpecificaCore apsCore) throws Exception {
+		
+		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+		
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+		
+		
+		Subscription subscriptionDefault = protocolFactory.createProtocolIntegrationConfiguration().
+				createDefaultSubscription(serviceBinding, idFruitore, idServizio);
+		
+		PortaDelegata portaDelegata = subscriptionDefault.getPortaDelegata();
+		MappingFruizionePortaDelegata mappingFruizione = subscriptionDefault.getMapping();
+		portaDelegata.setIdSoggetto((long) idProv);
+
+		porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
+				fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+				fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
+				fruizioneServizioApplicativo, fruizioneRuolo,
+				autorizzazione_tokenOptions,
+				autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
+		
+		porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
+				gestioneTokenPolicy,  gestioneTokenOpzionale,
+				gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
+				autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+				autorizzazione_tokenOptions
+				);
+					
+		// Verifico prima che la porta delegata non esista già
+		if (!porteDelegateCore.existsPortaDelegata(mappingFruizione.getIdPortaDelegata())){
+			listaOggettiDaCreare.add(portaDelegata);
+		}
+		listaOggettiDaCreare.add(mappingFruizione);	
+	}
+	
 	public static List<Object> getOggettiDaAggiornare(AccordoServizioParteSpecifica asps, AccordiServizioParteSpecificaCore apsCore) throws Exception {
 
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
@@ -843,6 +1166,143 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		
 	}
-	
 
+	public static void deleteAccordoServizioParteSpecificaPorteApplicative(IDPortaApplicativa idPortaApplicativa, IDServizio idServizio,
+			String superUser, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
+			StringBuffer inUsoMessage) throws Exception {
+		
+		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+		ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+		
+		List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+		
+		// leggo la pa
+		PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
+		// controllo se il mapping e' di default, se lo e' salto questo elemento
+		
+		boolean isDefault = apsCore.isDefaultMappingErogazione(idServizio, idPortaApplicativa );
+		
+		if(!isDefault) {
+			//cancello il mapping
+			MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
+			mappingErogazione.setIdServizio(idServizio);
+			mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
+			listaOggettiDaEliminare.add(mappingErogazione);
+			
+			// cancello per policy associate alla porta se esistono
+			List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, tmpPA.getNome());
+			if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+				listaOggettiDaEliminare.addAll(listAttivazione);
+			}
+			
+			// cancello la porta associata
+			listaOggettiDaEliminare.add(tmpPA);
+			
+			for (PortaApplicativaServizioApplicativo paSA : tmpPA.getServizioApplicativoList()) {
+				if(paSA.getNome().equals(tmpPA.getNome())) {
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
+					idSA.setNome(paSA.getNome());
+					ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
+					listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+				}
+			}
+			
+			// Elimino entrambi gli oggetti
+			apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
+		} else {
+			inUsoMessage.append(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE);
+		}
+		
+	}
+	
+	public static void deleteAccordoServizioParteSpecificaFruitoriPorteDelegate(List<IDPortaDelegata> listPortaDelegataDaELiminare,
+			AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore,
+			String superUser, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
+			StringBuffer inUsoMessage) throws Exception {
+		
+		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+		
+		IDServizio idServizioFromAccordo = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		
+		List<Object> listaOggettiDaModificare = new ArrayList<Object>();
+		Fruitore fruitore = null;
+		for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
+			if(fruitoreCheck.getTipo().equals(idSoggettoFruitore.getTipo()) && fruitoreCheck.getNome().equals(idSoggettoFruitore.getNome())) {
+				fruitore = fruitoreCheck;
+				break;
+			}
+		}
+		
+		boolean updateASPS = false;
+		
+		for (int i = 0; i < listPortaDelegataDaELiminare.size(); i++) {
+			
+			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
+			
+			// ricevo come parametro l'id della pd associata al mapping da cancellare
+			IDPortaDelegata idPortaDelegata = listPortaDelegataDaELiminare.get(i);
+
+			// Prendo la porta delegata
+			PortaDelegata tmpPD = porteDelegateCore.getPortaDelegata(idPortaDelegata);
+			
+			// controllo se il mapping e' di default, se lo e' salto questo elemento
+			boolean isDefault = apsCore.isDefaultMappingFruizione(idServizioFromAccordo, idSoggettoFruitore, idPortaDelegata );
+			
+			if(!isDefault) {
+				//cancello il mapping
+				MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+				mappingFruizione.setIdFruitore(idSoggettoFruitore);
+				mappingFruizione.setIdPortaDelegata(idPortaDelegata);
+				mappingFruizione.setIdServizio(idServizioFromAccordo);
+				listaOggettiDaEliminare.add(mappingFruizione);
+			
+				// cancello per policy associate alla porta se esistono
+				List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.DELEGATA, tmpPD.getNome());
+				if(listAttivazione!=null && !listAttivazione.isEmpty()) {
+					listaOggettiDaEliminare.addAll(listAttivazione);
+				}
+				
+				// cancello la porta associata
+				listaOggettiDaEliminare.add(tmpPD);
+				
+				// Elimino entrambi gli oggetti
+				apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
+				
+				// Connettore della fruizione
+				int index = -1;
+				for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
+					ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
+					if(config!=null) {
+						String azione = tmpPD.getAzione().getAzioneDelegata(0); // prendo la prima
+						if(config.getAzioneList().contains(azione)) {
+							index = j;
+							break;
+						}
+					}
+				}
+				if(index>=0) {
+					updateASPS = true;
+					fruitore.removeConfigurazioneAzione(index);
+				}
+				
+			}else {
+				inUsoMessage.append(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_FRUIZIONE);
+			}
+			
+		}// for
+		
+		
+		if(updateASPS) {
+			
+			listaOggettiDaModificare.add(asps);
+			
+		}
+		
+		if(listaOggettiDaModificare.size()>0) {
+			porteDelegateCore.performUpdateOperation(superUser, apsHelper.smista(), listaOggettiDaModificare.toArray());
+		}
+	}
 }

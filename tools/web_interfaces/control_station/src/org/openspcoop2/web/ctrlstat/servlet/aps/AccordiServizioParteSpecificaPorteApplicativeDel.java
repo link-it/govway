@@ -35,15 +35,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
-import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -51,9 +44,6 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -110,18 +100,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 			apsHelper.makeMenu();
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
-			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
-
-			// Elimino le porte applicative del servizio dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
 
 			// Prendo l'id del soggetto erogatore del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioLong);
@@ -129,55 +107,22 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 
-			String errMsg = null;
+			StringBuffer inUsoMessage = new StringBuffer();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 				// ricevo come parametro l'id della pa associata al mapping da cancellare
 				IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 				idPortaApplicativa.setNome(idsToRemove.get(i)); 
 				
-				// leggo la pa
-				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(idPortaApplicativa);
-				// controllo se il mapping e' di default, se lo e' salto questo elemento
+				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaPorteApplicative(idPortaApplicativa, idServizio, 
+						superUser, apsCore, apsHelper, inUsoMessage);
 				
-				boolean isDefault = apsCore.isDefaultMappingErogazione(idServizio, idPortaApplicativa );
-				
-				if(!isDefault) {
-					//cancello il mapping
-					MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
-					mappingErogazione.setIdServizio(idServizio);
-					mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
-					listaOggettiDaEliminare.add(mappingErogazione);
-					
-					// cancello per policy associate alla porta se esistono
-					List<AttivazionePolicy> listAttivazione = confCore.attivazionePolicyList(new Search(true), RuoloPolicy.APPLICATIVA, tmpPA.getNome());
-					if(listAttivazione!=null && !listAttivazione.isEmpty()) {
-						listaOggettiDaEliminare.addAll(listAttivazione);
-					}
-					
-					// cancello la porta associata
-					listaOggettiDaEliminare.add(tmpPA);
-					
-					for (PortaApplicativaServizioApplicativo paSA : tmpPA.getServizioApplicativoList()) {
-						if(paSA.getNome().equals(tmpPA.getNome())) {
-							IDServizioApplicativo idSA = new IDServizioApplicativo();
-							idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
-							idSA.setNome(paSA.getNome());
-							ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
-							listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
-						}
-					}
-					
-					// Elimino entrambi gli oggetti
-					apsCore.performDeleteOperation(superUser, apsHelper.smista(), listaOggettiDaEliminare.toArray(new Object[1]));
-				} else {
-					errMsg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_IMPOSSIBILE_ELIMINARE_LA_CONFIGURAZIONE_DI_DEFAULT_EROGAZIONE;
-				}
 			}// for
 			
-			if(errMsg != null)
-				pd.setMessage(errMsg);
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+			}
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
