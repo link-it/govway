@@ -39,7 +39,6 @@ import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
-import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -267,13 +266,13 @@ public class ApiApiHelper {
 		
 		switch (body.getRuolo()) {
 		case ALLEGATO:
-			AllegatoGenerico ag = fromMap((Map<String,String>) body.getAllegato(), AllegatoGenerico.class);
+			@SuppressWarnings("unchecked") AllegatoGenerico ag = fromMap((Map<String,String>) body.getAllegato(), AllegatoGenerico.class);
 			documento.setByteContenuto(ag.getDocumento());
 			documento.setFile(ag.getNome());
 			documento.setTipo(ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length()));
 			break;
 		case SPECIFICASEMIFORMALE:
-			AllegatoSpecificaSemiformale ass = fromMap( (Map<String,String>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = fromMap( (Map<String,String>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
 			documento.setByteContenuto(ass.getDocumento());
 			documento.setFile(ass.getNome());	
 			documento.setTipo(ApiApiHelper.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString());

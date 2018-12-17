@@ -12,7 +12,6 @@ import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
 import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
 import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
 import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 /**
  * GovWay Config API
  *
@@ -80,6 +79,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 
+			@SuppressWarnings("unused")
 			GruppoNuovaConfigurazione g = new GruppoNuovaConfigurazione();
 			
 			

@@ -612,6 +612,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
+			@SuppressWarnings("unused")
 			APIImplAutenticazione impl_auth = new APIImplAutenticazione();
 			//impl_auth.
         // TODO: Implement...

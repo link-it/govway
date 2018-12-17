@@ -16,15 +16,12 @@ import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.jaxrs.fault.FaultCode;
 import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
 import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
 import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
 import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
 import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.web.lib.mvc.TipoOperazione;
 /**
  * GovWay Config API
  *
@@ -57,6 +54,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
+			@SuppressWarnings("unused")
 			Erogazione ero = null;
             try{
             	ero = JSONUtils.getInstance().getAsObject(((InputStream)body), Erogazione.class);
@@ -65,143 +63,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
             }
             
             
-            ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
-            
-			AccordoServizioParteSpecifica asps = null;
-			AccordoServizioParteComune as = null;	// TODO: Recuperare l'as da ero.getApiNome ecc.. 
-		
-		
-
-            
-            String[] soggettiCompatibili = new String[1];
-            String[] accordiList = new String[1];
-            String[] ptList = new String[1];
-            boolean accordoPrivato = as.getPrivato()!=null && as.getPrivato();
-            
-            // TODO: Wrapper http servlet per calcolo endpointtype 
-            String endpointtype = env.apsHelper.readEndPointType();
-            
-         /*   env.apsHelper.serviziCheckData(
-            		TipoOperazione.ADD, 
-            		soggettiCompatibili,		// TODO: Questa deve rifattorizzarla andrea.
-            		accordiList, 		 		// TODO: Rifattorizzarla andrea
-            		asps.getNome(),				// oldnome
-            		asps.getTipo(),				// oldtipo
-            		asps.getVersione(),			// oldversione
-            		asps.getNome(),
-            		asps.getTipo(),
-            		env.idSoggetto.getId().toString(), 	// idSoggErogatore
-            		env.idSoggetto.getNome(),
-            		env.idSoggetto.getTipo(), 
-            		as.getId().toString(),
-            		as.getServiceBinding(),
-            		null,  //servcorr,
-            		endpointtype, // endpointtype,
-            		ero.getConnettore().getEndpoint(),	// TODO: Usare il nome dell'oggetto finale e non del json.
-            		null, 	// nome JMS
-            		null, 	// tipo JMS,
-            		null,	// user, TODO: recuperarlo autenticazione
-            		null,   // password, TODO: recuperarlo autenticazione 
-            		null,   // initcont JMS,
-            		null,   // urlpgk JMS,
-            		null,   // provurl JMS 
-            		null,   // connfact JMS
-            		null, 	// sendas JMS, 
-            		"",		//  TODO: wsdlimpler, Recuperare il wsdl implementativo dell'erogatore.
-            		"",		//  TODO: wsdlimplfru, sarà lo stesso di sopra?
-            		"0", 	//  Se nella Add questo è a zero, bisognerà settarlo in una update.
-            		env.tipo_protocollo, // TODO check,
-            		"",		//  TODO: Questo è il servizio scelto in caso di SOAP, 
-            		ptList,	//  TODO: Valorizzare. 
-            		accordoPrivato,
-            		false, 	//  TODO check da console this.privato,
-            		httpsurl, 
-            		httpstipologia, 
-            		httpshostverify, 
-            		httpspath, 
-            		httpstipo,
-            		httpspwd,
-            		httpsalgoritmo,
-            		httpsstato,
-            		httpskeystore, 
-            		httpspwdprivatekeytrust, 
-            		httpspathkey,
-            		httpstipokey, 
-            		httpspwdkey, 
-            		httpspwdprivatekey, 
-            		httpsalgoritmokey,
-            		tipoconn, 	// Boh forse asps.getTipo
-            		versione, 	
-            		validazioneDocumenti, 
-            		backToStato,
-            		autenticazioneHttp,
-            		proxyEnabled, 
-            		proxyHost,
-            		proxyPort,
-            		proxyUsername, 
-            		proxyPassword, 
-            		tempiRisposta_enabled, 
-            		tempiRisposta_connectionTimeout, 
-            		tempiRisposta_readTimeout, 
-            		tempiRisposta_tempoMedioRisposta,
-            		opzioniAvanzate, 
-            		transfer_mode, 
-            		transfer_mode_chunk_size, 
-            		redirect_mode, 
-            		redirect_max_hop, 
-            		requestOutputFileName,
-            		requestOutputFileNameHeaders, 
-            		requestOutputParentDirCreateIfNotExists, 
-            		requestOutputOverwriteIfExists,
-            		responseInputMode,
-            		responseInputFileName,
-            		responseInputFileNameHeaders,
-            		responseInputDeleteAfterRead,
-            		responseInputWaitTime,
-            		erogazioneSoggetto,
-            		erogazioneRuolo, 
-            		erogazioneAutenticazione,
-            		erogazioneAutenticazioneOpzionale,
-            		erogazioneAutorizzazione,
-            		erogazioneAutorizzazioneAutenticati, 
-            		erogazioneAutorizzazioneRuoli, 
-            		erogazioneAutorizzazioneRuoliTipologia,
-            		erogazioneAutorizzazioneRuoliMatch, 
-            		isSupportatoAutenticazione,
-            		generaPACheckSoggetto, 
-            		listExtendedConnettore,
-            		fruizioneServizioApplicativo,
-            		fruizioneRuolo, 
-            		fruizioneAutenticazione,
-            		fruizioneAutenticazioneOpzionale, 
-            		fruizioneAutorizzazione, 
-            		fruizioneAutorizzazioneAutenticati, 
-            		fruizioneAutorizzazioneRuoli,
-            		fruizioneAutorizzazioneRuoliTipologia,
-            		fruizioneAutorizzazioneRuoliMatch,
-            		protocollo, 
-            		allegatoXacmlPolicy,
-            		descrizione,
-            		tipoFruitore,
-            		nomeFruitore
-            	);
-            */
-            //ero.get
-
-            /* Sostituendolo con la properties deternino il nome 
-            if (apsHelper.isModalitaStandard()) {
-				switch (this.serviceBinding) {
-				case REST:
-					// il nome del servizio e' quello dell'accordo
-					this.nomeservizio = as.getNome();
-					break;
-				case SOAP:
-				default:
-					// il nome del servizio e' quello del porttype selezionato
-					this.nomeservizio = this.portType;
-					break;
-				}
-			}*/
+            @SuppressWarnings("unused")
+			ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
 
         // TODO: Implement...
         
@@ -420,6 +283,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
+			@SuppressWarnings("unused")
 			ErogazioneViewItem ret = new ErogazioneViewItem();
 			//ret.set
                         
