@@ -1,0 +1,48 @@
+# -------- Domibus Configuration -----
+
+# SecurityPolicy Folder
+org.openspcoop2.protocol.as4.securityPolicies.folder=WORK_DIR/as4/securityPolicies
+# org.openspcoop2.protocol.as4.securityPolicies.folder=DOMIBUS_DIR/conf/domibus/policies
+
+
+
+# --- Comunicazione HTTP verso Gateway -----
+
+# Configurazione dell'indirizzamento verso il domibusGateway
+org.openspcoop2.protocol.as4.domibusGateway.config.default.url=http://DOMIBUS-HOST:8080/domibus-wildfly/services/backend
+
+
+
+# --- Comunicazione JMS verso Broker -----
+
+# JNDI
+org.openspcoop2.protocol.as4.domibusJms.jndi.java.naming.factory.initial=org.jboss.naming.remote.client.InitialContextFactory
+
+# URLBroker JMS
+org.openspcoop2.protocol.as4.domibusJms.jndi.java.naming.provider.url=http-remoting://DOMIBUS-HOST:8080
+
+# ConnectionFactory
+org.openspcoop2.protocol.as4.domibusJms.connectionFactory=jms/RemoteConnectionFactory
+
+# Credenziali
+org.openspcoop2.protocol.as4.domibusJms.username=domibus
+org.openspcoop2.protocol.as4.domibusJms.password=domibus
+
+# Nome Coda JMS per i messaggi ricevuti quando si assume il ruolo 'Receiver'
+org.openspcoop2.protocol.as4.domibusJms.queue.receiver=domibus.backend.jms.outQueue
+
+# Nome Coda JMS per gli ack ricevuti quando si assume il ruolo 'Sender'
+org.openspcoop2.protocol.as4.domibusJms.queue.sender=domibus.notification.webservice
+
+# Rendere accessibili da remoto le due code sopra indicate effettuando la seguente configurazione:
+# 1) Registrata utenza applicativa 'domibus' con ruolo 'domibus' (application-users.properties e application-roles.properties), 
+#    ad es. con password 'domibus':
+#    - application-users.properties
+#	  domibus=2b9e9ce0cb0a872862711124f52da9d8
+#    - application-roles.properties
+#	  domibus=domibus
+# 2) Registrare il ruolo domibus tra i ruoli abilitati a fare operazioni sulle code in standalone-full.xml:
+#    - <security-setting name="#"> ... <role name="domibus" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+# 3) Rendere le due code accessibili da remoto modificandole in standalone-full.xml:
+#    - <jms-queue name="DomibusBusinessMessageOutQueue" entries="java:jboss/exported/domibus.backend.jms.outQueue java:/jms/domibus.backend.jms.outQueue java:/jms/queue/DomibusBusinessMessageOutQueue" durable="true"/>
+#    - <jms-queue name="DomibusNotifyBackendWebServiceQueue" entries="java:jboss/exported/domibus.notification.webservice java:/jms/domibus.notification.webservice java:/jms/queue/DomibusNotifyBackendWebServiceQueue" durable="true"/>

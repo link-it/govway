@@ -55,14 +55,13 @@
 	<target name="receive" depends=""
         description="Esegue il Client" >
 	
-	<!--	
 		<if>
 			<equals arg1="${as}" arg2="$${as}"/>
 		    <then>
-		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant receive -Das=VERSION -DtipoTest=TEST' [-Dusername=username -Dpassword=password] (indicare jbossVersionNumber es. jboss6)"/>
+		 	   <fail message="Parametro as non fornito, utilizzare il comando: 'ant receive -Das=VERSION"/>
 			</then>
 		</if>
-		
+		<!--
 		<if>
 			<equals arg1="${tipoTest}" arg2="$${tipoTest}"/>
 		    <then>
@@ -77,14 +76,12 @@
 			<classpath>
 				<pathelement path="${build}"/>
 				<path refid="classpath" />
-				<fileset dir="../../deploy/lib_jms/">
+				<fileset dir="../../deploy/lib_jms/tomcat">
 					<include name="*.jar"/>
 				</fileset>
-<!--
 				<fileset dir="${libs}/applicationServer/${as}">
 					<include name="*.jar"/>
 				</fileset>
--->
 			</classpath>
 		</java>
 

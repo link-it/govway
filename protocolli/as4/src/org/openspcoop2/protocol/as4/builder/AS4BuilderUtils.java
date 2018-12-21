@@ -156,7 +156,8 @@ public class AS4BuilderUtils {
 			if(profilesBytes!=null) {
 				// aggiungo namespace per poter effettuare unmarshall
 				String profiles = new String(profilesBytes);
-				profiles = profiles.replace("<payloadProfiles>", "<payloadProfiles xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+				profiles = profiles.replace("<payloadProfiles>", "<ns:payloadProfiles xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+				profiles = profiles.replace("</payloadProfiles","</ns:payloadProfiles"); 
 				eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 				pps = deserializer.readPayloadProfiles(profiles.getBytes());
 			}
@@ -241,7 +242,8 @@ public class AS4BuilderUtils {
 			if(profilesBytes!=null) {
 				// aggiungo namespace per poter effettuare unmarshall
 				String profiles = new String(profilesBytes);
-				profiles = profiles.replace("<properties>", "<properties xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+				profiles = profiles.replace("<properties>", "<ns:properties xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+				profiles = profiles.replace("</properties","</ns:properties"); 
 				eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 				pps = deserializer.readProperties(profiles.getBytes());
 			}

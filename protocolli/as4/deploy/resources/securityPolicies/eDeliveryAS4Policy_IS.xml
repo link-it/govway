@@ -1,0 +1,73 @@
+<!--
+Reference to an Issuer and Serial Number
+The <wsse:SecurityTokenReference> element contains a <ds:X509Data> element that contains
+a <ds:X509IssuerSerial> element that uniquely identifies an end entity certificate by
+its X.509 Issuer and Serial Number.
+-->
+<wsp:Policy xmlns:wsp="http://www.w3.org/ns/ws-policy"
+            xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702"
+            xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+            xmlns:sp13="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200802"
+            wsu:Id="eDeliveryAS4Policy_IS">
+    <wsp:ExactlyOne>
+        <wsp:All>
+            <sp:AsymmetricBinding>
+                <wsp:Policy>
+                    <sp:InitiatorToken>
+                        <wsp:Policy>
+                            <sp:X509Token
+                                    sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never">
+                                <wsp:Policy>
+                                    <sp:WssX509V3Token10/>
+                                    <sp:RequireIssuerSerialReference/>
+                                </wsp:Policy>
+                            </sp:X509Token>
+                        </wsp:Policy>
+                    </sp:InitiatorToken>
+                    <sp:RecipientToken>
+                        <wsp:Policy>
+                            <sp:X509Token
+                                    sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Never">
+                                <wsp:Policy>
+                                    <sp:WssX509V3Token10/>
+                                    <sp:RequireIssuerSerialReference/>
+                                </wsp:Policy>
+                            </sp:X509Token>
+                        </wsp:Policy>
+                    </sp:RecipientToken>
+                    <sp:Layout>
+                        <wsp:Policy>
+                            <sp:Strict/>
+                        </wsp:Policy>
+                    </sp:Layout>
+                    <sp:SignBeforeEncrypting />
+                    <sp:AlgorithmSuite>
+                        <wsp:Policy>
+                            <sp-cxf:Basic128GCMSha256MgfSha256
+                                    xmlns:sp-cxf="http://e-delivery.eu/custom/security-policy"/>
+                        </wsp:Policy>
+                    </sp:AlgorithmSuite>
+                </wsp:Policy>
+            </sp:AsymmetricBinding>
+            <sp:SignedParts>
+                <sp:Header
+                        Namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                        Name="Messaging"/>
+                <sp:Body/>
+                <sp:Attachments>
+                    <sp13:ContentSignatureTransform/>
+                </sp:Attachments>
+            </sp:SignedParts>
+            <sp:EncryptedParts>
+                <sp:Attachments/>
+            </sp:EncryptedParts>
+            <sp:Wss11>
+                <wsp:Policy>
+                    <sp:MustSupportRefKeyIdentifier />
+                    <sp:MustSupportRefIssuerSerial />
+                    <sp:MustSupportRefEmbeddedToken />
+                </wsp:Policy>
+            </sp:Wss11>
+        </wsp:All>
+    </wsp:ExactlyOne>
+</wsp:Policy>

@@ -1,9 +1,8 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-  xmlns:tns="http://org.ecodex.backend/1_1/" 
-  attributeFormDefault="unqualified" elementFormDefault="unqualified" 
-  targetNamespace="http://org.ecodex.backend/1_1/">
-  
-  
+  xmlns:tns="http://org.ecodex.backend/1_1/"  
+  attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://org.ecodex.backend/1_1/">
+
+    
   <xsd:annotation>
     <xsd:appinfo>
       <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
@@ -42,539 +41,439 @@
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="tns:FaultDetail"/>
-        <xsd:element ref="tns:downloadMessageRequest"/>
-        <xsd:element ref="tns:downloadMessageResponse"/>
         <xsd:element ref="tns:retrieveMessageRequest"/>
         <xsd:element ref="tns:retrieveMessageResponse"/>
         <!-- <xsd:element ref="tns:listPendingMessagesRequest"/> Elemento semplice 'string' non supportato -->
         <xsd:element ref="tns:listPendingMessagesResponse"/>
         <xsd:element ref="tns:messageErrorsRequest"/>
         <xsd:element ref="tns:messageStatusRequest"/>
-        <xsd:element ref="tns:sendRequest"/>
         <xsd:element ref="tns:submitRequest"/>
         <xsd:element ref="tns:submitResponse"/>
-        <xsd:element ref="tns:sendRequestURL"/>
-        <xsd:element ref="tns:sendResponse"/>
         <xsd:element ref="tns:getStatusRequest"/>
-        <!-- <xsd:element ref="tns:getMessageStatusResponse"/>
-          <xsd:element ref="tns:getStatusResponse"/> Elemento semplice 'string' non supportato -->
+        <!-- <xsd:element ref="tns:getStatusResponse"/> Elemento semplice 'string' non supportato -->
         <xsd:element ref="tns:getErrorsRequest"/>
         <xsd:element ref="tns:getMessageErrorsResponse"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
-  
-  
-  
-  <!--
+
+   <!-- 
   <xsd:simpleType name="max255-non-empty-string">
-    
+        
     <xsd:restriction base="xsd:string">
-      
+            
       <xsd:minLength value="1"/>
-      
+            
       <xsd:maxLength value="255"/>
-      
+        
     </xsd:restriction>
     
   </xsd:simpleType>
   -->
-  
-  
+
+    
   <xsd:element name="FaultDetail">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <xsd:element name="code" type="xsd:string"/>
-        
+                
         <xsd:element name="message" nillable="true" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
-  
-  <xsd:element name="downloadMessageRequest">
+
     
-    <xsd:complexType>
-      
-      <xsd:sequence>
-        
-        <!-- <xsd:element name="messageID" nillable="true" type="tns:max255-non-empty-string"/> -->
-        <xsd:element name="messageID" nillable="true" type="xsd:string"/>
-        
-      </xsd:sequence>
-      
-    </xsd:complexType>
-    
-  </xsd:element>
-  
-  
-  <xsd:element name="downloadMessageResponse">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
-        
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
-        
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" type="tns:PayloadType"/>
-        
-        <!-- <xsd:any minOccurs="0"/> --> <!-- Introduced to support validation and MTOM/XOP -->
-        
-      </xsd:sequence>
-      
-    </xsd:complexType>
-    
-  </xsd:element>
-  
   <xsd:element name="retrieveMessageRequest">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" nillable="true" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" nillable="true" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="retrieveMessageResponse">
-    
+        
     <xsd:complexType>
-      
+            
       <xsd:sequence>
-        
+                
         <xsd:element minOccurs="0" name="bodyload" type="tns:LargePayloadType"/>
-        
+                
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" type="tns:LargePayloadType"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
-  
+
+    
   <!-- <xsd:element name="listPendingMessagesRequest" nillable="false" type="xsd:anyType"/> -->
   <xsd:element name="listPendingMessagesRequest" nillable="false" type="xsd:string"/>
-  
-  
+    
   <xsd:element name="listPendingMessagesResponse">
-    
+        
     <xsd:complexType>
-      
+            
       <xsd:sequence>
-        
+                
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="messageErrorsRequest">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="messageStatusRequest">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
-  <xsd:element name="sendRequest">
+
     
-    <xsd:complexType>
-      
-      <xsd:sequence>
-        
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
-        
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:PayloadType"/>
-        
-      </xsd:sequence>
-      
-    </xsd:complexType>
-    
-  </xsd:element>
-  
-  
   <xsd:element name="submitRequest">
-    
+        
     <xsd:complexType>
-      
+            
       <xsd:sequence>
-        
-        <xsd:element minOccurs="0" name="bodyload" type="tns:LargePayloadType"/>
-        
+                
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:LargePayloadType"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="submitResponse">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
-  
-  <xsd:element name="sendRequestURL">
+
     
-    <xsd:complexType>
-      
-      <xsd:sequence>
-        
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadURLType"/>
-        
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:PayloadURLType"/>
-        
-      </xsd:sequence>
-      
-    </xsd:complexType>
-    
-  </xsd:element>
-  
-  
-  <xsd:element name="sendResponse">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
-        
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
-        
-      </xsd:sequence>
-      
-    </xsd:complexType>
-    
-  </xsd:element>
-  
-  
-  
-  
   <xsd:complexType name="PayloadType">
-    
+            
     <xsd:simpleContent>
-      
+                
       <!-- <xsd:extension base="ns1:base64Binary"> -->
       <xsd:extension base="xsd:base64Binary">
-        
+                    
         <xsd:attribute name="payloadId" type="xsd:token" use="required"/>
+           
         <!-- Reintrodotto per compatibilità interfaccia di spedizione -->
         <xsd:attribute name="contentType" type="xsd:token" />
-        
+           
       </xsd:extension>
-      
+            
     </xsd:simpleContent>
     
   </xsd:complexType>
-  
-  
-  <xsd:complexType name="LargePayloadType">
+
     
+  <xsd:complexType name="LargePayloadType">
+        
     <xsd:sequence>
-      
+            
       <!-- <xsd:element name="value" ns1:expectedContentTypes="application/octet-stream" type="xsd:base64Binary"/> -->
       <xsd:element name="value" type="xsd:base64Binary"/>
-      
+        
     </xsd:sequence>
-    
+        
     <xsd:attribute name="payloadId" type="xsd:token" use="required"/>
-    
+        
     <xsd:attribute name="contentType" type="xsd:string"/>
     
   </xsd:complexType>
-  
-  
-  <xsd:complexType name="errorResultImpl">
+
     
+  <xsd:complexType name="errorResultImpl">
+        
     <xsd:sequence>
-      
+            
       <xsd:element minOccurs="0" name="errorCode" type="tns:errorCode"/>
-      
+            
       <xsd:element minOccurs="0" name="errorDetail" type="xsd:string"/>
-      
+            
       <xsd:element minOccurs="0" name="messageInErrorId" type="xsd:string"/>
-      
+            
       <xsd:element minOccurs="0" name="mshRole" type="tns:mshRole"/>
-      
+            
       <xsd:element minOccurs="0" name="notified" type="xsd:dateTime"/>
-      
+            
       <xsd:element minOccurs="0" name="timestamp" type="xsd:dateTime"/>
-      
+        
     </xsd:sequence>
     
   </xsd:complexType>
-  
-  
-  <xsd:complexType name="PayloadURLType">
+
     
+  <xsd:complexType name="PayloadURLType">
+        
     <xsd:simpleContent>
-      
+            
       <xsd:extension base="xsd:string">
-        
+                
         <xsd:attribute name="payloadId" type="xsd:token" use="required"/>
-        
+            
       </xsd:extension>
-      
+        
     </xsd:simpleContent>
     
   </xsd:complexType>
-  
-  
+
+    
   <xsd:simpleType name="messageStatus">
-    
+        
     <xsd:restriction base="xsd:string">
-      
+            
       <xsd:enumeration value="READY_TO_SEND"/>
-      
+            
       <xsd:enumeration value="READY_TO_PULL"/>
-      
+            
       <xsd:enumeration value="BEING_PULLED"/>
-      
+            
       <xsd:enumeration value="SEND_ENQUEUED"/>
-      
+            
       <xsd:enumeration value="SEND_IN_PROGRESS"/>
-      
+            
       <xsd:enumeration value="WAITING_FOR_RECEIPT"/>
-      
+            
       <xsd:enumeration value="ACKNOWLEDGED"/>
-      
+            
       <xsd:enumeration value="ACKNOWLEDGED_WITH_WARNING"/>
-      
+            
       <xsd:enumeration value="SEND_ATTEMPT_FAILED"/>
-      
+            
       <xsd:enumeration value="SEND_FAILURE"/>
-      
+            
       <xsd:enumeration value="NOT_FOUND"/>
-      
+            
       <xsd:enumeration value="WAITING_FOR_RETRY"/>
-      
+            
       <xsd:enumeration value="RECEIVED"/>
-      
+            
       <xsd:enumeration value="RECEIVED_WITH_WARNINGS"/>
-      
+            
       <xsd:enumeration value="DELETED"/>
-      
+            
       <xsd:enumeration value="DOWNLOADED"/>
-      
+        
     </xsd:restriction>
     
   </xsd:simpleType>
-  
-  
+
+    
   <xsd:simpleType name="errorCode">
-    
+        
     <xsd:restriction base="xsd:string">
-      
+            
       <xsd:enumeration value="EBMS_0001"/>
-      
+            
       <xsd:enumeration value="EBMS_0002"/>
-      
+            
       <xsd:enumeration value="EBMS_0003"/>
-      
+            
       <xsd:enumeration value="EBMS_0004"/>
-      
+            
       <xsd:enumeration value="EBMS_0005"/>
-      
+            
       <xsd:enumeration value="EBMS_0006"/>
-      
+            
       <xsd:enumeration value="EBMS_0007"/>
-      
+            
       <xsd:enumeration value="EBMS_0008"/>
-      
+            
       <xsd:enumeration value="EBMS_0009"/>
-      
+            
       <xsd:enumeration value="EBMS_0010"/>
-      
+            
       <xsd:enumeration value="EBMS_0011"/>
-      
+            
       <xsd:enumeration value="EBMS_0101"/>
-      
+            
       <xsd:enumeration value="EBMS_0102"/>
-      
+            
       <xsd:enumeration value="EBMS_0103"/>
-      
+            
       <xsd:enumeration value="EBMS_0201"/>
-      
+            
       <xsd:enumeration value="EBMS_0202"/>
-      
+            
       <xsd:enumeration value="EBMS_0301"/>
-      
+            
       <xsd:enumeration value="EBMS_0302"/>
-      
+            
       <xsd:enumeration value="EBMS_0303"/>
-      
+            
       <xsd:enumeration value="EBMS_0020"/>
-      
+            
       <xsd:enumeration value="EBMS_0021"/>
-      
+            
       <xsd:enumeration value="EBMS_0022"/>
-      
+            
       <xsd:enumeration value="EBMS_0023"/>
-      
+            
       <xsd:enumeration value="EBMS_0030"/>
-      
+            
       <xsd:enumeration value="EBMS_0031"/>
-      
+            
       <xsd:enumeration value="EBMS_0040"/>
-      
+            
       <xsd:enumeration value="EBMS_0041"/>
-      
+            
       <xsd:enumeration value="EBMS_0042"/>
-      
+            
       <xsd:enumeration value="EBMS_0043"/>
-      
+            
       <xsd:enumeration value="EBMS_0044"/>
-      
+            
       <xsd:enumeration value="EBMS_0045"/>
-      
+            
       <xsd:enumeration value="EBMS_0046"/>
-      
+            
       <xsd:enumeration value="EBMS_0047"/>
-      
+            
       <xsd:enumeration value="EBMS_0048"/>
-      
+            
       <xsd:enumeration value="EBMS_0049"/>
-      
+            
       <xsd:enumeration value="EBMS_0050"/>
-      
+            
       <xsd:enumeration value="EBMS_0051"/>
-      
+            
       <xsd:enumeration value="EBMS_0052"/>
-      
+            
       <xsd:enumeration value="EBMS_0053"/>
-      
+            
       <xsd:enumeration value="EBMS_0054"/>
-      
+            
       <xsd:enumeration value="EBMS_0055"/>
-      
+            
       <xsd:enumeration value="EBMS_0060"/>
-      
+            
       <xsd:enumeration value="EBMS_0065"/>
-      
+        
     </xsd:restriction>
     
   </xsd:simpleType>
-  
+    
   <xsd:simpleType name="mshRole">
-    
+        
     <xsd:restriction base="xsd:string">
-      
+            
       <xsd:enumeration value="SENDING"/>
-      
+            
       <xsd:enumeration value="RECEIVING"/>
-      
+        
     </xsd:restriction>
     
   </xsd:simpleType>
-  
-  <xsd:complexType final="#all" name="errorResultImplArray">
     
+  <xsd:complexType final="#all" name="errorResultImplArray">
+        
     <xsd:sequence>
-      
+            
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:errorResultImpl"/>
-      
+        
     </xsd:sequence>
     
   </xsd:complexType>
-  
+    
   <xsd:element name="getStatusRequest" nillable="true">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="statusRequest" nillable="true">
-    
-    <xsd:complexType>
-      
-      <xsd:sequence>
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
-  <!-- <xsd:element name="getMessageStatusResponse" nillable="true" type="tns:messageStatus"/>
-  
-  <xsd:element name="getStatusResponse" nillable="true" type="tns:messageStatus"/> -->
-  
-  <xsd:element name="getMessageStatusResponse" nillable="true" type="xsd:string"/>
-  
+    
+  <!-- <xsd:element name="getStatusResponse" nillable="true" type="tns:messageStatus"/> -->
   <xsd:element name="getStatusResponse" nillable="true" type="xsd:string"/>
-  
-  
-  <xsd:element name="getErrorsRequest" nillable="true">
     
-    <xsd:complexType>
-      
-      <xsd:sequence>
+  <xsd:element name="getErrorsRequest" nillable="true">
         
+    <xsd:complexType>
+            
+      <xsd:sequence>
+                
         <!-- <xsd:element name="messageID" type="tns:max255-non-empty-string"/> -->
         <xsd:element name="messageID" type="xsd:string"/>
-        
+            
       </xsd:sequence>
-      
+        
     </xsd:complexType>
     
   </xsd:element>
-  
+    
   <xsd:element name="getMessageErrorsResponse" nillable="true" type="tns:errorResultImplArray"/>
-  
+
 </xsd:schema>

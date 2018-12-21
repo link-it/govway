@@ -28,8 +28,8 @@
      all'interno della directory indicata nella proprietà 'org.openspcoop2.protocol.as4.securityPolicies.folder' del file 'as4_local.properties'.
      Default value:  /etc/govway/as4/securityPolicies
     
-2.3) Verificare che la policy 'eDeliveryPolicy' esista tra le policy di domibus.
-     Se non esiste crearla copiando il file che si trova nella directory 'securityPolicies/eDeliveryPolicy.xml'
+2.3) Verificare che la policy 'eDeliveryAS4Policy' esista tra le policy di domibus.
+     Se non esiste crearla copiando il file che si trova nella directory 'securityPolicies/eDeliveryAS4Policy.xml'
      in 'DOMIBUS_DIR/conf/domibus/policies'.
      La policy viene utilizzata dalle configurazioni di test
 

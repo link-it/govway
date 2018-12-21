@@ -43,18 +43,13 @@ public class CollectionModel extends AbstractModel<Collection> {
 		super();
 	
 		this.FAULT_DETAIL = new backend.ecodex.org._1_1.model.FaultDetailModel(new Field("FaultDetail",backend.ecodex.org._1_1.FaultDetail.class,"collection",Collection.class));
-		this.DOWNLOAD_MESSAGE_REQUEST = new backend.ecodex.org._1_1.model.DownloadMessageRequestModel(new Field("downloadMessageRequest",backend.ecodex.org._1_1.DownloadMessageRequest.class,"collection",Collection.class));
-		this.DOWNLOAD_MESSAGE_RESPONSE = new backend.ecodex.org._1_1.model.DownloadMessageResponseModel(new Field("downloadMessageResponse",backend.ecodex.org._1_1.DownloadMessageResponse.class,"collection",Collection.class));
 		this.RETRIEVE_MESSAGE_REQUEST = new backend.ecodex.org._1_1.model.RetrieveMessageRequestModel(new Field("retrieveMessageRequest",backend.ecodex.org._1_1.RetrieveMessageRequest.class,"collection",Collection.class));
 		this.RETRIEVE_MESSAGE_RESPONSE = new backend.ecodex.org._1_1.model.RetrieveMessageResponseModel(new Field("retrieveMessageResponse",backend.ecodex.org._1_1.RetrieveMessageResponse.class,"collection",Collection.class));
 		this.LIST_PENDING_MESSAGES_RESPONSE = new backend.ecodex.org._1_1.model.ListPendingMessagesResponseModel(new Field("listPendingMessagesResponse",backend.ecodex.org._1_1.ListPendingMessagesResponse.class,"collection",Collection.class));
 		this.MESSAGE_ERRORS_REQUEST = new backend.ecodex.org._1_1.model.MessageErrorsRequestModel(new Field("messageErrorsRequest",backend.ecodex.org._1_1.MessageErrorsRequest.class,"collection",Collection.class));
 		this.MESSAGE_STATUS_REQUEST = new backend.ecodex.org._1_1.model.MessageStatusRequestModel(new Field("messageStatusRequest",backend.ecodex.org._1_1.MessageStatusRequest.class,"collection",Collection.class));
-		this.SEND_REQUEST = new backend.ecodex.org._1_1.model.SendRequestModel(new Field("sendRequest",backend.ecodex.org._1_1.SendRequest.class,"collection",Collection.class));
 		this.SUBMIT_REQUEST = new backend.ecodex.org._1_1.model.SubmitRequestModel(new Field("submitRequest",backend.ecodex.org._1_1.SubmitRequest.class,"collection",Collection.class));
 		this.SUBMIT_RESPONSE = new backend.ecodex.org._1_1.model.SubmitResponseModel(new Field("submitResponse",backend.ecodex.org._1_1.SubmitResponse.class,"collection",Collection.class));
-		this.SEND_REQUEST_URL = new backend.ecodex.org._1_1.model.SendRequestURLModel(new Field("sendRequestURL",backend.ecodex.org._1_1.SendRequestURL.class,"collection",Collection.class));
-		this.SEND_RESPONSE = new backend.ecodex.org._1_1.model.SendResponseModel(new Field("sendResponse",backend.ecodex.org._1_1.SendResponse.class,"collection",Collection.class));
 		this.GET_STATUS_REQUEST = new backend.ecodex.org._1_1.model.GetStatusRequestModel(new Field("getStatusRequest",backend.ecodex.org._1_1.GetStatusRequest.class,"collection",Collection.class));
 		this.GET_ERRORS_REQUEST = new backend.ecodex.org._1_1.model.GetErrorsRequestModel(new Field("getErrorsRequest",backend.ecodex.org._1_1.GetErrorsRequest.class,"collection",Collection.class));
 		this.GET_MESSAGE_ERRORS_RESPONSE = new backend.ecodex.org._1_1.model.ErrorResultImplArrayModel(new Field("getMessageErrorsResponse",backend.ecodex.org._1_1.ErrorResultImplArray.class,"collection",Collection.class));
@@ -66,18 +61,13 @@ public class CollectionModel extends AbstractModel<Collection> {
 		super(father);
 	
 		this.FAULT_DETAIL = new backend.ecodex.org._1_1.model.FaultDetailModel(new ComplexField(father,"FaultDetail",backend.ecodex.org._1_1.FaultDetail.class,"collection",Collection.class));
-		this.DOWNLOAD_MESSAGE_REQUEST = new backend.ecodex.org._1_1.model.DownloadMessageRequestModel(new ComplexField(father,"downloadMessageRequest",backend.ecodex.org._1_1.DownloadMessageRequest.class,"collection",Collection.class));
-		this.DOWNLOAD_MESSAGE_RESPONSE = new backend.ecodex.org._1_1.model.DownloadMessageResponseModel(new ComplexField(father,"downloadMessageResponse",backend.ecodex.org._1_1.DownloadMessageResponse.class,"collection",Collection.class));
 		this.RETRIEVE_MESSAGE_REQUEST = new backend.ecodex.org._1_1.model.RetrieveMessageRequestModel(new ComplexField(father,"retrieveMessageRequest",backend.ecodex.org._1_1.RetrieveMessageRequest.class,"collection",Collection.class));
 		this.RETRIEVE_MESSAGE_RESPONSE = new backend.ecodex.org._1_1.model.RetrieveMessageResponseModel(new ComplexField(father,"retrieveMessageResponse",backend.ecodex.org._1_1.RetrieveMessageResponse.class,"collection",Collection.class));
 		this.LIST_PENDING_MESSAGES_RESPONSE = new backend.ecodex.org._1_1.model.ListPendingMessagesResponseModel(new ComplexField(father,"listPendingMessagesResponse",backend.ecodex.org._1_1.ListPendingMessagesResponse.class,"collection",Collection.class));
 		this.MESSAGE_ERRORS_REQUEST = new backend.ecodex.org._1_1.model.MessageErrorsRequestModel(new ComplexField(father,"messageErrorsRequest",backend.ecodex.org._1_1.MessageErrorsRequest.class,"collection",Collection.class));
 		this.MESSAGE_STATUS_REQUEST = new backend.ecodex.org._1_1.model.MessageStatusRequestModel(new ComplexField(father,"messageStatusRequest",backend.ecodex.org._1_1.MessageStatusRequest.class,"collection",Collection.class));
-		this.SEND_REQUEST = new backend.ecodex.org._1_1.model.SendRequestModel(new ComplexField(father,"sendRequest",backend.ecodex.org._1_1.SendRequest.class,"collection",Collection.class));
 		this.SUBMIT_REQUEST = new backend.ecodex.org._1_1.model.SubmitRequestModel(new ComplexField(father,"submitRequest",backend.ecodex.org._1_1.SubmitRequest.class,"collection",Collection.class));
 		this.SUBMIT_RESPONSE = new backend.ecodex.org._1_1.model.SubmitResponseModel(new ComplexField(father,"submitResponse",backend.ecodex.org._1_1.SubmitResponse.class,"collection",Collection.class));
-		this.SEND_REQUEST_URL = new backend.ecodex.org._1_1.model.SendRequestURLModel(new ComplexField(father,"sendRequestURL",backend.ecodex.org._1_1.SendRequestURL.class,"collection",Collection.class));
-		this.SEND_RESPONSE = new backend.ecodex.org._1_1.model.SendResponseModel(new ComplexField(father,"sendResponse",backend.ecodex.org._1_1.SendResponse.class,"collection",Collection.class));
 		this.GET_STATUS_REQUEST = new backend.ecodex.org._1_1.model.GetStatusRequestModel(new ComplexField(father,"getStatusRequest",backend.ecodex.org._1_1.GetStatusRequest.class,"collection",Collection.class));
 		this.GET_ERRORS_REQUEST = new backend.ecodex.org._1_1.model.GetErrorsRequestModel(new ComplexField(father,"getErrorsRequest",backend.ecodex.org._1_1.GetErrorsRequest.class,"collection",Collection.class));
 		this.GET_MESSAGE_ERRORS_RESPONSE = new backend.ecodex.org._1_1.model.ErrorResultImplArrayModel(new ComplexField(father,"getMessageErrorsResponse",backend.ecodex.org._1_1.ErrorResultImplArray.class,"collection",Collection.class));
@@ -87,10 +77,6 @@ public class CollectionModel extends AbstractModel<Collection> {
 	
 
 	public backend.ecodex.org._1_1.model.FaultDetailModel FAULT_DETAIL = null;
-	 
-	public backend.ecodex.org._1_1.model.DownloadMessageRequestModel DOWNLOAD_MESSAGE_REQUEST = null;
-	 
-	public backend.ecodex.org._1_1.model.DownloadMessageResponseModel DOWNLOAD_MESSAGE_RESPONSE = null;
 	 
 	public backend.ecodex.org._1_1.model.RetrieveMessageRequestModel RETRIEVE_MESSAGE_REQUEST = null;
 	 
@@ -102,15 +88,9 @@ public class CollectionModel extends AbstractModel<Collection> {
 	 
 	public backend.ecodex.org._1_1.model.MessageStatusRequestModel MESSAGE_STATUS_REQUEST = null;
 	 
-	public backend.ecodex.org._1_1.model.SendRequestModel SEND_REQUEST = null;
-	 
 	public backend.ecodex.org._1_1.model.SubmitRequestModel SUBMIT_REQUEST = null;
 	 
 	public backend.ecodex.org._1_1.model.SubmitResponseModel SUBMIT_RESPONSE = null;
-	 
-	public backend.ecodex.org._1_1.model.SendRequestURLModel SEND_REQUEST_URL = null;
-	 
-	public backend.ecodex.org._1_1.model.SendResponseModel SEND_RESPONSE = null;
 	 
 	public backend.ecodex.org._1_1.model.GetStatusRequestModel GET_STATUS_REQUEST = null;
 	 

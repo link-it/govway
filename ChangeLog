@@ -1,3 +1,9 @@
+2018-12-21  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloAS4]
+	Aggiunta funzionalità OP-802
+	Effettuato adeguamento software per compatibilità con versione 4 di domibus (https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/Domibus).
+
 2018-12-14  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.0.1

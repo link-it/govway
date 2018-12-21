@@ -3932,7 +3932,9 @@ public class ConsoleHelper {
 				
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 					
-					if((autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
+					if( !isSupportatoAutenticazione || 
+							(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
+							) {
 					
 						if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 							de = new DataElement();
@@ -3957,7 +3959,9 @@ public class ConsoleHelper {
 							dati.addElement(de);
 						}
 						
-						if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo)){
+						if(!isPortaDelegata && this.saCore.isSupportatoAutenticazioneApplicativiErogazione(protocollo) 
+								&& isSupportatoAutenticazione // il link degli applicativi sulla pa deve essere visualizzato SOLO se è abilitata l'autenticazione
+								){
 							if(urlAutorizzazioneErogazioneApplicativiAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 								de = new DataElement();
 								de.setType(DataElementType.LINK);

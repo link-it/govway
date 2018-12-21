@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/security/spring-security.xsd">
       
 	<!-- entry point per l'httpbasic per gestire il contenuto della response nel caso id utenza non autorizzata. -->
-	<b:bean id="basicAuthenticationEntryPoint" class="org.openspcoop2.utils.jaxrs.impl.BasicAuthenticationEntryPoint" >
+	<b:bean id="basicAuthenticationEntryPoint" class="org.openspcoop2.utils.jaxrs.impl.authentication.entrypoint.BasicAuthenticationEntryPoint" >
 		<b:property name="realname" value="GovWay API Monitor"/>
 	</b:bean>
 

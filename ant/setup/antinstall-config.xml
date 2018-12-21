@@ -342,7 +342,25 @@
 
     </page>
 
-    <page name="preinstallazioneEDelivery" type="input" displayText="Configurazione eDelivery" ifProperty="${antinstaller_protocollo_as4}==true">
+    <page name="preinstallazioneEDelivery" type="input" displayText="Configurazione Profilo eDelivery (1/3)" ifProperty="${antinstaller_protocollo_as4}==true">
+
+	<comment displayText="Domibus v4.x" bold="true"/>  
+      
+	<comment displayText=""/>
+	<large-select defaultValue="wildfly12" property="antinstaller_as4_as" displayText="Application Server">
+            <option value="tomcat" text="tomcat"/>
+            <option value="wildfly12" text="wildfly12"/>
+        </large-select>
+
+	<comment displayText=""/>
+       <large-select defaultValue="mysql" property="antinstaller_as4_tipo_database" displayText="DBMS">
+            <option value="mysql" text="MySQL"/>
+            <option value="oracle" text="Oracle"/>
+        </large-select>
+
+    </page>
+
+    <page name="preinstallazioneEDelivery2a" type="input" displayText="Configurazione Profilo eDelivery (2/3)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_as}==tomcat)">
 
 	<comment displayText="HTTP Endpoint" bold="true"/>
 	<validated defaultValue="http://localhost:8080/domibus/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
@@ -353,16 +371,24 @@
 	<validated defaultValue="admin" property="antinstaller_as4_jms_username" displayText="Username" regex="^[^ ]+$" />
 	<validated defaultValue="123456" property="antinstaller_as4_jms_password" displayText="Password" regex="^[^ ]+$" />
 
-        <comment displayText="DBMS" bold="true"/>
-	<large-select defaultValue="mysql" property="antinstaller_as4_tipo_database" displayText="Tipo">
-            <option value="mysql" text="MySQL"/>
-            <option value="oracle" text="Oracle"/>
-        </large-select>
+    </page>
+
+    <page name="preinstallazioneEDelivery2b" type="input" displayText="Configurazione Profilo eDelivery (2/3)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_as}==wildfly12)">
+
+	<comment displayText="HTTP Endpoint" bold="true"/>
+	<validated defaultValue="http://localhost:8080/domibus-wildfly/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+	<validated defaultValue="http://localhost:8080/domibus-wildfly/services/backend" property="antinstaller_as4_backend" displayText="Domibus Backend WS URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+
+	<comment displayText="Broker JMS" bold="true"/>
+	<validated defaultValue="http-remoting://127.0.0.1:8080" property="antinstaller_as4_jms_url" displayText="Provider URL" regex="(.+):\/\/(.+)"/>
+	<validated defaultValue="domibus" property="antinstaller_as4_jms_username" displayText="Username" regex="^[^ ]+$" />
+	<validated defaultValue="domibus" property="antinstaller_as4_jms_password" displayText="Password" regex="^[^ ]+$" />
 
     </page>
 
-<page name="infoDB_EDelivery_oracle" type="input" displayText="Configurazione eDelivery (DBMS)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}==oracle)">
-        <validated defaultValue="127.0.0.1" property="antinstaller_as4_dbhost" displayText="Hostname"
+    <page name="infoDB_EDelivery_oracle" type="input" displayText="Configurazione Profilo eDelivery (3/3)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}==oracle)">
+	<comment displayText="DBMS" bold="true"/>        
+	<validated defaultValue="127.0.0.1" property="antinstaller_as4_dbhost" displayText="Hostname"
             regex=".+"/>
         <hidden property="porta-db_as4" value="1521"/>
         <hidden property="TABLESPACE_as4" value="XE"/>
@@ -384,7 +410,7 @@
 
     </page>
 
- <page name="infoDB_EDelivery_notOracle" type="input" displayText="Configurazione eDelivery (DBMS)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}!=oracle)">
+ <page name="infoDB_EDelivery_notOracle" type="input" displayText="Configurazione Profilo eDelivery (3/3)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}!=oracle)">
         <validated defaultValue="127.0.0.1" property="antinstaller_as4_dbhost" displayText="Hostname"
             regex=".+"/>
         <conditional ifProperty="${antinstaller_as4_tipo_database}=mysql">

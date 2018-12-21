@@ -115,9 +115,11 @@ public class TranslatorPropertiesDefault {
 			}
 			else {
 				if(this.propertyDefault==null) {
+					//System.out.println("================ getPropertyDefault ==================");
 					Map<String, Object> map = new HashMap<String, Object>();
 					StringWriter writer = new StringWriter();
 					this.templatePropertyDefault.process(map, writer);
+					//System.out.println("LETTO: "+writer.toString());
 					return writer.toString();
 				}
 				else {
@@ -144,11 +146,15 @@ public class TranslatorPropertiesDefault {
 					String finalString = bf.toString();
 					if(finalString!=null && !"".equals(finalString)) {
 						String sWithNamespace = finalString.replace("<property>", 
-								"<property xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+								"<ns:property xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<property ", 
-								"<property xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+								"<ns:property xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+						sWithNamespace = sWithNamespace.replace("</property","</ns:property"); 
+						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						Property p = deserializer.readProperty(sWithNamespace.getBytes());
+						//System.out.println("Test ["+p.getName()+"] ValueNotNull["+p.getValue()!=null+"]");
 						list.add(p);
 					}
 					bf = new StringBuffer();
@@ -166,9 +172,11 @@ public class TranslatorPropertiesDefault {
 	public String getPropertySetDefault() throws ProtocolException {
 		try {
 			if(this.payloadPropertySetDefault==null) {
+				//System.out.println("================ getPropertySetDefault ==================");
 				Map<String, Object> map = new HashMap<String, Object>();
 				StringWriter writer = new StringWriter();
 				this.templatePropertySetDefault.process(map, writer);
+				//System.out.println("LETTO: "+writer.toString());
 				return writer.toString();
 			}
 			else {
@@ -195,11 +203,15 @@ public class TranslatorPropertiesDefault {
 					String finalString = bf.toString();
 					if(finalString!=null && !"".equals(finalString)) {
 						String sWithNamespace = 
-								finalString.replace("<propertySet>", "<propertySet xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
+								finalString.replace("<propertySet>", "<ns:propertySet xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<propertySet ", 
-								"<propertySet xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+								"<ns:propertySet xmlns:ns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
+						sWithNamespace = sWithNamespace.replace("</propertySet","</ns:propertySet"); 
+						//System.out.println("Deserializzo ["+sWithNamespace+"]");
+						
 						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						PropertySet p = deserializer.readPropertySet(sWithNamespace.getBytes());
+						//System.out.println("Test ["+p.getName()+"] size["+p.getPropertyRefList().size()+"]");
 						list.add(p);
 					}
 					bf = new StringBuffer();

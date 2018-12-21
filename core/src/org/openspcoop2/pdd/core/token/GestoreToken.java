@@ -445,6 +445,21 @@ public class GestoreToken {
     						esitoPresenzaToken.setPropertyFormBased(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
     					}
     				}
+    				else if(FormUrlEncodedHttpServletRequest.isFormUrlEncodedRequest(httpServletRequest)) {
+    					token = httpServletRequest.getParameter(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					if(token==null) {
+    						token = httpServletRequest.getParameter(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN.toLowerCase());
+    					}
+    					if(token==null) {
+    						token = httpServletRequest.getParameter(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN.toUpperCase());
+    					}
+    					if(token==null) {
+    						detailsErrorForm = "Non è stato riscontrata la proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"' contenente il token";
+    					}
+    					else {
+    						esitoPresenzaToken.setPropertyFormBased(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
+    					}
+    				}
     				else {
     					detailsErrorForm = "Non è stato riscontrata la presenza di un contenuto 'Form-Encoded'";
     				}

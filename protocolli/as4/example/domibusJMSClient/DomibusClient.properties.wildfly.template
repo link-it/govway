@@ -1,0 +1,30 @@
+# JNDI Env
+#as4.jndi.<name>=value
+as4.jndi.java.naming.factory.initial=org.jboss.naming.remote.client.InitialContextFactory
+
+# ConnectionFactory
+# Nel caso sia avviato l'application server con 0.0.0.0 aggiungere in etc hosts la risoluzione dell'host indicato nel provider url
+as4.connectionFactory=jms/RemoteConnectionFactory
+
+# Credenziali
+as4.username=domibus
+as4.password=domibus
+
+# ConsumeMessages
+as4.consumeMessage=false
+
+
+# ---- Receive Message ----
+as4.tipoOperazione=receive
+# URLBroker JMS
+as4.jndi.java.naming.provider.url=http-remoting://BLUE:8080
+# Nome Coda JMS
+as4.queue=domibus.backend.jms.outQueue
+
+
+# ---- Receive Ack ----
+#as4.tipoOperazione=ack
+# URLBroker JMS
+#as4.jndi.java.naming.provider.url=http-remoting://RED:8080
+# Nome Coda JMS
+#as4.queue=domibus.notification.webservice

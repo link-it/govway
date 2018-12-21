@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -187,6 +188,46 @@ public class PModeRegistryReader {
 				if(listServizi!=null && listServizi.size()>0) {
 					for (IDServizio idServizio : listServizi) {
 						AccordoServizioParteSpecifica asps = this.registryReader.getAccordoServizioParteSpecifica(idServizio);
+						
+						// aggiungo fruitori letti dalla PA se sono una erogazione
+						try{
+							FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
+							filtroPA.setTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
+							filtroPA.setNomeSoggetto(idServizio.getSoggettoErogatore().getNome());
+							filtroPA.setTipoServizio(idServizio.getTipo());
+							filtroPA.setNomeServizio(idServizio.getNome());
+							filtroPA.setVersioneServizio(idServizio.getVersione());
+							List<IDPortaApplicativa> idPA = this.configIntergrationReader.findIdPorteApplicative(filtroPA);
+							if(idPA!=null && idPA.size()>0) {
+								for (IDPortaApplicativa pa : idPA) {
+									PortaApplicativa porta = this.configIntergrationReader.getPortaApplicativa(pa);
+									if(porta.getSoggetti()!=null && porta.getSoggetti().sizeSoggettoList()>0) {
+										for (PortaApplicativaAutorizzazioneSoggetto paSoggetto : porta.getSoggetti().getSoggettoList()) {
+											String tipoSoggetto = paSoggetto.getTipo();
+											String nomeSoggetto = paSoggetto.getNome();
+											boolean found = false;
+											if(asps.sizeFruitoreList()>0) {
+												for (Fruitore fruitore : asps.getFruitoreList()) {
+													if(fruitore.getTipo().equals(tipoSoggetto) &&
+															fruitore.getNome().equals(nomeSoggetto)) {
+														found = true;
+														break;
+													}
+												}
+											}
+											if(!found) {
+												Fruitore fruitore = new Fruitore();
+												fruitore.setTipo(tipoSoggetto);
+												fruitore.setNome(nomeSoggetto);
+												asps.addFruitore(fruitore);
+											}
+										}
+									}
+								}
+							}
+						}catch(RegistryNotFound notFound) {}
+						
+						
 						soggetto.addAccordoServizioParteSpecifica(asps);
 					}
 				}

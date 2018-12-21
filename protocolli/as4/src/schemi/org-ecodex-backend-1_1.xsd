@@ -37,39 +37,6 @@
   </xsd:element>
 
     
-  <xsd:element name="downloadMessageRequest">
-        
-    <xsd:complexType>
-            
-      <xsd:sequence>
-                
-        <xsd:element name="messageID" nillable="true" type="tns:max255-non-empty-string"/>
-            
-      </xsd:sequence>
-        
-    </xsd:complexType>
-    
-  </xsd:element>
-
-    
-  <xsd:element name="downloadMessageResponse">
-        
-    <xsd:complexType>
-            
-      <xsd:sequence>
-                
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
-                
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" type="tns:PayloadType"/>
-                
-        <xsd:any minOccurs="0"/> <!-- Introduced to support validation and MTOM/XOP -->
-            
-      </xsd:sequence>
-        
-    </xsd:complexType>
-    
-  </xsd:element>
-    
   <xsd:element name="retrieveMessageRequest">
         
     <xsd:complexType>
@@ -145,22 +112,6 @@
     </xsd:complexType>
     
   </xsd:element>
-    
-  <xsd:element name="sendRequest">
-        
-    <xsd:complexType>
-            
-      <xsd:sequence>
-                
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
-                
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:PayloadType"/>
-            
-      </xsd:sequence>
-        
-    </xsd:complexType>
-    
-  </xsd:element>
 
     
   <xsd:element name="submitRequest">
@@ -168,8 +119,6 @@
     <xsd:complexType>
             
       <xsd:sequence>
-                
-        <xsd:element minOccurs="0" name="bodyload" type="tns:LargePayloadType"/>
                 
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:LargePayloadType"/>
             
@@ -192,39 +141,6 @@
     </xsd:complexType>
     
   </xsd:element>
-
-    
-  <xsd:element name="sendRequestURL">
-        
-    <xsd:complexType>
-            
-      <xsd:sequence>
-                
-        <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadURLType"/>
-                
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="payload" nillable="true" type="tns:PayloadURLType"/>
-            
-      </xsd:sequence>
-        
-    </xsd:complexType>
-    
-  </xsd:element>
-
-    
-  <xsd:element name="sendResponse">
-        
-    <xsd:complexType>
-            
-      <xsd:sequence>
-                
-        <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
-            
-      </xsd:sequence>
-        
-    </xsd:complexType>
-    
-  </xsd:element>
-
 
     
   <xsd:complexType name="PayloadType">
@@ -477,8 +393,6 @@
     </xsd:complexType>
     
   </xsd:element>
-    
-  <xsd:element name="getMessageStatusResponse" nillable="true" type="tns:messageStatus"/>
     
   <xsd:element name="getStatusResponse" nillable="true" type="tns:messageStatus"/>
     

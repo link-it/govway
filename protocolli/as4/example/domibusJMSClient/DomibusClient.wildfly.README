@@ -1,0 +1,52 @@
+1) Creazione di una utenza
+
+In wildfly è obbligatoria l'autenticazione per accedere alle code.
+Di seguito vengono fornite le indicazioni.
+
+E' necessario creare un application user:
+Also you need to create a user for “Application User” using the “/AS_DIR/bin/add-user.sh” which would be used for getting the connection with the JBoss on remote box
+
+Fornire anche un ruolo (o group), es. 'domibus' poi da personalizzare nel file di configurazione in standalone/configuration/standalone-full.xml
+
+NOTA: nel file di properties, per default, è indicata una utenza 'domibus', password 'domibus' e gruppo 'domibus'
+
+L'application user viene creato nei files:
+Added user 'openspcoop2' to file 'jboss-as-7.x/standalone/configuration/application-users.properties'
+Added user 'openspcoop2' to file 'jboss-as-7.x/domain/configuration/application-users.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/standalone/configuration/application-roles.properties'
+Added user 'openspcoop2' with roles testrole to file 'jboss-as-7.x/domain/configuration/application-roles.properties'
+
+
+2) Associazione dei permessi all'utenza
+
+Nel file standalone/configuration/standalone-full.xml aggiungere il ruolo ai vari permessi:
+
+<subsystem xmlns="urn:jboss:domain:messaging-activemq:1.x">
+    <server name="default">
+        <security-setting name="#">
+             <role name="guest" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+             <role name="domibus" send="true" consume="true" create-non-durable-queue="true" delete-non-durable-queue="true"/>
+        </security-setting>
+        ...
+    </server>
+</subsystem>
+
+3) Rendere accessibili da remoto le code:
+
+Nel file standalone/configuration/standalone-full.xml modificare le seguenti due code aggiungendo il nome jndi con il prefisso 'java:jboss/exported/':
+
+<jms-queue name="DomibusBusinessMessageOutQueue" entries="java:jboss/exported/domibus.backend.jms.outQueue java:/jms/domibus.backend.jms.outQueue java:/jms/queue/DomibusBusinessMessageOutQueue" durable="true"/>
+...
+<jms-queue name="DomibusNotifyBackendWebServiceQueue" entries="java:jboss/exported/domibus.notification.webservice java:/jms/domibus.notification.webservice java:/jms/queue/DomibusNotifyBackendWebServiceQueue" durable="true"/>
+...
+
+4) Note Finali
+
+!! NOTA !!: in wildfly non avviare il server con binding su 0.0.0.0, altrimenti la connessione remota non funziona e si ottiene l'errore:
+Caused by: HornetQNotConnectedException[errorType=NOT_CONNECTED message=HQ119007: Cannot connect to server(s). Tried with all available servers.]
+Se non si vuole fare il binding su localhost, indicare esattamente l'indirizzo ip della macchina.
+
+Per avviare l'as su di un particolare binding usare -Djboss.bind.address=10.10.10.10
+
+Oppure aggiungere in etc hosts la risoluzione dell'host indicato nel provider url (verso broker remoti funziona)
+

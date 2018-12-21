@@ -57,13 +57,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SendResponse }
-     */
-    public SendResponse createSendResponse() {
-        return new SendResponse();
-    }
-
-    /**
      * Create an instance of {@link GetStatusRequest }
      */
     public GetStatusRequest createGetStatusRequest() {
@@ -89,20 +82,6 @@ public class ObjectFactory {
      */
     public FaultDetail createFaultDetail() {
         return new FaultDetail();
-    }
-
-    /**
-     * Create an instance of {@link DownloadMessageRequest }
-     */
-    public DownloadMessageRequest createDownloadMessageRequest() {
-        return new DownloadMessageRequest();
-    }
-
-    /**
-     * Create an instance of {@link DownloadMessageResponse }
-     */
-    public DownloadMessageResponse createDownloadMessageResponse() {
-        return new DownloadMessageResponse();
     }
 
     /**
@@ -155,13 +134,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SendRequestURL }
-     */
-    public SendRequestURL createSendRequestURL() {
-        return new SendRequestURL();
-    }
-
-    /**
      * Create an instance of {@link SubmitResponse }
      */
     public SubmitResponse createSubmitResponse() {
@@ -187,13 +159,6 @@ public class ObjectFactory {
      */
     public PayloadURLType createPayloadURLType() {
         return new PayloadURLType();
-    }
-
-    /**
-     * Create an instance of {@link SendRequest }
-     */
-    public SendRequest createSendRequest() {
-        return new SendRequest();
     }
 
     /**

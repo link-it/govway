@@ -42,7 +42,6 @@ public class SubmitRequestModel extends AbstractModel<SubmitRequest> {
 	
 		super();
 	
-		this.BODYLOAD = new backend.ecodex.org._1_1.model.LargePayloadTypeModel(new Field("bodyload",backend.ecodex.org._1_1.LargePayloadType.class,"submitRequest",SubmitRequest.class));
 		this.PAYLOAD = new backend.ecodex.org._1_1.model.LargePayloadTypeModel(new Field("payload",backend.ecodex.org._1_1.LargePayloadType.class,"submitRequest",SubmitRequest.class));
 	
 	}
@@ -51,15 +50,12 @@ public class SubmitRequestModel extends AbstractModel<SubmitRequest> {
 	
 		super(father);
 	
-		this.BODYLOAD = new backend.ecodex.org._1_1.model.LargePayloadTypeModel(new ComplexField(father,"bodyload",backend.ecodex.org._1_1.LargePayloadType.class,"submitRequest",SubmitRequest.class));
 		this.PAYLOAD = new backend.ecodex.org._1_1.model.LargePayloadTypeModel(new ComplexField(father,"payload",backend.ecodex.org._1_1.LargePayloadType.class,"submitRequest",SubmitRequest.class));
 	
 	}
 	
 	
 
-	public backend.ecodex.org._1_1.model.LargePayloadTypeModel BODYLOAD = null;
-	 
 	public backend.ecodex.org._1_1.model.LargePayloadTypeModel PAYLOAD = null;
 	 
 

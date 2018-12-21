@@ -37,8 +37,15 @@
 		<!-- inizializza directory jarsDir (se non esiste) -->
 		<var name="jarsDir" value="${deploy_sw}/jars" />
 		<mkdir dir="${jarsDir}" />
-		<copy todir="${jarsDir}">
-			<fileset dir="${jms_lib_as4}">
+		<mkdir dir="${jarsDir}/domibus_tomcat" />
+		<mkdir dir="${jarsDir}/domibus_wildfly12" />
+		<copy todir="${jarsDir}/domibus_tomcat">
+			<fileset dir="${jms_lib_as4}/tomcat">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${jarsDir}/domibus_wildfly12">
+			<fileset dir="${jms_lib_as4}/wildfly12">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
@@ -47,7 +54,8 @@
 
 		<mkdir dir="${deploy_resources}/protocolli"/>
 		<mkdir dir="${deploy_resources}/protocolli/as4"/>
-		<copy file="${as4}/deploy/resources/properties/as4_local.properties_minimal" tofile="${deploy_resources}/protocolli/as4/as4_local.properties"/>
+		<copy file="${as4}/deploy/resources/properties/as4_local.properties_tomcat_minimal" tofile="${deploy_resources}/protocolli/as4/as4_local.properties.tomcat"/>
+		<copy file="${as4}/deploy/resources/properties/as4_local.properties_wildfly12_minimal" tofile="${deploy_resources}/protocolli/as4/as4_local.properties.wildfly12"/>
 		<mkdir dir="${deploy_resources}/protocolli/as4/securityPolicies"/>
 		<copy todir="${deploy_resources}/protocolli/as4/securityPolicies">
 			<fileset dir="${as4}/deploy/resources/securityPolicies"/>

@@ -1,0 +1,38 @@
+# -------- Domibus Configuration -----
+
+# SecurityPolicy Folder
+org.openspcoop2.protocol.as4.securityPolicies.folder=WORK_DIR/as4/securityPolicies
+# org.openspcoop2.protocol.as4.securityPolicies.folder=DOMIBUS_DIR/conf/domibus/policies
+
+
+
+# --- Comunicazione HTTP verso Gateway -----
+
+# Configurazione dell'indirizzamento verso il domibusGateway
+org.openspcoop2.protocol.as4.domibusGateway.config.default.url=http://DOMIBUS-HOST:8080/domibus/services/backend
+
+
+
+# --- Comunicazione JMS verso Broker -----
+
+# JNDI
+org.openspcoop2.protocol.as4.domibusJms.jndi.java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory
+org.openspcoop2.protocol.as4.domibusJms.jndi.queue.messages=domibus.backend.jms.outQueue
+org.openspcoop2.protocol.as4.domibusJms.jndi.queue.acks=domibus.notification.webservice
+
+# URLBroker JMS
+org.openspcoop2.protocol.as4.domibusJms.jndi.java.naming.provider.url=tcp://DOMIBUS-HOST:61616
+
+# ConnectionFactory
+org.openspcoop2.protocol.as4.domibusJms.connectionFactory=ConnectionFactory
+
+# Credenziali
+org.openspcoop2.protocol.as4.domibusJms.username=admin
+org.openspcoop2.protocol.as4.domibusJms.password=123456
+
+# Nome Coda JMS per i messaggi ricevuti quando si assume il ruolo 'Receiver'
+org.openspcoop2.protocol.as4.domibusJms.queue.receiver=messages
+
+# Nome Coda JMS per gli ack ricevuti quando si assume il ruolo 'Sender'
+org.openspcoop2.protocol.as4.domibusJms.queue.sender=acks
+

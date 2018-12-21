@@ -155,6 +155,10 @@ textarea.inputLinkLong {
 	color: ${input.color};
 }
 
+div.txtA_div {
+	margin-left: 232px;
+}
+
 .spacer {
 	width: 100%;
 	height: 1px;

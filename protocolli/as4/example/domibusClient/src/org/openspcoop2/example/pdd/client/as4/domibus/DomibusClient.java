@@ -35,11 +35,9 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
-import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageRequest;
-import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageResponse;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ErrorResultImpl;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ErrorResultImplArray;
-import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetStatusRequest;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.StatusRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetErrorsRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ListPendingMessagesResponse;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
@@ -165,53 +163,7 @@ public class DomibusClient {
 				
 			}
 			
-			else if(comando.equals("downloadMessage")){
-				
-				// DEPRECATO
-				
-				DownloadMessageRequest msgRequest = new DownloadMessageRequest();
-				msgRequest.setMessageID(msgID);
-				
-				// DownloadMessageResponse msgRespone = new
-				Holder<DownloadMessageResponse> msgRespone = new Holder<DownloadMessageResponse>();
-				Holder<Messaging> headerResponse = new Holder<Messaging>();
-				
-				domibusPort.downloadMessage(msgRequest, msgRespone, headerResponse);
-				
-				if(msgRespone.value==null){
-					System.out.println("Invocazione fallita: nessuna oggetto ritornato");
-				}
-				if(headerResponse.value==null){
-					System.out.println("Invocazione fallita: nessuna informazione as4 sull'oggetto ritornata");
-				}
-				
-				UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
-				System.out.println("Header: \n"+msg.toXml());
-				System.out.println("\n\n");
-				if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
-					System.out.println("Nessun payload associato al messaggio");
-				}
-				else{
-					System.out.println("Invocazione effettuata: trovati "+msgRespone.value.getPayload().size()+" payload");
-					String payloadName = "payload";
-					for (int i = 0; i < msgRespone.value.getPayload().size(); i++) {
-						String ext = "bin";
-						if(msgRespone.value.getPayload().get(i).getContentType()!=null){
-							String baseType = ContentTypeUtilities.readBaseTypeFromContentType(msgRespone.value.getPayload().get(i).getContentType());
-							ext = MimeTypes.getInstance().getExtension(baseType);
-						}
-						File f = new File(payloadName+(i+1)+"."+ext);
-						FileSystemUtilities.writeFile(f, msgRespone.value.getPayload().get(i).getValue());
-						System.out.println("Payload["+i+"] contentType["+msgRespone.value.getPayload().get(i).getContentType()+"] id["
-								+msgRespone.value.getPayload().get(i).getPayloadId()+"] savedTo["+f.getName()+"]");
-					}
-				}
-
-			}
-			
 			else if(comando.equals("retrieveMessage")){
-				
-				// DEPRECATO
 				
 				RetrieveMessageRequest msgRequest = new RetrieveMessageRequest();
 				msgRequest.setMessageID(msgID);
@@ -254,12 +206,12 @@ public class DomibusClient {
 
 			}
 			
-			else if(comando.equals("getMessageStatus")){
+			else if(comando.equals("getStatus")){
 				
-				GetStatusRequest getStatusRequest = new GetStatusRequest();
+				StatusRequest getStatusRequest = new StatusRequest();
 				getStatusRequest.setMessageID(msgID);
 				
-				MessageStatus status = domibusPort.getMessageStatus(getStatusRequest);
+				MessageStatus status = domibusPort.getStatus(getStatusRequest);
 				if(status==null){
 					System.out.println("Nessun stato trovato per il messaggio");
 				}

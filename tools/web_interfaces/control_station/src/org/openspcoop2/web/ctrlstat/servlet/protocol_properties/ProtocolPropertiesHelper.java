@@ -377,7 +377,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		String statoPackage = this.getStatoOggettoProprietario(idProprietario, nomeProprietario, nomeParentProprietario, tipoProprietario, tipoAccordo);
 
 		// solo per le properties con stato finale blocco l'edit
-		if(statoPackage != null && StatiAccordo.finale.toString().equals(statoPackage)) {
+		if(this.isShowGestioneWorkflowStatoDocumenti() && statoPackage != null && StatiAccordo.finale.toString().equals(statoPackage)) {
 			this.pd.disableEditMode();
 			
 			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
@@ -401,7 +401,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setValue(contenutoDocumentoStringBuffer.toString());
 					de.setRows(30);
-					de.setCols(110);
+					de.setCols(100);
 					dati.addElement(de);
 				}
 			}else {
@@ -459,7 +459,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setValue(contenutoDocumentoStringBuffer.toString());
 					de.setRows(30);
-					de.setCols(110);
+					de.setCols(100);
 					dati.addElement(de);
 				}
 	

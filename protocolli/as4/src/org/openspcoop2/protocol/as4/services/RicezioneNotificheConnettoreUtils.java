@@ -33,10 +33,17 @@ import java.util.Properties;
 import javax.jms.TextMessage;
 import javax.sql.DataSource;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.generic_project.beans.UpdateField;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.pdd.logger.TracciamentoOpenSPCoopAppenderDB;
@@ -63,10 +70,19 @@ import org.openspcoop2.utils.threads.RunnableLogger;
 public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 
 	private AS4Properties properties;
+	private DAOFactory daoFactory;
+	private ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni;
 	
-	public RicezioneNotificheConnettoreUtils(RunnableLogger log, AS4Properties properties) {
+	public RicezioneNotificheConnettoreUtils(RunnableLogger log, AS4Properties properties) throws Exception {
 		super(log);
 		this.properties = properties;
+		
+		this.daoFactory = DAOFactory.getInstance(log.getLog());
+		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(log.getLog());
+		this.daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
+		boolean debug = true;
+		this.daoFactoryServiceManagerPropertiesTransazioni.setShowSql(debug);	
+		this.daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
 	}
 	
 	
@@ -212,6 +228,10 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 									traccia.getBusta().getTipoOraRegistrazioneValue());
 							bustaRicevuta.setID(ricevuta.id);
 							bustaRicevuta.setRiferimentoMessaggio(traccia.getBusta().getID());
+							bustaRicevuta.setTipoServizio(traccia.getBusta().getTipoServizio());
+							bustaRicevuta.setServizio(traccia.getBusta().getServizio());
+							bustaRicevuta.setVersioneServizio(traccia.getBusta().getVersioneServizio());
+							bustaRicevuta.setAzione(traccia.getBusta().getAzione());
 							
 							Riscontro r = new Riscontro();
 							r.setTipoOraRegistrazione(traccia.getBusta().getTipoOraRegistrazione());
@@ -235,7 +255,20 @@ public class RicezioneNotificheConnettoreUtils extends BaseConnettoreUtils {
 							
 							appender.log(connection, tracciaRisposta);
 							
-							this.log.debug("Creata traccia con riscontro con id '"+bustaRicevuta.getID()+"' come risposta alla traccia con id long '"+id+"' e id '"+traccia.getBusta().getID()+"'");
+							this.log.info("Creata traccia con riscontro con id '"+bustaRicevuta.getID()+"' come risposta alla traccia con id long '"+id+"' e id '"+traccia.getBusta().getID()+"'");
+							
+
+
+							org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
+									(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+											connection, true,
+											this.daoFactoryServiceManagerPropertiesTransazioni, this.log.getLog());
+							ITransazioneService transazioneService = jdbcServiceManager.getTransazioneService();
+							UpdateField updateField = new UpdateField(Transazione.model().ID_MESSAGGIO_RISPOSTA, bustaRicevuta.getID());
+							transazioneService.updateFields(idTransazione, updateField);
+							
+							this.log.info("Aggiornata transazione con id '"+idTransazione+"' per indicare l'id di risposta '"+bustaRicevuta.getID()+"' come risposta alla traccia con id long '"+id+"' e id '"+traccia.getBusta().getID()+"'");
+							
 						}
 					}
 				}

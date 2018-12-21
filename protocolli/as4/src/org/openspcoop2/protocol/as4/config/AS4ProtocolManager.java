@@ -44,7 +44,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
-import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetStatusRequest;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.StatusRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
 import org.openspcoop2.protocol.basic.config.BasicManager;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -59,7 +59,7 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
-import backend.ecodex.org._1_1.SendResponse;
+import backend.ecodex.org._1_1.SubmitResponse;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolManager} 
@@ -105,13 +105,13 @@ public class AS4ProtocolManager extends BasicManager {
 						Node n = list.get(0);
 						// provo a vedere se si tratta di una risposta
 						if(backend.ecodex.org._1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(n.getNamespaceURI()) &&
-								"sendResponse".equals(n.getLocalName())) {
+								"submitResponse".equals(n.getLocalName())) {
 							
 							// recupero id
 							backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer deserializer = new backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer();
 							byte[]b=XMLUtils.getInstance().toByteArray(n);
-							SendResponse sendResponse = deserializer.readSendResponse(b);
-							String responseId = sendResponse.getMessageIDList().get(0);
+							SubmitResponse submitResponse = deserializer.readSubmitResponse(b);
+							String responseId = submitResponse.getMessageIDList().get(0);
 							busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, responseId);
 							
 							// recupero stato
@@ -135,13 +135,13 @@ public class AS4ProtocolManager extends BasicManager {
 							BindingProvider imProviderMessageBox = (BindingProvider)domibusPort;
 							imProviderMessageBox.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
 
-							GetStatusRequest statusReq = new GetStatusRequest();
+							StatusRequest statusReq = new StatusRequest();
 							statusReq.setMessageID(responseId);
-							MessageStatus stat = domibusPort.getMessageStatus(statusReq);
+							MessageStatus stat = domibusPort.getStatus(statusReq);
 							int index = 10;
 							while( (stat==null) && index<10) {
 								Utilities.sleep(1000);
-								stat = domibusPort.getMessageStatus(statusReq);
+								stat = domibusPort.getStatus(statusReq);
 							}
 							if(stat==null) {
 								ProtocolException pe = new ProtocolException("Fallito recupero da Domibus dello stato del messaggio spedito con id '"+responseId+"'");

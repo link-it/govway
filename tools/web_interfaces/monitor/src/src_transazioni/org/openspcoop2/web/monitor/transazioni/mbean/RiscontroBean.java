@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.BlackListElement;
 
@@ -97,6 +98,18 @@ public class RiscontroBean extends Riscontro {
 			return this.getTipoOraRegistrazione().getEngineValue();
 		} else 
 			return null;
+	}
+	
+	public String getPrettyRicevuta() {
+		String toRet = null;
+		
+		if(this.getRicevuta()!=null)
+			toRet = Utils.prettifyXml(this.getRicevuta());
+		
+		if(toRet == null)
+			toRet = this.getRicevuta() != null ? this.getRicevuta() : "";
+			
+		return toRet;
 	}
 
 

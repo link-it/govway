@@ -31,6 +31,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+
 
 /**
  * FormUrlEncodedFilter
@@ -57,7 +59,15 @@ public class FormUrlEncodedFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
-		if(req instanceof HttpServletRequest) {
+		
+		boolean doFilter = false;
+		try {
+			OpenSPCoop2Properties op2PropertieS = OpenSPCoop2Properties.getInstance();
+			doFilter = op2PropertieS.isFormUrlEncodedFilterEnabled();
+		}catch(Throwable t) {}
+		
+		
+		if(doFilter && req instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) req;
 			if(FormUrlEncodedHttpServletRequest.isFormUrlEncodedRequest(httpServletRequest)) {
 				req = FormUrlEncodedHttpServletRequest.convert(httpServletRequest);

@@ -109,8 +109,12 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 		try {
 			
 			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-			IProtocolFactory<?> pfEmptyContext = protocolFactoryManager.getProtocolFactoryWithEmptyContext();
-			IDService idServiceDefaultEmptyContext = protocolFactoryManager.getDefaultServiceForEmptyContext();
+			IProtocolFactory<?> pfEmptyContext = null;
+			IDService idServiceDefaultEmptyContext = null;
+			try {
+				pfEmptyContext = protocolFactoryManager.getProtocolFactoryWithEmptyContext();
+				idServiceDefaultEmptyContext = protocolFactoryManager.getDefaultServiceForEmptyContext();
+			}catch(Throwable e) {}
 			
 			// Altro...
 			if(urlInvocazione.startsWith(servletContext+"/")){

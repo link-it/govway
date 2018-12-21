@@ -38,7 +38,6 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="submitRequest">
  * 		&lt;sequence>
- * 			&lt;element name="bodyload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="payload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -53,7 +52,6 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "submitRequest", 
   propOrder = {
-  	"bodyload",
   	"payload"
   }
 )
@@ -62,14 +60,6 @@ import java.util.List;
 
 public class SubmitRequest extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SubmitRequest() {
-  }
-
-  public LargePayloadType getBodyload() {
-    return this.bodyload;
-  }
-
-  public void setBodyload(LargePayloadType bodyload) {
-    this.bodyload = bodyload;
   }
 
   public void addPayload(LargePayloadType payload) {
@@ -99,9 +89,6 @@ public class SubmitRequest extends org.openspcoop2.utils.beans.BaseBean implemen
   private static final long serialVersionUID = 1L;
 
 
-
-  @XmlElement(name="bodyload",required=false,nillable=false)
-  protected LargePayloadType bodyload;
 
   @XmlElement(name="payload",required=true,nillable=false)
   protected List<LargePayloadType> payload = new ArrayList<LargePayloadType>();

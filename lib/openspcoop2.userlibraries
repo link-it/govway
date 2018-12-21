@@ -104,7 +104,7 @@
 	<archive path="/op2_3.0.dev/lib/jax/jaxb-core-2.3.0.1.jar"/>
 	<!-- jminix -->
 	<archive path="/op2_3.0.dev/lib/jminix/jminix-1.2.0.jar"/>
-	<archive path="/op2_3.0.dev/lib/jminix/jminix-1.2.0-standalone.jar"/>
+	<archive path="/op2_3.0.dev/lib/jminix/jminix-1.2.0-standalone.gw.jar"/>
 	<archive path="/op2_3.0.dev/lib/jminix/org.restlet-2.1.4.jar"/>
 	<archive path="/op2_3.0.dev/lib/jminix/org.restlet.ext.servlet-2.1.4.jar"/>
 	<archive path="/op2_3.0.dev/lib/jminix/org.restlet.ext.velocity-2.1.4.jar"/>

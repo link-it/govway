@@ -91,8 +91,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
-import backend.ecodex.org._1_1.PayloadType;
-import backend.ecodex.org._1_1.SendRequest;
+import backend.ecodex.org._1_1.LargePayloadType;
+import backend.ecodex.org._1_1.SubmitRequest;
 import eu.domibus.configuration.Attachment;
 import eu.domibus.configuration.Payload;
 import eu.domibus.configuration.PayloadProfile;
@@ -238,8 +238,8 @@ public class AS4Imbustamento {
 			PayloadInfo payloadInfo = new PayloadInfo();
 			ebmsV3_0Messagging.getUserMessage(0).setPayloadInfo(payloadInfo);
 			
-			// Send Request Body
-			SendRequest sendRequest = new SendRequest();
+			// Submit Request Body
+			SubmitRequest submitRequest = new SubmitRequest();
 						
 			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				
@@ -255,7 +255,7 @@ public class AS4Imbustamento {
 					fillSoap12fromSoap11(as4Message, soapMessage);
 				}
 				
-				mapAS4InfoFromSoapMessage(as4Message, soapMessage, payloadInfo, sendRequest, mapIdPartInfoToIdAttach,
+				mapAS4InfoFromSoapMessage(as4Message, soapMessage, payloadInfo, submitRequest, mapIdPartInfoToIdAttach,
 						payloadConfig, payloadProfile, protocolFactory.getLogger());
 
 			}
@@ -265,7 +265,7 @@ public class AS4Imbustamento {
 				as4Message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
 				msg.copyResourcesTo(as4Message);
 				
-				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, sendRequest, mapIdPartInfoToIdAttach,
+				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, submitRequest, mapIdPartInfoToIdAttach,
 						payloadConfig, payloadProfile, protocolFactory.getLogger());
 				
 			}
@@ -290,7 +290,7 @@ public class AS4Imbustamento {
 			// Serializzo Body
 			backend.ecodex.org._1_1.utils.serializer.JaxbSerializer ecodexSerializer =
 					new backend.ecodex.org._1_1.utils.serializer.JaxbSerializer();
-			byte[] as4Body = ecodexSerializer.toByteArray(sendRequest);
+			byte[] as4Body = ecodexSerializer.toByteArray(submitRequest);
 			SOAPElement soapElementAs4Body = as4Message.createSOAPElement(as4Body);
 			List<SOAPElement> childAs4Body = SoapUtils.getNotEmptyChildSOAPElement(soapElementAs4Body);
 			for (SOAPElement payloadInfoAs4Body : childAs4Body) {
@@ -299,11 +299,22 @@ public class AS4Imbustamento {
 					throw new Exception("Attachment with payloadInfo id ["+value+"] not found");
 				}
 				String attachmentId = mapIdPartInfoToIdAttach.get(value);
-				Element xomReference = payloadInfoAs4Body.getOwnerDocument().createElementNS(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_NAMESPACE, 
-						"xop:"+org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME);
-				xomReference.setAttribute(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF, 
-						attachmentId);
-				payloadInfoAs4Body.appendChild(xomReference);
+				boolean xop = false;
+				if(xop) {
+					// versione 3 di domibus
+					Element xomReference = payloadInfoAs4Body.getOwnerDocument().createElementNS(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_NAMESPACE, 
+							"xop:"+org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME);
+					xomReference.setAttribute(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF, 
+							attachmentId);
+					payloadInfoAs4Body.appendChild(xomReference);
+				}
+				else {
+					// versione 4 di domibus
+					Element cidReference = payloadInfoAs4Body.getOwnerDocument().createElement("value");
+					cidReference.setTextContent(attachmentId);
+					payloadInfoAs4Body.appendChild(cidReference);
+				}
+				
 			}
 			as4Message.getSOAPBody().removeContents();
 			as4Message.getSOAPBody().addChildElement(soapElementAs4Body);
@@ -528,7 +539,7 @@ public class AS4Imbustamento {
 	}
 	
 	private void mapAS4InfoFromSoapMessage(OpenSPCoop2SoapMessage as4Message,OpenSPCoop2SoapMessage soapMessage,
-			PayloadInfo payloadInfo,SendRequest sendRequest,
+			PayloadInfo payloadInfo,SubmitRequest submitRequest,
 			Map<String,String> mapIdPartInfoToIdAttach,
 			List<Payload> payloadConfig, String payloadProfile, Logger log) throws Exception{
 	
@@ -536,7 +547,7 @@ public class AS4Imbustamento {
 		// Attachments
 		
 		List<PartInfo> _listPartInfoUserMessage = null; 
-		List<PayloadType> _listPayload = null;
+		List<LargePayloadType> _listPayload = null;
 		List<AttachmentPart> _listAP = null;
 		
 		boolean reOrderAttachments = false; // se abilitato gli attachments li riaggiungo dopo per averli dopo il body element
@@ -545,7 +556,7 @@ public class AS4Imbustamento {
 		if(countAttach>0){
 			
 			_listPartInfoUserMessage = new ArrayList<PartInfo>();
-			_listPayload = new ArrayList<PayloadType>();
+			_listPayload = new ArrayList<LargePayloadType>();
 			if(reOrderAttachments) {
 				_listAP = new ArrayList<AttachmentPart>();
 			}
@@ -596,7 +607,7 @@ public class AS4Imbustamento {
 				pInfo.setPartProperties(partProperties);
 				_listPartInfoUserMessage.add(pInfo);
 				
-				PayloadType pBodyInfo = new PayloadType();
+				LargePayloadType pBodyInfo = new LargePayloadType();
 				pBodyInfo.setPayloadId(partInfoCid);
 				pBodyInfo.setContentType(contentTypeUtilizzato);
 				_listPayload.add(pBodyInfo);
@@ -635,7 +646,7 @@ public class AS4Imbustamento {
 		Payload payload = payloadConfig.get(0);
 		
 		PartInfo _PartInfoUserMessageBody = null;
-		PayloadType _PayloadBody = null;
+		LargePayloadType _PayloadBody = null;
 		AttachmentPart apBody = null;
 		// DEVO spedire tutto il documento, altrimenti eventuali parti firmate vengono perse.
 		//java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
@@ -716,7 +727,7 @@ public class AS4Imbustamento {
 			pInfo.setPartProperties(partProperties);
 			_PartInfoUserMessageBody = pInfo;
 			
-			PayloadType pBodyInfo = new PayloadType();
+			LargePayloadType pBodyInfo = new LargePayloadType();
 			pBodyInfo.setPayloadId(partInfoCid);
 			pBodyInfo.setContentType(contentTypeUtilizzato);
 			_PayloadBody = pBodyInfo;
@@ -725,12 +736,12 @@ public class AS4Imbustamento {
 		
 		if(_PartInfoUserMessageBody!=null){
 			payloadInfo.addPartInfo(_PartInfoUserMessageBody);
-			sendRequest.addPayload(_PayloadBody);
+			submitRequest.addPayload(_PayloadBody);
 			as4Message.addAttachmentPart(apBody);
 		}
 		if(_listPartInfoUserMessage!=null && _listPartInfoUserMessage.size()>0){
 			payloadInfo.getPartInfoList().addAll(_listPartInfoUserMessage);
-			sendRequest.getPayloadList().addAll(_listPayload);
+			submitRequest.getPayloadList().addAll(_listPayload);
 			if(reOrderAttachments) {
 				if(_listAP!=null && _listAP.size()>0) {
 					for (AttachmentPart ap : _listAP) {
@@ -743,7 +754,7 @@ public class AS4Imbustamento {
 	
 
 	private void mapAS4InfoFromRestMessage(OpenSPCoop2SoapMessage as4Message,
-			OpenSPCoop2RestMessage<?> restMessage,PayloadInfo payloadInfo,SendRequest sendRequest,
+			OpenSPCoop2RestMessage<?> restMessage,PayloadInfo payloadInfo,SubmitRequest submitRequest,
 			Map<String,String> mapIdPartInfoToIdAttach,
 			List<Payload> payloadConfig, String payloadProfile, Logger log) throws Exception{
 		
@@ -809,10 +820,10 @@ public class AS4Imbustamento {
 				pInfo.setPartProperties(partProperties);
 				payloadInfo.addPartInfo(pInfo);
 				
-				PayloadType pBodyInfo = new PayloadType();
+				LargePayloadType pBodyInfo = new LargePayloadType();
 				pBodyInfo.setPayloadId(partInfoCid);
 				pBodyInfo.setContentType(contentTypeUtilizzato);
-				sendRequest.addPayload(pBodyInfo);
+				submitRequest.addPayload(pBodyInfo);
 				
 				index++;
 			}
@@ -906,10 +917,10 @@ public class AS4Imbustamento {
 			pInfo.setPartProperties(partProperties);
 			payloadInfo.addPartInfo(pInfo);
 				
-			PayloadType pBodyInfo = new PayloadType();
+			LargePayloadType pBodyInfo = new LargePayloadType();
 			pBodyInfo.setPayloadId(partInfoCid);
 			pBodyInfo.setContentType(contentTypeUtilizzato);
-			sendRequest.addPayload(pBodyInfo);
+			submitRequest.addPayload(pBodyInfo);
 
 		}
 		

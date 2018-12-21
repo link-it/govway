@@ -10,11 +10,10 @@ urlServizio=http://localhost:8080/domibus/services/backend
 
 # Comuni
 #operazione=listPendingMessages
-#operazione=getMessageStatus
+#operazione=getStatus
 #operazione=getMessageErrors
 
 # Receiver
-#operazione=downloadMessage
 #operazione=retrieveMessage
 
 

@@ -332,7 +332,7 @@
 										<h:outputText rendered="#{empty riscontro.tipoOraRegistrazioneRicavato}" value="-" />
 									</h:panelGrid>
 								</h:panelGroup>
-								
+																
 								<rich:spacer height="10" />
 								<rich:spacer height="10" />
 								<rich:spacer height="10" />
@@ -343,6 +343,22 @@
 					
 					</link:fieldset>
 					
+					<c:forEach items="#{dettagliBean.traccia.bustaBean.listaRiscontriBean}" var="riscontro" >
+							
+							<rich:spacer height="20px" rendered="#{not empty riscontro.ricevuta}"/>
+							
+							<link:fieldset legend="Ricevuta #{riscontro.ID}"
+										rendered="#{not empty riscontro.ricevuta}" collapsible="false" closed="false">
+											
+								<div style="height: 350px; overflow-y: scroll;">
+									<pre class="brush: xml; toolbar: false;">#{riscontro.prettyRicevuta}</pre>
+								</div>
+									
+							</link:fieldset>
+							
+					</c:forEach>
+						
+						
 					
 					<rich:spacer id="spacerTrasmissioni" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.listaTrasmissioniBean}"/>
 					

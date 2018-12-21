@@ -318,7 +318,9 @@ for (int i = 0; i < dati.size(); i++) {
 							     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span></div><%
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
-							     						%><textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= de.getValue() %></textarea><%
+							     						%><div class="txtA_div">
+							     							<textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= deName  %>" class="<%= classInput %>"><%= de.getValue() %></textarea>
+						     							</div><%
 							     					}
 													%>
 							     					<% if(!deNote.equals("")){ %>

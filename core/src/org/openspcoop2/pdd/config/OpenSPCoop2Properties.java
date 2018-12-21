@@ -1468,6 +1468,9 @@ public class OpenSPCoop2Properties {
 				}
 			}
 			
+			// FormUrlEncodedFilter
+			this.isFormUrlEncodedFilterEnabled();
+			
 			// Monitor SDK
 			this.getMonitorSDK_repositoryJars();
 			
@@ -13620,6 +13623,35 @@ public class OpenSPCoop2Properties {
 			} 
 		}
 		return OpenSPCoop2Properties.notifierInputStreamCallback;
+	}
+	
+	
+	
+	
+	/* ------------- FORMURLEncoder  ---------------------*/
+	
+	private static Boolean isFormUrlEncodedFilterEnabled = null;
+	public boolean isFormUrlEncodedFilterEnabled(){
+
+		if(OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.formUrlEncodedFilter.enabled"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isFormUrlEncodedFilterEnabled;
 	}
 	
 	

@@ -102,7 +102,6 @@
     <!-- 
 	La versione 2 non serializza il tipo 'ebmsUserMessageCollaborationInfoServiceType'
 	In questa maniera viene compreso il servizio differente su domibus
-	Inoltre su questa versione, nell'implementazione, viene utilizzato il 'eSensPolicy'.
 	Infine in questa versione viene definito una nuova operazione Json che utilizza il profilo payload JsonProfile
     -->    
     <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
@@ -181,7 +180,7 @@
             accordo-servizio-parte-comune="as4/Blue:SoapExample:1"
 	    port-type="ConsegnaRispostaSOAP">
             <fruitore tipo="as4" nome="Blue"/>
-	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
+	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryAS4Policy" />
 	    <protocol-property name="ebmsReliabilityNonRepudiation" boolean-value="true" />
             <protocol-property name="ebmsReliabilityReplyPattern" value="response" />
         </accordo-servizio-parte-specifica>
@@ -218,7 +217,7 @@
             accordo-servizio-parte-comune="as4/Blue:SoapExample:1"
 	    port-type="GestioneFileSOAP">
             <fruitore tipo="as4" nome="Red"/>
-	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
+	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryAS4Policy" />
 	    <protocol-property name="ebmsReliabilityNonRepudiation" boolean-value="true" />
             <protocol-property name="ebmsReliabilityReplyPattern" value="response" />
         </accordo-servizio-parte-specifica>

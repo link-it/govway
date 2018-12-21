@@ -27,7 +27,6 @@ import java.net.URISyntaxException;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
@@ -37,7 +36,6 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Schema;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
@@ -134,11 +132,6 @@ public class AS4StubUtils {
 			for (int i = 0; i < msg.getUserMessage().getPayloadInfo().getPartInfo().size(); i++) {
 				PartInfo partInfo = new PartInfo();
 				partInfo.setHref(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getHref());
-				if(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getDescription()!=null){
-					Description description = new Description();
-					description.setBase(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getDescription().getValue());
-					partInfo.setDescription(description);
-				}
 				if(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getPartProperties()!=null && 
 						msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getPartProperties().getProperty()!=null && 
 						msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getPartProperties().getProperty().size()>0){
@@ -150,15 +143,6 @@ public class AS4StubUtils {
 						partProperties.addProperty(property);
 					}
 					partInfo.setPartProperties(partProperties);
-				}
-				if(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getSchema()!=null){
-					Schema schema = new Schema();
-					schema.setNamespace(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getSchema().getNamespace());
-					schema.setVersion(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getSchema().getVersion());
-					if(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getSchema().getLocation()!=null){
-						schema.setLocation(new URI(msg.getUserMessage().getPayloadInfo().getPartInfo().get(i).getSchema().getLocation()));
-					}
-					partInfo.setSchema(schema);
 				}
 				payloadInfo.addPartInfo(partInfo);
 			}
