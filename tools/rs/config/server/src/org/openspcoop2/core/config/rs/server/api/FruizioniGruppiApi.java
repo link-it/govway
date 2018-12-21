@@ -91,17 +91,17 @@ public interface FruizioniGruppiApi  {
     public void delete(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_gruppo") @Size(max=255) String nomeGruppo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Elimina azioni o risorse dell&#x27;API associate al gruppo
+     * Elimina l&#x27;azione o la risorsa dell&#x27;API associatia al gruppo
      *
-     * Questa operazione consente di eliminare azioni o risorse dell&#x27;API associate al gruppo
+     * Questa operazione consente di eliminare l&#x27;azione o la risorsa dell&#x27;API associata al gruppo
      *
      */
     @DELETE
-    @Path("/fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni")
+    @Path("/fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}")
     @Produces({ "application/problem+json" })
-    @Operation(summary = "Elimina azioni o risorse dell'API associate al gruppo", tags={ "fruizioni-gruppi" })
+    @Operation(summary = "Elimina l'azione o la risorsa dell'API associatia al gruppo", tags={ "fruizioni-gruppi" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "204", description = "Azioni eliminate con successo"),
+        @ApiResponse(responseCode = "204", description = "Azione eliminata con successo"),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -109,7 +109,7 @@ public interface FruizioniGruppiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteAzioni(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_gruppo") @Size(max=255) String nomeGruppo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteAzione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_gruppo") @Size(max=255) String nomeGruppo, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Ricerca i gruppi in cui sono stati classificate le azioni o le risorse dell&#x27;API

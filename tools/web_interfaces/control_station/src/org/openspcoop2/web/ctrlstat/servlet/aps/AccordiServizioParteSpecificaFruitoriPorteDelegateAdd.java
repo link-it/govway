@@ -41,11 +41,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -57,15 +55,10 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.config.Subscription;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -132,6 +125,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			Long idFru = Long.parseLong(idFruizione);
 			
 			String idSoggFruitoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO);
+			@SuppressWarnings("unused")
 			Long idSoggFru = Long.parseLong(idSoggFruitoreDelServizio);
 			
 			//String azione = apsHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
@@ -309,84 +303,16 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 			idSoggettoFruitore.setTipo(tipoSoggettoFruitore);
 			idSoggettoFruitore.setNome(nomeSoggettoFruitore);
-			List<MappingFruizionePortaDelegata> listaMappingFruizione = apsCore.serviziFruitoriMappingList(idFru, idSoggettoFruitore, idServizio2, null);
-			
-			MappingFruizionePortaDelegata mappingSelezionato = null, mappingDefault = null;
-			
-			String mappingLabel = "";
-			String[] listaMappingLabels = null;
-			String[] listaMappingValues = null;
-			List<String> azioniOccupate = new ArrayList<>();
-			String nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + "1";
-			int idxConfigurazione = 0;
-			int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
-			if(listaMappingFruizioneSize > 0) {
-				for (int i = 0; i < listaMappingFruizione.size(); i++) {
-					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-					if(mappingFruizionePortaDelegata.isDefault()) {
-						mappingDefault = mappingFruizionePortaDelegata;
-						break;
-					}
-				}
-				
-				if(mappingPD != null) {
-					for (int i = 0; i < listaMappingFruizione.size(); i++) {
-						MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-						if(mappingFruizionePortaDelegata.getNome().equals(mappingPD)) {
-							mappingSelezionato = mappingFruizionePortaDelegata;
-							break;
-						}
-					}
-				}
-
-				if(mappingSelezionato == null) {
-					mappingSelezionato = mappingDefault;
-				}
-				
-				if(!mappingSelezionato.isDefault()) {
-					PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
-					mappingLabel = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,Integer.MAX_VALUE);
-				}
-
-				listaMappingLabels = new String[listaMappingFruizioneSize];
-				listaMappingValues = new String[listaMappingFruizioneSize];
-				for (int i = 0; i < listaMappingFruizione.size(); i++) {
-					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-					//String nomeMappingNoDefault = mappingFruizionePortaDelegata.getNome();
-					String nomeMappingNoDefault = null;
-					//if(!mappingFruizionePortaDelegata.isDefault()) {
-					PortaDelegata pdMapping = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-					nomeMappingNoDefault = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(null,null,pdMapping,70,true);
-					//}
-//					listaMappingLabels[i] = mappingFruizionePortaDelegata.isDefault()? 
-//							PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_NOME_DEFAULT: nomeMappingNoDefault;
-					listaMappingLabels[i] = nomeMappingNoDefault;
-					listaMappingValues[i] = mappingFruizionePortaDelegata.getNome();
-					
-					// calcolo del nome automatico
-					if(!mappingFruizionePortaDelegata.isDefault())  {
-						int idx = mappingFruizionePortaDelegata.getNome().indexOf(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX);
-						if(idx > -1) {
-							String idxTmp = mappingFruizionePortaDelegata.getNome().substring(idx + PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX.length());
-							int idxMax = -1;
-							try {
-								idxMax = Integer.parseInt(idxTmp);
-							}catch(Exception e) {
-								idxMax = 0;
-							}
-							idxConfigurazione = Math.max(idxConfigurazione, idxMax);
-						}
-					}
-					
-					// colleziono le azioni gia' configurate
-					PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
-					if(portaDelegata.getAzione() != null && portaDelegata.getAzione().getAzioneDelegataList() != null)
-						azioniOccupate.addAll(portaDelegata.getAzione().getAzioneDelegataList());
-				}
-			}
-			
-			nomeNuovaConfigurazione = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_FRUIZIONE_PD_AZIONE_SPECIFIC_PREFIX + (++ idxConfigurazione);
-
+		
+			AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPD, idSoggettoFruitore, asps, apsCore);
+			MappingFruizionePortaDelegata mappingSelezionato = mappingInfo.getMappingSelezionato();
+			MappingFruizionePortaDelegata mappingDefault = mappingInfo.getMappingDefault();
+			String mappingLabel = mappingInfo.getMappingLabel();
+			String[] listaMappingLabels = mappingInfo.getListaMappingLabels();
+			String[] listaMappingValues = mappingInfo.getListaMappingValues();
+			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
+			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
+						
 			AccordoServizioParteComune as = null;
 			ServiceBinding serviceBinding = null;
 			if (asps != null) {
@@ -747,145 +673,40 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						ForwardParams.ADD());
 			}
 
-			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-
-			PortaDelegata portaDelegataDefault = porteDelegateCore.getPortaDelegata(mappingDefault.getIdPortaDelegata());
-			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(idServizio2.getTipo());
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-		
-			Connettore connettore = null;
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				connettore = new Connettore();
-				// this.nomeservizio);
-				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-					connettore.setTipo(tipoconn);
-				else
-					connettore.setTipo(endpointtype);
-
-				apsHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
-						nomeCodaJms, tipoJms, user, password,
-						initcont, urlpgk, url, connfact,
-						tipoSendas, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo,
-						httpspwd, httpsalgoritmo, httpsstato,
-						httpskeystore, httpspwdprivatekeytrust,
-						httpspathkey, httpstipokey,
-						httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
-			}
-			
-			
-			Subscription subscription = null;
-			PortaDelegata portaDelegataDaCopiare = null;
-			if(modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-				portaDelegataDaCopiare = porteDelegateCore.getPortaDelegata(mappingSelezionato.getIdPortaDelegata());
-				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, portaDelegataDaCopiare, nome, nomeGruppo, azioni);
-			}
-			else {
-				subscription = protocolFactory.createProtocolIntegrationConfiguration().createSubscription(serviceBinding, idSoggettoFruitore, idServizio2, 
-						portaDelegataDefault, nome, nomeGruppo, azioni);
-				
-			}
-			
-			boolean clonatoDaPDConConnettoreRidefinito = false;
-			if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaDelegataDaCopiare!=null) {
-				if(portaDelegataDaCopiare.getAzione()!=null && PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(portaDelegataDaCopiare.getAzione().getIdentificazione())) {
-					// devo clonare il connettore
-					String azioneConnettoreDaPortaDelegataDaClonare = null; // prendo la prima
-					if(portaDelegataDaCopiare.getAzione().sizeAzioneDelegataList()>0) {
-						azioneConnettoreDaPortaDelegataDaClonare = portaDelegataDaCopiare.getAzione().getAzioneDelegata(0);
-					}
-					Connettore connettorePortaDelegataDaClonare = null;
-					Fruitore fruitore = null;
-					if(azioneConnettoreDaPortaDelegataDaClonare!=null) {
-						
-						for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-							if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
-								fruitore = fruitoreCheck;
-								break;
-							}
-						}
-						if(fruitore!=null) {
-							for (ConfigurazioneServizioAzione check : fruitore.getConfigurazioneAzioneList()) {
-								if(check.getAzioneList().contains(azioneConnettoreDaPortaDelegataDaClonare)) {
-									connettorePortaDelegataDaClonare = check.getConnettore();
-									break;
-								}
-							}
-						}
-					}
-					if(connettorePortaDelegataDaClonare!=null) {
-						clonatoDaPDConConnettoreRidefinito = true;
-						
-						Connettore newConnettoreRidefinito = (Connettore) connettorePortaDelegataDaClonare.clone();
-						ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
-						configurazioneAzione.setConnettore(newConnettoreRidefinito);
-						for (int i = 0; i < azioni.length; i++) {
-							configurazioneAzione.addAzione(azioni[i]);
-						}
-						fruitore.addConfigurazioneAzione(configurazioneAzione);
-					}
-				}
-			}
-			
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				
-				Fruitore fruitore = null;
-				for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-					if(fruitoreCheck.getTipo().equals(tipoSoggettoFruitore) && fruitoreCheck.getNome().equals(nomeSoggettoFruitore)) {
-						fruitore = fruitoreCheck;
-						break;
-					}
-				}
-				
-				ConfigurazioneServizioAzione configurazioneAzione = new ConfigurazioneServizioAzione();
-				configurazioneAzione.setConnettore(connettore);
-				for (int i = 0; i < azioni.length; i++) {
-					configurazioneAzione.addAzione(azioni[i]);
-				}
-				fruitore.addConfigurazioneAzione(configurazioneAzione);
-			}
-			
-			PortaDelegata portaDelegata = subscription.getPortaDelegata();
-			MappingFruizionePortaDelegata mappingFruizione = subscription.getMapping();
-			portaDelegata.setIdSoggetto((long) idSoggFru);
-
-			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
-						fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
-						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
-						fruizioneServizioApplicativo, fruizioneRuolo,
-						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
-				
-				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, 
-						gestioneTokenPolicy, gestioneTokenOpzionale,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
-						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions
-						);
-			}
-			
-			listaOggettiDaCreare.add(portaDelegata);
-			listaOggettiDaCreare.add(mappingFruizione);
-
-			porteDelegateCore.performCreateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaCreare.toArray());
-
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || clonatoDaPDConConnettoreRidefinito) {
-				listaOggettiDaModificare.add(asps);
-			}
-			
-			if(listaOggettiDaModificare.size()>0) {
-				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
-			}
+			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteDelegate(
+					mappingDefault,
+					mappingSelezionato,
+					nome, nomeGruppo, azioni, modeCreazione, modeCreazioneConnettore,
+					endpointtype, tipoconn, autenticazioneHttp,
+					connettoreDebug,
+					url,
+					nomeCodaJms, tipoJms, 
+					initcont, urlpgk, provurl, connfact, tipoSendas, 
+					user, password,
+					httpsurl, httpstipologia, httpshostverify,
+					httpspath, httpstipo, httpspwd,
+					httpsalgoritmo, httpsstato, httpskeystore,
+					httpspwdprivatekeytrust, httpspathkey,
+					httpstipokey, httpspwdkey,
+					httpspwdprivatekey, httpsalgoritmokey,
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					listExtendedConnettore,
+					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
+					fruizioneServizioApplicativo, fruizioneRuolo, 
+					autorizzazione_tokenOptions,
+					autorizzazioneScope, scope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					gestioneToken, 
+					gestioneTokenPolicy,  gestioneTokenOpzionale,  
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					idSoggettoFruitore, asps, 
+					userLogin,
+					apsCore, apsHelper);
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

@@ -117,8 +117,8 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "redirect_mode";
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "redirect_max_hop";
 	
-	public final static String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nome";
-	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipo";
+	public final static String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nomeJms";
+	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipoJms";
 	public final static String PARAMETRO_CONNETTORE_JMS_USERNAME = "userJms";
 	public final static String PARAMETRO_CONNETTORE_JMS_PASSWORD = "passwordJms";
 	public final static String PARAMETRO_CONNETTORE_JMS_INIT_CTX = "initcont";

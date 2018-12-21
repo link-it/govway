@@ -1826,7 +1826,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			// Jms
 			if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
-				ConnettoreJMSUtils.addJMSDati(dati, nome, tipoconn, user, password, initcont, urlpgk, 
+				ConnettoreJMSUtils.addJMSDati(dati, nome, tipo, user, password, initcont, urlpgk, 
 						provurl, connfact, sendas, objectName, tipoOperazione, stato,
 						this.core, this, this.getSize());
 			}

@@ -35,11 +35,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -47,7 +44,6 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -96,85 +92,35 @@ public final class PorteDelegateAzioneDel extends Action {
 			String idFruizione = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
 			String objToRemove = porteDelegateHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino il servizioApplicativo della porta applicativa dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
-			String azione = "";
 
 			// Prendo la porta applicativa
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
-			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 			
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
 
-			ConfigurazioneServizioAzione configAzioni = null; 
-			boolean updateASPS = false;
 			Long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(idAspsLong);
 			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
 			
-			String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
-			
-			Fruitore fruitore = null;
-			for (Fruitore fruitoreCheck : asps.getFruitoreList()) {
-				if(fruitoreCheck.getTipo().equals(portaDelegata.getTipoSoggettoProprietario()) && fruitoreCheck.getNome().equals(portaDelegata.getNomeSoggettoProprietario())) {
-					fruitore = fruitoreCheck;
-					break;
-				}
-			}
-			for (int j = 0; j < fruitore.sizeConfigurazioneAzioneList(); j++) {
-				ConfigurazioneServizioAzione config = fruitore.getConfigurazioneAzione(j);
-				if(config!=null) {
-					if(config.getAzioneList().contains(azioneGiaEsistente)) {
-						configAzioni = config;
-						break;
-					}
-				}
-			}
-			
-			StringBuffer bfCT = new StringBuffer();
+			List<String> azioni = new ArrayList<>();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
-				azione = idsToRemove.get(i);
+				String azione = idsToRemove.get(i);
+				azioni.add(azione);
 				
-				if(confCore.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy.DELEGATA, portaDelegata.getNome(), azione)) {
-					if(bfCT.length()>0) {
-						bfCT.append(",");
-					}
-					bfCT.append(azione);
-				}else {
-					for (int j = 0; j < portaDelegata.getAzione().sizeAzioneDelegataList(); j++) {
-						String azioneDelegata = portaDelegata.getAzione().getAzioneDelegata(j);
-						if (azione.equals(azioneDelegata)) {
-							portaDelegata.getAzione().removeAzioneDelegata(j);
-							break;
-						}
-					}
-					
-					if(configAzioni!=null) {
-						for (int j = 0; j < configAzioni.sizeAzioneList(); j++) {
-							if(configAzioni.getAzione(j).equals(azione)) {
-								configAzioni.removeAzione(j);
-								updateASPS = true;
-								break;
-							}
-						}
-					}
-				}
-
+			}
+			
+			StringBuffer inUsoMessage = new StringBuffer();
+			
+			PorteDelegateUtilities.deletePortaDelegataAzioni(portaDelegata, asps, porteDelegateCore, porteDelegateHelper, inUsoMessage, azioni);
+			
+			// imposto msg di errore se presente
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
 			}
 			
 			String labelPerPorta = null;
@@ -188,27 +134,6 @@ public final class PorteDelegateAzioneDel extends Action {
 				labelPerPorta = porteDelegateHelper.getLabelAzioniDi(serviceBinding)+nomePorta;
 			}
 			
-			// non posso eliminare tutte le azioni
-			if(portaDelegata.getAzione().sizeAzioneDelegataList() == 0) {
-				pd.setMessage(PorteDelegateCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
-			} 
-			else if(bfCT.length()>0) {
-				pd.setMessage("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
-			}
-			else {
-				
-				List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-				
-				listaOggettiDaModificare.add(portaDelegata);
-				
-				if(updateASPS) {
-					listaOggettiDaModificare.add(asps);
-				}
-				
-				String userLogin = ServletUtils.getUserLoginFromSession(session);
-				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
-				
-			}
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 			

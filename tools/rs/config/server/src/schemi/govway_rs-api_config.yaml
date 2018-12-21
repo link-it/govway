@@ -1914,15 +1914,24 @@ paths:
           $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-components.yaml#/components/responses/default'
+          
+  /erogazioni/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_nome_gruppo"      
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_nome_azione"       
     delete:
       tags:
         - erogazioni-gruppi
-      summary: Elimina azioni o risorse dell'API associate al gruppo 
-      operationId: deleteAzioni
-      description: Questa operazione consente di eliminare azioni o risorse dell'API associate al gruppo 
+      summary: Elimina l'azione o la risorsa dell'API associata al gruppo 
+      operationId: deleteAzione
+      description: Questa operazione consente di eliminare l'azione o la risorsa dell'API associate al gruppo 
       responses: 
         '204':
-          description: Azioni eliminate con successo
+          description: Azione eliminate con successo
         '400':
           $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
         '401':
@@ -3461,15 +3470,25 @@ paths:
           $ref: 'teamdigitale-components.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-components.yaml#/components/responses/default'
+          
+  /fruizioni/{erogatore}/{nome}/{versione}/gruppi/{nome_gruppo}/azioni/{nome_azione}:
+    parameters:
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/profilo"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/soggetto"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_erogatore"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_ncname"
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_versione"  
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_nome_gruppo"         
+      - $ref: "govway_rs-api_commons.yaml#/components/parameters/id_nome_azione"  
     delete:
       tags:
         - fruizioni-gruppi
-      summary: Elimina azioni o risorse dell'API associate al gruppo 
-      operationId: deleteAzioni
-      description: Questa operazione consente di eliminare azioni o risorse dell'API associate al gruppo 
+      summary: Elimina l'azione o la risorsa dell'API associatia al gruppo 
+      operationId: deleteAzione
+      description: Questa operazione consente di eliminare l'azione o la risorsa dell'API associata al gruppo 
       responses: 
         '204':
-          description: Azioni eliminate con successo
+          description: Azione eliminata con successo
         '400':
           $ref: 'teamdigitale-components.yaml#/components/responses/400BadRequest'
         '401':

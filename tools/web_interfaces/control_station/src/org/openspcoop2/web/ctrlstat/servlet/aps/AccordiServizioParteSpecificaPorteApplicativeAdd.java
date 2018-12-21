@@ -41,26 +41,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
-import org.openspcoop2.core.config.constants.TipologiaErogazione;
-import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -71,9 +62,6 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.config.Implementation;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -90,7 +78,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -318,82 +305,15 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			AccordoServizioParteSpecifica asps  =apsCore.getAccordoServizioParteSpecifica(idServizio);
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
-			List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
-			MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
 			
-			String mappingLabel = "";
-			String[] listaMappingLabels = null;
-			String[] listaMappingValues = null;
-			List<String> azioniOccupate = new ArrayList<>();
-			String nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + "1";
-			int idxConfigurazione = 0;
-			int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
-			if(listaMappingErogazioneSize > 0) {
-				for (int i = 0; i < listaMappingErogazione.size(); i++) {
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					if(mappingErogazionePortaApplicativa.isDefault()) {
-						mappingDefault = mappingErogazionePortaApplicativa;
-						break;
-					}
-				}
-				
-				if(mappingPA != null) {
-					for (int i = 0; i < listaMappingErogazione.size(); i++) {
-						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-						if(mappingErogazionePortaApplicativa.getNome().equals(mappingPA)) {
-							mappingSelezionato = mappingErogazionePortaApplicativa;
-							break;
-						}
-					}
-				}
-
-				if(mappingSelezionato == null) {
-					mappingSelezionato = mappingDefault;
-				}
-
-				if(!mappingSelezionato.isDefault()) {
-					PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-					mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,Integer.MAX_VALUE);
-				}
-				
-				listaMappingLabels = new String[listaMappingErogazioneSize];
-				listaMappingValues = new String[listaMappingErogazioneSize];
-				for (int i = 0; i < listaMappingErogazione.size(); i++) {
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					//String nomeMappingNoDefault = mappingErogazionePortaApplicativa.getNome();
-					String nomeMappingNoDefault = null;
-					//if(!mappingErogazionePortaApplicativa.isDefault()) {
-					PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-					nomeMappingNoDefault = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,70,true);
-					//}
-//					listaMappingLabels[i] = mappingErogazionePortaApplicativa.isDefault()?
-//							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_NOME_DEFAULT: nomeMappingNoDefault;
-					listaMappingLabels[i] = nomeMappingNoDefault;
-					listaMappingValues[i] = mappingErogazionePortaApplicativa.getNome();
-					
-					// calcolo del nome automatico
-					if(!mappingErogazionePortaApplicativa.isDefault())  {
-						int idx = mappingErogazionePortaApplicativa.getNome().indexOf(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX);
-						if(idx > -1) {
-							String idxTmp = mappingErogazionePortaApplicativa.getNome().substring(idx + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX.length());
-							int idxMax = -1;
-							try {
-								idxMax = Integer.parseInt(idxTmp);
-							}catch(Exception e) {
-								idxMax = 0;
-							}
-							idxConfigurazione = Math.max(idxConfigurazione, idxMax);
-						}
-					}
-					
-					// colleziono le azioni gia' configurate
-					PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
-					if(portaApplicativa.getAzione() != null && portaApplicativa.getAzione().getAzioneDelegataList() != null)
-						azioniOccupate.addAll(portaApplicativa.getAzione().getAzioneDelegataList());
-				}
-			}
-			
-			nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + ( ++ idxConfigurazione);
+			AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPA, asps, apsCore);
+			MappingErogazionePortaApplicativa mappingSelezionato = mappingInfo.getMappingSelezionato();
+			MappingErogazionePortaApplicativa mappingDefault = mappingInfo.getMappingDefault();
+			String mappingLabel = mappingInfo.getMappingLabel();
+			String[] listaMappingLabels = mappingInfo.getListaMappingLabels();
+			String[] listaMappingValues = mappingInfo.getListaMappingValues();
+			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
+			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
@@ -832,205 +752,40 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						ForwardParams.ADD());
 			}
 
-			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 
-			PortaApplicativa portaApplicativaDefault = porteApplicativeCore.getPortaApplicativa(mappingDefault.getIdPortaApplicativa());
-			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			Implementation implementation = null;
-			
-			PortaApplicativa portaApplicativaDaCopiare = null;
-			if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
-				portaApplicativaDaCopiare = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
-						portaApplicativaDefault, portaApplicativaDaCopiare, nome, nomeGruppo, azioni);
-			}
-			else {
-				implementation = protocolFactory.createProtocolIntegrationConfiguration().createImplementation(serviceBinding, idServizio2, 
-						portaApplicativaDefault, nome, nomeGruppo, azioni);
-			}
-			
-			PortaApplicativa portaApplicativa = implementation.getPortaApplicativa();
-			MappingErogazionePortaApplicativa mappingErogazione = implementation.getMapping();
-			portaApplicativa.setIdSoggetto((long) soggInt);
-			
-			Connettore connettore = null;
-			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				// Connettore
-				connettore = new Connettore();
-				// this.nomeservizio);
-				if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
-					connettore.setTipo(tipoconn);
-				else
-					connettore.setTipo(endpointtype);
-
-				apsHelper.fillConnettore(connettore, connettoreDebug, endpointtype, endpointtype, tipoconn, url,
-						nomeCodaJms, tipoJms, user, password,
-						initcont, urlpgk, url, connfact,
-						tipoSendas, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo,
-						httpspwd, httpsalgoritmo, httpsstato,
-						httpskeystore, httpspwdprivatekeytrust,
-						httpspathkey, httpstipokey,
-						httpspwdkey, httpspwdprivatekey,
-						httpsalgoritmokey,
-						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						listExtendedConnettore);
-			}
-			boolean addSpecSicurezza = false;
-			
-			if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
-							
-				String nomeServizioApplicativoErogatore = portaApplicativaDefault.getServizioApplicativo(0).getNome();
-				
-				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-									
-					nomeServizioApplicativoErogatore = portaApplicativa.getNome();
-					
-					ServizioApplicativo sa = new ServizioApplicativo();
-					sa.setNome(nomeServizioApplicativoErogatore);
-					sa.setTipologiaFruizione(TipologiaFruizione.DISABILITATO.getValue());
-					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-					sa.setIdSoggetto((long) soggInt);
-					sa.setTipoSoggettoProprietario(portaApplicativa.getTipoSoggettoProprietario());
-					sa.setNomeSoggettoProprietario(portaApplicativa.getNomeSoggettoProprietario());
-					
-					RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
-					rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-					rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
-					sa.setRispostaAsincrona(rispostaAsinc);
-					
-					InvocazioneServizio invServizio = new InvocazioneServizio();
-					if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-						InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
-						invCredenziali.setUser(user);
-						invCredenziali.setPassword(password);
-						invServizio.setCredenziali(invCredenziali);
-					}
-					else {
-						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-					}
-					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
-					invServizio.setConnettore(connettore.mappingIntoConnettoreConfigurazione());
-					sa.setInvocazioneServizio(invServizio);
-					
-					listaOggettiDaCreare.add(sa);
-				}
-				
-				IDSoggetto idSoggettoAutenticatoErogazione = null;
-				if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
-					String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
-					if(splitSoggetto != null) {
-						idSoggettoAutenticatoErogazione = new IDSoggetto();
-						if(splitSoggetto.length == 2) {
-							idSoggettoAutenticatoErogazione.setTipo(splitSoggetto[0]);
-							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[1]);
-						} else {
-							idSoggettoAutenticatoErogazione.setNome(splitSoggetto[0]);
-						}
-					}
-				}
-				
-				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
-						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
-						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,
-						autorizzazione_tokenOptions,
-						autorizzazioneScope,scope,autorizzazioneScopeMatch,allegatoXacmlPolicy);
-				
-				porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, 
-						gestioneTokenPolicy, gestioneTokenOpzionale,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
-						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-						autorizzazione_tokenOptions);
-			}
-			else {
-				
-				portaApplicativa.getServizioApplicativoList().clear();
-				
-				org.openspcoop2.core.config.Connettore connettorePDClonato = null;
-				InvocazioneServizioTipoAutenticazione tipoAutenticazioneClonata = null;
-				InvocazioneCredenziali invocazioneCredenzialiClonata = null;
-				if(!ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) && portaApplicativaDaCopiare!=null && !mappingSelezionato.isDefault()) {
-					PortaApplicativaServizioApplicativo portaApplicativaDaCopiareServizioApplicativo = portaApplicativaDaCopiare.getServizioApplicativoList().get(0);
-					if(portaApplicativaDaCopiareServizioApplicativo.getNome().equals(portaApplicativaDaCopiare.getNome())) { 
-						// ridefinito
-						IDServizioApplicativo idSA = new IDServizioApplicativo();
-						idSA.setNome(portaApplicativaDaCopiareServizioApplicativo.getNome());
-						idSA.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDaCopiare.getTipoSoggettoProprietario(), portaApplicativaDaCopiare.getNomeSoggettoProprietario()));
-						ServizioApplicativo saDaCopiare = saCore.getServizioApplicativo(idSA);
-						connettorePDClonato = (org.openspcoop2.core.config.Connettore) saDaCopiare.getInvocazioneServizio().getConnettore().clone();
-						if(saDaCopiare.getInvocazioneServizio().getAutenticazione()!=null) {
-							tipoAutenticazioneClonata = saDaCopiare.getInvocazioneServizio().getAutenticazione();
-						}
-						if(saDaCopiare.getInvocazioneServizio().getCredenziali()!=null) {
-							invocazioneCredenzialiClonata = (InvocazioneCredenziali) saDaCopiare.getInvocazioneServizio().getCredenziali().clone();
-						}
-					}
-				}
-				
-				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || (connettorePDClonato!=null)) {
-					PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
-						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
-						idServizioApplicativoDefault.setNome(paSADefault.getNome());
-						idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaSelezionata.getTipoSoggettoProprietario(), portaApplicativaSelezionata.getNomeSoggettoProprietario()));
-						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
-						ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
-						sa.setNome(portaApplicativa.getNome());
-						if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-							if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-								sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-								InvocazioneCredenziali invCredenziali = new InvocazioneCredenziali();
-								invCredenziali.setUser(user);
-								invCredenziali.setPassword(password);
-								sa.getInvocazioneServizio().setCredenziali(invCredenziali);
-							}
-							else {
-								sa.getInvocazioneServizio().setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-								sa.getInvocazioneServizio().setCredenziali(null);
-							}
-						}
-						else {
-							sa.getInvocazioneServizio().setAutenticazione(tipoAutenticazioneClonata);
-							sa.getInvocazioneServizio().setCredenziali(invocazioneCredenzialiClonata);
-						}
-						if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-							sa.getInvocazioneServizio().setConnettore(connettore.mappingIntoConnettoreConfigurazione());
-						}
-						else {
-							sa.getInvocazioneServizio().setConnettore(connettorePDClonato);
-						}
-						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
-						paSa.setNome(sa.getNome());
-						portaApplicativa.getServizioApplicativoList().add(paSa);
-						listaOggettiDaCreare.add(sa);
-					}
-				}
-				else {
-					
-					// assegno sempre il connettore della pa di default in caso di eredita'
-					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
-						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
-						paSa.setNome(paSADefault.getNome());
-						portaApplicativa.getServizioApplicativoList().add(paSa);
-					}
-					
-				}
-			}
-			
-			listaOggettiDaCreare.add(portaApplicativa);
-			listaOggettiDaCreare.add(mappingErogazione);
-			
-
-			porteApplicativeCore.performCreateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaCreare.toArray());
-			if(addSpecSicurezza) {
-				porteApplicativeCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
-			}
+			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(mappingDefault,
+					mappingSelezionato,
+					nome, nomeGruppo, azioni, modeCreazione, modeCreazioneConnettore,
+					endpointtype, tipoconn, autenticazioneHttp,
+					connettoreDebug,
+					url,
+					nomeCodaJms, tipoJms, 
+					initcont, urlpgk, provurl, connfact, tipoSendas, 
+					user, password,
+					httpsurl, httpstipologia, httpshostverify,
+					httpspath, httpstipo, httpspwd,
+					httpsalgoritmo, httpsstato, httpskeystore,
+					httpspwdprivatekeytrust, httpspathkey,
+					httpstipokey, httpspwdkey,
+					httpspwdprivatekey, httpsalgoritmokey,
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					listExtendedConnettore,
+					erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
+					erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
+					nomeSA, erogazioneRuolo, erogazioneSoggettoAutenticato, 
+					autorizzazione_tokenOptions,
+					autorizzazioneScope, scope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+					gestioneToken, 
+					gestioneTokenPolicy,  gestioneTokenOpzionale,  
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+					asps, 
+					protocollo, userLogin,
+					apsCore, apsHelper);
 			
 			
 			// Preparo la lista

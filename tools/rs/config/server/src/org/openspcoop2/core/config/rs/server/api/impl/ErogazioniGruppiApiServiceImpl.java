@@ -134,13 +134,13 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
     }
     
     /**
-     * Elimina azioni o risorse dell&#x27;API associate al gruppo
+     * Elimina l&#x27;azione o la risorsa dell&#x27;API associata al gruppo
      *
-     * Questa operazione consente di eliminare azioni o risorse dell&#x27;API associate al gruppo
+     * Questa operazione consente di eliminare l&#x27;azione o la risorsa dell&#x27;API associate al gruppo
      *
      */
 	@Override
-    public void deleteAzioni(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void deleteAzione(String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
 		ServiceContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     

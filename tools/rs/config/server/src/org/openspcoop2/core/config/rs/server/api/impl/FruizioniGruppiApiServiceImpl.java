@@ -122,13 +122,13 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
     }
     
     /**
-     * Elimina azioni o risorse dell&#x27;API associate al gruppo
+     * Elimina l&#x27;azione o la risorsa dell&#x27;API associatia al gruppo
      *
-     * Questa operazione consente di eliminare azioni o risorse dell&#x27;API associate al gruppo
+     * Questa operazione consente di eliminare l&#x27;azione o la risorsa dell&#x27;API associata al gruppo
      *
      */
 	@Override
-    public void deleteAzioni(String erogatore, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+    public void deleteAzione(String erogatore, String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
 		ServiceContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     

@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -45,7 +44,6 @@ import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -94,52 +92,34 @@ public final class PorteApplicativeAzioneDel extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
-			// Elimino il servizioApplicativo della porta applicativa dal db
-			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
-			// int[] idToRemove = new int[objTok.countTokens()];
-			//
-			// int k = 0;
-			// while (objTok.hasMoreElements()) {
-			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
-			// }
-
-			String azione = "";
 
 			// Prendo la porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
-			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
 			AccordoServizioParteComune aspc = apcCore.getAccordoServizio(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
 			
-			StringBuffer bfCT = new StringBuffer();
+			List<String> azioni = new ArrayList<>();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// servizioApplicativo = de.getValue();
-				azione = idsToRemove.get(i);
+				String azione = idsToRemove.get(i);
+				azioni.add(azione);
 				
-				if(confCore.checkConfigurazioneControlloTrafficoAttivazionePolicyListUsedAction(RuoloPolicy.APPLICATIVA, pa.getNome(), azione)) {
-					if(bfCT.length()>0) {
-						bfCT.append(",");
-					}
-					bfCT.append(azione);
-				}else {
-					for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
-						String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
-						if (azione.equals(azioneDelegata)) {
-							pa.getAzione().removeAzioneDelegata(j);
-							break;
-						}
-					}
-				}
 			}
+			
+			StringBuffer inUsoMessage = new StringBuffer();
+			
+			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, inUsoMessage, azioni);
 
+			// imposto msg di errore se presente
+			if (inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+			}
+			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
@@ -151,17 +131,6 @@ public final class PorteApplicativeAzioneDel extends Action {
 				labelPerPorta = porteApplicativeHelper.getLabelAzioniDi(serviceBinding)+pa.getNome();
 			}
 			
-			// non posso eliminare tutte le azioni
-			if(pa.getAzione().sizeAzioneDelegataList() == 0) {
-				pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
-			}
-			else if(bfCT.length()>0) {
-				pd.setMessage("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
-			}
-			else {
-				String userLogin = ServletUtils.getUserLoginFromSession(session);
-				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-			}
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 			// ricarico la porta
