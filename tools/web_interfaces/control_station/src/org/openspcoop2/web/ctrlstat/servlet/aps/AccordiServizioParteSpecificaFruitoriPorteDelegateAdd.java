@@ -599,7 +599,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,true);
+			boolean isOk = apsHelper.configurazioneFruizioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,true, mappingInfo);
 			
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {

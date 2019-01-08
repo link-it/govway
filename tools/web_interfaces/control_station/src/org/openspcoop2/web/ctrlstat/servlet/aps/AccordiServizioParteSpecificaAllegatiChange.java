@@ -263,56 +263,7 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 
 
 
-			switch (RuoliDocumento.valueOf(doc.getRuolo())) {
-			case allegato:
-				//rimuovo il vecchio doc dalla lista
-				for (int i = 0; i < asps.sizeAllegatoList(); i++) {
-					Documento documento = asps.getAllegato(i);						
-					if(documento.getId().equals(doc.getId())){
-						asps.removeAllegato(i);
-						break;
-					}
-				}
-				//aggiungo il nuovo
-				asps.addAllegato(toCheck);
-
-				break;
-
-			case specificaSemiformale:
-
-				for (int i = 0; i < asps.sizeSpecificaSemiformaleList(); i++) {
-					Documento documento = asps.getSpecificaSemiformale(i);						
-					if(documento.getId().equals(doc.getId())){
-						asps.removeSpecificaSemiformale(i);
-						break;
-					}
-				}
-				//aggiungo il nuovo
-				asps.addSpecificaSemiformale(toCheck);
-				break;
-			case specificaSicurezza:
-				for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
-					Documento documento = asps.getSpecificaSicurezza(i);						
-					if(documento.getId().equals(doc.getId())){
-						asps.removeSpecificaSicurezza(i);
-						break;
-					}
-				}
-				//aggiungo il nuovo
-				asps.addSpecificaSicurezza(toCheck);
-				break;
-			case specificaLivelloServizio:
-				for (int i = 0; i < asps.sizeSpecificaLivelloServizioList(); i++) {
-					Documento documento = asps.getSpecificaLivelloServizio(i);						
-					if(documento.getId().equals(doc.getId())){
-						asps.removeSpecificaLivelloServizio(i);
-						break;
-					}
-				}
-				//aggiungo il nuovo
-				asps.addSpecificaLivelloServizio(toCheck);
-				break;
-			}
+			AccordiServizioParteSpecificaUtilities.sostituisciDocumentoAsps(asps, doc, toCheck);
 
 
 			// effettuo le operazioni

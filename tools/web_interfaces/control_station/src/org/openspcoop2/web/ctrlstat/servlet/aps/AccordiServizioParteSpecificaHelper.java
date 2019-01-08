@@ -7373,7 +7373,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public boolean configurazioneErogazioneCheckData(TipoOperazione tipoOp, String nome, String nomeGruppo, String[] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
-			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
+			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione,
+			AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo) throws Exception{
 		
 		if(nomeGruppo==null || "".equals(nomeGruppo.trim())) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
@@ -7381,6 +7382,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 		// Check lunghezza
 		if(this.checkLength255(nomeGruppo, PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO)==false) {
+			return false;
+		}
+		if(AccordiServizioParteSpecificaUtilities.getMappingPA_filterByDescription(mappingInfo.getListaMappingErogazione(), nomeGruppo)!=null) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_ESISTENTE);
 			return false;
 		}
 		
@@ -7478,7 +7483,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	
 	public boolean configurazioneFruizioneCheckData(TipoOperazione tipoOp, String nome, String nomeGruppo, String [] azioni,
 			AccordoServizioParteSpecifica asps, List<String> azioniOccupate,
-			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione) throws Exception{
+			String modeCreazione, String idPorta, boolean isSupportatoAutenticazione,
+			AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo mappingInfo) throws Exception{
 		
 		if(nomeGruppo==null || "".equals(nomeGruppo.trim())) {
 			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_NON_PUO_ESSERE_VUOTA);
@@ -7487,6 +7493,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		// Check lunghezza
 		if(this.checkLength255(nomeGruppo, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO)==false) {
+			return false;
+		}
+		
+		if(AccordiServizioParteSpecificaUtilities.getMappingPD_filterByDescription(mappingInfo.getListaMappingFruizione(), nomeGruppo)!=null) {
+			this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_ESISTENTE);
 			return false;
 		}
 		

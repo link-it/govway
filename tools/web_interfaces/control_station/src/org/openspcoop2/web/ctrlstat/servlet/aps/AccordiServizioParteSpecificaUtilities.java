@@ -1317,6 +1317,18 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 	}
 	
+	public static final MappingErogazionePortaApplicativa getDefaultMappingPA(List<MappingErogazionePortaApplicativa> listaMappingErogazione) {
+		return listaMappingErogazione.stream().filter( m -> m.isDefault()).findFirst().orElse(null);
+	}
+	
+	public static final MappingErogazionePortaApplicativa getMappingPA(List<MappingErogazionePortaApplicativa> listaMappingErogazione, String mappingPA) {
+		return listaMappingErogazione.stream().filter( m -> m.getNome().equals(mappingPA)).findFirst().orElse(null);
+	}
+	
+	public static final MappingErogazionePortaApplicativa getMappingPA_filterByDescription(List<MappingErogazionePortaApplicativa> listaMappingErogazione, String descrizione) {
+		return listaMappingErogazione.stream().filter( m -> m.getDescrizione().equals(descrizione)).findFirst().orElse(null);
+	}
+	
 	public static AccordiServizioParteSpecificaPorteApplicativeMappingInfo getMappingInfo(String mappingPA, AccordoServizioParteSpecifica asps, 
 			AccordiServizioParteSpecificaCore apsCore) throws Exception {
 		
@@ -1335,23 +1347,13 @@ public class AccordiServizioParteSpecificaUtilities {
 		String nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + "1";
 		int idxConfigurazione = 0;
 		int listaMappingErogazioneSize = listaMappingErogazione != null ? listaMappingErogazione.size() : 0;
+		
 		if(listaMappingErogazioneSize > 0) {
-			for (int i = 0; i < listaMappingErogazione.size(); i++) {
-				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-				if(mappingErogazionePortaApplicativa.isDefault()) {
-					mappingDefault = mappingErogazionePortaApplicativa;
-					break;
-				}
-			}
+
+			mappingDefault = getDefaultMappingPA(listaMappingErogazione);
 			
 			if(mappingPA != null) {
-				for (int i = 0; i < listaMappingErogazione.size(); i++) {
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = listaMappingErogazione.get(i);
-					if(mappingErogazionePortaApplicativa.getNome().equals(mappingPA)) {
-						mappingSelezionato = mappingErogazionePortaApplicativa;
-						break;
-					}
-				}
+				mappingSelezionato = getMappingPA(listaMappingErogazione, mappingPA);
 			}
 
 			if(mappingSelezionato == null) {
@@ -1452,7 +1454,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
-		ServiziApplicativiCore saCore = new ServiziApplicativiCore();
+		ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 		
 		IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 	
@@ -1686,6 +1688,18 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 	}
 	
+	public static final MappingFruizionePortaDelegata getDefaultMappingPD(List<MappingFruizionePortaDelegata> listaMappingFruizione) {
+		return listaMappingFruizione.stream().filter( m -> m.isDefault()).findFirst().orElse(null);
+	}
+	
+	public static final MappingFruizionePortaDelegata getMappingPD(List<MappingFruizionePortaDelegata> listaMappingFruizione, String mappingPD) {
+		return listaMappingFruizione.stream().filter( m -> m.getNome().equals(mappingPD)).findFirst().orElse(null);
+	}
+	
+	public static final MappingFruizionePortaDelegata getMappingPD_filterByDescription(List<MappingFruizionePortaDelegata> listaMappingFruizione, String descrizione) {
+		return listaMappingFruizione.stream().filter( m -> m.getDescrizione().equals(descrizione)).findFirst().orElse(null);
+	}
+	
 	public static AccordiServizioParteSpecificaFruitoriPorteDelegateMappingInfo getMappingInfo(String mappingPD, 
 			IDSoggetto idSoggettoFruitore, AccordoServizioParteSpecifica asps, 
 			AccordiServizioParteSpecificaCore apsCore) throws Exception {
@@ -1708,22 +1722,11 @@ public class AccordiServizioParteSpecificaUtilities {
 		int idxConfigurazione = 0;
 		int listaMappingFruizioneSize = listaMappingFruizione != null ? listaMappingFruizione.size() : 0;
 		if(listaMappingFruizioneSize > 0) {
-			for (int i = 0; i < listaMappingFruizione.size(); i++) {
-				MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-				if(mappingFruizionePortaDelegata.isDefault()) {
-					mappingDefault = mappingFruizionePortaDelegata;
-					break;
-				}
-			}
+			
+			mappingDefault = getDefaultMappingPD(listaMappingFruizione);
 			
 			if(mappingPD != null) {
-				for (int i = 0; i < listaMappingFruizione.size(); i++) {
-					MappingFruizionePortaDelegata mappingFruizionePortaDelegata = listaMappingFruizione.get(i);
-					if(mappingFruizionePortaDelegata.getNome().equals(mappingPD)) {
-						mappingSelezionato = mappingFruizionePortaDelegata;
-						break;
-					}
-				}
+				mappingSelezionato = getMappingPD(listaMappingFruizione, mappingPD);
 			}
 
 			if(mappingSelezionato == null) {
@@ -2044,5 +2047,61 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		// effettuo le operazioni
 		apsCore.performUpdateOperation(userLogin, apsHelper.smista(), asps);
+	}
+
+	public static void sostituisciDocumentoAsps(AccordoServizioParteSpecifica asps, Documento doc, Documento toCheck) {
+		switch (RuoliDocumento.valueOf(doc.getRuolo())) {
+		case allegato:
+			//rimuovo il vecchio doc dalla lista
+			for (int i = 0; i < asps.sizeAllegatoList(); i++) {
+				Documento documento = asps.getAllegato(i);						
+				if(documento.getId().equals(doc.getId())){
+					asps.removeAllegato(i);
+					break;
+				}
+			}
+			//aggiungo il nuovo
+			asps.addAllegato(toCheck);
+	
+			break;
+	
+		case specificaSemiformale:
+	
+			for (int i = 0; i < asps.sizeSpecificaSemiformaleList(); i++) {
+				Documento documento = asps.getSpecificaSemiformale(i);						
+				if(documento.getId().equals(doc.getId())){
+					asps.removeSpecificaSemiformale(i);
+					break;
+				}
+			}
+			//aggiungo il nuovo
+			asps.addSpecificaSemiformale(toCheck);
+			break;
+		case specificaSicurezza:
+			for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
+				Documento documento = asps.getSpecificaSicurezza(i);						
+				if(documento.getId().equals(doc.getId())){
+					asps.removeSpecificaSicurezza(i);
+					break;
+				}
+			}
+			//aggiungo il nuovo
+			asps.addSpecificaSicurezza(toCheck);
+			break;
+		case specificaLivelloServizio:
+			for (int i = 0; i < asps.sizeSpecificaLivelloServizioList(); i++) {
+				Documento documento = asps.getSpecificaLivelloServizio(i);						
+				if(documento.getId().equals(doc.getId())){
+					asps.removeSpecificaLivelloServizio(i);
+					break;
+				}
+			}
+			//aggiungo il nuovo
+			asps.addSpecificaLivelloServizio(toCheck);
+			break;
+		case specificaCoordinamento:
+			// non supportato
+			break;
+		}
 	}
 }

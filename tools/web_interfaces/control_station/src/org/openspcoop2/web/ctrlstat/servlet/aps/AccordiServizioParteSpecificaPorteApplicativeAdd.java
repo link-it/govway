@@ -679,7 +679,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti);
+			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti, mappingInfo);
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 				isOk = apsHelper.endPointCheckData(endpointtype, url, nome, tipoJms,
