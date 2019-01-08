@@ -27,7 +27,6 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 
 /**
@@ -41,7 +40,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 public class PorteApplicativeUtilities {
 
 	public static void deletePortaApplicativaAzioni(PortaApplicativa pa, PorteApplicativeCore porteApplicativeCore, PorteApplicativeHelper porteApplicativeHelper, 
-			StringBuffer inUsoMessage, List<String> azioni) throws Exception {
+			StringBuffer inUsoMessage, List<String> azioni, String userLogin) throws Exception {
 	
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 		StringBuffer bfCT = new StringBuffer();
@@ -74,7 +73,6 @@ public class PorteApplicativeUtilities {
 			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè le seguenti azioni risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
 		}
 		else {
-			String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 		}
 		

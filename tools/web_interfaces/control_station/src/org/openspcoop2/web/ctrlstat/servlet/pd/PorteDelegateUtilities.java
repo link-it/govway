@@ -31,7 +31,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * PorteDelegateUtilities
@@ -45,7 +44,8 @@ public class PorteDelegateUtilities {
 
 	public static void deletePortaDelegataAzioni(PortaDelegata portaDelegata, AccordoServizioParteSpecifica asps,
 			PorteDelegateCore porteDelegateCore, PorteDelegateHelper porteDelegateHelper, 
-			StringBuffer inUsoMessage, List<String> azioni) throws Exception {
+			StringBuffer inUsoMessage, List<String> azioni, 
+			String userLogin) throws Exception {
 		
 		String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
 		
@@ -120,7 +120,6 @@ public class PorteDelegateUtilities {
 				listaOggettiDaModificare.add(asps);
 			}
 			
-			String userLogin = ServletUtils.getUserLoginFromSession(porteDelegateHelper.getSession());
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), listaOggettiDaModificare.toArray());
 			
 		}

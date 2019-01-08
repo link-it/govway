@@ -113,7 +113,9 @@ public final class PorteApplicativeAzioneDel extends Action {
 			
 			StringBuffer inUsoMessage = new StringBuffer();
 			
-			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, inUsoMessage, azioni);
+			String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());
+			
+			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, inUsoMessage, azioni, userLogin);
 
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {

@@ -116,7 +116,9 @@ public final class PorteDelegateAzioneDel extends Action {
 			
 			StringBuffer inUsoMessage = new StringBuffer();
 			
-			PorteDelegateUtilities.deletePortaDelegataAzioni(portaDelegata, asps, porteDelegateCore, porteDelegateHelper, inUsoMessage, azioni);
+			String userLogin = ServletUtils.getUserLoginFromSession(porteDelegateHelper.getSession());
+			
+			PorteDelegateUtilities.deletePortaDelegataAzioni(portaDelegata, asps, porteDelegateCore, porteDelegateHelper, inUsoMessage, azioni, userLogin);
 			
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {
