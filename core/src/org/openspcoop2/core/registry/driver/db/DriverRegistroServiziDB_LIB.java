@@ -2213,7 +2213,7 @@ public class DriverRegistroServiziDB_LIB {
 						oldTipoSoggetto = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo();
 					}
 					oldNomeServizio = asps.getOldIDServizioForUpdate().getNome();
-					oldTipoSoggetto = asps.getOldIDServizioForUpdate().getTipo();
+					oldTipoServizio = asps.getOldIDServizioForUpdate().getTipo();
 					oldVersioneServizio = asps.getOldIDServizioForUpdate().getVersione();
 				}
 

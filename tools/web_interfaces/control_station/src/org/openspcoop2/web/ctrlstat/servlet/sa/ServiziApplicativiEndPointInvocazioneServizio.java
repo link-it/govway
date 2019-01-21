@@ -23,7 +23,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -38,7 +37,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
@@ -876,22 +874,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			// disabilitato
 			// bisogna controllare che il servizio applicativo non sia in uso in
 			// porte applicative
-			InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-			StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-			if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)) {
-				Map<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
-				if (saCore.isServizioApplicativoInUso(sa, whereIsInUso)) {
-
-					// se in uso in porte applicative allora impossibile
-					// disabilitare connettore o getmessage
-					if (whereIsInUso.containsKey(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE)) {
-						pd.setMessage("Impossibile disabilitare il GetMessage o il Connettore in quanto il Servizio Applicativo [" + sa.getNome() + "]<br>" + " e' in uso in Porta Applicative " + whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE));
-						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-						return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
-								ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
-					}
-
-				}
+			StringBuffer inUsoMessage = new StringBuffer();
+			ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+			if(inUsoMessage.length()>0) {
+				pd.setMessage(inUsoMessage.toString());
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
+						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 			}
 			
 			if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {

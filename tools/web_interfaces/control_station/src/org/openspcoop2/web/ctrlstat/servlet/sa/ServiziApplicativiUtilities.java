@@ -23,14 +23,21 @@
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -209,5 +216,24 @@ public class ServiziApplicativiUtilities {
 		saGeneralInfo.setTipoProtocollo(tipoProtocollo);
 		saGeneralInfo.setProvider(provider);
 		return saGeneralInfo;
+	}
+	
+	public static void checkStatoConnettore(ServiziApplicativiCore saCore, ServizioApplicativo sa, Connettore connis, StringBuffer inUsoMessage, String newLine) throws DriverConfigurazioneException {
+		InvocazioneServizio invServizio = sa.getInvocazioneServizio();
+		StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+		if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)) {
+			Map<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
+			if (saCore.isServizioApplicativoInUso(sa, whereIsInUso)) {
+
+				// se in uso in porte applicative allora impossibile
+				// disabilitare connettore o getmessage
+				if (whereIsInUso.containsKey(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE)) {
+					inUsoMessage.append("Impossibile disabilitare il GetMessage o il Connettore in quanto il Servizio Applicativo [" + 
+							sa.getNome() + "]"+ newLine + " è in uso in Porta Applicative " + whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE));
+					return;
+				}
+
+			}
+		}
 	}
 }
