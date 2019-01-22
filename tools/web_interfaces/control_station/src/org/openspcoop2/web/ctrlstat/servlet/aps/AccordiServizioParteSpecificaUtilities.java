@@ -22,6 +22,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -2103,5 +2104,91 @@ public class AccordiServizioParteSpecificaUtilities {
 			// non supportato
 			break;
 		}
+	}
+	
+	public static boolean alreadyExists(AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, 
+			long idSoggettoErogatore, IDServizio idAccordoServizioParteSpecifica, String uriAccordoServizioParteComune,
+			String tipoFruitore, String nomeFruitore,
+			String protocollo, String profilo, String portType,
+			boolean gestioneFruitori, boolean gestioneErogatori,
+			StringBuffer inUsoMessage) throws Exception {
+		
+		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
+		
+		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
+		
+		String tiposervizio = idAccordoServizioParteSpecifica.getTipo();
+		String nomeservizio = idAccordoServizioParteSpecifica.getNome();
+		Integer versioneInt = idAccordoServizioParteSpecifica.getVersione();
+		String tipoErogatore = idAccordoServizioParteSpecifica.getSoggettoErogatore().getTipo();
+		String nomeErogatore = idAccordoServizioParteSpecifica.getSoggettoErogatore().getNome();
+		
+		if (apsCore.existServizio(nomeservizio, tiposervizio, versioneInt, idSoggettoErogatore) > 0) {
+			String labelServizio = apsHelper.getLabelNomeServizio(protocollo, tiposervizio, nomeservizio, versioneInt);
+			String labelSoggetto = apsHelper.getLabelNomeSoggetto(protocollo, tipoErogatore, nomeErogatore);
+			
+			AccordoServizioParteSpecifica asps = apsCore.getServizio(idAccordoServizioParteSpecifica, false);
+			if(gestioneFruitori || gestioneErogatori) {
+				// verifico che l'api indicata sia la stessa dell'api del servizio già esistente
+				String uri_apc = asps.getAccordoServizioParteComune();
+				if(uriAccordoServizioParteComune.equals(uri_apc)==false) {
+					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_API_DIFFERENTE;
+					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, apsHelper.getLabelIdAccordo(idAccordoFactory.getIDAccordoFromUri(uri_apc)));
+					inUsoMessage.append(msg);
+					return true;
+				}
+				if (profilo!=null && !"".equals(profilo) && "-".equals(profilo) == false && !profilo.equals(asps.getVersioneProtocollo())) {
+					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_VERSIONE_PROTOCOLLO_DIFFERENTE;
+					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, 
+							asps.getVersioneProtocollo()==null? AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_VERSIONE_EROGATORE : asps.getVersioneProtocollo());
+					inUsoMessage.append(msg);
+					return true;
+				}
+				if (portType != null && !"".equals(portType) && !"-".equals(portType) && !portType.equals(asps.getPortType())) {
+					String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PORT_TYPE_DIFFERENTE;
+					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, 
+							asps.getPortType()==null? "Nessun Servizio" : asps.getPortType());
+					inUsoMessage.append(msg);
+					return true;
+				}
+			}
+			
+			String msg = null;
+			if(gestioneFruitori) {
+				
+				boolean found = false;
+				for (Fruitore fruitore : asps.getFruitoreList()) {
+					if(fruitore.getTipo().equals(tipoFruitore) && fruitore.getNome().equals(nomeFruitore)) {
+						found = true;
+						break;
+					}
+				}
+				
+				if(found) {
+					String labelSoggettoFruitore = apsHelper.getLabelNomeSoggetto(protocollo, tipoFruitore, nomeFruitore);
+					msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI_FRUIZIONE;
+					msg = MessageFormat.format(msg,	labelSoggettoFruitore, labelServizio, labelSoggetto);
+				}
+			}
+			else if(gestioneErogatori) {
+				
+				List<IDPortaApplicativa> l = porteApplicativeCore.getIDPorteApplicativeAssociate(idAccordoServizioParteSpecifica);
+				if(l!=null && l.size()>0) {
+					msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
+					msg = MessageFormat.format(msg,	labelServizio, labelSoggetto);
+				}
+				
+			}
+			else {
+				msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
+				msg = MessageFormat.format(msg,	labelServizio, labelSoggetto);
+			}
+			if(msg!=null) {
+				inUsoMessage.append(msg);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

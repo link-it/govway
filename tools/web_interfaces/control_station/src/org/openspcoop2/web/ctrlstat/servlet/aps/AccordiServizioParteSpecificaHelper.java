@@ -571,70 +571,18 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					)
 				){
 				
-				if (this.apsCore.existServizio(nomeservizio, tiposervizio, versioneInt, idSoggettoErogatore) > 0) {
-					String labelServizio = this.getLabelNomeServizio(protocollo, tiposervizio, nomeservizio, versioneInt);
-					String labelSoggetto = this.getLabelNomeSoggetto(protocollo, tipoErogatore, nomeErogatore);
-					
-					AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idAccordoServizioParteSpecifica, false);
-					if(gestioneFruitori || gestioneErogatori) {
-						// verifico che l'api indicata sia la stessa dell'api del servizio già esistente
-						String uri_apc = asps.getAccordoServizioParteComune();
-						if(uriAccordoServizioParteComune.equals(uri_apc)==false) {
-							String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_API_DIFFERENTE;
-							msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, this.getLabelIdAccordo(this.idAccordoFactory.getIDAccordoFromUri(uri_apc)));
-							this.pd.setMessage(msg);
-							return false;
-						}
-						if (profilo!=null && !"".equals(profilo) && "-".equals(profilo) == false && !profilo.equals(asps.getVersioneProtocollo())) {
-							String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_VERSIONE_PROTOCOLLO_DIFFERENTE;
-							msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, 
-									asps.getVersioneProtocollo()==null? AccordiServizioParteSpecificaCostanti.LABEL_APS_USA_VERSIONE_EROGATORE : asps.getVersioneProtocollo());
-							this.pd.setMessage(msg);
-							return false;
-						}
-						if (portType != null && !"".equals(portType) && !"-".equals(portType) && !portType.equals(asps.getPortType())) {
-							String msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PORT_TYPE_DIFFERENTE;
-							msg = MessageFormat.format(msg,	labelServizio, labelSoggetto, 
-									asps.getPortType()==null? "Nessun Servizio" : asps.getPortType());
-							this.pd.setMessage(msg);
-							return false;
-						}
-					}
-					
-					String msg = null;
-					if(gestioneFruitori) {
-						
-						boolean found = false;
-						for (Fruitore fruitore : asps.getFruitoreList()) {
-							if(fruitore.getTipo().equals(tipoFruitore) && fruitore.getNome().equals(nomeFruitore)) {
-								found = true;
-								break;
-							}
-						}
-						
-						if(found) {
-							String labelSoggettoFruitore = this.getLabelNomeSoggetto(protocollo, tipoFruitore, nomeFruitore);
-							msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI_FRUIZIONE;
-							msg = MessageFormat.format(msg,	labelSoggettoFruitore, labelServizio, labelSoggetto);
-						}
-					}
-					else if(gestioneErogatori) {
-						
-						List<IDPortaApplicativa> l = this.porteApplicativeCore.getIDPorteApplicativeAssociate(idAccordoServizioParteSpecifica);
-						if(l!=null && l.size()>0) {
-							msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
-							msg = MessageFormat.format(msg,	labelServizio, labelSoggetto);
-						}
-						
-					}
-					else {
-						msg = AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ESISTE_UN_SERVIZIO_CON_IL_TIPO_E_NOME_DEFINITO_EROGATO_DAL_SOGGETTO_CON_PARAMETRI;
-						msg = MessageFormat.format(msg,	labelServizio, labelSoggetto);
-					}
-					if(msg!=null) {
-						this.pd.setMessage(msg);
-						return false;
-					}
+				StringBuffer inUsoMessage = new StringBuffer();
+				
+				boolean alreadyExists = AccordiServizioParteSpecificaUtilities.alreadyExists(this.apsCore, this, 
+						idSoggettoErogatore, idAccordoServizioParteSpecifica, uriAccordoServizioParteComune,
+						tipoFruitore, nomeFruitore,
+						protocollo, profilo, portType,
+						gestioneFruitori, gestioneErogatori,
+						inUsoMessage);
+				
+				if(alreadyExists) {
+					this.pd.setMessage(inUsoMessage.toString());
+					return false;
 				}
 			}
 
