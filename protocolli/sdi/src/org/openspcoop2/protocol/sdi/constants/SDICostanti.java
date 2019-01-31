@@ -88,6 +88,7 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_NOME_FILE = "NomeFile";
     public final static String SDI_BUSTA_EXT_NOME_FILE_METADATI = "NomeFileMetadati";
     public final static String SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA = "NomeFileInternoNotifica";
+    public final static String SDI_BUSTA_EXT_HASH_IN_NOTIFICA = "HashNotifica";
     public final static String SDI_BUSTA_EXT_MESSAGE_ID = "MessageId";
     public final static String SDI_BUSTA_EXT_MESSAGE_ID_COMMITTENTE = "MessageIdCommittente";
     public final static String SDI_BUSTA_EXT_VERSIONE_FATTURA_PA = "FormatoFatturaPA";
@@ -100,6 +101,8 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_ESITO_NOTIFICA = "EsitoNotifica";
     public final static String SDI_BUSTA_EXT_SCARTO = "Scarto";
     public final static String SDI_BUSTA_EXT_DATA_ORA_RICEZIONE = "DataOraRicezione";
+    public final static String SDI_BUSTA_EXT_DATA_MESSA_A_DISPOSIZIONE = "DataMessaADisposizione";
+    public final static String SDI_BUSTA_EXT_DATA_ORA_CONSEGNA = "DataOraConsegna";
     public final static String SDI_BUSTA_EXT_ERRORE = "Errore";
     public final static String SDI_BUSTA_EXT_ESITO_COMMITTENTE = "EsitoCommittente";
     public final static String SDI_BUSTA_EXT_DESTINATARIO_CODICE = "Destinatario-Codice";

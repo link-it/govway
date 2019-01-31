@@ -16,6 +16,9 @@ pa=ENTE/TrasmissioneFatture/v1
 #pdd=https://localhost:8444/govway/spcoop/in
 #pa=
 
+
+# ------- Fatturazione PA ---------------
+
 # Tipo Operazione
 # - RicevutaConsegna
 # - NotificaMancataConsegna
@@ -57,3 +60,22 @@ NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
 # -- AttestazioneTrasmissioneFattura
 AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_11111_AT_001.zip
 #AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_AT_001.zip
+
+
+# ------- Fatturazione B2B ---------------
+
+# Tipo Operazione
+# (Ricevuta di Consegna) - RicevutaConsegna
+# (Ricevuta di Impossibilità di Recapito) - NotificaMancataConsegna
+# (Ricevuta di Scarto) - NotificaScarto
+#tipoOperazione=RicevutaConsegna
+
+# -- RicevutaConsegna
+#RicevutaConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_RC_001.xml
+
+# -- NotificaMancataConsegna
+#NotificaMancataConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_MC_001.xml
+
+# -- NotificaScarto
+#NotificaScarto=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_NS_001.xml
+#NotificaScarto=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_NS__001.xml

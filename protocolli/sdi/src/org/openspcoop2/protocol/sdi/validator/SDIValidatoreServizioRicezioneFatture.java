@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.FileMetadatiType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.MetadatiInvioFileType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
@@ -50,6 +51,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -524,12 +526,54 @@ public class SDIValidatoreServizioRicezioneFatture {
 			forceEccezioneLivelloInfo = true;
 		}
 		
+		
+		boolean fatturaB2B = false;
+		if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XMLUtils.isNotificaB2B(metadati)) {
+			fatturaB2B = true;
+		}
+		else if(it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.isNotificaPA(metadati, sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov())) {
+			fatturaB2B = false;
+		}
+		else {
+			String namespace = null;
+			Throwable eMalformato = null;
+			try {
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				Document docXML = xmlUtils.newDocument(metadati);
+				Element elemXML = docXML.getDocumentElement();
+				namespace = elemXML.getNamespaceURI();
+			}catch(Throwable t) {
+				eMalformato = t;
+			}
+			if(namespace!=null) {
+				eccezioniValidazione.add(
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un namespace ("+namespace+") sconosciuto",
+							forceEccezioneLivelloInfo));
+			}
+			else {
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un xml malformato: "+eMalformato.getMessage(),eMalformato,
+								forceEccezioneLivelloInfo));
+			}
+			return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
+		}
+		
+		
 		// validazione XSD file Metadati
 		if(sdiProperties.isEnableValidazioneXsdMetadati()){
 			try{
-				AbstractValidatoreXSD validatore = 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-				validatore.valida(new ByteArrayInputStream(metadati));
+				if(fatturaB2B) {
+					AbstractValidatoreXSD validatore = 
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(metadati));
+				}
+				else {
+					AbstractValidatoreXSD validatore = 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(metadati));
+				}
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
@@ -540,76 +584,160 @@ public class SDIValidatoreServizioRicezioneFatture {
 		}
 		
 		// Lettura metadati
-		MetadatiInvioFileType metadatiObject = null;
-		try{
-			it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
-					new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-			metadatiObject = deserializer.readMetadatiInvioFileType(metadati);
-			if(sdiProperties.isSaveFatturaInContext()){
-				this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI, metadatiObject);
-				this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES, metadati);
-			}
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+
-									e.getMessage(),e, forceEccezioneLivelloInfo));
-			return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
-		}
 		
-		// Metadati.IdentificativoSdI
-		String identificativoSdILettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
-		if(identificativoSdILettoInValidazioneSintattica.equals(metadatiObject.getIdentificativoSdI().toString())==false){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO,
-							"Identificativo presente nel messaggio SdI ["+identificativoSdILettoInValidazioneSintattica+
-							"] differente da quello presente nel file Metadati ["+metadatiObject.getIdentificativoSdI().toString()+"]",
-							!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
-			if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+		if(fatturaB2B) {
+			
+			FileMetadatiType metadatiObject = null;
+			try{
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				metadatiObject = deserializer.readFileMetadatiType(metadati);
+				if(sdiProperties.isSaveFatturaInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI, metadatiObject);
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES, metadati);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+e.getMessage(),e,
+								forceEccezioneLivelloInfo));
+				return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
+			}
+			
+			// Metadati.IdentificativoSdI
+			String identificativoSdILettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
+			if(identificativoSdILettoInValidazioneSintattica.equals(metadatiObject.getIdentificativoSdI().toString())==false){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO,
+								"Identificativo presente nel messaggio SdI ["+identificativoSdILettoInValidazioneSintattica+
+								"] differente da quello presente nel file Metadati ["+metadatiObject.getIdentificativoSdI().toString()+"]",
+								!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
+				if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+					return false;	
+				}
+			}
+			
+			
+			// Metadati.NomeFile
+			String nomeFileLettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE);
+			if(nomeFileLettoInValidazioneSintattica.equals(metadatiObject.getNomeFile())==false){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"NomeFile presente nel messaggio SdI ["+nomeFileLettoInValidazioneSintattica+
+								"] differente da quello presente nel file Metadati ["+metadatiObject.getNomeFile()+"]",
+								!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
+				if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+					return false;	
+				}
+			}
+					
+			// Hash
+			if(metadatiObject.getHash()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HASH_IN_NOTIFICA, metadatiObject.getHash());
+			}
+			
+			// Metadati.CodiceDestinatario
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO, metadatiObject.getCodiceDestinatario());
+			
+			// Metadati.FormatoFattura (validazione necessaria per riconoscere poi il tipo di fattura da parsare)
+			String formatoFattura = metadatiObject.getFormato();
+			if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"FormatoFattura presente nei metadati ["+formatoFattura+
+								"] non valido"));
 				return false;	
 			}
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, formatoFattura);
+			
+			// Metadati.TentativiInvio
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TENTATIVI_INVIO, metadatiObject.getTentativiInvio().toString());
+			
+			// Metadati.MessageId
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, metadatiObject.getMessageId());
+			
+			// Metadati.Note
+			if(metadatiObject.getNote()!=null)
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, metadatiObject.getNote());
+			
 		}
+		else {
 		
-		
-		// Metadati.NomeFile
-		String nomeFileLettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE);
-		if(nomeFileLettoInValidazioneSintattica.equals(metadatiObject.getNomeFile())==false){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"NomeFile presente nel messaggio SdI ["+nomeFileLettoInValidazioneSintattica+
-							"] differente da quello presente nel file Metadati ["+metadatiObject.getNomeFile()+"]",
-							!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
-			if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+			MetadatiInvioFileType metadatiObject = null;
+			try{
+				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				metadatiObject = deserializer.readMetadatiInvioFileType(metadati);
+				if(sdiProperties.isSaveFatturaInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI, metadatiObject);
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA_METADATI_BYTES, metadati);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_METADATI+"] contiene un file Metadati non valido: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return false; // esco anche in caso di forceEccezioneLivelloInfo poiche' i metadati non sono ben formati e non ha senso andare avanti
+			}
+			
+			// Metadati.IdentificativoSdI
+			String identificativoSdILettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI);
+			if(identificativoSdILettoInValidazioneSintattica.equals(metadatiObject.getIdentificativoSdI().toString())==false){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO,
+								"Identificativo presente nel messaggio SdI ["+identificativoSdILettoInValidazioneSintattica+
+								"] differente da quello presente nel file Metadati ["+metadatiObject.getIdentificativoSdI().toString()+"]",
+								!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
+				if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+					return false;	
+				}
+			}
+			
+			
+			// Metadati.NomeFile
+			String nomeFileLettoInValidazioneSintattica = this.busta.getProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE);
+			if(nomeFileLettoInValidazioneSintattica.equals(metadatiObject.getNomeFile())==false){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"NomeFile presente nel messaggio SdI ["+nomeFileLettoInValidazioneSintattica+
+								"] differente da quello presente nel file Metadati ["+metadatiObject.getNomeFile()+"]",
+								!sdiProperties.isEnableValidazioneCampiInterniMetadati()));
+				if(sdiProperties.isEnableValidazioneCampiInterniMetadati()){
+					return false;	
+				}
+			}
+					
+			// Metadati.CodiceDestinatario
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO, metadatiObject.getCodiceDestinatario());
+			
+			// Metadati.FormatoFattura (validazione necessaria per riconoscere poi il tipo di fattura da parsare)
+			String formatoFattura = metadatiObject.getFormato();
+			if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
+				!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"FormatoFattura presente nei metadati ["+formatoFattura+
+								"] non valido"));
 				return false;	
 			}
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, formatoFattura);
+			
+			// Metadati.TentativiInvio
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TENTATIVI_INVIO, metadatiObject.getTentativiInvio().toString());
+			
+			// Metadati.MessageId
+			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, metadatiObject.getMessageId());
+			
+			// Metadati.Note
+			if(metadatiObject.getNote()!=null)
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, metadatiObject.getNote());
+			
 		}
-				
-		// Metadati.CodiceDestinatario
-		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO, metadatiObject.getCodiceDestinatario());
-		
-		// Metadati.FormatoFattura (validazione necessaria per riconoscere poi il tipo di fattura da parsare)
-		String formatoFattura = metadatiObject.getFormato();
-		if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
-			!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
-			!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
-			!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"FormatoFattura presente nei metadati ["+formatoFattura+
-							"] non valido"));
-			return false;	
-		}
-		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, formatoFattura);
-		
-		// Metadati.TentativiInvio
-		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TENTATIVI_INVIO, metadatiObject.getTentativiInvio().toString());
-		
-		// Metadati.MessageId
-		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, metadatiObject.getMessageId());
-		
-		// Metadati.Note
-		if(metadatiObject.getNote()!=null)
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, metadatiObject.getNote());
 		
 		return true;
 	}

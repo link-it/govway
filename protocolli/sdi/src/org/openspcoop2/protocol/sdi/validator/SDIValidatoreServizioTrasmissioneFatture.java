@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaImpossibilitaRecapitoType;
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaScartoType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.AttestazioneTrasmissioneFatturaType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.ErroreType;
 import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType;
@@ -56,6 +58,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -508,18 +511,60 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			forceEccezioneLivelloInfo = true;
 		}
 		
-		String tipoXml = "Ricevuta di Consegna";
+		boolean fatturaB2B = false;
+		String tipoXml = null;
+		if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XMLUtils.isNotificaB2B(xmlDoc)) {
+			fatturaB2B = true;
+			tipoXml = "Ricevuta di Consegna";
+		}
+		else if(it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.isNotificaPA(xmlDoc, sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov())) {
+			fatturaB2B = false;
+			tipoXml = "Ricevuta di Consegna";
+		}
+		else {
+			String namespace = null;
+			Throwable eMalformato = null;
+			try {
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				Document docXML = xmlUtils.newDocument(xmlDoc);
+				Element elemXML = docXML.getDocumentElement();
+				namespace = elemXML.getNamespaceURI();
+			}catch(Throwable t) {
+				eMalformato = t;
+			}
+			if(namespace!=null) {
+				eccezioniValidazione.add(
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un namespace ("+namespace+") sconosciuto",
+							forceEccezioneLivelloInfo));
+			}
+			else {
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un xml malformato: "+eMalformato.getMessage(),eMalformato,
+								forceEccezioneLivelloInfo));
+			}
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
+		}
+		
 		byte[] xml = xmlDoc;
-		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
+		if(!fatturaB2B && sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 			xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), xml);
 		}
 		
 		// validazione XSD file
 		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
 			try{
-				AbstractValidatoreXSD validatore = 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-				validatore.valida(new ByteArrayInputStream(xml));
+				if(fatturaB2B) {
+					AbstractValidatoreXSD validatore = 
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
+				else {
+					AbstractValidatoreXSD validatore = 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
@@ -530,79 +575,162 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// Lettura metadati
-		RicevutaConsegnaType xmlObject = null;
-		try{
-			it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
-					new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-			xmlObject = deserializer.readRicevutaConsegnaType(xml);
-			if(sdiProperties.isSaveMessaggiInContext()){
-				this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+		
+		if(fatturaB2B) {
+			
+			it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaConsegnaType xmlObject = null;
+			try{
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readRicevutaConsegnaType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
-									e.getMessage(),e, forceEccezioneLivelloInfo));
-			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
-		}
-		
-		String idSdi = null;
-		String idSdiRifArchivio = null;
-		
-		// IdentificativoSdI
-		if(xmlObject.getIdentificativoSdI()!=null){
-			idSdi = xmlObject.getIdentificativoSdI()+"";
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
-		}
-		
-		// NomeFile
-		if(xmlObject.getNomeFile()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
-		}
+			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+			
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI();
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI()+"");
+			}
+			
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
+			}
 				
-		// DataOraRicezione
-		if(xmlObject.getDataOraRicezione()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
-		}
-		
-		// DataOraConsegna
-		if(xmlObject.getDataOraConsegna()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraConsegna().toString());
-		}
-		
-		// Destinatario
-		if(xmlObject.getDestinatario()!=null){
-			if(xmlObject.getDestinatario().getCodice()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_CODICE, xmlObject.getDestinatario().getCodice());
+			// Hash
+			if(xmlObject.getHash()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HASH_IN_NOTIFICA, xmlObject.getHash());
 			}
-			if(xmlObject.getDestinatario().getDescrizione()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_DESCRIZIONE, xmlObject.getDestinatario().getDescrizione());
+			
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
 			}
-		}
-		
-		// RiferimentoArchivio
-		if(xmlObject.getRiferimentoArchivio()!=null){
-			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+			
+			// DataOraConsegna
+			if(xmlObject.getDataOraConsegna()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_CONSEGNA, xmlObject.getDataOraConsegna().toString());
 			}
-			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+			
+			// Destinatario
+			if(xmlObject.getDestinatario()!=null){
+				if(xmlObject.getDestinatario().getCodice()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_CODICE, xmlObject.getDestinatario().getCodice());
+				}
+				if(xmlObject.getDestinatario().getDescrizione()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_DESCRIZIONE, xmlObject.getDestinatario().getDescrizione());
+				}
 			}
+			
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI();
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI());
+				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+			
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+			
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 		}
+		else {
+			
+			RicevutaConsegnaType xmlObject = null;
+			try{
+				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readRicevutaConsegnaType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
+			}
 		
-		// MessageId
-		if(xmlObject.getMessageId()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+		
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
+			}
+		
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
+			}
+				
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
+			}
+		
+			// DataOraConsegna
+			if(xmlObject.getDataOraConsegna()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_CONSEGNA, xmlObject.getDataOraConsegna().toString());
+			}
+		
+			// Destinatario
+			if(xmlObject.getDestinatario()!=null){
+				if(xmlObject.getDestinatario().getCodice()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_CODICE, xmlObject.getDestinatario().getCodice());
+				}
+				if(xmlObject.getDestinatario().getDescrizione()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESTINATARIO_DESCRIZIONE, xmlObject.getDestinatario().getDescrizione());
+				}
+			}
+		
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+		
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+		
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+		
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 		}
-		
-		// Note
-		if(xmlObject.getNote()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
-		}
-		
-		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
-		
 	}
 	
 	
@@ -618,9 +746,45 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		
-		String tipoXml = "Notifica di Mancata Consegna";
+		boolean fatturaB2B = false;
+		String tipoXml = null;
+		if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XMLUtils.isNotificaB2B(xmlDoc)) {
+			fatturaB2B = true;
+			tipoXml = "Ricevuta di Impossibilità di Recapito";
+		}
+		else if(it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.isNotificaPA(xmlDoc, sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov())) {
+			fatturaB2B = false;
+			tipoXml = "Notifica di Mancata Consegna";
+		}
+		else {
+			String namespace = null;
+			Throwable eMalformato = null;
+			try {
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				Document docXML = xmlUtils.newDocument(xmlDoc);
+				Element elemXML = docXML.getDocumentElement();
+				namespace = elemXML.getNamespaceURI();
+			}catch(Throwable t) {
+				eMalformato = t;
+			}
+			if(namespace!=null) {
+				eccezioniValidazione.add(
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un namespace ("+namespace+") sconosciuto",
+							forceEccezioneLivelloInfo));
+			}
+			else {
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un xml malformato: "+eMalformato.getMessage(),eMalformato,
+								forceEccezioneLivelloInfo));
+			}
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti	
+		}
+		
+		
 		byte[] xml = xmlDoc;
-		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
+		if(!fatturaB2B && sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 			xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), xml);
 		}
 		
@@ -628,9 +792,16 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// validazione XSD file
 		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
 			try{
-				AbstractValidatoreXSD validatore = 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-				validatore.valida(new ByteArrayInputStream(xml));
+				if(fatturaB2B) {
+					AbstractValidatoreXSD validatore = 
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
+				else {
+					AbstractValidatoreXSD validatore = 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
@@ -641,68 +812,148 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// Lettura metadati
-		NotificaMancataConsegnaType xmlObject = null;
-		try{
-			it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
-					new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-			xmlObject = deserializer.readNotificaMancataConsegnaType(xml);
-			if(sdiProperties.isSaveMessaggiInContext()){
-				this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
-			}
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
-									e.getMessage(),e, forceEccezioneLivelloInfo));
-			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
-		}
 		
-		String idSdi = null;
-		String idSdiRifArchivio = null;
-				
-		// IdentificativoSdI
-		if(xmlObject.getIdentificativoSdI()!=null){
-			idSdi = xmlObject.getIdentificativoSdI()+"";
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
-		}
-				
-		// NomeFile
-		if(xmlObject.getNomeFile()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
-		}
-				
-		// DataOraRicezione
-		if(xmlObject.getDataOraRicezione()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
-		}
-
-		// RiferimentoArchivio
-		if(xmlObject.getRiferimentoArchivio()!=null){
-			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+		if(fatturaB2B) {
+			
+			RicevutaImpossibilitaRecapitoType xmlObject = null;
+			try{
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readRicevutaImpossibilitaRecapitoType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e,
+								forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
-			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+					
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI();
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI());
 			}
+					
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
+			}
+			
+			// Hash
+			if(xmlObject.getHash()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HASH_IN_NOTIFICA, xmlObject.getHash());
+			}
+					
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
+			}
+			
+			// DataMessaADisposizione
+			if(xmlObject.getDataMessaADisposizione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_MESSA_A_DISPOSIZIONE, xmlObject.getDataMessaADisposizione().toString());
+			}
+	
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI();
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI());				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+	
+			// Descrizione
+			if(xmlObject.getDescrizione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESCRIZIONE, xmlObject.getDescrizione());
+			}
+					
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+			
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
+			
 		}
-
-		// Descrizione
-		if(xmlObject.getDescrizione()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESCRIZIONE, xmlObject.getDescrizione());
+		else {
+			
+			NotificaMancataConsegnaType xmlObject = null;
+			try{
+				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readNotificaMancataConsegnaType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
+			}
+			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+					
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
+			}
+					
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
+			}
+					
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
+			}
+	
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+	
+			// Descrizione
+			if(xmlObject.getDescrizione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DESCRIZIONE, xmlObject.getDescrizione());
+			}
+					
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+			
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
+			
 		}
-				
-		// MessageId
-		if(xmlObject.getMessageId()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
-		}
-		
-		// Note
-		if(xmlObject.getNote()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
-		}
-		
-		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 
 	
@@ -718,10 +969,46 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			forceEccezioneLivelloInfo = true;
 		}
 		
+				
+		boolean fatturaB2B = false;
+		String tipoXml = null;
+		if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XMLUtils.isNotificaB2B(xmlDoc)) {
+			fatturaB2B = true;
+			tipoXml = "Ricevuta di Scarto";
+		}
+		else if(it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.isNotificaPA(xmlDoc, sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov())) {
+			fatturaB2B = false;
+			tipoXml = "Notifica di Scarto";
+		}
+		else {
+			String namespace = null;
+			Throwable eMalformato = null;
+			try {
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				Document docXML = xmlUtils.newDocument(xmlDoc);
+				Element elemXML = docXML.getDocumentElement();
+				namespace = elemXML.getNamespaceURI();
+			}catch(Throwable t) {
+				eMalformato = t;
+			}
+			if(namespace!=null) {
+				eccezioniValidazione.add(
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un namespace ("+namespace+") sconosciuto",
+							forceEccezioneLivelloInfo));
+			}
+			else {
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un xml malformato: "+eMalformato.getMessage(),eMalformato,
+								forceEccezioneLivelloInfo));
+			}
+			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
+		}
 		
-		String tipoXml = "Notifica di Scarto";
+
 		byte[] xml = xmlDoc;
-		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
+		if(!fatturaB2B && sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
 			xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(protocolFactory.getLogger(), xml);
 		}
 		
@@ -729,9 +1016,16 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		// validazione XSD file
 		if(sdiProperties.isEnableValidazioneXsdMessaggi()){
 			try{
-				AbstractValidatoreXSD validatore = 
-						it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
-				validatore.valida(new ByteArrayInputStream(xml));
+				if(fatturaB2B) {
+					AbstractValidatoreXSD validatore = 
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
+				else {
+					AbstractValidatoreXSD validatore = 
+							it.gov.fatturapa.sdi.messaggi.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+					validatore.valida(new ByteArrayInputStream(xml));
+				}
 			}catch(Exception e){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
@@ -742,74 +1036,159 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 		}
 		
 		// Lettura metadati
-		NotificaScartoType xmlObject = null;
-		try{
-			it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
-					new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
-			xmlObject = deserializer.readNotificaScartoType(xml);
-			if(sdiProperties.isSaveMessaggiInContext()){
-				this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
-			}
-		}catch(Exception e){
-			eccezioniValidazione.add(
-					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-							"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
-									e.getMessage(),e, forceEccezioneLivelloInfo));
-			return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
-		}
 		
-		String idSdi = null;
-		String idSdiRifArchivio = null;
-				
-		// IdentificativoSdI
-		if(xmlObject.getIdentificativoSdI()!=null){
-			idSdi = xmlObject.getIdentificativoSdI()+"";
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
-		}
-				
-		// NomeFile
-		if(xmlObject.getNomeFile()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
-		}
-				
-		// DataOraRicezione
-		if(xmlObject.getDataOraRicezione()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
-		}
-
-		// RiferimentoArchivio
-		if(xmlObject.getRiferimentoArchivio()!=null){
-			if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
-				idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+		if(fatturaB2B) {
+			
+			RicevutaScartoType xmlObject = null;
+			try{
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readRicevutaScartoType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+e.getMessage(),e,
+								forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
 			}
-			if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
-				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+					
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI();
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, xmlObject.getIdentificativoSdI());
 			}
-		}
-
-		// ListaErrori
-		if(xmlObject.getListaErrori()!=null && xmlObject.getListaErrori().sizeErroreList()>0){
-			StringBuffer bf = new StringBuffer();
-			bf.append(xmlObject.getListaErrori().sizeErroreList()+" errori rilevati: ");
-			for (int i = 0; i < xmlObject.getListaErrori().sizeErroreList(); i++) {
-				ErroreType errore = xmlObject.getListaErrori().getErrore(i);
-				bf.append("\n\t- ["+errore.getCodice()+"] "+errore.getDescrizione());
+					
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
 			}
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ERRORI, bf.toString());
+			
+			// Hash
+			if(xmlObject.getHash()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_HASH_IN_NOTIFICA, xmlObject.getHash());
+			}
+			
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
+			}
+	
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI();
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, xmlObject.getRiferimentoArchivio().getIdentificativoSdI());
+				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+	
+			// ListaErrori
+			if(xmlObject.getListaErrori()!=null && xmlObject.getListaErrori().sizeErroreList()>0){
+				StringBuffer bf = new StringBuffer();
+				bf.append(xmlObject.getListaErrori().sizeErroreList()+" errori rilevati: ");
+				for (int i = 0; i < xmlObject.getListaErrori().sizeErroreList(); i++) {
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.ErroreType errore = xmlObject.getListaErrori().getErrore(i);
+					bf.append("\n\t- ["+errore.getCodice()+"] "+errore.getDescrizione());
+					if(errore.getSuggerimento()!=null) {
+						bf.append(" (").append(errore.getSuggerimento()).append(")");
+					}
+				}
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ERRORI, bf.toString());
+			}
+			
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+			
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
+			
 		}
-		
-		// MessageId
-		if(xmlObject.getMessageId()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+		else {
+			
+			NotificaScartoType xmlObject = null;
+			try{
+				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+				xmlObject = deserializer.readNotificaScartoType(xml);
+				if(sdiProperties.isSaveMessaggiInContext()){
+					this.msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI, xmlObject);
+				}
+			}catch(Exception e){
+				eccezioniValidazione.add(
+						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+								"Elemento ["+SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE+"] contiene un file "+tipoXml+" non valido: "+
+										e.getMessage(),e, forceEccezioneLivelloInfo));
+				return;	// esco anche in caso di forceEccezioneLivelloInfo poiche' i messaggi non sono ben formati e non ha senso andare avanti
+			}
+			
+			String idSdi = null;
+			String idSdiRifArchivio = null;
+					
+			// IdentificativoSdI
+			if(xmlObject.getIdentificativoSdI()!=null){
+				idSdi = xmlObject.getIdentificativoSdI()+"";
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI_FATTURA, idSdi);
+			}
+					
+			// NomeFile
+			if(xmlObject.getNomeFile()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA, xmlObject.getNomeFile());
+			}
+					
+			// DataOraRicezione
+			if(xmlObject.getDataOraRicezione()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_DATA_ORA_RICEZIONE, xmlObject.getDataOraRicezione().toString());
+			}
+	
+			// RiferimentoArchivio
+			if(xmlObject.getRiferimentoArchivio()!=null){
+				if(xmlObject.getRiferimentoArchivio().getIdentificativoSdI()!=null){
+					idSdiRifArchivio = xmlObject.getRiferimentoArchivio().getIdentificativoSdI()+"";
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_IDENTIFICATIVO_SDI, idSdiRifArchivio);
+				}
+				if(xmlObject.getRiferimentoArchivio().getNomeFile()!=null){
+					this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_RIFERIMENTO_ARCHIVIO_NOME_FILE, xmlObject.getRiferimentoArchivio().getNomeFile());
+				}
+			}
+	
+			// ListaErrori
+			if(xmlObject.getListaErrori()!=null && xmlObject.getListaErrori().sizeErroreList()>0){
+				StringBuffer bf = new StringBuffer();
+				bf.append(xmlObject.getListaErrori().sizeErroreList()+" errori rilevati: ");
+				for (int i = 0; i < xmlObject.getListaErrori().sizeErroreList(); i++) {
+					ErroreType errore = xmlObject.getListaErrori().getErrore(i);
+					bf.append("\n\t- ["+errore.getCodice()+"] "+errore.getDescrizione());
+				}
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_ERRORI, bf.toString());
+			}
+			
+			// MessageId
+			if(xmlObject.getMessageId()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_MESSAGE_ID, xmlObject.getMessageId());
+			}
+			
+			// Note
+			if(xmlObject.getNote()!=null){
+				this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
+			}
+			
+			validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
+			
 		}
-		
-		// Note
-		if(xmlObject.getNote()!=null){
-			this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOTE, xmlObject.getNote());
-		}
-		
-		validazioneUtils.addHeaderIdentificativoSdiMessaggio(this.msg, idSdi, idSdiRifArchivio);
 	}
 	
 	

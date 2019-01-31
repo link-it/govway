@@ -116,6 +116,18 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 #metadati=sdiFiles/esempiMetadati/1.2/ITAAABBB00C11D222E_12011_MT_001.xml
 
 
+# --- Fattura 1.2 B2B (usata in riceviFatture) ---
+
+# Fattura B2B presa dal sito delle Agenzie Fiscali
+#fattura=sdiFiles/esempiFattureB2B/1.2/ITHVQWPH73P42H501Y_X0024.xml
+#metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_00022_MT_001.xml
+
+# Fattura B2B presa dal sito delle Agenzie Fiscali
+#fattura=sdiFiles/esempiFattureB2B/1.2/ITHVQWPH73P42H501Y_00023.xml
+#metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_00022_MT_001.xml
+
+
+
 # --- NotificaDecorrenzaTermini ---
 
 # Esempio di NotificaDecorrenzaTermini con namespace corretto 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0'

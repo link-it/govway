@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><ns3:RicevutaScarto xmlns:ns3="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" versione="1.0">
+    <IdentificativoSdI>724999</IdentificativoSdI>
+    <NomeFile>ITHVQWPH73P42H501Y_00022.xml</NomeFile>
+    <Hash>ef912599ea43cddf0c9ee59e30e38b2a91f0793ef046e61aa120a9d3ee0b5992</Hash>
+    <DataOraRicezione>2018-06-16T18:34:00.000+02:00</DataOraRicezione>
+    <ListaErrori>
+	<Errore>
+	<Codice>00002</Codice>
+	<Descrizione>Nome file duplicato</Descrizione>
+	<Suggerimento>Il sistema non accetta file con nomi duplicati. Probabilmente e' gia' stato inviato un file con lo stesso nome. Per risolvere il problema cambiare nome al file</Suggerimento>
+	</Errore>
+	</ListaErrori>
+    <MessageId>1413856</MessageId>
+<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="Signature1"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="reference-document" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2"><XPath xmlns="http://www.w3.org/2002/06/xmldsig-filter2" Filter="subtract">/descendant::ds:Signature</XPath></ds:Transform></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>8RsMWrdGsRFxZnT793RuYLemqrQKaZ8SdBLU1Cnqz3A=</ds:DigestValue></ds:Reference><ds:Reference Id="reference-signedpropeties" Type="http://uri.etsi.org/01903#SignedProperties" URI="#SignedProperties_1"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>9ppVB9XW67BGDEZFzzFm7QEbSUHhsvTXm5v2hYb+GlE=</ds:DigestValue></ds:Reference><ds:Reference Id="reference-keyinfo" URI="#KeyInfoId"><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>4thgElWRY9silOj9xa4LNcLRtYlVjF7OmMsGMDl0Gpg=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="SignatureValue1">I0Rq7wDrd0WlVlkULLjnjZoPF7Y7DGs44OJ8BhPpopB+iDQyDJPgIxctp9RZwD4zMAypftTdLET4
+C2w/npUwCCmQ3/KGGms0iiotJmIMfbkGk8GRQkbZl+xHvWcAREc9nPTHa25OSww2WH6foknXu7zc
+r7Gg6lOY1NjyqJarSxmlLH4uot6bGWgISic5TZdeGtQGPg1sAnDadKYKqRWqb1pwzsDVFiEDKcGd
+f+HU7kQftWrpV+RTE6zW3zbB6NQ95mIQV4t4lADR7CqoMxFN+f0FywcmZ9AvrgclHbzLF7W0ugYv
+on/XgEqMYegKGQE8bLpOk4FyRYo4B5wFDXE0kw==</ds:SignatureValue><ds:KeyInfo Id="KeyInfoId"><ds:X509Data><ds:X509Certificate>MIIEejCCA2KgAwIBAgIIQV7WvvxeHGIwDQYJKoZIhvcNAQELBQAwcjELMAkGA1UEBhMCaXQxHjAc
+BgNVBAoTFUFnZW56aWEgZGVsbGUgRW50cmF0ZTEbMBkGA1UECxMSU2Vydml6aSBUZWxlbWF0aWNp
+MSYwJAYDVQQDEx1DQSBBZ2VuemlhIGRlbGxlIEVudHJhdGUgVGVzdDAeFw0xNzExMDMxNTI0MDFa
+Fw0yMDExMDMxNTI0MDFaMHQxCzAJBgNVBAYTAklUMR4wHAYDVQQKDBVBZ2VuemlhIGRlbGxlIEVu
+dHJhdGUxGzAZBgNVBAsMElNlcnZpemkgVGVsZW1hdGljaTEoMCYGA1UEAwwfU2lzdGVtYSBJbnRl
+cnNjYW1iaW8gRmF0dHVyYSBQQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMJg1+xb
+EzQvjsLY2AIMDWgmlU23+cOMy44c3PTLw05If0TQsDwwHphWU1bXYaf5zdNDzXedbNZw7Ob3I9z3
+Sp99rqyADekrwE2kDTRwIvDVdkhW6U8Wz6+4ucjwkoZhMOLjfBBgOei+JwMkr6VRRKZVcV/YXKIx
+go/jFFHiPvgc20hVfU9Q2t7QK8Ybhq7nFrv64aEIAeRue23y/hG3HYid0xltfFd9xps2aCrpc0bm
+ayuRAA5C7dQqqGmT/tZcGDLOnFIuHBp7OwOvyyLdRb0Zcj3zUf9yfSKaK38GVDlrJ+n5D1JfKHlk
+6GOV5Z7wXhWWbiPfXn0n6mYr5yA6GZECAwEAAaOCARAwggEMMB8GA1UdIwQYMBaAFCL9qmkiTJyx
+IGKdMsfVF1vqnMEzMIG5BgNVHR8EgbEwga4wgauggaiggaWGgaJsZGFwOi8vY2Fkcy5lbnRyYXRl
+LmZpbmFuemUuaXQvY24lM2RDQSUyMEFnZW56aWElMjBkZWxsZSUyMEVudHJhdGUlMjBUZXN0LG91
+JTNkU2Vydml6aSUyMFRlbGVtYXRpY2ksbyUzZEFnZW56aWElMjBkZWxsZSUyMEVudHJhdGUsYyUz
+ZGl0P2NlcnRpZmljYXRlUmV2b2NhdGlvbkxpc3QwHQYDVR0OBBYEFGnuF3c7A1iZtwJ1K2mGn3Ya
+Rk/rMA4GA1UdDwEB/wQEAwIGQDANBgkqhkiG9w0BAQsFAAOCAQEAKwTJTo8Qll5zzokke9BmSher
+NwscIV2bz5qEtMG+PCkjk96oBJIlm3fkA4P6ylL/Jx0ym3V2Zhpl4TB/DCtbvfMDtTXV4Grlv5Pf
+IDl3F2w+OHk6EAQtqLqcIc9w2eG6FL5GoM1bQqAqCSguzr31cChWhH0W8SxDEzYxNun/aKIBs2tA
+c+Km3MbewLgdBANBwpwZysFR7LvwnoMO0e96C0fpJbPxl+tIeXp5ySWM1LtQwRVsk0NgupER5HKU
+3UCrjW7XH59+zpBEtVXiTHOeFNxzJss99eywAiss3hhuVEe/bzXRJqZpaYXNByAIh4pm/WeDTIvF
++XXNWODd/KMPEw==</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#Signature1"><xades:SignedProperties Id="SignedProperties_1"><xades:SignedSignatureProperties><xades:SigningTime>2018-06-16T16:35:44Z</xades:SigningTime></xades:SignedSignatureProperties></xades:SignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></ns3:RicevutaScarto>

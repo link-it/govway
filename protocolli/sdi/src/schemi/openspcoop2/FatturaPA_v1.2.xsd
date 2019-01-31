@@ -444,6 +444,11 @@
           <xs:documentation>Parcella</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+	  <xs:enumeration value="TD20">
+        <xs:annotation>
+          <xs:documentation>Autofattura</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="TipoRitenutaType">

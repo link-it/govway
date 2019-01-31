@@ -34,7 +34,7 @@ public class SDICompatibilitaNamespaceErrati {
 
 	private static it.gov.fatturapa.sdi.messaggi.v1_0.utils.ProjectInfo pInfo = new it.gov.fatturapa.sdi.messaggi.v1_0.utils.ProjectInfo();
 	
-	private static final String NAMESPACE_SENZA_GOV = pInfo.getProjectNamespace().replace("www.fatturapa.gov.it", "www.fatturapa.it");
+	private static final String NAMESPACE_SENZA_GOV = it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.NAMESPACE_SENZA_GOV;
 	
 	public static byte[] convertiXmlNamespaceSenzaGov(Logger log, byte[] xml){
 		try{

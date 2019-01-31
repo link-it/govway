@@ -22,6 +22,8 @@
 
 package org.openspcoop2.example.pdd.client.sdi.ricezione_fatture;
 
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.FileMetadatiType;
+
 /**
  * Please modify this class to meet your needs
  * This class is not complete
@@ -162,7 +164,6 @@ public final class RicezioneFatture_RicezioneFatturePort_Client {
             ((BindingProvider)port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  username);
         	((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  password);
         }
-        it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
         
         if("notificaDecorrenzaTermini".equals(tipoOperazione)){
 	       
@@ -176,6 +177,7 @@ public final class RicezioneFatture_RicezioneFatturePort_Client {
         	
     		byte [] xml = FileSystemUtilities.readBytesFromFile(notificaDecorrenzaTermini);
     		xml = SDICompatibilitaNamespaceErrati.convertiXmlNamespaceSenzaGov(LoggerWrapperFactory.getLogger(RicezioneFatture_RicezioneFatturePort_Client.class), xml);
+    		it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
     		NotificaDecorrenzaTerminiType ntd = deserializer.readNotificaDecorrenzaTerminiType(xml);
     		
         	System.out.println("Invoking notificaDecorrenzaTermini...");
@@ -206,15 +208,35 @@ public final class RicezioneFatture_RicezioneFatturePort_Client {
     			metadati = metadati.trim();
     		}
 
-    		MetadatiInvioFileType metadatiObject = deserializer.readMetadatiInvioFileType(metadati);
+    		byte [] metadatiArray = FileSystemUtilities.readBytesFromFile(metadati);
+    		
+    		boolean fatturaB2B = false;
+    		if(it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.XMLUtils.isNotificaB2B(metadatiArray)) {
+    			fatturaB2B = true;
+    		}
+    		else if(it.gov.fatturapa.sdi.messaggi.v1_0.utils.XMLUtils.isNotificaPA(metadatiArray, true)) {
+    			fatturaB2B = false;
+    		}
+    		
+    		String identificativoSDI = null;
+    		if(fatturaB2B) {
+    			it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+    			FileMetadatiType metadatiObject = deserializer.readFileMetadatiType(metadati);
+    			identificativoSDI = metadatiObject.getIdentificativoSdI();
+    		}
+    		else {
+    			it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer deserializer = new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbDeserializer();
+    			MetadatiInvioFileType metadatiObject = deserializer.readMetadatiInvioFileType(metadati);
+    			identificativoSDI = metadatiObject.getIdentificativoSdI()+"";
+    		}
         	
 	        System.out.println("Invoking riceviFatture...");
 	        org.openspcoop2.example.pdd.client.sdi.ricezione_fatture.FileSdIConMetadatiType _riceviFatture_parametersIn = new FileSdIConMetadatiType();
-	        _riceviFatture_parametersIn.setIdentificativoSdI(new BigInteger(metadatiObject.getIdentificativoSdI()+""));
+	        _riceviFatture_parametersIn.setIdentificativoSdI(new BigInteger(identificativoSDI));
 	        _riceviFatture_parametersIn.setNomeFile((new File(fattura).getName()));
 	        _riceviFatture_parametersIn.setFile(FileSystemUtilities.readBytesFromFile(fattura));
 	        _riceviFatture_parametersIn.setNomeFileMetadati((new File(metadati).getName()));
-	        _riceviFatture_parametersIn.setMetadati(FileSystemUtilities.readBytesFromFile(metadati));
+	        _riceviFatture_parametersIn.setMetadati(metadatiArray);
 	        	        
 	        org.openspcoop2.example.pdd.client.sdi.ricezione_fatture.RispostaRiceviFattureType _riceviFatture__return = port.riceviFatture(_riceviFatture_parametersIn);
 	        System.out.println("riceviFatture.result=" + _riceviFatture__return.getEsito().name());
