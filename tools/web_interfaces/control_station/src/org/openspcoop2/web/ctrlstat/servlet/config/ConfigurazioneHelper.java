@@ -10437,6 +10437,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				protocolloSelezionatoLabel = this.getLabelProtocollo(protocolloSelezionatoValue); 
 			}
+			else {
+				protocolloSelezionatoValue = policy.getFiltro().getProtocollo();
+			}
 			
 			// ruolo erogatore
 			if(configurazione) {
@@ -11608,37 +11611,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 	public boolean attivazionePolicyCheckData(TipoOperazione tipoOperazione, ConfigurazioneGenerale configurazioneControlloTraffico, AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta) throws Exception { 
 
-		if(infoPolicy!=null){
-			AttivazionePolicy p = null;
-			try {
-				p = this.confCore.getGlobalPolicy(policy.getIdPolicy(),policy.getFiltro(), policy.getGroupBy());
-			}catch(DriverControlStationNotFound e) {
-				//ignore
-			}
-			if(p!=null){
-				if(TipoOperazione.ADD.equals(tipoOperazione) ||	(p.getId()!=null &&	policy.getId()!=null &&	p.getId().longValue()!=policy.getId().longValue())){
-					String messaggio = "Esiste già una attivazione per la policy con nome '"+
-							policy.getIdPolicy()+"' <br/>e<br/>Collezionamento dei Dati: "+ this.toStringCompactGroupBy(policy.getGroupBy(),ruoloPorta,nomePorta)+"<br/>e<br/>"+	this.toStringFilter(policy.getFiltro(),ruoloPorta,nomePorta);
-					this.pd.setMessage(messaggio);
-					return false; 
-				}
-			}
-			
-			AttivazionePolicy pAlias = null;
-			if(policy.getAlias()!=null && !"".equals(policy.getAlias())) {
-				try {
-					pAlias = this.confCore.getGlobalPolicyByAlias(policy.getAlias());
-				}catch(DriverControlStationNotFound e) {
-					//ignore
-				}
-				if(pAlias!=null){
-					if(TipoOperazione.ADD.equals(tipoOperazione) || (pAlias.getId()!=null && policy.getId()!=null && pAlias.getId().longValue()!=policy.getId().longValue())){
-						String messaggio = "Esiste già una attivazione per la policy con "+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ALIAS+" '"+	policy.getAlias()+"'";
-						this.pd.setMessage(messaggio);
-						return false;
-					}
-				}
-			}
+		StringBuffer existsMessage = new StringBuffer();
+		
+		boolean alreadyExists = ConfigurazioneUtilities.alreadyExists(tipoOperazione, this.confCore, this, policy, infoPolicy, ruoloPorta, nomePorta, existsMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+		
+		if(alreadyExists) {
+			this.pd.setMessage(existsMessage.toString());
+			return false; 
 		}
 		
 		return this.checkAttivazionePolicy(configurazioneControlloTraffico,policy,infoPolicy);

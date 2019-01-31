@@ -2623,6 +2623,10 @@ public class DriverControlStationDB  {
 			}
 		}
 		
+		if(ricerca!=null && listaPolicy!=null) {
+			ricerca.setNumEntries(idLista,listaPolicy.size());
+		}
+		
 		return listaPolicy;
 	}
 
@@ -2698,6 +2702,10 @@ public class DriverControlStationDB  {
 			} catch (Exception e) {
 				// ignore exception
 			}
+		}
+		
+		if(ricerca!=null && listaPolicy!=null) {
+			ricerca.setNumEntries(idLista,listaPolicy.size());
 		}
 		
 		return listaPolicy;

@@ -55,10 +55,6 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
-import org.openspcoop2.core.config.CorrelazioneApplicativa;
-import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
 import org.openspcoop2.core.config.CorsConfigurazioneMethods;
@@ -2805,54 +2801,18 @@ public class ConsoleHelper {
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
-
-			if (pattern == null) {
-				pattern = "";
+			StringBuffer existsMessage = new StringBuffer();
+			if(portaDelegata) {
+				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(this.porteDelegateCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
-
-			int idCorrApp = 0;
-			CorrelazioneApplicativa ca = null;
-			String nomePorta = null;
-			if(portaDelegata){
-				PortaDelegata pde = null;
-				pde = this.porteDelegateCore.getPortaDelegata(idInt);
-				ca = pde.getCorrelazioneApplicativa();
-				nomePorta = pde.getNome();
-			}else{
-				PortaApplicativa pda = null;
-				pda = this.porteApplicativeCore.getPortaApplicativa(idInt);
-				ca = pda.getCorrelazioneApplicativa();
-				nomePorta = pda.getNome();
+			else {
+				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(this.porteApplicativeCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
-			if (ca != null) {
-				for (int i = 0; i < ca.sizeElementoList(); i++) {
-					CorrelazioneApplicativaElemento cae = ca.getElemento(i);
-					String caeNome = cae.getNome();
-					if (caeNome == null)
-						caeNome = "";
-					if (elemxml.equals(caeNome) || ("*".equals(caeNome) && "".equals(elemxml))) {
-						idCorrApp = cae.getId().intValue();
-						break;
-					}
-				}
-			}
-
-			if ((idCorrApp != 0) && (idCorrApp != idcorrInt)) {
-				giaRegistrato = true;
-			}
-
+			
 			if (giaRegistrato) {
-				String nomeElemento = CostantiControlStation.LABEL_NON_DEFINITO;
-				if(elemxml!=null && ("".equals(elemxml)==false))
-					nomeElemento = elemxml;
-				String idPorta = null;
-				if(portaDelegata)
-					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_DELEGATA_CON_PARAMETRI, nomePorta);
-				else
-					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_APPLICATIVA_CON_PARAMETRI, nomePorta);
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_CON_ELEMENTO_XML_DEFINITA_GIA_ESISTENTE,	nomeElemento, idPorta));
+				this.pd.setMessage(existsMessage.toString());
 				return false;
-			}
+			}			
 
 			return true;
 		} catch (Exception e) {
@@ -2860,6 +2820,8 @@ public class ConsoleHelper {
 			throw new Exception(e);
 		}
 	}
+	
+
 
 
 	// Controlla i dati della correlazione applicativa della porta delegata
@@ -2919,55 +2881,19 @@ public class ConsoleHelper {
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
-
-			if (pattern == null) {
-				pattern = "";
+			StringBuffer existsMessage = new StringBuffer();
+			if(portaDelegata) {
+				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(this.porteDelegateCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
-
-			int idCorrApp = 0;
-			CorrelazioneApplicativaRisposta ca = null;
-			String nomePorta = null;
-			if(portaDelegata){
-				PortaDelegata pde = null;
-				pde = this.porteDelegateCore.getPortaDelegata(idInt);
-				ca = pde.getCorrelazioneApplicativaRisposta();
-				nomePorta = pde.getNome();
-			}else{
-				PortaApplicativa pda = null;
-				pda = this.porteApplicativeCore.getPortaApplicativa(idInt);
-				ca = pda.getCorrelazioneApplicativaRisposta();
-				nomePorta = pda.getNome();
+			else {
+				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(this.porteApplicativeCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
-			if (ca != null) {
-				for (int i = 0; i < ca.sizeElementoList(); i++) {
-					CorrelazioneApplicativaRispostaElemento cae = ca.getElemento(i);
-					String caeNome = cae.getNome();
-					if (caeNome == null)
-						caeNome = "";
-					if (elemxml.equals(caeNome) || ("*".equals(caeNome) && "".equals(elemxml))) {
-						idCorrApp = cae.getId().intValue();
-						break;
-					}
-				}
-			}
-
-			if ((idCorrApp != 0) && (idCorrApp != idcorrInt)) {
-				giaRegistrato = true;
-			}
-
+			
 			if (giaRegistrato) {
-				String nomeElemento = CostantiControlStation.LABEL_NON_DEFINITO;
-				if(elemxml!=null && ("".equals(elemxml)==false))
-					nomeElemento = elemxml;
-				String idPorta = null;
-				if(portaDelegata)
-					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_DELEGATA_CON_PARAMETRI, nomePorta);
-				else
-					idPorta = MessageFormat.format(CostantiControlStation.LABEL_PORTA_APPLICATIVA_CON_PARAMETRI, nomePorta);
-				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_PER_LA_RISPOSTA_CON_ELEMENTO_DEFINITA_GIA_ESISTENTE,	nomeElemento, idPorta));
+				this.pd.setMessage(existsMessage.toString());
 				return false;
-			}
-
+			}	
+			
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
