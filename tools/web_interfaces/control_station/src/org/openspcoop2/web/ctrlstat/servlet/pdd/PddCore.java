@@ -259,7 +259,7 @@ public class PddCore extends ControlStationCore {
 		}
 	}
 	
-	public List<org.openspcoop2.core.config.Soggetto> pddSoggettiList(int idPDD, ISearch ricerca) throws DriverControlStationException {
+	public List<org.openspcoop2.core.config.Soggetto> pddSoggettiList(long idPDD, ISearch ricerca) throws DriverControlStationException {
 		Connection con = null;
 		String nomeMetodo = "pddSoggettiList";
 		DriverControlStationDB driver = null;

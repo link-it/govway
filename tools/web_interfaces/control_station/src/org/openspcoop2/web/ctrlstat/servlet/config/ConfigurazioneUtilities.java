@@ -22,10 +22,18 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -80,5 +88,67 @@ public class ConfigurazioneUtilities {
 		
 		return false;
 	}
-	
+
+	public static void deleteAttivazionePolicy(List<AttivazionePolicy> policies , ConfigurazioneHelper confHelper, ConfigurazioneCore confCore, String userLogin,
+			StringBuffer inUsoMessage, String newLine, List<AttivazionePolicy> policiesRimosse) throws DriverControlStationException, DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverRegistroServiziException, ControlStationCoreException, Exception {
+		
+		StringBuffer deleteMessage = new StringBuffer();
+		
+		for (AttivazionePolicy attivazionePolicy : policies) {
+			
+			boolean delete = true;
+			if(confHelper.isAllarmiModuleEnabled()){
+				
+				// throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
+				List<String> allarmiUtilizzanoPolicy = null;
+//				List<String> allarmiUtilizzanoPolicy = confHelper.getAllIdAllarmiUseActivePolicy(policy.getIdActivePolicy());
+				allarmiUtilizzanoPolicy = new ArrayList<String>();
+				allarmiUtilizzanoPolicy.add("Allarme1");
+				
+				if(allarmiUtilizzanoPolicy!=null && allarmiUtilizzanoPolicy.size()>0){
+					StringBuffer bf = new StringBuffer();
+					bf.append("La policy '"+attivazionePolicy.getIdActivePolicy()+"' risulta utilizzata da ");
+					bf.append(allarmiUtilizzanoPolicy.size());
+					if(allarmiUtilizzanoPolicy.size()<2){
+						bf.append(" allarme: ");
+					}else{
+						bf.append(" allarmi: ");
+					}
+					for (int j = 0; j < allarmiUtilizzanoPolicy.size(); j++) {
+						if(j>0){
+							bf.append(", ");
+						}
+						bf.append(allarmiUtilizzanoPolicy.get(j));
+					}
+					
+					if(deleteMessage.length()>0){
+						deleteMessage.append(newLine);
+					}
+					deleteMessage.append("- "+bf.toString());
+					delete = false;
+				}
+			}
+
+			if(delete) {
+				// aggiungo elemento alla lista di quelli da cancellare
+				policiesRimosse.add(attivazionePolicy);
+			}
+			
+		}
+		
+		if(deleteMessage.length()>0){
+			if(policiesRimosse.size()>0){
+				inUsoMessage.append("Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:"+newLine+deleteMessage.toString());
+			}
+			else{
+				inUsoMessage.append("Non è stato possibile eliminare gli elementi selezionati:"+newLine+deleteMessage.toString());
+			}
+		}
+		
+		if(policiesRimosse .size() > 0) {
+//		 	eseguo delete
+			confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) policiesRimosse.toArray(new AttivazionePolicy[1])); 
+		}
+			
+	}
 }

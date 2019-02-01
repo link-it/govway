@@ -282,7 +282,7 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 
-	public boolean existsSoggettoServiziWithoutConnettore(int idSoggetto) throws DriverRegistroServiziException {
+	public boolean existsSoggettoServiziWithoutConnettore(long idSoggetto) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "existsSoggettoServiziWithoutConnettore";
 		DriverControlStationDB driver = null;
@@ -303,7 +303,7 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existFruizioniServiziSoggettoWithoutConnettore(int idSoggetto, boolean escludiSoggettiEsterni) throws DriverRegistroServiziException {
+	public boolean existFruizioniServiziSoggettoWithoutConnettore(long idSoggetto, boolean escludiSoggettiEsterni) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "existFruizioniServiziSoggettoWithoutConnettore";
 		DriverControlStationDB driver = null;

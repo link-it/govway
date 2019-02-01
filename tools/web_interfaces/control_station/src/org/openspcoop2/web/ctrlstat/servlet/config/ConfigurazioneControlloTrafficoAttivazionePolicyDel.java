@@ -91,85 +91,38 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
-			StringBuilder delMsg = new StringBuilder();
-			List<AttivazionePolicy> elemToRemove = new ArrayList<AttivazionePolicy>();
+			List<AttivazionePolicy> policyDaEliminare = new ArrayList<AttivazionePolicy>();
+			StringBuffer inUsoMessage = new StringBuffer();
+			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				long idPolicy = Long.parseLong(idsToRemove.get(i));
 				AttivazionePolicy policy = confCore.getAttivazionePolicy(idPolicy); 
 				
-				boolean delete = true;
-				if(confHelper.isAllarmiModuleEnabled()){
-					
-					// throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
-					List<String> allarmiUtilizzanoPolicy = null;
-//					List<String> allarmiUtilizzanoPolicy = confHelper.getAllIdAllarmiUseActivePolicy(policy.getIdActivePolicy());
-					allarmiUtilizzanoPolicy = new ArrayList<String>();
-					allarmiUtilizzanoPolicy.add("Allarme1");
-					
-					if(allarmiUtilizzanoPolicy!=null && allarmiUtilizzanoPolicy.size()>0){
-						StringBuffer bf = new StringBuffer();
-						bf.append("La policy '"+policy.getIdActivePolicy()+"' risulta utilizzata da ");
-						bf.append(allarmiUtilizzanoPolicy.size());
-						if(allarmiUtilizzanoPolicy.size()<2){
-							bf.append(" allarme: ");
-						}else{
-							bf.append(" allarmi: ");
-						}
-						for (int j = 0; j < allarmiUtilizzanoPolicy.size(); j++) {
-							if(j>0){
-								bf.append(", ");
-							}
-							bf.append(allarmiUtilizzanoPolicy.get(j));
-						}
-						
-						if(delMsg.length()>0){
-							delMsg.append("<br/>");
-						}
-						delMsg.append("- "+bf.toString());
-						delete = false;
-					}
-				}
-
-				if(delete) {
-					// aggiungo elemento alla lista di quelli da cancellare
-					elemToRemove.add(policy);
-				}
+				policyDaEliminare.add(policy);
+				
 			}
-			
-			
-			String msgErrore = "";
-			if(delMsg.length()>0){
-				if(elemToRemove.size()>0){
-					msgErrore = "Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:<br/>"+delMsg.toString();
-				}
-				else{
-					msgErrore = "Non è stato possibile eliminare gli elementi selezionati:<br/>"+delMsg.toString();
-				}
-			}
-			
-			if(elemToRemove .size() > 0) {
-//			 	eseguo delete
-				confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) elemToRemove.toArray(new AttivazionePolicy[1])); 
-			}
+				
+			List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
+			ConfigurazioneUtilities.deleteAttivazionePolicy(policyDaEliminare, confHelper, confCore, userLogin, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, policyRimosse);
 			
 			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.DEL);
 			
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
-				if(msgErrore!=null && !"".equals(msgErrore)){
-					if(elemToRemove.size()>0){
-						msgCompletato = msgCompletato+"<br/><br/>"+msgErrore;
+				if(inUsoMessage.length()>0){
+					if(policyRimosse.size()>0){
+						msgCompletato = msgCompletato+"<br/><br/>"+inUsoMessage.toString();
 					}
 					else{
-						msgCompletato = msgErrore;
+						msgCompletato = inUsoMessage.toString();
 					}
 				}
 			}
 			else{
-				msgCompletato = msgErrore;
+				msgCompletato = inUsoMessage.toString();
 			}
 			if(msgCompletato!=null && !"".equals(msgCompletato)){
-				if(msgErrore!=null && !"".equals(msgErrore))
+				if(inUsoMessage.length()>0)
 					pd.setMessage(msgCompletato);
 				else
 					pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);

@@ -8797,7 +8797,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public List<PortaApplicativaAutorizzazioneSoggetto> porteAppSoggettoList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaAutorizzazioneSoggetto> porteAppSoggettoList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppSoggettoList";
 		int idLista = Liste.PORTE_APPLICATIVE_SOGGETTO;
 		int offset;
@@ -8843,7 +8843,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			} 
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -8920,7 +8920,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 	
-	public List<PortaApplicativaAutorizzazioneServizioApplicativo> porteAppServiziApplicativiAutorizzatiList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaAutorizzazioneServizioApplicativo> porteAppServiziApplicativiAutorizzatiList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppServiziApplicativiAutorizzatiList";
 		int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 		int offset;
@@ -8968,7 +8968,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPortaApplicativa);
+			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista,risultato.getInt(1));
@@ -10553,7 +10553,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<CorrelazioneApplicativaElemento> porteDelegateCorrelazioneApplicativaList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaElemento> porteDelegateCorrelazioneApplicativaList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateCorrelazioneApplicativaList";
 		int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA;
 		int offset;
@@ -10701,7 +10701,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<CorrelazioneApplicativaRispostaElemento> porteDelegateCorrelazioneApplicativaRispostaList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaRispostaElemento> porteDelegateCorrelazioneApplicativaRispostaList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateCorrelazioneApplicativaRispostaList";
 		int idLista = Liste.PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
 		int offset;
@@ -10847,7 +10847,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 
 
-	public List<CorrelazioneApplicativaElemento> porteApplicativeCorrelazioneApplicativaList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaElemento> porteApplicativeCorrelazioneApplicativaList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteApplicativeCorrelazioneApplicativaList";
 		int idLista = Liste.PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA;
 		int offset;
@@ -10994,7 +10994,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 
 
-	public List<CorrelazioneApplicativaRispostaElemento> porteApplicativeCorrelazioneApplicativaRispostaList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaRispostaElemento> porteApplicativeCorrelazioneApplicativaRispostaList(long idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteApplicativeCorrelazioneApplicativaRispostaList";
 		int idLista = Liste.PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA;
 		int offset;

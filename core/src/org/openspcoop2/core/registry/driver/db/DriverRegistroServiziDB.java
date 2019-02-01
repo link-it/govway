@@ -3947,7 +3947,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 *                della resource
 	 * @return true se la risposta esiste, false altrimenti
 	 */
-	public boolean existsAccordoServizioResourceResponse(int idRisorsa, int httpStatus) throws DriverRegistroServiziException {
+	public boolean existsAccordoServizioResourceResponse(long idRisorsa, int httpStatus) throws DriverRegistroServiziException {
 
 		boolean exist = false;
 		Connection connection;
@@ -13844,7 +13844,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public void deleteAzione(int idAccordo, String nomeAzione) throws DriverRegistroServiziException {
+	public void deleteAzione(long idAccordo, String nomeAzione) throws DriverRegistroServiziException {
 		String nomeMetodo = "deleteAzione";
 		Connection con = null;
 		PreparedStatement stmt = null;

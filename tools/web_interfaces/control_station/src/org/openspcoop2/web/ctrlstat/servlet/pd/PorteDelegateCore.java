@@ -336,7 +336,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateMessageSecurityRequestList";
 		DriverControlStationDB driver = null;
@@ -358,7 +358,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 
-	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MessageSecurityFlowParameter> porteDelegateMessageSecurityResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateMessageSecurityResponseList";
 		DriverControlStationDB driver = null;
@@ -594,7 +594,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 
-	public List<PortaDelegata> porteDelegateList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaDelegata> porteDelegateList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateList";
 		DriverControlStationDB driver = null;
@@ -638,7 +638,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 
-	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> porteDelegateServizioApplicativoList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -660,7 +660,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
-	public List<CorrelazioneApplicativaElemento> porteDelegateCorrelazioneApplicativaList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaElemento> porteDelegateCorrelazioneApplicativaList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateCorrelazioneApplicativaList";
 		DriverControlStationDB driver = null;
@@ -682,7 +682,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
-	public List<CorrelazioneApplicativaRispostaElemento> porteDelegateCorrelazioneApplicativaRispostaList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<CorrelazioneApplicativaRispostaElemento> porteDelegateCorrelazioneApplicativaRispostaList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateCorrelazioneApplicativaRispostaList";
 		DriverControlStationDB driver = null;
@@ -704,7 +704,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMRequestList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateMTOMRequestList";
 		DriverControlStationDB driver = null;
@@ -726,7 +726,7 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 
-	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(int idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<MtomProcessorFlowParameter> porteDelegateMTOMResponseList(long idPortaDelegata, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelegateMTOMResponseList";
 		DriverControlStationDB driver = null;
@@ -1002,7 +1002,7 @@ public class PorteDelegateCore extends ControlStationCore {
 			}
 		}
 	}
-	public List<Proprieta> porteDelPropList(int idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
+	public List<Proprieta> porteDelPropList(long idPortaDelegata, Search ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteDelPropList";
 		DriverControlStationDB driver = null;

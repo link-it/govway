@@ -121,7 +121,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public void deleteAzione(int idAccordo, String nomeAzione) throws DriverRegistroServiziException {
+	public void deleteAzione(long idAccordo, String nomeAzione) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "deleteAzione";
 		DriverControlStationDB driver = null;
@@ -370,7 +370,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<Documento> accordiAllegatiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> accordiAllegatiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiAllegatiList";
 		DriverControlStationDB driver = null;
@@ -390,7 +390,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public List<Azione> accordiAzioniList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Azione> accordiAzioniList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiAzioniList";
 		DriverControlStationDB driver = null;
@@ -412,7 +412,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<Azione> accordiAzioniList(int idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Azione> accordiAzioniList(long idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiAzioniList";
 		DriverControlStationDB driver = null;
@@ -434,7 +434,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<org.openspcoop2.core.registry.Soggetto> accordiErogatoriList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<org.openspcoop2.core.registry.Soggetto> accordiErogatoriList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiErogatoriList";
 		DriverControlStationDB driver = null;
@@ -456,7 +456,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<org.openspcoop2.core.registry.PortType> accordiPorttypeList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<org.openspcoop2.core.registry.PortType> accordiPorttypeList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiPorttypeList";
 		DriverControlStationDB driver = null;
@@ -478,7 +478,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<org.openspcoop2.core.registry.PortType> accordiPorttypeList(int idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<org.openspcoop2.core.registry.PortType> accordiPorttypeList(long idAccordo, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiPorttypeList";
 		DriverControlStationDB driver = null;
@@ -500,7 +500,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 	}
 
-	public List<Operation> accordiPorttypeOperationList(int idPortType, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Operation> accordiPorttypeOperationList(long idPortType, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiPorttypeOperationList";
 		DriverControlStationDB driver = null;
@@ -554,7 +554,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 
-	public List<Operation> accordiPorttypeOperationList(int idPortType, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Operation> accordiPorttypeOperationList(long idPortType, String profiloCollaborazione, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiPorttypeOperationList";
 		DriverControlStationDB driver = null;
@@ -574,7 +574,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<MessagePart> accordiPorttypeOperationMessagePartList(int idOperation, boolean isInput, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<MessagePart> accordiPorttypeOperationMessagePartList(long idOperation, boolean isInput, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiPorttypeOperationMessagePartList";
 		DriverControlStationDB driver = null;
@@ -594,7 +594,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<org.openspcoop2.core.registry.Resource> accordiResourceList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<org.openspcoop2.core.registry.Resource> accordiResourceList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiResourceList";
 		DriverControlStationDB driver = null;
@@ -788,7 +788,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existsAccordoServizioResourceResponse(int idRisorsa, int httpStatus) throws DriverRegistroServiziException{
+	public boolean existsAccordoServizioResourceResponse(long idRisorsa, int httpStatus) throws DriverRegistroServiziException{
 		Connection con = null;
 		String nomeMetodo = "existsAccordoServizioResourceResponse";
 		DriverControlStationDB driver = null;
@@ -879,7 +879,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	 * @return true se l'azione e' usata come correlata, false altrimenti
 	 * @throws DriverRegistroServiziException
 	 */
-	public boolean isAzioneCorrelata(int idAccordo, String nomeAzione, String owner) throws DriverRegistroServiziException {
+	public boolean isAzioneCorrelata(long idAccordo, String nomeAzione, String owner) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isAzioneCorrelata";
 		DriverControlStationDB driver = null;
@@ -912,7 +912,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	 * @return true se l'operazione e' usata come correlata, false altrimenti
 	 * @throws DriverRegistroServiziException
 	 */
-	public boolean isOperationCorrelata(int idPortType, String nomeCorrelata, String owner) throws DriverRegistroServiziException {
+	public boolean isOperationCorrelata(long idPortType, String nomeCorrelata, String owner) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "isOperationCorrelata";
 		DriverControlStationDB driver = null;
@@ -1275,7 +1275,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 
 
 
-	public List<AccordoServizioParteComuneServizioCompostoServizioComponente> accordiComponentiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<AccordoServizioParteComuneServizioCompostoServizioComponente> accordiComponentiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiComponentiList";
 		DriverControlStationDB driver = null;

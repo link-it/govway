@@ -137,7 +137,7 @@ public class AccordiCooperazioneCore extends ControlStationCore {
 		}
 	}
 	
-	public List<Documento> accordiCoopAllegatiList(int idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> accordiCoopAllegatiList(long idAccordo, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "accordiCoopAllegatiList";
 		DriverControlStationDB driver = null;

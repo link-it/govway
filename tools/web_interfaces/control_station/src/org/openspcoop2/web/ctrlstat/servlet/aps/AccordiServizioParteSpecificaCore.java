@@ -521,7 +521,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public List<Fruitore> getSoggettiWithServizioNotFruitori(int idServizio, boolean escludiSoggettiEsterni, CredenzialeTipo credenzialeTipo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public List<Fruitore> getSoggettiWithServizioNotFruitori(long idServizio, boolean escludiSoggettiEsterni, CredenzialeTipo credenzialeTipo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getSoggettiWithServizioNotFruitori";
 		DriverControlStationDB driver = null;
@@ -1267,7 +1267,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 
 
-	public List<Fruitore> getServiziFruitoriWithServizio(int idServizio) throws DriverRegistroServiziException {
+	public List<Fruitore> getServiziFruitoriWithServizio(long idServizio) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServiziFruitoriWithServizio";
 		DriverControlStationDB driver = null;
@@ -1287,7 +1287,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public List<Documento> serviziAllegatiList(int idServizio, ISearch ricerca) throws DriverRegistroServiziException {
+	public List<Documento> serviziAllegatiList(long idServizio, ISearch ricerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "serviziAllegatiList";
 		DriverControlStationDB driver = null;

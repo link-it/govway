@@ -44,7 +44,7 @@ public class ProtocolPropertiesCore  extends ControlStationCore {
 	public ProtocolPropertiesCore(ControlStationCore core) throws Exception {
 		super(core);
 	}
-	public ProtocolProperty getProtocolPropertyBinaria(int idProperty) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public ProtocolProperty getProtocolPropertyBinaria(long idProperty) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getProtocolPropertyBinaria";
 		DriverControlStationDB driver = null;

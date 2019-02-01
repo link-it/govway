@@ -522,7 +522,7 @@ public class DriverControlStationDB  {
 	 * @throws DriverControlStationException
 	 */
 	public PdDControlStation getPdDControlStation(long idPdd) throws DriverControlStationException, DriverControlStationNotFound {
-		String nomeMetodo = "pddList(int idPdd)";
+		String nomeMetodo = "pddList(long idPdd)";
 
 		String queryString;
 
@@ -620,7 +620,7 @@ public class DriverControlStationDB  {
 
 	}
 
-	public List<org.openspcoop2.core.config.Soggetto> pddSoggettiList(int idPdd, ISearch ricerca) throws DriverControlStationException {
+	public List<org.openspcoop2.core.config.Soggetto> pddSoggettiList(long idPdd, ISearch ricerca) throws DriverControlStationException {
 		String nomeMetodo = "pddSoggettiList";
 		int idLista = Liste.PDD_SOGGETTI;
 		int offset;
@@ -662,7 +662,7 @@ public class DriverControlStationDB  {
 			sqlQueryObject.addWhereCondition("id = ?");
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setInt(1, idPdd);
+			stmt.setLong(1, idPdd);
 			risultato = stmt.executeQuery();
 			if (risultato.next()) {
 				nomePdd = risultato.getString("nome");
