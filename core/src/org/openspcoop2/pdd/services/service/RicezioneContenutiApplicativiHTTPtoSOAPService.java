@@ -678,7 +678,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		if(context.getHeaderIntegrazioneRisposta()==null) {
 			context.setHeaderIntegrazioneRisposta(new Properties());
 		}
-		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, true, context.getPddContext());
+		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, true, context.getPddContext(), requestInfo.getProtocolContext());
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){

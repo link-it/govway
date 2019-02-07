@@ -290,9 +290,10 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				if(StatoFunzionalita.ABILITATO.equals(cors.getStato())) {
 					if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
 						
+						boolean preflightRequest = true;
 						CORSFilter corsFilter = new CORSFilter(logCore, cors);
 						CORSWrappedHttpServletResponse resCORS = new CORSWrappedHttpServletResponse(false);
-						corsFilter.doCORS(httpServletRequest, resCORS);
+						corsFilter.doCORS(httpServletRequest, resCORS, preflightRequest);
 						OpenSPCoop2Message msgCORSResponse = resCORS.buildMessage();
 						EsitoTransazione esito = 
 								requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),

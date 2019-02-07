@@ -750,7 +750,7 @@ public class RicezioneBusteService  {
 		if(context.getHeaderIntegrazioneRisposta()==null) {
 			context.setHeaderIntegrazioneRisposta(new Properties());
 		}
-		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, false, context.getPddContext());
+		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, false, context.getPddContext(), requestInfo.getProtocolContext());
 		if(context.getHeaderIntegrazioneRisposta()!=null){
 			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
 	    	while(en.hasMoreElements()){

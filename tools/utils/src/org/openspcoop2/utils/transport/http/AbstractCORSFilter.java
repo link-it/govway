@@ -68,90 +68,121 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 		chain.doFilter(servletReq, servletRes);
 	}
 
-	public void doCORS(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	protected void doCORS(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		HttpRequestMethod method = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		boolean options = false;
+		if(HttpRequestMethod.OPTIONS.equals(method)) {
+			options = true;
+		}
+		
+		this.doCORS(req, res, options);
+	}
+	
+	public void doCORS(HttpServletRequest req, HttpServletResponse res, boolean isPreflightRequest) throws IOException {
 
 		CORSFilterConfiguration config = this.getConfig();
 
 		Logger log = this.getLog();
+			
+		if(isPreflightRequest) {
+				
+			// allowHeaders
+			String accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
+			if(accessControlRequestHeaders==null) {
+				accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS.toLowerCase());
+			}
+			if(accessControlRequestHeaders==null) {
+				accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS.toUpperCase());
+			}
+			if(accessControlRequestHeaders!=null) {
+				if(config.allowRequestHeader!=null && config.allowRequestHeader) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, accessControlRequestHeaders);
+					if(config.generateAllowHeader) {
+						res.addHeader(HttpConstants.ALLOW_HEADERS, accessControlRequestHeaders);
+					}
+				}
+				else if(!config.allowHeaders.isEmpty()) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+					if(config.generateAllowHeader) {
+						res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+					}
+				}
+				else {
+					if(config.throwExceptionIfNotFoundConfig) {
+						String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+" header, a response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS+"' is required";
+						log.error(msgError);
+						throw new IOException(msgError);
+					}
+					else {
+						// non produco alcun header allow, sarà il browser a riconoscere che non e' abilitato
+					}
+				}
+			}
+			else {
+				if(!config.allowHeaders.isEmpty()) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
+					if(config.generateAllowHeader) {
+						res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
+					}
+				}
+			}
+	
+			// allowMethods
+			String accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
+			if(accessControlRequestMethod==null) {
+				accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toLowerCase());
+			}
+			if(accessControlRequestMethod==null) {
+				accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toUpperCase());
+			}
+			if(accessControlRequestMethod!=null) {
+				if(config.allowRequestMethod!=null && config.allowRequestMethod) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, accessControlRequestMethod);
+				}
+				else if(!config.allowHeaders.isEmpty()) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
+				}
+				else {
+					if(config.throwExceptionIfNotFoundConfig) {
+						String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+" header, a response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' is required";
+						log.error(msgError);
+						throw new IOException(msgError);
+					}
+					else {
+						// non produco alcun header allow, sarà il browser a riconoscere che non e' abilitato
+					}
+				}
+			}
+			else {
+				if(!config.allowHeaders.isEmpty()) {
+					res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
+				}
+			}
+			
+			// MaxAge
+			if(config.cachingAccessControl_maxAgeSeconds!=null) {
+				res.addHeader(HttpConstants.ACCESS_CONTROL_MAX_AGE, config.cachingAccessControl_maxAgeSeconds.intValue()+"");
+			}
+			else if(config.cachingAccessControl_disable!=null && config.cachingAccessControl_disable) {
+				res.addHeader(HttpConstants.ACCESS_CONTROL_MAX_AGE, HttpConstants.ACCESS_CONTROL_MAX_AGE_DISABLE_CACHE);
+			}
+			
+		}
+
 		
 		// allowCredentials
 		if(config.allowCredentials!=null && config.allowCredentials) {
 			res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
 		}
-
-		// allowHeaders
-		String accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS);
-		if(accessControlRequestHeaders==null) {
-			accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS.toLowerCase());
+		
+		
+		// Expose-Headers
+		if(!config.exposeHeaders.isEmpty()) {
+			res.addHeader(HttpConstants.ACCESS_CONTROL_EXPOSE_HEADERS, this.convertList(config.exposeHeaders));
 		}
-		if(accessControlRequestHeaders==null) {
-			accessControlRequestHeaders = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS.toUpperCase());
-		}
-		if(accessControlRequestHeaders!=null) {
-			if(config.allowRequestHeader!=null && config.allowRequestHeader) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, accessControlRequestHeaders);
-				if(config.generateAllowHeader) {
-					res.addHeader(HttpConstants.ALLOW_HEADERS, accessControlRequestHeaders);
-				}
-			}
-			else if(!config.allowHeaders.isEmpty()) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
-				if(config.generateAllowHeader) {
-					res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
-				}
-			}
-			else {
-				if(config.throwExceptionIfNotFoundConfig) {
-					String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_HEADERS+" header, a response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS+"' is required";
-					log.error(msgError);
-					throw new IOException(msgError);
-				}
-				else {
-					// non produco alcun header allow, sarà il browser a riconoscere che non e' abilitato
-				}
-			}
-		}
-		else {
-			if(!config.allowHeaders.isEmpty()) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_HEADERS, this.convertList(config.allowHeaders));
-				if(config.generateAllowHeader) {
-					res.addHeader(HttpConstants.ALLOW_HEADERS, this.convertList(config.allowHeaders));
-				}
-			}
-		}
-
-		// allowMethods
-		String accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD);
-		if(accessControlRequestMethod==null) {
-			accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toLowerCase());
-		}
-		if(accessControlRequestMethod==null) {
-			accessControlRequestMethod = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_METHOD.toUpperCase());
-		}
-		if(accessControlRequestMethod!=null) {
-			if(config.allowRequestMethod!=null && config.allowRequestMethod) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, accessControlRequestMethod);
-			}
-			else if(!config.allowHeaders.isEmpty()) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
-			}
-			else {
-				if(config.throwExceptionIfNotFoundConfig) {
-					String msgError = "CORSE Configuration error: the request has an "+HttpConstants.ACCESS_CONTROL_REQUEST_METHOD+" header, a response header '"+HttpConstants.ACCESS_CONTROL_ALLOW_METHODS+"' is required";
-					log.error(msgError);
-					throw new IOException(msgError);
-				}
-				else {
-					// non produco alcun header allow, sarà il browser a riconoscere che non e' abilitato
-				}
-			}
-		}
-		else {
-			if(!config.allowHeaders.isEmpty()) {
-				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_METHODS, this.convertList(config.allowMethods));
-			}
-		}
-
+		
+		
 		// allowOrigin
 		String accessControlRequestOrigin = req.getHeader(HttpConstants.ACCESS_CONTROL_REQUEST_ORIGIN);
 		if(accessControlRequestOrigin==null) {
@@ -197,19 +228,6 @@ public abstract class AbstractCORSFilter implements javax.servlet.Filter {
 			if(config.allowAllOrigin!=null && config.allowAllOrigin) {
 				res.addHeader(HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN, HttpConstants.ACCESS_CONTROL_ALLOW_ORIGIN_ALL_VALUE);
 			}
-		}
-
-		// Expose-Headers
-		if(!config.exposeHeaders.isEmpty()) {
-			res.addHeader(HttpConstants.ACCESS_CONTROL_EXPOSE_HEADERS, this.convertList(config.exposeHeaders));
-		}
-
-		// MaxAge
-		if(config.cachingAccessControl_maxAgeSeconds!=null) {
-			res.addHeader(HttpConstants.ACCESS_CONTROL_MAX_AGE, config.cachingAccessControl_maxAgeSeconds.intValue()+"");
-		}
-		else if(config.cachingAccessControl_disable!=null && config.cachingAccessControl_disable) {
-			res.addHeader(HttpConstants.ACCESS_CONTROL_MAX_AGE, HttpConstants.ACCESS_CONTROL_MAX_AGE_DISABLE_CACHE);
 		}
 
 	}

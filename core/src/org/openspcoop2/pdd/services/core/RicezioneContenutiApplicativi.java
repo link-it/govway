@@ -594,7 +594,7 @@ public class RicezioneContenutiApplicativi {
 						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
 					}
 					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
-					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext());
+					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getPropertiesRispostaTrasporto());
@@ -1417,8 +1417,9 @@ public class RicezioneContenutiApplicativi {
 				
 				CORSFilter corsFilter = new CORSFilter(logCore, cors);
 				try {
+					boolean preflightRequest = true;
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
-					corsFilter.doCORS(httpServletRequest, res);
+					corsFilter.doCORS(httpServletRequest, res, preflightRequest);
 					this.msgContext.setMessageResponse(res.buildMessage());
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
