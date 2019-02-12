@@ -236,7 +236,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
 		de.setName(nomeParametroStatoCache);
-		if(view){
+		if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStatoCache);
 			de.setSelected(statocache);
