@@ -19,22 +19,23 @@ CREATE INDEX INDEX_PD_AUTH_PROP ON pd_auth_properties (id_porta);
 
 
 
-CREATE TABLE porte_applicative_sa_auth
+CREATE TABLE pa_auth_properties
 (
 	id_porta BIGINT NOT NULL,
-	id_servizio_applicativo BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
-	CONSTRAINT uniq_pa_sa_auth_1 UNIQUE (id_porta,id_servizio_applicativo),
+	CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome,valore),
 	-- fk/pk keys constraints
-	CONSTRAINT fk_porte_applicative_sa_auth_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
-	CONSTRAINT fk_porte_applicative_sa_auth_2 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
-	CONSTRAINT pk_porte_applicative_sa_auth PRIMARY KEY (id)
+	CONSTRAINT fk_pa_auth_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_auth_properties PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PA_SA_AUTH ON porte_applicative_sa_auth (id_porta);
+CREATE INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties (id_porta);
+
 
 
 
