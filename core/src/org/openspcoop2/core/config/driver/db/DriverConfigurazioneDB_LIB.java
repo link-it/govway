@@ -378,6 +378,14 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(TrasformazioneRegolaParametroTipoAzione valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -538,6 +546,14 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		else{
 			return VersioneSOAP.toEnumConstant(value);
+		}
+	}
+	public static TrasformazioneRegolaParametroTipoAzione getEnumTrasformazioneRegolaParametroTipoAzione(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return TrasformazioneRegolaParametroTipoAzione.toEnumConstant(value);
 		}
 	}
 	
@@ -2284,6 +2300,9 @@ public class DriverConfigurazioneDB_LIB {
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), aPD.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), aPD.getId(), true);
+				
 				
 				// extendedInfo
 				i=0;
@@ -3147,6 +3166,9 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
 				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
+				
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -3174,6 +3196,9 @@ public class DriverConfigurazioneDB_LIB {
 
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPD.getTrasformazioni(), idPortaDelegata, true);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5007,6 +5032,9 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), aPA.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), aPA.getId(), false);
+				
 				
 				// extendedInfo
 				i=0;
@@ -5933,6 +5961,10 @@ public class DriverConfigurazioneDB_LIB {
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  aPA, CRUDType.UPDATE);
@@ -5963,6 +5995,9 @@ public class DriverConfigurazioneDB_LIB {
 
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				
+				// trasformazioni
+				CRUDTrasformazioni(type, con, aPA.getTrasformazioni(), idPortaApplicativa, false);
 				
 				// Cache Regole
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -9389,88 +9424,106 @@ public class DriverConfigurazioneDB_LIB {
 				
 				for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
 					
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-					if(portaDelegata) {
-						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
-					}
-					else {
-						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
-					}
-					sqlQueryObject.addInsertField("id_porta", "?");
-					sqlQueryObject.addInsertField("applicabilita_azioni", "?");
-					sqlQueryObject.addInsertField("applicabilita_ct", "?");
-					sqlQueryObject.addInsertField("applicabilita_pattern", "?");
-					sqlQueryObject.addInsertField("req_conversione_enabled", "?");
-					sqlQueryObject.addInsertField("req_conversione_tipo", "?");
-					sqlQueryObject.addInsertField("req_conversione_template", "?");
-					sqlQueryObject.addInsertField("req_content_type", "?");
-					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneRest()!=null) {
-						sqlQueryObject.addInsertField("rest_transformation", "?");
-						sqlQueryObject.addInsertField("rest_method", "?");
-						sqlQueryObject.addInsertField("rest_path", "?");
-					}
-					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneSoap()!=null) {
-						sqlQueryObject.addInsertField("soap_transformation", "?");
-						sqlQueryObject.addInsertField("soap_version", "?");
-						sqlQueryObject.addInsertField("soap_action", "?");
-						sqlQueryObject.addInsertField("soap_envelope", "?");
-						sqlQueryObject.addInsertField("soap_envelope_as_attach", "?");
-						sqlQueryObject.addInsertField("soap_envelope_tipo", "?");
-						sqlQueryObject.addInsertField("soap_envelope_template", "?");
-					}
-					String updateQuery = sqlQueryObject.createSQLInsert();
-					updateStmt = con.prepareStatement(updateQuery);
-					int index = 1;
-					updateStmt.setLong(index++, idProprietario);
-					
-					StringBuffer bf = new StringBuffer();
+					String applicabilita_azioni = null;
 					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
+						StringBuffer bf = new StringBuffer();
 						for (int i = 0; i < regola.getApplicabilita().sizeAzioneList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
 							bf.append(regola.getApplicabilita().getAzione(i));
 						}
+						if(bf.length()>0) {
+							applicabilita_azioni = bf.toString();
+						}
 					}
-					updateStmt.setString(index++, bf.length()>0 ? bf.toString() : null);
 					
-					bf = new StringBuffer();
+					String applicabilita_ct = null;
 					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeContentTypeList()>0) {
+						StringBuffer bf = new StringBuffer();
 						for (int i = 0; i < regola.getApplicabilita().sizeContentTypeList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
 							bf.append(regola.getApplicabilita().getContentType(i));
 						}
+						if(bf.length()>0) {
+							applicabilita_ct = bf.toString();
+						}
 					}
-					updateStmt.setString(index++, bf.length()>0 ? bf.toString() : null);
 					
-					updateStmt.setString(index++, regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null);
-					
-					updateStmt.setInt(index++, regola.getRichiesta()!=null && regola.getRichiesta().getConversione() ? CostantiDB.TRUE : CostantiDB.FALSE);
-					updateStmt.setString(index++, regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTipo() : null);
-					jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTemplate() : null);
-					
-					updateStmt.setString(index++, regola.getRichiesta()!=null ? regola.getRichiesta().getContentType() : null);
-					
+					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_porta", idProprietario , InsertAndGeneratedKeyJDBCType.LONG) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_azioni", applicabilita_azioni , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_conversione_enabled", ( regola.getRichiesta()!=null && regola.getRichiesta().getConversione()) ? CostantiDB.TRUE : CostantiDB.FALSE , InsertAndGeneratedKeyJDBCType.INT) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_conversione_tipo", (regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTipo() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("req_content_type", (regola.getRichiesta()!=null ? regola.getRichiesta().getContentType() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
 					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneRest()!=null) {
-						updateStmt.setInt(index++, CostantiDB.TRUE);
-						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneRest().getMetodo());
-						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneRest().getPath());
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("rest_transformation", CostantiDB.TRUE , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("rest_method", regola.getRichiesta().getTrasformazioneRest().getMetodo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("rest_path", regola.getRichiesta().getTrasformazioneRest().getPath() , InsertAndGeneratedKeyJDBCType.STRING) );
 					}
-					
 					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneSoap()!=null) {
-						updateStmt.setInt(index++, CostantiDB.TRUE);
-						updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(regola.getRichiesta().getTrasformazioneSoap().getVersione()));
-						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneSoap().getSoapAction());
-						updateStmt.setInt(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE );
-						updateStmt.setInt(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE );
-						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
-						jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_transformation", CostantiDB.TRUE , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_version", DriverConfigurazioneDB_LIB.getValue(regola.getRichiesta().getTrasformazioneSoap().getVersione()) , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_action", regola.getRichiesta().getTrasformazioneSoap().getSoapAction() , InsertAndGeneratedKeyJDBCType.STRING) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope", (regola.getRichiesta().getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_as_attach", (regola.getRichiesta().getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_tipo", regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+					}
+					// Insert and return generated key
+					String tableName = null;
+					String columnIdName = null;
+					String sequence = null;
+					String tableForId = null;
+					if(portaDelegata) {
+						tableName = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI;
+						columnIdName = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID;
+						sequence = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_SEQUENCE;
+						tableForId = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_TABLE_FOR_ID;
+					}
+					else {
+						tableName = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+						columnIdName = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_ID;
+						sequence = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_SEQUENCE;
+						tableForId = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_TABLE_FOR_ID;
+					}
+					long idtrasformazione = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(tipoDB), 
+							new CustomKeyGeneratorObject(tableName, columnIdName, sequence, tableForId),
+							listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+					if(idtrasformazione<=0){
+						throw new Exception("ID autoincrementale non ottenuto");
 					}
 					
-					updateStmt.executeUpdate();
-					updateStmt.close();
+					if( regola.getRichiesta()!=null && 
+							(
+									regola.getRichiesta().getConversioneTemplate()!=null 
+									||
+									(regola.getRichiesta().getTrasformazioneSoap()!=null && regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null)
+							) ) {
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						if(regola.getRichiesta().getConversioneTemplate()!=null ) {
+							sqlQueryObject.addUpdateField("req_conversione_template", "?");
+						}
+						if(regola.getRichiesta().getTrasformazioneSoap()!=null && regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null) {
+							sqlQueryObject.addUpdateField("soap_envelope_template", "?");
+						}
+						sqlQueryObject.addWhereCondition(columnIdName+"=?");
+						String updateQuery = sqlQueryObject.createSQLUpdate();
+						updateStmt = con.prepareStatement(updateQuery);
+						int index = 1;
+						if(regola.getRichiesta().getConversioneTemplate()!=null ) {
+							jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTemplate() : null);
+						}
+						if(regola.getRichiesta().getTrasformazioneSoap()!=null && regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null) {
+							jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+						}
+						updateStmt.setLong(index++, idtrasformazione);
+						updateStmt.executeUpdate();
+						updateStmt.close();
+					}
 				
 					
 					if(regola.getRichiesta()!=null) {
@@ -9478,7 +9531,7 @@ public class DriverConfigurazioneDB_LIB {
 						if(regola.getRichiesta().sizeHeaderList()>0) {
 							for (TrasformazioneRegolaParametro parametro : regola.getRichiesta().getHeaderList()) {
 								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 								if(portaDelegata) {
 									sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
 								}
@@ -9490,12 +9543,160 @@ public class DriverConfigurazioneDB_LIB {
 								sqlQueryObject.addInsertField("nome", "?");
 								sqlQueryObject.addInsertField("valore", "?");
 								
-								updateQuery = sqlQueryObject.createSQLInsert();
+								String updateQuery = sqlQueryObject.createSQLInsert();
 								updateStmt = con.prepareStatement(updateQuery);
-								index = 1;
-								updateStmt.setLong(index++, idProprietario);
+								int index = 1;
+								updateStmt.setLong(index++, idtrasformazione);
+								updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
+								updateStmt.setString(index++, parametro.getNome());
+								updateStmt.setString(index++, parametro.getValore());
 								updateStmt.executeUpdate();
 								updateStmt.close();
+							}
+						}
+						
+						if(regola.getRichiesta().sizeParametroUrlList()>0) {
+							for (TrasformazioneRegolaParametro parametro : regola.getRichiesta().getParametroUrlList()) {
+								
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								if(portaDelegata) {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL);
+								}
+								else {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL);
+								}
+								sqlQueryObject.addInsertField("id_trasformazione", "?");
+								sqlQueryObject.addInsertField("tipo", "?");
+								sqlQueryObject.addInsertField("nome", "?");
+								sqlQueryObject.addInsertField("valore", "?");
+								
+								String updateQuery = sqlQueryObject.createSQLInsert();
+								updateStmt = con.prepareStatement(updateQuery);
+								int index = 1;
+								updateStmt.setLong(index++, idtrasformazione);
+								updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
+								updateStmt.setString(index++, parametro.getNome());
+								updateStmt.setString(index++, parametro.getValore());
+								updateStmt.executeUpdate();
+								updateStmt.close();
+							}
+						}
+					}
+					
+					if(regola.sizeRispostaList()<0) {
+						
+						for (TrasformazioneRegolaRisposta regolaRisposta : regola.getRispostaList()) {
+							
+							String applicabilita_ct_response = null;
+							if(regolaRisposta.getApplicabilita()!=null && regolaRisposta.getApplicabilita().sizeContentTypeList()>0) {
+								StringBuffer bf = new StringBuffer();
+								for (int i = 0; i < regolaRisposta.getApplicabilita().sizeContentTypeList(); i++) {
+									if(i>0) {
+										bf.append(",");
+									}
+									bf.append(regolaRisposta.getApplicabilita().getContentType(i));
+								}
+								if(bf.length()>0) {
+									applicabilita_ct_response = bf.toString();
+								}
+							}
+							
+							listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_trasformazione", idtrasformazione , InsertAndGeneratedKeyJDBCType.LONG) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_status_min", 
+									(regolaRisposta.getApplicabilita()!=null && regolaRisposta.getApplicabilita().getReturnCodeMin()!=null && 
+									regolaRisposta.getApplicabilita().getReturnCodeMin().intValue()>0) ? regolaRisposta.getApplicabilita().getReturnCodeMin().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_status_max", 
+									(regolaRisposta.getApplicabilita()!=null && regolaRisposta.getApplicabilita().getReturnCodeMax()!=null && 
+									regolaRisposta.getApplicabilita().getReturnCodeMax().intValue()>0) ? regolaRisposta.getApplicabilita().getReturnCodeMax().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_ct", applicabilita_ct_response , InsertAndGeneratedKeyJDBCType.STRING) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("applicabilita_pattern", (regolaRisposta.getApplicabilita()!=null ? regolaRisposta.getApplicabilita().getPattern() : null) , InsertAndGeneratedKeyJDBCType.STRING) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_enabled", regolaRisposta.getConversione() ? CostantiDB.TRUE : CostantiDB.FALSE , InsertAndGeneratedKeyJDBCType.INT) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conversione_tipo", regolaRisposta.getConversioneTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("content_type", regolaRisposta.getContentType() , InsertAndGeneratedKeyJDBCType.STRING) );
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("return_code", 
+									(regolaRisposta.getReturnCode()!=null && 
+									regolaRisposta.getReturnCode().intValue()>0) ? regolaRisposta.getReturnCode().intValue() : null , InsertAndGeneratedKeyJDBCType.INT) );
+							if(regolaRisposta.getTrasformazioneSoap()!=null) {
+								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope", (regolaRisposta.getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
+								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_as_attach", (regolaRisposta.getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE) , InsertAndGeneratedKeyJDBCType.INT) );
+								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_envelope_tipo", regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+							}
+							// Insert and return generated key
+							tableName = null;
+							columnIdName = null;
+							sequence = null;
+							tableForId = null;
+							if(portaDelegata) {
+								tableName = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
+								columnIdName = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID;
+								sequence = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_SEQUENCE;
+								tableForId = CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID;
+							}
+							else {
+								tableName = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+								columnIdName = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID;
+								sequence = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_SEQUENCE;
+								tableForId = CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID;
+							}
+							long idtrasformazioneRisposta = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(tipoDB), 
+									new CustomKeyGeneratorObject(tableName, columnIdName, sequence, tableForId),
+									listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+							if(idtrasformazioneRisposta<=0){
+								throw new Exception("ID autoincrementale non ottenuto");
+							}
+							
+							if( 	regolaRisposta.getConversioneTemplate()!=null 
+											||
+											(regolaRisposta.getTrasformazioneSoap()!=null && regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null)
+								 ) {
+								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								if(regolaRisposta.getConversioneTemplate()!=null ) {
+									sqlQueryObject.addUpdateField("conversione_template", "?");
+								}
+								if(regolaRisposta.getTrasformazioneSoap()!=null && regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null) {
+									sqlQueryObject.addUpdateField("soap_envelope_template", "?");
+								}
+								sqlQueryObject.addWhereCondition(columnIdName+"=?");
+								String updateQuery = sqlQueryObject.createSQLUpdate();
+								updateStmt = con.prepareStatement(updateQuery);
+								int index = 1;
+								if(regolaRisposta.getConversioneTemplate()!=null ) {
+									jdbcAdapter.setBinaryData(updateStmt, index++, regolaRisposta.getConversioneTemplate());
+								}
+								if(regolaRisposta.getTrasformazioneSoap()!=null && regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null) {
+									jdbcAdapter.setBinaryData(updateStmt, index++, regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+								}
+								updateStmt.setLong(index++, idtrasformazioneRisposta);
+								updateStmt.executeUpdate();
+								updateStmt.close();
+							}
+							
+							if(regolaRisposta.sizeHeaderList()>0) {
+								for (TrasformazioneRegolaParametro parametro : regolaRisposta.getHeaderList()) {
+									
+									ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+									if(portaDelegata) {
+										sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER);
+									}
+									else {
+										sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER);
+									}
+									sqlQueryObject.addInsertField("id_transform_risp", "?");
+									sqlQueryObject.addInsertField("tipo", "?");
+									sqlQueryObject.addInsertField("nome", "?");
+									sqlQueryObject.addInsertField("valore", "?");
+									
+									String updateQuery = sqlQueryObject.createSQLInsert();
+									updateStmt = con.prepareStatement(updateQuery);
+									int index = 1;
+									updateStmt.setLong(index++, idtrasformazione);
+									updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
+									updateStmt.setString(index++, parametro.getNome());
+									updateStmt.setString(index++, parametro.getValore());
+									updateStmt.executeUpdate();
+									updateStmt.close();
+								}
 							}
 						}
 						
@@ -9797,7 +9998,7 @@ public class DriverConfigurazioneDB_LIB {
 		
 				while (rs.next()) {
 					TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-					parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
 					regola.getRichiesta().addHeader(parametro);
@@ -9823,7 +10024,7 @@ public class DriverConfigurazioneDB_LIB {
 		
 				while (rs.next()) {
 					TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-					parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
 					regola.getRichiesta().addParametroUrl(parametro);
@@ -9959,7 +10160,7 @@ public class DriverConfigurazioneDB_LIB {
 			
 					while (rs.next()) {
 						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
-						parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+						parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
 						risposta.addHeader(parametro);
