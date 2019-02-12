@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -320,6 +321,8 @@ public final class PorteDelegateChange extends Action {
 					autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
 				}
 			}
+			TipoAutenticazionePrincipal autenticazionePrincipal = porteDelegateCore.getTipoAutenticazionePrincipal(pde.getProprietaAutenticazioneList());
+			List<String> autenticazioneParametroList = porteDelegateCore.getParametroAutenticazione(autenticazione, pde.getProprietaAutenticazioneList());
 
 			String autorizzazione = null;
 			String autorizzazioneCustom = null;
@@ -918,7 +921,7 @@ public final class PorteDelegateChange extends Action {
 						azioniList, azione, patternAzione, numAzioni,
 						stateless, localForward, paLocalForward, ricsim, ricasim, statoValidazione,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
+						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMessageMTOM,
@@ -1081,7 +1084,7 @@ public final class PorteDelegateChange extends Action {
 						azioniListLabel, azioniList, azione, azione,
 						numAzioni,  stateless, localForward, paLocalForward, ricsim, ricasim,
 						statoValidazione, tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
+						gestManifest,integrazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, 
 						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
 						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
 						statoMessageSecurity,statoMessageMTOM,

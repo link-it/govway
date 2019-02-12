@@ -79,7 +79,8 @@ public class HashGenerator {
 				// I parametri vengono riordinati proprio per far si differenze nell'ordine non impattano nel digest
 				
 				sb = new StringBuilder();
-				sb.append("requestURI").append("=").append(requestInfo.getProtocolContext().getRequestURI());
+				sb.append("requestType").append("=").append(requestInfo.getProtocolContext().getRequestType());
+				sb.append("\nrequestURI").append("=").append(requestInfo.getProtocolContext().getRequestURI());
 				sb.append("\nParametriURL");
 				this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
 				digest.update(sb.toString().getBytes());
@@ -91,10 +92,22 @@ public class HashGenerator {
 				
 				// Gli header vengono riordinati e le chiavi vengono prese lowerCase proprio per far si che tali differenze non impattano nel digest
 				
-				sb = new StringBuilder("HEADER");
-				this.addList(requestInfo.getProtocolContext().getParametersTrasporto(), true, sb);
-				digest.update(sb.toString().getBytes());
-				//System.out.println("TESTb: "+sb.toString());
+				Properties pTrasportoForDigest = new Properties();
+				if(requestInfo.getProtocolContext().getParametersTrasporto()!=null && responseCachingConfig.getHashGenerator().sizeHeaderList()>0) {
+					for (String header : responseCachingConfig.getHashGenerator().getHeaderList()) {
+						String v = requestInfo.getProtocolContext().getParameterTrasporto(header);
+						if(v!=null) {
+							pTrasportoForDigest.put(header, v);
+						}
+					}
+				}
+				
+				if(pTrasportoForDigest.isEmpty()) {
+					sb = new StringBuilder("HEADER");
+					this.addList(pTrasportoForDigest, true, sb);
+					digest.update(sb.toString().getBytes());
+					//System.out.println("TESTb: "+sb.toString());
+				}
 				
 			}
 			

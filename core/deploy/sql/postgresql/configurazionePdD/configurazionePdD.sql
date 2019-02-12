@@ -42,6 +42,23 @@ CREATE TABLE routing
 
 
 
+CREATE SEQUENCE seq_config_cache_regole start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE config_cache_regole
+(
+	status_min INT,
+	status_max INT,
+	fault INT DEFAULT 0,
+	cache_seconds INT,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_config_cache_regole') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_cache_regole PRIMARY KEY (id)
+);
+
+
+
+
 CREATE SEQUENCE seq_configurazione start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE configurazione
@@ -141,7 +158,11 @@ CREATE TABLE configurazione
 	response_cache_max_msg_size BIGINT,
 	response_cache_hash_url VARCHAR(255),
 	response_cache_hash_headers VARCHAR(255),
+	response_cache_hash_hdr_list TEXT,
 	response_cache_hash_payload VARCHAR(255),
+	response_cache_control_nocache INT,
+	response_cache_control_maxage INT,
+	response_cache_control_nostore INT,
 	-- Cache per il response caching
 	response_cache_statocache VARCHAR(255),
 	response_cache_dimensionecache VARCHAR(255),

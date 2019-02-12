@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -108,6 +109,8 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.TokenForward;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniException;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -675,6 +678,21 @@ public class InoltroBuste extends GenericLib{
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "getConfigurazioneResponseCaching(pd)");
 				ejbUtils.rollbackMessage("Errore nella lettura della configurazione per il salvataggio della risposta in cache", esito);
+				openspcoopstate.releaseResource();
+				esito.setEsitoInvocazione(false);	
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}
+		
+		// Trasformazioni
+		Trasformazioni trasformazioni = null;
+		if(functionAsRouter==false){
+			try {
+				trasformazioni = configurazionePdDManager.getTrasformazioni(pd);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "getTrasformazioni(pd)");
+				ejbUtils.rollbackMessage("Errore nella lettura della configurazione delle trasformazioni", esito);
 				openspcoopstate.releaseResource();
 				esito.setEsitoInvocazione(false);	
 				esito.setStatoInvocazioneErroreNonGestito(e);
@@ -1681,6 +1699,66 @@ public class InoltroBuste extends GenericLib{
 			
 			
 			
+			
+			/* ------------ Trasformazione Richiesta  -------------- */
+			
+			GestoreTrasformazioni gestoreTrasformazioni = null;
+			OpenSPCoop2Message requestMessageTrasformato = requestMessage;
+			if(trasformazioni!=null) {
+				try {
+					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, trasformazioni, transactionNullable, pddContext, requestInfo);
+					requestMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(requestMessage, bustaRichiesta);
+				}
+				catch(GestoreTrasformazioniException e) {
+					
+					msgDiag.addKeywordErroreProcessamento(e);
+					msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInErrore");
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RICHIESTA, "true");
+					
+					ErroreIntegrazione erroreIntegrazione = gestoreTrasformazioni.getErrore();
+					if(erroreIntegrazione==null) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+					}
+					
+					if(sendRispostaApplicativa){
+						OpenSPCoop2Message responseMessageError = null;
+						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+								erroreIntegrazione,e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
+						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+						esito.setEsitoInvocazione(true);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+								"Trasformazione-Richiesta");
+					}else{
+						// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+						// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+						if(gestioneBusteNonRiscontrateAttive==false){
+							ejbUtils.rollbackMessage("Trasformazione della richiesta non riuscita: "+e.getMessage(), esito);
+							esito.setEsitoInvocazione(false);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,
+									"Trasformazione-Richiesta");
+						}else{
+							ejbUtils.updateErroreProcessamentoMessage("Trasformazione della richiesta non riuscita: "+e.getMessage(), esito);
+							esito.setEsitoInvocazione(true);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+									"Trasformazione-Richiesta");
+						}
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}		
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 			Utilities.printFreeMemory("InoltroBuste - Impostazione messaggio del connettore...");
 
@@ -1699,7 +1777,7 @@ public class InoltroBuste extends GenericLib{
 			if(connettore.getPropertyList().size()>0){
 				cps = connettore.getPropertyList().toArray(new org.openspcoop2.core.config.Property[connettore.getPropertyList().size()]);
 			}
-			ConnettoreMsg connettoreMsg = new ConnettoreMsg(tipoConnector,requestMessage,cps);
+			ConnettoreMsg connettoreMsg = new ConnettoreMsg(tipoConnector,requestMessageTrasformato,cps);
 			connettoreMsg.setBusta(bustaRichiesta);
 			connettoreMsg.setIdModulo(InoltroBuste.ID_MODULO);
 			connettoreMsg.setMsgDiagnostico(msgDiag);
@@ -1711,7 +1789,7 @@ public class InoltroBuste extends GenericLib{
 
 			// mapping per forward token
 			TokenForward tokenForward = null;
-			Object oTokenForward = requestMessage.getContextProperty(org.openspcoop2.pdd.core.token.Costanti.MSG_CONTEXT_TOKEN_FORWARD);
+			Object oTokenForward = requestMessageTrasformato.getContextProperty(org.openspcoop2.pdd.core.token.Costanti.MSG_CONTEXT_TOKEN_FORWARD);
 			if(oTokenForward!=null) {
 				tokenForward = (TokenForward) oTokenForward;
 			}
@@ -1767,9 +1845,9 @@ public class InoltroBuste extends GenericLib{
 				try{
 					if(connectorSender instanceof ConnettoreBaseHTTP){
 						ConnettoreBaseHTTP baseHttp = (ConnettoreBaseHTTP) connectorSender;
-						baseHttp.setHttpMethod(requestMessage);
+						baseHttp.setHttpMethod(requestMessageTrasformato);
 						
-						if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+						if(ServiceBinding.REST.equals(requestMessageTrasformato.getServiceBinding())){
 							httpRequestMethod = baseHttp.getHttpMethod();
 						}
 					}
@@ -1783,7 +1861,7 @@ public class InoltroBuste extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
@@ -1838,7 +1916,7 @@ public class InoltroBuste extends GenericLib{
 				outRequestContext.setConnettore(infoConnettoreUscita);
 				
 				// Informazioni messaggio
-				outRequestContext.setMessaggio(requestMessage);
+				outRequestContext.setMessaggio(requestMessageTrasformato);
 				
 				// Contesto
 				ProtocolContext protocolContext = new ProtocolContext();
@@ -1889,7 +1967,7 @@ public class InoltroBuste extends GenericLib{
 				GestoreHandlers.outRequest(outRequestContext, msgDiag, this.log);
 				
 				// Riporto messaggio
-				requestMessage = outRequestContext.getMessaggio();
+				requestMessageTrasformato = outRequestContext.getMessaggio();
 				
 				// Salvo handler
 				connettoreMsg.setOutRequestContext(outRequestContext);
@@ -1975,7 +2053,7 @@ public class InoltroBuste extends GenericLib{
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
@@ -2003,7 +2081,7 @@ public class InoltroBuste extends GenericLib{
 					soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
-			dumpApplicativoRichiesta.dumpRichiestaUscita(requestMessage, outRequestContext.getConnettore());
+			dumpApplicativoRichiesta.dumpRichiestaUscita(requestMessageTrasformato, outRequestContext.getConnettore());
 			
 			
 			
@@ -2084,6 +2162,18 @@ public class InoltroBuste extends GenericLib{
 				esito.setEsitoInvocazione(false);	
 				return esito;
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+
+			
+			
+		
 			
 			
 			
@@ -2210,7 +2300,80 @@ public class InoltroBuste extends GenericLib{
 
 			
 			
+			/* ------------ Trasformazione Risposta  -------------- */
 			
+			boolean dumpRispostaEffettuato = false;
+			if(trasformazioni!=null && responseMessage!=null) {
+				try {
+					
+					// prima effettuo dump applicativo
+					if(responseMessage!=null ){
+						Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
+								soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
+								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+								dumpConfig);
+						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
+						if(infoConnettoreUscita!=null){
+							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
+						}
+						dumpApplicativo.dumpRispostaIngresso(responseMessage, infoConnettoreUscita, connectorSender.getHeaderTrasporto());
+						dumpRispostaEffettuato = true;
+					}
+					
+					responseMessage = gestoreTrasformazioni.trasformazioneRisposta(responseMessage, bustaRichiesta);
+				}
+				catch(Throwable e) {
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RISPOSTA, "true");
+					
+					// prima emetto diagnostico di fine connettore
+					StringBuffer bfMsgErroreSituazioneAnomale = new StringBuffer();
+					EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
+							responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
+							functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
+					if(esitoTraccia!=null) {
+						tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
+								Tracciamento.createLocationString(false, location),
+								idCorrelazioneApplicativa);
+					}
+					
+					msgDiag.addKeywordErroreProcessamento(e);
+					msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInErrore");
+					
+					ErroreIntegrazione erroreIntegrazione = gestoreTrasformazioni.getErrore();
+					if(erroreIntegrazione==null) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+					}
+					
+					if(sendRispostaApplicativa){
+						OpenSPCoop2Message responseMessageError = null;
+						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+								erroreIntegrazione,e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
+						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+						esito.setEsitoInvocazione(true);
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+								"Trasformazione-Risposta");
+					}else{
+						// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+						// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+						if(gestioneBusteNonRiscontrateAttive==false){
+							ejbUtils.rollbackMessage("Trasformazione della risposta non riuscita: "+e.getMessage(), esito);
+							esito.setEsitoInvocazione(false);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,
+									"Trasformazione-Risposta");
+						}else{
+							ejbUtils.updateErroreProcessamentoMessage("Trasformazione della risposta non riuscita: "+e.getMessage(), esito);
+							esito.setEsitoInvocazione(true);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+									"Trasformazione-Risposta");
+						}
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}		
+			}
 			
 			
 			
@@ -2429,7 +2592,7 @@ public class InoltroBuste extends GenericLib{
 				responseMessage = inResponseContext.getMessaggio();
 			
 				// dump applicativo
-				if(responseMessage!=null ){
+				if(!dumpRispostaEffettuato && responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
 							soggettoFruitore,idServizio,tipoPdD,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
@@ -2452,77 +2615,18 @@ public class InoltroBuste extends GenericLib{
 			/* ------------  Tracciamento Richiesta e Messaggio Diagnostico ------------- */
 			if(invokerNonSupportato==false){// && errorConsegna==false){
 
-				
-				String msgErroreSituazioneAnomale = null;
-
-				// Tracciamento effettuato:
-
-				// - SEMPRE se vi e' da tornare una risposta applicativa (sendRispostaApplicativa=true)
-
-				// - SEMPRE se si ha e' un router: functionAsRouter
-
-				// - SEMPPRE se non vi sono errori (errorConsegna=false)
-
-				// Settings msgDiag
-				if(errorConsegna){
-					// Una busta contiene per forza di cose un SOAPFault
-					// Una busta la si riconosce dal motivo di errore.
-					if(fault!=null && fault.getFaultString()!=null && 
-							(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE)) || fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO)))){
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
-						msgDiag.logPersonalizzato("inoltroConErrore");
-					}else{
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
-						msgDiag.logPersonalizzato("inoltroConErrore");
-						
-						// Controllo Situazione Anomala ISSUE OP-7
-						if(responseMessage!=null && ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
-							OpenSPCoop2SoapMessage soapMessageResponse = responseMessage.castAsSoap();
-							if(soapMessageResponse.getSOAPPart()!=null && 
-									soapMessageResponse.getSOAPPart().getEnvelope()!=null &&
-									(soapMessageResponse.getSOAPPart().getEnvelope().getBody()==null || (!soapMessageResponse.getSOAPPart().getEnvelope().getBody().hasFault()))){
-								msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
-								if(isBlockedTransaction_responseMessageWithTransportCodeError){
-									msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
-									this.log.error(msgErroreSituazioneAnomale);
-								}
-							}
-						}
-					}
-				}else{	
-					if(fault!=null && fault.getFaultString()!=null && 
-							(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
-						msgDiag.logPersonalizzato("inoltroConErrore");
-					}
-					else{
-						msgDiag.logPersonalizzato("inoltroEffettuato");
-					}
-				}
-				
-				// Se non vi e' da tornare una risposta applicativa
-				// - Se vi e' una consegna con errore, e non vi e' un soap fault, non viene tracciato (verra' rispedito).
-				// - Altrimenti viene tracciato anche se:
-				//       - messaggio errore protocollo
-				//       - messaggio protocollo con fault applicativo
-				//       - FaultServer
-				if( (errorConsegna==false) || (functionAsRouter) || (sendRispostaApplicativa) || 
-						( fault!=null) ){
-					msgDiag.mediumDebug("Tracciamento della richiesta...");
-					EsitoElaborazioneMessaggioTracciato esitoTraccia = null;
-					if(errorConsegna){
-						esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
-					}else{
-						if(fault!=null && fault.getFaultString()!=null && 
-								(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
-							esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
-						}else{
-							esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
-						}
-					}
+				StringBuffer bfMsgErroreSituazioneAnomale = new StringBuffer();
+				EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
+						responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
+						functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
+				if(esitoTraccia!=null) {
 					tracciamento.registraRichiesta(requestMessage,securityInfo,headerBustaRichiesta,bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(false, location),
 							idCorrelazioneApplicativa);
+				}
+				String msgErroreSituazioneAnomale = null;
+				if(bfMsgErroreSituazioneAnomale.length()>0) {
+					msgErroreSituazioneAnomale = bfMsgErroreSituazioneAnomale.toString();
 				}
 
 				// Dopo che ho effettuata la tracciatura ritorno errore se necessario
@@ -4647,5 +4751,86 @@ public class InoltroBuste extends GenericLib{
 			headerProtocolloRisposta = null;
 			// *** GB ***
 		}
+	}
+	
+	private EsitoElaborazioneMessaggioTracciato gestioneTracciamentoFineConnettore(boolean errorConsegna, SOAPFault fault, org.openspcoop2.protocol.sdk.config.ITraduttore traduttore,
+			MsgDiagnostico msgDiag, String motivoErroreConsegna, OpenSPCoop2Message responseMessage,
+			boolean isBlockedTransaction_responseMessageWithTransportCodeError,
+			boolean functionAsRouter, boolean sendRispostaApplicativa,
+			StringBuffer bfMsgErroreSituazioneAnomale) throws Exception {
+		
+		String msgErroreSituazioneAnomale = null;
+
+		// Tracciamento effettuato:
+
+		// - SEMPRE se vi e' da tornare una risposta applicativa (sendRispostaApplicativa=true)
+
+		// - SEMPRE se si ha e' un router: functionAsRouter
+
+		// - SEMPPRE se non vi sono errori (errorConsegna=false)
+		
+		// Settings msgDiag
+		if(errorConsegna){
+			// Una busta contiene per forza di cose un SOAPFault
+			// Una busta la si riconosce dal motivo di errore.
+			if(fault!=null && fault.getFaultString()!=null && 
+					(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE)) || fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO)))){
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
+				msgDiag.logPersonalizzato("inoltroConErrore");
+			}else{
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
+				msgDiag.logPersonalizzato("inoltroConErrore");
+				
+				// Controllo Situazione Anomala ISSUE OP-7
+				if(responseMessage!=null && ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+					OpenSPCoop2SoapMessage soapMessageResponse = responseMessage.castAsSoap();
+					if(soapMessageResponse.getSOAPPart()!=null && 
+							soapMessageResponse.getSOAPPart().getEnvelope()!=null &&
+							(soapMessageResponse.getSOAPPart().getEnvelope().getBody()==null || (!soapMessageResponse.getSOAPPart().getEnvelope().getBody().hasFault()))){
+						msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+						if(isBlockedTransaction_responseMessageWithTransportCodeError){
+							msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+							this.log.error(msgErroreSituazioneAnomale);
+							bfMsgErroreSituazioneAnomale.append(msgErroreSituazioneAnomale);
+						}
+					}
+				}
+			}
+		}else{	
+			if(fault!=null && fault.getFaultString()!=null && 
+					(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
+				msgDiag.logPersonalizzato("inoltroConErrore");
+			}
+			else{
+				msgDiag.logPersonalizzato("inoltroEffettuato");
+			}
+		}
+		
+		// Se non vi e' da tornare una risposta applicativa
+		// - Se vi e' una consegna con errore, e non vi e' un soap fault, non viene tracciato (verra' rispedito).
+		// - Altrimenti viene tracciato anche se:
+		//       - messaggio errore protocollo
+		//       - messaggio protocollo con fault applicativo
+		//       - FaultServer
+		if( (errorConsegna==false) || (functionAsRouter) || (sendRispostaApplicativa) || 
+				( fault!=null) ){
+			msgDiag.mediumDebug("Tracciamento della richiesta...");
+			EsitoElaborazioneMessaggioTracciato esitoTraccia = null;
+			if(errorConsegna){
+				esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
+			}else{
+				if(fault!=null && fault.getFaultString()!=null && 
+						(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
+					esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
+				}else{
+					esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
+				}
+			}
+			return esitoTraccia;
+		}
+		
+		return null;
+
 	}
 }

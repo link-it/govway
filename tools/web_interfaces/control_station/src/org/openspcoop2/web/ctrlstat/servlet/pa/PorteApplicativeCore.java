@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -85,7 +86,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 	}
 	
 	public void configureControlloAccessiPortaApplicativa(PortaApplicativa pa,
-			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
+			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, 
 			String erogazioneAutorizzazione_tokenOptions,
@@ -98,6 +99,12 @@ public class PorteApplicativeCore extends ControlStationCore {
 				pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
 		} else 
 			pa.setAutenticazioneOpzionale(null);
+		pa.getProprietaAutenticazioneList().clear();
+		List<Proprieta> proprietaAutenticazione = this.convertToAutenticazioneProprieta(erogazioneAutenticazione, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList);
+		if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
+			pa.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+		}
+		
 		pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(erogazioneAutorizzazione, 
 				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), 
 				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli),

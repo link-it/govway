@@ -109,6 +109,13 @@ public class CostantiConfigurazione {
 	public final static String LABEL_CREDENZIALE_SSL = "https";
 	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
 	public final static String LABEL_CREDENZIALE_DISABILITATO = "disabilitato";
+	
+	public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTAINER = "Container";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_HEADER = "HeaderBased";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_FORM = "FormBased";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_URL = "UrlBased";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT = "ContentBased";
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "Indirizzo IP";
     
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";
@@ -119,6 +126,13 @@ public class CostantiConfigurazione {
 //    public final static String AUTENTICAZIONE_PRINCIPAL_BASIC = "principalOrBasic";
 //    public final static String AUTENTICAZIONE_PRINCIPAL_SSL = "principalOrSsl";
 //    public final static String AUTENTICAZIONE_SSL_BASIC = "sslOrBasic";
+    
+    public final static String AUTENTICAZIONE_PRINCIPAL_CONTAINER = "container";
+    public final static String AUTENTICAZIONE_PRINCIPAL_HEADER = "header-based";
+    public final static String AUTENTICAZIONE_PRINCIPAL_FORM = "form-based";
+    public final static String AUTENTICAZIONE_PRINCIPAL_URL = "url-based";
+    public final static String AUTENTICAZIONE_PRINCIPAL_CONTENT = "content-based";
+    public final static String AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "indirizzo-ip";
     
     /** tipo di porta autorizzazione */
     public final static String AUTORIZZAZIONE_NONE = "none";

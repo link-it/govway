@@ -33,6 +33,8 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneException;
 import org.openspcoop2.pdd.core.autenticazione.AutenticazioneUtils;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -49,6 +51,17 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 
 	protected boolean cleanHeaderAuthorization = true;
+	
+	@Override
+    public void initParametri(ParametriAutenticazione parametri) throws AutenticazioneException {
+		super.initParametri(parametri);
+		
+		ParametriAutenticazioneBasic authBasic = new ParametriAutenticazioneBasic(this.parametri);
+		if(authBasic.getCleanHeaderAuthorization()!=null) {
+			this.cleanHeaderAuthorization = authBasic.getCleanHeaderAuthorization();
+		}
+		
+	}
 	
     @Override
     public EsitoAutenticazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione) throws AutenticazioneException{

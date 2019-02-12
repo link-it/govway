@@ -431,7 +431,7 @@ public class ServicesUtils {
 				if(!preflightRequest) {
 					CORSFilter corsFilter = new CORSFilter(logCore, cors);
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
-					corsFilter.doCORS(httpServletRequest, res, !preflightRequest);
+					corsFilter.doCORS(httpServletRequest, res, false);
 					propertiesTrasporto.putAll(res.getHeader());
 				}
 			}

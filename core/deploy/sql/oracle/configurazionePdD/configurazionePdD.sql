@@ -64,6 +64,37 @@ end;
 
 
 
+CREATE SEQUENCE seq_config_cache_regole MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE config_cache_regole
+(
+	status_min NUMBER,
+	status_max NUMBER,
+	fault NUMBER,
+	cache_seconds NUMBER,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_config_cache_regole PRIMARY KEY (id)
+);
+
+
+ALTER TABLE config_cache_regole MODIFY fault DEFAULT 0;
+
+CREATE TRIGGER trg_config_cache_regole
+BEFORE
+insert on config_cache_regole
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_config_cache_regole.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 CREATE SEQUENCE seq_configurazione MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE configurazione
@@ -163,7 +194,11 @@ CREATE TABLE configurazione
 	response_cache_max_msg_size NUMBER,
 	response_cache_hash_url VARCHAR2(255),
 	response_cache_hash_headers VARCHAR2(255),
+	response_cache_hash_hdr_list CLOB,
 	response_cache_hash_payload VARCHAR2(255),
+	response_cache_control_nocache NUMBER,
+	response_cache_control_maxage NUMBER,
+	response_cache_control_nostore NUMBER,
 	-- Cache per il response caching
 	response_cache_statocache VARCHAR2(255),
 	response_cache_dimensionecache VARCHAR2(255),

@@ -21,6 +21,7 @@
                                 <linkit:sql-comment><![CDATA[**** Configurazione ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="registri" object-type="registri"/>
                                 <linkit:sql-table object-name="routing" object-type="routing"/>
+                                <linkit:sql-table object-name="response-cache-regola" object-type="response-cache-regola"/>
                                 <linkit:sql-table object-name="configurazione" object-type="configurazione"/>
                                 <linkit:sql-comment><![CDATA[**** Protocolli ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="protocolli" object-type="protocolli"/>
@@ -236,6 +237,68 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="is_default"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la regola è quella di default o meno (1=true, 0=false). Se non è una regola di default, devono essere obbligatoriamente valorizzate le colonne 'tipo' e 'nome'</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    <xsd:element name="response-cache-regola">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="config_cache_regole"
+                        comment="Elenco di regole di cache associate alla configurazione">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="status_min" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="status_min" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore minimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="status_max" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="status_max" />
+                                <linkit:sql-ddl-column-comment>Criterio di applicabilità della regola, in base al valore massimo del return code http</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="fault" type="xsd:integer" minOccurs="0" default="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="fault"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se un fault viene salvato in cache (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cache_seconds" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="cache_seconds"/>
+                                <linkit:sql-ddl-column-comment>Indicazione della durata delle informazioni salvate in cache, in secondi</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1053,6 +1116,17 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="response_cache_hash_hdr_list" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_hash_hdr_list"  text="true"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sugli header http abilitati, nel calcolo del digest. Gli header sono separati dalla ','</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="response_cache_hash_payload" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -1060,6 +1134,39 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="response_cache_hash_payload"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se nel calcolo del digest per la response caching viene considerato il payload (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_nocache" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_nocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'no-cache' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_maxage" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_maxage"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'max-age' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="response_cache_control_nostore" type="xsd:integer" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="response_cache_control_nostore"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se viene interpretata la direttiva 'no-store' in 'Cache-Control' header (1:abilitato/0:disabilitato)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

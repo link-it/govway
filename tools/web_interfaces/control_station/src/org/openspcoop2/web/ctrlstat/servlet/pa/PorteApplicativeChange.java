@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -344,11 +345,14 @@ public final class PorteApplicativeChange extends Action {
 			}
 
 			String autenticazioneOpzionale = "";
-				if(pa.getAutenticazioneOpzionale()!=null){
-					if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
-						autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
-					}
+			if(pa.getAutenticazioneOpzionale()!=null){
+				if (pa.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+					autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
 				}
+			}
+			
+			TipoAutenticazionePrincipal autenticazionePrincipal = porteApplicativeCore.getTipoAutenticazionePrincipal(pa.getProprietaAutenticazioneList());
+			List<String> autenticazioneParametroList = porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList());
 
 			String autorizzazione = null;
 			String autorizzazioneCustom = null;
@@ -948,7 +952,7 @@ public final class PorteApplicativeChange extends Action {
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,servizioApplicativoList,servizioApplicativo,idSa,
 						autenticazione, autorizzazione,
-						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
+						autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
@@ -1119,7 +1123,7 @@ public final class PorteApplicativeChange extends Action {
 						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
 						behaviour,servizioApplicativoList,servizioApplicativo,idSa,
 						autenticazione, autorizzazione,
-						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
+						autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, autenticazioneCustom, autorizzazioneCustom,
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,

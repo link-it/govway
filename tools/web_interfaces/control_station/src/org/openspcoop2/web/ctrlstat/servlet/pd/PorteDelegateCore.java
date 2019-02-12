@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -86,7 +87,7 @@ public class PorteDelegateCore extends ControlStationCore {
 	
 
 	public void configureControlloAccessiPortaDelegata(PortaDelegata portaDelegata, 
-			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
+			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale, TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal, List<String> fruizioneAutenticazioneParametroList,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			String fruizioneServizioApplicativo, String fruizioneRuolo, 
 			String fruizioneAutorizzazione_tokenOptions,
@@ -100,6 +101,12 @@ public class PorteDelegateCore extends ControlStationCore {
 				portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
 		} else 
 			portaDelegata.setAutenticazioneOpzionale(null);
+		portaDelegata.getProprietaAutenticazioneList().clear();
+		List<Proprieta> proprietaAutenticazione = this.convertToAutenticazioneProprieta(fruizioneAutenticazione, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList);
+		if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
+			portaDelegata.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+		}
+		
 		portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), 
 				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli),

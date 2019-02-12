@@ -27,6 +27,7 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.Route;
@@ -42,12 +43,17 @@ import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.RouteRegistro;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
+import org.openspcoop2.core.config.TrasformazioneRest;
+import org.openspcoop2.core.config.TrasformazioneSoap;
 import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
@@ -58,6 +64,7 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.IdPortaDelegata;
@@ -75,13 +82,17 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.Trasformazioni;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.CorsConfigurazioneHeaders;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.RouteGateway;
 import org.openspcoop2.core.config.Openspcoop2;
@@ -93,6 +104,7 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
@@ -446,6 +458,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Ruolo ruolo,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Ruolo.class, ruolo, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-soap-risposta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneSoapRisposta trasformazioneSoapRisposta) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneSoapRisposta trasformazioneSoapRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneSoapRisposta trasformazioneSoapRisposta) throws SerializerException {
+		this.objToXml(file, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneSoapRisposta trasformazioneSoapRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneSoapRisposta trasformazioneSoapRisposta) throws SerializerException {
+		this.objToXml(out, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneSoapRisposta</var>
+	 * @param trasformazioneSoapRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneSoapRisposta trasformazioneSoapRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param trasformazioneSoapRisposta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneSoapRisposta trasformazioneSoapRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param trasformazioneSoapRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneSoapRisposta trasformazioneSoapRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param trasformazioneSoapRisposta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneSoapRisposta trasformazioneSoapRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneSoapRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoapRisposta}
+	 * 
+	 * @param trasformazioneSoapRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneSoapRisposta trasformazioneSoapRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneSoapRisposta.class, trasformazioneSoapRisposta, prettyPrint).toString();
 	}
 	
 	
@@ -2222,6 +2352,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-risposta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaRisposta</var>
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaRisposta trasformazioneRegolaApplicabilitaRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRisposta.class, trasformazioneRegolaApplicabilitaRisposta, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: proprieta
 	 =================================================================================
 	*/
@@ -2924,6 +3172,478 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(RouteRegistro routeRegistro,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(RouteRegistro.class, routeRegistro, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-richiesta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaRichiesta</var>
+	 * @param trasformazioneRegolaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaRichiesta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaRichiesta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaRichiesta trasformazioneRegolaRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRichiesta.class, trasformazioneRegolaRichiesta, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-parametro
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaParametro trasformazioneRegolaParametro) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaParametro trasformazioneRegolaParametro,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaParametro trasformazioneRegolaParametro) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaParametro trasformazioneRegolaParametro,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaParametro trasformazioneRegolaParametro) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaParametro</var>
+	 * @param trasformazioneRegolaParametro Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaParametro trasformazioneRegolaParametro,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param trasformazioneRegolaParametro Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaParametro trasformazioneRegolaParametro) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param trasformazioneRegolaParametro Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaParametro trasformazioneRegolaParametro,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param trasformazioneRegolaParametro Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaParametro trasformazioneRegolaParametro) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaParametro</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaParametro}
+	 * 
+	 * @param trasformazioneRegolaParametro Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaParametro trasformazioneRegolaParametro,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaParametro.class, trasformazioneRegolaParametro, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-rest
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRest trasformazioneRest) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRest.class, trasformazioneRest, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRest trasformazioneRest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRest.class, trasformazioneRest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRest trasformazioneRest) throws SerializerException {
+		this.objToXml(file, TrasformazioneRest.class, trasformazioneRest, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRest trasformazioneRest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRest.class, trasformazioneRest, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRest trasformazioneRest) throws SerializerException {
+		this.objToXml(out, TrasformazioneRest.class, trasformazioneRest, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRest</var>
+	 * @param trasformazioneRest Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRest trasformazioneRest,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRest.class, trasformazioneRest, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param trasformazioneRest Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRest trasformazioneRest) throws SerializerException {
+		return this.objToXml(TrasformazioneRest.class, trasformazioneRest, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param trasformazioneRest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRest trasformazioneRest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRest.class, trasformazioneRest, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param trasformazioneRest Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRest trasformazioneRest) throws SerializerException {
+		return this.objToXml(TrasformazioneRest.class, trasformazioneRest, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRest</var> of type {@link org.openspcoop2.core.config.TrasformazioneRest}
+	 * 
+	 * @param trasformazioneRest Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRest trasformazioneRest,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRest.class, trasformazioneRest, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-soap
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneSoap trasformazioneSoap) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneSoap.class, trasformazioneSoap, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneSoap trasformazioneSoap,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneSoap.class, trasformazioneSoap, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneSoap trasformazioneSoap) throws SerializerException {
+		this.objToXml(file, TrasformazioneSoap.class, trasformazioneSoap, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneSoap trasformazioneSoap,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneSoap.class, trasformazioneSoap, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneSoap trasformazioneSoap) throws SerializerException {
+		this.objToXml(out, TrasformazioneSoap.class, trasformazioneSoap, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneSoap</var>
+	 * @param trasformazioneSoap Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneSoap trasformazioneSoap,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneSoap.class, trasformazioneSoap, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param trasformazioneSoap Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneSoap trasformazioneSoap) throws SerializerException {
+		return this.objToXml(TrasformazioneSoap.class, trasformazioneSoap, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param trasformazioneSoap Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneSoap trasformazioneSoap,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneSoap.class, trasformazioneSoap, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param trasformazioneSoap Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneSoap trasformazioneSoap) throws SerializerException {
+		return this.objToXml(TrasformazioneSoap.class, trasformazioneSoap, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneSoap</var> of type {@link org.openspcoop2.core.config.TrasformazioneSoap}
+	 * 
+	 * @param trasformazioneSoap Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneSoap trasformazioneSoap,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneSoap.class, trasformazioneSoap, prettyPrint).toString();
 	}
 	
 	
@@ -4104,6 +4824,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(PortaApplicativaAutorizzazioneServiziApplicativi portaApplicativaAutorizzazioneServiziApplicativi,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(PortaApplicativaAutorizzazioneServiziApplicativi.class, portaApplicativaAutorizzazioneServiziApplicativi, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-risposta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaRisposta</var>
+	 * @param trasformazioneRegolaRisposta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaRisposta trasformazioneRegolaRisposta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param trasformazioneRegolaRisposta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaRisposta trasformazioneRegolaRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param trasformazioneRegolaRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaRisposta trasformazioneRegolaRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param trasformazioneRegolaRisposta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaRisposta trasformazioneRegolaRisposta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaRisposta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaRisposta}
+	 * 
+	 * @param trasformazioneRegolaRisposta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaRisposta trasformazioneRegolaRisposta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaRisposta.class, trasformazioneRegolaRisposta, prettyPrint).toString();
 	}
 	
 	
@@ -6116,6 +6954,242 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: trasformazioni
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Trasformazioni trasformazioni) throws SerializerException {
+		this.objToXml(fileName, Trasformazioni.class, trasformazioni, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Trasformazioni trasformazioni,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Trasformazioni.class, trasformazioni, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Trasformazioni trasformazioni) throws SerializerException {
+		this.objToXml(file, Trasformazioni.class, trasformazioni, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Trasformazioni trasformazioni,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Trasformazioni.class, trasformazioni, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Trasformazioni trasformazioni) throws SerializerException {
+		this.objToXml(out, Trasformazioni.class, trasformazioni, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioni</var>
+	 * @param trasformazioni Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Trasformazioni trasformazioni,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Trasformazioni.class, trasformazioni, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param trasformazioni Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Trasformazioni trasformazioni) throws SerializerException {
+		return this.objToXml(Trasformazioni.class, trasformazioni, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param trasformazioni Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Trasformazioni trasformazioni,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Trasformazioni.class, trasformazioni, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param trasformazioni Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Trasformazioni trasformazioni) throws SerializerException {
+		return this.objToXml(Trasformazioni.class, trasformazioni, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioni</var> of type {@link org.openspcoop2.core.config.Trasformazioni}
+	 * 
+	 * @param trasformazioni Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Trasformazioni trasformazioni,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Trasformazioni.class, trasformazioni, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: response-caching-configurazione-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneRegola</var>
+	 * @param responseCachingConfigurazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param responseCachingConfigurazioneRegola Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param responseCachingConfigurazioneRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param responseCachingConfigurazioneRegola Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneRegola</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola}
+	 * 
+	 * @param responseCachingConfigurazioneRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneRegola responseCachingConfigurazioneRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneRegola.class, responseCachingConfigurazioneRegola, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: generic-properties
 	 =================================================================================
 	*/
@@ -6464,6 +7538,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(CorsConfigurazioneHeaders corsConfigurazioneHeaders,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(CorsConfigurazioneHeaders.class, corsConfigurazioneHeaders, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola-applicabilita-richiesta
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegolaApplicabilitaRichiesta</var>
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegolaApplicabilitaRichiesta</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta}
+	 * 
+	 * @param trasformazioneRegolaApplicabilitaRichiesta Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegolaApplicabilitaRichiesta trasformazioneRegolaApplicabilitaRichiesta,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegolaApplicabilitaRichiesta.class, trasformazioneRegolaApplicabilitaRichiesta, prettyPrint).toString();
 	}
 	
 	
@@ -6936,6 +8128,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(CorrelazioneApplicativaElemento correlazioneApplicativaElemento,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(CorrelazioneApplicativaElemento.class, correlazioneApplicativaElemento, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: trasformazione-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegola trasformazioneRegola) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegola.class, trasformazioneRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,TrasformazioneRegola trasformazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, TrasformazioneRegola.class, trasformazioneRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegola trasformazioneRegola) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegola.class, trasformazioneRegola, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param file Xml file to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,TrasformazioneRegola trasformazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, TrasformazioneRegola.class, trasformazioneRegola, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegola trasformazioneRegola) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegola.class, trasformazioneRegola, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param out OutputStream to serialize the object <var>trasformazioneRegola</var>
+	 * @param trasformazioneRegola Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,TrasformazioneRegola trasformazioneRegola,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, TrasformazioneRegola.class, trasformazioneRegola, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param trasformazioneRegola Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegola trasformazioneRegola) throws SerializerException {
+		return this.objToXml(TrasformazioneRegola.class, trasformazioneRegola, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param trasformazioneRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(TrasformazioneRegola trasformazioneRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegola.class, trasformazioneRegola, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param trasformazioneRegola Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegola trasformazioneRegola) throws SerializerException {
+		return this.objToXml(TrasformazioneRegola.class, trasformazioneRegola, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>trasformazioneRegola</var> of type {@link org.openspcoop2.core.config.TrasformazioneRegola}
+	 * 
+	 * @param trasformazioneRegola Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(TrasformazioneRegola trasformazioneRegola,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(TrasformazioneRegola.class, trasformazioneRegola, prettyPrint).toString();
 	}
 	
 	
@@ -8234,6 +9544,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(OpenspcoopSorgenteDati openspcoopSorgenteDati,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(OpenspcoopSorgenteDati.class, openspcoopSorgenteDati, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: response-caching-configurazione-control
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param file Xml file to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param out OutputStream to serialize the object <var>responseCachingConfigurazioneControl</var>
+	 * @param responseCachingConfigurazioneControl Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param responseCachingConfigurazioneControl Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param responseCachingConfigurazioneControl Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param responseCachingConfigurazioneControl Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>responseCachingConfigurazioneControl</var> of type {@link org.openspcoop2.core.config.ResponseCachingConfigurazioneControl}
+	 * 
+	 * @param responseCachingConfigurazioneControl Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ResponseCachingConfigurazioneControl responseCachingConfigurazioneControl,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ResponseCachingConfigurazioneControl.class, responseCachingConfigurazioneControl, prettyPrint).toString();
 	}
 	
 	

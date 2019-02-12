@@ -49,6 +49,9 @@ public class ValidatoreMessaggiApplicativiException extends Exception {
 	public ValidatoreMessaggiApplicativiException(String msg) {
 		super(msg);
 	}
+	public ValidatoreMessaggiApplicativiException(String message, Throwable cause) {
+		super(message, cause);
+	}
 	
 	public ErroreIntegrazione getErrore() {
 		return this.errore;

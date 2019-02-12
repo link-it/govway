@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config}porta-delegata-soggetto-erogatore" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="proprieta-autenticazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
@@ -61,6 +62,7 @@ import java.util.List;
  * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}porta-tracciamento" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -99,6 +101,7 @@ import java.util.List;
   	"soggettoErogatore",
   	"servizio",
   	"azione",
+  	"proprietaAutenticazione",
   	"xacmlPolicy",
   	"servizioApplicativo",
   	"ruoli",
@@ -114,7 +117,8 @@ import java.util.List;
   	"dump",
   	"tracciamento",
   	"gestioneCors",
-  	"responseCaching"
+  	"responseCaching",
+  	"trasformazioni"
   }
 )
 
@@ -192,6 +196,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setAzione(PortaDelegataAzione azione) {
     this.azione = azione;
+  }
+
+  public void addProprietaAutenticazione(Proprieta proprietaAutenticazione) {
+    this.proprietaAutenticazione.add(proprietaAutenticazione);
+  }
+
+  public Proprieta getProprietaAutenticazione(int index) {
+    return this.proprietaAutenticazione.get( index );
+  }
+
+  public Proprieta removeProprietaAutenticazione(int index) {
+    return this.proprietaAutenticazione.remove( index );
+  }
+
+  public List<Proprieta> getProprietaAutenticazioneList() {
+    return this.proprietaAutenticazione;
+  }
+
+  public void setProprietaAutenticazioneList(List<Proprieta> proprietaAutenticazione) {
+    this.proprietaAutenticazione=proprietaAutenticazione;
+  }
+
+  public int sizeProprietaAutenticazioneList() {
+    return this.proprietaAutenticazione.size();
   }
 
   public java.lang.String getXacmlPolicy() {
@@ -352,6 +380,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setResponseCaching(ResponseCachingConfigurazione responseCaching) {
     this.responseCaching = responseCaching;
+  }
+
+  public Trasformazioni getTrasformazioni() {
+    return this.trasformazioni;
+  }
+
+  public void setTrasformazioni(Trasformazioni trasformazioni) {
+    this.trasformazioni = trasformazioni;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -699,6 +735,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="azione",required=false,nillable=false)
   protected PortaDelegataAzione azione;
 
+  @XmlElement(name="proprieta-autenticazione",required=true,nillable=false)
+  protected List<Proprieta> proprietaAutenticazione = new ArrayList<Proprieta>();
+
+  /**
+   * @deprecated Use method getProprietaAutenticazioneList
+   * @return List<Proprieta>
+  */
+  @Deprecated
+  public List<Proprieta> getProprietaAutenticazione() {
+  	return this.proprietaAutenticazione;
+  }
+
+  /**
+   * @deprecated Use method setProprietaAutenticazioneList
+   * @param proprietaAutenticazione List<Proprieta>
+  */
+  @Deprecated
+  public void setProprietaAutenticazione(List<Proprieta> proprietaAutenticazione) {
+  	this.proprietaAutenticazione=proprietaAutenticazione;
+  }
+
+  /**
+   * @deprecated Use method sizeProprietaAutenticazioneList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProprietaAutenticazione() {
+  	return this.proprietaAutenticazione.size();
+  }
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="xacml-policy",required=false,nillable=false)
   protected java.lang.String xacmlPolicy;
@@ -801,6 +867,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="response-caching",required=false,nillable=false)
   protected ResponseCachingConfigurazione responseCaching;
+
+  @XmlElement(name="trasformazioni",required=false,nillable=false)
+  protected Trasformazioni trasformazioni;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

@@ -53,6 +53,7 @@ import org.openspcoop2.message.context.UrlParameters;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.utils.TransportUtilities;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -131,6 +132,11 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	
 	@Override
 	public void copyResourcesTo(OpenSPCoop2Message newInstance) throws MessageException{
+		this.copyResourcesTo(newInstance, false);
+	}
+	
+	@Override
+	public void copyResourcesTo(OpenSPCoop2Message newInstance,  boolean skipTransportInfo) throws MessageException{
 		
 		// Le seguenti risorse non vengono ricopiate poichè varieranno nella nuova versione
 		// - contentTypeParamaters
@@ -144,31 +150,37 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		
 		if(newInstance instanceof AbstractBaseOpenSPCoop2Message){
 			AbstractBaseOpenSPCoop2Message base = (AbstractBaseOpenSPCoop2Message) newInstance; 
-			base.transportRequestContext = this.transportRequestContext;
-			base.transportResponseContext = this.transportResponseContext;
-			base.forcedResponseCode = this.forcedResponseCode;
-			base.forcedEmptyResponse = this.forcedEmptyResponse;
-			base.forcedResponse = this.forcedResponse;
-			base.forwardTransportHeader = this.forwardTransportHeader;
-			base.forwardUrlProperties = this.forwardUrlProperties;
+			if(!skipTransportInfo) {
+				base.transportRequestContext = this.transportRequestContext;
+				base.transportResponseContext = this.transportResponseContext;
+				base.forcedResponseCode = this.forcedResponseCode;
+				base.forcedEmptyResponse = this.forcedEmptyResponse;
+				base.forcedResponse = this.forcedResponse;
+				base.forwardTransportHeader = this.forwardTransportHeader;
+				base.forwardUrlProperties = this.forwardUrlProperties;
+			}
 			base.context = this.context;
 			base.messageRole = this.messageRole;
-			base.incomingsize = this.incomingsize;
-			base.incomingSizeForced = this.incomingSizeForced;
+			if(!skipTransportInfo) {
+				base.incomingsize = this.incomingsize;
+				base.incomingSizeForced = this.incomingSizeForced;
+			}
 			base.protocolName = this.protocolName;
 		}
 		else{
 			// Viene riversato solo quello che è possibile riversare
-			newInstance.setTransportRequestContext(this.transportRequestContext);
-			newInstance.setTransportResponseContext(this.transportResponseContext);
-			newInstance.setForcedResponseCode(this.forcedResponseCode);
-			if(this.forcedEmptyResponse) {
-				newInstance.forceEmptyResponse();
+			if(!skipTransportInfo) {
+				newInstance.setTransportRequestContext(this.transportRequestContext);
+				newInstance.setTransportResponseContext(this.transportResponseContext);
+				newInstance.setForcedResponseCode(this.forcedResponseCode);
+				if(this.forcedEmptyResponse) {
+					newInstance.forceEmptyResponse();
+				}
+				if(this.forcedResponse!=null) {
+					newInstance.forceResponse(this.forcedResponse);
+				}
+				newInstance.setForcedResponseCode(this.forcedResponseCode);
 			}
-			if(this.forcedResponse!=null) {
-				newInstance.forceResponse(this.forcedResponse);
-			}
-			newInstance.setForcedResponseCode(this.forcedResponseCode);
 			if(this.context.size()>0){
 				Iterator<String> it = this.context.keySet().iterator();
 				while (it.hasNext()) {
@@ -828,6 +840,28 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	@Override
 	public void setMessageRole(MessageRole messageRole) {
 		this.messageRole = messageRole;
+	}
+	
+	@Override
+	public boolean isFault() throws MessageException {
+		try {
+			boolean isFault = false;
+			if(ServiceBinding.SOAP.equals(this.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMsg = this.castAsSoap();
+				boolean hasContent = soapMsg.getSOAPBody()!=null;
+				if(hasContent){
+					hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+				}
+				isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(this.getMessageRole());
+			}
+			else{
+				OpenSPCoop2RestMessage<?> restMsg = this.castAsRest();
+				isFault = restMsg.isProblemDetailsForHttpApis_RFC7807() || MessageRole.FAULT.equals(this.getMessageRole());
+			}
+			return isFault;
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
+		}
 	}
 	
 	

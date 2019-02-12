@@ -36,6 +36,7 @@ import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -140,7 +141,7 @@ public class ConnettoreUtils {
 			if(dynamicLocation) {
 				try {
 					Map<String, Object> dynamicMap = ((ConnettoreBase)connector).buildDynamicMap(connettoreMsg);
-					location = ((ConnettoreBase)connector).convertDynamicPropertyValue(CostantiConnettori.CONNETTORE_LOCATION, location, dynamicMap);
+					location = DynamicUtils.convertDynamicPropertyValue(CostantiConnettori.CONNETTORE_LOCATION, location, dynamicMap, pddContext, false);
 				}catch(Exception e){
 					log.error("Errore durante la costruzione della location (dynamic): "+e.getMessage(),e);
 				}

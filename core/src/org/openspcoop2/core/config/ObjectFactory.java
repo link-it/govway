@@ -54,6 +54,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRichiesta }
+     */
+    public TrasformazioneRegolaApplicabilitaRichiesta createTrasformazioneRegolaApplicabilitaRichiesta() {
+        return new TrasformazioneRegolaApplicabilitaRichiesta();
+    }
+
+    /**
      * Create an instance of {@link PortaApplicativaServizioApplicativo }
      */
     public PortaApplicativaServizioApplicativo createPortaApplicativaServizioApplicativo() {
@@ -110,6 +117,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TrasformazioneRegolaParametro }
+     */
+    public TrasformazioneRegolaParametro createTrasformazioneRegolaParametro() {
+        return new TrasformazioneRegolaParametro();
+    }
+
+    /**
      * Create an instance of {@link IdPortaDelegata }
      */
     public IdPortaDelegata createIdPortaDelegata() {
@@ -135,6 +149,13 @@ public class ObjectFactory {
      */
     public Property createProperty() {
         return new Property();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneSoap }
+     */
+    public TrasformazioneSoap createTrasformazioneSoap() {
+        return new TrasformazioneSoap();
     }
 
     /**
@@ -383,6 +404,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TrasformazioneRegolaRichiesta }
+     */
+    public TrasformazioneRegolaRichiesta createTrasformazioneRegolaRichiesta() {
+        return new TrasformazioneRegolaRichiesta();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaRisposta }
+     */
+    public TrasformazioneRegolaRisposta createTrasformazioneRegolaRisposta() {
+        return new TrasformazioneRegolaRisposta();
+    }
+
+    /**
      * Create an instance of {@link RouteGateway }
      */
     public RouteGateway createRouteGateway() {
@@ -432,6 +467,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ResponseCachingConfigurazioneControl }
+     */
+    public ResponseCachingConfigurazioneControl createResponseCachingConfigurazioneControl() {
+        return new ResponseCachingConfigurazioneControl();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegola }
+     */
+    public TrasformazioneRegola createTrasformazioneRegola() {
+        return new TrasformazioneRegola();
+    }
+
+    /**
      * Create an instance of {@link InvocazioneCredenziali }
      */
     public InvocazioneCredenziali createInvocazioneCredenziali() {
@@ -467,6 +516,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ResponseCachingConfigurazioneRegola }
+     */
+    public ResponseCachingConfigurazioneRegola createResponseCachingConfigurazioneRegola() {
+        return new ResponseCachingConfigurazioneRegola();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneMultitenant }
      */
     public ConfigurazioneMultitenant createConfigurazioneMultitenant() {
@@ -495,10 +551,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TrasformazioneRest }
+     */
+    public TrasformazioneRest createTrasformazioneRest() {
+        return new TrasformazioneRest();
+    }
+
+    /**
      * Create an instance of {@link MtomProcessorFlow }
      */
     public MtomProcessorFlow createMtomProcessorFlow() {
         return new MtomProcessorFlow();
+    }
+
+    /**
+     * Create an instance of {@link Trasformazioni }
+     */
+    public Trasformazioni createTrasformazioni() {
+        return new Trasformazioni();
     }
 
     /**
@@ -590,6 +660,13 @@ public class ObjectFactory {
      */
     public GestioneErroreSoapFault createGestioneErroreSoapFault() {
         return new GestioneErroreSoapFault();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneSoapRisposta }
+     */
+    public TrasformazioneSoapRisposta createTrasformazioneSoapRisposta() {
+        return new TrasformazioneSoapRisposta();
     }
 
     /**
@@ -688,6 +765,13 @@ public class ObjectFactory {
      */
     public AutorizzazioneRuoli createAutorizzazioneRuoli() {
         return new AutorizzazioneRuoli();
+    }
+
+    /**
+     * Create an instance of {@link TrasformazioneRegolaApplicabilitaRisposta }
+     */
+    public TrasformazioneRegolaApplicabilitaRisposta createTrasformazioneRegolaApplicabilitaRisposta() {
+        return new TrasformazioneRegolaApplicabilitaRisposta();
     }
 
     /**

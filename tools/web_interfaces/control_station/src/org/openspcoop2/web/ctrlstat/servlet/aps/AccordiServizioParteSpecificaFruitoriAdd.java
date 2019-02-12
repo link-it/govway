@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -137,6 +138,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private String fruizioneRuolo;
 	private String fruizioneAutenticazione;
 	private String fruizioneAutenticazioneOpzionale;
+	private TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal;
+	private List<String> fruizioneAutenticazioneParametroList;
 	private String fruizioneAutorizzazione;
 	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
 	private Properties parametersPOST;
@@ -210,6 +213,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			this.fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			this.fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			String fruizioneAutenticazionePrincipalTipo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			this.fruizioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(fruizioneAutenticazionePrincipalTipo, false);
+			this.fruizioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(this.fruizioneAutenticazione, this.fruizioneAutenticazionePrincipal);
 			this.fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
 			this.fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
 			this.fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
@@ -706,7 +712,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList,
 							soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
-							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							null, null, null, null,
@@ -777,7 +783,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					allegatoXacmlPolicy,listExtendedConnettore);
 
@@ -838,7 +844,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, "0", this.id, tipoOp,
 						"", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 						null, null, null, null,gestioneToken, policyLabels, policyValues, 
@@ -987,7 +993,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, 
 							soggettiList, soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, 
 							this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							null, null, null, null,gestioneToken, policyLabels, policyValues, 
@@ -1086,7 +1092,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				portaDelegata.setIdSoggetto((long) idProv);
 
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
-						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,
+						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList,
 						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						this.fruizioneServizioApplicativo, this.fruizioneRuolo,
 						autorizzazione_tokenOptions,

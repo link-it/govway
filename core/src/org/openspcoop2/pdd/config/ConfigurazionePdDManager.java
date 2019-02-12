@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -430,6 +431,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection(), pd);
 	}
 	
+	public Trasformazioni getTrasformazioni(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getTrasformazioni(this.getConnection(), pd);
+	}
+	
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pd);
 	}
@@ -644,6 +649,10 @@ public class ConfigurazionePdDManager {
 	
 	public DumpConfigurazione getDumpConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection(), pa);
+	}
+	
+	public Trasformazioni getTrasformazioni(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getTrasformazioni(this.getConnection(), pa);
 	}
 	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{

@@ -51,7 +51,7 @@ public class TempiElaborazioneUtils implements Serializable {
 	/*
 	 * NOTA: Spazio massimo occupato.
 	 * Ogni informazione occupa  'yyyyMMddHHmmssSSS' + '-' + 'yyyyMMddHHmmssSSS' + ' ' = 36
-	 * Per ora siamo a 29 informazioni raccolte (token, autenticazione, ...), quindi 29*36=1044.
+	 * Per ora siamo a 31 informazioni raccolte (token, autenticazione, ...), quindi 31*36=1116.
 	 * Attenzione a non superare 4000 che è la larghezza massima.
 	 * 
 	 **/
@@ -108,6 +108,8 @@ public class TempiElaborazioneUtils implements Serializable {
 		bf.append(_convertToDBValue(tempiElaborazione.responseCachingCalcoloDigest)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.responseCachingReadFromCache)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.responseCachingSaveInCache)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.trasformazioneRichiesta)).append(TEMPI_SEPARATOR);
+		bf.append(_convertToDBValue(tempiElaborazione.trasformazioneRisposta)).append(TEMPI_SEPARATOR);
 		
 		return bf.toString();
 	}
@@ -257,6 +259,12 @@ public class TempiElaborazioneUtils implements Serializable {
 			}
 			else if(i==28) {
 				tempiElaborazione.responseCachingSaveInCache = funzionalita;
+			}
+			else if(i==29) {
+				tempiElaborazione.trasformazioneRichiesta = funzionalita;
+			}
+			else if(i==30) {
+				tempiElaborazione.trasformazioneRisposta = funzionalita;
 			}
 
 		}

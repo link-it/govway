@@ -100,6 +100,7 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -119,6 +120,16 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRest;
+import org.openspcoop2.core.config.TrasformazioneSoap;
+import org.openspcoop2.core.config.TrasformazioneSoapRisposta;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.constants.AlgoritmoCache;
 import org.openspcoop2.core.config.constants.CorrelazioneApplicativaGestioneIdentificazioneFallita;
@@ -142,8 +153,10 @@ import org.openspcoop2.core.config.constants.TipoConnessioneRisposte;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
+import org.openspcoop2.core.config.constants.VersioneSOAP;
 import org.openspcoop2.core.config.driver.ConnettorePropertiesUtilities;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -156,9 +169,11 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
+import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
+import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -355,6 +370,14 @@ public class DriverConfigurazioneDB_LIB {
 			return valore.getValue();
 		}
 	}
+	public static String getValue(VersioneSOAP valore){
+		if(valore==null){
+			return null;
+		}
+		else{
+			return valore.getValue();
+		}
+	}
 	
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
@@ -507,6 +530,14 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		else{
 			return TipoGestioneCORS.toEnumConstant(value);
+		}
+	}
+	public static VersioneSOAP getEnumVersioneSOAP(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return VersioneSOAP.toEnumConstant(value);
 		}
 	}
 	
@@ -1489,16 +1520,39 @@ public class DriverConfigurazioneDB_LIB {
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
 		String response_cache_hash_headers = null;
+		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
+		boolean response_cache_noCache = true;
+		boolean response_cache_maxAge = true;
+		boolean response_cache_noStore = true;
+		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
 		if(responseCachingConfigurazone!=null) {
 			response_cache_stato = getValue(responseCachingConfigurazone.getStato());
 			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
 			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
+			if(responseCachingConfigurazone.getControl()!=null) {
+				response_cache_noCache = responseCachingConfigurazone.getControl().getNoCache();
+				response_cache_maxAge = responseCachingConfigurazone.getControl().getMaxAge();
+				response_cache_noStore = responseCachingConfigurazone.getControl().getNoStore();
+			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
+					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getHashGenerator().getHeader(i));
+						}
+						response_cache_hash_headers_list = bf.toString();
+					}
+				}
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
+			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
 		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
@@ -1640,8 +1694,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_stato", "?");
 				sqlQueryObject.addInsertField("response_cache_seconds", "?");
 				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nocache", "?");
+				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
 				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -1780,8 +1838,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
+				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
 				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
 				
 				//idaccordo
@@ -1828,7 +1890,10 @@ public class DriverConfigurazioneDB_LIB {
 								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
+								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
+								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								aPD.getIdAccordo(),aPD.getIdPortType()));
 				n = stm.executeUpdate();
 				stm.close();
@@ -2070,6 +2135,25 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " associazioni ServizioApplicativo<->PortaDelegata associati alla PortaDelegata[" + idPortaDelegata + "]");
 
+				// set prop autenticazione
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addInsertField("id_porta", "?");
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("valore", "?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = con.prepareStatement(sqlQuery);
+				for (i = 0; i < aPD.sizeProprietaAutenticazioneList(); i++) {
+					Proprieta propProtocollo = aPD.getProprietaAutenticazione(i);
+					stm.setLong(1, aPD.getId());
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+				}
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
 				// set prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_PROP);
@@ -2153,6 +2237,48 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				// Cache Regole
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						stm.setLong(indexCR++, aPD.getId());
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						stm.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							stm.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
 				// dumpConfigurazione
@@ -2328,8 +2454,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_stato", "?");
 				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
 				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nocache", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
 				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -2460,8 +2590,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
+				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
 				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
@@ -2774,6 +2908,44 @@ public class DriverConfigurazioneDB_LIB {
 
 				
 				
+				/*Proprieta Autenticazione associate alla Porta Delegata*/
+
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Delegata "+idPortaDelegata);
+				// set prop
+				int newProps = 0;
+				for (i = 0; i < aPD.sizeProprietaAutenticazioneList(); i++) {
+					Proprieta propProtocollo = aPD.getProprietaAutenticazione(i);
+
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+
+					stm.setLong(1, idPortaDelegata);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+					stm.close();
+					newProps++;
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolProp Autenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
+				
 				/*Proprieta associate alla Porta Delegata*/
 
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
@@ -2788,7 +2960,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Delegata "+idPortaDelegata);
 				// set prop
-				int newProps = 0;
+				newProps = 0;
 				for (i = 0; i < aPD.sizeProprietaList(); i++) {
 					Proprieta propProtocollo = aPD.getProprieta(i);
 
@@ -2917,6 +3089,60 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// Cache Regole
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
+				
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						stm.setLong(indexCR++, idPortaDelegata);
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						stm.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							stm.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				
@@ -2948,6 +3174,17 @@ public class DriverConfigurazioneDB_LIB {
 
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
+				// Cache Regole
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla Porta Delegata "+idPortaDelegata);
 				
 				// azioni delegate
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -3098,6 +3335,18 @@ public class DriverConfigurazioneDB_LIB {
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
+				
+				// cancello le prop di autenticazione
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -3978,16 +4227,39 @@ public class DriverConfigurazioneDB_LIB {
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
 		String response_cache_hash_headers = null;
+		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
+		boolean response_cache_noCache = true;
+		boolean response_cache_maxAge = true;
+		boolean response_cache_noStore = true;
+		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
 		if(responseCachingConfigurazone!=null) {
 			response_cache_stato = getValue(responseCachingConfigurazone.getStato());
 			response_cache_seconds = responseCachingConfigurazone.getCacheTimeoutSeconds();
 			response_cache_max_msg_size = responseCachingConfigurazone.getMaxMessageSize();
+			if(responseCachingConfigurazone.getControl()!=null) {
+				response_cache_noCache = responseCachingConfigurazone.getControl().getNoCache();
+				response_cache_maxAge = responseCachingConfigurazone.getControl().getMaxAge();
+				response_cache_noStore = responseCachingConfigurazone.getControl().getNoStore();
+			}
 			if(responseCachingConfigurazone.getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getHashGenerator().getRequestUri());
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
+					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getHashGenerator().getHeader(i));
+						}
+						response_cache_hash_headers_list = bf.toString();
+					}
+				}
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getHashGenerator().getPayload());
 			}
+			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
 		
 		
@@ -4127,8 +4399,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_stato", "?");
 				sqlQueryObject.addInsertField("response_cache_seconds", "?");
 				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nocache", "?");
+				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
 				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -4265,8 +4541,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
+				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
 				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
 				
 				//idaccordo
@@ -4510,6 +4790,26 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				
+				// set prop autenticazione
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addInsertField("id_porta", "?");
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("valore", "?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = con.prepareStatement(sqlQuery);
+				for (i = 0; i < aPA.sizeProprietaAutenticazioneList(); i++) {
+					propProtocollo = aPA.getProprietaAutenticazione(i);
+					stm.setLong(1, idPortaApplicativa);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+				}
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
 				// set prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_PROP);
@@ -4657,6 +4957,49 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
+				// Cache Regole
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						stm.setLong(indexCR++, aPA.getId());
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						stm.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							stm.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
 				
@@ -4811,8 +5154,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_stato", "?");
 				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
 				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nocache", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
 				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -4950,8 +5297,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					stm.setNull(index++, java.sql.Types.BIGINT);
 				}
+				stm.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				stm.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				stm.setString(index++, response_cache_hash_url);
 				stm.setString(index++, response_cache_hash_headers);
+				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
 				// id
 				stm.setLong(index++, aPA.getIdAccordo() !=null ? aPA.getIdAccordo() : -1L);
@@ -5254,6 +5605,44 @@ public class DriverConfigurazioneDB_LIB {
 
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " associazioni PortaApplicativa<->ServizioApplicativo associati alla PortaDelegata[" + idPortaApplicativa + "]");
 
+				
+				/*Proprieta autenticazione associate alla Porta Applicativa*/
+				//TODO possibilie ottimizzazione
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta di autenticazione associate alla Porta Applicativa "+idPortaApplicativa);
+				// set prop
+				int newProps = 0;
+				for (i = 0; i < aPA.sizeProprietaAutenticazioneList(); i++) {
+					propProtocollo = aPA.getProprietaAutenticazione(i);
+
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+
+					stm.setLong(1, idPortaApplicativa);
+					stm.setString(2, propProtocollo.getNome());
+					stm.setString(3, propProtocollo.getValore());
+					stm.executeUpdate();
+					stm.close();
+					newProps++;
+				}
+				DriverConfigurazioneDB_LIB.log.debug("Inserted " + newProps + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
 				/*Proprieta associate alla Porta Applicativa*/
 				//TODO possibilie ottimizzazione
 				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
@@ -5268,7 +5657,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
-				int newProps = 0;
+				newProps = 0;
 				for (i = 0; i < aPA.sizeProprietaList(); i++) {
 					propProtocollo = aPA.getProprieta(i);
 
@@ -5485,6 +5874,61 @@ public class DriverConfigurazioneDB_LIB {
 				
 			
 				
+				
+				// Cache Regole
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla PortaApplicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						stm.setLong(indexCR++, idPortaApplicativa);
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							stm.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						stm.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							stm.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
@@ -5519,6 +5963,17 @@ public class DriverConfigurazioneDB_LIB {
 
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				
+				// Cache Regole
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache associate alla Porta Applicativa "+idPortaApplicativa);
 				
 				// azioni delegate
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5679,7 +6134,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " correlazione della risposta associate alla PortaApplicativa[" + idPortaApplicativa + "]");
-				
+								
 				// cancello le prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
@@ -5691,6 +6146,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				if (n > 0)
 					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+
+				// cancello le prop di autenticazione
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " SetProtocolPropAutenticazione associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
@@ -7209,16 +7676,39 @@ public class DriverConfigurazioneDB_LIB {
 		Long response_cache_max_msg_size = null;
 		String response_cache_hash_url = null;
 		String response_cache_hash_headers = null;
+		String response_cache_hash_headers_list = null;
 		String response_cache_hash_payload = null;
+		boolean response_cache_noCache = true;
+		boolean response_cache_maxAge = true;
+		boolean response_cache_noStore = true;
+		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
 		if(responseCachingConfigurazone!=null && responseCachingConfigurazone.getConfigurazione()!=null) {
 			response_cache_stato = getValue(responseCachingConfigurazone.getConfigurazione().getStato());
 			response_cache_seconds = responseCachingConfigurazone.getConfigurazione().getCacheTimeoutSeconds();
 			response_cache_max_msg_size = responseCachingConfigurazone.getConfigurazione().getMaxMessageSize();
+			if(responseCachingConfigurazone.getConfigurazione().getControl()!=null) {
+				response_cache_noCache = responseCachingConfigurazone.getConfigurazione().getControl().getNoCache();
+				response_cache_maxAge = responseCachingConfigurazone.getConfigurazione().getControl().getMaxAge();
+				response_cache_noStore = responseCachingConfigurazone.getConfigurazione().getControl().getNoStore();
+			}
 			if(responseCachingConfigurazone.getConfigurazione().getHashGenerator()!=null) {
 				response_cache_hash_url = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getRequestUri());
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders())) {
+					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
+						StringBuffer bf = new StringBuffer();
+						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeader(i));
+						}
+						response_cache_hash_headers_list = bf.toString();
+					}
+				}
 				response_cache_hash_payload = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getPayload());
 			}
+			response_cache_regole = responseCachingConfigurazone.getConfigurazione().getRegolaList();
 		}
 		
 		Cache responseCaching_cache = null;
@@ -7492,8 +7982,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_stato", "?");
 				sqlQueryObject.addInsertField("response_cache_seconds", "?");
 				sqlQueryObject.addInsertField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nocache", "?");
+				sqlQueryObject.addInsertField("response_cache_control_maxage", "?");
+				sqlQueryObject.addInsertField("response_cache_control_nostore", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_url", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
+				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
 				// responseCaching cache
 				sqlQueryObject.addInsertField("response_cache_statocache", "?");
@@ -7593,8 +8087,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					updateStmt.setNull(index++, java.sql.Types.BIGINT);
 				}
+				updateStmt.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setString(index++, response_cache_hash_url);
 				updateStmt.setString(index++, response_cache_hash_headers);
+				updateStmt.setString(index++, response_cache_hash_headers_list);
 				updateStmt.setString(index++, response_cache_hash_payload);
 				// responseCaching cache
 				updateStmt.setString(index++, responseCaching_statoCache);
@@ -7625,7 +8123,10 @@ public class DriverConfigurazioneDB_LIB {
 								cors_stato, cors_tipo, cors_all_allow_origins, cors_allow_credentials, cors_allow_max_age, cors_allow_max_age_seconds,
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
-								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_payload,
+								(response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
+								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
+								response_cache_hash_url, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
 								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
 								));
 
@@ -7812,6 +8313,45 @@ public class DriverConfigurazioneDB_LIB {
 
 					}
 				}
+				
+				// Cache Regole
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						String sqlQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							updateStmt.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							updateStmt.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						updateStmt.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							updateStmt.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache");
 				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
@@ -8010,8 +8550,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_stato", "?");
 				sqlQueryObject.addUpdateField("response_cache_seconds", "?");
 				sqlQueryObject.addUpdateField("response_cache_max_msg_size", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nocache", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_maxage", "?");
+				sqlQueryObject.addUpdateField("response_cache_control_nostore", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_url", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
+				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
 				// responseCaching cache
 				sqlQueryObject.addUpdateField("response_cache_statocache", "?");
@@ -8111,8 +8655,12 @@ public class DriverConfigurazioneDB_LIB {
 				else {
 					updateStmt.setNull(index++, java.sql.Types.BIGINT);
 				}
+				updateStmt.setInt(index++, response_cache_noCache ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE);
+				updateStmt.setInt(index++, response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE);
 				updateStmt.setString(index++, response_cache_hash_url);
 				updateStmt.setString(index++, response_cache_hash_headers);
+				updateStmt.setString(index++, response_cache_hash_headers_list);
 				updateStmt.setString(index++, response_cache_hash_payload);
 				// responseCaching cache
 				updateStmt.setString(index++, responseCaching_statoCache);
@@ -8333,6 +8881,55 @@ public class DriverConfigurazioneDB_LIB {
 					}
 				}
 				
+				// Cache Regole
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+				String sqlQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(sqlQuery);
+				n=updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" regole di cache");
+				
+				n=0;
+				if(response_cache_regole!=null && response_cache_regole.size()>0){
+					for (int j = 0; j < response_cache_regole.size(); j++) {
+						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							sqlQueryObject.addInsertField("status_min", "?");
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							sqlQueryObject.addInsertField("status_max", "?");
+						}
+						sqlQueryObject.addInsertField("fault", "?");
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							sqlQueryObject.addInsertField("cache_seconds", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(sqlQuery);
+						int indexCR = 1;
+						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
+							updateStmt.setInt(indexCR++, regola.getReturnCodeMin());
+						}
+						if(regola.getReturnCodeMax()!=null && regola.getReturnCodeMax()>0) {
+							updateStmt.setInt(indexCR++, regola.getReturnCodeMax());
+						}
+						updateStmt.setInt(indexCR++, regola.getFault() ? CostantiDB.TRUE : CostantiDB.FALSE);
+						if(regola.getCacheTimeoutSeconds()!=null && regola.getCacheTimeoutSeconds()>0) {
+							updateStmt.setInt(indexCR++, regola.getCacheTimeoutSeconds());
+						}
+						updateStmt.executeUpdate();
+						updateStmt.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunta regola di cache");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " regole di cache");
+				
 				// dumpConfigurazione
 				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
 				
@@ -8466,6 +9063,13 @@ public class DriverConfigurazioneDB_LIB {
 						extInfoConfigurazioneDriver.createExtendedInfo(con, DriverConfigurazioneDB_LIB.log,  config, config.getExtendedInfo(l), CRUDType.UPDATE);
 					}
 				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.CONFIGURAZIONE);
@@ -8767,6 +9371,626 @@ public class DriverConfigurazioneDB_LIB {
 			}catch(Exception e) {}
 		}
 	}
+	
+	
+	private static void CRUDTrasformazioni(int type, Connection con, Trasformazioni trasformazioni, 
+			Long idProprietario, boolean portaDelegata) throws Exception {
+		
+		PreparedStatement updateStmt = null;
+		ResultSet rs = null;
+		IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+		try {
+			switch (type) {
+			case CREATE:
+		
+				if(trasformazioni==null || trasformazioni.sizeRegolaList()<=0) {
+					break;
+				}
+				
+				for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+					
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					if(portaDelegata) {
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+					}
+					else {
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+					}
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("applicabilita_azioni", "?");
+					sqlQueryObject.addInsertField("applicabilita_ct", "?");
+					sqlQueryObject.addInsertField("applicabilita_pattern", "?");
+					sqlQueryObject.addInsertField("req_conversione_enabled", "?");
+					sqlQueryObject.addInsertField("req_conversione_tipo", "?");
+					sqlQueryObject.addInsertField("req_conversione_template", "?");
+					sqlQueryObject.addInsertField("req_content_type", "?");
+					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneRest()!=null) {
+						sqlQueryObject.addInsertField("rest_transformation", "?");
+						sqlQueryObject.addInsertField("rest_method", "?");
+						sqlQueryObject.addInsertField("rest_path", "?");
+					}
+					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneSoap()!=null) {
+						sqlQueryObject.addInsertField("soap_transformation", "?");
+						sqlQueryObject.addInsertField("soap_version", "?");
+						sqlQueryObject.addInsertField("soap_action", "?");
+						sqlQueryObject.addInsertField("soap_envelope", "?");
+						sqlQueryObject.addInsertField("soap_envelope_as_attach", "?");
+						sqlQueryObject.addInsertField("soap_envelope_tipo", "?");
+						sqlQueryObject.addInsertField("soap_envelope_template", "?");
+					}
+					String updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					int index = 1;
+					updateStmt.setLong(index++, idProprietario);
+					
+					StringBuffer bf = new StringBuffer();
+					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
+						for (int i = 0; i < regola.getApplicabilita().sizeAzioneList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(regola.getApplicabilita().getAzione(i));
+						}
+					}
+					updateStmt.setString(index++, bf.length()>0 ? bf.toString() : null);
+					
+					bf = new StringBuffer();
+					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeContentTypeList()>0) {
+						for (int i = 0; i < regola.getApplicabilita().sizeContentTypeList(); i++) {
+							if(i>0) {
+								bf.append(",");
+							}
+							bf.append(regola.getApplicabilita().getContentType(i));
+						}
+					}
+					updateStmt.setString(index++, bf.length()>0 ? bf.toString() : null);
+					
+					updateStmt.setString(index++, regola.getApplicabilita()!=null ? regola.getApplicabilita().getPattern() : null);
+					
+					updateStmt.setInt(index++, regola.getRichiesta()!=null && regola.getRichiesta().getConversione() ? CostantiDB.TRUE : CostantiDB.FALSE);
+					updateStmt.setString(index++, regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTipo() : null);
+					jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta()!=null ? regola.getRichiesta().getConversioneTemplate() : null);
+					
+					updateStmt.setString(index++, regola.getRichiesta()!=null ? regola.getRichiesta().getContentType() : null);
+					
+					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneRest()!=null) {
+						updateStmt.setInt(index++, CostantiDB.TRUE);
+						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneRest().getMetodo());
+						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneRest().getPath());
+					}
+					
+					if(regola.getRichiesta()!=null && regola.getRichiesta().getTrasformazioneSoap()!=null) {
+						updateStmt.setInt(index++, CostantiDB.TRUE);
+						updateStmt.setString(index++, DriverConfigurazioneDB_LIB.getValue(regola.getRichiesta().getTrasformazioneSoap().getVersione()));
+						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneSoap().getSoapAction());
+						updateStmt.setInt(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelope() ? CostantiDB.TRUE : CostantiDB.FALSE );
+						updateStmt.setInt(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeAsAttachment() ? CostantiDB.TRUE : CostantiDB.FALSE );
+						updateStmt.setString(index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTipo());
+						jdbcAdapter.setBinaryData(updateStmt, index++, regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate());
+					}
+					
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				
+					
+					if(regola.getRichiesta()!=null) {
+						
+						if(regola.getRichiesta().sizeHeaderList()>0) {
+							for (TrasformazioneRegolaParametro parametro : regola.getRichiesta().getHeaderList()) {
+								
+								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								if(portaDelegata) {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
+								}
+								else {
+									sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER);
+								}
+								sqlQueryObject.addInsertField("id_trasformazione", "?");
+								sqlQueryObject.addInsertField("tipo", "?");
+								sqlQueryObject.addInsertField("nome", "?");
+								sqlQueryObject.addInsertField("valore", "?");
+								
+								updateQuery = sqlQueryObject.createSQLInsert();
+								updateStmt = con.prepareStatement(updateQuery);
+								index = 1;
+								updateStmt.setLong(index++, idProprietario);
+								updateStmt.executeUpdate();
+								updateStmt.close();
+							}
+						}
+						
+					}
+					
+				}
+				
+				break;
+				
+			case UPDATE:
+				
+				// Per la delete recupero l'immagine attuale del configurazione
+				Trasformazioni trasformazioniOld = DriverConfigurazioneDB_LIB.readTrasformazioni(idProprietario, portaDelegata, con);
+				if(trasformazioniOld!=null) {
+					CRUDTrasformazioni(DELETE, con, trasformazioniOld, idProprietario, portaDelegata);
+				}
+				
+				// Creo la nuova immagine
+				if(trasformazioni!=null) {
+					CRUDTrasformazioni(CREATE, con, trasformazioni, idProprietario, portaDelegata);
+				}
+				break;
+				
+			case DELETE:
+				
+				if(trasformazioni==null) {
+					break;
+				}
+				
+				List<Long> idTrasformazioneList = new ArrayList<>();
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				String updateQuery = sqlQueryObject.createSQLQuery();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idProprietario);
+				rs = updateStmt.executeQuery();
+				while(rs.next()) {
+					idTrasformazioneList.add(rs.getLong("id"));
+				}
+				rs.close();
+				updateStmt.close();
+				
+				if(idTrasformazioneList.size()<=0) {
+					break;
+				}
+				
+				for (Long idTrasformazione : idTrasformazioneList) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idTrasformazione);
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL);
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idTrasformazione);
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+					List<Long> idTrasformazioneRisposteList = new ArrayList<>();
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+					sqlQueryObject.addSelectField("id");
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLQuery();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idTrasformazione);
+					rs = updateStmt.executeQuery();
+					while(rs.next()) {
+						idTrasformazioneRisposteList.add(rs.getLong("id"));
+					}
+					rs.close();
+					updateStmt.close();
+					
+					if(idTrasformazioneRisposteList.size()<0) {
+						
+						for (Long idTrasformazioneRisposta : idTrasformazioneRisposteList) {
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+							sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER);
+							sqlQueryObject.addWhereCondition("id_transform_risp=?");
+							sqlQueryObject.setANDLogicOperator(true);
+							updateQuery = sqlQueryObject.createSQLDelete();
+							updateStmt = con.prepareStatement(updateQuery);
+							updateStmt.setLong(1, idTrasformazioneRisposta);
+							updateStmt.executeUpdate();
+							updateStmt.close();
+							
+						}
+						
+					}
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+					sqlQueryObject.addWhereCondition("id_trasformazione=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					updateQuery = sqlQueryObject.createSQLDelete();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idTrasformazione);
+					updateStmt.executeUpdate();
+					updateStmt.close();
+					
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idProprietario);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(rs!=null)rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+		}
+	}
+	
+	public static Trasformazioni readTrasformazioni(long idPorta, boolean portaDelegata, Connection con) throws Exception {
+		
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		Trasformazioni trasformazioni = null;
+		try {
+			
+			String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_porta=?");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idPorta);
+	
+			log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+			rs = stm.executeQuery();
+	
+			while (rs.next()) {
+				
+				if(trasformazioni==null) {
+					trasformazioni = new Trasformazioni();
+				}
+				
+				TrasformazioneRegola regola = new TrasformazioneRegola();
+				
+				String applicabilita_azioni = rs.getString("applicabilita_azioni");
+				String applicabilita_ct = rs.getString("applicabilita_ct");
+				String applicabilita_pattern = rs.getString("applicabilita_pattern");
+				if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ||
+						(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+						(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+						) {
+					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = new TrasformazioneRegolaApplicabilitaRichiesta();
+					
+					if( (applicabilita_azioni!=null && !"".equals(applicabilita_azioni)) ) {
+						if(applicabilita_azioni.contains(",")) {
+							String [] tmp = applicabilita_azioni.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addAzione(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addAzione(applicabilita_azioni);
+						}
+					}
+					
+					if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+						if(applicabilita_ct.contains(",")) {
+							String [] tmp = applicabilita_ct.split(",");
+							for (int i = 0; i < tmp.length; i++) {
+								applicabilita.addContentType(tmp[i].trim());
+							}
+						}
+						else {
+							applicabilita.addContentType(applicabilita_ct);
+						}
+					}
+					
+					if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+						applicabilita.setPattern(applicabilita_pattern);
+					}
+					
+					regola.setApplicabilita(applicabilita);
+				}
+				
+				TrasformazioneRegolaRichiesta richiesta = new TrasformazioneRegolaRichiesta();
+				
+				int req_conversione_enabled = rs.getInt("req_conversione_enabled");
+				if(CostantiDB.TRUE == req_conversione_enabled) {
+					richiesta.setConversione(true);
+				}
+				else {
+					richiesta.setConversione(true);
+				}
+				richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
+				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+				richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "req_conversione_template"));
+				richiesta.setContentType("req_content_type");
+				
+				int trasformazione_rest = rs.getInt("rest_transformation");
+				if(CostantiDB.TRUE == trasformazione_rest) {
+					TrasformazioneRest trasformazioneRest = new TrasformazioneRest();
+					trasformazioneRest.setMetodo(rs.getString("rest_method"));
+					trasformazioneRest.setPath(rs.getString("rest_path"));
+					richiesta.setTrasformazioneRest(trasformazioneRest);
+				}
+					
+				int trasformazione_soap = rs.getInt("soap_transformation");
+				if(CostantiDB.TRUE == trasformazione_soap) {
+					TrasformazioneSoap trasformazioneSoap = new TrasformazioneSoap();
+					
+					trasformazioneSoap.setVersione(DriverConfigurazioneDB_LIB.getEnumVersioneSOAP(rs.getString("soap_version")));
+					trasformazioneSoap.setSoapAction(rs.getString("soap_action"));
+					
+					int envelope = rs.getInt("soap_envelope");
+					if(CostantiDB.TRUE == envelope) {
+						trasformazioneSoap.setEnvelope(true);
+					}
+					else {
+						trasformazioneSoap.setEnvelope(false);
+					}
+					
+					int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
+					if(CostantiDB.TRUE == envelope_as_attach) {
+						trasformazioneSoap.setEnvelopeAsAttachment(true);
+						
+						trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
+						trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
+					}
+					else {
+						trasformazioneSoap.setEnvelopeAsAttachment(false);
+					}
+					
+					richiesta.setTrasformazioneSoap(trasformazioneSoap);
+				}
+				
+				regola.setId(rs.getLong("id"));
+				
+				regola.setRichiesta(richiesta);
+				
+				trasformazioni.addRegola(regola);
+				
+			}
+			rs.close();
+			stm.close();
+			
+			if(trasformazioni==null) {
+				return trasformazioni;
+			}
+			
+			for (TrasformazioneRegola regola : trasformazioni.getRegolaList()) {
+				
+				// ** HEADER **
+				
+				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, regola.getId());
+		
+				log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+				rs = stm.executeQuery();
+		
+				while (rs.next()) {
+					TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+					parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+					parametro.setNome(rs.getString("nome"));
+					parametro.setValore(rs.getString("valore"));
+					regola.getRichiesta().addHeader(parametro);
+				}
+				
+				rs.close();
+				stm.close();
+				
+				
+				// ** URL **
+				
+				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, regola.getId());
+		
+				log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+				rs = stm.executeQuery();
+		
+				while (rs.next()) {
+					TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+					parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+					parametro.setNome(rs.getString("nome"));
+					parametro.setValore(rs.getString("valore"));
+					regola.getRichiesta().addParametroUrl(parametro);
+				}
+				
+				rs.close();
+				stm.close();
+				
+				
+				
+				// ** RISPOSTE **
+				
+				nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_trasformazione=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, regola.getId());
+		
+				log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+				rs = stm.executeQuery();
+		
+				while (rs.next()) {
+				
+					TrasformazioneRegolaRisposta risposta = new TrasformazioneRegolaRisposta();
+					
+					int applicabilita_status_min = rs.getInt("applicabilita_status_min");
+					int applicabilita_status_max = rs.getInt("applicabilita_status_max");
+					String applicabilita_ct = rs.getString("applicabilita_ct");
+					String applicabilita_pattern = rs.getString("applicabilita_pattern");
+					if( (applicabilita_status_min >0 || applicabilita_status_max>0) ||
+							(applicabilita_ct!=null && !"".equals(applicabilita_ct)) ||
+							(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)) 
+							) {
+						TrasformazioneRegolaApplicabilitaRisposta applicabilita = new TrasformazioneRegolaApplicabilitaRisposta();
+						
+						if(applicabilita_status_min>0) {
+							applicabilita.setReturnCodeMin(applicabilita_status_min);
+						}
+						if(applicabilita_status_max>0) {
+							applicabilita.setReturnCodeMax(applicabilita_status_max);
+						}
+
+						if( (applicabilita_ct!=null && !"".equals(applicabilita_ct)) ) {
+							if(applicabilita_ct.contains(",")) {
+								String [] tmp = applicabilita_ct.split(",");
+								for (int i = 0; i < tmp.length; i++) {
+									applicabilita.addContentType(tmp[i].trim());
+								}
+							}
+							else {
+								applicabilita.addContentType(applicabilita_ct);
+							}
+						}
+						
+						if(applicabilita_pattern!=null && !"".equals(applicabilita_pattern)){
+							applicabilita.setPattern(applicabilita_pattern);
+						}
+						
+						risposta.setApplicabilita(applicabilita);
+					}
+					
+					int conversione_enabled = rs.getInt("conversione_enabled");
+					if(CostantiDB.TRUE == conversione_enabled) {
+						risposta.setConversione(true);
+					}
+					else {
+						risposta.setConversione(true);
+					}
+					risposta.setConversioneTipo(rs.getString("conversione_tipo"));
+					IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
+					risposta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "conversione_template"));
+					risposta.setContentType(rs.getString("content_type"));
+					int return_code = rs.getInt("return_code");
+					if(return_code>0) {
+						risposta.setReturnCode(return_code);
+					}
+					
+					if(regola.getRichiesta().getTrasformazioneSoap()!=null) {
+					
+						TrasformazioneSoapRisposta trasformazioneSoap = new TrasformazioneSoapRisposta();
+						
+						int envelope = rs.getInt("soap_envelope");
+						if(CostantiDB.TRUE == envelope) {
+							trasformazioneSoap.setEnvelope(true);
+						}
+						else {
+							trasformazioneSoap.setEnvelope(false);
+						}
+						
+						int envelope_as_attach = rs.getInt("soap_envelope_as_attach");
+						if(CostantiDB.TRUE == envelope_as_attach) {
+							trasformazioneSoap.setEnvelopeAsAttachment(true);
+							
+							trasformazioneSoap.setEnvelopeBodyConversioneTipo(rs.getString("soap_envelope_tipo"));
+							trasformazioneSoap.setEnvelopeBodyConversioneTemplate(jdbcAdapter.getBinaryData(rs, "soap_envelope_template"));
+						}
+						else {
+							trasformazioneSoap.setEnvelopeAsAttachment(false);
+						}
+						
+						risposta.setTrasformazioneSoap(trasformazioneSoap);
+						
+					}
+
+					risposta.setId(rs.getLong("id"));
+					
+					regola.addRisposta(risposta);
+					
+				}
+				
+				rs.close();
+				stm.close();
+				
+				
+				// ** HEADER RISPOSTA **
+				
+				for (TrasformazioneRegolaRisposta risposta : regola.getRispostaList()) {
+					
+					nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER;
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(nomeTabella);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_transform_risp=?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = con.prepareStatement(sqlQuery);
+					stm.setLong(1, risposta.getId());
+			
+					log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+					rs = stm.executeQuery();
+			
+					while (rs.next()) {
+						TrasformazioneRegolaParametro parametro = new TrasformazioneRegolaParametro();
+						parametro.setConversioneTipo(TrasformazioneRegolaParametroTipoAzione.valueOf(rs.getString("tipo")));
+						parametro.setNome(rs.getString("nome"));
+						parametro.setValore(rs.getString("valore"));
+						risposta.addHeader(parametro);
+					}
+					
+					rs.close();
+					stm.close();
+					
+				}
+			}
+			
+		}finally {
+			try {
+				rs.close();
+			}catch(Exception eClose) {}
+			try {
+				stm.close();
+			}catch(Exception eClose) {}
+		}
+		
+		return trasformazioni;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

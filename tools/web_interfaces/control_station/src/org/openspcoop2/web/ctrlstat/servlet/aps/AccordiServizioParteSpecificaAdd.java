@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -185,6 +186,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String erogazioneRuolo;
 	private String erogazioneAutenticazione;
 	private String erogazioneAutenticazioneOpzionale;
+	private TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal;
+	private List<String> erogazioneAutenticazioneParametroList;
 	private String erogazioneAutorizzazione;
 	private String erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch;
 	private String erogazioneSoggettoAutenticato; 
@@ -193,6 +196,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String fruizioneRuolo;
 	private String fruizioneAutenticazione;
 	private String fruizioneAutenticazioneOpzionale;
+	private TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal;
+	private List<String> fruizioneAutenticazioneParametroList;
 	private String fruizioneAutorizzazione;
 	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
 	
@@ -247,6 +252,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.erogazioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			this.erogazioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			this.erogazioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			String erogazioneAutenticazionePrincipalTipo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			this.erogazioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(erogazioneAutenticazionePrincipalTipo, false);
+			this.erogazioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(this.erogazioneAutenticazione, this.erogazioneAutenticazionePrincipal);
 			this.erogazioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
 			this.erogazioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
 			this.erogazioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
@@ -351,6 +359,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			this.fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			this.fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			String fruizioneAutenticazionePrincipalTipo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			this.fruizioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(fruizioneAutenticazionePrincipalTipo, false);
+			this.fruizioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(this.fruizioneAutenticazione, this.fruizioneAutenticazionePrincipal);
 			this.fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
 			this.fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
 			this.fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
@@ -1389,12 +1400,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
-						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
+						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati,soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo,
 						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
-						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saFruitoriList,gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
@@ -1482,10 +1493,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
-					null,this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,
+					null,this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal,this.erogazioneAutenticazioneParametroList,this.erogazioneAutorizzazione,
 					this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,erogazioneIsSupportatoAutenticazioneSoggetti,
 					generaPortaApplicativa, listExtendedConnettore,
-					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					this.tipoProtocollo, allegatoXacmlPolicy, 
 					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore);
@@ -1548,12 +1559,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						saSoggetti,this.nomeSA,generaPortaApplicativa,null,
-						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
+						this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList, this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 						this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 						soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 						this.tipoProtocollo, listaTipiProtocollo,
 						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
-						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saFruitoriList,gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy,  gestioneTokenOpzionale,
@@ -1769,12 +1780,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							saSoggetti,this.nomeSA,generaPortaApplicativa,null,
-							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
+							this.erogazioneRuolo,this.erogazioneAutenticazione,this.erogazioneAutenticazioneOpzionale,this.erogazioneAutenticazionePrincipal, this.erogazioneAutenticazioneParametroList, this.erogazioneAutorizzazione,erogazioneIsSupportatoAutenticazioneSoggetti,
 							this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
 							soggettiAutenticati, soggettiAutenticatiLabel, this.erogazioneSoggettoAutenticato,
 							this.tipoProtocollo, listaTipiProtocollo,
 							soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
-							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutenticazionePrincipal, this.fruizioneAutenticazioneParametroList, this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saFruitoriList,gestioneToken, policyLabels, policyValues, 
 							gestioneTokenPolicy,  gestioneTokenOpzionale,
@@ -1838,13 +1849,19 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			
 			String autenticazione = null, autenticazioneOpzionale = null;
+			TipoAutenticazionePrincipal autenticazionePrincipal = null;
+			List<String> autenticazioneParametroList = null;
 			if(generaPortaApplicativa){
 				autenticazione = this.erogazioneAutenticazione;
 				autenticazioneOpzionale = this.erogazioneAutenticazioneOpzionale;
+				autenticazionePrincipal = this.erogazioneAutenticazionePrincipal;
+				autenticazioneParametroList = this.erogazioneAutenticazioneParametroList;
 			}
 			if(generaPortaDelegata){
 				autenticazione = this.fruizioneAutenticazione;
 				autenticazioneOpzionale = this.fruizioneAutenticazioneOpzionale;
+				autenticazionePrincipal = this.fruizioneAutenticazionePrincipal;
+				autenticazioneParametroList = this.fruizioneAutenticazioneParametroList;
 			}
 			
 			String autorizzazione = null, autorizzazioneAutenticati = null, autorizzazioneRuoli = null, autorizzazioneRuoliTipologia = null, autorizzazioneRuoliMatch = null;
@@ -1880,7 +1897,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					idProv, 
 					connettore, 
 					generaPortaApplicativa, generaPortaDelegata, 
-					autenticazione, autenticazioneOpzionale, 
+					autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 					servizioApplicativo, ruolo, soggettoAutenticato, 
 					autorizzazione_tokenOptions, 

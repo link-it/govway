@@ -105,7 +105,11 @@ CREATE TABLE porte_applicative
 	response_cache_max_msg_size BIGINT,
 	response_cache_hash_url VARCHAR(255),
 	response_cache_hash_headers VARCHAR(255),
+	response_cache_hash_hdr_list TEXT,
 	response_cache_hash_payload VARCHAR(255),
+	response_cache_control_nocache INT,
+	response_cache_control_maxage INT,
+	response_cache_control_nostore INT,
 	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta applicativa
@@ -142,6 +146,25 @@ CREATE TABLE porte_applicative_sa
 
 -- index
 CREATE INDEX INDEX_PA_SA ON porte_applicative_sa (id_porta);
+
+
+
+CREATE TABLE pa_auth_properties
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT uniq_pa_auth_props_1 UNIQUE (id_porta,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_auth_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_auth_properties PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties (id_porta);
 
 
 
@@ -365,5 +388,136 @@ CREATE TABLE pa_azioni
 
 -- index
 CREATE UNIQUE INDEX index_pa_azioni_1 ON pa_azioni (id_porta,azione);
+
+
+
+CREATE TABLE pa_cache_regole
+(
+	id_porta BIGINT NOT NULL,
+	status_min INT,
+	status_max INT,
+	fault INT DEFAULT 0,
+	cache_seconds INT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_cache_regole_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_cache_regole PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+
+
+
+CREATE TABLE pa_transform
+(
+	id_porta BIGINT NOT NULL,
+	applicabilita_azioni TEXT,
+	applicabilita_ct TEXT,
+	applicabilita_pattern TEXT,
+	req_conversione_enabled INT NOT NULL DEFAULT 0,
+	req_conversione_tipo VARCHAR(255),
+	req_conversione_template LONGBLOB,
+	req_content_type VARCHAR(255),
+	rest_transformation INT NOT NULL DEFAULT 0,
+	rest_method VARCHAR(255),
+	rest_path VARCHAR(255),
+	soap_transformation INT NOT NULL DEFAULT 0,
+	soap_version VARCHAR(255),
+	soap_action VARCHAR(255),
+	soap_envelope INT NOT NULL DEFAULT 0,
+	soap_envelope_as_attach INT NOT NULL DEFAULT 0,
+	soap_envelope_tipo VARCHAR(255),
+	soap_envelope_template LONGBLOB,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_transform PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX index_pa_transform_1 ON pa_transform (id_porta);
+
+
+
+CREATE TABLE pa_transform_hdr
+(
+	id_trasformazione BIGINT NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_hdr_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_hdr PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX idx_pa_trasf_hdr_1 ON pa_transform_hdr (id_trasformazione);
+
+
+
+CREATE TABLE pa_transform_url
+(
+	id_trasformazione BIGINT NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_url_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_url PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX idx_pa_trasf_url_1 ON pa_transform_url (id_trasformazione);
+
+
+
+CREATE TABLE pa_transform_risp
+(
+	id_trasformazione BIGINT NOT NULL,
+	applicabilita_status_min INT,
+	applicabilita_status_max INT,
+	applicabilita_ct TEXT,
+	applicabilita_pattern TEXT,
+	conversione_enabled INT NOT NULL DEFAULT 0,
+	conversione_tipo VARCHAR(255),
+	conversione_template LONGBLOB,
+	content_type VARCHAR(255),
+	return_code INT,
+	soap_envelope INT NOT NULL DEFAULT 0,
+	soap_envelope_as_attach INT NOT NULL DEFAULT 0,
+	soap_envelope_tipo VARCHAR(255),
+	soap_envelope_template LONGBLOB,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_risp_1 FOREIGN KEY (id_trasformazione) REFERENCES pa_transform(id),
+	CONSTRAINT pk_pa_transform_risp PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX idx_pa_trasf_resp_1 ON pa_transform_risp (id_trasformazione);
+
+
+
+CREATE TABLE pa_transform_risp_hdr
+(
+	id_transform_risp BIGINT NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_transform_risp_hdr_1 FOREIGN KEY (id_transform_risp) REFERENCES pa_transform_risp(id),
+	CONSTRAINT pk_pa_transform_risp_hdr PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+-- index
+CREATE INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr (id_transform_risp);
 
 

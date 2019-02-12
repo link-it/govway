@@ -22,5 +22,6 @@ DROP TABLE msgdiag_appender_prop;
 DROP TABLE msgdiag_appender;
 DROP TABLE config_protocolli;
 DROP TABLE configurazione;
+DROP TABLE config_cache_regole;
 DROP TABLE routing;
 DROP TABLE registri;

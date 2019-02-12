@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
@@ -112,6 +113,8 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.TokenForward;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
+import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioniException;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -397,6 +400,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		CorrelazioneApplicativaRisposta correlazioneApplicativaRisposta = null;
 		boolean gestioneManifest = false;
 		ProprietaManifestAttachments proprietaManifestAttachments = this.propertiesReader.getProprietaManifestAttachments(implementazionePdDMittente);
+		Trasformazioni trasformazioni = null;
 
 		IDSoggetto soggettoErogatoreServizioHeaderIntegrazione = null;
 		IDSoggetto soggettoFruitoreHeaderIntegrazione = null;
@@ -653,6 +657,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
 			}
+			try{
+				msgDiag.mediumDebug("readTrasformazioni(pa)...");
+				trasformazioni = configurazionePdDManager.getTrasformazioni(pa);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readTrasformazioni(pa)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
 			
 		}else{
 			try{
@@ -714,6 +727,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				responseCachingConfig = configurazionePdDManager.getConfigurazioneResponseCaching(pd);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "readResponseCachingConfig(pd)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+			try{
+				msgDiag.mediumDebug("readTrasformazioni(pd)...");
+				trasformazioni = configurazionePdDManager.getTrasformazioni(pd);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readTrasformazioni(pd)");
 				esito.setEsitoInvocazione(false); 
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
@@ -1368,6 +1390,64 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 
+			
+			
+			
+			
+			
+			
+			/* ------------ Trasformazione Richiesta  -------------- */
+			
+			GestoreTrasformazioni gestoreTrasformazioni = null;
+			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessage;
+			if(trasformazioni!=null) {
+				try {
+					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, trasformazioni, transactionNullable, pddContext, requestInfo);
+					consegnaMessageTrasformato = gestoreTrasformazioni.trasformazioneRichiesta(consegnaMessage, bustaRichiesta);
+				}
+				catch(GestoreTrasformazioniException e) {
+					
+					msgDiag.addKeywordErroreProcessamento(e);
+					msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInErrore");
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RICHIESTA, "true");
+					
+					ErroreIntegrazione erroreIntegrazione = gestoreTrasformazioni.getErrore();
+					if(erroreIntegrazione==null) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+					}
+					
+					String msgErrore = e.getMessage();					
+					if(existsModuloInAttesaRispostaApplicativa) {
+						
+						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+								erroreIntegrazione,
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(responseMessage!=null ? responseMessage.getParseException() : null));
+						
+						esito.setEsitoInvocazione(true); 
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
+					}else{
+						ejbUtils.rollbackMessage(msgErrore,servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}		
+			}	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 
 
@@ -1383,7 +1463,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					soggettoFruitoreHeaderIntegrazione, servizioHeaderIntegrazione, soggettoFruitore, idServizio, bustaRichiesta, idCorrelazioneApplicativa);
 
 			// definizione connettore
-			connettoreMsg.setRequestMessage(consegnaMessage);
+			connettoreMsg.setRequestMessage(consegnaMessageTrasformato);
 			connettoreMsg.setIdModulo(ConsegnaContenutiApplicativi.ID_MODULO);
 			connettoreMsg.setPropertiesTrasporto(propertiesTrasporto);
 			connettoreMsg.setPropertiesUrlBased(propertiesUrlBased);
@@ -1410,7 +1490,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			// mapping per forward token
 			TokenForward tokenForward = null;
-			Object oTokenForward = consegnaMessage.getContextProperty(org.openspcoop2.pdd.core.token.Costanti.MSG_CONTEXT_TOKEN_FORWARD);
+			Object oTokenForward = consegnaMessageTrasformato.getContextProperty(org.openspcoop2.pdd.core.token.Costanti.MSG_CONTEXT_TOKEN_FORWARD);
 			if(oTokenForward!=null) {
 				tokenForward = (TokenForward) oTokenForward;
 			}
@@ -1467,9 +1547,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				try{
 					if(connectorSender instanceof ConnettoreBaseHTTP){
 						ConnettoreBaseHTTP baseHttp = (ConnettoreBaseHTTP) connectorSender;
-						baseHttp.setHttpMethod(consegnaMessage);
+						baseHttp.setHttpMethod(consegnaMessageTrasformato);
 						
-						if(ServiceBinding.REST.equals(consegnaMessage.getServiceBinding())){
+						if(ServiceBinding.REST.equals(consegnaMessageTrasformato.getServiceBinding())){
 							httpRequestMethod = baseHttp.getHttpMethod();
 						}
 					}
@@ -1483,7 +1563,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory,  this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
@@ -1553,7 +1633,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				outRequestContext.setConnettore(infoConnettoreUscita);
 				
 				// Informazioni messaggio
-				outRequestContext.setMessaggio(consegnaMessage);
+				outRequestContext.setMessaggio(consegnaMessageTrasformato);
 				
 				// Contesto
 				ProtocolContext protocolContext = new ProtocolContext();
@@ -1613,7 +1693,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				GestoreHandlers.outRequest(outRequestContext, msgDiag, this.log);
 				
 				// Riporto messaggio
-				consegnaMessage = outRequestContext.getMessaggio();
+				consegnaMessageTrasformato = outRequestContext.getMessaggio();
 				
 				// Salvo handler
 				connettoreMsg.setOutRequestContext(outRequestContext);
@@ -1680,7 +1760,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connectorSender, connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
@@ -1714,7 +1794,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
-			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessage, outRequestContext.getConnettore());
+			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessageTrasformato, outRequestContext.getConnettore());
 
 			
 			
@@ -1889,6 +1969,82 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 
+			
+			
+			
+			
+			
+			
+			
+			/* ------------ Trasformazione Risposta  -------------- */
+			
+			boolean dumpRispostaEffettuato = false;
+			if(trasformazioni!=null && responseMessage!=null) {
+				try {
+					
+					// prima effettuo dump applicativo
+					if(responseMessage!=null ){
+						
+						String idMessaggioDump = idMessaggioConsegna;
+						if(idMessaggioPreBehaviour!=null){
+							idMessaggioDump = idMessaggioPreBehaviour;
+						}
+						
+						Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
+								soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
+								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+								dumpConfig);
+						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
+						if(infoConnettoreUscita!=null){
+							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
+						}
+						dumpApplicativo.dumpRispostaIngresso(responseMessage, infoConnettoreUscita, connectorSender.getHeaderTrasporto());
+						dumpRispostaEffettuato = true;
+					}
+					
+					responseMessage = gestoreTrasformazioni.trasformazioneRisposta(responseMessage, bustaRichiesta);
+				}
+				catch(Throwable e) {
+					
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RISPOSTA, "true");
+					
+					// prima emetto diagnostico di fine connettore
+					emitDiagnostico(invokerNonSupportato, bustaRichiesta, msgDiag, errorConsegna);
+
+					
+					msgDiag.addKeywordErroreProcessamento(e);
+					msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInErrore");
+					
+					ErroreIntegrazione erroreIntegrazione = gestoreTrasformazioni.getErrore();
+					if(erroreIntegrazione==null) {
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_562_TRASFORMAZIONE);
+					}
+					
+					String msgErrore = e.getMessage();					
+					if(existsModuloInAttesaRispostaApplicativa) {
+						
+						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+								erroreIntegrazione,
+								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
+								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null));
+						
+						esito.setEsitoInvocazione(true); 
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
+					}else{
+						ejbUtils.rollbackMessage(msgErrore,servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+					}
+					openspcoopstate.releaseResource();
+					return esito;
+				}		
+			}
+			
+			
+			
+			
+			
 			
 			
 			
@@ -2096,7 +2252,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				
 				//	dump applicativo
-				if(responseMessage!=null ){
+				if(!dumpRispostaEffettuato && responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
@@ -2116,22 +2272,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 			/* ------------------- MsgDiagnostico -----------------------*/
-			if(invokerNonSupportato==false){
-				if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
-					if(errorConsegna){
-						msgDiag.logPersonalizzato("consegnaConErrore");
-					}else{
-						msgDiag.logPersonalizzato("consegnaEffettuata");
-					}
-				}
-				else{
-					if(errorConsegna){
-						msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
-					}else{
-						msgDiag.logPersonalizzato("consegnaEffettuata.mittenteAnonimo");
-					}
-				}
-			}
+			
+			emitDiagnostico(invokerNonSupportato, bustaRichiesta, msgDiag, errorConsegna);
 
 
 
@@ -3343,4 +3485,23 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 	}
 	
+	
+	private void emitDiagnostico(boolean invokerNonSupportato, Busta bustaRichiesta, MsgDiagnostico msgDiag, boolean errorConsegna) {
+		if(invokerNonSupportato==false){
+			if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
+				if(errorConsegna){
+					msgDiag.logPersonalizzato("consegnaConErrore");
+				}else{
+					msgDiag.logPersonalizzato("consegnaEffettuata");
+				}
+			}
+			else{
+				if(errorConsegna){
+					msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
+				}else{
+					msgDiag.logPersonalizzato("consegnaEffettuata.mittenteAnonimo");
+				}
+			}
+		}
+	}
 }

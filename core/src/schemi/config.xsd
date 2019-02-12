@@ -59,6 +59,7 @@
 			<xsd:element name="soggetto-erogatore" type="porta-delegata-soggetto-erogatore" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="servizio" type="porta-delegata-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="proprieta-autenticazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
@@ -75,6 +76,7 @@
 			<xsd:element name="tracciamento" type="porta-tracciamento" minOccurs="0"/>
 			<xsd:element name="gestione-cors" type="cors-configurazione" minOccurs="0"/>
 			<xsd:element name="response-caching" type="response-caching-configurazione" minOccurs="0"/>
+			<xsd:element name="trasformazioni" type="trasformazioni" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -134,6 +136,7 @@
 			<xsd:element name="servizio" type="porta-applicativa-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-applicativa-azione" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="proprieta-autenticazione" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="xacml-policy" type="xsd:string" minOccurs="0" />
 			<xsd:element name="soggetti" type="porta-applicativa-autorizzazione-soggetti" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="servizi-applicativi-autorizzati" type="porta-applicativa-autorizzazione-servizi-applicativi" maxOccurs="1" minOccurs="0" />	
@@ -150,6 +153,7 @@
 			<xsd:element name="tracciamento" type="porta-tracciamento" minOccurs="0"/>
 			<xsd:element name="gestione-cors" type="cors-configurazione" minOccurs="0"/>
 			<xsd:element name="response-caching" type="response-caching-configurazione" minOccurs="0"/>
+			<xsd:element name="trasformazioni" type="trasformazioni" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -321,6 +325,87 @@
 		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="xsd"/>
 		<xsd:attribute name="accept-mtom-message" type="StatoFunzionalita" use="optional" default="disabilitato"/> <!-- il default e' il true/false a seconda della funzionalita' packaging/unpackaging MTOM -->
 	</xsd:complexType>
+
+	<!-- Trasformazione -->
+	<xsd:complexType name="trasformazioni">
+		<xsd:sequence>
+			<xsd:element name="regola" type="trasformazione-regola" maxOccurs="unbounded" minOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola">
+		<xsd:sequence>
+			<xsd:element name="applicabilita" type="trasformazione-regola-applicabilita-richiesta" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="richiesta" type="trasformazione-regola-richiesta" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="risposta" type="trasformazione-regola-risposta" maxOccurs="unbounded" minOccurs="1"/>
+		</xsd:sequence>	
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola-applicabilita-richiesta">
+		<xsd:sequence>
+			<xsd:element name="azione" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="content-type" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="pattern" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>	
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola-richiesta">
+		<xsd:sequence>
+			<xsd:element name="conversione-template" type="xsd:base64Binary" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="header" type="trasformazione-regola-parametro" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="parametro-url" type="trasformazione-regola-parametro" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="trasformazione-rest" type="trasformazione-rest" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="trasformazione-soap" type="trasformazione-soap" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="conversione" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="conversione-tipo" type="xsd:string" />
+		<xsd:attribute name="content-type" type="xsd:string" />
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-soap">
+		<xsd:sequence>
+			<xsd:element name="envelope-body-conversione-template" type="xsd:base64Binary" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="envelope" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="versione" type="VersioneSOAP" />
+		<xsd:attribute name="soap-action" type="xsd:string" use="optional"/>
+		<xsd:attribute name="envelope-as-attachment" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string" />
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-rest">
+		<xsd:attribute name="metodo" type="xsd:string" use="required" />
+		<xsd:attribute name="path" type="xsd:string" use="optional" />
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola-parametro">
+		<xsd:attribute name="conversione-tipo" type="TrasformazioneRegolaParametroTipoAzione" use="required" />
+		<xsd:attribute name="nome" type="xsd:string" use="required" />
+		<xsd:attribute name="valore" type="xsd:string" />
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola-risposta">
+		<xsd:sequence>
+			<xsd:element name="conversione-template" type="xsd:base64Binary" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="applicabilita" type="trasformazione-regola-applicabilita-risposta" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="header" type="trasformazione-regola-parametro" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="trasformazione-soap" type="trasformazione-soap-risposta" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="conversione" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="conversione-tipo" type="xsd:string" />
+		<xsd:attribute name="content-type" type="xsd:string" />
+		<xsd:attribute name="return-code" type="xsd:unsignedInt" />
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-regola-applicabilita-risposta">
+		<xsd:sequence>
+			<xsd:element name="return-code-min" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="return-code-max" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="content-type" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="pattern" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>	
+	</xsd:complexType>
+	<xsd:complexType name="trasformazione-soap-risposta">
+		<xsd:sequence>
+			<xsd:element name="envelope-body-conversione-template" type="xsd:base64Binary" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="envelope" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="envelope-as-attachment" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="envelope-body-conversione-tipo" type="xsd:string" />
+	</xsd:complexType>
+	
 
 	<!-- Proprieta -->
 	<xsd:complexType name="proprieta">
@@ -822,15 +907,31 @@
 	<xsd:complexType name="response-caching-configurazione">
 		<xsd:sequence>
 			<xsd:element name="hash-generator" type="response-caching-configurazione-hash-generator" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="control" type="response-caching-configurazione-control" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="regola" type="response-caching-configurazione-regola" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="cache-timeout-seconds" type="xsd:unsignedInt" use="optional" default="300"/>
 		<xsd:attribute name="max-message-size" type="xsd:unsignedLong" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="response-caching-configurazione-hash-generator">
+		<xsd:sequence>
+			<xsd:element name="header" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="request-uri" type="StatoFunzionalita" default="abilitato"/>
-		<xsd:attribute name="headers" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="headers" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="payload" type="StatoFunzionalita" default="abilitato"/>
+	</xsd:complexType>
+	<xsd:complexType name="response-caching-configurazione-control">
+		<xsd:attribute name="noCache" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="maxAge" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="noStore" type="xsd:boolean" default="true"/>
+	</xsd:complexType>
+	<xsd:complexType name="response-caching-configurazione-regola">
+		<xsd:attribute name="return-code-min" type="xsd:unsignedInt" use="optional"/>
+		<xsd:attribute name="return-code-max" type="xsd:unsignedInt" use="optional"/>
+		<xsd:attribute name="fault" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="cache-timeout-seconds" type="xsd:unsignedInt" use="optional"/>
 	</xsd:complexType>
 
 
@@ -1034,6 +1135,20 @@
 			<xsd:enumeration value="soggettiEsterni"/>
 			<xsd:enumeration value="escludiSoggettoErogatore"/>
 			<xsd:enumeration value="tutti"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TrasformazioneRegolaParametroTipoAzione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="add"/>
+			<xsd:enumeration value="update"/>
+			<xsd:enumeration value="updateOrAdd"/>
+			<xsd:enumeration value="delete"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="VersioneSOAP">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="1_1"/>
+			<xsd:enumeration value="1_2"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	

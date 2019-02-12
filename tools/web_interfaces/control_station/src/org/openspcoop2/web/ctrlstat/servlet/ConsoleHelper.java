@@ -82,6 +82,7 @@ import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -3512,7 +3513,66 @@ public class ConsoleHelper {
 		dati.addElement(de);
 	}
 	
+	public List<String> convertFromDataElementValue_parametroAutenticazioneList(String autenticazione, TipoAutenticazionePrincipal autenticazionePrincipal) throws Exception{
+		List<String> l = null;
+		
+		if(TipoAutenticazione.BASIC.equals(autenticazione)) {
+			
+			// posizione 0: clean
+			String v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+			if(v!=null && !"".equals(v)) {
+				l = new ArrayList<>();
+				l.add(v);
+			}
+			
+		}
+		else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
+								
+			if(autenticazionePrincipal==null) {
+				autenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;	
+			}
+			
+			switch (autenticazionePrincipal) {
+			case CONTAINER:
+			case INDIRIZZO_IP:
+				break;
+			case HEADER:
+			case FORM:
+				
+				// posizione 0: nome
+				String v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+				if(v!=null && !"".equals(v)) {
+					l = new ArrayList<>();
+					l.add(v);
+				}
+				
+				// posizione 1: clean
+				if(l==null) {
+					break;
+				}
+				v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+				if(v!=null && !"".equals(v)) {
+					l.add(v);
+				}
+
+				break;
+			case URL:
+				
+				// posizione 0: pattern
+				v = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+				if(v!=null && !"".equals(v)) {
+					l = new ArrayList<>();
+					l.add(v);
+				}
+				break;
+			}
+		}
+		
+		return l;
+	}
+	
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
+			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
 			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail){
 		
@@ -3574,6 +3634,106 @@ public class ConsoleHelper {
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 				de.setValue(autenticazioneCustom);
 				dati.addElement(de);
+						
+				try {
+					if(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE.equals(this.getPostBackElementName())) {
+						autenticazioneParametroList = null;
+					}
+				}catch(Exception e) {}
+				
+				if(TipoAutenticazione.BASIC.equals(autenticazione)) {
+					
+					// posizione 0: clean
+					String autenticazioneParametro = null;
+					if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+						autenticazioneParametro = autenticazioneParametroList.get(0);
+					}
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+					de.setType(DataElementType.CHECKBOX);
+					if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
+						autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
+					}
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
+					dati.addElement(de);
+				}
+				else if(TipoAutenticazione.PRINCIPAL.equals(autenticazione)) {
+										
+					List<String> autenticazionePrincipalValues = TipoAutenticazionePrincipal.getValues();
+					List<String> autenticazionePrincipalLabels = TipoAutenticazionePrincipal.getLabels();
+					de = new DataElement();
+					de.setType(DataElementType.SELECT);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+					de.setValues(autenticazionePrincipalValues);
+					de.setLabels(autenticazionePrincipalLabels);
+					if(autenticazionePrincipal==null) {
+						autenticazionePrincipal = TipoAutenticazionePrincipal.CONTAINER;	
+					}
+					de.setPostBack(true);
+					de.setSelected(autenticazionePrincipal.getValue());
+					dati.addElement(de);
+					
+					switch (autenticazionePrincipal) {
+					case CONTAINER:
+					case INDIRIZZO_IP:
+						break;
+					case HEADER:
+					case FORM:
+						
+						// posizione 0: nome
+						String autenticazioneParametro = null;
+						if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+							autenticazioneParametro = autenticazioneParametroList.get(0);
+						}
+						de = new DataElement();
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+						de.setValue(autenticazioneParametro);
+						de.setType(DataElementType.TEXT_EDIT);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+						de.setRequired(true);
+						dati.addElement(de);
+						
+						// posizione 1: clean
+						if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty() &&
+								autenticazioneParametroList.size()>1) {
+							autenticazioneParametro = autenticazioneParametroList.get(1);
+						}
+						de = new DataElement();
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
+						de.setType(DataElementType.CHECKBOX);
+						if(autenticazioneParametro==null || "".equals(autenticazioneParametro)) {
+							autenticazioneParametro = Costanti.CHECK_BOX_DISABLED;
+						}
+						de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneParametro));
+						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER);
+						}else {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM);
+						}
+						dati.addElement(de);
+						
+						break;
+					case URL:
+						
+						// posizione 0: pattern
+						autenticazioneParametro = null;
+						if(autenticazioneParametroList!=null && !autenticazioneParametroList.isEmpty()) {
+							autenticazioneParametro = autenticazioneParametroList.get(0);
+						}
+						de = new DataElement();
+						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
+						de.setValue(autenticazioneParametro);
+						de.setType(DataElementType.TEXT_AREA);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE);
+						de.setRequired(true);
+						dati.addElement(de);
+						
+						break;
+					}
+				}
 				
 				de = new DataElement();
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
@@ -4269,7 +4429,7 @@ public class ConsoleHelper {
 	}
 	
 	public boolean controlloAccessiCheck(TipoOperazione tipoOperazione, 
-			String autenticazione, String autenticazioneOpzionale, 
+			String autenticazione, String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList,
 			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli,  
 			String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean isSupportatoAutenticazione, boolean isPortaDelegata, Object oggetto,
@@ -4280,6 +4440,27 @@ public class ConsoleHelper {
 			String autorizzazioneContenuto,
 			String protocollo) throws Exception{
 		try {
+			
+			if(TipoAutenticazione.PRINCIPAL.equals(autenticazione) &&  autenticazionePrincipal!=null) {
+				switch (autenticazionePrincipal) {
+				case CONTAINER:
+				case INDIRIZZO_IP:
+					break;
+				case HEADER:
+				case FORM:
+					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME));
+						return false;
+					}
+					break;
+				case URL:
+					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE));
+						return false;
+					}
+					break;
+				}
+			}
 			
 			// check token
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(gestioneToken)){

@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
@@ -40,7 +41,8 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
@@ -56,11 +58,12 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
-import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**	
  * Contiene una classe base per i connettori
@@ -294,36 +297,70 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						ResponseCached responseCached =  GestoreCacheResponseCaching.getInstance().readByDigest(this.responseCachingDigest);
 						if(responseCached!=null) {
 						
-							OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(this.openspcoopProperties.getAttachmentsProcessingMode(),
-									this.openspcoopProperties.getCachingResponseHeaderCacheKey());
-													
-							this.responseMsg = msgResponse;
+							// esiste una risposta cachata, verifico eventuali direttive
+							if(this.responseCachingConfig.getControl()!=null) {
+						
+								Properties trasportoRichiesta = null;
+								if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
+										this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
+									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
+								}
+								
+								if(this.responseCachingConfig.getControl().isNoCache()) {
+									if(HttpUtilities.isNoCache(trasportoRichiesta)) {
+										GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
+										responseCached = null;
+									}
+								}
+								
+								if(responseCached!=null) {
+									if(this.responseCachingConfig.getControl().isMaxAge()) {
+										Integer maxAge = HttpUtilities.getCacheMaxAge(trasportoRichiesta);
+										if(maxAge!=null && maxAge.intValue()>0) {
+											if(responseCached.getAgeInSeconds() > maxAge.intValue()) {
+												GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
+												responseCached = null;
+											}
+										}
+									}
+								}
+									
+							}
 							
-							this.dataAccettazioneRisposta = DateManager.getDate();
+							if(responseCached!=null) {
 							
-							org.openspcoop2.utils.transport.TransportResponseContext transportResponseContenxt = msgResponse.getTransportResponseContext();
-							
-							if(transportResponseContenxt!=null && transportResponseContenxt.getCodiceTrasporto()!=null){
-								try {
-									this.codice = Integer.parseInt(transportResponseContenxt.getCodiceTrasporto());
-								}catch(Exception e) {
-									this.logger.error("Errore durante la conversione del codice di trasporto ["+transportResponseContenxt.getCodiceTrasporto()+"]");
+								OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(this.openspcoopProperties.getAttachmentsProcessingMode(),
+										this.openspcoopProperties.getCachingResponseHeaderCacheKey());
+														
+								this.responseMsg = msgResponse;
+								
+								this.dataAccettazioneRisposta = DateManager.getDate();
+								
+								org.openspcoop2.utils.transport.TransportResponseContext transportResponseContenxt = msgResponse.getTransportResponseContext();
+								
+								if(transportResponseContenxt!=null && transportResponseContenxt.getCodiceTrasporto()!=null){
+									try {
+										this.codice = Integer.parseInt(transportResponseContenxt.getCodiceTrasporto());
+									}catch(Exception e) {
+										this.logger.error("Errore durante la conversione del codice di trasporto ["+transportResponseContenxt.getCodiceTrasporto()+"]");
+										this.codice = 200;
+									}
+								}
+								else {
 									this.codice = 200;
 								}
+								
+								if(transportResponseContenxt!=null) {
+									this.propertiesTrasportoRisposta = transportResponseContenxt.getParametersTrasporto();
+								}
+								
+								this.contentLength = responseCached.getMessageLength();
+								
+								this.location = LOCATION_CACHED;
+								
+								this.responseAlready = true;
+								
 							}
-							else {
-								this.codice = 200;
-							}
-							
-							if(transportResponseContenxt!=null) {
-								this.propertiesTrasportoRisposta = transportResponseContenxt.getParametersTrasporto();
-							}
-							
-							this.contentLength = responseCached.getMessageLength();
-							
-							this.location = LOCATION_CACHED;
-							
-							this.responseAlready = true;
 						}
 					}catch(Exception e){
 						this.eccezioneProcessamento = e;
@@ -365,22 +402,85 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		try {
 			if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato()) &&
 					this.responseMsg!=null) { // jms, null ha la response null
+				
 				boolean saveInCache = true;
+				
+				int cacheTimeoutSeconds = this.responseCachingConfig.getCacheTimeoutSeconds().intValue();
+				
 				Long kbMax = this.responseCachingConfig.getMaxMessageSize();
 				long byteMax = -1;
 				if(kbMax!=null) {
 					byteMax = kbMax.longValue() * 1024;
-					if(this.contentLength>0) {
-						if(this.contentLength>byteMax) {
-							this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+this.contentLength+ 
-									" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+				}
+				
+				Properties trasportoRichiesta = null;
+				if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
+						this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
+					trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
+				}
+				
+				if(this.responseCachingConfig.getControl()!=null) {
+					if(this.responseCachingConfig.getControl().isNoStore()) {
+						if(HttpUtilities.isNoStore(trasportoRichiesta)) {
 							saveInCache = false;
 						}
 					}
 				}
 				
 				if(saveInCache) {
-					ResponseCached responseCached = ResponseCached.toResponseCached(this.responseMsg, this.responseCachingConfig.getCacheTimeoutSeconds().intValue());
+					if(this.responseCachingConfig.sizeRegolaList()>0) {
+						
+						int returnCode = -1;
+						try {
+							if(this.responseMsg.getTransportResponseContext()!=null && this.responseMsg.getTransportResponseContext().getCodiceTrasporto()!=null) {
+								returnCode = Integer.parseInt(this.responseMsg.getTransportResponseContext().getCodiceTrasporto());
+							}
+						}catch(Exception e) {}
+						
+						boolean isFault = this.responseMsg.isFault();
+						
+						saveInCache = false; // se ci sono delle regole, salvo solamente se la regola ha un match
+						for (ResponseCachingConfigurazioneRegola regola : this.responseCachingConfig.getRegolaList()) {
+							
+							if(returnCode>0 && regola.getReturnCodeMin()!=null) {
+								if(returnCode<regola.getReturnCodeMin().intValue()) {
+									continue;
+								}
+							}
+							if(returnCode>0 && regola.getReturnCodeMax()!=null) {
+								if(returnCode>regola.getReturnCodeMax().intValue()) {
+									continue;
+								}
+							}
+							
+							if(isFault && !regola.isFault()) {
+								continue;
+							}
+							
+							// ho un match
+							saveInCache = true;
+							if(regola.getCacheTimeoutSeconds()!=null) {
+								cacheTimeoutSeconds = regola.getCacheTimeoutSeconds().intValue();
+							}
+							break;
+						}
+					}
+				}
+				
+				if(saveInCache) {				
+					if(kbMax!=null) {
+						if(this.contentLength>0) {
+							if(this.contentLength>byteMax) {
+								this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+this.contentLength+ 
+										" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+								saveInCache = false;
+							}
+						}
+					}
+				}
+				
+				if(saveInCache) {
+					ResponseCached responseCached = ResponseCached.toResponseCached(this.responseMsg, cacheTimeoutSeconds);
 					if(kbMax!=null && this.contentLength<=0) {
 						// ricontrollo poichè non era disponibile l'informazione
 						if(responseCached.getMessageLength()>byteMax) {
@@ -709,44 +809,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	if(this.dynamicMap==null) {
     		this.dynamicMap = new Hashtable<String, Object>();
     	}
-    	fillDynamicMap(this.dynamicMap, connettoreMsg, this.getPddContext());
+    	DynamicInfo dInfo = new DynamicInfo(connettoreMsg, this.getPddContext());
+    	Logger log = null;
+    	if(this.logger!=null) {
+    		log = this.logger.getLogger();
+    	}
+    	if(log==null) {
+    		log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+    	}
+    	DynamicUtils.fillDynamicMap(log,this.dynamicMap, dInfo);
 		return this.dynamicMap;
-    }
-    public static void fillDynamicMap(Map<String, Object> dynamicMap, ConnettoreMsg connettoreMsg, PdDContext pddContext) {
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT)==false) {
-    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_DATE_OBJECT, DateManager.getDate());
-    	}
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT)==false && connettoreMsg!=null && connettoreMsg.getBusta()!=null) {
-    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_OBJECT, connettoreMsg.getBusta());
-    	}
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT)==false && pddContext!=null && pddContext.getContext()!=null) {
-    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_CTX_OBJECT, pddContext.getContext());
-    	}
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_HEADER)==false && connettoreMsg!=null && 
-    			connettoreMsg.getPropertiesTrasporto()!=null && !connettoreMsg.getPropertiesTrasporto().isEmpty()) {
-    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_HEADER, connettoreMsg.getPropertiesTrasporto());
-    	}
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_QUERY_PARAMETER)==false && connettoreMsg!=null && 
-    			connettoreMsg.getPropertiesUrlBased()!=null && !connettoreMsg.getPropertiesUrlBased().isEmpty()) {
-    		dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_QUERY_PARAMETER, connettoreMsg.getPropertiesUrlBased());
-    	}
-    	if(dynamicMap.containsKey(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_PROPERTY)==false && connettoreMsg!=null && 
-    			connettoreMsg.getBusta()!=null && connettoreMsg.getBusta().sizeProperties()>0) {
-    		Properties propertiesBusta = new Properties();
-			String[] pNames = connettoreMsg.getBusta().getPropertiesNames();
-			if(pNames!=null && pNames.length>0) {
-				for (int j = 0; j < pNames.length; j++) {
-					String pName = pNames[j];
-					String pValue = connettoreMsg.getBusta().getProperty(pName);
-					if(pValue!=null) {
-						propertiesBusta.setProperty(pName, pValue);
-					}
-				}
-			}
-			if(!propertiesBusta.isEmpty()) {
-				dynamicMap.put(CostantiConnettori._CONNETTORE_FILE_MAP_BUSTA_PROPERTY, propertiesBusta);
-			}
-    	}
     }
     
     protected String getDynamicProperty(String tipoConnettore,boolean required,String name,Map<String,Object> dynamicMap) throws ConnettoreException{
@@ -760,23 +832,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			}
 			return null;
 		}
-		return this.convertDynamicPropertyValue(name, tmp, dynamicMap);
+		try {
+			return DynamicUtils.convertDynamicPropertyValue(name, tmp, dynamicMap, this.getPddContext(), false);
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
     }
     
-    protected String convertDynamicPropertyValue(String name,String tmp,Map<String,Object> dynamicMap) throws ConnettoreException{
-		if(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
-			String idTransazione = (String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-			while(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
-				tmp = tmp.replace(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID, idTransazione);
-			}
-		}
-		try{
-			tmp = DynamicStringReplace.replace(tmp, dynamicMap);
-		}catch(Exception e){
-			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
-		}
-		return tmp;
-    }
+   
     
     protected boolean isBooleanProperty(String tipoConnettore,boolean defaultValue,String name){
   		String tmp = this.properties.get(name);

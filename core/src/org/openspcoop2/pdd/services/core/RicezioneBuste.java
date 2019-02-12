@@ -92,6 +92,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pa.EsitoAutenticazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
@@ -2874,14 +2875,17 @@ public class RicezioneBuste {
 			
 				msgDiag.mediumDebug("Autenticazione del soggetto...");
 				boolean autenticazioneOpzionale = false;
+				ParametriAutenticazione parametriAutenticazione = null;
 				try{
 					if(pa!=null){
 						tipoAutenticazione = configurazionePdDReader.getAutenticazione(pa);
 						autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(pa);
+						parametriAutenticazione = new ParametriAutenticazione(pa.getProprietaAutenticazioneList());
 					}
 					else{
 						tipoAutenticazione = configurazionePdDReader.getAutenticazione(pd);
 						autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(pd);
+						parametriAutenticazione = new ParametriAutenticazione(pd.getProprietaAutenticazioneList());
 					}
 				}catch(Exception exception){}
 				this.msgContext.getIntegrazione().setTipoAutenticazione(tipoAutenticazione);
@@ -2908,7 +2912,9 @@ public class RicezioneBuste {
 						String wwwAuthenticateErrorHeader = null;
 						try {						
 							EsitoAutenticazionePortaApplicativa esito = 
-									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
+									GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione,
+											datiInvocazioneAutenticazione, parametriAutenticazione,
+											pddContext, protocolFactory, requestMessage); 
 							if(esito.getDetails()==null){
 								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 							}else{

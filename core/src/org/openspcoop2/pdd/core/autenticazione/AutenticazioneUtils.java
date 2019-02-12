@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -48,6 +49,37 @@ public class AutenticazioneUtils {
 			}
 		}catch(Throwable t) {
 			throw new AutenticazioneException("Clean Header Authorization failed: "+t.getMessage(),t);
+		}
+    }
+	
+	public static void cleanPrincipal(OpenSPCoop2Message message, TipoAutenticazionePrincipal tipoAutenticazionePrincipal, String nome) throws AutenticazioneException {
+		try {
+			switch (tipoAutenticazionePrincipal) {
+			case CONTAINER:
+			case INDIRIZZO_IP:
+			case URL:
+				break;
+			case HEADER:
+				if(nome!=null && message.getTransportRequestContext()!=null) {
+					if(message.getTransportRequestContext().getParametersTrasporto()!=null) {
+						message.getTransportRequestContext().getParametersTrasporto().remove(nome);
+						message.getTransportRequestContext().getParametersTrasporto().remove(nome.toLowerCase());
+						message.getTransportRequestContext().getParametersTrasporto().remove(nome.toUpperCase());
+		    		}
+				}
+				break;
+			case FORM:
+				if(message.getTransportRequestContext()!=null) {
+					if(message.getTransportRequestContext().getParametersFormBased()!=null) {
+						message.getTransportRequestContext().getParametersFormBased().remove(nome);
+						message.getTransportRequestContext().getParametersFormBased().remove(nome.toLowerCase());
+						message.getTransportRequestContext().getParametersFormBased().remove(nome.toUpperCase());
+		    		}
+				}
+				break;
+			}
+		}catch(Throwable t) {
+			throw new AutenticazioneException("Clean Principal failed: "+t.getMessage(),t);
 		}
     }
 	

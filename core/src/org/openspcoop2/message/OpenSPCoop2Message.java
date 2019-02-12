@@ -56,6 +56,7 @@ public interface OpenSPCoop2Message {
 	/* Copy Resources to another instance */
 	
 	public void copyResourcesTo(OpenSPCoop2Message newInstance) throws MessageException;
+	public void copyResourcesTo(OpenSPCoop2Message newInstance, boolean skipTransportInfo) throws MessageException;
 	public MessageContext serializeResourcesTo() throws MessageException;
 	public void serializeResourcesTo(OutputStream os) throws MessageException;
 	public void readResourcesFrom(MessageContext messageContext) throws MessageException;
@@ -121,6 +122,7 @@ public interface OpenSPCoop2Message {
 	
 	public MessageRole getMessageRole();
 	public void setMessageRole(MessageRole messageRole);
+	public boolean isFault() throws MessageException;
 	
 	
 	/* ServiceBinding */

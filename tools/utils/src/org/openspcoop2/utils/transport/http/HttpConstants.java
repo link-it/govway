@@ -81,10 +81,14 @@ public class HttpConstants {
 	public final static String CONTENT_DISPOSITION_ATTACH_FILE_PREFIX = "attachment; filename=";
 	
 	/** Cache */
+	public final static String CACHE_STATUS_DIRECTIVE_NO_CACHE = "no-cache";
+	public final static String CACHE_STATUS_DIRECTIVE_NO_STORE = "no-store";
+	public final static String CACHE_STATUS_DIRECTIVE_MAX_AGE = "max-age";
+	public final static String CACHE_STATUS_DIRECTIVE_MUST_REVALIDATE = "must-revalidate";
 	public final static String CACHE_STATUS_HTTP_1_1 = "Cache-Control";
-	public final static String CACHE_STATUS_HTTP_1_1_DISABLE_CACHE = "no-cache, no-store, must-revalidate";
+	public final static String CACHE_STATUS_HTTP_1_1_DISABLE_CACHE = CACHE_STATUS_DIRECTIVE_NO_CACHE+", "+CACHE_STATUS_DIRECTIVE_NO_STORE+", "+CACHE_STATUS_DIRECTIVE_MUST_REVALIDATE;
 	public final static String CACHE_STATUS_HTTP_1_0 = "Pragma";
-	public final static String CACHE_STATUS_HTTP_1_0_DISABLE_CACHE = "no-cache";
+	public final static String CACHE_STATUS_HTTP_1_0_DISABLE_CACHE = CACHE_STATUS_DIRECTIVE_NO_CACHE;
 	public final static String CACHE_STATUS_PROXY_EXPIRES = "Expires";
 	public final static long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
 

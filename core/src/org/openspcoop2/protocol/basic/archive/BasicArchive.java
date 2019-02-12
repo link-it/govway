@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.basic.archive;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -287,10 +288,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 						opOpenSPCoop.setFiltroDuplicati(CostantiRegistroServizi.ABILITATO);
 						
 						// Prendo la definizione del messaggio di input
-						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, log, opOpenSPCoop);
+						HashMap<String,QName> mapPartQName_input = new HashMap<String,QName>();
+						AccordoServizioWrapperUtilities.addMessageInputOperation(opWSDL, log, opOpenSPCoop, mapPartQName_input);
 						
 						// Prendo la definizione del messaggio di output
-						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, log, opOpenSPCoop);
+						HashMap<String,QName> mapPartQName_output = new HashMap<String,QName>();
+						AccordoServizioWrapperUtilities.addMessageOutputOperation(opWSDL, log, opOpenSPCoop, mapPartQName_output);
 						
 						// profilo di collaborazione (non basta guardare l'output, poiche' puo' avere poi un message vuoto e quindi equivale a non avere l'output)
 						//if(opWSDL.getOutput()!=null){
@@ -319,14 +322,14 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 									if(opOpenSPCoop.getMessageInput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageInputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop);
+													opOpenSPCoop, ptOpenSPCoop, mapPartQName_input);
 									}
 									
 									// Raccolgo Message-Output
 									if(opOpenSPCoop.getMessageOutput()!=null){
 										AccordoServizioWrapperUtilities.
 											setMessageOutputSoapBindingInformation(bindingOperationWSDL, log, 
-													opOpenSPCoop, ptOpenSPCoop);
+													opOpenSPCoop, ptOpenSPCoop, mapPartQName_output);
 									}
 									
 								}

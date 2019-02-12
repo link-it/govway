@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -124,7 +125,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			long totAzioni,  String stateless, String localForward, String paLocalForward, String ricsim,
 			String ricasim, String statoValidazione, String tipoValidazione,
 			int numCorrApp, String scadcorr, String gestBody,
-			String gestManifest, String integrazione, String autenticazioneOpzionale, String autenticazioneCustom,
+			String gestManifest, String integrazione, 
+			String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList, String autenticazioneCustom,
 			String autorizzazioneCustom,String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,String autorizzazioneContenuti, String idsogg2, String protocollo,
 			int numSA, int numRuoli, String ruoloMatch, String statoMessageSecurity,String statoMTOM ,int numCorrelazioneReq , 
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
@@ -768,7 +770,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					gestioneTokenPolicy, gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers , isSupportatoAutenticazioneSoggetti,true,
+			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
+					autenticazionePrincipal, autenticazioneParametroList,
+					confPers , isSupportatoAutenticazioneSoggetti,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 			
 			String urlAutorizzazioneAutenticati = null;
@@ -1522,6 +1526,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 			String autenticazioneOpzionale = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			String autenticazionePrincipalTipo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			TipoAutenticazionePrincipal autenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(autenticazionePrincipalTipo, false);
+			List<String> autenticazioneParametroList = this.convertFromDataElementValue_parametroAutenticazioneList(autenticazione, autenticazionePrincipal);
 			String autorizzazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			String autorizzazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			String autorizzazioneAutenticati = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
@@ -1662,7 +1669,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(asps.getTipo());
 				
-				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
 						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 

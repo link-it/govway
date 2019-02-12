@@ -351,11 +351,12 @@ public class ConnettoreHTTPSUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setValue(httpspath);
 		if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-			de.setType(DataElementType.TEXT_EDIT);
+			de.setType(DataElementType.TEXT_AREA);
 			de.setRequired(true);	
 		}else{
-			de.setType(DataElementType.TEXT);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		}
+		de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION_SIZE);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 		de.setSize(pageSize);
 		dati.addElement(de);
@@ -449,11 +450,12 @@ public class ConnettoreHTTPSUtils {
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))){
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setType(DataElementType.TEXT_EDIT);
+				de.setType(DataElementType.TEXT_AREA);
 				de.setRequired(true);	
 			}else{
-				de.setType(DataElementType.TEXT);
+				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 			}
+			de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION_SIZE);
 		}else
 			de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);

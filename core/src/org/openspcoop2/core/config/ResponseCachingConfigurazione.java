@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for response-caching-configurazione complex type.
@@ -40,6 +42,8 @@ import java.io.Serializable;
  * &lt;complexType name="response-caching-configurazione">
  * 		&lt;sequence>
  * 			&lt;element name="hash-generator" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-hash-generator" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="control" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-control" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-regola" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="cache-timeout-seconds" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="300"/>
@@ -56,7 +60,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "response-caching-configurazione", 
   propOrder = {
-  	"hashGenerator"
+  	"hashGenerator",
+  	"control",
+  	"regola"
   }
 )
 
@@ -86,6 +92,38 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
 
   public void setHashGenerator(ResponseCachingConfigurazioneHashGenerator hashGenerator) {
     this.hashGenerator = hashGenerator;
+  }
+
+  public ResponseCachingConfigurazioneControl getControl() {
+    return this.control;
+  }
+
+  public void setControl(ResponseCachingConfigurazioneControl control) {
+    this.control = control;
+  }
+
+  public void addRegola(ResponseCachingConfigurazioneRegola regola) {
+    this.regola.add(regola);
+  }
+
+  public ResponseCachingConfigurazioneRegola getRegola(int index) {
+    return this.regola.get( index );
+  }
+
+  public ResponseCachingConfigurazioneRegola removeRegola(int index) {
+    return this.regola.remove( index );
+  }
+
+  public List<ResponseCachingConfigurazioneRegola> getRegolaList() {
+    return this.regola;
+  }
+
+  public void setRegolaList(List<ResponseCachingConfigurazioneRegola> regola) {
+    this.regola=regola;
+  }
+
+  public int sizeRegolaList() {
+    return this.regola.size();
   }
 
   public void set_value_stato(String value) {
@@ -133,6 +171,39 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
 
   @XmlElement(name="hash-generator",required=false,nillable=false)
   protected ResponseCachingConfigurazioneHashGenerator hashGenerator;
+
+  @XmlElement(name="control",required=true,nillable=false)
+  protected ResponseCachingConfigurazioneControl control;
+
+  @XmlElement(name="regola",required=true,nillable=false)
+  protected List<ResponseCachingConfigurazioneRegola> regola = new ArrayList<ResponseCachingConfigurazioneRegola>();
+
+  /**
+   * @deprecated Use method getRegolaList
+   * @return List<ResponseCachingConfigurazioneRegola>
+  */
+  @Deprecated
+  public List<ResponseCachingConfigurazioneRegola> getRegola() {
+  	return this.regola;
+  }
+
+  /**
+   * @deprecated Use method setRegolaList
+   * @param regola List<ResponseCachingConfigurazioneRegola>
+  */
+  @Deprecated
+  public void setRegola(List<ResponseCachingConfigurazioneRegola> regola) {
+  	this.regola=regola;
+  }
+
+  /**
+   * @deprecated Use method sizeRegolaList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeRegola() {
+  	return this.regola.size();
+  }
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;

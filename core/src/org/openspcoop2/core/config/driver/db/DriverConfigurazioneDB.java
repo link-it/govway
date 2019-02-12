@@ -115,8 +115,10 @@ import org.openspcoop2.core.config.PortaTracciamento;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -138,6 +140,7 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.Transazioni;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -3432,8 +3435,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm = con.prepareStatement(sqlQuery);
 				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
-				stm.setString(2, aUser);
-				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), aUser));
+				stm.setString(2, principal);
+				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), principal));
 
 				break;
 				
@@ -7043,7 +7046,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				config.setResponseCaching(new ResponseCachingConfigurazioneGenerale());
 				
 				config.getResponseCaching().setConfigurazione(new ResponseCachingConfigurazione());
-				readResponseCaching(config.getResponseCaching().getConfigurazione(), rs);
+				readResponseCaching(null, true, false, config.getResponseCaching().getConfigurazione(), rs, con);
 				
 				String tmpCache = rs.getString("response_cache_statocache");
 				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
@@ -7254,7 +7257,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 	}
 	
-	private void readResponseCaching(ResponseCachingConfigurazione configurazione, ResultSet rs) throws SQLException {
+	private void readResponseCaching(Long idPorta, boolean config, boolean portaDelegata, ResponseCachingConfigurazione configurazione, ResultSet rs, Connection con) throws Exception {
 		
 		String responseCacheStato = rs.getString("response_cache_stato");
 		if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
@@ -7285,13 +7288,113 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				configurazione.getHashGenerator().setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashHeaders));
 			}
 			
+			if(StatoFunzionalita.ABILITATO.equals(configurazione.getHashGenerator().getHeaders())) {
+				List<String> l = convertToList(rs.getString("response_cache_hash_hdr_list"));
+				for (String v : l) {
+					configurazione.getHashGenerator().addHeader(v);
+				}
+			}
+			
 			String responseCacheHashPayload = rs.getString("response_cache_hash_payload");
 			if(responseCacheHashPayload!=null && !"".equals(responseCacheHashPayload)) {
 				configurazione.getHashGenerator().setPayload(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(responseCacheHashPayload));
 			}
+			
+			configurazione.setControl(new ResponseCachingConfigurazioneControl());
+			
+			int response_cache_control_nocache = rs.getInt("response_cache_control_nocache");
+			if(CostantiDB.TRUE == response_cache_control_nocache) {
+				configurazione.getControl().setNoCache(true);
+			}
+			else if(CostantiDB.FALSE == response_cache_control_nocache) {
+				configurazione.getControl().setNoCache(false);
+			}
+			
+			int response_cache_control_maxage = rs.getInt("response_cache_control_maxage");
+			if(CostantiDB.TRUE == response_cache_control_maxage) {
+				configurazione.getControl().setMaxAge(true);
+			}
+			else if(CostantiDB.FALSE == response_cache_control_maxage) {
+				configurazione.getControl().setMaxAge(false);
+			}
+			
+			int response_cache_control_nostore = rs.getInt("response_cache_control_nostore");
+			if(CostantiDB.TRUE == response_cache_control_nostore) {
+				configurazione.getControl().setNoStore(true);
+			}
+			else if(CostantiDB.FALSE == response_cache_control_nostore) {
+				configurazione.getControl().setNoStore(false);
+			}
+			
+			PreparedStatement stmRegole = null;
+			ResultSet rsRegole = null;
+			try {
+				String nomeTabella = null;
+				if(config) {
+					nomeTabella = CostantiDB.CONFIGURAZIONE_CACHE_REGOLE;
+				}
+				else {
+					nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_CACHE_REGOLE : CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE;
+				}
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(nomeTabella);
+				sqlQueryObject.addSelectField("*");
+				if(!config) {
+					sqlQueryObject.addWhereCondition("id_porta=?");
+				}
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				stmRegole = con.prepareStatement(sqlQuery);
+				if(!config) {
+					stmRegole.setLong(1, idPorta);
+				}
+		
+				this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idPorta));
+				rsRegole = stmRegole.executeQuery();
+		
+				while (rsRegole.next()) {
+				
+					ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+					
+					int status_min = rsRegole.getInt("status_min");
+					int status_max = rsRegole.getInt("status_max");
+					if(status_min>0) {
+						regola.setReturnCodeMin(status_min);
+					}
+					if(status_max>0) {
+						regola.setReturnCodeMax(status_max);
+					}
+
+					int fault = rsRegole.getInt("fault");
+					if(CostantiDB.TRUE == fault) {
+						regola.setFault(true);
+					}
+					else if(CostantiDB.FALSE == fault) {
+						regola.setFault(false);
+					}
+					
+					int cacheSeconds = rsRegole.getInt("cache_seconds");
+					if(cacheSeconds>0) {
+						regola.setCacheTimeoutSeconds(cacheSeconds);
+					}
+					
+					configurazione.addRegola(regola);
+					
+				}
+				
+				
+			}finally {
+				try {
+					rsRegole.close();
+				}catch(Exception eClose) {}
+				try {
+					stmRegole.close();
+				}catch(Exception eClose) {}
+			}
 		}
 
 	}
+	
+	
 			
 	private List<String> convertToList(String v){
 		List<String> l = new ArrayList<>();
@@ -13125,7 +13228,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_max_msg_size");
 			sqlQueryObject.addSelectField("response_cache_hash_url");
 			sqlQueryObject.addSelectField("response_cache_hash_headers");
+			sqlQueryObject.addSelectField("response_cache_hash_hdr_list");
 			sqlQueryObject.addSelectField("response_cache_hash_payload");
+			sqlQueryObject.addSelectField("response_cache_control_nocache");
+			sqlQueryObject.addSelectField("response_cache_control_maxage");
+			sqlQueryObject.addSelectField("response_cache_control_nostore");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -13485,12 +13592,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				String responseCacheStato = rs.getString("response_cache_stato");
 				if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
 					pa.setResponseCaching(new ResponseCachingConfigurazione());
-					readResponseCaching(pa.getResponseCaching(), rs);
+					readResponseCaching(idPortaApplicativa, false, false, pa.getResponseCaching(), rs, con);
 				}
 				
 				rs.close();
 				stm.close();
 
+				
+				// Trasformazioni
+				Trasformazioni trasformazioni = DriverConfigurazioneDB_LIB.readTrasformazioni(idPortaApplicativa, false, con);
+				if(trasformazioni!=null) {
+					pa.setTrasformazioni(trasformazioni);
+				}
 				
 				
 				if(paAzione!=null) {
@@ -13704,8 +13817,30 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm.close();
 				
 				
-				// pa.addSetProperty(setProperty); .....
+				// autenticazione prop
 				Proprieta prop = null;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs=stm.executeQuery();
+				while (rs.next()) {
+					prop = new Proprieta();
+					prop.setId(idPortaApplicativa);
+					prop.setNome(rs.getString("nome"));
+					prop.setValore(rs.getString("valore"));
+					pa.addProprietaAutenticazione(prop);
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				// pa.addSetProperty(setProperty); .....
+				prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 				sqlQueryObject.addSelectField("*");
@@ -14034,7 +14169,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_max_msg_size");
 			sqlQueryObject.addSelectField("response_cache_hash_url");
 			sqlQueryObject.addSelectField("response_cache_hash_headers");
+			sqlQueryObject.addSelectField("response_cache_hash_hdr_list");
 			sqlQueryObject.addSelectField("response_cache_hash_payload");
+			sqlQueryObject.addSelectField("response_cache_control_nocache");
+			sqlQueryObject.addSelectField("response_cache_control_maxage");
+			sqlQueryObject.addSelectField("response_cache_control_nostore");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -14405,11 +14544,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				String responseCacheStato = rs.getString("response_cache_stato");
 				if(responseCacheStato!=null && !"".equals(responseCacheStato)) {
 					pd.setResponseCaching(new ResponseCachingConfigurazione());
-					readResponseCaching(pd.getResponseCaching(), rs);
+					readResponseCaching(idPortaDelegata, false, true, pd.getResponseCaching(), rs, con);
 				}
 				
 				rs.close();
 				stm.close();
+						
+				
+				// Trasformazioni
+				Trasformazioni trasformazioni = DriverConfigurazioneDB_LIB.readTrasformazioni(idPortaDelegata, true, con);
+				if(trasformazioni!=null) {
+					pd.setTrasformazioni(trasformazioni);
+				}
 
 				
 				if(pdAzione!=null) {
@@ -14622,8 +14768,31 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm.close();
 				
 				
-				// pd.addSetProperty(setProperty); .....
+				// proprieta autenticazione
 				Proprieta prop = null;
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				rs=stm.executeQuery();
+				while (rs.next()) {
+					prop = new Proprieta();
+					prop.setId(idPortaDelegata);
+					prop.setNome(rs.getString("nome"));
+					prop.setValore(rs.getString("valore"));
+					pd.addProprietaAutenticazione(prop);
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
+				// pd.addSetProperty(setProperty); .....
+				prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_PROP);
 				sqlQueryObject.addSelectField("*");
@@ -14980,6 +15149,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -15009,6 +15185,48 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
@@ -15050,6 +15268,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_PROP);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -15083,7 +15308,49 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE);
 			updateString = sqlQueryObject.createSQLDelete();

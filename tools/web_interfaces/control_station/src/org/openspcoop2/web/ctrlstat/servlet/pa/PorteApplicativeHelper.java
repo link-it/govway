@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -145,6 +146,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String autenticazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
 			String autenticazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
 			String autenticazioneOpzionale = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			String autenticazionePrincipalTipo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			TipoAutenticazionePrincipal autenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(autenticazionePrincipalTipo, false);
+			List<String> autenticazioneParametroList = this.convertFromDataElementValue_parametroAutenticazioneList(autenticazione, autenticazionePrincipal);
+			
 			String autorizzazione = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			String autorizzazioneCustom = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			String autorizzazioneAutenticati = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
@@ -487,7 +492,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(idSE.getTipo());
 				
-				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,
 						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 						autorizzazioneRuoliTipologia, ruoloMatch, 
 						isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
@@ -976,7 +981,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String behaviour,
 			String[] servizioApplicativoList, String servizioApplicativo, Long idSa,
 			String autenticazione, String autorizzazione,
-			String autenticazioneOpzionale, String autenticazioneCustom, String autorizzazioneCustom,
+			String autenticazioneOpzionale, TipoAutenticazionePrincipal autenticazionePrincipal, List<String> autenticazioneParametroList, String autenticazioneCustom, 
+			String autorizzazioneCustom,
 			boolean isSupportatoAutenticazioneSoggetti,
 			String autorizzazioneAutenticati,String autorizzazioneRuoli,String autorizzazioneRuoliTipologia,
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc, ServiceBinding serviceBinding,
@@ -1617,7 +1623,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 
-			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti,false,
+			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
+					autenticazionePrincipal, autenticazioneParametroList,
+					confPers, isSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 			
 			String urlAutorizzazioneAutenticati = null;

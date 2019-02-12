@@ -40,11 +40,13 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -109,6 +111,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			String autenticazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
 			String autenticazioneOpzionale = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
+			String autenticazionePrincipalTipo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			TipoAutenticazionePrincipal autenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(autenticazionePrincipalTipo, false);
+			List<String> autenticazioneParametroList = porteApplicativeHelper.convertFromDataElementValue_parametroAutenticazioneList(autenticazione, autenticazionePrincipal);
 			String autenticazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
 			String autorizzazione = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
 			String autorizzazioneCustom = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
@@ -263,6 +268,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autenticazioneCustom = autenticazione;
 						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 					}
+					
+					autenticazionePrincipal = porteApplicativeCore.getTipoAutenticazionePrincipal(pa.getProprietaAutenticazioneList());
+					autenticazioneParametroList = porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList());
 				}
 				if(autenticazioneOpzionale==null){
 					autenticazioneOpzionale = "";
@@ -437,7 +445,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						gestioneTokenPolicy, gestioneTokenOpzionale, 
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,false,
+				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
@@ -463,7 +471,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
+			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
@@ -482,7 +490,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,false,
+				porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList, confPers, isSupportatoAutenticazione,false,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 				
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
@@ -521,6 +529,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
 			} else 
 				pa.setAutenticazioneOpzionale(null);
+			pa.getProprietaAutenticazioneList().clear();
+			List<Proprieta> proprietaAutenticazione = porteApplicativeCore.convertToAutenticazioneProprieta(autenticazione, autenticazionePrincipal, autenticazioneParametroList);
+			if(proprietaAutenticazione!=null && !proprietaAutenticazione.isEmpty()) {
+				pa.getProprietaAutenticazioneList().addAll(proprietaAutenticazione);
+			}
+			
 			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
 				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
 						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), 
@@ -629,6 +643,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autenticazioneCustom = autenticazione;
 					autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
 				}
+				
+				autenticazionePrincipal = porteApplicativeCore.getTipoAutenticazionePrincipal(pa.getProprietaAutenticazioneList());
+				autenticazioneParametroList = porteApplicativeCore.getParametroAutenticazione(autenticazione, pa.getProprietaAutenticazioneList());
 			}
 			if(autenticazioneOpzionale==null){
 				autenticazioneOpzionale = "";
@@ -791,7 +808,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa,false);
 
-			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,false,
+			porteApplicativeHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, autenticazionePrincipal, autenticazioneParametroList,confPers, isSupportatoAutenticazione,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail);
 			
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE

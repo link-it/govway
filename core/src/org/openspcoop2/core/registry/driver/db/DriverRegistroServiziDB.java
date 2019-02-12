@@ -15001,6 +15001,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AUTENTICAZIONE_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -15036,12 +15043,68 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AUTENTICAZIONE_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_PROP);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST);
 			updateString = sqlQueryObject.createSQLDelete();
@@ -15070,6 +15133,48 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE);
 			updateString = sqlQueryObject.createSQLDelete();

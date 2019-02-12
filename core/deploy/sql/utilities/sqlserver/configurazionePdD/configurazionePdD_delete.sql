@@ -17,5 +17,6 @@ DELETE FROM msgdiag_appender_prop;
 DELETE FROM msgdiag_appender;
 DELETE FROM config_protocolli;
 DELETE FROM configurazione;
+DELETE FROM config_cache_regole;
 DELETE FROM routing;
 DELETE FROM registri;

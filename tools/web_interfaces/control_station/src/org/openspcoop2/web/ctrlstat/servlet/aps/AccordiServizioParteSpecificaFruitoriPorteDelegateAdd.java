@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -143,6 +144,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String fruizioneRuolo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
 			String fruizioneAutenticazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
 			String fruizioneAutenticazioneOpzionale = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			String fruizioneAutenticazionePrincipalTipo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO);
+			TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal = TipoAutenticazionePrincipal.toEnumConstant(fruizioneAutenticazionePrincipalTipo, false);
+			List<String> fruizioneAutenticazioneParametroList = apsHelper.convertFromDataElementValue_parametroAutenticazioneList(fruizioneAutenticazione, fruizioneAutenticazionePrincipal);
+			
 			String fruizioneAutorizzazione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
 			String fruizioneAutorizzazioneAutenticati = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
 			String fruizioneAutorizzazioneRuoli = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
@@ -555,7 +560,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							idFruizione, tipoSoggettoFruitore, nomeSoggettoFruitore, dati);
 					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
 							gestioneToken, policyLabels, policyValues, 
@@ -632,7 +637,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
 						gestioneToken, policyLabels, policyValues, 
@@ -695,7 +700,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore,
-					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
+					fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList,
 					fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
 					fruizioneServizioApplicativo, fruizioneRuolo, 
 					autorizzazione_tokenOptions,

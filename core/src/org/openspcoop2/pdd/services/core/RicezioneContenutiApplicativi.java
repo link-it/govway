@@ -95,6 +95,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
@@ -2090,7 +2091,9 @@ public class RicezioneContenutiApplicativi {
 				try {						
 						
 					EsitoAutenticazionePortaDelegata esito = 
-							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
+							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, 
+									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
+									pddContext, protocolFactory, requestMessage); 
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{

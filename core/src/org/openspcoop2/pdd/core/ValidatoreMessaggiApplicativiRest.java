@@ -130,7 +130,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca del formato di specifica che definisce l'accordo di servizio: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante la ricerca del formato di specifica: "+e.getMessage());
+			= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante la ricerca del formato di specifica: "+e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_405_SERVIZIO_NON_TROVATO.getErroreIntegrazione());
 			throw ex;
 		}catch(DriverRegistroServiziException e){
@@ -144,7 +144,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 			this.logger.error("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage());
+				= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			if(e.getMessage()!=null && formatoSpecifica!=null){
 				ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(formatoSpecifica.getValue()));
 				throw ex;
@@ -194,7 +194,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(Exception e){
 			this.logger.error("Riscontrato errore durante il controllo del messaggio: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage());
+				= new ValidatoreMessaggiApplicativiException("Riscontrato errore durante l'inizializzazione: "+e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_530_COSTRUZIONE_INTERFACCIA_FALLITA));
 			throw ex;
 		}
@@ -219,7 +219,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(Exception e){
 			this.logger.error("validateWithSchemiXSD failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			throw ex;
 		}
@@ -229,7 +229,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			validatoreBodyApplicativo.valida(this.message.castAsRestXml().getContent());	
 		}catch(Exception e){ 
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(CostantiPdD.SCHEMA_XSD));
 			}else{
@@ -287,7 +287,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		}catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			ex.setErrore(ErroriIntegrazione.ERRORE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA.getErrore417_CostruzioneValidatoreTramiteInterfacciaFallita(interfaceType));
 			throw ex;
 		}
@@ -403,7 +403,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			
 		}catch(Throwable e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException(e.getMessage());
+				= new ValidatoreMessaggiApplicativiException(e.getMessage(),e);
 			if(isRichiesta){
 				ex.setErrore(ErroriIntegrazione.ERRORE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA.getErrore418_ValidazioneRichiestaTramiteInterfacciaFallita(interfaceType));
 			}else{

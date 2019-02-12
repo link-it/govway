@@ -355,7 +355,7 @@ public enum ErroriIntegrazione {
 	public ErroreIntegrazione get5XX_ErroreProcessamento(CodiceErroreIntegrazione codiceErroreIntegrazione) {
 		return get5XX_ErroreProcessamento(ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.descrizione, codiceErroreIntegrazione);
 	}
-	public ErroreIntegrazione get5XX_ErroreProcessamento(Exception e,CodiceErroreIntegrazione codiceErroreIntegrazione) {
+	public ErroreIntegrazione get5XX_ErroreProcessamento(Throwable e,CodiceErroreIntegrazione codiceErroreIntegrazione) {
 		return get5XX_ErroreProcessamento(Utilities.readFirstErrorValidMessageFromException(e), codiceErroreIntegrazione);
 	}
 	public ErroreIntegrazione get5XX_ErroreProcessamento(String descrizione,CodiceErroreIntegrazione codiceErroreIntegrazione) {
