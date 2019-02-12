@@ -287,33 +287,27 @@ public class GestoreToken {
 
 		}
 
-		if( (idleTime > 0) ||
-				(itemLifeSecond > 0) ){
-
-			if( idleTime > 0  ){
-				try{
-					String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
-					if(log!=null)
-						log.info(msg);
-					GestoreToken.logConsole.info(msg);
-					GestoreToken.cacheToken.setItemIdleTime(idleTime);
-				}catch(Exception error){
-					throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
-				}
+		if( idleTime > 0  ){
+			try{
+				String msg = "Attributo 'IdleTime' (Token) impostato al valore: "+idleTime;
+				if(log!=null)
+					log.info(msg);
+				GestoreToken.logConsole.info(msg);
+				GestoreToken.cacheToken.setItemIdleTime(idleTime);
+			}catch(Exception error){
+				throw new TokenException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
 			}
-			if( itemLifeSecond > 0  ){
-				try{
-					String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
-					if(log!=null)
-						log.info(msg);
-					GestoreToken.logConsole.info(msg);
-					GestoreToken.cacheToken.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
-				}
-			}
-
 		}
+		try{
+			String msg = "Attributo 'MaxLifeSecond' (Token) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			GestoreToken.logConsole.info(msg);
+			GestoreToken.cacheToken.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new TokenException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
+		}
+
 	}
 	
 	

@@ -234,16 +234,18 @@ public class GestoreCacheResponseCaching {
 		}
 		
 		// LifeSecond
+		long longItemLife = -1; 
 		if(itemLifeSecond!=null && itemLifeSecond>0){
-			try{
-				msg = "Attributo 'MaxLifeSecond' (ResponseCaching) impostato al valore: "+itemLifeSecond;
-				alog.info(msg);
-				cache.setItemLifeTime(itemLifeSecond);
-			}catch(Exception error){
-				msg = "Parametro errato per l'attributo 'MaxLifeSecond' (ResponseCaching): "+error.getMessage();
-				alog.error(msg);
-				throw new Exception(msg,error);
-			}
+			longItemLife = itemLifeSecond.longValue();
+		}
+		try{
+			msg = "Attributo 'MaxLifeSecond' (ResponseCaching) impostato al valore: "+longItemLife;
+			alog.info(msg);
+			cache.setItemLifeTime(longItemLife);
+		}catch(Exception error){
+			msg = "Parametro errato per l'attributo 'MaxLifeSecond' (ResponseCaching): "+error.getMessage();
+			alog.error(msg);
+			throw new Exception(msg,error);
 		}
 		
 	}

@@ -818,6 +818,8 @@ public class ConfigurazioneCostanti {
 	
 	/* LABEL PARAMETRI */
 	
+	public final static String LABEL_CACHE_SECONDS_NOTE = "Non indicare i secondi per avere un tempo infinito";
+	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ID = "id";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA = "IdProp";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_NOME = "Nome";
@@ -1133,7 +1135,7 @@ public class ConfigurazioneCostanti {
 
 	public final static boolean DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_STATO = true;
 	public final static long DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE = 10000;
-	public final static long DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME = 300;
+	//public final static long DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME = 300;
 	public final static Long DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME = null;
 	public final static CacheAlgorithm DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_ALGORITMO = CacheAlgorithm.LRU;
 
