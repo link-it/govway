@@ -45,7 +45,7 @@
 		<groupId>org.openspcoop2</groupId>
 		<artifactId>org.openspcoop2</artifactId>
 		<version>1.0</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 </project>
