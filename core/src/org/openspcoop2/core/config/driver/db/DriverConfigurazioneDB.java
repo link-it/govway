@@ -3244,6 +3244,519 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		
 		return listIdScope;
 	}
+	
+	public List<ResponseCachingConfigurazioneRegola> portaApplicativaResponseCachingConfigurazioneRegolaList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaApplicativaResponseCachingConfigurazioneRegolaList";
+		int idLista = Liste.PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+		int offset; 
+		int limit;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<ResponseCachingConfigurazioneRegola> lista = new ArrayList<ResponseCachingConfigurazioneRegola>();
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".status_min");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".status_max");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".fault");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".cache_seconds");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE+".id");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+				
+				ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+				
+				regola.setId(risultato.getLong("id"));
+				int status_min = risultato.getInt("status_min");
+				int status_max = risultato.getInt("status_max");
+				if(status_min>0) {
+					regola.setReturnCodeMin(status_min);
+				}
+				if(status_max>0) {
+					regola.setReturnCodeMax(status_max);
+				}
+
+				int fault = risultato.getInt("fault");
+				if(CostantiDB.TRUE == fault) {
+					regola.setFault(true);
+				}
+				else if(CostantiDB.FALSE == fault) {
+					regola.setFault(false);
+				}
+				
+				int cacheSeconds = risultato.getInt("cache_seconds");
+				if(cacheSeconds>0) {
+					regola.setCacheTimeoutSeconds(cacheSeconds);
+				}
+
+				lista.add(regola);
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	}
+	
+	public boolean existsPortaApplicativaResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaApplicativaResponseCachingConfigurazioneRegola";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsPortaApplicativaResponseCachingConfigurazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			if(statusMin != null) {
+				sqlQueryObject.addWhereCondition("status_min = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_min");
+			}
+			
+			if(statusMax != null) {
+				sqlQueryObject.addWhereCondition("status_max = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_max");
+			}
+			
+			if(cacheSeconds != null) {
+				sqlQueryObject.addWhereCondition("cache_seconds = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("cache_seconds");
+			}
+			
+			if(fault) {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			} else {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPA);
+			if(statusMin != null)
+				stmt.setInt(parameterIndex ++, statusMin);
+			if(statusMax != null)
+				stmt.setInt(parameterIndex ++, statusMax);
+			if(cacheSeconds != null)
+				stmt.setInt(parameterIndex ++, cacheSeconds);
+			if(fault) {
+				stmt.setInt(parameterIndex ++, CostantiDB.TRUE);
+			} else {
+				stmt.setInt(parameterIndex ++, CostantiDB.FALSE);
+			}
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ResponseCachingConfigurazioneRegola> portaDelegataResponseCachingConfigurazioneRegolaList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaDelegataResponseCachingConfigurazioneRegolaList";
+		int idLista = Liste.PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+		int offset; 
+		int limit;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<ResponseCachingConfigurazioneRegola> lista = new ArrayList<ResponseCachingConfigurazioneRegola>();
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".id");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".status_min");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".status_max");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".fault");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".cache_seconds");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".id_porta");
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE+".id");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+				
+				ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+				
+				regola.setId(risultato.getLong("id"));
+				int status_min = risultato.getInt("status_min");
+				int status_max = risultato.getInt("status_max");
+				if(status_min>0) {
+					regola.setReturnCodeMin(status_min);
+				}
+				if(status_max>0) {
+					regola.setReturnCodeMax(status_max);
+				}
+
+				int fault = risultato.getInt("fault");
+				if(CostantiDB.TRUE == fault) {
+					regola.setFault(true);
+				}
+				else if(CostantiDB.FALSE == fault) {
+					regola.setFault(false);
+				}
+				
+				int cacheSeconds = risultato.getInt("cache_seconds");
+				if(cacheSeconds>0) {
+					regola.setCacheTimeoutSeconds(cacheSeconds);
+				}
+
+				lista.add(regola);
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return lista;
+	}
+	
+	public boolean existsPortaDelegataResponseCachingConfigurazioneRegola(long idPA, Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsPortaDelegataResponseCachingConfigurazioneRegola";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsPortaDelegataResponseCachingConfigurazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQueryObject.addWhereCondition("id_porta = ?");
+			if(statusMin != null) {
+				sqlQueryObject.addWhereCondition("status_min = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_min");
+			}
+			
+			if(statusMax != null) {
+				sqlQueryObject.addWhereCondition("status_max = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_max");
+			}
+			
+			if(cacheSeconds != null) {
+				sqlQueryObject.addWhereCondition("cache_seconds = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("cache_seconds");
+			}
+			
+			if(fault) {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			} else {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			stmt.setLong(parameterIndex ++, idPA);
+			if(statusMin != null)
+				stmt.setInt(parameterIndex ++, statusMin);
+			if(statusMax != null)
+				stmt.setInt(parameterIndex ++, statusMax);
+			if(cacheSeconds != null)
+				stmt.setInt(parameterIndex ++, cacheSeconds);
+			if(fault) {
+				stmt.setInt(parameterIndex ++, CostantiDB.TRUE);
+			} else {
+				stmt.setInt(parameterIndex ++, CostantiDB.FALSE);
+			}
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
 
     @Override
     public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -7355,6 +7868,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 					ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
 					
+					regola.setId(rsRegole.getLong("id"));
 					int status_min = rsRegole.getInt("status_min");
 					int status_max = rsRegole.getInt("status_max");
 					if(status_min>0) {
@@ -11823,6 +12337,244 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 
 			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<ResponseCachingConfigurazioneRegola> responseCachingConfigurazioneRegolaList(ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "responseCachingConfigurazioneRegolaList";
+		int idLista = Liste.CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+		int offset;
+		int limit;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<ResponseCachingConfigurazioneRegola> lista = new ArrayList<ResponseCachingConfigurazioneRegola>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("responseCachingConfigurazioneRegolaList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("status_min");
+			sqlQueryObject.addSelectField("status_max");
+			sqlQueryObject.addSelectField("fault");
+			sqlQueryObject.addSelectField("cache_seconds");
+			sqlQueryObject.addOrderBy("id");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+
+				ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
+				
+				regola.setId(risultato.getLong("id"));
+				int status_min = risultato.getInt("status_min");
+				int status_max = risultato.getInt("status_max");
+				if(status_min>0) {
+					regola.setReturnCodeMin(status_min);
+				}
+				if(status_max>0) {
+					regola.setReturnCodeMax(status_max);
+				}
+
+				int fault = risultato.getInt("fault");
+				if(CostantiDB.TRUE == fault) {
+					regola.setFault(true);
+				}
+				else if(CostantiDB.FALSE == fault) {
+					regola.setFault(false);
+				}
+				
+				int cacheSeconds = risultato.getInt("cache_seconds");
+				if(cacheSeconds>0) {
+					regola.setCacheTimeoutSeconds(cacheSeconds);
+				}
+
+				lista.add(regola);
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public boolean existsResponseCachingConfigurazioneRegola(Integer statusMin, Integer statusMax, boolean fault, Integer cacheSeconds) throws DriverConfigurazioneException {
+		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		String queryString;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("existsResponseCachingConfigurazioneRegola");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			int count = 0;
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			if(statusMin != null) {
+				sqlQueryObject.addWhereCondition("status_min = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_min");
+			}
+			
+			if(statusMax != null) {
+				sqlQueryObject.addWhereCondition("status_max = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("status_max");
+			}
+			
+			if(cacheSeconds != null) {
+				sqlQueryObject.addWhereCondition("cache_seconds = ?");
+			} else {
+				sqlQueryObject.addWhereIsNullCondition("cache_seconds");
+			}
+			
+			if(fault) {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			} else {
+				sqlQueryObject.addWhereCondition("fault = ?");
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int parameterIndex = 1;
+			if(statusMin != null)
+				stmt.setInt(parameterIndex ++, statusMin);
+			if(statusMax != null)
+				stmt.setInt(parameterIndex ++, statusMax);
+			if(cacheSeconds != null)
+				stmt.setInt(parameterIndex ++, cacheSeconds);
+			if(fault) {
+				stmt.setInt(parameterIndex ++, CostantiDB.TRUE);
+			} else {
+				stmt.setInt(parameterIndex ++, CostantiDB.FALSE);
+			}
+			
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				count = risultato.getInt(1);
+			risultato.close();
+			stmt.close();
+
+			return count > 0;
 
 		} catch (Exception qe) {
 			error = true;

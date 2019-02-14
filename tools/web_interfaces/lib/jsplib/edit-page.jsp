@@ -276,8 +276,9 @@ for (int i = 0; i < dati.size(); i++) {
 									    	} else {
 									    		String minvalue = de.getMinValue() != null ? " min=\"" + de.getMinValue() + "\"" : "";
 									    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
+									    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
 									    		
-									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> >
+									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
 									      	<%
 									    	}
 									      	%>
@@ -500,7 +501,47 @@ for (int i = 0; i < dati.size(); i++) {
 			                                                			</div>
 			                                                			<%
 			                                                		} else { // else radio
-			                                                			//fineelementi
+			                                                			if(type.equals("interval-number")){
+			                                                				%>
+			                                                					<div class="prop">
+												                    				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
+												                    				<%
+																			    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+																			    		String taeditValNoEdit = de.getValuesNoEdit(pd.getMode());
+																			    		%><div class="<%=classDivNoEdit %>"> 
+																			    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
+																			    			</div><%
+																			    	} else {
+																			    		String minvalue = de.getMinValue() != null ? " min=\"" + de.getMinValue() + "\"" : "";
+																			    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
+																			    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
+																			    		
+																			      		%>
+																			      		<div class="intervalExternalDiv">
+																			      		<%
+																			      			for(int z=0; z < de.getNames().length ; z++){
+																			      				String nameI = de.getNames()[z] == null ? "" : de.getNames()[z];
+																			      				String valueI = de.getValues()[z] == null ? "" : de.getValues()[z];
+																			      		%>
+																			      			<div class="intervalInnerDiv">
+																			      				<input type="number" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																			      			</div>
+																			      		<%
+																				      		} // end for
+																				      	%>
+																			      		</div>
+																			      	<%
+																			      		} // end else
+																			      	%>
+																			      		
+																			      	<% if(!deNote.equals("")){ %>
+																			      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+																			      	<% } %>
+												                    			</div>
+			                                                				<%
+			                                                			} else{ // else interval number			                                                			
+			                                                				//fineelementi
+			                                                			} // end else interval number
 			                                                		} // end else radio
 			                                            		} // end else checkbox
 		                                        			} // end else multi-select

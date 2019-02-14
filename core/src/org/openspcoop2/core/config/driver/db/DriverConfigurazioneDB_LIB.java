@@ -8932,7 +8932,6 @@ public class DriverConfigurazioneDB_LIB {
 						ResponseCachingConfigurazioneRegola regola = response_cache_regole.get(j);
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 						sqlQueryObject.addInsertTable(CostantiDB.CONFIGURAZIONE_CACHE_REGOLE);
-						sqlQueryObject.addInsertField("id_porta", "?");
 						if(regola.getReturnCodeMin()!=null && regola.getReturnCodeMin()>0) {
 							sqlQueryObject.addInsertField("status_min", "?");
 						}

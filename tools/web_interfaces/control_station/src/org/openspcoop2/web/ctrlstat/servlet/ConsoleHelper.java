@@ -72,8 +72,10 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -7719,7 +7721,9 @@ public class ConsoleHelper {
 	public void addConfigurazioneResponseCachingPorteToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoResponseCachingPorta, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
-			boolean responseCachingDigestPayload) throws Exception {
+			boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola, 
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) throws Exception {
 		
 		if(showStato) {
 			DataElement de = new DataElement();
@@ -7748,14 +7752,19 @@ public class ConsoleHelper {
 		dati.addElement(de);
 		
 		if(!showStato || statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_CORS_STATO_RIDEFINITO)) {
-			this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, false);
+			this.addResponseCachingToDati(dati, responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, 
+					responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, false, responseCachingDigestHeadersNomiHeaders,
+					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
+					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 		}
 	}
 	
 	public void addResponseCachingToDati(Vector<DataElement> dati, boolean responseCachingEnabled, int responseCachingSeconds,
 			boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
 			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,
-			boolean responseCachingDigestPayload, boolean addTitle) {
+			boolean responseCachingDigestPayload, boolean addTitle, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore, boolean visualizzaLinkConfigurazioneRegola,
+			String servletResponseCachingConfigurazioneRegolaList, List<Parameter> paramsResponseCachingConfigurazioneRegolaList, int numeroResponseCachingConfigurazioneRegola) {
 		DataElement de;
 		if(addTitle) {
 			de = new DataElement();
@@ -7805,6 +7814,19 @@ public class ConsoleHelper {
 				dati.addElement(de);
 			}
 			
+			if(visualizzaLinkConfigurazioneRegola) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+				if (contaListeFromSession)
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE+" (" + numeroResponseCachingConfigurazioneRegola + ")");
+				else
+					de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE);
+				de.setUrl(servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList.toArray(new Parameter[paramsResponseCachingConfigurazioneRegolaList.size()]));
+				dati.addElement(de);
+			}
+			
+			
 			de = new DataElement();
 			de.setType(DataElementType.SUBTITLE);
 			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_GENERAZIONE_HASH);
@@ -7819,17 +7841,6 @@ public class ConsoleHelper {
 			de.setValue(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			dati.addElement(de);
 			
-			
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
-			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
-			de.setType(DataElementType.SELECT);
-			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
-			de.setSelected(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			de.setValue(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
-			dati.addElement(de);
-			
-			
 			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
@@ -7839,11 +7850,62 @@ public class ConsoleHelper {
 			de.setValue(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
 			dati.addElement(de);
 			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+			de.setType(DataElementType.SELECT);
+			de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+			de.setSelected(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			de.setValue(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			if(responseCachingDigestHeaders) {
+				de = new DataElement();
+//				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setValue(responseCachingDigestHeadersNomiHeaders);
+				de.enableTags();
+				de.setNote(CostantiControlStation.NOTE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+//				de.setRequired(true);
+				dati.addElement(de);
+			}
+			
+			de = new DataElement();
+			de.setType(DataElementType.SUBTITLE);
+			de.setLabel(CostantiControlStation.LABEL_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(responseCachingCacheControlNoCache);
+			de.setValue(responseCachingCacheControlNoCache+"");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(responseCachingCacheControlMaxAge);
+			de.setValue(responseCachingCacheControlMaxAge+"");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(responseCachingCacheControlNoStore);
+			de.setValue(responseCachingCacheControlNoStore+"");
+			dati.addElement(de);
 		}
 	}
 	
 	public ResponseCachingConfigurazione getResponseCaching(boolean responseCachingEnabled, int responseCachingSeconds, boolean responseCachingMaxResponseSize, long responseCachingMaxResponseSizeBytes,
-			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,	boolean responseCachingDigestPayload) {
+			boolean responseCachingDigestUrlInvocazione, boolean responseCachingDigestHeaders,	boolean responseCachingDigestPayload, String responseCachingDigestHeadersNomiHeaders, 
+			boolean responseCachingCacheControlNoCache, boolean responseCachingCacheControlMaxAge, boolean responseCachingCacheControlNoStore,List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione) {
 		
 		ResponseCachingConfigurazione responseCaching  = new ResponseCachingConfigurazione();
 		
@@ -7861,8 +7923,25 @@ public class ConsoleHelper {
 				hashGenerator.setPayload(responseCachingDigestPayload ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 				hashGenerator.setRequestUri(responseCachingDigestUrlInvocazione ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
 				hashGenerator.setHeaders(responseCachingDigestHeaders ? StatoFunzionalita.ABILITATO : StatoFunzionalita.DISABILITATO);
+				if(StringUtils.isNotEmpty(responseCachingDigestHeadersNomiHeaders)) {
+					hashGenerator.setHeaderList(Arrays.asList(responseCachingDigestHeadersNomiHeaders.split(",")));
+				}
 				
 				responseCaching.setHashGenerator(hashGenerator);
+			}
+			
+			ResponseCachingConfigurazioneControl control = new ResponseCachingConfigurazioneControl();
+			
+			control.setNoCache(responseCachingCacheControlNoCache);
+			control.setMaxAge(responseCachingCacheControlMaxAge);
+			control.setNoStore(responseCachingCacheControlNoStore);
+			
+			responseCaching.setControl(control);
+			
+			if(listaRegoleCachingConfigurazione!= null) {
+				for (ResponseCachingConfigurazioneRegola regola : listaRegoleCachingConfigurazione) {
+					responseCaching.addRegola(regola);
+				}
 			}
 		}
 		
@@ -7880,6 +7959,16 @@ public class ConsoleHelper {
 		
 		
 		return abilitato;
+	}
+	
+	public int numeroRegoleResponseCaching(ResponseCachingConfigurazione configurazione) {
+		if(configurazione == null)
+			return 0;
+		
+		if(configurazione.getStato().equals(StatoFunzionalita.ABILITATO))
+			return configurazione.sizeRegolaList();
+		
+		return 0;
 	}
 	
 	public boolean isCorsAbilitato(CorsConfigurazione configurazione) {
@@ -7913,6 +8002,65 @@ public class ConsoleHelper {
 	}
 	
 	public boolean checkDataResponseCaching() throws Exception {
+		String responseCachingDigestHeadersTmp = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS);
+		boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
+		if(responseCachingDigestHeaders) {
+			// se e' abilitato il salvataggio degli headers bisogna indicare quali si vuole salvare
+			String responseCachingDigestHeadersNomiHeaders =  this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+			if(StringUtils.isNotEmpty(responseCachingDigestHeadersNomiHeaders)) {
+				List<String> asList = Arrays.asList(responseCachingDigestHeadersNomiHeaders.split(","));
+				for (String string : asList) {
+					if(string.contains(" ")) {
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_SPAZI_BIANCHI_NON_AMMESSI, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   
+						return false;
+					}
+				}
+			} else {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CORS_CAMPO_OBBLIGATORIO, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS));   
+				return false;
+			}
+		}
+		
 		return true;
+	}
+	
+public Vector<DataElement> addResponseCachingConfigurazioneRegola(TipoOperazione tipoOP, String statusMin, String statusMax, String fault, String cacheSeconds, Vector<DataElement> dati) {
+		
+		DataElement dataElement = new DataElement();
+		dataElement.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
+		dataElement.setType(DataElementType.TITLE);
+		dati.add(dataElement);
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+		de.setValues(Arrays.asList(statusMin + "", statusMax + ""));
+		de.setType(DataElementType.INTERVAL_NUMBER);
+		de.setNames(Arrays.asList(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN,
+				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX));
+		de.setMinValue(1);
+		de.setMaxValue(999);
+		de.setSize(getSize());
+		de.reloadMinValue(false);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+		de.setValue(cacheSeconds+ "");
+		de.setType(DataElementType.NUMBER);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+		de.setSize( getSize());
+		de.setMinValue(1);
+		de.reloadMinValue(false);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+		de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+		de.setType(DataElementType.CHECKBOX);
+		de.setSelected(fault);
+		de.setValue(fault+"");
+		dati.addElement(de);
+
+		return dati;
 	}
 }

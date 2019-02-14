@@ -32,6 +32,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
@@ -43,6 +44,7 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
@@ -3741,4 +3743,223 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 		return this.getMessaggioConfermaModificaRegolaMapping(mapping.isDefault(), listaAzioni, serviceBinding, abilitazione, multiline, listElement);
 	}
+	
+	
+	
+	public void prepareResponseCachingConfigurazioneRegolaList(String nomePorta, ISearch ricerca, List<ResponseCachingConfigurazioneRegola> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+
+			int idLista = Liste.PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING, 
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + myPD.getId()),
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome()),
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, myPD.getIdSoggetto() + ""),
+					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
+			
+			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLE;
+			
+			lstParam.add(new Parameter(labelPagLista,null));
+			
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = {
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS
+			};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<ResponseCachingConfigurazioneRegola> it = lista.iterator();
+				while (it.hasNext()) {
+					ResponseCachingConfigurazioneRegola regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					
+					Integer statusMin = regola.getReturnCodeMin();
+					Integer statusMax = regola.getReturnCodeMax();
+					
+					// se e' stato salvato il valore 0 lo tratto come null
+					if(statusMin != null && statusMin.intValue() <= 0) {
+						statusMin = null;
+					}
+					
+					if(statusMax != null && statusMax.intValue() <= 0) {
+						statusMax = null;
+					}
+					
+					String statusValue = null;
+					// Intervallo
+					if(statusMin != null && statusMax != null) {
+						statusValue = "[" + statusMin + " - " + statusMax + "]";
+					} else if(statusMin != null && statusMax == null) { // definito solo l'estremo inferiore
+						statusValue = "&gt;" + statusMin;
+					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
+						statusValue = "&lt;" + statusMax;
+					} else { //entrambi null 
+						statusValue = CostantiControlStation.LABEL_QUALSIASI;
+					}
+					
+					de.setValue(statusValue);
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(regola.getFault() ? CostantiControlStation.LABEL_SI : CostantiControlStation.LABEL_NO);
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(regola.getCacheTimeoutSeconds() != null ? regola.getCacheTimeoutSeconds() + "" : "--");
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	// Controlla i dati del registro
+		public boolean responseCachingConfigurazioneRegolaCheckData(TipoOperazione tipoOp, long idPorta) throws Exception {
+
+			try{
+				
+				String statusMinS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
+				String statusMaxS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
+				String faultS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+				String cacheSecondsS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+				
+				Integer statusMin = null;
+				Integer statusMax = null;
+				Integer cacheSeconds = null;
+				boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
+				if(StringUtils.isNotEmpty(statusMinS)) {
+					try {
+						statusMin = Integer.parseInt(statusMinS);
+						
+						if(statusMin < 1) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+						if(statusMin > 999) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
+						return false;
+					}
+				}
+				
+				if(StringUtils.isNotEmpty(statusMaxS)) {
+					try {
+						statusMax = Integer.parseInt(statusMaxS);
+						
+						if(statusMax < 1) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+						if(statusMax > 999) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
+						return false;
+					}
+				}
+				
+				if(StringUtils.isNotEmpty(cacheSecondsS)) {
+					try {
+						cacheSeconds = Integer.parseInt(cacheSecondsS);
+						
+						if(cacheSeconds < 1) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+					}catch(Exception e) {
+						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
+						return false;
+					}
+				}
+				
+				
+
+				// Se tipoOp = add, controllo che il registro non sia gia' stato
+				// registrata
+				if (tipoOp.equals(TipoOperazione.ADD)) {
+					boolean giaRegistrato = this.porteDelegateCore.existsResponseCachingConfigurazioneRegola(idPorta,statusMin, statusMax, fault, cacheSeconds);
+
+					if (giaRegistrato) {
+						this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Response Caching con in parametri indicati.");
+						return false;
+					}
+				}
+
+				return true;
+
+			} catch (Exception e) {
+				this.log.error("Exception: " + e.getMessage(), e);
+				throw new Exception(e);
+			}
+		}
 }

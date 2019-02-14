@@ -80,7 +80,7 @@ public class DataElement {
 	}
 
 	String label, labelRight, value, type, name, onClick, onChange, selected;
-	String [] values = null;
+	String [] values = null, names = null;
 	String [] labels = null;
 	int size, cols, rows, id;
 	boolean affiancato; // serve a gestire il successivo elemento se disegnarlo accanto o in verticale (default)
@@ -104,6 +104,8 @@ public class DataElement {
 	private List<String> icon, url,toolTip, target = null;
 	
 	private Map<String, String> dataAttributes = null;
+	
+	private String customJsFunction = null;
 
 	public String getIdToRemove() {
 		return this.idToRemove;
@@ -173,6 +175,22 @@ public class DataElement {
 	}
 	public String getValue() {
 		return DataElement.checkNull(this.value);
+	}
+	
+	public String getValuesNoEdit(String mode) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i = 0; i < this.values.length; i++) {
+			String val = this.values[i];
+			String label = this.labels[i];
+			
+			if(sb.length() >0)
+				sb.append(", ");
+			
+			sb.append(label).append(": ").append(val != null && !val.equals("") ? val : (mode.equals("view-noeditbutton") ? "&nbsp;" : "not defined"));
+		}
+		
+		return sb.toString();
 	}
 
 	public void setType(DataElementType s) {
@@ -668,4 +686,34 @@ public class DataElement {
 	public void enableTags() {
 		this.getDataAttributesMap().put("role", "tagsinput");
 	}
+
+	public void reloadMinValue(boolean reload) {
+		if(reload) {
+			this.setCustomJsFunction(null);
+		} else {
+			this.setCustomJsFunction(Costanti.CUSTOM_JS_FUNCTION_INPUT_NUMBER_VALIDATION);
+		}
+	}
+	
+	public String getCustomJsFunction() {
+		return DataElement.checkNull(this.customJsFunction);
+	}
+
+	public void setCustomJsFunction(String customJsFunction) {
+		this.customJsFunction = customJsFunction;
+	}
+	
+	public void setNames(String [] s) {
+		this.names = s;
+	}
+	public void setNames(List<String> s) {
+		if(s==null || s.size()<=0){
+			return;
+		}
+		this.setNames(s.toArray(new String[1]));
+	}
+	public String[] getNames() {
+		return this.names;
+	}
+	
 }

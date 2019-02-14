@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -35,8 +37,10 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
+import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -129,12 +133,29 @@ public class PorteApplicativeResponseCaching extends Action {
 			boolean responseCachingDigestHeaders = ServletUtils.isCheckBoxEnabled(responseCachingDigestHeadersTmp);
 			String responseCachingDigestPayloadTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_PAYLOAD);
 			boolean responseCachingDigestPayload = ServletUtils.isCheckBoxEnabled(responseCachingDigestPayloadTmp);
+			
+			String responseCachingDigestHeadersNomiHeaders = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_RESPONSE_DIGEST_HEADERS_NOMI_HEADERS);
+			String responseCachingCacheControlNoCacheTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_CACHE);
+			boolean responseCachingCacheControlNoCache = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoCacheTmp);
+			String responseCachingCacheControlMaxAgeTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_MAX_AGE);
+			boolean responseCachingCacheControlMaxAge = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlMaxAgeTmp);
+			String responseCachingCacheControlNoStoreTmp = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CACHE_CONTROL_NO_STORE);
+			boolean responseCachingCacheControlNoStore = ServletUtils.isCheckBoxEnabled(responseCachingCacheControlNoStoreTmp);
 
-
+			
+			String servletResponseCachingConfigurazioneRegolaList = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_LIST;
+			List<Parameter> paramsResponseCachingConfigurazioneRegolaList = new ArrayList<Parameter>();
+			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id));
+			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg));
+			paramsResponseCachingConfigurazioneRegolaList.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
 
 			ResponseCachingConfigurazione oldConfigurazione = pa.getResponseCaching();
+			boolean visualizzaLinkConfigurazioneRegola = porteApplicativeHelper.isResponseCachingAbilitato(oldConfigurazione) && responseCachingEnabled;
+			List<ResponseCachingConfigurazioneRegola> listaRegoleCachingConfigurazione = oldConfigurazione != null ?  oldConfigurazione.getRegolaList() : null;
+			int numeroResponseCachingConfigurazioneRegola = porteApplicativeHelper.numeroRegoleResponseCaching(oldConfigurazione);
 
 			boolean initConfigurazione = false;
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -155,9 +176,9 @@ public class PorteApplicativeResponseCaching extends Action {
 							responseCachingMaxResponseSizeBytes = configurazioneTmp.getMaxMessageSize().longValue();
 						}
 						
-						responseCachingDigestUrlInvocazione = false;
+						responseCachingDigestUrlInvocazione = true;
 						responseCachingDigestHeaders = false;
-						responseCachingDigestPayload = false;
+						responseCachingDigestPayload = true;
 						configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
 						if(configurazioneTmp.getHashGenerator() != null) {
 							if(configurazioneTmp.getHashGenerator().getHeaders() != null && configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
@@ -169,6 +190,17 @@ public class PorteApplicativeResponseCaching extends Action {
 							if(configurazioneTmp.getHashGenerator().getPayload() != null && configurazioneTmp.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
 								responseCachingDigestPayload = true;
 						}
+						
+						responseCachingCacheControlNoCache = true;
+						responseCachingCacheControlMaxAge = true;
+						responseCachingCacheControlNoStore = true;
+						configurazioneTmp.setControl(new ResponseCachingConfigurazioneControl());
+						if(configurazioneTmp.getControl() != null) {
+							responseCachingCacheControlNoCache = configurazioneTmp.getControl().isNoCache();
+							responseCachingCacheControlMaxAge = configurazioneTmp.getControl().isMaxAge();
+							responseCachingCacheControlNoStore = configurazioneTmp.getControl().isNoStore();
+						}
+						numeroResponseCachingConfigurazioneRegola = configurazioneTmp.sizeRegolaList();
 					}
 				}
 			}
@@ -209,19 +241,37 @@ public class PorteApplicativeResponseCaching extends Action {
 								responseCachingMaxResponseSizeBytes = oldConfigurazione.getMaxMessageSize().longValue();
 							}
 							
-							responseCachingDigestUrlInvocazione = false;
+							responseCachingDigestUrlInvocazione = true;
 							responseCachingDigestHeaders = false;
-							responseCachingDigestPayload = false;
+							responseCachingDigestPayload = true;
+							responseCachingDigestHeadersNomiHeaders = "";
 							if(oldConfigurazione.getHashGenerator() != null) {
-								if(oldConfigurazione.getHashGenerator().getHeaders() != null && oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
-									responseCachingDigestHeaders = true;
+								if(oldConfigurazione.getHashGenerator().getHeaders() != null)  
+									responseCachingDigestHeaders = oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 								
-								if(oldConfigurazione.getHashGenerator().getRequestUri() != null && oldConfigurazione.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
-									responseCachingDigestUrlInvocazione = true;
+								if(oldConfigurazione.getHashGenerator().getHeaderList() != null)  
+									responseCachingDigestHeadersNomiHeaders = StringUtils.join(oldConfigurazione.getHashGenerator().getHeaderList(), ",");
 								
-								if(oldConfigurazione.getHashGenerator().getPayload() != null && oldConfigurazione.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
-									responseCachingDigestPayload = true;
+								if(oldConfigurazione.getHashGenerator().getRequestUri() != null) 
+									responseCachingDigestUrlInvocazione = oldConfigurazione.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO);
+								
+								if(oldConfigurazione.getHashGenerator().getPayload() != null) 
+									responseCachingDigestPayload = oldConfigurazione.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO);
+								
 							}
+							
+							responseCachingCacheControlNoCache = true;
+							responseCachingCacheControlMaxAge = true;
+							responseCachingCacheControlNoStore = true;
+							if(oldConfigurazione.getControl() != null) {
+								responseCachingCacheControlNoCache = oldConfigurazione.getControl().isNoCache();
+								responseCachingCacheControlMaxAge = oldConfigurazione.getControl().isMaxAge();
+								responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
+							}
+							
+							visualizzaLinkConfigurazioneRegola = true;
+							listaRegoleCachingConfigurazione = oldConfigurazione.getRegolaList();
+							numeroResponseCachingConfigurazioneRegola = porteApplicativeHelper.numeroRegoleResponseCaching(oldConfigurazione);
 						}
 					}
 				}
@@ -244,19 +294,33 @@ public class PorteApplicativeResponseCaching extends Action {
 									responseCachingMaxResponseSizeBytes = oldConfigurazione.getMaxMessageSize().longValue();
 								}
 								
-								responseCachingDigestUrlInvocazione = false;
+								responseCachingDigestUrlInvocazione = true;
 								responseCachingDigestHeaders = false;
-								responseCachingDigestPayload = false;
+								responseCachingDigestPayload = true;
 								if(oldConfigurazione.getHashGenerator() != null) {
-									if(oldConfigurazione.getHashGenerator().getHeaders() != null && oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestHeaders = true;
+									if(oldConfigurazione.getHashGenerator().getHeaders() != null)  
+										responseCachingDigestHeaders = oldConfigurazione.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 									
-									if(oldConfigurazione.getHashGenerator().getRequestUri() != null && oldConfigurazione.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestUrlInvocazione = true;
+									if(oldConfigurazione.getHashGenerator().getHeaderList() != null)  
+										responseCachingDigestHeadersNomiHeaders = StringUtils.join(oldConfigurazione.getHashGenerator().getHeaderList(), ",");
 									
-									if(oldConfigurazione.getHashGenerator().getPayload() != null && oldConfigurazione.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestPayload = true;
+									if(oldConfigurazione.getHashGenerator().getRequestUri() != null) 
+										responseCachingDigestUrlInvocazione = oldConfigurazione.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO);
+									
+									if(oldConfigurazione.getHashGenerator().getPayload() != null) 
+										responseCachingDigestPayload = oldConfigurazione.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO);
 								}
+								
+								responseCachingCacheControlNoCache = true;
+								responseCachingCacheControlMaxAge = true;
+								responseCachingCacheControlNoStore = true;
+								if(oldConfigurazione.getControl() != null) {
+									responseCachingCacheControlNoCache = oldConfigurazione.getControl().isNoCache();
+									responseCachingCacheControlMaxAge = oldConfigurazione.getControl().isMaxAge();
+									responseCachingCacheControlNoStore = oldConfigurazione.getControl().isNoStore();
+								}
+								
+								//numeroResponseCachingConfigurazioneRegola = oldConfigurazione.sizeRegolaList();
 							}
 							else {
 								
@@ -272,20 +336,37 @@ public class PorteApplicativeResponseCaching extends Action {
 									responseCachingMaxResponseSizeBytes = configurazioneTmp.getMaxMessageSize().longValue();
 								}
 								
-								responseCachingDigestUrlInvocazione = false;
+								responseCachingDigestUrlInvocazione = true;
 								responseCachingDigestHeaders = false;
-								responseCachingDigestPayload = false;
+								responseCachingDigestPayload = true;
 								configurazioneTmp.setHashGenerator(new ResponseCachingConfigurazioneHashGenerator());
 								if(configurazioneTmp.getHashGenerator() != null) {
-									if(configurazioneTmp.getHashGenerator().getHeaders() != null && configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestHeaders = true;
+									if(configurazioneTmp.getHashGenerator().getHeaders() != null)  
+										responseCachingDigestHeaders = configurazioneTmp.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 									
-									if(configurazioneTmp.getHashGenerator().getRequestUri() != null && configurazioneTmp.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestUrlInvocazione = true;
+									if(configurazioneTmp.getHashGenerator().getHeaderList() != null)  
+										responseCachingDigestHeadersNomiHeaders = StringUtils.join(configurazioneTmp.getHashGenerator().getHeaderList(), ",");
 									
-									if(configurazioneTmp.getHashGenerator().getPayload() != null && configurazioneTmp.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
-										responseCachingDigestPayload = true;
+									if(configurazioneTmp.getHashGenerator().getRequestUri() != null) 
+										responseCachingDigestUrlInvocazione = configurazioneTmp.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO);
+									
+									if(configurazioneTmp.getHashGenerator().getPayload() != null) 
+										responseCachingDigestPayload = configurazioneTmp.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO);
 								}
+								
+								responseCachingCacheControlNoCache = true;
+								responseCachingCacheControlMaxAge = true;
+								responseCachingCacheControlNoStore = true;
+								configurazioneTmp.setControl(new ResponseCachingConfigurazioneControl());
+								if(configurazioneTmp.getControl() != null) {
+									responseCachingCacheControlNoCache = configurazioneTmp.getControl().isNoCache();
+									responseCachingCacheControlMaxAge = configurazioneTmp.getControl().isMaxAge();
+									responseCachingCacheControlNoStore = configurazioneTmp.getControl().isNoStore();
+								}
+								
+								visualizzaLinkConfigurazioneRegola = true;
+								listaRegoleCachingConfigurazione = configurazioneTmp.getRegolaList();
+								numeroResponseCachingConfigurazioneRegola = porteApplicativeHelper.numeroRegoleResponseCaching(configurazioneTmp);
 							}
 						}
 					}
@@ -296,7 +377,10 @@ public class PorteApplicativeResponseCaching extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
-						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
+						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
+						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -318,7 +402,10 @@ public class PorteApplicativeResponseCaching extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
-						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
+						responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes,
+						responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
+						servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 
@@ -331,7 +418,10 @@ public class PorteApplicativeResponseCaching extends Action {
 
 			ResponseCachingConfigurazione newConfigurazione = null;
 			if(statoResponseCachingPorta.equals(CostantiControlStation.VALUE_PARAMETRO_RESPONSE_CACHING_STATO_RIDEFINITO)) {
-				newConfigurazione = porteApplicativeHelper.getResponseCaching(responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
+				newConfigurazione = porteApplicativeHelper.getResponseCaching(responseCachingEnabled, responseCachingSeconds,
+						responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, 
+						responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+						responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore,listaRegoleCachingConfigurazione);
 			}
 			
 			pa.setResponseCaching(newConfigurazione);
@@ -369,25 +459,43 @@ public class PorteApplicativeResponseCaching extends Action {
 							responseCachingMaxResponseSizeBytes = configurazioneAggiornata.getMaxMessageSize().longValue();
 						}
 						
-						responseCachingDigestUrlInvocazione = false;
+						responseCachingDigestUrlInvocazione = true;
 						responseCachingDigestHeaders = false;
-						responseCachingDigestPayload = false;
+						responseCachingDigestPayload = true;
 						if(configurazioneAggiornata.getHashGenerator() != null) {
-							if(configurazioneAggiornata.getHashGenerator().getHeaders() != null && configurazioneAggiornata.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO)) 
-								responseCachingDigestHeaders = true;
+							if(configurazioneAggiornata.getHashGenerator().getHeaders() != null)  
+								responseCachingDigestHeaders = configurazioneAggiornata.getHashGenerator().getHeaders().equals(StatoFunzionalita.ABILITATO);
 							
-							if(configurazioneAggiornata.getHashGenerator().getRequestUri() != null && configurazioneAggiornata.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO)) 
-								responseCachingDigestUrlInvocazione = true;
+							if(configurazioneAggiornata.getHashGenerator().getHeaderList() != null)  
+								responseCachingDigestHeadersNomiHeaders = StringUtils.join(configurazioneAggiornata.getHashGenerator().getHeaderList(), ",");
 							
-							if(configurazioneAggiornata.getHashGenerator().getPayload() != null && configurazioneAggiornata.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO)) 
-								responseCachingDigestPayload = true;
+							if(configurazioneAggiornata.getHashGenerator().getRequestUri() != null) 
+								responseCachingDigestUrlInvocazione = configurazioneAggiornata.getHashGenerator().getRequestUri().equals(StatoFunzionalita.ABILITATO);
+							
+							if(configurazioneAggiornata.getHashGenerator().getPayload() != null) 
+								responseCachingDigestPayload = configurazioneAggiornata.getHashGenerator().getPayload().equals(StatoFunzionalita.ABILITATO);
 						}
+						
+						responseCachingCacheControlNoCache = true;
+						responseCachingCacheControlMaxAge = true;
+						responseCachingCacheControlNoStore = true;
+						if(configurazioneAggiornata.getControl() != null) {
+							responseCachingCacheControlNoCache = configurazioneAggiornata.getControl().isNoCache();
+							responseCachingCacheControlMaxAge = configurazioneAggiornata.getControl().isMaxAge();
+							responseCachingCacheControlNoStore = configurazioneAggiornata.getControl().isNoStore();
+						}
+						
+						numeroResponseCachingConfigurazioneRegola = configurazioneAggiornata.sizeRegolaList();
+						visualizzaLinkConfigurazioneRegola = true;
 					}
 				}
 			}
 
 			porteApplicativeHelper.addConfigurazioneResponseCachingPorteToDati(tipoOperazione, dati, showStato, statoResponseCachingPorta,
-					responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload);
+					responseCachingEnabled, responseCachingSeconds, responseCachingMaxResponseSize, responseCachingMaxResponseSizeBytes, 
+					responseCachingDigestUrlInvocazione, responseCachingDigestHeaders, responseCachingDigestPayload, responseCachingDigestHeadersNomiHeaders,
+					responseCachingCacheControlNoCache, responseCachingCacheControlMaxAge, responseCachingCacheControlNoStore, visualizzaLinkConfigurazioneRegola,
+					servletResponseCachingConfigurazioneRegolaList, paramsResponseCachingConfigurazioneRegolaList, numeroResponseCachingConfigurazioneRegola );
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 

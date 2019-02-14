@@ -57,6 +57,7 @@ public final class Liste
 	public final static int PORTE_APPLICATIVE_RUOLI;
 	public final static int PORTE_APPLICATIVE_SCOPE;
 	public final static int PORTE_APPLICATIVE_EXTENDED;
+	public final static int PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 	
 	public final static int PORTE_DELEGATE;
 	public final static int PORTE_DELEGATE_BY_SOGGETTO;
@@ -72,6 +73,7 @@ public final class Liste
 	public final static int PORTE_DELEGATE_RUOLI;
 	public final static int PORTE_DELEGATE_SCOPE;
 	public final static int PORTE_DELEGATE_EXTENDED;
+	public final static int PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
 	
 	public final static int SERVIZIO_APPLICATIVO;
 	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO;
@@ -133,7 +135,9 @@ public final class Liste
     
     public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;	
     public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
-    public final static int CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;	
+    public final static int CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;
+    public final static int CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
+    
 	
 
     private static int numeroListe = 0;
@@ -158,6 +162,7 @@ public final class Liste
     	PORTE_APPLICATIVE_RUOLI = numeroListe ++;
     	PORTE_APPLICATIVE_SCOPE = numeroListe ++;
     	PORTE_APPLICATIVE_EXTENDED = numeroListe ++;
+    	PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = numeroListe ++;
     	PORTE_DELEGATE = numeroListe ++;
     	PORTE_DELEGATE_BY_SOGGETTO= numeroListe ++;
     	PORTE_DELEGATE_PROP= numeroListe ++;
@@ -172,6 +177,7 @@ public final class Liste
     	PORTE_DELEGATE_RUOLI = numeroListe ++;
     	PORTE_DELEGATE_SCOPE = numeroListe ++;
     	PORTE_DELEGATE_EXTENDED = numeroListe ++;
+    	PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = numeroListe ++;
     	SERVIZIO_APPLICATIVO = numeroListe ++;
     	SERVIZI_APPLICATIVI_BY_SOGGETTO = numeroListe ++;
     	SERVIZIO_APPLICATIVO_RUOLI = numeroListe ++;
@@ -221,6 +227,7 @@ public final class Liste
     	CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY = numeroListe ++;
     	CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY = numeroListe ++;
     	CONFIGURAZIONE_GESTIONE_POLICY_TOKEN = numeroListe ++;
+    	CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA = numeroListe ++;
     }
     
 	

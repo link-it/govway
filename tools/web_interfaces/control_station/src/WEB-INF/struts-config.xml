@@ -1496,6 +1496,26 @@
             <forward name="porteDelegateResponseCachingCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteDelegateResponseCachingError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Porte Delegate (Response Caching Configurazione Regola) -->
+
+        <action path="/porteDelegateResponseCachingConfigurazioneRegolaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateResponseCachingConfigurazioneRegolaAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateResponseCachingConfigurazioneRegolaList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateResponseCachingConfigurazioneRegolaList"
+            scope="request" validate="true">
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateResponseCachingConfigurazioneRegolaDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateResponseCachingConfigurazioneRegolaDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
 		    
     	<!--  Porte Applicative -->
     
@@ -1999,6 +2019,26 @@
             <forward name="porteApplicativeResponseCachingCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeResponseCachingError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!-- Porte Applicative (Response Caching Configurazione Regola) -->
+
+        <action path="/porteApplicativeResponseCachingConfigurazioneRegolaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeResponseCachingConfigurazioneRegolaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeResponseCachingConfigurazioneRegolaList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeResponseCachingConfigurazioneRegolaList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeResponseCachingConfigurazioneRegolaDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeResponseCachingConfigurazioneRegolaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Configurazione (Generale) -->
@@ -2308,6 +2348,26 @@
             scope="request" validate="true">
             <forward name="configurazioneRegistriDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!-- Configurazione Response Caching Configurazione Regola -->
+
+        <action path="/configurazioneResponseCachingConfigurazioneRegolaAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneResponseCachingConfigurazioneRegolaAdd"
+            scope="request" validate="true">
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneResponseCachingConfigurazioneRegolaList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneResponseCachingConfigurazioneRegolaList"
+            scope="request" validate="true">
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneResponseCachingConfigurazioneRegolaDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneResponseCachingConfigurazioneRegolaDel"
+            scope="request" validate="true">
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
         </action>
     
    		<!-- Configurazione Routing (link alla lista delle rotte) -->
