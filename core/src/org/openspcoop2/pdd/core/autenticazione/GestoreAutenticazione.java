@@ -277,33 +277,28 @@ public class GestoreAutenticazione {
 
 		}
 
-		if( (idleTime > 0) ||
-				(itemLifeSecond > 0) ){
-
-			if( idleTime > 0  ){
-				try{
-					String msg = "Attributo 'IdleTime' (Autenticazione) impostato al valore: "+idleTime;
-					if(log!=null)
-						log.info(msg);
-					GestoreAutenticazione.logConsole.info(msg);
-					GestoreAutenticazione.cacheAutenticazione.setItemIdleTime(idleTime);
-				}catch(Exception error){
-					throw new AutenticazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
-				}
+		if( idleTime > 0  ){
+			try{
+				String msg = "Attributo 'IdleTime' (Autenticazione) impostato al valore: "+idleTime;
+				if(log!=null)
+					log.info(msg);
+				GestoreAutenticazione.logConsole.info(msg);
+				GestoreAutenticazione.cacheAutenticazione.setItemIdleTime(idleTime);
+			}catch(Exception error){
+				throw new AutenticazioneException("Parametro errato per l'attributo 'IdleTime' (Gestore Messaggi): "+error.getMessage(),error);
 			}
-			if( itemLifeSecond > 0  ){
-				try{
-					String msg = "Attributo 'MaxLifeSecond' (Autenticazione) impostato al valore: "+itemLifeSecond;
-					if(log!=null)
-						log.info(msg);
-					GestoreAutenticazione.logConsole.info(msg);
-					GestoreAutenticazione.cacheAutenticazione.setItemLifeTime(itemLifeSecond);
-				}catch(Exception error){
-					throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
-				}
-			}
-
 		}
+
+		try{
+			String msg = "Attributo 'MaxLifeSecond' (Autenticazione) impostato al valore: "+itemLifeSecond;
+			if(log!=null)
+				log.info(msg);
+			GestoreAutenticazione.logConsole.info(msg);
+			GestoreAutenticazione.cacheAutenticazione.setItemLifeTime(itemLifeSecond);
+		}catch(Exception error){
+			throw new AutenticazioneException("Parametro errato per l'attributo 'MaxLifeSecond' (Gestore Messaggi): "+error.getMessage(),error);
+		}
+
 	}
 	
 

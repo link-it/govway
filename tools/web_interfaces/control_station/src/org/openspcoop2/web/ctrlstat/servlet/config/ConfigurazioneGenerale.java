@@ -507,7 +507,7 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoConfigurazione().getCache().setDimensione(dimensionecache_config);
 					newConfigurazione.getAccessoConfigurazione().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_config));
 					newConfigurazione.getAccessoConfigurazione().getCache().setItemIdleTime(idlecache_config);
-					newConfigurazione.getAccessoConfigurazione().getCache().setItemLifeSecond(lifecache_config);
+					newConfigurazione.getAccessoConfigurazione().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_config));
 				}
 				else{
 					newConfigurazione.getAccessoConfigurazione().setCache(null);
@@ -521,7 +521,7 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setDimensione(dimensionecache_authz);
 					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_authz));
 					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setItemIdleTime(idlecache_authz);
-					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setItemLifeSecond(lifecache_authz);
+					newConfigurazione.getAccessoDatiAutorizzazione().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_authz));
 				}
 				else{
 					newConfigurazione.getAccessoDatiAutorizzazione().setCache(null);
@@ -535,7 +535,7 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiAutenticazione().getCache().setDimensione(dimensionecache_authn);
 					newConfigurazione.getAccessoDatiAutenticazione().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_authn));
 					newConfigurazione.getAccessoDatiAutenticazione().getCache().setItemIdleTime(idlecache_authn);
-					newConfigurazione.getAccessoDatiAutenticazione().getCache().setItemLifeSecond(lifecache_authn);
+					newConfigurazione.getAccessoDatiAutenticazione().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_authn));
 				}
 				else{
 					newConfigurazione.getAccessoDatiAutenticazione().setCache(null);
@@ -549,7 +549,7 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getAccessoDatiGestioneToken().getCache().setDimensione(dimensionecache_token);
 					newConfigurazione.getAccessoDatiGestioneToken().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_token));
 					newConfigurazione.getAccessoDatiGestioneToken().getCache().setItemIdleTime(idlecache_token);
-					newConfigurazione.getAccessoDatiGestioneToken().getCache().setItemLifeSecond(lifecache_token);
+					newConfigurazione.getAccessoDatiGestioneToken().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_token));
 				}
 				else{
 					newConfigurazione.getAccessoDatiGestioneToken().setCache(null);
@@ -563,7 +563,7 @@ public final class ConfigurazioneGenerale extends Action {
 					newConfigurazione.getResponseCaching().getCache().setDimensione(dimensionecache_risposte);
 					newConfigurazione.getResponseCaching().getCache().setAlgoritmo(AlgoritmoCache.toEnumConstant(algoritmocache_risposte));
 					newConfigurazione.getResponseCaching().getCache().setItemIdleTime(idlecache_risposte);
-					newConfigurazione.getResponseCaching().getCache().setItemLifeSecond(lifecache_risposte);
+					newConfigurazione.getResponseCaching().getCache().setItemLifeSecond(confHelper.convertLifeCacheValue(lifecache_risposte));
 				}
 				else{
 					newConfigurazione.getResponseCaching().setCache(null);

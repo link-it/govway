@@ -64,3 +64,25 @@ ALTER TABLE configurazione ADD response_cache_dimensionecache VARCHAR2(255);
 ALTER TABLE configurazione ADD response_cache_algoritmocache VARCHAR2(255);
 ALTER TABLE configurazione ADD response_cache_idlecache VARCHAR2(255);
 ALTER TABLE configurazione ADD response_cache_lifecache VARCHAR2(255);
+
+
+-- Configurazione CORS
+UPDATE configurazione set cors_stato='abilitato';
+UPDATE configurazione set cors_tipo='gateway';
+UPDATE configurazione set cors_all_allow_origins='abilitato';
+UPDATE configurazione set cors_allow_headers='Authorization,Content-Type,SOAPAction,Cache-Control';
+UPDATE configurazione set cors_allow_methods='GET,PUT,POST,DELETE,PATCH';
+
+-- Configurazione Cache Response
+UPDATE configurazione set response_cache_stato='disabilitato';
+
+-- Configurazione Cache ResponseCache
+UPDATE configurazione set response_cache_statocache='abilitato';
+UPDATE configurazione set response_cache_dimensionecache='10000';
+UPDATE configurazione set response_cache_algoritmocache='lru';
+UPDATE configurazione set response_cache_lifecache='-1';
+
+-- Configurazione ControlloTraffico
+UPDATE ct_config set max_threads_tipo_errore='http429';
+UPDATE ct_config set rt_tipo_errore='http429';
+

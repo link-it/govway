@@ -201,11 +201,25 @@ public class Cache {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public boolean isEternal() throws UtilsException {
+		try{
+			return this.cache.getDefaultElementAttributes().getIsEternal();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	public void setItemLifeTime(long itemLifeTimeCache) throws UtilsException {
 		try{
 			// E' necessario prendere l'oggetto e poi risettarlo a causa di un bug.
 			IElementAttributes el = this.cache.getDefaultElementAttributes();
-			el.setMaxLife(itemLifeTimeCache);
+			if(itemLifeTimeCache>0) {
+				el.setIsEternal(false);
+				el.setMaxLife(itemLifeTimeCache);
+			}
+			else {
+				el.setIsEternal(true);
+				el.setMaxLife(-1);
+			}
 			this.cache.setDefaultElementAttributes(el);
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -540,7 +554,12 @@ public class Cache {
 					bf.append("0");
 				}
 				else if(lifeTime<0){
-					bf.append("Infinito");
+					if(cache.getElementAttributes().getIsEternal()) {
+						bf.append("Infinito");
+					}
+					else {
+						bf.append("Infinito (NoEternal?)");
+					}
 				}
 				bf.append(" ");
 				
@@ -623,6 +642,7 @@ public class Cache {
 		try {
 			bf.append("CACHE SIZE["+this.getCacheSize()
 					+"] ITEM_COUNT["+this.getItemCount()+"] ITEM_IDLE_TIME["+this.getItemIdleTime()+"] ITEM_IDLE_LIFE["+this.getItemLifeTime()
+					+"] IS_ETERNAL["+this.isEternal()
 					+"] CACHE_ALGO["+this.getCacheAlgoritm()+"] STATS{"+this.printStats("")+"}");
 			return bf.toString();
 		} catch (UtilsException e) {

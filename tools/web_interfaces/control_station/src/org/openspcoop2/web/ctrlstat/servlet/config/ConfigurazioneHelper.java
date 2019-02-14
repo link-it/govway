@@ -197,6 +197,23 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
+	public String convertLifeCacheValue(String v) {
+		if(v==null) {
+			return "-1";
+		}
+		try {
+			int vInt = Integer.valueOf(v);
+			if(vInt>0) {
+				return vInt+"";
+			}
+			else {
+				return "-1";
+			}
+		}catch(Exception e) {
+			return "-1";
+		}
+	}
+	
 	public void setDataElementCache(Vector<DataElement> dati, String intestazioneSezione,
 			String nomeParametroStatoCache, String statocache,
 			String nomeParametroDimensioneCache, String dimensionecache,
@@ -220,7 +237,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
 		de.setName(nomeParametroStatoCache);
-		if(view){
+		if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStatoCache);
 			de.setSelected(statocache);
@@ -272,10 +289,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE);
-			de.setValue(lifecache);
-			if(view){
+			int value = -1;
+			try {
+				value = Integer.valueOf(lifecache);
+			}catch(Exception e) {}
+			if(value>0){
+				de.setValue(value+"");
+			}
+			if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
+				//de.setRequired(true);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -289,6 +312,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(idlecache);
 			if(view){
 				de.setType(DataElementType.TEXT_EDIT);
+				de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
@@ -1681,11 +1705,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (lifecache==null || lifecache.equals("")) ) {
-				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
-				return false;
-			}
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !lifecache.equals("") && 
+//			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && (lifecache==null || lifecache.equals("")) ) {
+//				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
+//				return false;
+//			}
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && lifecache!=null && !lifecache.equals("") && 
 					!this.checkNumber(lifecache, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE+ "("+nomeCache+")", false)) {
 				return false;
 			}
@@ -5988,33 +6012,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(cache.getSize()+"");
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
-		if(enabled && cache.isCache()){
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-		}
-		if(cache.getLifeTime()!=null)
-			de.setValue(cache.getLifeTime()+"");
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
-		if(enabled && cache.isCache()){
-			de.setType(DataElementType.TEXT_EDIT);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-		}
-		if(cache.getIdleTime()!=null)
-			de.setValue(cache.getIdleTime()+"");
-		dati.addElement(de);
-		
 		
 		String[] tipoAlgoritmo = { 
 				CacheAlgorithm.LRU.name(),
@@ -6037,6 +6034,35 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(cache.getAlgorithm().name());
 		}
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+		if(enabled && cache.isCache()){
+			de.setType(DataElementType.TEXT_EDIT);
+			//de.setRequired(true);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		if(cache.getLifeTime()!=null)
+			de.setValue(cache.getLifeTime()+"");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_IDLE_TIME);
+		if(enabled && cache.isCache()){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		if(cache.getIdleTime()!=null)
+			de.setValue(cache.getIdleTime()+"");
+		dati.addElement(de);
+		
 		
 	}
 	
@@ -6399,7 +6425,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(first){
 				if(cache.getLifeTime()==null){
 					// default
-					cache.setLifeTime(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
+					//cache.setLifeTime(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_LIFE_TIME);
 				}
 			}else{
 				cache.setLifeTime(null); // il check segnalera' l'errore  
@@ -6549,11 +6575,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
-			if(configurazioneControlloTraffico.getCache().getLifeTime()==null){
-				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"'";
-				this.pd.setMessage(messaggio);
-				return false;
-			}
+//			if(configurazioneControlloTraffico.getCache().getLifeTime()==null){
+//				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CACHE_DIMENSIONE+"'";
+//				this.pd.setMessage(messaggio);
+//				return false;
+//			}
 			
 		}
 		return true;
