@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>1.0</version>
+	<artifactId>org.openspcoop2</artifactId>
+	<packaging>pom</packaging>
+	<name>govway</name>
+	<modules>
+		<module>mvn/dependencies</module>
+		<module>mvn/compile</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>linkit-releases</id>
+			<url>https://maven.link.it/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>linkit-snapshot</id>
+			<url>https://maven.link.it/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>linkit-thirdparty</id>
+			<url>https://maven.link.it/content/repositories/thirdparty-releases/</url>
+		</repository>
+	</repositories>
+
+</project>

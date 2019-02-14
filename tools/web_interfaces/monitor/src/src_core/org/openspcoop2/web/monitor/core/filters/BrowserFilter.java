@@ -231,7 +231,6 @@ public class BrowserFilter implements Filter {
 	 * sono "libere" le pagine di login e timeout, e i path delle risorse richiesta dinamicamente dal framework 
 	 *	
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean usaSVG(HttpServletRequest httpServletRequest) {
 		int svgLength = 0;
 		String svg = null;
@@ -291,7 +290,6 @@ public class BrowserFilter implements Filter {
 		return svgLength > 0;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static String getParamValue(HttpServletRequest httpServletRequest, String paramName){
 		Enumeration<String> parameterNames = httpServletRequest.getParameterNames(); 
 		

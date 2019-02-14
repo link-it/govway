@@ -36,7 +36,7 @@ import java.util.Properties;
 
 import org.apache.http.benchmark.Config;
 import org.apache.http.benchmark.HttpBenchmark;
-import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.io.Base64Utilities;
 
 
 /**
@@ -246,7 +246,7 @@ public class Client {
         String authentication = "";
 		if(user!=null && passw!=null){
 			authentication = user + ":" + passw;
-			authentication = "Basic " + Base64.encode(authentication.getBytes());
+			authentication = "Basic " + Base64Utilities.encodeAsString(authentication.getBytes());
 			//System.out.println("CODE["+authentication+"]");
 			headers.add("Authorization:"+authentication);
 		}

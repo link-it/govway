@@ -52,7 +52,6 @@ import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -62,6 +61,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -367,8 +367,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			}
 			if(user!=null && password!=null){
 				String authentication = user + ":" + password;
-				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
-				Base64.encode(authentication.getBytes());
+				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
 				httpRequest.setHeader(HttpConstants.AUTHORIZATION,authentication);
 				if(this.debug)
 					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);

@@ -26,7 +26,7 @@ import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
 
@@ -64,7 +64,7 @@ public class HttpServletCredential extends Credential implements Serializable {
 		// Basic (HTTP-Based)
 		if(auth != null && auth.toLowerCase().startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC.toLowerCase())){
 			// Sbustring(6): elimina la parte "Basic "
-			String decodeAuth = new String(Base64.decode(auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BASIC.length())));
+			String decodeAuth = new String(Base64Utilities.decode(auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BASIC.length())));
 			String [] decodeAuthSplit = decodeAuth.split(":");
 			if(decodeAuthSplit.length>1){
 				this.username = decodeAuthSplit[0];

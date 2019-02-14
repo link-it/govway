@@ -32,8 +32,8 @@ MVN_VERSION="$OPENSPCOOP_VERSION.$VERSIONE_DISTRIB$SNAPSHOT_SUFFIX"
 #rm -rf SWAGGER_CODE_GEN
 #mkdir SWAGGER_CODE_GEN
 
-#SWAGGER_CODE_JAR=../../lib/swagger-codegen/swagger-codegen-cli-3.0.0.jar
-#SWAGGER_CODE_JAR_TEMPLATE=${PWD}/../../lib/swagger-codegen/swagger-codegen-cli-3.0.0-templates.gw.jar
+#SWAGGER_CODE_JAR=../../lib/swagger-codegen/swagger-codegen-cli-3.0.4.jar
+#SWAGGER_CODE_JAR_TEMPLATE=${PWD}/../../lib/swagger-codegen/swagger-codegen-cli-3.0.4-gov4j-1.jar
 #rm -rf /tmp/SW_COD_GEN_TMP
 #unzip -q ${SWAGGER_CODE_JAR} -d /tmp/SW_COD_GEN_TMP
 #pushd /tmp/SW_COD_GEN_TMP

@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>1.0</version>
+	<artifactId>org.openspcoop2.wadl</artifactId>
+	<packaging>pom</packaging>
+	<name>dependencies.wadl</name>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2.dependencies</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<properties>
+
+		<jar.group.name>wadl</jar.group.name>
+		
+		<localizer.version>1.0</localizer.version>
+		<wadl.version>1.1.6</wadl.version>
+
+	</properties>
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.sun.localizer</groupId>
+			<artifactId>localizer</artifactId>
+			<version>${localizer.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jvnet.ws.wadl</groupId>
+			<artifactId>wadl-core</artifactId>
+			<version>${wadl.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.ws.wadl</groupId>
+			<artifactId>wadl-xslt</artifactId>
+			<version>${wadl.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				<execution>
+					<id>copy-dependencies</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
+						<overWriteReleases>false</overWriteReleases>
+						<overWriteSnapshots>false</overWriteSnapshots>
+						<overWriteIfNewer>true</overWriteIfNewer>
+						<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+					</configuration>
+				</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>1.0</version>
+	<artifactId>org.openspcoop2.dependencies</artifactId>
+	<packaging>pom</packaging>
+	<name>dependencies</name>
+
+	<modules>
+		<module>ant</module>
+		<module>antinstaller</module>
+		<module>axiom</module> 
+		<module>axis14</module>
+		<module>applicationServer</module>
+		<module>cxf</module>
+		<module>commons</module>
+		<module>faces</module>
+		<module>git</module>
+		<module>httpcore</module>
+		<module>jackson</module>
+		<module>javax</module>
+		<module>jax</module>
+		<module>jetty</module>
+		<module>jminix</module>
+		<module>json</module>
+		<module>log</module>
+		<module>lucene</module>
+		<module>opensaml</module>
+		<module>proguard</module>
+		<module>reports</module>
+		<module>saaj</module>
+		<module>security</module>
+		<module>shared</module>
+		<module>soapbox</module>
+		<module>spring</module>
+		<module>spring-security</module>
+		<module>swagger</module>
+		<module>swagger-codegen</module>
+		<module>testsuite</module>
+		<module>wadl</module>
+		<module>wss4j</module>
+	</modules>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+</project>

@@ -294,6 +294,55 @@ public class Session implements javax.jms.Session{
 		}
 		this.session.unsubscribe(arg0);
 	}
+
+	@Override
+	public MessageConsumer createDurableConsumer(Topic arg0, String arg1) throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createDurableConsumer(arg0, arg1);
+	}
+
+	@Override
+	public MessageConsumer createDurableConsumer(Topic arg0, String arg1, String arg2, boolean arg3)
+			throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createDurableConsumer(arg0, arg1, arg2, arg3);
+	}
+
+	@Override
+	public MessageConsumer createSharedConsumer(Topic arg0, String arg1) throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createSharedConsumer(arg0, arg1);
+	}
+
+	@Override
+	public MessageConsumer createSharedConsumer(Topic arg0, String arg1, String arg2) throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createSharedConsumer(arg0, arg1, arg2);
+	}
+
+	@Override
+	public MessageConsumer createSharedDurableConsumer(Topic arg0, String arg1) throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createSharedDurableConsumer(arg0, arg1);
+	}
+
+	@Override
+	public MessageConsumer createSharedDurableConsumer(Topic arg0, String arg1, String arg2) throws JMSException {
+		if(this.session == null){
+			throw new JMSException("Session is null");
+		}
+		return this.session.createSharedDurableConsumer(arg0, arg1, arg2);
+	}
 	
 	
 }

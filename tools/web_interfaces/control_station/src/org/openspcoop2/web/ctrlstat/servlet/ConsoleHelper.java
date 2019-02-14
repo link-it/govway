@@ -441,7 +441,6 @@ public class ConsoleHelper {
 					}else throw new Exception("Parametro ["+partName+"] Duplicato.");
 				}
 			} else {
-				@SuppressWarnings("unchecked")
 				Enumeration<String> parameterNames = this.request.getParameterNames();
 				while (parameterNames.hasMoreElements()) {
 					String param = (String) parameterNames.nextElement();

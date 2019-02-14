@@ -413,7 +413,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
-			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-160.jar" use-physical-code-source="true"/>
+			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.60.jar" use-physical-code-source="true"/>
 			 *  all'interno del file jboss-deployment-structure.xml non è più sufficente da quanto è stato necessario
 			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'

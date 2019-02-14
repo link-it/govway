@@ -47,10 +47,10 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -715,8 +715,7 @@ public class HttpUtilities {
 			
 			if(request.getUsername()!=null && request.getPassword()!=null){
 				String authentication = request.getUsername() + ":" + request.getPassword();
-				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
-				Base64.encode(authentication.getBytes());
+				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 			}
 			
@@ -854,8 +853,7 @@ public class HttpUtilities {
 			
 			if(username!=null && password!=null){
 				String authentication = username + ":" + password;
-				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC+ 
-				Base64.encode(authentication.getBytes());
+				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC+ Base64Utilities.encodeAsString(authentication.getBytes());
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 			}
 			

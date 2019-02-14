@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>1.0</version>
+	<artifactId>org.openspcoop2.git</artifactId>
+	<packaging>pom</packaging>
+	<name>dependencies.git</name>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2.dependencies</artifactId>
+		<version>1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<properties>
+
+		<jar.group.name>git</jar.group.name>
+		
+		<git-task.version>1.0</git-task.version>
+		<org.eclipse.jgit.version>5.0.1.201806211838-r</org.eclipse.jgit.version>
+
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.openspcoop2</groupId>
+			<artifactId>openspcoop2_git-task</artifactId>
+			<version>${git-task.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>${org.eclipse.jgit.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				<execution>
+					<id>copy-dependencies</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
+						<overWriteReleases>false</overWriteReleases>
+						<overWriteSnapshots>false</overWriteSnapshots>
+						<overWriteIfNewer>true</overWriteIfNewer>
+						<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+					</configuration>
+				</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

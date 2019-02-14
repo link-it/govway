@@ -78,7 +78,7 @@
 			<lib dir="${openspcoop2.lib}/faces">
 				<include name="richfaces-api-3.3.4.Final.jar"/>
 				<include name="richfaces-ui-3.3.4.Final.jar"/>
-				<include name="richfaces-impl-3.3.4.Final.gw.jar"/>
+				<include name="richfaces-impl-3.3.4.Final-gov4j-1.jar"/>
 				<include name="richfaces-impl-jsf2-3.3.4.Final.jar"/>
 				<include name="javax.faces-2.2.3.jar"/>
 			</lib>
@@ -126,7 +126,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			

@@ -34,7 +34,6 @@ import java.util.List;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
@@ -139,6 +138,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -2456,7 +2456,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							Node idMessaggioPresenteNelRepositoryNode = prelevaMessaggioReturn.getFirstChild();
 							if(idMessaggioPresenteNelRepositoryNode==null)
 								throw new Exception("Identificativo non presente [idMessaggioPresenteNelRepositoryNode]");
-							byte[] idMessaggioPresenteNelRepositoryByte = Base64.decode(idMessaggioPresenteNelRepositoryNode.getNodeValue());
+							byte[] idMessaggioPresenteNelRepositoryByte = Base64Utilities.decode(idMessaggioPresenteNelRepositoryNode.getNodeValue());
 							String idMessaggioPresenteNelRepository = new String(idMessaggioPresenteNelRepositoryByte);
 							//if(idMessaggioPresenteNelRepository==null)
 							//	throw new Exception("Identificativo non presente");

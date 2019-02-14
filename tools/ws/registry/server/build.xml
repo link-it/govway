@@ -59,7 +59,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->

@@ -19,23 +19,23 @@
 		
 		<var name="tmp_prefix" value="lib" />
 		<var name="tmp" value="${tmp_prefix}/addressing-1.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-160.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-160.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcprov-ext-jdk15on-1.60.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk15on-1.60.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.11.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-discovery-0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.2.6.gw.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.2.6-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.2.6.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.0.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.0.1-gov4j.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1-gov4j.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.0.1-gov4j.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.0.1-gov4j.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.0.2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2.gw.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.3.1.jar"/>
@@ -60,7 +60,6 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.3.28.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.7.8.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.7.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/soap.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.0.8.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aspects-5.0.8.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-beans-5.0.8.RELEASE.jar"/>
@@ -541,7 +540,7 @@
 			</or>
 			<then>
 				<var name="xalan_jar" value="xalan-2.7.2.jar"/>
-				<var name="xalan_serializer_jar" value="xalan-2.7.2_serializer.jar" />
+				<var name="xalan_serializer_jar" value="serializer-2.7.2.jar" />
 			</then>
 		</if>
 		<!-- xerces -->
@@ -554,7 +553,7 @@
 			</or>
 			<then>
 				<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
-				<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
+				<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 			</then>
 		</if>
 		<!-- jaxb_xjc -->
@@ -564,7 +563,7 @@
 				<equals arg1="${as}" arg2="jboss6"/>
 			</or>
 			<then>
-				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.0.1.jar"/>
+				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.0.1-gov4j.jar"/>
 			</then>
 		</if>
 		<!-- jaxp_ri -->
@@ -575,7 +574,7 @@
 				<matches string="${as}" pattern="wildfly.*"/>
 			</or>
 			<then>
-				<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+				<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 			</then>
 		</if>
 		<!-- concurrent -->
@@ -764,8 +763,8 @@
 				<include name="commons-lang3-3.8.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-160.jar"/>
-				<include name="bcpkix-jdk15on-160.jar"/>
+				<include name="bcprov-ext-jdk15on-1.60.jar"/>
+				<include name="bcpkix-jdk15on-1.60.jar"/>
 				<include name="neethi-3.1.1.jar"/>
 				<include name="xmlsec-2.1.2.jar"/>
 				<include name="cryptacular-1.2.2.jar"/>
@@ -781,8 +780,7 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
 				<include name="addressing-1.1.jar"/>
-				<include name="commons-jcs-core-2.2.gw.jar"/>
-				<include name="soap.jar"/>
+				<include name="commons-jcs-core-2.2-gov4j-1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xerces_jar}"/>
@@ -801,7 +799,7 @@
 				<include name="snakeyaml-1.22.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jminix">
@@ -810,7 +808,6 @@
 			<zipfileset prefix="lib" dir="${required_lib}/cxf">
 				<include name="*.jar"/>
 				<exclude name="cxf-tools-*.jar"/>
-				<exclude name="javax.servlet-api-3.1.0.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/saaj">
 				<include name="*.jar"/>

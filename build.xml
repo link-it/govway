@@ -3,14 +3,7 @@
 	<description>
         Ambiente di compilazione dei jar della PdD
     </description>
-	
-	<!-- estensione di ant (if .... ) -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement location="lib/ant/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
-	
+		
 	<!-- Env -->
 	<property name="rootDir" location="." />
 	<property name="openspcoop2" value="${rootDir}" />
@@ -23,9 +16,15 @@
 	<property name="as" value="wildfly10" />
 	<property name="debug" value="true" />
 
-		
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${rootDir}/lib/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
 	<!-- Core -->
-	<property name="core.dir" location="core" />
+	<property name="core.dir" location="${rootDir}/core" />
 	<available file="${core.dir}/local_env.xml" property="core_localenv.present"/>
 	<if>
 		<not>
@@ -39,7 +38,7 @@
 	<import file="${core.dir}/build.xml" />
 	
 	<!-- Protocollo SPCoop -->
-	<property name="protocolli.spcoop.dir" location="protocolli/spcoop" />
+	<property name="protocolli.spcoop.dir" location="${rootDir}/protocolli/spcoop" />
 	<available file="${protocolli.spcoop.dir}/local_env.xml" property="spcoop_localenv.present"/>
 	<if>
 		<not>
@@ -53,7 +52,7 @@
 	<import file="${protocolli.spcoop.dir}/build.xml" />
 	
 	<!-- Protocollo SPCoop (Backward Compatibility) -->
-	<property name="protocolli.spcoop.backwardCompatibility.dir" location="protocolli/spcoop/tools/backward_compatibility" />
+	<property name="protocolli.spcoop.backwardCompatibility.dir" location="${rootDir}/protocolli/spcoop/tools/backward_compatibility" />
 	<available file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" property="spcoop-backwardCompatibility_localenv.present"/>
 	<if>
 		<not>
@@ -67,7 +66,7 @@
 	<import file="${protocolli.spcoop.backwardCompatibility.dir}/build.xml" />
 	
 	<!-- Protocollo ProxyTrasparente -->
-	<property name="protocolli.trasparente.dir" location="protocolli/trasparente" />
+	<property name="protocolli.trasparente.dir" location="${rootDir}/protocolli/trasparente" />
 	<available file="${protocolli.trasparente.dir}/local_env.xml" property="trasparente_localenv.present"/>
 	<if>
 		<not>
@@ -81,7 +80,7 @@
 	<import file="${protocolli.trasparente.dir}/build.xml" />
 	
 	<!-- Protocollo SDI Fatturazione Elettronica -->
-	<property name="protocolli.sdi.dir" location="protocolli/sdi" />
+	<property name="protocolli.sdi.dir" location="${rootDir}/protocolli/sdi" />
 	<available file="${protocolli.sdi.dir}/local_env.xml" property="sdi_localenv.present"/>
 	<if>
 		<not>
@@ -95,7 +94,7 @@
 	<import file="${protocolli.sdi.dir}/build.xml" />
 
 	<!-- Protocollo AS4 -->
-	<property name="protocolli.as4.dir" location="protocolli/as4" />
+	<property name="protocolli.as4.dir" location="${rootDir}/protocolli/as4" />
 	<available file="${protocolli.as4.dir}/local_env.xml" property="as4_localenv.present"/>
 	<if>
 		<not>
@@ -109,7 +108,7 @@
 	<import file="${protocolli.as4.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - Lib - Users -->
-	<property name="web.lib.users.dir" location="tools/web_interfaces/lib/users" />
+	<property name="web.lib.users.dir" location="${rootDir}/tools/web_interfaces/lib/users" />
 	<property name="users" value="${web.lib.users.dir}" />
 	<available file="${web.lib.users.dir}/local_env.xml" property="web_lib_users_localenv.present"/>
 	<if>
@@ -124,7 +123,7 @@
 	<import file="${web.lib.users.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - Lib - MVC -->
-	<property name="web.lib.mvc.dir" location="tools/web_interfaces/lib/mvc" />
+	<property name="web.lib.mvc.dir" location="${rootDir}/tools/web_interfaces/lib/mvc" />
 	<property name="mvc" value="${web.lib.mvc.dir}" />
 	<available file="${web.lib.mvc.dir}/local_env.xml" property="web_lib_mvc_localenv.present"/>
 	<if>
@@ -139,7 +138,7 @@
 	<import file="${web.lib.mvc.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - Lib - Audit -->
-	<property name="web.lib.audit.dir" location="tools/web_interfaces/lib/audit" />
+	<property name="web.lib.audit.dir" location="${rootDir}/tools/web_interfaces/lib/audit" />
 	<property name="audit" value="${web.lib.audit.dir}" />
 	<available file="${web.lib.audit.dir}/local_env.xml" property="web_lib_audit_localenv.present"/>
 	<if>
@@ -154,7 +153,7 @@
 	<import file="${web.lib.audit.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - Lib - Queue -->
-	<property name="web.lib.queue.dir" location="tools/web_interfaces/lib/queue" />
+	<property name="web.lib.queue.dir" location="${rootDir}/tools/web_interfaces/lib/queue" />
 	<property name="queue" value="${web.lib.queue.dir}" />
 	<available file="${web.lib.queue.dir}/local_env.xml" property="web_lib_queue_localenv.present"/>
 	<if>
@@ -169,7 +168,7 @@
 	<import file="${web.lib.queue.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - govwayConsole -->
-	<property name="web.govwayConsole.dir" location="tools/web_interfaces/control_station" />
+	<property name="web.govwayConsole.dir" location="${rootDir}/tools/web_interfaces/control_station" />
 	<available file="${web.govwayConsole.dir}/local_env.xml" property="web_govwayConsole_localenv.present"/>
 	<if>
 		<not>
@@ -183,7 +182,7 @@
 	<import file="${web.govwayConsole.dir}/build.xml" />
 
 	<!-- Tools - WebInterfaces - govwayMonitor -->
-	<property name="web.govwayMonitor.dir" location="tools/web_interfaces/monitor" />
+	<property name="web.govwayMonitor.dir" location="${rootDir}/tools/web_interfaces/monitor" />
 	<available file="${web.govwayMonitor.dir}/local_env.xml" property="web_govwayMonitor_localenv.present"/>
 	<if>
 		<not>
@@ -197,7 +196,7 @@
 	<import file="${web.govwayMonitor.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - govwayLoader -->
-	<property name="web.govwayLoader.dir" location="tools/web_interfaces/loader" />
+	<property name="web.govwayLoader.dir" location="${rootDir}/tools/web_interfaces/loader" />
 	<available file="${web.govwayLoader.dir}/local_env.xml" property="web_govwayLoader_localenv.present"/>
 	<if>
 		<not>
@@ -219,7 +218,6 @@
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
 			<exclude name="axis14/*"/>
-			<exclude name="cxf/javax.servlet-api-3.1.0.jar"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>

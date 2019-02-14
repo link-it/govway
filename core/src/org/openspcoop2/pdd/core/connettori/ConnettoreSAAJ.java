@@ -37,7 +37,6 @@ import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -48,6 +47,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -276,8 +276,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				}
 				if(user!=null && password!=null){
 					String authentication = user + ":" + password;
-					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
-					Base64.encode(authentication.getBytes());
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
 					soapRequestMessage.getSOAPMessage().getMimeHeaders().addHeader(HttpConstants.AUTHORIZATION,authentication);
 					if(this.debug)
 						this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);

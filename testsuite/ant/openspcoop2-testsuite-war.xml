@@ -101,11 +101,11 @@
 				<include name="openspcoop2*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/axis14">
-				<include name="axis-1.4.gw.jar"/>
+				<include name="axis-1.4-gov4j-1.jar"/>
 				<include name="axis-saaj-1.4.jar"/>
-				<include name="axis-jaxrpc-1.4.gw.jar"/>
+				<include name="axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<include name="wss4j-1.5.11.jar"/>
-				<include name="opensaml-1.1b.jar"/>
+				<include name="opensaml-1.1.jar"/>
 				<include name="xmlsec-1.4.4.jar"/>
 				<include name="mailapi-1.5.6.jar"/> 
 			</lib>
@@ -119,7 +119,6 @@
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="activation-1.1.1.jar"/>
 				<include name="addressing-1.1.jar"/>
-				<include name="soap.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
@@ -134,7 +133,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-160.jar"/>
+				<include name="bcprov-ext-jdk15on-1.60.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
@@ -143,11 +142,11 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
-				<include name="${javax_jms_jar}"/>
+				<include name="${javax.jms-api-2.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/stub/axis14">
 				<include name="openspcoop2_integrationManagerStub_axis14.jar"/>

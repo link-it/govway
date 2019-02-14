@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
@@ -42,7 +43,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.soap.util.mime.ByteArrayDataSource;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandler;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandlerInputStream;
 import org.openspcoop2.message.OpenSPCoop2Message;

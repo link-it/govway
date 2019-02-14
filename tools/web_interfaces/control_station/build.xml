@@ -56,7 +56,7 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="javax_jms_jar" value="" />
+	<var name="javax.jms-api-2.0.jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
@@ -79,7 +79,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="javax_jms_jar" value="javax.jms.jar" />
+			<var name="javax.jms-api-2.0.jar" value="javax.jms-api-2.0.jar" />
 		</then>
 	</if>
 	<!-- xalan -->
@@ -93,7 +93,7 @@
 		</or>
 		<then>
 			<var name="xalan_jar" value="xalan-2.7.2.jar" />
-			<var name="xalan_serializer_jar" value="xalan-2.7.2_serializer.jar" />
+			<var name="xalan_serializer_jar" value="serializer-2.7.2.jar" />
 		</then>
 	</if>
 	<!-- xerces -->
@@ -105,7 +105,7 @@
 		</or>
 		<then>
 			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
-			<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
 	<!-- jaxp_ri -->
@@ -115,7 +115,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- neethi -->

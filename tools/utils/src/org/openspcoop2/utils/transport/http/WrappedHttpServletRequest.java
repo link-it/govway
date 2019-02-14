@@ -25,15 +25,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 
 
 /**
@@ -77,13 +87,11 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.getParameter(key);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<java.lang.String,java.lang.String[]> getParameterMap() {
 		return this.httpServletRequest.getParameterMap();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<String> getParameterNames() {
 		return this.httpServletRequest.getParameterNames();
@@ -141,7 +149,6 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.getAttribute(arg0);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<String> getAttributeNames() {
 		return this.httpServletRequest.getAttributeNames();
@@ -172,7 +179,6 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.getLocale();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<java.util.Locale> getLocales() {
 		return this.httpServletRequest.getLocales();
@@ -259,13 +265,11 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.getHeader(arg0);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<String> getHeaderNames() {
 		return this.httpServletRequest.getHeaderNames();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration<String> getHeaders(String arg0) {
 		return this.httpServletRequest.getHeaders(arg0);
@@ -331,6 +335,83 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 	@Override
 	public boolean isUserInRole(String arg0) {
 		return this.httpServletRequest.isUserInRole(arg0);
+	}
+
+	// v3
+	
+	@Override
+	public AsyncContext getAsyncContext() {
+		return this.httpServletRequest.getAsyncContext();
+	}
+
+	@Override
+	public long getContentLengthLong() {
+		return this.httpServletRequest.getContentLengthLong();
+	}
+
+	@Override
+	public DispatcherType getDispatcherType() {
+		return this.httpServletRequest.getDispatcherType();
+	}
+
+	@Override
+	public ServletContext getServletContext() {
+		return this.httpServletRequest.getServletContext();
+	}
+
+	@Override
+	public boolean isAsyncStarted() {
+		return this.httpServletRequest.isAsyncStarted();
+	}
+
+	@Override
+	public boolean isAsyncSupported() {
+		return this.httpServletRequest.isAsyncSupported();
+	}
+
+	@Override
+	public AsyncContext startAsync() throws IllegalStateException {
+		return this.httpServletRequest.startAsync();
+	}
+
+	@Override
+	public AsyncContext startAsync(ServletRequest arg0, ServletResponse arg1) throws IllegalStateException {
+		return this.httpServletRequest.startAsync(arg0,arg1);
+	}
+
+	@Override
+	public boolean authenticate(HttpServletResponse arg0) throws IOException, ServletException {
+		return this.httpServletRequest.authenticate(arg0);
+	}
+
+	@Override
+	public String changeSessionId() {
+		return this.httpServletRequest.changeSessionId();
+	}
+
+	@Override
+	public Part getPart(String arg0) throws IOException, ServletException {
+		return this.httpServletRequest.getPart(arg0);
+	}
+
+	@Override
+	public Collection<Part> getParts() throws IOException, ServletException {
+		return this.httpServletRequest.getParts();
+	}
+
+	@Override
+	public void login(String arg0, String arg1) throws ServletException {
+		this.httpServletRequest.login(arg0,arg1);
+	}
+
+	@Override
+	public void logout() throws ServletException {
+		this.httpServletRequest.logout();
+	}
+
+	@Override
+	public <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException {
+		return this.httpServletRequest.upgrade(arg0);
 	}
 	
 }

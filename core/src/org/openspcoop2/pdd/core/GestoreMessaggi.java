@@ -37,7 +37,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -90,6 +89,7 @@ import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -5851,7 +5851,7 @@ public class GestoreMessaggi  {
 					"</soapenv:Envelope>";
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			bout.write(msgUpper.getBytes());
-			bout.write(Base64.encode(messaggio).getBytes());
+			bout.write(Base64Utilities.encode(messaggio));
 			bout.write(msgDown.getBytes());
 			bout.flush();
 			bout.close();

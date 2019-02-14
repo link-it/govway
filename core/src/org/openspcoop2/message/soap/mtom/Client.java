@@ -33,6 +33,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,10 +72,10 @@ public class Client {
 		
 		Document d = XMLUtils.getInstance().newDocument("<prova xmlns=\"www.openspcoop.org\"><esempio>Esempio di Utilizzo</esempio></prova>".getBytes());
 		Element contenuto1 = d.createElementNS("www.openspcoop.org", "contenuto1");
-		contenuto1.setTextContent(org.apache.soap.encoding.soapenc.Base64.encode("<esempioXml xmlns=\"www.openspcoop.org/example1\">PROVA</esempioXml>".getBytes()));
+		contenuto1.setTextContent(Base64Utilities.encodeAsString("<esempioXml xmlns=\"www.openspcoop.org/example1\">PROVA</esempioXml>".getBytes()));
 		d.getFirstChild().appendChild(contenuto1);
 		Element contenuto2 = d.createElementNS("www.openspcoop.org", "contenuto2");
-		contenuto2.setTextContent(org.apache.soap.encoding.soapenc.Base64.encode("<esempioXml2 xmlns=\"www.openspcoop.org/example2\"><nodoInterno>PROVA</nodoInterno></esempioXml2>".getBytes()));
+		contenuto2.setTextContent(Base64Utilities.encodeAsString("<esempioXml2 xmlns=\"www.openspcoop.org/example2\"><nodoInterno>PROVA</nodoInterno></esempioXml2>".getBytes()));
 		d.getLastChild().appendChild(contenuto2);
 		byte[]xmlOriginale = XMLUtils.getInstance().toByteArray(d,true);
 		
@@ -109,7 +110,7 @@ public class Client {
 			javax.xml.soap.AttachmentPart ap = msg.createAttachmentPart();
 			String contentType = HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
 			ap.setContentId(msg.createContentID("www.openspcoop2.org/example"));
-			ap.setBase64Content(new java.io.ByteArrayInputStream(org.apache.soap.encoding.soapenc.Base64.encode("PROVA".getBytes()).getBytes()), contentType);
+			ap.setBase64Content(new java.io.ByteArrayInputStream(Base64Utilities.encode("PROVA".getBytes())), contentType);
 			msg.addAttachmentPart(ap);
 		}
 		

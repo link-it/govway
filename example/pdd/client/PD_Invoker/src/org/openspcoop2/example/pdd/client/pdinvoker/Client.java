@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -188,7 +188,7 @@ public class Client {
 		String authentication = "";
 		if(user!=null && passw!=null){
 			authentication = user + ":" + passw;
-			authentication = "Basic " + Base64.encode(authentication.getBytes("UTF-8"));
+			authentication = "Basic " + Base64Utilities.encodeAsString(authentication.getBytes("UTF-8"));
 			//System.out.println("CODE["+authentication+"]");
 		}
 

@@ -39,6 +39,7 @@ import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -180,7 +181,7 @@ public class MTOMUtilities {
 				String base64Binary = null;
 				if(fast){
 					// fast unpackaging (for validation)
-					base64Binary = org.apache.soap.encoding.soapenc.Base64.encode("FAST".getBytes());
+					base64Binary = Base64Utilities.encodeAsString("FAST".getBytes());
 				}else{
 					base64Binary = Utilities.getAsByteArrayOuputStream(ap.getBase64Content()).toString();
 					message.removeAttachments(mhs);

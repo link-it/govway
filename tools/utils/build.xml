@@ -31,8 +31,6 @@
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
-			<exclude name="**/cxf/javax.servlet-api-3.1.0.jar"/>
-			<exclude name="**/javax/javax.sql.jar"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>
@@ -99,7 +97,7 @@
 				<include name="openspcoop2_utils_*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/shared">
-				<include name="commons-jcs-core-2.2.gw.jar"/>
+				<include name="commons-jcs-core-2.2-gov4j-1.jar"/>
 				<include name="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
 			</lib>
 		</war>
@@ -114,8 +112,8 @@
 		<fileset dir="${ext_lib}" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${required_lib}/shared">
-			<include name="soap.jar"/>
+		<fileset dir="${required_lib}/commons">
+			<include name="commons-codec-1.11.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>

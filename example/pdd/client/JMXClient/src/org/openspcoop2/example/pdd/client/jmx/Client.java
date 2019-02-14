@@ -32,11 +32,6 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import org.jboss.security.SecurityAssociation;
-import org.jboss.security.SimplePrincipal;
 
 
 /**
@@ -176,29 +171,31 @@ public class Client {
 			}
 			
 			MBeanServerConnection mconn = null;
-			if(args[0].equals("jboss7") ||
-					args[0].startsWith("wildfly") ||
-					args[0].startsWith("tomcat")){
-				JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
-				Hashtable<String, Object> env = null;
-				if(username!=null && password!=null){
-					String[] creds = {username, password};
-					env = new Hashtable<String, Object>();
-					env.put(JMXConnector.CREDENTIALS, creds);
-				}
-				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
-				mconn = jmxConnector.getMBeanServerConnection();
+			// eliminate librerie 3part per vecchi application server
+//			if(args[0].equals("jboss7") ||
+//					args[0].startsWith("wildfly") ||
+//					args[0].startsWith("tomcat")){
+			JMXServiceURL serviceURL = new JMXServiceURL(serverUrl);  
+			Hashtable<String, Object> env = null;
+			if(username!=null && password!=null){
+				String[] creds = {username, password};
+				env = new Hashtable<String, Object>();
+				env.put(JMXConnector.CREDENTIALS, creds);
 			}
-			else{
-				Hashtable<String, Object> env = new Hashtable<String, Object>();
-				env.put(Context.INITIAL_CONTEXT_FACTORY, factory);
-				env.put(Context.PROVIDER_URL, serverUrl);
-				
-				Context ctx = new InitialContext(env);
-				mconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
-				SecurityAssociation.setPrincipal(new SimplePrincipal(username));
-				SecurityAssociation.setCredential(password);	
-			}
+			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);             
+			mconn = jmxConnector.getMBeanServerConnection();
+//			}
+//			else{
+//				
+//				Hashtable<String, Object> env = new Hashtable<String, Object>();
+//				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, factory);
+//				env.put(javax.naming.Context.PROVIDER_URL, serverUrl);
+//				
+//				javax.naming.Context ctx = new javax.naming.InitialContext(env);
+//				mconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
+//				SecurityAssociation.setPrincipal(new SimplePrincipal(username));
+//				SecurityAssociation.setCredential(password);	
+//			}
 		
 			// AccessoRegistroServizi
 			System.out.println();

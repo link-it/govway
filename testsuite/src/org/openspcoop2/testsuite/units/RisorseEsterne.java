@@ -32,11 +32,7 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
-import org.jboss.security.SecurityAssociation;
-import org.jboss.security.SimplePrincipal;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
@@ -171,34 +167,35 @@ public class RisorseEsterne {
 			//System.out.println("JBOSS_VERSIONE["+version_jbossas+"]");
 			
 			MBeanServerConnection jmxconn = null;
-			if("jboss7".equals(version_jbossas) || 
-					(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
-					version_jbossas.startsWith("tomcat")){
+			// eliminato supporto di jboss
+//			if("jboss7".equals(version_jbossas) || 
+//					(version_jbossas!=null && version_jbossas.startsWith("wildfly")) || 
+//					version_jbossas.startsWith("tomcat")){
 				
-				String as = version_jbossas;
-				if(version_jbossas.startsWith("tomcat")){
-					as = "tomcat";
-				}
-				
-				JMXServiceURL serviceURL = new JMXServiceURL(this.unitsTestsuiteProperties.getJMXServiceURL(as));   
-				Hashtable<String, Object> env = null;
-				if(this.unitsTestsuiteProperties.getJMXUsername()!=null && this.unitsTestsuiteProperties.getJMXPassword()!=null){
-					String[] creds = {this.unitsTestsuiteProperties.getJMXUsername(), this.unitsTestsuiteProperties.getJMXPassword()};
-					env = new Hashtable<String, Object>();
-					env.put(JMXConnector.CREDENTIALS, creds);
-				}
-				JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
-				jmxconn = jmxConnector.getMBeanServerConnection();	
-			}else{
-				Hashtable<String, Object> env = new Hashtable<String, Object>();
-				env.put(Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
-				env.put(Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
-				
-				Context ctx = new InitialContext(env);
-				jmxconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
-				SecurityAssociation.setPrincipal(new SimplePrincipal(this.unitsTestsuiteProperties.getJMXUsername()));
-				SecurityAssociation.setCredential(this.unitsTestsuiteProperties.getJMXPassword());
-			}			
+			String as = version_jbossas;
+			if(version_jbossas.startsWith("tomcat")){
+				as = "tomcat";
+			}
+			
+			JMXServiceURL serviceURL = new JMXServiceURL(this.unitsTestsuiteProperties.getJMXServiceURL(as));   
+			Hashtable<String, Object> env = null;
+			if(this.unitsTestsuiteProperties.getJMXUsername()!=null && this.unitsTestsuiteProperties.getJMXPassword()!=null){
+				String[] creds = {this.unitsTestsuiteProperties.getJMXUsername(), this.unitsTestsuiteProperties.getJMXPassword()};
+				env = new Hashtable<String, Object>();
+				env.put(JMXConnector.CREDENTIALS, creds);
+			}
+			JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceURL, env);           
+			jmxconn = jmxConnector.getMBeanServerConnection();	
+//			}else{
+//				Hashtable<String, Object> env = new Hashtable<String, Object>();
+//				env.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, this.unitsTestsuiteProperties.getJMXFactory());
+//				env.put(javax.naming.Context.PROVIDER_URL, this.unitsTestsuiteProperties.getJMXServer());
+//				
+//				javax.naming.Context ctx = new javax.naming.InitialContext(env);
+//				jmxconn = (MBeanServerConnection) ctx.lookup("jmx/invoker/RMIAdaptor");
+//				SecurityAssociation.setPrincipal(new SimplePrincipal(this.unitsTestsuiteProperties.getJMXUsername()));
+//				SecurityAssociation.setCredential(this.unitsTestsuiteProperties.getJMXPassword());
+//			}			
 
 			
 			ObjectName jmxname = new ObjectName("org.openspcoop2.pdd:type=MonitoraggioRisorse");

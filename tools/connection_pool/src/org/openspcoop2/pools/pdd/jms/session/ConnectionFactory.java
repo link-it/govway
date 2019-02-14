@@ -25,6 +25,7 @@
 package org.openspcoop2.pools.pdd.jms.session;
 
 import javax.jms.Connection;
+import javax.jms.JMSContext;
 import javax.jms.JMSException;
 
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
@@ -66,6 +67,29 @@ public class ConnectionFactory  extends SessionJMSPool implements javax.jms.Conn
 		}catch(Exception e){
 			throw new JMSException(e.getMessage());
 		}
+	}
+	
+	@Override
+	public JMSContext createContext() {
+		return null;
+	}
+
+
+	@Override
+	public JMSContext createContext(int arg0) {
+		return null;
+	}
+
+
+	@Override
+	public JMSContext createContext(String arg0, String arg1) {
+		return null;
+	}
+
+
+	@Override
+	public JMSContext createContext(String arg0, String arg1, int arg2) {
+		return null;
 	}
 
 }

@@ -7,12 +7,7 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
   https://github.com/link-it/GovWay/releases/download/<versione>/govway-installer-<versione>.tgz
   (es.   https://github.com/link-it/GovWay/releases/download/3.0.0/govway-installer-3.0.0.tgz)
   
-1.2. Scaricare le librerie esterne relative alla versione sorgente da compilare, disponibili alla URL: 
-
-  https://github.com/link-it/GovWay/releases/download/<versione>/govway-external-lib-<versione>.tgz
-  (es. https://github.com/link-it/GovWay/releases/download/3.0.0/govway-external-lib-3.0.0.tgz)
-
-1.3. Scaricare i sorgenti del software, disponibili all'indirizzo:
+1.2. Scaricare i sorgenti del software, disponibili all'indirizzo:
 
   https://github.com/link-it/GovWay.git
      
@@ -24,16 +19,10 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 	cd GovWay
 	git checkout <versione>
 
-2.2 Copiare le librerie esterne all'interno della directory lib
-
-    Esempio: 
-    	tar xzf govway-external-lib-3.0.0.tgz
-	cp -r govway-external-lib-3.0.0/lib/* lib/
-
-2.3 Compilare il Software tramite il comando ant
+2.3 Compilare il Software tramite il comando mvn
 
     Esempio:
-	ant
+	mvn clean compile
 
 3. Installazione dei Binari prodotti
 

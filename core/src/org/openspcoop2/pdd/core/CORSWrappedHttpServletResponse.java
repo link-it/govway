@@ -78,6 +78,7 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 		return this.message;
 	}
 
+	@Override
 	public int getStatus() {
 		return this.status;
 	}

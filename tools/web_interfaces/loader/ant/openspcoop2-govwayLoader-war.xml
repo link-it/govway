@@ -72,7 +72,7 @@
 			<lib dir="${required_lib_loaderConsole}/shared" >
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="struts-core-1.3.10.jar"/>
-				<include name="xmldb.jar"/>
+				<include name="xmldb-1.0.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
@@ -88,7 +88,7 @@
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${dist_loaderConsole}" >

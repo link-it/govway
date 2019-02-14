@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.internet.ContentType;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -268,6 +269,21 @@ class FormUrlEncodedServletInputStream extends ServletInputStream {
 	@Override
 	public boolean markSupported() {
 		return this.is.markSupported();
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false;
+	}
+
+	@Override
+	public boolean isReady() {
+		return true;
+	}
+
+	@Override
+	public void setReadListener(ReadListener arg0) {
+		
 	}
 
 

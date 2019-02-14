@@ -534,8 +534,8 @@
 								</copy>
 								<copy todir="${tmp_archivi}/govway.ear/lib">
 								    <fileset dir="${deploy_sw}/jars">
-									<include name="javax.jms.jar"/>
-									<include name="javax.management.jar"/>
+									<include name="javax.jms-api-2.0.jar"/>
+									<include name="javax.management-1.0-gov4j.jar"/>
 								    </fileset>
 								</copy>
 							</then>

@@ -84,7 +84,7 @@
 		</or>
 		<then>
 			<var name="xalan_jar" value="xalan-2.7.2.jar" />
-			<var name="xalan_serializer_jar" value="xalan-2.7.2_serializer.jar" />
+			<var name="xalan_serializer_jar" value="serializer-2.7.2.jar" />
 		</then>
 	</if>
 	<!-- xerces -->
@@ -96,7 +96,7 @@
 		</or>
 		<then>
 			<var name="xerces_jar" value="xercesImpl-2.12.0.jar"/>
-			<var name="xml_apis_jar" value="xml-apis-2.12.0.jar"/>
+			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
 	<!-- jaxp_ri -->
@@ -106,7 +106,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->

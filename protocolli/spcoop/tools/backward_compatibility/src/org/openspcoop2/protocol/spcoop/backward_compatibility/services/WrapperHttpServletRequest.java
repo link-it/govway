@@ -21,25 +21,14 @@
  */
 package org.openspcoop2.protocol.spcoop.backward_compatibility.services;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Web;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCompatibilityProperties;
+import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
 
 /**
  * WrapperHttpServletRequest
@@ -48,13 +37,12 @@ import org.openspcoop2.protocol.spcoop.backward_compatibility.config.BackwardCom
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class WrapperHttpServletRequest implements HttpServletRequest {
+public class WrapperHttpServletRequest extends WrappedHttpServletRequest {
 
-	private HttpServletRequest httpServletRequest;
 	private String protocolContext;
 	public WrapperHttpServletRequest(HttpServletRequest httpServletRequest,BackwardCompatibilityProperties backwardCompatibilityProperties) throws ProtocolException{
-		this.httpServletRequest = httpServletRequest;
-		
+		super(httpServletRequest);
+
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(backwardCompatibilityProperties.getProtocolName());
 		Web web = protocolFactory.getManifest().getWeb();
 		if(web.sizeContextList()>0){
@@ -150,256 +138,5 @@ public class WrapperHttpServletRequest implements HttpServletRequest {
 		}
 	}
 	
-	
-	
-	
-	
-	// Metodi originali
-
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
-	public String getRealPath(String arg0) {
-		return this.httpServletRequest.getRealPath(arg0);
-	}
-	
-	@Override
-	public Object getAttribute(String arg0) {
-		return this.httpServletRequest.getAttribute(arg0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<String> getAttributeNames() {
-		return this.httpServletRequest.getAttributeNames();
-	}
-
-	@Override
-	public String getCharacterEncoding() {
-		return this.httpServletRequest.getCharacterEncoding();
-	}
-
-	@Override
-	public int getContentLength() {
-		return this.httpServletRequest.getContentLength();
-	}
-
-	@Override
-	public String getContentType() {
-		return this.httpServletRequest.getContentType();
-	}
-
-	@Override
-	public ServletInputStream getInputStream() throws IOException {
-		return this.httpServletRequest.getInputStream();
-	}
-
-	@Override
-	public String getLocalAddr() {
-		return this.httpServletRequest.getLocalAddr();
-	}
-
-	@Override
-	public String getLocalName() {
-		return this.httpServletRequest.getLocalName();
-	}
-
-	@Override
-	public int getLocalPort() {
-		return this.httpServletRequest.getLocalPort();
-	}
-
-	@Override
-	public Locale getLocale() {
-		return this.httpServletRequest.getLocale();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<java.util.Locale> getLocales() {
-		return this.httpServletRequest.getLocales();
-	}
-
-	@Override
-	public String getParameter(String arg0) {
-		return this.httpServletRequest.getParameter(arg0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Map<java.lang.String,java.lang.String[]> getParameterMap() {
-		return this.httpServletRequest.getParameterMap();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<String> getParameterNames() {
-		return this.httpServletRequest.getParameterNames();
-	}
-
-	@Override
-	public String[] getParameterValues(String arg0) {
-		return this.httpServletRequest.getParameterValues(arg0);
-	}
-
-	@Override
-	public String getProtocol() {
-		return this.httpServletRequest.getProtocol();
-	}
-
-	@Override
-	public BufferedReader getReader() throws IOException {
-		return this.httpServletRequest.getReader();
-	}
-
-	@Override
-	public String getRemoteAddr() {
-		return this.httpServletRequest.getRemoteAddr();
-	}
-
-	@Override
-	public String getRemoteHost() {
-		return this.httpServletRequest.getRemoteHost();
-	}
-
-	@Override
-	public int getRemotePort() {
-		return this.httpServletRequest.getRemotePort();
-	}
-
-	@Override
-	public RequestDispatcher getRequestDispatcher(String arg0) {
-		return this.httpServletRequest.getRequestDispatcher(arg0);
-	}
-
-	@Override
-	public String getScheme() {
-		return this.httpServletRequest.getScheme();
-	}
-
-	@Override
-	public String getServerName() {
-		return this.httpServletRequest.getServerName();
-	}
-
-	@Override
-	public int getServerPort() {
-		return this.httpServletRequest.getServerPort();
-	}
-
-	@Override
-	public boolean isSecure() {
-		return this.httpServletRequest.isSecure();
-	}
-
-	@Override
-	public void removeAttribute(String arg0) {
-		this.httpServletRequest.removeAttribute(arg0);
-	}
-
-	@Override
-	public void setAttribute(String arg0, Object arg1) {
-		this.httpServletRequest.setAttribute(arg0,arg1);
-	}
-
-	@Override
-	public void setCharacterEncoding(String arg0)
-			throws UnsupportedEncodingException {
-		this.httpServletRequest.setCharacterEncoding(arg0);
-	}
-
-	@Override
-	public String getAuthType() {
-		return this.httpServletRequest.getAuthType();
-	}
-
-	@Override
-	public Cookie[] getCookies() {
-		return this.httpServletRequest.getCookies();
-	}
-
-	@Override
-	public long getDateHeader(String arg0) {
-		return this.httpServletRequest.getDateHeader(arg0);
-	}
-
-	@Override
-	public String getHeader(String arg0) {
-		return this.httpServletRequest.getHeader(arg0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<String> getHeaderNames() {
-		return this.httpServletRequest.getHeaderNames();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<String> getHeaders(String arg0) {
-		return this.httpServletRequest.getHeaders(arg0);
-	}
-
-	@Override
-	public int getIntHeader(String arg0) {
-		return this.httpServletRequest.getIntHeader(arg0);
-	}
-
-	@Override
-	public String getMethod() {
-		return this.httpServletRequest.getMethod();
-	}
-
-	@Override
-	public String getRemoteUser() {
-		return this.httpServletRequest.getRemoteUser();
-	}
-
-	@Override
-	public String getRequestedSessionId() {
-		return this.httpServletRequest.getRequestedSessionId();
-	}
-
-	@Override
-	public HttpSession getSession() {
-		return this.httpServletRequest.getSession();
-	}
-
-	@Override
-	public HttpSession getSession(boolean arg0) {
-		return this.httpServletRequest.getSession(arg0);
-	}
-
-	@Override
-	public Principal getUserPrincipal() {
-		return this.httpServletRequest.getUserPrincipal();
-	}
-
-	@Override
-	public boolean isRequestedSessionIdFromCookie() {
-		return this.httpServletRequest.isRequestedSessionIdFromCookie();
-	}
-
-	@Override
-	public boolean isRequestedSessionIdFromURL() {
-		return this.httpServletRequest.isRequestedSessionIdFromURL();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
-	public boolean isRequestedSessionIdFromUrl() {
-		return this.httpServletRequest.isRequestedSessionIdFromUrl();
-	}
-
-	@Override
-	public boolean isRequestedSessionIdValid() {
-		return this.httpServletRequest.isRequestedSessionIdValid();
-	}
-
-	@Override
-	public boolean isUserInRole(String arg0) {
-		return this.httpServletRequest.isUserInRole(arg0);
-	}
 
 }

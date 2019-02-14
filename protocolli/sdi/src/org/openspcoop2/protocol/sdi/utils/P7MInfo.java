@@ -24,8 +24,8 @@ package org.openspcoop2.protocol.sdi.utils;
 
 import java.io.ByteArrayInputStream;
 
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.slf4j.Logger;
-import org.apache.soap.encoding.soapenc.Base64;
 
 /**
  * P7MInfo
@@ -64,7 +64,7 @@ public class P7MInfo {
 			
 			byte[] decoded = null;
 			try{
-				decoded = Base64.decode(new String(fattura));
+				decoded = Base64Utilities.decode(new String(fattura));
 			}catch(Throwable eDecode){
 				log.error("DecodificaBase64 non riuscita: "+eDecode.getMessage(), eDecode);
 				throw e; // lancio l'eccezione originale, poiche' piu' interessante. La seconda mi informa solo che non e' una rappresentazione Base64

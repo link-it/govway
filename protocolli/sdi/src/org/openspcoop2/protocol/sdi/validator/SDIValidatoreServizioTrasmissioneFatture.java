@@ -21,18 +21,6 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
-import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaImpossibilitaRecapitoType;
-import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaScartoType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.AttestazioneTrasmissioneFatturaType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.ErroreType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaMancataConsegnaType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaScartoType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.RicevutaConsegnaType;
-import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
-import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Iterator;
@@ -42,7 +30,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
@@ -55,11 +42,24 @@ import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaImpossibilitaRecapitoType;
+import it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.RicevutaScartoType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.AttestazioneTrasmissioneFatturaType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.ErroreType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaDecorrenzaTerminiType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaMancataConsegnaType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.NotificaScartoType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.RicevutaConsegnaType;
+import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
+import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
 
 /**
  * SDIValidatoreServizioTrasmissioneFatture
@@ -442,7 +442,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 					throw new Exception("Codifica Base64 non presente");
 				}
 				try{
-					xml = Base64.decode(base64File);
+					xml = Base64Utilities.decode(base64File);
 				}catch(Exception e){
 					// un errore non dovrebbe mai capitare, la validazione sintattica garantisce la presenza
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.

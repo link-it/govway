@@ -80,7 +80,7 @@
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
 		<then>
-			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.gw.jar"/>
+			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
 		</then>
 	</if>
 	<!-- neethi -->
@@ -140,6 +140,7 @@
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>
+				<include name="commons-codec-1.11.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${libs}/cxf">
@@ -151,9 +152,6 @@
 			<lib dir="${libs}/jax">
 				<include name="jaxws-*.jar"/>
 			</lib>
-			<lib dir="${libs}/shared">
-				<include name="soap.jar"/>
-			</lib>
 			<lib dir="${required_lib}/jax">
 				<include name="${jaxp_ri_jar}" />
 			</lib>
@@ -163,7 +161,7 @@
 				<include name="openspcoop2_message_*.jar"/>
 			</lib>
 			<lib dir="${libs}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/security">

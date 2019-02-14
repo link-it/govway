@@ -63,7 +63,7 @@
 				<include name="openspcoop2_utils*.jar"/>
 			</lib>
 			<lib dir="${required_lib_openspcoop2Pools}/log">
-				<include name="slf4j-api-1.7.25.gw.jar"/>
+				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib_openspcoop2Pools}/jax">

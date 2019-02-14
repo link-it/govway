@@ -24,6 +24,7 @@ package org.openspcoop2.utils.transport;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -207,6 +208,33 @@ public class WrappedHttpServletResponse implements HttpServletResponse {
 	@Override
 	public void setStatus(int arg0, String arg1) {
 		this.httpServletResponse.setStatus(arg0, arg1);
+	}
+
+	// v3
+	
+	@Override
+	public void setContentLengthLong(long arg0) {
+		this.httpServletResponse.setContentLengthLong(arg0);
+	}
+
+	@Override
+	public String getHeader(String arg0) {
+		return this.httpServletResponse.getHeader(arg0);
+	}
+
+	@Override
+	public Collection<String> getHeaderNames() {
+		return this.httpServletResponse.getHeaderNames();
+	}
+
+	@Override
+	public Collection<String> getHeaders(String arg0) {
+		return this.httpServletResponse.getHeaders(arg0);
+	}
+
+	@Override
+	public int getStatus() {
+		return this.httpServletResponse.getStatus();
 	}
 
 }

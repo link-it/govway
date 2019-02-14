@@ -28,7 +28,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.io.Base64Utilities;
+
 /**
  * Classe contenente i parametri per le Sonde
  * 
@@ -69,8 +70,8 @@ public class ParametriSonda {
 						try {
 							String key = nameValue[0].trim();
 							String value = nameValue[1].trim();
-							byte[] decodedKey = Base64.decode(key);
-							byte[] decodedValue = Base64.decode(value);
+							byte[] decodedKey = Base64Utilities.decode(key);
+							byte[] decodedValue = Base64Utilities.decode(value);
 							this.datiCheck.put(new String(decodedKey), new String(decodedValue));
 						} catch(Throwable t) {
 							System.err.println("Errore durante il decoding del parametro ["+datoReale+"]: " + t.getMessage());	
@@ -103,8 +104,8 @@ public class ParametriSonda {
 				if(contains) {
 					sb.append(key).append(SEPARATOR).append(this.datiCheck.get(key)).append("\n");
 				} else {
-					String keyEncoded = Base64.encode(key.toString().getBytes());
-					String valueEncoded = Base64.encode(this.datiCheck.get(key).toString().getBytes());
+					String keyEncoded = Base64Utilities.encodeAsString(key.toString().getBytes());
+					String valueEncoded = Base64Utilities.encodeAsString(this.datiCheck.get(key).toString().getBytes());
 					sb.append(CUSTOM).append(keyEncoded).append(SEPARATOR).append(valueEncoded).append("\n");
 				}
 			}

@@ -34,7 +34,7 @@ import javax.activation.ActivationDataFlavor;
 import javax.activation.DataContentHandler;
 import javax.activation.DataSource;
 
-import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -82,7 +82,7 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 				attach = attach.substring(OpenSPCoop2DataContentHandler.OPENSPCOOP2_SIGNATURE.length(),attach.length());
 			}
 			
-			OpenSPCoop2DataContentHandlerInputStream bin = new OpenSPCoop2DataContentHandlerInputStream(Base64.decode(attach));
+			OpenSPCoop2DataContentHandlerInputStream bin = new OpenSPCoop2DataContentHandlerInputStream(Base64Utilities.decode(attach));
 			return bin;
 
 		}catch(Exception e){
@@ -156,7 +156,7 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 			if(giaCodificato){
 				outputstream.write(content);
 			}else{
-				String encoded =  OpenSPCoop2DataContentHandler.OPENSPCOOP2_SIGNATURE + Base64.encode(content);
+				String encoded =  OpenSPCoop2DataContentHandler.OPENSPCOOP2_SIGNATURE + Base64Utilities.encodeAsString(content);
 				outputstream.write(encoded.getBytes());
 			}
 

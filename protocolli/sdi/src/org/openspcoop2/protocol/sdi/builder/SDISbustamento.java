@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
@@ -159,7 +160,7 @@ public class SDISbustamento {
 						}else{
 							//System.out.println("NON OTTIMIZZATO NO MTOM");
 							// no mtom
-							xmlFattura = org.apache.soap.encoding.soapenc.Base64.decode(child.getTextContent());
+							xmlFattura = Base64Utilities.decode(child.getTextContent());
 						}
 					}
 				}
@@ -266,7 +267,7 @@ public class SDISbustamento {
 									}else{
 										//System.out.println("NON OTTIMIZZATO NO MTOM");
 										// no mtom
-										xmlNotificaScartoEsitoCommittente = org.apache.soap.encoding.soapenc.Base64.decode(scartoChild.getTextContent());
+										xmlNotificaScartoEsitoCommittente = Base64Utilities.decode(scartoChild.getTextContent());
 									}
 									
 								}
@@ -420,7 +421,7 @@ public class SDISbustamento {
 							}else{
 								//System.out.println("NON OTTIMIZZATO NO MTOM");
 								// no mtom
-								xmlNotifica = org.apache.soap.encoding.soapenc.Base64.decode(child.getTextContent());
+								xmlNotifica = Base64Utilities.decode(child.getTextContent());
 							}
 						}
 					}

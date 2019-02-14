@@ -30,8 +30,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.sonde.ParametriSonda;
 import org.openspcoop2.utils.sonde.Sonda;
 import org.openspcoop2.utils.sonde.SondaException;
@@ -145,7 +145,7 @@ public class SondaBatch extends Sonda {
 			statoSonda.setStato(2);
 			String descr = null;
 			if(super.getParam().getDatiCheck().containsKey("descrizione_errore")) {
-				descr = new String(Base64.decode((String) super.getParam().getDatiCheck().get("descrizione_errore")));
+				descr = new String(Base64Utilities.decode((String) super.getParam().getDatiCheck().get("descrizione_errore")));
 			}
 			statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta fallire dal "+dataUltimoBatchString+" (fallite "+interazioniFallite+" iterazioni). Descrizione dell'ultimo errore:" + descr);
 			return statoSonda;
@@ -182,7 +182,7 @@ public class SondaBatch extends Sonda {
 				super.getParam().getDatiCheck().put("interazioni_fallite", 1 + "");
 			}
 			if(descrizioneErrore != null) {
-				super.getParam().getDatiCheck().put("descrizione_errore", Base64.encode(descrizioneErrore.getBytes()));
+				super.getParam().getDatiCheck().put("descrizione_errore", Base64Utilities.encodeAsString(descrizioneErrore.getBytes()));
 			}
 		} else {
 			if(super.getParam().getDatiCheck().containsKey("descrizione_errore"))

@@ -30,6 +30,7 @@ import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.ServerSessionPool;
+import javax.jms.Session;
 import javax.jms.Topic;
 
 /**
@@ -227,6 +228,25 @@ public class Connection implements javax.jms.Connection {
 	public void setValidationExceptionListener(
 			javax.jms.JMSException validationExceptionListener) {
 		this.validationExceptionListener = validationExceptionListener;
+	}
+	
+	@Override
+	public Session createSession() throws JMSException {
+		return null;
+	}
+	@Override
+	public Session createSession(int arg0) throws JMSException {
+		return null;
+	}
+	@Override
+	public ConnectionConsumer createSharedConnectionConsumer(Topic arg0, String arg1, String arg2,
+			ServerSessionPool arg3, int arg4) throws JMSException {
+		return null;
+	}
+	@Override
+	public ConnectionConsumer createSharedDurableConnectionConsumer(Topic arg0, String arg1, String arg2,
+			ServerSessionPool arg3, int arg4) throws JMSException {
+		return null;
 	}
 
 }

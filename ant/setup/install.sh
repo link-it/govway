@@ -42,13 +42,13 @@ ANTINSTALLER_LIBRARIES=${LIBRARIES}/antinstaller
 
 # Installer from command line classpath
 CLASSPATH=${LIBRARIES}/shared/xercesImpl-2.12.0.jar
-CLASSPATH=${LIBRARIES}/shared/xml-apis-2.12.0.jar
-CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/xml-apis_antinstaller0.8b.jar
+CLASSPATH=${LIBRARIES}/shared/xml-apis-1.4.01.jar
+CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/xml-apis_antinstaller-0.8b.jar
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ant-installer-0.8b.jar
-CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ai-icons-eclipse_antinstaller0.8b.jar
+CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ai-icons-eclipse_antinstaller-0.8b.jar
 
 # JGoodies Look And Feel
-CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/jgoodies-edited-1_2_2.jar
+CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/jgoodies-edited-1.2.2.jar
 
 # minimal ANT classpath requirements
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ant-1.9.8.jar
