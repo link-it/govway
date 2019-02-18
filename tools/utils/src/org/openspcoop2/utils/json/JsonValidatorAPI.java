@@ -44,7 +44,10 @@ public class JsonValidatorAPI {
 		this.validatorClass = validatorClass;
 	}
 	
-	public enum ApiName {NETWORK_NT, EVERIT, FGE}
+	public enum ApiName {
+		NETWORK_NT, 
+		EVERIT, 
+		FGE}
 	private static Map<ApiName, JsonValidatorAPI> mapApi;
 	
 	public static JsonValidatorAPI get(ApiName name) {
@@ -54,6 +57,7 @@ public class JsonValidatorAPI {
 
 	private static void initMapApi() {
 		JsonValidatorAPI.mapApi = new HashMap<ApiName, JsonValidatorAPI>();
+		
 		JsonValidatorAPI networkNtApi = new JsonValidatorAPI();
 		networkNtApi.setValidatorClass("org.openspcoop2.utils.json.validation.NetworkNTJsonschemaValidator");
 		JsonValidatorAPI.mapApi.put(ApiName.NETWORK_NT, networkNtApi);

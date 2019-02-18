@@ -5,6 +5,12 @@
 	<artifactId>org.openspcoop2</artifactId>
 	<packaging>pom</packaging>
 	<name>govway</name>
+
+	<properties>		
+		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
+		<owasp.output.dir>dependency-check-result</owasp.output.dir>
+	</properties>
+
 	<modules>
 		<module>mvn/dependencies</module>
 		<module>mvn/compile</module>
@@ -24,5 +30,36 @@
 			<url>https://maven.link.it/content/repositories/thirdparty-releases/</url>
 		</repository>
 	</repositories>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>5.0.0-M1</version>
+				<executions>
+					<execution>
+						<id>check owasp</id>
+						<phase>verify</phase>
+						<configuration>
+							<failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
+							<outputDirectory>${owasp.output.dir}</outputDirectory>
+							<format>ALL</format>
+							<suppressionFiles>
+								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/commons-net-echo.xml</suppressionFile>
+							</suppressionFiles>
+						</configuration>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

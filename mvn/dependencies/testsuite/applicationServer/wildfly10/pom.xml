@@ -2,22 +2,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.applicationServer.wildfly14</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly10</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.applicationServer.wildfly14</name>
+	<name>dependencies.testsuite.as.wildfly10</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.applicationServer</artifactId>
+		<artifactId>org.openspcoop2.testsuite.applicationServer</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 
-		<jar.group.name>wildfly14</jar.group.name>
+		<jar.group.name>wildfly10</jar.group.name>
 		
-		<wildfly.version>wf14</wildfly.version>
+		<wildfly.version>wf10</wildfly.version>
 
 	</properties>
 
@@ -33,6 +33,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -50,7 +51,7 @@
 						<goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-						<outputDirectory>../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
+						<outputDirectory>../../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
 						<overWriteReleases>false</overWriteReleases>
 						<overWriteSnapshots>false</overWriteSnapshots>
 						<overWriteIfNewer>true</overWriteIfNewer>

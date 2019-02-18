@@ -107,7 +107,8 @@
 				<include name="wss4j-1.5.11.jar"/>
 				<include name="opensaml-1.1.jar"/>
 				<include name="xmlsec-1.4.4.jar"/>
-				<include name="mailapi-1.5.6.jar"/> 
+				<include name="mailapi-1.5.6.jar"/>
+				<include name="addressing-1.1.jar"/> 
 			</lib>
 			<lib dir="${required_lib}/shared">
 				<!-- Includendolo, i test con attachments falliscono poiche' axis14 genera dei messaggi non corretti (ContentLength non appropriato rispetto al messaggio) 
@@ -118,7 +119,6 @@
 				<!-- <include name="mailapi-1.6.2.jar"/> -->
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="activation-1.1.1.jar"/>
-				<include name="addressing-1.1.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>

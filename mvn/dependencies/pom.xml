@@ -10,8 +10,6 @@
 		<module>ant</module>
 		<module>antinstaller</module>
 		<module>axiom</module> 
-		<module>axis14</module>
-		<module>applicationServer</module>
 		<module>cxf</module>
 		<module>commons</module>
 		<module>faces</module>
@@ -36,9 +34,9 @@
 		<module>spring-security</module>
 		<module>swagger</module>
 		<module>swagger-codegen</module>
-		<module>testsuite</module>
 		<module>wadl</module>
 		<module>wss4j</module>
+		<module>testsuite</module>
 	</modules>
 
 	<parent>

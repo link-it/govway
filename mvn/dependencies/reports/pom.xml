@@ -24,7 +24,7 @@
 		<jcommon.version>1.0.23</jcommon.version>
 		<jdtcore.version>3.2.0.v_658</jdtcore.version>
 		<jfreechart.version>1.0.19</jfreechart.version>
-		<poi.version>3.15</poi.version>
+		<poi.version>3.17</poi.version>
 
 	</properties>
 

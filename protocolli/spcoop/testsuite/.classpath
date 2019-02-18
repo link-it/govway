@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="example/registroServizi/wsdl/src"/>
+	<classpathentry excluding="*/*.xml" kind="src" path="example/server/ValidazioneContenutiWS/src"/>
+	<classpathentry excluding="*/*.xml" kind="src" path="example/client/ValidazioneContenutiWS/src"/>
+	<classpathentry kind="src" path="example/client/IntegrationManagerClient/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_axis14"/>
         <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_jboss4"/>
         <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_stub"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openspcoop2_3.1_lib_stub_axis14"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.1.dev"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/op2_3.1.dev_testsuite"/>
 	<classpathentry kind="lib" path="/op2_3.1.dev/protocolli/spcoop/example/server/ValidazioneContenutiWS/deploy/stub_ws/validazioneContenutiWS_stub.jar"/>

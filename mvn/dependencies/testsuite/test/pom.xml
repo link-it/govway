@@ -2,37 +2,52 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.applicationServer.wildfly9</artifactId>
+	<artifactId>org.openspcoop2.testsuite.test</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.applicationServer.wildfly9</name>
+	<name>dependencies.testsuite.test</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.applicationServer</artifactId>
+		<artifactId>org.openspcoop2.testsuite</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 
-		<jar.group.name>wildfly9</jar.group.name>
+		<jar.group.name>testsuite</jar.group.name>
 		
-		<wildfly.version>wf9</wildfly.version>
+		<jcommander.version>1.72</jcommander.version>
+		<testng.version>6.14.3</testng.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.wildfly</groupId>
-			<artifactId>jboss-client</artifactId>
-			<version>${wildfly.version}</version>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>${jcommander.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -50,7 +65,7 @@
 						<goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-						<outputDirectory>../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
+						<outputDirectory>../../../../lib/${jar.group.name}</outputDirectory>
 						<overWriteReleases>false</overWriteReleases>
 						<overWriteSnapshots>false</overWriteSnapshots>
 						<overWriteIfNewer>true</overWriteIfNewer>

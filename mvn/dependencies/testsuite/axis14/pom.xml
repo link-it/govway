@@ -2,13 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.axis14</artifactId>
+	<artifactId>org.openspcoop2.testsuite.axis14</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.axis14</name>
+	<name>dependencies.testsuite.axis14</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.dependencies</artifactId>
+		<artifactId>org.openspcoop2.testsuite</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -24,6 +24,7 @@
 		<opensaml.version>1.1</opensaml.version>
 		<wss4j.version>1.5.11</wss4j.version>
 		<xmlsec.version>1.4.4</xmlsec.version>
+		<addressing.version>1.1</addressing.version>
 
 	</properties>
 
@@ -39,6 +40,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis</groupId>
@@ -50,6 +52,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 
@@ -63,6 +66,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis</groupId>
@@ -74,6 +78,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -86,6 +91,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -98,6 +104,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -110,6 +117,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -122,6 +130,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -134,6 +143,20 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>addressing</artifactId>
+			<version>${addressing.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -151,7 +174,7 @@
 						<goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-						<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
+						<outputDirectory>../../../../lib/${jar.group.name}</outputDirectory>
 						<overWriteReleases>false</overWriteReleases>
 						<overWriteSnapshots>false</overWriteSnapshots>
 						<overWriteIfNewer>true</overWriteIfNewer>

@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.applicationServer</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.applicationServer</name>
+	<name>dependencies.testsuite.as</name>
 
 	<modules>
                 <module>wildfly8</module>
@@ -18,7 +18,7 @@
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.dependencies</artifactId>
+		<artifactId>org.openspcoop2.testsuite</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>

@@ -2,23 +2,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.applicationServer.wildfly12</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly9</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.applicationServer.wildfly12</name>
+	<name>dependencies.testsuite.as.wildfly9</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.applicationServer</artifactId>
+		<artifactId>org.openspcoop2.testsuite.applicationServer</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 
-		<jar.group.name>wildfly12</jar.group.name>
+		<jar.group.name>wildfly9</jar.group.name>
 		
-		<wildfly.version>wf12</wildfly.version>
-		<javax.json-api.version>1.1.2</javax.json-api.version>
+		<wildfly.version>wf9</wildfly.version>
 
 	</properties>
 
@@ -34,17 +33,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>javax.json</groupId>
-			<artifactId>javax.json-api</artifactId>
-			<version>${javax.json-api.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -62,7 +51,7 @@
 						<goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-						<outputDirectory>../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
+						<outputDirectory>../../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
 						<overWriteReleases>false</overWriteReleases>
 						<overWriteSnapshots>false</overWriteSnapshots>
 						<overWriteIfNewer>true</overWriteIfNewer>

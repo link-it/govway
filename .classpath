@@ -4,9 +4,6 @@
 	<classpathentry kind="src" path="core/deploy/deploy_web/web_app/WEB-INF"/>
 	<classpathentry kind="src" path="protocolli/spcoop/src"/>
 	<classpathentry excluding="*/web.xml" kind="src" path="protocolli/spcoop/tools/backward_compatibility/src"/>
-	<classpathentry kind="src" path="protocolli/spcoop/example/registroServizi/wsdl/src"/>
-	<classpathentry excluding="*/*.xml" kind="src" path="protocolli/spcoop/example/server/ValidazioneContenutiWS/src"/>
-	<classpathentry excluding="*/*.xml" kind="src" path="protocolli/spcoop/example/client/ValidazioneContenutiWS/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/oneway/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/sincrono/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoSimmetrico/src"/>
@@ -56,7 +53,6 @@
 	<classpathentry kind="src" path="example/pdd/client/PA_Invoker/src"/>
 	<classpathentry kind="src" path="example/pdd/client/PD_Invoker/src"/>
 	<classpathentry kind="src" path="example/pdd/client/Benchmark/src"/>
-	<classpathentry kind="src" path="example/pdd/client/IntegrationManagerClient/axis14/src"/>
 	<classpathentry kind="src" path="example/pdd/client/IntegrationManagerClient/cxf/src"/>
 	<classpathentry kind="src" path="example/pdd/client/JMSReceiver/src"/>
 	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>

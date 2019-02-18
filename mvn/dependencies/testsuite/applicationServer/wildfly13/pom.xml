@@ -2,37 +2,51 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>1.0</version>
-	<artifactId>org.openspcoop2.swagger-codegen.linkit</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.wildfly13</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.swagger-codegen.linkit</name>
+	<name>dependencies.testsuite.as.wildfly13</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
-		<artifactId>org.openspcoop2.swagger-codegen</artifactId>
+		<artifactId>org.openspcoop2.testsuite.applicationServer</artifactId>
 		<version>1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<properties>
 
-		<jar.group.name>swagger-codegen</jar.group.name>
+		<jar.group.name>wildfly13</jar.group.name>
 		
-		<swagger.codegen.cli.gov4j.version>3.0.4-gov4j-2</swagger.codegen.cli.gov4j.version>
+		<wildfly.version>wf13</wildfly.version>
+		<javax.json-api.version>1.1.2</javax.json-api.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>io.swagger.codegen.v3</groupId>
-			<artifactId>swagger-codegen-cli</artifactId>
-			<version>${swagger.codegen.cli.gov4j.version}</version>
+			<groupId>org.wildfly</groupId>
+			<artifactId>jboss-client</artifactId>
+			<version>${wildfly.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>${javax.json-api.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -50,7 +64,7 @@
 						<goal>copy-dependencies</goal>
 					</goals>
 					<configuration>
-						<outputDirectory>../../../../lib/${jar.group.name}</outputDirectory>
+						<outputDirectory>../../../../../lib/applicationServer/${jar.group.name}</outputDirectory>
 						<overWriteReleases>false</overWriteReleases>
 						<overWriteSnapshots>false</overWriteSnapshots>
 						<overWriteIfNewer>true</overWriteIfNewer>
