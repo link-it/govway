@@ -1,0 +1,53 @@
+.. _headerRisposta:
+
+Scambio di informazioni tra gateway e la risposta ritornata al client
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le informazioni fornite dal gateway all'applicativo fruitore, sia per
+quanto concerne fruizioni che per erogazioni, sono riassunte nella :numref:`headerGw2ClientTab`.
+
+
+.. table:: Scambio di informazioni tra gateway e la risposta ritornata al client
+   :widths: 35 65
+   :name: headerGw2ClientTab
+
+   =========================================  ==============================================
+   Nome Header Trasporto                      Descrizione                                                                       
+   =========================================  ==============================================
+   GovWay-Message-ID                          Identificativo del messaggio assegnato da GovWay                          
+   GovWay-Relates-To                          Identificativo del messaggio riferito                                                 
+   GovWay-Conversation-ID                     Identificativo della conversazione                                                    
+   GovWay-Application-Message-ID              Identificativo del messaggio assegnato dall'applicativo (solo nel caso di Fruizione)
+   GovWay-Transaction-ID                      Identificativo della transazione assegnato da GovWay
+   =========================================  ==============================================
+
+All'applicativo client vengono inoltre forniti ulteriori header http
+generati se l'applicativo erogatore non è disponibile o se sono stati
+attivati meccanismi di Rate Limiting (sezione :ref:`rateLimiting`).
+
+.. table:: Scambio di informazioni tra gateway e la risposta ritornata al client
+   :class: longtable
+   :widths: 30 30 40
+   :name: headerGw2ClientExtraTab
+
+   ========================================================================================================================  =============================================================================================================================  =================
+   Nome Header Trasporto                                                                                                     Descrizione                                                                                                                    Motivazione
+   ========================================================================================================================  =============================================================================================================================  =================
+   Retry-After                                                                                                               Indica al client il numero di secondi dopo i quali ripresentarsi poichè il servizio contattato non è al momento disponibile.   Le principali cause della generazione di tale header sono imputabili alla non raggiungibilità un applicativo erogatore, alla violazione di politiche di RateLimiting o a quando un servizio è temporaneamente disabilitato
+   X-RateLimit-Limit                                                                                                         Indica il numero massimo di richieste effettuabili                                                                             Rate-Limiting attivato con policy di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`)                                                                                                                                         
+   X-RateLimit-Remaining                                                                                                     Numero di richieste rimanenti prima del prossimo reset                                                                         Rate-Limiting attivato con policy di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`)
+   X-RateLimit-Reset                                                                                                         Numero di secondi mancante al prossimo reset                                                                                   Rate-Limiting attivato con policy di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`)                                                                                                                                         
+   GovWay-RateLimit-ConcurrentRequest-Limit                                                                                  Indica il numero massimo di richieste concorrenti inviabili                                                                    Rate-Limiting attivato con policy di tipo 'NumeroRichieste-RichiesteSimultanee' (sezione :ref:`rateLimiting`)
+   GovWay-RateLimit-ConcurrentRequest-Remaining                                                                              Indica il numero massimo di richieste concorrenti ancora inviabili                                                             Rate-Limiting attivato con policy di tipo 'NumeroRichieste-RichiesteSimultanee' (sezione :ref:`rateLimiting`)                                                                                                                                         
+   GovWay-RateLimit-BandwithQuota-Limit                                                                                      Indica la massima banda occupabile                                                                                             Rate-Limiting attivato con policy di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`)                                                                                                                                                         
+   GovWay-RateLimit-BandwithQuota-Remaining                                                                                  Indica la banda ancora occupabile prima del prossimo reset                                                                     Rate-Limiting attivato con policy di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`)                                                                                                                                                         
+   GovWay-RateLimit-BandwithQuota-Reset                                                                                      Numero di secondi mancante al prossimo reset                                                                                   Rate-Limiting attivato con policy di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`)                                                                                                                                                         
+   GovWay-RateLimit-AvgTimeResponse-Limit                                                                                    Tempo medio di risposta atteso                                                                                                 Rate-Limiting attivato con policy di tipo 'TempoMedioRisposta-\*' (sezione :ref:`rateLimiting`)
+   GovWay-RateLimit-AvgTimeResponse-Reset                                                                                    Numero di secondi mancante al prossimo reset                                                                                   Rate-Limiting attivato con policy di tipo 'TempoMedioRisposta-\*' (sezione :ref:`rateLimiting`)                                                                                                                                                       
+   GovWay-RateLimit-TimeResponseQuota-Limit                                                                                  Tempo complessivo di risposta occupabile                                                                                       Policy creata con risorsa di tipo 'TempoComplessivioRisposta' (sezione :ref:`registroPolicy`)
+   GovWay-RateLimit-TimeResponseQuota-Remaining                                                                              Tempo di risposta ancora occupabile prima del prossimo reset                                                                   Policy creata con risorsa di tipo 'TempoComplessivioRisposta' (sezione :ref:`registroPolicy`)                                                                                                                                                           
+   GovWay-RateLimit-TimeResponseQuota-Reset                                                                                  Numero di secondi mancante al prossimo reset                                                                                   Policy creata con risorsa di tipo 'TempoComplessivioRisposta' (sezione :ref:`registroPolicy`)
+   GovWay-RateLimit-RequestSuccessful-Limit, GovWay-RateLimit-RequestFailed-Limit, GovWay-RateLimit-Fault-Limit              Indica il numero massimo di richieste effettuabili                                                                             Policy creata rispettivamente con risorsa di tipo 'NumeroRichiesteCompletateConSuccesso', 'NumeroRichiesteFallite' e 'NumeroFaultApplicativi' (sezione :ref:`registroPolicy`)                                                                           
+   GovWay-RateLimit-RequestSuccessful-Remaining, GovWay-RateLimit-RequestFailed-Remaining, GovWay-RateLimit-Fault-Remaining  Numero di richieste rimanenti prima del prossimo reset                                                                         Policy creata rispettivamente con risorsa di tipo 'NumeroRichiesteCompletateConSuccesso', 'NumeroRichiesteFallite' e 'NumeroFaultApplicativi' (sezione :ref:`registroPolicy`)                                                                           
+   GovWay-RateLimit-RequestSuccessful-Reset, GovWay-RateLimit-RequestFailed-Reset, GovWay-RateLimit-Fault-Reset              Numero di secondi mancante al prossimo reset                                                                                   Policy creata rispettivamente con risorsa di tipo 'NumeroRichiesteCompletateConSuccesso', 'NumeroRichiesteFallite' e 'NumeroFaultApplicativi' (sezione :ref:`registroPolicy`)
+   ========================================================================================================================  =============================================================================================================================  =================

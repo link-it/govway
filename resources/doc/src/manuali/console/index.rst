@@ -1,0 +1,16 @@
+================================
+Guida alla Console di Gestione
+================================
+
+.. toctree::
+        :maxdepth: 2
+
+        introduzione/index
+        profiloApiGateway/index
+        profiloEDelivery/index
+        profiloSPCoop/index
+        profiloFatturaPA/index
+        strumenti/index
+        configurazione/index
+        avanzate/index
+

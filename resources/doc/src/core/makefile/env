@@ -1,5 +1,0 @@
-LANG=it_IT
-
-DB_LATEX_OPTIONS=-P latex.output.revhistory=0 -P doc.collab.show=0
-DOC_VERSION=3.0
-PDF_DOC_VERSION=3.0
