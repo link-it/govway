@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
-	<version>1.0</version>
+	<version>${revision}</version>
 	<artifactId>org.openspcoop2.antinstaller</artifactId>
 	<packaging>pom</packaging>
 	<name>dependencies.antinstaller</name>
@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>org.openspcoop2</groupId>
 		<artifactId>org.openspcoop2.dependencies</artifactId>
-		<version>1.0</version>
+		<version>${revision}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -126,21 +126,22 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin}</version>
 				<executions>
-				<execution>
-					<id>copy-dependencies</id>
-					<phase>initialize</phase>
-					<goals>
-						<goal>copy-dependencies</goal>
-					</goals>
-					<configuration>
-						<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
-						<overWriteReleases>false</overWriteReleases>
-						<overWriteSnapshots>false</overWriteSnapshots>
-						<overWriteIfNewer>true</overWriteIfNewer>
-						<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
-					</configuration>
-				</execution>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>../../../lib/${jar.group.name}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

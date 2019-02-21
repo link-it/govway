@@ -1,10 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
-	<version>1.0</version>
+	<version>${revision}</version>
 	<artifactId>org.openspcoop2.dependencies</artifactId>
 	<packaging>pom</packaging>
 	<name>dependencies</name>
+
+	<properties>		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- owasp config -->
+		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
+		<owasp.output.dir>${project.parent.parent.basedir}/dependency-check-result</owasp.output.dir>
+	</properties>
 
 	<modules>
 		<module>ant</module>
@@ -42,8 +50,63 @@
 	<parent>
 		<groupId>org.openspcoop2</groupId>
 		<artifactId>org.openspcoop2</artifactId>
-		<version>1.0</version>
+		<version>${revision}</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${owasp.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>check owasp</id>
+						<phase>${owasp}</phase>
+						<configuration>
+							<failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
+							<outputDirectory>${owasp.output.dir}</outputDirectory>
+							<format>ALL</format>
+							<suppressionFiles>
+								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/commons-net-echo.xml</suppressionFile>
+							</suppressionFiles>
+						</configuration>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- 
+				Il plugin seguente serve a risolvere il problema del plugin di owasp della versione in uso, 
+				che ignora la configurazione 'outputDirectory' 
+			-->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin}</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>${owasp}</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${owasp.output.dir}</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>${project.parent.parent.basedir}/mvn/dependencies/target</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

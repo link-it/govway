@@ -1,0 +1,14 @@
+Per creare una tag version:
+1. Inserire la corretta versione in core/src/org/openspcoop2/utils/Costanti.java
+2. Inserire la versione del rilascio in ChangeLog
+3. Inserire la versione corretta in ant/setup/antinstall-config.xml:
+   - 3 occorrenze della versione (2 display e proprietà 'antinstaller_versione_attuale')
+     NOTA: per le due versioni display usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
+   - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
+4. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
+5. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
+6. Eseguire i test di verifica JavaDoc, GPL e XSD.
+7. Creazione versione tag
+
+NOTA: prima di generare la versione, sistemare la documentazione e soprattutto il documento di ReleaseNotes
+      Inoltre aggiungere la corretta versione. 

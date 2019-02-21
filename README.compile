@@ -2,60 +2,43 @@ In questo file sono documentate le modalità di ricompilazione del software GovW
 
 1. Scaricare il software
 
-1.1. Scaricare la versione binaria di GovWay, disponibile alla URL:
+Scaricare i sorgenti del software, disponibili all'indirizzo:
 
-  https://github.com/link-it/GovWay/releases/download/<versione>/govway-installer-<versione>.tgz
-  (es.   https://github.com/link-it/GovWay/releases/download/3.0.0/govway-installer-3.0.0.tgz)
-  
-1.2. Scaricare i sorgenti del software, disponibili all'indirizzo:
-
-  https://github.com/link-it/GovWay.git
+  https://github.com/link-it/govway.git
      
 2. Istruzioni per la compilazione
 
 2.1 Posizionarsi nella radice della directory dei sorgenti scaricati
 
     Esempio:
-	cd GovWay
+	cd govway
+
+    Per compilare i sorgenti di una release posizionarsi sul tag della versione:
 	git checkout <versione>
 
-2.3 Compilare il Software tramite il comando mvn
+2.2 Compilare il Software
 
-    Esempio:
-	mvn clean compile
+    Usare il comando:
+	mvn compile
 
-3. Installazione dei Binari prodotti
+    Tutti i jar compilati saranno disponibili al termine della compilazione nella sottodirectory dist della directory di lavoro
 
-3.1 Tutti i jar compilati saranno disponibili al termine della compilazione nella sottodirectory dist della directory di lavoro
+2.3 Generazione del pacchetto di installazione
 
-    Esempio:
-	GovWay/dist/openspcoop2_*.jar
+    L'installer di ogni release è ottenibile scaricando l'archivio alla url:
+	-  https://github.com/link-it/GovWay/releases/download/<versione>/govway-installer-<versione>.tgz
+	-  (es.   https://github.com/link-it/GovWay/releases/download/3.0.0/govway-installer-3.0.0.tgz)
 
-3.2 Il modo più semplice di utilizzarli è quello di sostiturli ai jar inclusi nella distribuzione binaria e poi rieseguire l'installer. Per farlo:
+    Per generare l'installer a partire dai sorgenti utilizzare il comando:
+	mvn package
 
-    - spacchettare la distribuzione binaria.
-    Esempio:
-        tar xzf govway-installer-3.0.0.tgz
+2.4 Verifica tramite OWASP Dependency-Check
 
-    - copiare i nuovi jar generati nella directory GovWay/dist al posto di quelli preesistenti nella versione binaria 
-      preservando il nome dell'archivio jar di destinazione.
-      La directory dove si trovano gli archivi jar da sostituire nella versione binaria, fatta eccezione per i jar di protocollo, è la seguente:
-	govway-installer-<versione>/installer/setup/deploy/sw/jars/
-      La directory di destinazione per i jar di protocollo 
-	openspcoop2_spcoop-protocol_*.jar
-	openspcoop2_trasparente-protocol_*.jar
-	openspcoop2_sdi-protocol_*.jar
-	openspcoop2_as4-protocol_*.jar
-      è la directory superiore 
-	govway-installer-<versione>/installer/setup/deploy/sw/
-      !!Attenzione!!: Preservare il nome dell'archivio jar di destinazione presente nella versione binaria, rispetto a quello prodotto dalla versione sorgente.
-      Esempio:
-	cp GovWay/dist/openspcoop2_pdd_RELEASE.jar govway-installer-<versione>/installer/setup/deploy/sw/jars/openspcoop2_pdd_3.0.0.RELEASE.jar
+    Usare il comando:
+	mvn verify
 
-3.3 Rieseguire il setup
-
-    Esempio:
-
-    cd govway-installer-3.0.0
-    ./install.sh o ./install.cmd
-
+    Per evitare la compilazione e il packaging descritto nelle precedenti sezioni, utilizzare il comando:
+	mvn verify -Dcompile=none -Dpackage=none
+ 
+    Verranno identificate tutte le dipendenze relative a jar 3parti e saranno verificate se esistono vulnerabilità conosciute.
+    Un report viene prodotto nella directory 'dependency-check-result'

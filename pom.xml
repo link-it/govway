@@ -1,19 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
-	<version>1.0</version>
+	<version>${revision}</version>
 	<artifactId>org.openspcoop2</artifactId>
 	<packaging>pom</packaging>
 	<name>govway</name>
 
 	<properties>		
-		<owasp.falsePositives.dir>mvn/dependencies/owasp/falsePositives</owasp.falsePositives.dir>
-		<owasp.output.dir>dependency-check-result</owasp.output.dir>
+		<revision>1.0</revision>
+		<maven-antrun-plugin>1.8</maven-antrun-plugin>
+		<maven-resources-plugin>3.1.0</maven-resources-plugin>
+		<maven-dependency-plugin>3.1.1</maven-dependency-plugin>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- compile config -->
+		<compile>compile</compile> <!-- compile phase, use 'none' for disable -->
+		
+		<!-- owasp config -->
+		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
+		<owasp.plugin.version>5.0.0-M1</owasp.plugin.version>
+
+		<!-- package config -->
+		<package>package</package> <!-- package phase, use 'none' for disable -->
+		<package.type>branches</package.type>
+		<package.skip.check>true</package.skip.check>
+		<package.skip.src>true</package.skip.src>		
+
 	</properties>
 
 	<modules>
 		<module>mvn/dependencies</module>
 		<module>mvn/compile</module>
+		<module>distrib</module>
 	</modules>
 
 	<repositories>
@@ -30,36 +49,5 @@
 			<url>https://maven.link.it/content/repositories/thirdparty-releases/</url>
 		</repository>
 	</repositories>
-
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>5.0.0-M1</version>
-				<executions>
-					<execution>
-						<id>check owasp</id>
-						<phase>verify</phase>
-						<configuration>
-							<failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
-							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
-							<outputDirectory>${owasp.output.dir}</outputDirectory>
-							<format>ALL</format>
-							<suppressionFiles>
-								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/console-back-office.xml</suppressionFile>
-								<suppressionFile>${owasp.falsePositives.dir}/commons-net-echo.xml</suppressionFile>
-							</suppressionFiles>
-						</configuration>
-						<goals>
-							<goal>aggregate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

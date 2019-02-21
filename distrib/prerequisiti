@@ -1,0 +1,291 @@
+#!/bin/bash 
+
+[ -f log4bash-core.sh ] && source log4bash-core.sh
+PropertyConfigurator
+
+
+####################
+# Pre compilazione #
+####################
+SAVED_CONF="${WORK_DIR:-"."}/.javaenv.saved"
+if [ -f "$SAVED_CONF" ] 
+then
+    . "$SAVED_CONF"
+    JAVA_HOME=${JAVA_HOME_CONF}
+    ANT_HOME=${ANT_HOME_CONF}
+fi
+
+if [ -z "${JAVA_HOME_CONF}" ]
+then
+    infoPrintln "Configurazione JVM ... "
+    infoPrintln 
+    SYSTEM_JAVA=$(which java 2> /dev/null)
+    SYSTEM_JAVA_DIR=$(dirname $(readlink -f ${SYSTEM_JAVA} 2> /dev/null) 2> /dev/null)
+    SYSTEM_JAVA_HOME=$(readlink -f $SYSTEM_JAVA_DIR/.. 2> /dev/null)
+    if [ -z "$SYSTEM_JAVA_HOME" -a -z "$JAVA_HOME" ]
+    then
+        SCELTE=0
+        read -p "Inserisci path JAVA_HOME : " JAVA_HOME
+    elif [ -z "${JAVA_HOME}" ] 
+    then
+        SCELTE=1
+        infoPrintln "Rilevata la seguente JVM : $SYSTEM_JAVA"
+    elif [ -z "$SYSTEM_JAVA" ] 
+    then
+        SCELTE=1
+        infoPrintln "Rilevata la seguente JVM : $JAVA_HOME"
+    else
+        SCELTE=2;
+        infoPrintln "Rilevata la seguente JAVA_HOME tra le variabili d'ambiente : $JAVA_HOME"
+        infoPrintln "Rilevata la seguente JVM nel PATH di sistema : $SYSTEM_JAVA"
+	[ "${JAVA_HOME}bin/java" == "${SYSTEM_JAVA}" ] && { infoPrintln "  NOTA: Individuano la stessa JVM"; SCELTE=1; } 
+    fi
+    while [ 1 ]
+    do
+        infoPrintln
+        read -p "Vuoi specificarne una JVM alternativa ? [y/n]: " ANSWER
+        if [ ${ANSWER^^} == "Y" -o ${ANSWER^^} == "YES" -o ${ANSWER^^} == "S" -o ${ANSWER^^} == "SI" ]
+        then
+             read -p "Inserisci path JAVA_HOME : " JAVA_HOME
+             break
+        elif [ ${ANSWER^^} == "N" -o ${ANSWER^^} == "NO" ]
+        then
+            if [ $SCELTE -eq 2 ] 
+            then              
+                while [ 1 ]
+                do
+                    infoPrintln              
+                    infoPrintln "1) - [JAVA_HOME] - $JAVA_HOME"
+                    infoPrintln "2) - [PATH] - $SYSTEM_JAVA_HOME"
+                    read -p "Quale JVM vuoi utilizzare ? : " ANSWER
+                    [ ${ANSWER} == "1" ] && { break 2; }
+                    [ ${ANSWER} == "2" ] && { JAVA_HOME="$SYSTEM_JAVA_HOME"; break 2; }
+                done
+            else
+                [ -z "$JAVA_HOME" ] && JAVA_HOME="$SYSTEM_JAVA_HOME"
+                break
+            fi
+        fi
+    done
+    JAVA_HOME_CONF="$JAVA_HOME"
+fi
+
+if [ -z "${ANT_HOME_CONF}" ]
+then
+    infoPrintln "Configurazione ANT ... "
+    infoPrintln 
+    SYSTEM_ANT=$(which ant 2> /dev/null)  
+    SYSTEM_ANT_DIR=$(dirname $(readlink -f $SYSTEM_ANT 2> /dev/null) 2> /dev/null)
+    SYSTEM_ANT_HOME=$(readlink -f $SYSTEM_ANT_DIR 2> /dev/null)
+    if [ -z "$SYSTEM_ANT_HOME" -a -z "$ANT_HOME" ]       
+    then
+        SCELTE=0
+        read -p "Inserisci path ANT_HOME : " ANT_HOME
+    elif [ -z "${ANT_HOME}" ]
+    then 
+        SCELTE=1
+        infoPrintln "Rilevata il seguente ANT : $SYSTEM_ANT"
+    elif [ -z "$SYSTEM_ANT" ]
+    then
+        SCELTE=1
+        infoPrintln "Rilevata il seguente ANT : $ANT_HOME"
+    else
+        SCELTE=2;
+        infoPrintln "Rilevata la seguente ANT_HOME tra le variabili d'ambiente : $ANT_HOME"
+        infoPrintln "Rilevata il seguente ANT nel PATH di sistema : $SYSTEM_ANT"
+	[ "${ANT_HOME}bin/ant" == "${SYSTEM_ANT}" ] && { infoPrintln "  NOTA: Individuano lo stesso ANT"; SCELTE=1; } 
+    fi
+    while [ 1 ]
+    do
+        infoPrintln
+        read -p "Vuoi specificarne un ANT alternativo ? [y/n]: " ANSWER
+        if [ ${ANSWER^^} == "Y" -o ${ANSWER^^} == "YES" -o ${ANSWER^^} == "S" -o ${ANSWER^^} == "SI" ]
+        then
+             read -p "Inserisci path ANT_HOME : " ANT_HOME
+             break
+        elif [ ${ANSWER^^} == "N" -o ${ANSWER^^} == "NO" ]
+        then    
+            if [ $SCELTE -eq 2 ] 
+            then
+                while [ 1 ]
+                do
+                    infoPrintln
+                    infoPrintln "1) - [ANT_HOME] - $ANT_HOME"
+                    infoPrintln "2) - [PATH] - $SYSTEM_ANT_HOME"
+                    read -p "Quale ANT vuoi utilizzare ? : " ANSWER
+                    [ ${ANSWER} == "1" ] && { break 2; }
+                    [ ${ANSWER} == "2" ] && { ANT_HOME="$SYSTEM_ANT_HOME"; break 2; } 
+                done
+            else
+                [ -z "$ANT_HOME" ] &&  ANT_HOME="$SYSTEM_ANT_HOME"
+                break
+            fi
+        fi
+    done
+    ANT_HOME_CONF="$ANT_HOME"
+fi
+
+if [ -z "${SPHINX_BUILD_HOME_CONF}" ]
+then
+    infoPrintln "Configurazione sphinx-build ... "
+    infoPrintln 
+    SYSTEM_SPHINX_BUILD=$(which sphinx-build 2> /dev/null)  
+    SYSTEM_SPHINX_BUILD_DIR=$(dirname $(readlink -f $SYSTEM_SPHINX_BUILD 2> /dev/null) 2> /dev/null)
+    SYSTEM_SPHINX_BUILD_HOME=$(readlink -f $SYSTEM_SPHINX_BUILD_DIR 2> /dev/null)
+    if [ -z "$SYSTEM_SPHINX_BUILD_HOME" -a -z "$SPHINX_BUILD_HOME" ]       
+    then
+        SCELTE=0
+        read -p "Inserisci path SPHINX_BUILD_HOME : " SPHINX_BUILD_HOME
+    elif [ -z "${SPHINX_BUILD_HOME}" ]
+    then 
+        SCELTE=1
+        infoPrintln "Rilevata il seguente SPHINX_BUILD : $SYSTEM_SPHINX_BUILD"
+    elif [ -z "$SYSTEM_SPHINX_BUILD" ]
+    then
+        SCELTE=1
+        infoPrintln "Rilevata il seguente SPHINX_BUILD : $SPHINX_BUILD_HOME"
+    else
+        SCELTE=2;
+        infoPrintln "Rilevata la seguente SPHINX_BUILD_HOME tra le variabili d'ambiente : $SPHINX_BUILD_HOME"
+        infoPrintln "Rilevata il seguente DBSPHINX_BUILD nel PATH di sistema : $SYSTEM_SPHINX_BUILD"
+	[ "${SPHINX_BUILD_HOME}bin/sphinx-build" == "${SYSTEM_SPHINX_BUILD}" ] && { infoPrintln "  NOTA: Individuano lo stesso SPHINX_BUILD"; SCELTE=1; } 
+    fi
+    while [ 1 ]
+    do
+        infoPrintln
+        read -p "Vuoi specificarne un SPHINX_BUILD alternativo ? [y/n]: " ANSWER
+        if [ ${ANSWER^^} == "Y" -o ${ANSWER^^} == "YES" -o ${ANSWER^^} == "S" -o ${ANSWER^^} == "SI" ]
+        then
+             read -p "Inserisci path SPHINX_BUILD_HOME : " SPHINX_BUILD_HOME
+             break
+        elif [ ${ANSWER^^} == "N" -o ${ANSWER^^} == "NO" ]
+        then    
+            if [ $SCELTE -eq 2 ] 
+            then
+                while [ 1 ]
+                do
+                    infoPrintln
+                    infoPrintln "1) - [SPHINX_BUILD_HOME] - $SPHINX_BUILD_HOME"
+                    infoPrintln "2) - [PATH] - $SYSTEM_SPHINX_BUILD_HOME"
+                    read -p "Quale SPHINX_BUILD vuoi utilizzare ? : " ANSWER
+                    [ ${ANSWER} == "1" ] && { break 2; }
+                    [ ${ANSWER} == "2" ] && { SPHINX_BUILD_HOME="$SYSTEM_SPHINX_BUILD_HOME"; break 2; } 
+                done
+            else
+                [ -z "$SPHINX_BUILD_HOME" ] &&  SPHINX_BUILD_HOME="$SYSTEM_SPHINX_BUILD_HOME"
+                break
+            fi
+        fi
+    done
+    SPHINX_BUILD_HOME_CONF="$SPHINX_BUILD_HOME"
+fi
+
+if [ -z "${LATEX_HOME_CONF}" ]
+then
+    infoPrintln "Configurazione latexmk ... "
+    infoPrintln 
+    SYSTEM_LATEX=$(which latexmk 2> /dev/null)  
+    SYSTEM_LATEX_DIR=$(dirname $(readlink -f $SYSTEM_LATEX 2> /dev/null) 2> /dev/null)
+    SYSTEM_LATEX_HOME=$(readlink -f $SYSTEM_LATEX_DIR 2> /dev/null)
+    if [ -z "$SYSTEM_LATEX_HOME" -a -z "$LATEX_HOME" ]       
+    then
+        SCELTE=0
+        read -p "Inserisci path LATEX_HOME : " LATEX_HOME
+    elif [ -z "${LATEX_HOME}" ]
+    then 
+        SCELTE=1
+        infoPrintln "Rilevata il seguente LATEX : $SYSTEM_LATEX"
+    elif [ -z "$SYSTEM_LATEX" ]
+    then
+        SCELTE=1
+        infoPrintln "Rilevata il seguente LATEX : $LATEX_HOME"
+    else
+        SCELTE=2;
+        infoPrintln "Rilevata la seguente LATEX_HOME tra le variabili d'ambiente : $LATEX_HOME"
+        infoPrintln "Rilevata il seguente DBLATEX nel PATH di sistema : $SYSTEM_LATEX"
+	[ "${LATEX_HOME}bin/latexmk" == "${SYSTEM_LATEX}" ] && { infoPrintln "  NOTA: Individuano lo stesso LATEX"; SCELTE=1; } 
+    fi
+    while [ 1 ]
+    do
+        infoPrintln
+        read -p "Vuoi specificarne un LATEX alternativo ? [y/n]: " ANSWER
+        if [ ${ANSWER^^} == "Y" -o ${ANSWER^^} == "YES" -o ${ANSWER^^} == "S" -o ${ANSWER^^} == "SI" ]
+        then
+             read -p "Inserisci path LATEX_HOME : " LATEX_HOME
+             break
+        elif [ ${ANSWER^^} == "N" -o ${ANSWER^^} == "NO" ]
+        then    
+            if [ $SCELTE -eq 2 ] 
+            then
+                while [ 1 ]
+                do
+                    infoPrintln
+                    infoPrintln "1) - [LATEX_HOME] - $LATEX_HOME"
+                    infoPrintln "2) - [PATH] - $SYSTEM_LATEX_HOME"
+                    read -p "Quale LATEX vuoi utilizzare ? : " ANSWER
+                    [ ${ANSWER} == "1" ] && { break 2; }
+                    [ ${ANSWER} == "2" ] && { LATEX_HOME="$SYSTEM_LATEX_HOME"; break 2; } 
+                done
+            else
+                [ -z "$LATEX_HOME" ] &&  LATEX_HOME="$SYSTEM_LATEX_HOME"
+                break
+            fi
+        fi
+    done
+    LATEX_HOME_CONF="$LATEX_HOME"
+fi
+
+cat - << EOCONF > "$SAVED_CONF"
+JAVA_HOME_CONF="${JAVA_HOME_CONF}"
+ANT_HOME_CONF="${ANT_HOME_CONF}"
+SPHINX_BUILD_HOME_CONF="${SPHINX_BUILD_HOME_CONF}"
+LATEX_HOME_CONF="${LATEX_HOME_CONF}"
+EOCONF
+
+
+### Verifica versione java (default java6 Oracle)
+MIN_MAJOR=${MIN_MAJOR:-1}
+MAX_MAJOR=${MAX_MAJOR:-1}
+MIN_MINOR=${MIN_MINOR:-8}
+MAX_MINOR=${MAX_MINOR:-8}
+EXPECTED_RUNTIME=${EXPECTED_RUNTIME:-"Java(TM)"}
+JAVA_VERSION=$($JAVA_HOME_CONF/bin/java -version 2>&1 |awk -F '"' '/version/ {print $2}')
+JAVA_RUNTIME=$($JAVA_HOME_CONF/bin/java -version 2>&1 |awk -F ' ' '/Runtime/ {print $1}')
+IFS=. read major minor extra <<<"$JAVA_VERSION"
+if [  $major -lt ${MIN_MAJOR} -o $major -gt ${MAX_MAJOR}  ] || [  $minor -lt ${MIN_MINOR} -o $minor -gt ${MAX_MINOR}  ] 
+then
+    errorPrintln "Versione java rilevata [$JAVA_VERSION] non supportata. Richiesta versione compresa tra [$MIN_MAJOR.$MIN_MINOR] e [$MAX_MAJOR.$MAX_MINOR]"
+    FAILED_VERIFY=true
+fi
+if [ "$JAVA_RUNTIME" != "$EXPECTED_RUNTIME" ]
+then
+    errorPrintln "Runtime rilevato [$JAVA_RUNTIME] non supportato. Richiesto [$EXPECTED_RUNTIME]"
+    FAILED_VERIFY=true
+fi
+if [ "$FAILED_VERIFY" == "true" ]
+then
+    cat $SAVED_CONF |grep -v "JAVA_HOME" >$SAVED_CONF.temp
+    /bin/mv $SAVED_CONF.temp $SAVED_CONF
+else
+	export JAVA_HOME
+	export PATH=PATH=$JAVA_HOME/bin:$PATH
+fi
+
+### Verfica ANT_HOME
+if [ -d "${ANT_HOME}/lib" ]
+then
+        export ANT_HOME
+        export PATH=$ANT_HOME/bin:$PATH
+fi
+### Verifica esistenza path driver JDBC
+#if [ ! -f "$PGSQL_JDBC_CONF" -o ! -r  "$PGSQL_JDBC_CONF" ]
+#then
+#    cat $SAVED_CONF |grep -v "PGSQL_JDBC" >$SAVED_CONF.temp
+#    /bin/mv $SAVED_CONF.temp $SAVED_CONF
+#    errorPrinln "Il path al driver JDBC indicato [${PGSQL_JDBC_CONF}] non e' esistente o il file non e' leggibile"
+#    exit
+#
+#fi
+
+    SYSTEM_JAVA=$(which java 2> /dev/null)
+

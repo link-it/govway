@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>${revision}</version>
+	<artifactId>org.openspcoop2.package</artifactId>
+	<packaging>pom</packaging>
+	<name>package</name>
+
+	<properties>		
+		<!-- package config -->
+		<package.output.dir>../dist</package.output.dir>	
+		<package.log.dir>../log</package.log.dir>	
+	</properties>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>${revision}</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin}</version>
+				<executions>
+					<execution>
+						<phase>${package}</phase>
+						<configuration>
+							<target>
+								<exec executable="${project.basedir}/distrib.sh">
+									<arg value="${package.type}"/>
+									<arg value="${package.output.dir}"/>
+									<arg value="${package.skip.check}"/>
+									<arg value="${package.skip.src}"/>
+									<arg value="false"/> <!-- updateLibs -->
+									<arg value="${package.log.dir}"/>
+								</exec>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
