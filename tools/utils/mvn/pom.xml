@@ -1,0 +1,315 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openspcoop2</groupId>
+	<version>${revision}</version>
+	<artifactId>org.openspcoop2.testsuite.utils</artifactId>
+	<packaging>pom</packaging>
+	<name>testsuite.utils</name>
+
+	<parent>
+		<groupId>org.openspcoop2</groupId>
+		<artifactId>org.openspcoop2</artifactId>
+		<version>${revision}</version>
+		<relativePath>../../../pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin}</version>
+				<executions>
+					<execution>
+						<phase>${testsuite.utils}</phase>
+						<configuration>
+							<target>
+								<property name="rootDir" location="../../../" />
+								<path id="classpath_run_dist" >
+									<fileset dir="${rootDir}/dist" >
+										<include name="*.jar"/>
+									</fileset>
+								</path>
+								<path id="classpath_run_lib" >
+									<pathelement path="../src"/>
+									<pathelement path="../deploy/properties"/>
+									<fileset dir="${rootDir}/lib" >
+										<exclude name="**/axis14/*"/>
+										<exclude name="**/swagger-codegen/*"/>
+										<exclude name="**/*README"/>
+										<exclude name="*.userlibraries"/>
+										<include name="**/*.jar"/>
+									</fileset>
+								</path>
+
+								<taskdef resource="net/sf/antcontrib/antlib.xml"
+									classpathref="classpath_run_lib" />
+
+								<echo message="Run test 'WADL-Reader' ..."/>
+								<java classname="org.openspcoop2.utils.wadl.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'WADL-Reader' ok"/>
+
+								<echo message="Run test 'WADL-Validator' ..."/>
+								<java classname="org.openspcoop2.utils.wadl.validator.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'WADL-Validator' ok"/>
+
+								<echo message="Run test 'Swagger-Reader' ..."/>
+								<java classname="org.openspcoop2.utils.openapi.TestSwagger2" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Swagger-Reader' ok"/>
+
+								<echo message="Run test 'Swagger-Validator' ..."/>
+								<java classname="org.openspcoop2.utils.openapi.validator.TestSwagger2" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Swagger-Validator' ok"/>
+
+								<echo message="Run test 'OpenAPI-Reader' ..."/>
+								<java classname="org.openspcoop2.utils.openapi.TestOpenApi3" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'OpenAPI-Reader' ok"/>
+
+								<echo message="Run test 'OpenAPI-Validator' ..."/>
+								<java classname="org.openspcoop2.utils.openapi.validator.TestOpenApi3" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'OpenAPI-Validator' ok"/>
+
+								<echo message="Run test 'Problem RFC 7807' ..."/>
+								<java classname="org.openspcoop2.utils.rest.problem.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Problem RFC 7807' ok"/>
+
+								<echo message="Run test 'Compressor Utils' ..."/>
+								<java classname="org.openspcoop2.utils.io.CompressorUtilities" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Compressor Utils' ok"/>
+
+								<echo message="Run test 'Zip Utils' ..."/>
+								<java classname="org.openspcoop2.utils.io.ZipUtilities" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Zip Utils' ok"/>
+
+								<echo message="Run test 'RFC2047' ..."/>
+								<java classname="org.openspcoop2.utils.transport.http.RFC2047Utilities" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'RFC2047' ok"/>
+
+								<echo message="Run test 'XQuery' ..."/>
+								<java classname="org.openspcoop2.utils.xml.XQueryClientTest" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'XQuery' ok"/>
+
+								<echo message="Run test 'XMLDiffClientTest' ..."/>
+								<java classname="org.openspcoop2.utils.xml.XMLDiffClientTest" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'XMLDiffClientTest' ok"/>
+
+								<echo message="Run test 'XACML' ..."/>
+								<java classname="org.openspcoop2.utils.xacml.test.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'XACML' ok"/>
+
+								<echo message="Run test 'Security.encrypt' ..."/>
+								<java classname="org.openspcoop2.utils.security.TestEncrypt" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Security.encrypt' ok"/>
+
+								<echo message="Run test 'Security.signature' ..."/>
+								<java classname="org.openspcoop2.utils.security.TestSignature" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Security.signature' ok"/>
+
+								<echo message="Run test 'Security.verifyGoogleJWT' ..."/>
+								<java classname="org.openspcoop2.utils.security.TestVerifyGoogleJWT" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Security.verifyGoogleJWT' ok"/>
+
+								<echo message="Run test 'Apache Id Generator' ..."/>
+								<java classname="org.openspcoop2.utils.id.ApacheClient" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Apache Id Generator' ok"/>
+
+								<echo message="Run test 'XML2JSON' ..."/>
+								<java classname="org.openspcoop2.utils.xml2json.test.Xml2JsonTest" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'XML2JSON' ok"/>
+
+								<echo message="Run test 'Serializer' ..."/>
+								<java classname="org.openspcoop2.utils.serialization.test.SerializerTest" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Serializer' ok"/>
+
+								<echo message="Run test 'ApplicativeLogger' ..."/>
+								<java classname="org.openspcoop2.utils.logger.test.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'ApplicativeLogger' ok"/>
+
+								<echo message="Run test 'CSV' ..."/>
+								<java classname="org.openspcoop2.utils.csv.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'CSV' ok"/>
+
+								<echo message="Run test 'Crypt Password' ..."/>
+								<java classname="org.openspcoop2.utils.crypt.Password" 
+									fork="true" failonerror="true">
+									<arg value="changeit" />
+                        						<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Crypt Password' ok"/>
+
+								<echo message="Run test 'Crypt MD5' ..."/>
+								<java classname="org.openspcoop2.utils.crypt.MD5Crypt" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'Crypt MD5' ok"/>
+
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.sun</groupId>
+						<artifactId>tools</artifactId>
+						<version>${com-sun-tools}</version>
+						<scope>system</scope>
+						<systemPath>${java.home}/../lib/tools.jar</systemPath>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-apache-regexp</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-launcher</artifactId>
+						<version>${ant.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
