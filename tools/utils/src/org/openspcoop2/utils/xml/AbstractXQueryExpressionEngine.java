@@ -267,7 +267,7 @@ public abstract class AbstractXQueryExpressionEngine {
 					((Serializer)destination).setOutputProperty(Serializer.Property.METHOD, "xml");
 					((Serializer)destination).setOutputProperty(Serializer.Property.INDENT, "yes");
 					((Serializer)destination).setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-					((Serializer)destination).setOutputProperty(Serializer.Property.SAXON_INDENT_SPACES, "2");
+					//((Serializer)destination).setOutputProperty(Serializer.Property.SAXON_INDENT_SPACES, "2");
 				}
 			}
 			wrapper.destination = destination;

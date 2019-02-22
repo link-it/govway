@@ -48,6 +48,8 @@ import org.slf4j.Logger;
  */
 public class TestGestoreRepository {
 
+	private static boolean systemOut = true; // utile per maven test 
+	
 	private static Logger log = null;
 	
 	public static void main(String[] args) throws Exception{
@@ -177,8 +179,17 @@ public class TestGestoreRepository {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String driverJdbcCustom = args[4].trim();
+			if(!"${driverJdbc}".equals(driverJdbcCustom)){
+				driver = driverJdbcCustom;
+			}
+		}
 
-
+		System.out.println("URL:"+url);
+		System.out.println("UserName:"+userName);
+		System.out.println("Password:"+password);
+		System.out.println("DriverJDBC:"+driver);
 		ClassLoaderUtilities.newInstance(driver);
 		
 		Connection con = null;
@@ -194,6 +205,12 @@ public class TestGestoreRepository {
 	    }
 	}
 
+	private static void info(Logger log, boolean systemOut, String msg) {
+		log.info(msg);
+		if(systemOut) {
+			System.out.println(msg);
+		}
+	}
 	
 	@SuppressWarnings("resource")
 	private static void test(Connection con,TipiDatabase tipoDatabase) throws Exception{
@@ -212,11 +229,11 @@ public class TestGestoreRepository {
 	    	
 	    	IGestoreRepository gestoreRepository = GestoreRepositoryFactory.createRepositoryBuste(tipoDatabase);
 	    	String tipo = GestoreRepositoryFactory.getTipoRepositoryBuste(tipoDatabase);
-	    	log.info("Creato IGestoreRepository["+tipo+"] di tipo "+gestoreRepository.getClass().getName());
+	    	info(log,systemOut,"Creato IGestoreRepository["+tipo+"] di tipo "+gestoreRepository.getClass().getName());
 	    	
 	    	
 	    	String colonna = gestoreRepository.createSQLFields();
-	    	log.info("createSQLFields: "+colonna);
+	    	info(log,systemOut,"createSQLFields: "+colonna);
 	    	if("REPOSITORY_ACCESS".equals(colonna)==false){
 	    		throw new Exception("createSQLFields ha ritornato un valore differente da quello atteso (REPOSITORY_ACCESS): "+colonna);
 	    	}
@@ -228,15 +245,15 @@ public class TestGestoreRepository {
 	    	stmtInsert = con.prepareStatement(sqlQuery.createSQLInsert());
 	    	stmtInsert.setString(1, "descrizione di esempio");
 	    	int row = stmtInsert.executeUpdate();
-	    	log.info("\n\ninserita riga: "+row);
+	    	info(log,systemOut,"\n\ninserita riga: "+row);
 	    	
 	    	// Verifico default (history)
 	    	String query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(false);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 1. history=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 1. history=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 1. history=false)");
 	    	}
@@ -245,10 +262,10 @@ public class TestGestoreRepository {
 	    	// Verifico default (history+profilo)
 	    	query = query + " and "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(false);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 2. history=false and profilo=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 2. history=false and profilo=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 2. history=false and profilo=false)");
 	    	}
@@ -257,10 +274,10 @@ public class TestGestoreRepository {
 	    	// Verifico default (history+profilo+pdd)
 	    	query = query + " and "+gestoreRepository.createSQLCondition_PdD(false);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 3. history=false and profilo=false and pdd=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 3. history=false and profilo=false and pdd=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 3. history=false and profilo=false and pdd=false)");
 	    	}
@@ -271,29 +288,29 @@ public class TestGestoreRepository {
 	    	// Imposto History
 	    	String update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_History(true);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=false)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(false);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 4. history=false)");
 	    	}else{
-	    		log.info("(test 4. history=false). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 4. history=false). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 5. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 5. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 5. history=true)");
 	    	}
@@ -304,17 +321,17 @@ public class TestGestoreRepository {
 	    	// Imposto anche Profilo
 	    	update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_ProfiloCollaborazione(true);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 6. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 6. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 6. history=true)");
 	    	}
@@ -324,10 +341,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true)+
 	    			 "and "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 7. history=true and profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 7. history=true and profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 7. history=true and profilo=true)");
 	    	}
@@ -337,10 +354,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 8. history=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 8. history=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 8. history=true or profilo=true)");
 	    	}
@@ -352,17 +369,17 @@ public class TestGestoreRepository {
 	    	// Imposto anche PdD
 	    	update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_PdD(true);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 9. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 9. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 9. history=true)");
 	    	}
@@ -372,10 +389,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true)+
 	    			 "and "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 10. history=true and profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 10. history=true and profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 10. history=true and profilo=true)");
 	    	}
@@ -385,10 +402,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 1. history=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 1. history=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 11. history=true or profilo=true)");
 	    	}
@@ -399,10 +416,10 @@ public class TestGestoreRepository {
 	    			 "and "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true)+
 	    			 "and "+gestoreRepository.createSQLCondition_PdD(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 12. history=true and profilo=true and pdd=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 12. history=true and profilo=true and pdd=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 12. history=true and profilo=true and pdd=true)");
 	    	}
@@ -413,10 +430,10 @@ public class TestGestoreRepository {
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_PdD(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 13. history=true or profilo=true or pdd=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 13. history=true or profilo=true or pdd=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 13. history=true or profilo=true or pdd=true)");
 	    	}
@@ -431,60 +448,60 @@ public class TestGestoreRepository {
 	    	// Solo History
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyHistory();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 14. onlyHistory)");
 	    	}else{
-	    		log.info("(test 14. onlyHistory). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 14. onlyHistory). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo Profilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 15. onlyProfilo)");
 	    	}else{
-	    		log.info("(test 15. onlyProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 15. onlyProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo PdD
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPdd();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 16. onlyPdd)");
 	    	}else{
-	    		log.info("(test 16. onlyPdd). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 16. onlyPdd). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo PdD e Profilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPddAndProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 17. onlyPddAndProfilo)");
 	    	}else{
-	    		log.info("(test 17. onlyPddAndProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 17. onlyPddAndProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// DisabledAll
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_disabledAll();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 18. disableAll)");
 	    	}else{
-	    		log.info("(test 18. disableAll). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 18. disableAll). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -495,19 +512,19 @@ public class TestGestoreRepository {
 	    	
 	    	update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_History(false);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 19. history=true)");
 	    	}else{
-	    		log.info("(test 19. history=true). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 19. history=true). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -515,10 +532,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_PdD(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 20. pdd=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 20. pdd=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 20. pdd=true or profilo=true)");
 	    	}
@@ -527,34 +544,34 @@ public class TestGestoreRepository {
 	    	// Solo Profilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 21. onlyProfilo)");
 	    	}else{
-	    		log.info("(test 21. onlyProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 21. onlyProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo PdD
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPdd();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 22. onlyPdd)");
 	    	}else{
-	    		log.info("(test 22. onlyPdd). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 22. onlyPdd). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Verifico Solo PddAndProfilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPddAndProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 23. pddAndProfilo). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 23. pddAndProfilo). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 20. pddAndProfilo)");
 	    	}
@@ -563,12 +580,12 @@ public class TestGestoreRepository {
 	    	// DisabledAll
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_disabledAll();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 24. disableAll)");
 	    	}else{
-	    		log.info("(test 24. disableAll). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 24. disableAll). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -582,19 +599,19 @@ public class TestGestoreRepository {
 	    	
 	    	update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_PdD(false);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 25. history=true)");
 	    	}else{
-	    		log.info("(test 25. history=true). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 25. history=true). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -602,10 +619,10 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_PdD(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 26. pdd=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 26. pdd=true or profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 26. pdd=true or profilo=true)");
 	    	}
@@ -614,10 +631,10 @@ public class TestGestoreRepository {
 	    	// Solo Profilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 27. profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 27. profilo=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 27. onlyProfilo)");
 	    	}
@@ -626,36 +643,36 @@ public class TestGestoreRepository {
 	    	// Solo PdD
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPdd();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 28. onlyPdd)");
 	    	}else{
-	    		log.info("(test 28. onlyPdd). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 28. onlyPdd). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Verifico Solo PddAndProfilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPddAndProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 29. pddAndProfilo)");
 	    	}else{
-	    		log.info("(test 29. pddAndProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 29. pddAndProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// DisabledAll
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_disabledAll();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 30. disableAll)");
 	    	}else{
-	    		log.info("(test 30. disableAll). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 30. disableAll). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -671,19 +688,19 @@ public class TestGestoreRepository {
 	    	
 	    	update = "UPDATE prova_bytewise set "+gestoreRepository.createSQLSet_ProfiloCollaborazione(false);
 	    	stmtInsert = con.prepareStatement(update);
-	    	log.info("\n\nUpdate ["+update+"]");
+	    	info(log,systemOut,"\n\nUpdate ["+update+"]");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("aggiornata riga: "+row);
+	    	info(log,systemOut,"aggiornata riga: "+row);
 	    	
 	    	// Verifico (history=true)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 31. history=true)");
 	    	}else{
-	    		log.info("(test 31. history=true). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 31. history=true). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
@@ -691,58 +708,58 @@ public class TestGestoreRepository {
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_PdD(true)+
 	    			 "or "+gestoreRepository.createSQLCondition_ProfiloCollaborazione(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 32. pdd=true or profilo=true)");
 	    	}else{
-	    		log.info("(test 32. pdd=true or profilo=true). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 32. pdd=true or profilo=true). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo Profilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 33. onlyProfilo)");
 	    	}else{
-	    		log.info("(test 33. onlyProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 33. onlyProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Solo PdD
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPdd();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 34. onlyPdd)");
 	    	}else{
-	    		log.info("(test 34. onlyPdd). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 34. onlyPdd). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// Verifico Solo PddAndProfilo
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_enableOnlyPddAndProfilo();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
 	    		throw new Exception("trovata Riga non attesa (valore:"+toStringEngine(rsQuery,1)+") (test 35. pddAndProfilo)");
 	    	}else{
-	    		log.info("(test 35. pddAndProfilo). Non e' stata trovata correttamente una entry");
+	    		info(log,systemOut,"(test 35. pddAndProfilo). Non e' stata trovata correttamente una entry");
 	    	}
 	    	rsQuery.close();
 	    	
 	    	// DisabledAll
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_disabledAll();
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 36. disableAll). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 36. disableAll). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 36. disableAll)");
 	    	}
@@ -767,15 +784,15 @@ public class TestGestoreRepository {
 	    	stmtInsert = con.prepareStatement(sqlQuery.createSQLInsert());
 	    	stmtInsert.setString(1, "descrizione di esempio");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("\n\ninserita riga: "+row);
+	    	info(log,systemOut,"\n\ninserita riga: "+row);
 	    	
 	    	// Verifico default (history)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(true);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 37. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 37. history=true). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 37. history=true)");
 	    	}
@@ -801,15 +818,15 @@ public class TestGestoreRepository {
 	    	stmtInsert = con.prepareStatement(sqlQuery.createSQLInsert());
 	    	stmtInsert.setString(1, "descrizione di esempio");
 	    	row = stmtInsert.executeUpdate();
-	    	log.info("\n\ninserita riga: "+row);
+	    	info(log,systemOut,"\n\ninserita riga: "+row);
 	    	
 	    	// Verifico default (history)
 	    	query = "select "+colonna+" from prova_bytewise where "+gestoreRepository.createSQLCondition_History(false);
 	    	stmtQuery = con.createStatement();
-	    	log.info("\n\nQuery ["+query+"]");
+	    	info(log,systemOut,"\n\nQuery ["+query+"]");
 	    	rsQuery = stmtQuery.executeQuery(query);
 	    	if(rsQuery.next()){
-	    		log.info("(test 38. history=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
+	    		info(log,systemOut,"(test 38. history=false). Trovata entry con valore: "+toStringEngine(rsQuery,1));
 	    	}else{
 	    		throw new Exception("Riga attesa non trovata (test 38. history=false)");
 	    	}
@@ -839,7 +856,7 @@ public class TestGestoreRepository {
 	public static String toStringEngine(ResultSet rs, int index) throws SQLException{
 		//Object o = rs.getObject(index);
 		Object o = rs.getString(index);
-		//log.info("Classe: "+o.getClass().getName());
+		//info(log,systemOut,"Classe: "+o.getClass().getName());
 //		if(o instanceof byte[]){
 //			return new String((byte[])o);
 //		}

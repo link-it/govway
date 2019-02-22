@@ -34,7 +34,7 @@
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/*README"/>
-			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="*.userlibraries"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

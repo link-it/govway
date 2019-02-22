@@ -54,7 +54,7 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/*README"/>
-			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="*.userlibraries"/>
 			<exclude name="axis14/*"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>

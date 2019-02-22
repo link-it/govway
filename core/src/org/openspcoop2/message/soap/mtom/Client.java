@@ -50,16 +50,20 @@ public class Client {
 	public static void main(String[] args) throws Exception {
 		
 		// TEST 1
+		System.out.println("============ SOAP 11 ============");
 		new Client(MessageType.SOAP_11, null, false);
 		
 		// TEST 2
-		//new Client(MessageType.SOAP12, null, false);
+		System.out.println("============ SOAP 12 ============");
+		new Client(MessageType.SOAP_12, null, false);
 		
 		// TEST 3
-		//new Client(MessageType.SOAP11, null, true);
+		System.out.println("============ SOAP 11 (attach) ============");
+		new Client(MessageType.SOAP_11, null, true);
 		
 		// TEST 4
-		//new Client(MessageType.SOAP12, null, true);
+		System.out.println("============ SOAP 12 (attach) ============");
+		new Client(MessageType.SOAP_12, null, true);
 				
 	}
 	

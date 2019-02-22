@@ -109,6 +109,7 @@ public class JsonVerifySignature {
 			}
 		}
 		catch(Throwable t) {
+			t.printStackTrace(System.out);
 			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}

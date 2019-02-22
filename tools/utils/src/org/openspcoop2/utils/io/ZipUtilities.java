@@ -77,7 +77,7 @@ public class ZipUtilities {
 		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 
 		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
 		
-		ZipFile zipFile = new ZipFile("esempio.zip");
+		ZipFile zipFile = new ZipFile(new File(ZipUtilities.class.getResource("/org/openspcoop2/utils/io/test.zip").toURI()));
 		
 		System.out.println("=============================================");
 		@SuppressWarnings("unchecked")

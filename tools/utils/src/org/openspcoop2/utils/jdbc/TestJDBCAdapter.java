@@ -51,6 +51,8 @@ import org.slf4j.Logger;
  */
 public class TestJDBCAdapter {
 
+	private static boolean systemOut = true; // utile per maven test 
+		
 	private static Logger log = null;
 	
 	public static void main(String[] args) throws Exception{
@@ -184,8 +186,17 @@ public class TestJDBCAdapter {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String driverJdbcCustom = args[4].trim();
+			if(!"${driverJdbc}".equals(driverJdbcCustom)){
+				driver = driverJdbcCustom;
+			}
+		}
 
-		
+		System.out.println("URL:"+url);
+		System.out.println("UserName:"+userName);
+		System.out.println("Password:"+password);
+		System.out.println("DriverJDBC:"+driver);		
 		ClassLoaderUtilities.newInstance(driver);
 		
 		Connection con = null;
@@ -212,6 +223,12 @@ public class TestJDBCAdapter {
 	    }
 	}
 
+	private static void info(Logger log, boolean systemOut, String msg) {
+		log.info(msg);
+		if(systemOut) {
+			System.out.println(msg);
+		}
+	}
 	
 	private static void testBytes(Connection con,TipiDatabase tipoDatabase) throws Exception{
 		
@@ -221,7 +238,7 @@ public class TestJDBCAdapter {
 	    ResultSet rsQuery = null;
 	    InputStream pdfIs = null;
 	    try{
-	    	log.info("\n\n*** Test bytes[] ***");
+	    	info(log,systemOut,"\n\n*** Test bytes[] ***");
 	    	
 	    	// step0. Recuper il documento
 	    	pdfIs = TestJDBCAdapter.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test.pdf");
@@ -238,7 +255,7 @@ public class TestJDBCAdapter {
 	    		    	
 	    	// step2. Creo IJDBCResource
 	    	IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
-	    	log.info("Creato IJDBCAdapter di tipo "+jdbcAdapter.getClass().getName());
+	    	info(log,systemOut,"Creato IJDBCAdapter di tipo "+jdbcAdapter.getClass().getName());
 	    	
 	    	// step3. Inserisco documento
 	    	ISQLQueryObject sqlQuery = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -252,7 +269,7 @@ public class TestJDBCAdapter {
 	    	jdbcAdapter.setBinaryData(stmtInsert, 2, data);
 	    	jdbcAdapter.setBinaryData(stmtInsert, 3, null);
 	    	int row = stmtInsert.executeUpdate();
-	    	log.info("Documento PDF inserito: "+row);
+	    	info(log,systemOut,"Documento PDF inserito: "+row);
 	    	
 	    	// step4. Lettura per alias
 	    	String query = "select * from prova_bytes";
@@ -283,7 +300,7 @@ public class TestJDBCAdapter {
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
-	    	log.info("Documento PDF inserito e riletto dal database tramite columnName sono equivalenti" );
+	    	info(log,systemOut,"Documento PDF inserito e riletto dal database tramite columnName sono equivalenti" );
 	    	rsQuery.close();
 	    		    	
 	    	// step5. Lettura per index
@@ -313,7 +330,7 @@ public class TestJDBCAdapter {
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
-	    	log.info("Documento PDF inserito e riletto dal database tramite index sono equivalenti" );
+	    	info(log,systemOut,"Documento PDF inserito e riletto dal database tramite index sono equivalenti" );
 	    	
 	    	
 	    }finally{
@@ -345,7 +362,7 @@ public class TestJDBCAdapter {
 	    ResultSet rsQuery = null;
 	    InputStream pdfIs = null;
 	    try{
-	    	log.info("\n\n*** Test InputStream (lenght:"+withLength+" buffer:"+bufferEnabled+") ***");
+	    	info(log,systemOut,"\n\n*** Test InputStream (lenght:"+withLength+" buffer:"+bufferEnabled+") ***");
 	    	
 	    	// step0. Recuper il documento
 	    	pdfIs = TestJDBCAdapter.class.getResourceAsStream("/org/openspcoop2/utils/jdbc/test.pdf");
@@ -369,7 +386,7 @@ public class TestJDBCAdapter {
 	    		    	
 	    	// step2. Creo IJDBCResource
 	    	IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
-	    	log.info("Creato IJDBCAdapter di tipo "+jdbcAdapter.getClass().getName());
+	    	info(log,systemOut,"Creato IJDBCAdapter di tipo "+jdbcAdapter.getClass().getName());
 	    	
 	    	// step3. Inserisco documento
 	    	ISQLQueryObject sqlQuery = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -403,12 +420,12 @@ public class TestJDBCAdapter {
 	    	}
 	    	
 	    	if(!withLength && !bufferEnabled && eNotSupported!=null){
-	    		//log.info(eNotSupported.getMessage());
+	    		//info(log,systemOut,eNotSupported.getMessage());
 	    		eNotSupported.printStackTrace(System.out);
 	    		return;
 	    	}
 	    	int row = stmtInsert.executeUpdate();
-	    	log.info("Documento PDF inserito: "+row);
+	    	info(log,systemOut,"Documento PDF inserito: "+row);
 	    	
 	    	// step4. Lettura per alias
 	    	String query = "select * from prova_bytes";
@@ -434,7 +451,7 @@ public class TestJDBCAdapter {
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
-	    	log.info("Documento PDF inserito e riletto dal database tramite columnName sono equivalenti" );
+	    	info(log,systemOut,"Documento PDF inserito e riletto dal database tramite columnName sono equivalenti" );
 	    	rsQuery.close();
 	    		    	
 	    	// step5. Lettura per index
@@ -459,7 +476,7 @@ public class TestJDBCAdapter {
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
-	    	log.info("Documento PDF inserito e riletto dal database tramite index sono equivalenti" );
+	    	info(log,systemOut,"Documento PDF inserito e riletto dal database tramite index sono equivalenti" );
 	    	
 	    	
 	    }finally{

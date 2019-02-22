@@ -51,6 +51,8 @@ import org.slf4j.Logger;
  */
 public class ClientTest {
 
+	private static boolean systemOut = true; // utile per maven test 
+		
 	/**
 	 * Tabelle
 	 * 
@@ -371,7 +373,17 @@ public class ClientTest {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String driverJdbcCustom = args[4].trim();
+			if(!"${driverJdbc}".equals(driverJdbcCustom)){
+				driver = driverJdbcCustom;
+			}
+		}
 
+		System.out.println("URL:"+url);
+		System.out.println("UserName:"+userName);
+		System.out.println("Password:"+password);
+		System.out.println("DriverJDBC:"+driver);		
 		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		Statement stmtDelete = null;
@@ -499,7 +511,7 @@ public class ClientTest {
 					selectForUpdate = true;
 				}
 				
-				log.info("\n\n@@@ SELECT FOR UPDATE: "+selectForUpdate);
+				info(log,systemOut,"\n\n@@@ SELECT FOR UPDATE: "+selectForUpdate);
 				
 			
 			
@@ -582,6 +594,13 @@ public class ClientTest {
 
 	}
 
+	
+	private static void info(Logger log, boolean systemOut, String msg) {
+		log.info(msg);
+		if(systemOut) {
+			System.out.println(msg);
+		}
+	}
 
 	private static SQLQueryObjectCore createSQLQueryObjectCore(TipiDatabase tipo, boolean selectForUpdate) throws Exception{
 		SQLQueryObjectCore sqlQueryObject = (SQLQueryObjectCore) SQLObjectFactory.createSQLQueryObject(tipo);
@@ -613,7 +632,7 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			String testUnixTime = sqlQueryObject.createSQLQuery();
-			log.info("\ntest1-"+table+" unixtime:\n\t"+testUnixTime);
+			info(log,systemOut,"\ntest1-"+table+" unixtime:\n\t"+testUnixTime);
 			try{
 				stmtQuery = con.prepareStatement(testUnixTime);
 				rs = stmtQuery.executeQuery();
@@ -642,12 +661,12 @@ public class ClientTest {
 					long unixAtteso = dateformat.parse(s).getTime()  - (dateformat.parse(s).getTimezoneOffset()*60*1000);
 					long unixAttesoCalcolatoViaDB = rs.getLong("unixtime");
 
-					log.info("Data["+s+"]");
-					log.info("timeStampValue["+timeStampValue+"] offset["+timestamp.getTimezoneOffset()+"] timeStampValueWithTimeZone["+timeStampValueWithTimeZone+"]");
-					log.info("unixEpoqueAtteso["+unixAtteso+"] unixEpoqueCalcolato["+unixAttesoCalcolatoViaDB+"]");
+					info(log,systemOut,"Data["+s+"]");
+					info(log,systemOut,"timeStampValue["+timeStampValue+"] offset["+timestamp.getTimezoneOffset()+"] timeStampValueWithTimeZone["+timeStampValueWithTimeZone+"]");
+					info(log,systemOut,"unixEpoqueAtteso["+unixAtteso+"] unixEpoqueCalcolato["+unixAttesoCalcolatoViaDB+"]");
 										
 
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+" timeValue:"+timeStampValue+") ("+unixAttesoCalcolatoViaDB+")");
 					
 					// Questo controllo che aveva lo scopo di calcolare che lo unix timestamp dovesse corrispondere a quello atteso non funziona
@@ -709,13 +728,13 @@ public class ClientTest {
 			sqlQueryObject.addGroupBy("descrizione");
 			
 			testUnixTime = sqlQueryObject.createSQLQuery();
-			log.info("\ntest2-"+table+" unixtime:\n\t"+testUnixTime);
+			info(log,systemOut,"\ntest2-"+table+" unixtime:\n\t"+testUnixTime);
 			try{
 				stmtQuery = con.prepareStatement(testUnixTime);
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" [min:"+rs.getLong("unixtimemin")+" max:"+
 							rs.getLong("unixtimemax")+" avg:"+
 							rs.getLong("unixtimeavg")+" sum:"+
@@ -752,7 +771,7 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			testUnixTime = sqlQueryObject.createSQLQuery();
-			log.info("\ntest3-"+table+" unixtime:\n\t"+testUnixTime);
+			info(log,systemOut,"\ntest3-"+table+" unixtime:\n\t"+testUnixTime);
 			long oldLatenza = 0;
 			try{
 				stmtQuery = con.prepareStatement(testUnixTime);
@@ -760,7 +779,7 @@ public class ClientTest {
 				int index = 0;
 				while(rs.next()){
 					long latenza = rs.getLong("latenza");
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" gdo["+dateformat.format(rs.getTimestamp("gdo"))+"] gdo2["+dateformat.format(rs.getTimestamp("gdo2"))+
 								"] [msLatenza:"+latenza+" humanReadable:"+
 							Utilities.convertSystemTimeIntoString_millisecondi(latenza,true)+"]");
@@ -826,13 +845,13 @@ public class ClientTest {
 			sqlQueryObjectExternal.addFromTable(sqlQueryObject);
 			
 			String test = sqlQueryObjectExternal.createSQLQuery();
-			log.info("\ntest-"+table+" fromTable:\n\t"+test);
+			info(log,systemOut,"\ntest-"+table+" fromTable:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -895,13 +914,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, caseInsensitive);
 			
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -937,13 +956,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -981,13 +1000,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -1023,13 +1042,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -1072,13 +1091,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, !caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntest (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -1114,14 +1133,14 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, !caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntestLower (Parte1)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
 					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
-						log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 								" (time:"+rs.getTimestamp("gdo")+")");
 					}
 					else{
@@ -1129,7 +1148,7 @@ public class ClientTest {
 					}
 				}
 				else{
-					log.info("Nessuna riga trovata: risultato atteso");
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
 				if(rs!=null){
 					rs.close();
@@ -1163,13 +1182,13 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, !caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntest (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+")");
 				}
 				else{
@@ -1205,14 +1224,14 @@ public class ClientTest {
 			sqlQueryObject.addWhereLikeCondition("descrizione", ricerca, escape, contains, !caseInsensitive);
 			
 			test = sqlQueryObject.createSQLQuery();
-			log.info("\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
+			info(log,systemOut,"\ntestLower (Parte2)-"+table+" escapeLike:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
 					if(TipiDatabase.MYSQL.equals(tipo) || TipiDatabase.SQLSERVER.equals(tipo)){
-						log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+						info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 								" (time:"+rs.getTimestamp("gdo")+")");
 					}
 					else{
@@ -1220,7 +1239,7 @@ public class ClientTest {
 					}
 				}
 				else{
-					log.info("Nessuna riga trovata: risultato atteso");
+					info(log,systemOut,"Nessuna riga trovata: risultato atteso");
 				}
 				if(rs!=null){
 					rs.close();
@@ -1287,36 +1306,36 @@ public class ClientTest {
 			sqlQueryObject.addOrderBy("ALIASDEST",false);
 			sqlQueryObject.setSortType(true);
 
-			//log.info("["+tipo.toString()+"] getField: \t"+sqlQueryObject.getFields());
+			//info(log,systemOut,"["+tipo.toString()+"] getField: \t"+sqlQueryObject.getFields());
 			List<String> trovato = sqlQueryObject.getFieldsName();
-			log.info("(test0_engine) ["+tipo.toString()+"] getFieldsName: \t"+trovato);
+			info(log,systemOut,"(test0_engine) ["+tipo.toString()+"] getFieldsName: \t"+trovato);
 			String atteso = "cont, mittente, ALIASDEST";
 			if(atteso.equals(trovato.toString())){
 				throw new Exception("Test failed (getFieldsName) trovato["+trovato.toString()+"] atteso["+atteso+"]");
 			}
 			
-			//log.info("["+tipo.toString()+"] getTables: \t"+sqlQueryObject.getTables());
+			//info(log,systemOut,"["+tipo.toString()+"] getTables: \t"+sqlQueryObject.getTables());
 			trovato = sqlQueryObject.getTablesName();
-			log.info("(test0_engine) ["+tipo.toString()+"] getTablesName: \t"+trovato);
+			info(log,systemOut,"(test0_engine) ["+tipo.toString()+"] getTablesName: \t"+trovato);
 			atteso = "tracce, aliasMSG";
 			if(atteso.equals(trovato.toString())){
 				throw new Exception("Test failed (getTablesName) trovato["+trovato.toString()+"] atteso["+atteso+"]");
 			}
 			
-			log.info("");
+			info(log,systemOut,"");
 
 			
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\ntest0_engine:\n\t"+test);
+			info(log,systemOut,"\ntest0_engine:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+
 							"->"+rs.getString("ALIASDEST")+") (count:"+rs.getLong("cont")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+
 								"->"+rs.getString("ALIASDEST")+") (count:"+rs.getLong("cont")+")");
 						
 					}
@@ -1366,7 +1385,7 @@ public class ClientTest {
 			
 			// TEST 1.
 			
-			log.info("\n\na. ** Query normale");
+			info(log,systemOut,"\n\na. ** Query normale");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,(selectForUpdate && !distinct)); // distinct non supporta forUpdate
 
@@ -1385,15 +1404,15 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryNormale]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QueryNormale]:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");			
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");			
 					}
 				}
 				else{
@@ -1445,7 +1464,7 @@ public class ClientTest {
 			
 			// TEST 2.
 			
-			log.info("\n\nb. ** Query con limit/offset");
+			info(log,systemOut,"\n\nb. ** Query con limit/offset");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
@@ -1469,7 +1488,7 @@ public class ClientTest {
 			sqlQueryObject.setOffset(0);
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimitOffset]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimitOffset]:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
@@ -1482,9 +1501,9 @@ public class ClientTest {
 							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 						}
 					}
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
 					}
 				}
 				else{
@@ -1533,7 +1552,7 @@ public class ClientTest {
 			
 			// TEST 2b (con unixTimestamp).
 			
-			log.info("\n\nb. ** Query con limit/offset (unixTimestamp)");
+			info(log,systemOut,"\n\nb. ** Query con limit/offset (unixTimestamp)");
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipo);
 
@@ -1562,7 +1581,7 @@ public class ClientTest {
 			sqlQueryObject.setOffset(0);
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimitOffset]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimitOffset]:\n\t"+test);
 			try{
 				
 				if(rs!=null){
@@ -1585,9 +1604,9 @@ public class ClientTest {
 							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 						}
 					}
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");					
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")("+rs.getLong("latenza")+")");					
 					}
 				}
 				else{
@@ -1636,7 +1655,7 @@ public class ClientTest {
 			
 			// TEST 3.
 			
-			log.info("\n\nc. ** Query con limit");
+			info(log,systemOut,"\n\nc. ** Query con limit");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
@@ -1659,7 +1678,7 @@ public class ClientTest {
 			sqlQueryObject.setLimit(limit);
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimit]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QueryLimit]:\n\t"+test);
 			try{
 				if(rs!=null){
 					rs.close();
@@ -1681,9 +1700,9 @@ public class ClientTest {
 							throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 						}
 					}
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");						
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");						
 					}
 				}
 				else{
@@ -1731,7 +1750,7 @@ public class ClientTest {
 			
 			// TEST 4.
 			
-			log.info("\n\nd. ** Query con offset");
+			info(log,systemOut,"\n\nd. ** Query con offset");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
@@ -1752,7 +1771,7 @@ public class ClientTest {
 			sqlQueryObject.setOffset(2);
 			
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QueryOffset]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QueryOffset]:\n\t"+test);
 			try{
 				if(rs!=null){
 					rs.close();
@@ -1792,9 +1811,9 @@ public class ClientTest {
 							}
 						}
 					}
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")("+rs.getString("TIPODEST")+")("+rs.getString("destinatario")+")");					
 					}
 				}
 				else{
@@ -1848,7 +1867,7 @@ public class ClientTest {
 			
 			// TEST 5.
 			
-			log.info("\n\ne. ** Query groupBy");
+			info(log,systemOut,"\n\ne. ** Query groupBy");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);  // forUpdate non permesso in group by
 
@@ -1872,7 +1891,7 @@ public class ClientTest {
 			sqlQueryObject.addGroupBy("tracce.destinatario");
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [GroupBy]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [GroupBy]:\n\t"+test);
 			try{
 				if(rs!=null){
 					rs.close();
@@ -1887,12 +1906,12 @@ public class ClientTest {
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");
 					if(2!=rs.getLong("cont")){
 						throw new Exception("Test failed row["+(index)+"] found:"+rs.getLong("cont")+" expected:2"); 
 					}
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");		
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");		
 						if(rs.getString("mittente").endsWith("10")){
 							if(1!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
@@ -1970,7 +1989,7 @@ public class ClientTest {
 			
 			// TEST 6.
 			
-			log.info("\n\nf. ** Query groupBy con limit/offset");
+			info(log,systemOut,"\n\nf. ** Query groupBy con limit/offset");
 		
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false);  // forUpdate non permesso in group by
 		
@@ -1999,7 +2018,7 @@ public class ClientTest {
 			sqlQueryObject.setOffset(1);
 
 			String test = sqlQueryObject.createSQLQuery();
-			log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [GroupByLimitOffset]:\n\t"+test);
+			info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [GroupByLimitOffset]:\n\t"+test);
 			try{
 				if(rs!=null){
 					rs.close();
@@ -2014,12 +2033,12 @@ public class ClientTest {
 				rs = stmtQuery.executeQuery(test);
 				int index = 0;
 				if(rs.next()){
-					log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");
+					info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");
 					if(2!=rs.getLong("cont")){
 						throw new Exception("Test failed row["+((index-1))+"] found:"+rs.getLong("cont")+" expected:2"); 
 					}
 					while(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");		
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+") = "+rs.getLong("cont")+"");		
 						if(rs.getString("mittente").endsWith("10")){
 							if(1!=rs.getLong("cont")){
 								long cont = rs.getLong("cont");
@@ -2095,7 +2114,7 @@ public class ClientTest {
 			// TEST 7.
 			
 
-			log.info("\n\ng. ** Query con select*");
+			info(log,systemOut,"\n\ng. ** Query con select*");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,(selectForUpdate && !distinct));
 
@@ -2113,7 +2132,7 @@ public class ClientTest {
 			String test = null;
 			try{
 				test = sqlQueryObject.createSQLQuery();
-				log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*]:\n\t"+test);
+				info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*]:\n\t"+test);
 				if(distinct)
 					throw new Exception("Attesa eccezione: Per usare la select distinct devono essere indicati dei select field");
 			}catch(SQLQueryObjectException s){
@@ -2141,9 +2160,9 @@ public class ClientTest {
 					rs = stmtQuery.executeQuery(test);
 					int index = 0;
 					if(rs.next()){
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");
 						while(rs.next()){
-							log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+							info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
 						}
 					}
 					else{
@@ -2190,7 +2209,7 @@ public class ClientTest {
 			
 			// TEST 8.
 			
-			log.info("\n\nh. ** Query con select* e offset/limit");
+			info(log,systemOut,"\n\nh. ** Query con select* e offset/limit");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
@@ -2213,7 +2232,7 @@ public class ClientTest {
 			String test = null;
 			try{
 				test = sqlQueryObject.createSQLQuery();
-				log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*LimitOffset*]:\n\t"+test);
+				info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*LimitOffset*]:\n\t"+test);
 				if(distinct){
 					throw new Exception("Attesa eccezione: Per usare la select distinct devono essere indicati dei select field");
 				}
@@ -2249,9 +2268,9 @@ public class ClientTest {
 								throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 							}
 						}
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");
 						while(rs.next()){
-							log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+							info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
 						}
 					}
 					else{
@@ -2299,7 +2318,7 @@ public class ClientTest {
 			
 			// TEST 9.
 			
-			log.info("\n\ni. ** Query con select* e offset/limit e alias");
+			info(log,systemOut,"\n\ni. ** Query con select* e offset/limit e alias");
 
 			ISQLQueryObject sqlQueryObject = createSQLQueryObjectCore(tipo,false); // forUpdate non permesso con limit
 
@@ -2323,7 +2342,7 @@ public class ClientTest {
 			String test = null;
 			try{
 				test = sqlQueryObject.createSQLQuery();
-				log.info("\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*LimitOffsetAlias*]:\n\t"+test);
+				info(log,systemOut,"\nTest1("+distinct+") ["+tipo.toString()+"] [QuerySelect*LimitOffsetAlias*]:\n\t"+test);
 				if(distinct){
 					throw new Exception("Attesa eccezione: Per usare la select distinct devono essere indicati dei select field");
 				}
@@ -2359,9 +2378,9 @@ public class ClientTest {
 								throw new Exception("Test failed (atteso un nome di mittente che termina con 0)"); 
 							}
 						}
-						log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");
+						info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");
 						while(rs.next()){
-							log.info("riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
+							info(log,systemOut,"riga["+(index++)+"]= ("+rs.getString("mittente")+")");						
 						}
 					}
 					else{
@@ -2467,7 +2486,7 @@ public class ClientTest {
 		try{
 			
 			// TEST 1.
-			log.info("\n\na. ** Query Union (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\na. ** Query Union (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -2490,7 +2509,7 @@ public class ClientTest {
 			}else{
 				test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 			}
-			log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+			info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
@@ -2498,7 +2517,7 @@ public class ClientTest {
 				if(rs.next()){
 					if(count){
 						long cont = rs.getLong("aliasUnion");
-						log.info("riga["+(index++)+"]= ["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ["+cont+"]");
 						if(unionAll){
 							if(cont!=(limit*2)){
 								throw new Exception("Expected "+(limit*2)+", found "+cont);
@@ -2513,7 +2532,7 @@ public class ClientTest {
 					else{
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("cont");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(cont!=1){
 								throw new Exception("Expected 1, found "+cont);
@@ -2527,7 +2546,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("cont");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
 									if(rs!=null){
@@ -2615,7 +2634,7 @@ public class ClientTest {
 			// TEST 2.
 			
 			if(count==false){
-				log.info("\n\nb. ** Query Union OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nb. ** Query Union OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -2641,7 +2660,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSetLimit UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSetLimit UnionAll]:\n\t"+test);
 				try{
 					stmtQuery = con.createStatement();
 					rs = stmtQuery.executeQuery(test);
@@ -2650,7 +2669,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("cont");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(cont!=1){
 								throw new Exception("Expected 1, found "+cont);
@@ -2664,7 +2683,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("cont");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
 									if(rs!=null){
@@ -2738,7 +2757,7 @@ public class ClientTest {
 			// TEST 3.
 						
 			if(count==false){
-				log.info("\n\nc. ** Query Union OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nc. ** Query Union OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -2765,7 +2784,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
 				try{
 					if(rs!=null){
 						rs.close();
@@ -2783,7 +2802,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("cont");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(cont!=1){
 								throw new Exception("Expected 1, found "+cont);
@@ -2797,7 +2816,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("cont");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
 									throw new Exception("Expected 1, found "+cont);
@@ -2857,7 +2876,7 @@ public class ClientTest {
 			// TEST 4.
 						
 			if(count==false){
-				log.info("\n\nd. ** Query Union Limit (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nd. ** Query Union Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -2880,7 +2899,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
 				try{
 					if(rs!=null){
 						rs.close();
@@ -2899,7 +2918,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("cont");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							foundEndsWith10 = true;
 							if(cont!=1){
@@ -2914,7 +2933,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("cont");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
 									if(rs!=null){
@@ -2995,7 +3014,7 @@ public class ClientTest {
 		try{
 			
 			// TEST 5.
-			log.info("\n\ne. ** Query Union con select* (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\ne. ** Query Union con select* (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3015,7 +3034,7 @@ public class ClientTest {
 			}else{
 				test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 			}
-			log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+			info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 			try{
 				if(rs!=null){
 					rs.close();
@@ -3032,7 +3051,7 @@ public class ClientTest {
 				if(rs.next()){
 					if(count){
 						long cont = rs.getLong("aliasUnion");
-						log.info("riga["+(index++)+"]= ["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ["+cont+"]");
 						if(unionAll){
 							if(cont!=(limit*2)){
 								throw new Exception("Expected "+(limit*2)+", found "+cont);
@@ -3047,7 +3066,7 @@ public class ClientTest {
 					else{
 						String mit = rs.getString("mittente");
 						long cont = rs.getLong("cont");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(cont!=1){
 								throw new Exception("Expected 1, found "+cont);
@@ -3061,7 +3080,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mittente");
 							cont = rs.getLong("cont");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(cont!=1){
 									if(rs!=null){
@@ -3152,7 +3171,7 @@ public class ClientTest {
 			
 			
 			// TEST 6.
-			log.info("\n\nf. ** Query Union con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\nf. ** Query Union con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3169,9 +3188,9 @@ public class ClientTest {
 
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -3182,7 +3201,7 @@ public class ClientTest {
 
 
 			// TEST 7.
-			log.info("\n\ng. ** Query Union con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\ng. ** Query Union con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
 						
 			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
@@ -3194,9 +3213,9 @@ public class ClientTest {
 			
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -3207,7 +3226,7 @@ public class ClientTest {
 			
 
 			// TEST 8.
-			log.info("\n\nh. ** Query Union con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\nh. ** Query Union con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 									
 			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
@@ -3219,9 +3238,9 @@ public class ClientTest {
 			
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -3238,7 +3257,7 @@ public class ClientTest {
 			try{
 				
 				// TEST 9.
-				log.info("\n\ni. ** Query Union per test SelectForUpdate (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\ni. ** Query Union per test SelectForUpdate (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnionSelectForUpdate(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3262,7 +3281,7 @@ public class ClientTest {
 				}else{
 					test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 				}
-//				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+//				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 //				try{
 //					stmtQuery = con.createStatement();
 //					rs = stmtQuery.executeQuery(test);
@@ -3271,7 +3290,7 @@ public class ClientTest {
 //					if(rs.next()){
 //						if(count){
 //							long cont = rs.getLong("aliasUnion");
-//							log.info("riga["+(index++)+"]= ["+cont+"]");
+//							info(log,systemOut,"riga["+(index++)+"]= ["+cont+"]");
 //							if(unionAll){
 //								if(cont!=(limit*2)){
 //									throw new Exception("Expected "+(limit*2)+", found "+cont);
@@ -3286,11 +3305,11 @@ public class ClientTest {
 //						else{
 //							String mit = rs.getString("mit");
 //							String dest = rs.getString("dest");
-//							log.info("riga["+(index++)+"]= ("+mit+"):("+dest+")");
+//							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):("+dest+")");
 //							while(rs.next()){
 //								mit = rs.getString("mit");
 //								dest = rs.getString("dest");
-//								log.info("riga["+(index++)+"]= ("+mit+"):("+dest+")");		
+//								info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):("+dest+")");		
 //							}
 //						}
 //					}
@@ -3326,7 +3345,7 @@ public class ClientTest {
 				
 			}catch(Exception e){
 				findError = true;
-				log.info("ERRORE ATTESO: "+e.getMessage());
+				info(log,systemOut,"ERRORE ATTESO: "+e.getMessage());
 			}finally{
 				try{
 					if(rs!=null){
@@ -3364,7 +3383,7 @@ public class ClientTest {
 		try{
 						
 			// TEST 1.
-			log.info("\n\na. ** Query UnionGroupBy (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\na. ** Query UnionGroupBy (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3390,7 +3409,7 @@ public class ClientTest {
 			}else{
 				test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 			}
-			log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+			info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 			try{
 				stmtQuery = con.createStatement();
 				rs = stmtQuery.executeQuery(test);
@@ -3398,7 +3417,7 @@ public class ClientTest {
 				if(rs.next()){
 					if(count){
 						long cont = rs.getLong("aliasUnion");
-						log.info("riga["+(index++)+"]= ["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ["+cont+"]");
 						if(cont!=(limit)){
 							throw new Exception("Expected "+(limit)+", found "+cont);
 						}
@@ -3406,7 +3425,7 @@ public class ClientTest {
 					else{
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("contRisultatoGroupBy");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(unionAll){
 								if(cont!=2){
@@ -3434,7 +3453,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("contRisultatoGroupBy");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
@@ -3546,7 +3565,7 @@ public class ClientTest {
 			// TEST 2.
 			
 			if(count==false){
-				log.info("\n\nb. ** Query UnionGroupBy OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nb. ** Query UnionGroupBy OffSetLimit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3573,7 +3592,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSetLimit UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSetLimit UnionAll]:\n\t"+test);
 				try{
 					stmtQuery = con.createStatement();
 					rs = stmtQuery.executeQuery(test);
@@ -3582,7 +3601,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("contRisultatoGroupBy");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(unionAll){
 								if(cont!=2){
@@ -3610,7 +3629,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("contRisultatoGroupBy");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
@@ -3717,7 +3736,7 @@ public class ClientTest {
 			// TEST 3.
 						
 			if(count==false){
-				log.info("\n\nc. ** Query UnionGroupBy  OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nc. ** Query UnionGroupBy  OffSet (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3743,7 +3762,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
 				try{
 					if(rs!=null){
 						rs.close();
@@ -3761,7 +3780,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("contRisultatoGroupBy");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(unionAll){
 								if(cont!=2){
@@ -3789,7 +3808,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("contRisultatoGroupBy");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
@@ -3863,7 +3882,7 @@ public class ClientTest {
 			// TEST 4.
 						
 			if(count==false){
-				log.info("\n\nd. ** Query UnionGroupBy Limit (unionCount:"+count+" unionAll:"+unionAll+")");
+				info(log,systemOut,"\n\nd. ** Query UnionGroupBy Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 				
 				int limit = 5;
 				ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -3887,7 +3906,7 @@ public class ClientTest {
 	
 				String test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 
-				log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
+				info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [OffSet UnionAll]:\n\t"+test);
 				try{
 					if(rs!=null){
 						rs.close();
@@ -3906,7 +3925,7 @@ public class ClientTest {
 						
 						String mit = rs.getString("mit");
 						long cont = rs.getLong("contRisultatoGroupBy");
-						log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+						info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 						if(mit.endsWith("10")){
 							if(unionAll){
 								if(cont!=2){
@@ -3934,7 +3953,7 @@ public class ClientTest {
 						while(rs.next()){
 							mit = rs.getString("mit");
 							cont = rs.getLong("contRisultatoGroupBy");
-							log.info("riga["+(index++)+"]= ("+mit+"):["+cont+"]");
+							info(log,systemOut,"riga["+(index++)+"]= ("+mit+"):["+cont+"]");
 							if(mit.endsWith("10")){
 								if(unionAll){
 									if(cont!=2){
@@ -4041,7 +4060,7 @@ public class ClientTest {
 		try{
 			
 			// TEST 5.
-			log.info("\n\ne. ** Query UnionGroupBy con select* (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\ne. ** Query UnionGroupBy con select* (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -4064,7 +4083,7 @@ public class ClientTest {
 			}else{
 				test = sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2);
 			}
-			log.info("\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
+			info(log,systemOut,"\nTest(count:"+count+" unionAll:"+unionAll+") ["+tipo.toString()+"] [Normale UnionAll]:\n\t"+test);
 			throw new Exception("Attesa eccezione: Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field");
 		}catch(SQLQueryObjectException s){
 			if(!s.getMessage().equals("Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field"))
@@ -4081,7 +4100,7 @@ public class ClientTest {
 			
 			
 			// TEST 6.
-			log.info("\n\nf. ** Query UnionGroupBy con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\nf. ** Query UnionGroupBy con select* e LimitOffset (unionCount:"+count+" unionAll:"+unionAll+")");
 			
 			int limit = 5;
 			ISQLQueryObject prepare1 = prepareForUnion(createSQLQueryObjectCore(tipo,selectForUpdate),limit);
@@ -4101,9 +4120,9 @@ public class ClientTest {
 
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] f. OffSetLimit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -4114,7 +4133,7 @@ public class ClientTest {
 
 
 			// TEST 7.
-			log.info("\n\ng. ** Query UnionGroupBy con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\ng. ** Query UnionGroupBy con select* e Offset (unionCount:"+count+" unionAll:"+unionAll+")");
 						
 			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
@@ -4129,9 +4148,9 @@ public class ClientTest {
 
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] g. OffSet *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare offset se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -4142,7 +4161,7 @@ public class ClientTest {
 			
 
 			// TEST 8.
-			log.info("\n\nh. ** Query UnionGroupBy con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
+			info(log,systemOut,"\n\nh. ** Query UnionGroupBy con select* e Limit (unionCount:"+count+" unionAll:"+unionAll+")");
 									
 			sqlQueryObject = createSQLQueryObjectCore(tipo,false);
 
@@ -4157,9 +4176,9 @@ public class ClientTest {
 
 			try{
 				if(count){
-					log.info("["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnionCount(unionAll,"aliasUnion", prepare1, prepare2));
 				}else{
-					log.info("["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
+					info(log,systemOut,"["+tipo.toString()+"] h Limit *: \n\t"+sqlQueryObject.createSQLUnion(unionAll, prepare1, prepare2));
 				}
 				throw new Exception("Attesa eccezione: Non e' possibile usare limit se non e' stato indicato alcun field nella select piu' esterna della union");
 			}catch(SQLQueryObjectException s){
@@ -4177,7 +4196,7 @@ public class ClientTest {
 		ResultSet rs = null;
 		try{
 			
-			log.info("\n\nh. ** Test IS NULL / IS EMPTY");
+			info(log,systemOut,"\n\nh. ** Test IS NULL / IS EMPTY");
 			
 			
 			// TEST 1. (IS NULL)
@@ -4193,14 +4212,14 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			String testIsNull = sqlQueryObject.createSQLQuery();
-			log.info("\ntest1-"+table+" isNull:\n\t"+testIsNull);
+			info(log,systemOut,"\ntest1-"+table+" isNull:\n\t"+testIsNull);
 			try{
 				stmtQuery = con.prepareStatement(testIsNull);
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
@@ -4217,7 +4236,7 @@ public class ClientTest {
 				if(TipiDatabase.ORACLE.equals(tipo)){
 					attesi = 19; // in oracle le stringhe vuote sono trattate come null
 				}
-				log.info("Attesi ["+attesi+"] trovati["+index+"]");
+				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){
 					throw new Exception("Attesi ["+attesi+"] trovati["+index+"]");
 				}
@@ -4242,14 +4261,14 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			String testIsNotNull = sqlQueryObject.createSQLQuery();
-			log.info("\ntest2-"+table+" isNotNull:\n\t"+testIsNotNull);
+			info(log,systemOut,"\ntest2-"+table+" isNotNull:\n\t"+testIsNotNull);
 			try{
 				stmtQuery = con.prepareStatement(testIsNotNull);
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
@@ -4266,7 +4285,7 @@ public class ClientTest {
 				if(TipiDatabase.ORACLE.equals(tipo)){
 					attesi = 2; // in oracle le stringhe vuote sono trattate come null
 				}
-				log.info("Attesi ["+attesi+"] trovati["+index+"]");
+				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){
 					throw new Exception("Attesi ["+attesi+"] trovati["+index+"]");
 				}
@@ -4290,14 +4309,14 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			String testIsEmpty = sqlQueryObject.createSQLQuery();
-			log.info("\ntest3-"+table+" isEmpty:\n\t"+testIsEmpty);
+			info(log,systemOut,"\ntest3-"+table+" isEmpty:\n\t"+testIsEmpty);
 			try{
 				stmtQuery = con.prepareStatement(testIsEmpty);
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
@@ -4314,7 +4333,7 @@ public class ClientTest {
 				if(TipiDatabase.ORACLE.equals(tipo)){
 					attesi = 19; // in oracle le stringhe vuote sono trattate come null
 				}
-				log.info("Attesi ["+attesi+"] trovati["+index+"]");
+				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){
 					throw new Exception("Attesi ["+attesi+"] trovati["+index+"]");
 				}
@@ -4338,14 +4357,14 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 			
 			String testIsNotEmpty = sqlQueryObject.createSQLQuery();
-			log.info("\ntest4-"+table+" isNotEmpty:\n\t"+testIsNotEmpty);
+			info(log,systemOut,"\ntest4-"+table+" isNotEmpty:\n\t"+testIsNotEmpty);
 			try{
 				stmtQuery = con.prepareStatement(testIsNotEmpty);
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
 
-					log.info("riga["+(index++)+"]="+rs.getString("descrizione")+
+					info(log,systemOut,"riga["+(index++)+"]="+rs.getString("descrizione")+
 							" (time:"+rs.getTimestamp("gdo")+" campo_vuoto:("+rs.getString("campo_vuoto")+")");
 
 				}
@@ -4362,7 +4381,7 @@ public class ClientTest {
 				if(TipiDatabase.ORACLE.equals(tipo)){
 					attesi = 2; // in oracle le stringhe vuote sono trattate come null
 				}
-				log.info("Attesi ["+attesi+"] trovati["+index+"]");
+				info(log,systemOut,"Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){
 					throw new Exception("Attesi ["+attesi+"] trovati["+index+"]");
 				}

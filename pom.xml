@@ -11,6 +11,9 @@
 		<maven-antrun-plugin>1.8</maven-antrun-plugin>
 		<maven-resources-plugin>3.1.0</maven-resources-plugin>
 		<maven-dependency-plugin>3.1.1</maven-dependency-plugin>
+		<exec-maven-plugin>1.6.0</exec-maven-plugin>
+		<com-sun-tools>1.5.0</com-sun-tools>
+		<ant.version>1.9.8</ant.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -25,7 +28,25 @@
 		<package>package</package> <!-- package phase, use 'none' for disable -->
 		<package.type>branches</package.type>
 		<package.skip.check>true</package.skip.check>
-		<package.skip.src>true</package.skip.src>		
+		<package.skip.src>true</package.skip.src>	
+
+		<!-- testsuite (test phase, use 'none' for disable) -->
+		<testsuite>test</testsuite>
+		<testsuite.sql>none</testsuite.sql>
+		<testsuite.utils>${testsuite}</testsuite.utils>
+		<testsuite.utils.sql>${testsuite.sql}</testsuite.utils.sql>
+		<testsuite.pdd.core>${testsuite}</testsuite.pdd.core>
+		<testsuite.pdd.core.sql>${testsuite.sql}</testsuite.pdd.core.sql>
+
+		<!-- testsuite (database config) -->
+		<testsuite.utils.sql.tipoDatabase>postgresql</testsuite.utils.sql.tipoDatabase>
+		<testsuite.utils.sql.connectionUrl>jdbc:postgresql://localhost/govway</testsuite.utils.sql.connectionUrl>
+		<testsuite.utils.sql.username>govway</testsuite.utils.sql.username>
+		<testsuite.utils.sql.password>govway</testsuite.utils.sql.password>
+		<testsuite.utils.sql.driverJdbc>org.postgresql.Driver</testsuite.utils.sql.driverJdbc>
+		<testsuite.utils.sql.driverJdbc.mvn.groupId>org.postgresql</testsuite.utils.sql.driverJdbc.mvn.groupId>
+		<testsuite.utils.sql.driverJdbc.mvn.artifactId>postgresql</testsuite.utils.sql.driverJdbc.mvn.artifactId>
+		<testsuite.utils.sql.driverJdbc.mvn.version>9.4.1212</testsuite.utils.sql.driverJdbc.mvn.version>
 
 	</properties>
 
@@ -33,6 +54,10 @@
 		<module>mvn/dependencies</module>
 		<module>mvn/compile</module>
 		<module>distrib</module>
+		<module>tools/utils/mvn</module>
+		<module>tools/utils/mvn/sql</module>
+		<module>core/mvn</module>
+		<module>core/mvn/sql</module>
 	</modules>
 
 	<repositories>

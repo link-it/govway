@@ -58,6 +58,8 @@ import org.slf4j.Logger;
  */
 public class ClientTest {
 	
+	private static boolean systemOut = true; // utile per maven test 
+	
 	static int CICLI_LOCK_PER_THREAD = 150;
 	static int THREADS = 20;
 	static boolean DEBUG = false;
@@ -146,7 +148,13 @@ public class ClientTest {
 			}
 		}
 		if(args.length>4){
-			String numThreads = args[4].trim();
+			String driverJdbcCustom = args[4].trim();
+			if(!"${driverJdbc}".equals(driverJdbcCustom)){
+				driver = driverJdbcCustom;
+			}
+		}
+		if(args.length>5){
+			String numThreads = args[5].trim();
 			if(!"${threads}".equals(numThreads)){
 				try{
 					THREADS = Integer.parseInt(numThreads);
@@ -155,8 +163,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>5){
-			String cicliLockPerThread = args[5].trim();
+		if(args.length>6){
+			String cicliLockPerThread = args[6].trim();
 			if(!"${lockForThread}".equals(cicliLockPerThread)){
 				try{
 					CICLI_LOCK_PER_THREAD = Integer.parseInt(cicliLockPerThread);
@@ -165,8 +173,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>6){
-			String debugParam = args[6].trim();
+		if(args.length>7){
+			String debugParam = args[7].trim();
 			if(!"${printDebug}".equals(debugParam)){
 				try{
 					DEBUG = Boolean.parseBoolean(debugParam);
@@ -175,8 +183,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>7){
-			String timeWait = args[7].trim();
+		if(args.length>8){
+			String timeWait = args[8].trim();
 			if(!"${timeWaitMs}".equals(timeWait)){
 				try{
 					timeWaitMs = Integer.parseInt(timeWait);
@@ -186,6 +194,14 @@ public class ClientTest {
 			}
 		}
 		
+		System.out.println("URL:"+url);
+		System.out.println("UserName:"+userName);
+		System.out.println("Password:"+password);
+		System.out.println("DriverJDBC:"+driver);
+		System.out.println("Threads:"+THREADS);
+		System.out.println("Cicli lock per thread:"+CICLI_LOCK_PER_THREAD);
+		System.out.println("Debug:"+DEBUG);
+		System.out.println("TimeWaitMs:"+timeWaitMs);
 		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		List<Connection> conThreads = new ArrayList<Connection>();
@@ -209,8 +225,8 @@ public class ClientTest {
 			
 			/** TEST N.1 Idle:Infinito MaxLife:Infinito */
 			
-			log.info("\n\n==========================================");
-			log.info("Test 1. Idle:Infinito MaxLife:Infinito");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 1. Idle:Infinito MaxLife:Infinito");
 			String applicativeId = null;
 			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
 				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
@@ -226,16 +242,16 @@ public class ClientTest {
 			
 			infoStat.clear();
 						
-			log.info("\n\n==========================================");
-			log.info("Test 2a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-NOSerializable");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 2a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-NOSerializable");
 			applicativeId = "TestNumero2-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, READ_COMMITTED);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
-			log.info("\n\n==========================================");
-			log.info("Test 2b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-Serializable");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 2b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero2-Serializable");
 			applicativeId = "TestNumero2-Serializable";
 			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
 				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
@@ -250,16 +266,16 @@ public class ClientTest {
 			
 			infoStat.clear();
 						
-			log.info("\n\n==========================================");
-			log.info("Test 3a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-NOSerializable");		
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 3a. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-NOSerializable");		
 			applicativeId = "TestNumero3-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, -1, READ_COMMITTED);
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
-			log.info("\n\n==========================================");
-			log.info("Test 3b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-Serializable");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 3b. Idle:Infinito MaxLife:Infinito ApplicativeId:TestNumero3-Serializable");
 			applicativeId = "TestNumero3-Serializable";
 			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
 				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
@@ -273,8 +289,8 @@ public class ClientTest {
 			
 			infoStat.clear();
 						
-			log.info("\n\n==========================================");
-			log.info("Test 4a. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-NoSerializable");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 4a. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-NoSerializable");
 			applicativeId = "TestNumero4-NoSerializable";
 			init(con, tipoDatabase, applicativeId);
 			boolean foundError = false;
@@ -282,7 +298,7 @@ public class ClientTest {
 				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, 100, -1, READ_COMMITTED);
 			}catch(Throwable e) {
 				foundError = true;
-				log.info("Errore Atteso: "+e.getMessage());
+				info(log,systemOut,"Errore Atteso: "+e.getMessage());
 			}
 			if(foundError==false){
 				throw new Exception("Atteso errore di max life, errore non rilevato");
@@ -294,8 +310,8 @@ public class ClientTest {
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
-			log.info("\n\n==========================================");
-			log.info("Test 4b. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-Serializable");
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 4b. Idle:Infinito MaxLife:100ms ApplicativeId:TestNumero4-Serializable");
 			applicativeId = "TestNumero4-Serializable";
 			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
 				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
@@ -305,7 +321,7 @@ public class ClientTest {
 				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, 105, -1, SERIALIZABLE);
 			}catch(Throwable e) {
 				foundError = true;
-				log.info("Errore Atteso: "+e.getMessage());
+				info(log,systemOut,"Errore Atteso: "+e.getMessage());
 			}
 			if(foundError==false){
 				throw new Exception("Atteso errore di max life, errore non rilevato");
@@ -322,8 +338,8 @@ public class ClientTest {
 			
 			infoStat.clear();
 						
-			log.info("\n\n==========================================");
-			log.info("Test 5a. Idle:38ms MaxLife:Infinito ApplicativeId:TestNumero5-NOSerializable");			
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 5a. Idle:38ms MaxLife:Infinito ApplicativeId:TestNumero5-NOSerializable");			
 			applicativeId = "TestNumero5-NOSerializable";
 			init(con, tipoDatabase, applicativeId);
 			foundError = false;
@@ -331,7 +347,7 @@ public class ClientTest {
 				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 38, READ_COMMITTED);
 			}catch(Throwable e) {
 				foundError = true;
-				log.info("Errore Atteso: "+e.getMessage());
+				info(log,systemOut,"Errore Atteso: "+e.getMessage());
 			}
 			if(foundError==false){
 				throw new Exception("Atteso errore di idle time, errore non rilevato");
@@ -343,8 +359,8 @@ public class ClientTest {
 			printInfos(infoStat);
 			listApplicativeId.add(applicativeId);
 			
-			log.info("\n\n==========================================");
-			log.info("Test 5b. Idle:42s MaxLife:Infinito ApplicativeId:TestNumero5-Serializable");			
+			info(log,systemOut,"\n\n==========================================");
+			info(log,systemOut,"Test 5b. Idle:42s MaxLife:Infinito ApplicativeId:TestNumero5-Serializable");			
 			applicativeId = "TestNumero5-Serializable";
 			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
 				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
@@ -354,7 +370,7 @@ public class ClientTest {
 				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 42, SERIALIZABLE);
 			}catch(Throwable e) {
 				foundError = true;
-				log.info("Errore Atteso: "+e.getMessage());
+				info(log,systemOut,"Errore Atteso: "+e.getMessage());
 			}
 			if(foundError==false){
 				throw new Exception("Atteso errore di idle time, errore non rilevato");
@@ -387,11 +403,18 @@ public class ClientTest {
 
 	}
 
+	private static void info(Logger log, boolean systemOut, String msg) {
+		log.info(msg);
+		if(systemOut) {
+			System.out.println(msg);
+		}
+	}
+	
 	private static void printInfos(InfoStatistics infoStat){
-		log.info("Numero di errori 'access serializable': "+infoStat.getErrorSerializableAccess());
+		info(log,systemOut,"Numero di errori 'access serializable': "+infoStat.getErrorSerializableAccess());
 		for (int i=0; i<infoStat.getExceptionOccurs().size(); i++) {
 			Throwable e = infoStat.getExceptionOccurs().get(i);
-			log.info("Errore-"+(i+1)+" (occurs:"+infoStat.getNumber(e)+"): "+e.getMessage());
+			info(log,systemOut,"Errore-"+(i+1)+" (occurs:"+infoStat.getNumber(e)+"): "+e.getMessage());
 		}
 	}
 

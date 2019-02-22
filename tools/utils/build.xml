@@ -33,7 +33,7 @@
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/*README"/>
-			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="*.userlibraries"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
@@ -144,16 +144,17 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.utils.jdbc.TestKeyGenerator" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.jdbc.TestKeyGenerator" fork="true">
+		        <arg value="${tipoDatabase}" />
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+		        <arg value="${driverJdbc}" /> <!-- opzionale -->
+			<classpath>
+		        	<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="runJDBCAdapterTest">
@@ -163,16 +164,17 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.utils.jdbc.TestJDBCAdapter" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.jdbc.TestJDBCAdapter" fork="true">
+		        <arg value="${tipoDatabase}" />
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+		        <arg value="${driverJdbc}" /> <!-- opzionale -->
+			<classpath>
+				<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="runSQLQueryObjectTest">
@@ -182,16 +184,17 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.utils.sql.ClientTest" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.sql.ClientTest" fork="true">
+		        <arg value="${tipoDatabase}" />
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+		        <arg value="${driverJdbc}" /> <!-- opzionale -->
+			<classpath>
+		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 
 	<target name="runSondeTest">
@@ -201,18 +204,19 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.utils.sonde.ClientTest" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-        		<arg value="${sondaBatchName}" /> <!-- opzionale -->
-        		<arg value="${sondaCodaName}" /> <!-- opzionale -->
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.sonde.ClientTest" fork="true">
+		        <arg value="${tipoDatabase}" />
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+			<arg value="${driverJdbc}" /> <!-- opzionale -->
+			<arg value="${sondaBatchName}" /> <!-- opzionale -->
+			<arg value="${sondaCodaName}" /> <!-- opzionale -->
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="runIdSerialTest">
@@ -222,21 +226,22 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.utils.id.serial.ClientTest" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-        		<arg value="${threads}" /> <!-- opzionale -->
-        		<arg value="${idsForThread}" /> <!-- opzionale -->
-        		<arg value="${printDebug}" /> <!-- opzionale -->
-        		<arg value="${timeWaitMs}" /> <!-- opzionale -->
-        		<arg value="${sizeBuffer}" /> <!-- opzionale -->
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.utils.id.serial.ClientTest" fork="true">
+		        <arg value="${tipoDatabase}" />
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+			<arg value="${driverJdbc}" /> <!-- opzionale -->
+			<arg value="${threads}" /> <!-- opzionale -->
+			<arg value="${idsForThread}" /> <!-- opzionale -->
+			<arg value="${printDebug}" /> <!-- opzionale -->
+			<arg value="${timeWaitMs}" /> <!-- opzionale -->
+			<arg value="${sizeBuffer}" /> <!-- opzionale -->
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 
 	<target name="runSemaphoreTest">
@@ -249,13 +254,14 @@
 		<!-- Run the java code  -->
 		<java classname="org.openspcoop2.utils.semaphore.ClientTest" fork="true">
 		        <arg value="${tipoDatabase}" />
-				<arg value="${url}" /> <!-- opzionale -->
-				<arg value="${username}" /> <!-- opzionale -->
-				<arg value="${password}" /> <!-- opzionale -->
-				<arg value="${threads}" /> <!-- opzionale -->
-				<arg value="${lockForThread}" /> <!-- opzionale -->
-				<arg value="${printDebug}" /> <!-- opzionale -->
-				<arg value="${timeWaitMs}" /> <!-- opzionale -->
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+			<arg value="${driverJdbc}" /> <!-- opzionale -->
+			<arg value="${threads}" /> <!-- opzionale -->
+			<arg value="${lockForThread}" /> <!-- opzionale -->
+			<arg value="${printDebug}" /> <!-- opzionale -->
+			<arg value="${timeWaitMs}" /> <!-- opzionale -->
 		        <classpath>
 		        		<path refid="classpath_run_dist" />
 		        </classpath>

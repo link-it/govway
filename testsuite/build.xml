@@ -155,7 +155,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${required_lib}" >
 			<exclude name="**/*README"/>
-			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="*.userlibraries"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

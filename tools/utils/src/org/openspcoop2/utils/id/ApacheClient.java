@@ -46,14 +46,14 @@ public class ApacheClient {
 		config.setType(EnumTypeGenerator.PREFIXED_ALPHANUMERIC);
 		config.setPrefix("PREFIX");
 		
-		config.setSize("PREFIX".length()+2);
+		config.setSize("PREFIX".length()+3);
 		//config.setInitialStringValue("PREFIXbb");
 		
 		config.setStartDigit('3');
-		config.setEndDigit('4');
+		config.setEndDigit('9');
 		
 		config.setStartLetter('b');
-		config.setEndLetter('d');
+		config.setEndLetter('z');
 		
 		config.setEnableLowerCaseLetter(true);
 		config.setEnableUpperCaseLetter(true);

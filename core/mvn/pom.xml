@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.compile</artifactId>
+	<artifactId>org.openspcoop2.testsuite.pdd.core</artifactId>
 	<packaging>pom</packaging>
-	<name>compile</name>
+	<name>testsuite.pdd.core</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -15,20 +15,56 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
 				<executions>
 					<execution>
-						<phase>${compile}</phase>
+						<phase>${testsuite.pdd.core}</phase>
 						<configuration>
 							<target>
+								<property name="rootDir" location="../../" />
+								<path id="classpath_run_dist" >
+									<fileset dir="${rootDir}/dist" >
+										<include name="*.jar"/>
+									</fileset>
+								</path>
+								<path id="classpath_run_lib" >
+									<pathelement path="src"/>
+									<pathelement path="deploy/properties"/>
+									<fileset dir="${rootDir}/lib" >
+										<exclude name="**/axis14/*"/>
+										<exclude name="**/swagger-codegen/*"/>
+										<exclude name="**/*README"/>
+										<exclude name="*.userlibraries"/>
+										<include name="**/*.jar"/>
+									</fileset>
+								</path>
+
 								<taskdef resource="net/sf/antcontrib/antlib.xml"
-									classpathref="maven.plugin.classpath" />
-								<ant antfile="../../build.xml" useNativeBasedir="true">
-									<property name="rootDir" location="../../" />
-									<target name="build"/>
-								</ant>
+									classpathref="classpath_run_lib" />
+
+								<echo message="Run test 'MTOM' ..."/>
+								<java classname="org.openspcoop2.message.soap.mtom.Client" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'MTOM' ok"/>
+
+								<echo message="Run test 'ResponseCaching' ..."/>
+								<java classname="org.openspcoop2.pdd.core.response_caching.Test" 
+									fork="true" failonerror="true">
+									<classpath>
+										<path refid="classpath_run_lib" />
+										<path refid="classpath_run_dist" />
+									</classpath>
+								</java>
+								<echo message="Run test 'ResponseCaching' ok"/>
+
 							</target>
 						</configuration>
 						<goals>
@@ -61,6 +97,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
 		</plugins>
 	</build>
 

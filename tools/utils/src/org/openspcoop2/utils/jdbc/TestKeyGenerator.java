@@ -45,6 +45,8 @@ import org.slf4j.Logger;
  */
 public class TestKeyGenerator {
 
+	private static boolean systemOut = true; // utile per maven test 
+	
 	private static Logger log = null;
 	
 	public static void main(String[] args) throws Exception{
@@ -195,8 +197,17 @@ public class TestKeyGenerator {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String driverJdbcCustom = args[4].trim();
+			if(!"${driverJdbc}".equals(driverJdbcCustom)){
+				driver = driverJdbcCustom;
+			}
+		}
 
-		
+		System.out.println("URL:"+url);
+		System.out.println("UserName:"+userName);
+		System.out.println("Password:"+password);
+		System.out.println("DriverJDBC:"+driver);		
 		ClassLoaderUtilities.newInstance(driver);
 	    Connection con = null;
 	    Statement stmtDelete = null;
@@ -242,7 +253,7 @@ public class TestKeyGenerator {
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
 	    	
-	    	log.info("Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
+	    	info(log,systemOut,"Test effettuato correttamente (id generati: first["+id1+"] second["+id2+"])");
 
 	    	
 	    }finally{
@@ -259,6 +270,13 @@ public class TestKeyGenerator {
 	    		con.close();
 	    	}catch(Exception eClose){}
 	    }
+	}
+	
+	private static void info(Logger log, boolean systemOut, String msg) {
+		log.info(msg);
+		if(systemOut) {
+			System.out.println(msg);
+		}
 	}
 
 }

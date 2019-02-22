@@ -5,20 +5,20 @@ public class JavaDocCheck {
     public static final String AUTORE_CHECK = "@author";
     public static final String AUTORE_CHECK2 = "$Author";
     public static final String AUTORE_VALORE = "$Author$";
-    public static final String AUTORE_VALORE2 = "$Author$";
-    public static final String AUTORE_VALORE3 = "$Author$";
+    public static final String AUTORE_VALORE2 = "Author: $";
+    public static final String AUTORE_VALORE3 = "Author:$";
 
     public static final String VERSIONE_CHECK = "@version ";
     public static final String VERSIONE_CHECK2 = "$Rev";
     public static final String VERSIONE_CHECK_HTML = "$Rev";
     public static final String VERSIONE_VALORE = "$Rev$";
-    public static final String VERSIONE_VALORE2 = "$Rev$";
-    public static final String VERSIONE_VALORE3 = "$Rev$";
+    public static final String VERSIONE_VALORE2 = "Rev: $";
+    public static final String VERSIONE_VALORE3 = "Rev:$";
 
     public static final String DATA_CHECK = "$Date";
     public static final String DATA_VALORE = "$Date$";
-    public static final String DATA_VALORE2 = "$Date$";
-    public static final String DATA_VALORE3 = "$Date$";
+    public static final String DATA_VALORE2 = "Date: $";
+    public static final String DATA_VALORE3 = "Date:$";
 
     public static final String VALORE_CORROTTO = ".java $";
 

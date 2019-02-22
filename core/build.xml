@@ -60,7 +60,7 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/*README"/>
-			<exclude name="openspcoop2.userlibraries"/>
+			<exclude name="*.userlibraries"/>
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
@@ -560,9 +560,10 @@
 		<!-- Run the java code  -->
 		<java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" fork="true">
 		        <arg value="${tipoDatabase}" />
-				<arg value="${url}" /> <!-- opzionale -->
-				<arg value="${username}" /> <!-- opzionale -->
-				<arg value="${password}" /> <!-- opzionale -->
+			<arg value="${url}" /> <!-- opzionale -->
+			<arg value="${username}" /> <!-- opzionale -->
+			<arg value="${password}" /> <!-- opzionale -->
+			<arg value="${driverJdbc}" /> <!-- opzionale -->
 		        <classpath>
 		        	<path refid="classpath_run_lib" />
 		        	<path refid="classpath_run_dist" />
