@@ -87,6 +87,7 @@ public class ClientTest {
 		String userName = null;
 		String password = null;
 		int timeWaitMs = 60000;
+		boolean testIdle=true;
 
 		switch (tipoDatabase) {
 		case POSTGRESQL:
@@ -154,7 +155,13 @@ public class ClientTest {
 			}
 		}
 		if(args.length>5){
-			String numThreads = args[5].trim();
+			String testIdleCustom = args[5].trim();
+			if(!"${testIdle}".equals(testIdleCustom)){
+				testIdle = "true".equalsIgnoreCase(testIdleCustom);
+			}
+		}
+		if(args.length>6){
+			String numThreads = args[6].trim();
 			if(!"${threads}".equals(numThreads)){
 				try{
 					THREADS = Integer.parseInt(numThreads);
@@ -163,8 +170,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>6){
-			String cicliLockPerThread = args[6].trim();
+		if(args.length>7){
+			String cicliLockPerThread = args[7].trim();
 			if(!"${lockForThread}".equals(cicliLockPerThread)){
 				try{
 					CICLI_LOCK_PER_THREAD = Integer.parseInt(cicliLockPerThread);
@@ -173,8 +180,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>7){
-			String debugParam = args[7].trim();
+		if(args.length>8){
+			String debugParam = args[8].trim();
 			if(!"${printDebug}".equals(debugParam)){
 				try{
 					DEBUG = Boolean.parseBoolean(debugParam);
@@ -183,8 +190,8 @@ public class ClientTest {
 				}
 			}
 		}
-		if(args.length>8){
-			String timeWait = args[8].trim();
+		if(args.length>9){
+			String timeWait = args[9].trim();
 			if(!"${timeWaitMs}".equals(timeWait)){
 				try{
 					timeWaitMs = Integer.parseInt(timeWait);
@@ -336,51 +343,55 @@ public class ClientTest {
 			
 			/** TEST N.5 Idle:133ms MaxLife:Infinito con Applicative ID TestNumero5 */
 			
-			infoStat.clear();
-						
-			info(log,systemOut,"\n\n==========================================");
-			info(log,systemOut,"Test 5a. Idle:38ms MaxLife:Infinito ApplicativeId:TestNumero5-NOSerializable");			
-			applicativeId = "TestNumero5-NOSerializable";
-			init(con, tipoDatabase, applicativeId);
-			foundError = false;
-			try {
-				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 38, READ_COMMITTED);
-			}catch(Throwable e) {
-				foundError = true;
-				info(log,systemOut,"Errore Atteso: "+e.getMessage());
-			}
-			if(foundError==false){
-				throw new Exception("Atteso errore di idle time, errore non rilevato");
-			}
-			logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Idle Time (38ms) exceeded")==false) {
-				throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
-			}
-			printInfos(infoStat);
-			listApplicativeId.add(applicativeId);
+			if(testIdle) {
 			
-			info(log,systemOut,"\n\n==========================================");
-			info(log,systemOut,"Test 5b. Idle:42s MaxLife:Infinito ApplicativeId:TestNumero5-Serializable");			
-			applicativeId = "TestNumero5-Serializable";
-			if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
-				init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+				infoStat.clear();
+							
+				info(log,systemOut,"\n\n==========================================");
+				info(log,systemOut,"Test 5a. Idle:38ms MaxLife:Infinito ApplicativeId:TestNumero5-NOSerializable");			
+				applicativeId = "TestNumero5-NOSerializable";
+				init(con, tipoDatabase, applicativeId);
+				foundError = false;
+				try {
+					test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 38, READ_COMMITTED);
+				}catch(Throwable e) {
+					foundError = true;
+					info(log,systemOut,"Errore Atteso: "+e.getMessage());
+				}
+				if(foundError==false){
+					throw new Exception("Atteso errore di idle time, errore non rilevato");
+				}
+				logContent = FileSystemUtilities.readFile(logFile);
+				if(logContent.contains("Idle Time (38ms) exceeded")==false) {
+					throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+				}
+				printInfos(infoStat);
+				listApplicativeId.add(applicativeId);
+				
+				info(log,systemOut,"\n\n==========================================");
+				info(log,systemOut,"Test 5b. Idle:42s MaxLife:Infinito ApplicativeId:TestNumero5-Serializable");			
+				applicativeId = "TestNumero5-Serializable";
+				if(TipiDatabase.ORACLE.equals(tipoDatabase)) {
+					init(con, tipoDatabase, applicativeId); // la init è necessaria in oracle anche con serializable. Altrimenti si ottiene più righe
+				}
+				foundError = false;
+				try {
+					test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 42, SERIALIZABLE);
+				}catch(Throwable e) {
+					foundError = true;
+					info(log,systemOut,"Errore Atteso: "+e.getMessage());
+				}
+				if(foundError==false){
+					throw new Exception("Atteso errore di idle time, errore non rilevato");
+				}
+				logContent = FileSystemUtilities.readFile(logFile);
+				if(logContent.contains("Idle Time (42ms) exceeded")==false) {
+					throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
+				}
+				printInfos(infoStat);
+				listApplicativeId.add(applicativeId);
+				
 			}
-			foundError = false;
-			try {
-				test(infoStat, SemaphoreMapping.newInstance(applicativeId), tipoDatabase, conThreads, log, DEBUG, timeWaitMs, -1, 42, SERIALIZABLE);
-			}catch(Throwable e) {
-				foundError = true;
-				info(log,systemOut,"Errore Atteso: "+e.getMessage());
-			}
-			if(foundError==false){
-				throw new Exception("Atteso errore di idle time, errore non rilevato");
-			}
-			logContent = FileSystemUtilities.readFile(logFile);
-			if(logContent.contains("Idle Time (42ms) exceeded")==false) {
-				throw new Exception("Atteso errore di idle time, errore non rilevato nel log file");
-			}
-			printInfos(infoStat);
-			listApplicativeId.add(applicativeId);
 		
 			
 			

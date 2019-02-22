@@ -13,6 +13,10 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
+	<properties>
+		<testsuite.utils.sql.testIdle>true</testsuite.utils.sql.testIdle>
+	</properties>
+
 	<dependencies>
 
 		<dependency>
@@ -89,6 +93,7 @@
                         						<arg value="${testsuite.utils.sql.username}" />
                         						<arg value="${testsuite.utils.sql.password}" />
 	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
+									<arg value="${testsuite.utils.sql.testIdle}" />
                         						<classpath>
 										<path refid="classpath_run_lib" />
 										<path refid="classpath_run_dist" />

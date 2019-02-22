@@ -258,6 +258,7 @@
 			<arg value="${username}" /> <!-- opzionale -->
 			<arg value="${password}" /> <!-- opzionale -->
 			<arg value="${driverJdbc}" /> <!-- opzionale -->
+			<arg value="${testIdle}" /> <!-- opzionale -->
 			<arg value="${threads}" /> <!-- opzionale -->
 			<arg value="${lockForThread}" /> <!-- opzionale -->
 			<arg value="${printDebug}" /> <!-- opzionale -->
