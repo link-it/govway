@@ -2584,7 +2584,7 @@ public class RepositoryBuste  {
 			}
 		}else{
 			StatelessMessage statelessMsg = ((StatelessMessage)this.state);
-			Busta busta = statelessMsg.getBusta();
+			Busta busta = statelessMsg.getBusta().clone(); // Per evitare che venga modificato l'oggetto richiesta durante il salvataggio.
 			if(parametri.isMittente()==false){
 				busta.setTipoMittente(null);
 				busta.setMittente(null);
