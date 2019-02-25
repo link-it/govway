@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
@@ -270,6 +271,17 @@ public class ValidazioneSemantica {
 			if(showIDOggettiAnalizzati)
 				printMsg("Ruolo: "+ruolo.getNome());
 			validaRuolo(ruolo);
+		}
+		
+		if(showIDOggettiAnalizzati)
+			printMsg("\n\n------------------------------------Scope("+this.registro.sizeScopeList()+")-----------------------------------------------------");
+
+		// scope
+		for(int i=0; i<this.registro.sizeScopeList();i++){
+			Scope scope = this.registro.getScope(i);
+			if(showIDOggettiAnalizzati)
+				printMsg("Scope: "+scope.getNome());
+			validaScope(scope);
 		}
 
 		if(showIDOggettiAnalizzati)
@@ -1472,6 +1484,35 @@ public class ValidazioneSemantica {
 		}
 		if (numRuolo > 1)
 			this.errori.add("Non può esistere più di un ruolo con nome "+ruolo.getNome());
+	
+	}
+	
+	private  void validaScope(Scope scope) throws DriverRegistroServiziException {
+		
+		// required
+		if(scope.getNome()==null){
+			this.errori.add("Esiste uno scope senza nome");
+			return;
+		}
+		
+		// Controllo sul nome
+		try{
+			if (!RegularExpressionEngine.isMatch(scope.getNome(),"^[0-9A-Za-z_]+$")) {
+				this.errori.add("Il nome dello scope dev'essere formato solo da caratteri, cifre e '_'");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del nome dello scope :" +e.getMessage(),e);
+		}	
+		
+		// Ogni scope deve avere un nome diverso!
+		int numScope = 0;
+		for(int j=0; j<this.registro.sizeScopeList();j++){
+			Scope tmpScope = this.registro.getScope(j);
+			if (scope.getNome().equals(tmpScope.getNome()))
+				numScope++;
+		}
+		if (numScope > 1)
+			this.errori.add("Non può esistere più di uno scope con nome "+scope.getNome());
 	
 	}
 

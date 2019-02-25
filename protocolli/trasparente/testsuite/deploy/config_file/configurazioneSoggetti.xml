@@ -1,7 +1,5 @@
 <openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
 
-	<soggetto tipo="gw" nome="Anonimo"/>
-
 	<soggetto tipo="gw" nome="applicativoComunePisa"/>
 
 	<soggetto tipo="gw" nome="MinisteroReferente"/>

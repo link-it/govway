@@ -10,10 +10,10 @@
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
                     <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
 		<resource nome="invoke" />
-		<resource nome="invokeBasicPdD" />
-		<resource nome="invokeBasicPdD_credenzialiNonBruciate" />
-		<resource nome="invokeWithBasicAuth" />
-		<resource nome="invokeWithBasicAuthDomain" />
+		<resource nome="invokeBasicPdD" path="invokeBasicPdD" />
+		<resource nome="invokeBasicPdD_credenzialiNonBruciate" path="invokeBasicPdD_credenzialiNonBruciate" />
+		<resource nome="invokeWithBasicAuth" path="invokeWithBasicAuth" />
+		<resource nome="invokeWithBasicAuthDomain" path="invokeWithBasicAuthDomain" />
         </accordo-servizio-parte-comune>
 
 

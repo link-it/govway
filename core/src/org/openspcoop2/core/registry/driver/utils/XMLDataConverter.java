@@ -47,6 +47,8 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
@@ -725,6 +727,70 @@ public class XMLDataConverter {
 			e.printStackTrace();
 			throw new DriverRegistroServiziException("Errore durante la conversione XML delle porte di dominio: "+e.getMessage(),e);
 		}
+		
+		
+		
+		
+		
+		// Ruoli
+		try{
+			
+			for(int i=0; i<this.sorgenteRegistro.sizeRuoloList(); i++){
+				Ruolo ruolo = this.sorgenteRegistro.getRuolo(i);
+				ruolo.setSuperUser(this.superUser);
+				impostaInformazioniRegistroDB_Ruolo(ruolo);
+				
+				IDRuolo idRuolo = new IDRuolo(ruolo.getNome());
+				if( (reset==false) && this.gestoreCRUD.existsRuolo(idRuolo)){
+					this.log.info("Ruolo "+ruolo.getNome()+" aggiornamento in corso...");
+					this.gestoreCRUD.updateRuolo(ruolo);
+					this.log.info("Ruolo "+ruolo.getNome()+" aggiornata.");
+				}else{
+					this.log.info("Ruolo "+ruolo.getNome()+" creazione in corso...");
+					this.gestoreCRUD.createRuolo(ruolo);
+					this.log.info("Ruolo "+ruolo.getNome()+" creata.");				
+				}
+				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("Errore durante la conversione XML dei ruoli: "+e.getMessage(),e);
+		}
+		
+		
+		
+		
+		
+		
+		// Scope
+		try{
+			
+			for(int i=0; i<this.sorgenteRegistro.sizeScopeList(); i++){
+				Scope scope = this.sorgenteRegistro.getScope(i);
+				scope.setSuperUser(this.superUser);
+				impostaInformazioniRegistroDB_Scope(scope);
+				
+				IDScope idScope = new IDScope(scope.getNome());
+				if( (reset==false) && this.gestoreCRUD.existsScope(idScope)){
+					this.log.info("Scope "+scope.getNome()+" aggiornamento in corso...");
+					this.gestoreCRUD.updateScope(scope);
+					this.log.info("Scope "+scope.getNome()+" aggiornata.");
+				}else{
+					this.log.info("Scope "+scope.getNome()+" creazione in corso...");
+					this.gestoreCRUD.createScope(scope);
+					this.log.info("Scope "+scope.getNome()+" creata.");				
+				}
+				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("Errore durante la conversione XML degli scope: "+e.getMessage(),e);
+		}
+				
+		
+		
 		
 
 		// Soggetto
