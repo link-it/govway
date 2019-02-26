@@ -186,14 +186,23 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
     <security-constraint>
             <web-resource-collection>
-                    <web-resource-name>AuthenticationContainer</web-resource-name>
-                    <url-pattern>/IntegrationManager/PD</url-pattern>
-		    <url-pattern>/IntegrationManager/MessageBox</url-pattern>
-                    <url-pattern>/spcoop/IntegrationManager/PD</url-pattern>
-                    <url-pattern>/spcoop/IntegrationManager/MessageBox</url-pattern>
-                    <url-pattern>/proxy/IntegrationManager/PD</url-pattern>
-                    <url-pattern>/proxy/IntegrationManager/MessageBox</url-pattern>
-		    <http-method>GET</http-method>
+		<web-resource-name>AuthenticationContainer</web-resource-name>
+		<url-pattern>/IntegrationManager/PD</url-pattern>
+		<url-pattern>/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/check</url-pattern>
+		<url-pattern>/api/IntegrationManager/PD</url-pattern>
+		<url-pattern>/api/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/api/check</url-pattern>
+		<url-pattern>/spcoop/IntegrationManager/PD</url-pattern>
+		<url-pattern>/spcoop/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/spcoop/check</url-pattern>
+		<url-pattern>/sdi/IntegrationManager/PD</url-pattern>
+		<url-pattern>/sdi/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/sdi/check</url-pattern>
+		<url-pattern>/as4/IntegrationManager/PD</url-pattern>
+		<url-pattern>/as4/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/as4/check</url-pattern>
+		<http-method>GET</http-method>
             </web-resource-collection>
     </security-constraint>
 
