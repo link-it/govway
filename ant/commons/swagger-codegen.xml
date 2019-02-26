@@ -31,8 +31,7 @@
 		<if>
 			<istrue value="${swaggerCodeGen.useGovwayTemplate}" />
 			<then>
-				<unzip src="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4-gov4j-1.jar" dest="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/template"/>
-				<java jar="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4.jar" fork="true">
+				<java jar="${required_lib}/swagger-codegen/swagger-codegen-cli-3.0.4-gov4j-2.jar" fork="true">
 					<arg value="generate" />
 					<arg value="--input-spec" />
 					<arg value="${swaggerCodeGen.inputSpec}" />
@@ -51,8 +50,6 @@
 					<arg value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN" />
 					<arg value="--config" />
 					<arg value="${configSwagger}" />
-					<arg value="--template-dir" />
-					<arg value="${swaggerCodeGen.outputDir}/TMP_DIR_SWAGGER_CODEGEN/template/v2/JavaJaxRS/cxf" />
 					<classpath>
 		<!--
 						<pathelement path="${required_lib}/swagger/*.jar"/>

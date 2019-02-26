@@ -1,3 +1,14 @@
+2019-02-26  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-805
+	Aggiunto supporto jax-rs alle utilities per
+	- gestione Problem Detail RFC 7807
+	- logging (contesto del servizio, emissione dei diagnostici, emissione delle transazioni, dump)
+	- aggiunta possibilità di non far generare l'header WWW-Authenticate in BasicAuthenticationEntryPoint
+	- aggiunto un userDetailsService 'WildflyApplicationAuthenticationProvider' che utilizza le utenze applicative registrate su wildfly
+	- aggiunte classi di utility per gestire l'autenticazione tramite spring security
+
 2019-02-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

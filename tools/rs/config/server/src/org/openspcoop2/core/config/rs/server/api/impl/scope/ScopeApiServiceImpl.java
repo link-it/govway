@@ -13,11 +13,11 @@ import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaScope;
 import org.openspcoop2.core.config.rs.server.model.Scope;
 import org.openspcoop2.core.id.IDScope;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
@@ -45,12 +45,19 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      */
 	@Override
     public void create(Scope body) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");  
+			
+			if(context.getServletResponse()!=null) {
+				System.out.println("SERVLET RESPONSE NOT NULL");
+			}
+			else {
+				System.out.println("SERVLET RESPONSE NULL");
+			}
 			
 			if (body == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body mancante.");
@@ -91,7 +98,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      */
 	@Override
     public void delete(String nome) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -136,7 +143,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      */
 	@Override
     public ListaScope findAll(String q, Integer limit, Integer offset, ContestoEnum contesto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
@@ -189,7 +196,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      */
 	@Override
     public Scope get(String nome) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -228,7 +235,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      */
 	@Override
     public void update(Scope body, String nome) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

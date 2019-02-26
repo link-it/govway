@@ -7,8 +7,8 @@ import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -34,7 +34,7 @@ public class Environment {
 	public final SoggettiCore soggettiCore;
 
 	
-	public Environment(HttpServletRequest req, ProfiloEnum profilo, String soggetto, ServiceContext ctx) throws Exception {
+	public Environment(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws Exception {
 		
 		if (profilo == null)
 			profilo = Helper.getProfiloDefault();

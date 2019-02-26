@@ -26,8 +26,35 @@
 		        </then>
 		</if>
 
+		<delete dir="${src_govwayMonitorApiRS}/schemi/merge"/>
+		<mkdir dir="${src_govwayMonitorApiRS}/schemi/merge"/>
+		<mkdir dir="${src_govwayMonitorApiRS}/schemi/merge/tmp"/>
+		<copy todir="${src_govwayMonitorApiRS}/schemi/merge/tmp">
+			<fileset dir="${src_govwayMonitorApiRS}/schemi">
+				<exclude name="daEliminare.yaml"/>
+				<include name="*.yaml"/>
+			</fileset>
+		</copy>
+
+		<!-- Unifica l'interfaccia  -->
+		<echo message="Dest [${src_govwayMonitorApiRS}/schemi/merge/govway_rs-api_monitor.yaml]"/>
+		<echo message="Source [${src_govwayMonitorApiRS}/schemi/merge/tmp/govway_rs-api_monitor.yaml]"/>
+		<echo message="Attach [${src_govwayMonitorApiRS}/schemi/merge/tmp]"/>
+		<java classname="org.openspcoop2.utils.openapi.UniqueInterfaceGenerator" fork="true">
+	        	<arg value="OPEN_API_3" />
+			<arg value="${src_govwayMonitorApiRS}/schemi/merge/govway_rs-api_monitor.yaml" /> <!-- dest -->
+			<arg value="${src_govwayMonitorApiRS}/schemi/merge/tmp/govway_rs-api_monitor.yaml" /> <!-- master -->
+			<arg value="${src_govwayMonitorApiRS}/schemi/merge/tmp" />  <!-- attach dir -->
+		        <classpath>
+	        		<path refid="classpath_compile" />
+				<path refid="classpath_dist" />
+		        </classpath>
+		</java>
+
+		<delete dir="${src_govwayMonitorApiRS}/schemi/merge/tmp"/>
+
 	    	<antcall target="-swagger_codegen">
-			<param name="swaggerCodeGen.inputSpec" value="${src_govwayMonitorApiRS}/schemi/govway_rs-api_monitor.yaml"/>
+			<param name="swaggerCodeGen.inputSpec" value="${src_govwayMonitorApiRS}/schemi/merge/govway_rs-api_monitor.yaml"/>
 			<param name="swaggerCodeGen.package" value="org.openspcoop2.core.monitor.rs.server"/>
 			<param name="swaggerCodeGen.packagePath" value="org/openspcoop2/core/monitor/rs/server"/>
 			<param name="swaggerCodeGen.outputDir" value="${src_govwayMonitorApiRS}"/>

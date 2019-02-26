@@ -1,8 +1,11 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneBaseConfig;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseConfig {
   
@@ -16,7 +19,8 @@ public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseCon
    * @return soggetto
   **/
   @JsonProperty("soggetto")
-  public String getSoggetto() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggetto() {
     return this.soggetto;
   }
 
@@ -34,7 +38,8 @@ public class APIImplAutorizzazioneConfigNew extends APIImplAutorizzazioneBaseCon
    * @return ruolo
   **/
   @JsonProperty("ruolo")
-  public String getRuolo() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getRuolo() {
     return this.ruolo;
   }
 

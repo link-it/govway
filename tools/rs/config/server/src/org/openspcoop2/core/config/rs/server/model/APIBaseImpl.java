@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIBaseImpl  {
   
@@ -24,7 +25,8 @@ public class APIBaseImpl  {
   **/
   @JsonProperty("api_nome")
   @NotNull
-  public String getApiNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApiNome() {
     return this.apiNome;
   }
 
@@ -43,6 +45,7 @@ public class APIBaseImpl  {
   **/
   @JsonProperty("api_versione")
   @NotNull
+  @Valid
   public Integer getApiVersione() {
     return this.apiVersione;
   }
@@ -61,7 +64,8 @@ public class APIBaseImpl  {
    * @return apiSoapServizio
   **/
   @JsonProperty("api_soap_servizio")
-  public String getApiSoapServizio() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApiSoapServizio() {
     return this.apiSoapServizio;
   }
 
@@ -79,7 +83,8 @@ public class APIBaseImpl  {
    * @return tipoServizio
   **/
   @JsonProperty("tipo_servizio")
-  public String getTipoServizio() {
+  @Valid
+ @Size(max=20)  public String getTipoServizio() {
     return this.tipoServizio;
   }
 

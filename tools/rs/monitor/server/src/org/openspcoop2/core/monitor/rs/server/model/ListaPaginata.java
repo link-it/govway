@@ -2,6 +2,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ListaPaginata  {
   
@@ -24,6 +25,7 @@ public class ListaPaginata  {
    * @return numRisultati
   **/
   @JsonProperty("numRisultati")
+  @Valid
   public Integer getNumRisultati() {
     return this.numRisultati;
   }
@@ -42,6 +44,7 @@ public class ListaPaginata  {
    * @return numPagine
   **/
   @JsonProperty("numPagine")
+  @Valid
   public Integer getNumPagine() {
     return this.numPagine;
   }
@@ -60,6 +63,7 @@ public class ListaPaginata  {
    * @return risultatiPerPagina
   **/
   @JsonProperty("risultatiPerPagina")
+  @Valid
   public Integer getRisultatiPerPagina() {
     return this.risultatiPerPagina;
   }
@@ -78,6 +82,7 @@ public class ListaPaginata  {
    * @return pagina
   **/
   @JsonProperty("pagina")
+  @Valid
   public Integer getPagina() {
     return this.pagina;
   }
@@ -96,6 +101,7 @@ public class ListaPaginata  {
    * @return prossimiRisultati
   **/
   @JsonProperty("prossimiRisultati")
+  @Valid
   public String getProssimiRisultati() {
     return this.prossimiRisultati;
   }

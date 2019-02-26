@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ConnettoreConfigurazioneHttps  {
   
@@ -27,6 +28,7 @@ public class ConnettoreConfigurazioneHttps  {
   **/
   @JsonProperty("tipologia")
   @NotNull
+  @Valid
   public SslTipologiaEnum getTipologia() {
     return this.tipologia;
   }
@@ -45,6 +47,7 @@ public class ConnettoreConfigurazioneHttps  {
    * @return hostnameVerifier
   **/
   @JsonProperty("hostname_verifier")
+  @Valid
   public Boolean isHostnameVerifier() {
     return this.hostnameVerifier;
   }
@@ -64,6 +67,7 @@ public class ConnettoreConfigurazioneHttps  {
   **/
   @JsonProperty("server")
   @NotNull
+  @Valid
   public ConnettoreConfigurazioneHttpsServer getServer() {
     return this.server;
   }
@@ -82,6 +86,7 @@ public class ConnettoreConfigurazioneHttps  {
    * @return client
   **/
   @JsonProperty("client")
+  @Valid
   public ConnettoreConfigurazioneHttpsClient getClient() {
     return this.client;
   }

@@ -1,15 +1,16 @@
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
+import org.openspcoop2.core.monitor.rs.server.api.*;
 import org.joda.time.DateTime;
-import org.openspcoop2.core.monitor.rs.server.api.MonitoraggioApi;
 import org.openspcoop2.core.monitor.rs.server.model.RisultatoRicercaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.TransazioneDetail;
 import org.openspcoop2.core.monitor.rs.server.model.TransazioneSearchFilter;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 /**
  * GovWay Monitor API
  *
@@ -35,7 +36,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      */
 	@Override
     public RisultatoRicercaTransazioni baseSearchTransaction(String profilo, DateTime dataDa, DateTime dataA, String soggettoLocale, String soggettoRemoto, String servizio, String azione, String esito, String idApplicativo, String idMessaggio, String idT, Integer pagina, Integer risultatiPerPagina, String ordinamento) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -52,7 +53,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
-		catch(Exception e) {
+		catch(Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
@@ -66,7 +67,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      */
 	@Override
     public TransazioneDetail getTransazione(String id) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -83,7 +84,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
-		catch(Exception e) {
+		catch(Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
@@ -97,7 +98,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      */
 	@Override
     public Object searchTransazioni(TransazioneSearchFilter body, Integer pagina, Integer risultatiPerPagina, String ordinamento) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -114,7 +115,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
-		catch(Exception e) {
+		catch(Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}

@@ -11,6 +11,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneScopes;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
+import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.Problem;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
@@ -173,7 +174,7 @@ public interface FruizioniConfigurazioneApi  {
     @Produces({ "application/xml", "application/problem+json" })
     @Operation(summary = "Restituisce la policy XACML associata all'autorizzazione", tags={ "fruizioni-configurazione" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Interfaccia dell'API restituita con successo", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Interfaccia dell'API restituita con successo", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

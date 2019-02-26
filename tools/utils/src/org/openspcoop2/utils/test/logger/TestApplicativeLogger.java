@@ -24,6 +24,7 @@ package org.openspcoop2.utils.test.logger;
 
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.test.TestLogger;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -37,12 +38,21 @@ public class TestApplicativeLogger {
 
 	private static final String ID_TEST = "ApplicativeLogger";
 	
-	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
-	public void testApplicativeLogger() throws Exception{
+	@DataProvider(name="applicativeLoggerProvider")
+	public Object[][] provider(){
+		return new Object[][]{
+				{"proxy"},
+				{"application"},
+				{"batch"}
+		};
+	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="applicativeLoggerProvider")
+	public void testApplicativeLogger(String tipo) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.utils.logger.test.Test.main(null);
-		TestLogger.info("Run test '"+ID_TEST+"' ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ...");
+		org.openspcoop2.utils.logger.test.Test.main(new String[] {tipo});
+		TestLogger.info("Run test '"+ID_TEST+"' (tipo:"+tipo+") ok");
 		
 	}
 	

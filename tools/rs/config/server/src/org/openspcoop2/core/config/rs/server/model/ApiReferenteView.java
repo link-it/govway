@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiReferenteView extends BaseItem {
   
@@ -16,7 +17,8 @@ public class ApiReferenteView extends BaseItem {
   **/
   @JsonProperty("referente")
   @NotNull
-  public String getReferente() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getReferente() {
     return this.referente;
   }
 

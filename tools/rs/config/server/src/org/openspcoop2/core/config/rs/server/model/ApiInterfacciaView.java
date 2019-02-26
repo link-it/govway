@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiInterfacciaView extends BaseItem {
   
@@ -23,6 +24,7 @@ public class ApiInterfacciaView extends BaseItem {
   **/
   @JsonProperty("interfaccia")
   @NotNull
+  @Valid
   public byte[] getInterfaccia() {
     return this.interfaccia;
   }
@@ -42,6 +44,7 @@ public class ApiInterfacciaView extends BaseItem {
   **/
   @JsonProperty("tipo")
   @NotNull
+  @Valid
   public TipoApiEnum getTipo() {
     return this.tipo;
   }
@@ -61,6 +64,7 @@ public class ApiInterfacciaView extends BaseItem {
   **/
   @JsonProperty("formato")
   @NotNull
+  @Valid
   public Object getFormato() {
     return this.formato;
   }

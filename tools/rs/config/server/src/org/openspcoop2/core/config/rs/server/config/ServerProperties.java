@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.slf4j.Logger;
 
 /**     

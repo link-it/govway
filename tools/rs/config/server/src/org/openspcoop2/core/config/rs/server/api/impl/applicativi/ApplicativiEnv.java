@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
@@ -16,7 +16,7 @@ public class ApplicativiEnv extends Environment {
 	public final PorteDelegateCore porteDelegateCore;
 	public final ServiziApplicativiHelper saHelper;
 	
-	ApplicativiEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, ServiceContext ctx) throws UtilsException, Exception {
+	ApplicativiEnv(HttpServletRequest req, ProfiloEnum profilo, String soggetto, IContext ctx) throws UtilsException, Exception {
 		super(req,profilo,soggetto,ctx);
 		 
 		this.saCore = new ServiziApplicativiCore(this.stationCore);

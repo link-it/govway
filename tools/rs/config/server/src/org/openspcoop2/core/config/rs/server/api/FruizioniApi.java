@@ -7,6 +7,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplUrlInvocazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.Connettore;
+import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.Fruizione;
 import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
@@ -130,7 +131,7 @@ public interface FruizioniApi  {
     @Produces({ "application/_*", "text/_*", "application/problem+json" })
     @Operation(summary = "Restituisce l'allegato di una fruizione", tags={ "fruizioni" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Allegato della fruizione restituito con successo", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Allegato della fruizione restituito con successo", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

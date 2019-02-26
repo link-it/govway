@@ -2,44 +2,43 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class RicercaIntervalloTemporale extends FiltroTemporale {
-@XmlType(name="ProtocolloEnum")
-@XmlEnum(String.class)
-public enum ProtocolloEnum {
-
-@XmlEnumValue("spcoop") SPCOOP(String.valueOf("spcoop")), @XmlEnumValue("trasparente") TRASPARENTE(String.valueOf("trasparente")), @XmlEnumValue("sdi") SDI(String.valueOf("sdi")), @XmlEnumValue("edelivery") EDELIVERY(String.valueOf("edelivery"));
-
+  public enum ProtocolloEnum {
+    SPCOOP("spcoop"),
+    TRASPARENTE("trasparente"),
+    SDI("sdi"),
+    EDELIVERY("edelivery");
 
     private String value;
 
-    ProtocolloEnum (String v) {
-        this.value = v;
+    ProtocolloEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ProtocolloEnum fromValue(String v) {
-        for (ProtocolloEnum b : ProtocolloEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ProtocolloEnum fromValue(String text) {
+      for (ProtocolloEnum b : ProtocolloEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "trasparente", description = "")
   private ProtocolloEnum protocollo = null;
   
@@ -57,140 +56,141 @@ public enum ProtocolloEnum {
   
   @Schema(example = "azione1", description = "")
   private String azione = null;
-@XmlType(name="TipologiaEnum")
-@XmlEnum(String.class)
-public enum TipologiaEnum {
-
-@XmlEnumValue("fruzione") FRUZIONE(String.valueOf("fruzione")), @XmlEnumValue("erogazione") EROGAZIONE(String.valueOf("erogazione"));
-
+  public enum TipologiaEnum {
+    FRUZIONE("fruzione"),
+    EROGAZIONE("erogazione");
 
     private String value;
 
-    TipologiaEnum (String v) {
-        this.value = v;
+    TipologiaEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static TipologiaEnum fromValue(String v) {
-        for (TipologiaEnum b : TipologiaEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static TipologiaEnum fromValue(String text) {
+      for (TipologiaEnum b : TipologiaEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "fruizione", description = "")
   private TipologiaEnum tipologia = null;
-@XmlType(name="EsitoEnum")
-@XmlEnum(String.class)
-public enum EsitoEnum {
-
-@XmlEnumValue("fallite") FALLITE(String.valueOf("fallite")), @XmlEnumValue("fault applicativo") FAULT_APPLICATIVO(String.valueOf("fault applicativo")), @XmlEnumValue("completate con successo") COMPLETATE_CON_SUCCESSO(String.valueOf("completate con successo"));
-
+  public enum EsitoEnum {
+    FALLITE("fallite"),
+    FAULT_APPLICATIVO("fault applicativo"),
+    COMPLETATE_CON_SUCCESSO("completate con successo");
 
     private String value;
 
-    EsitoEnum (String v) {
-        this.value = v;
+    EsitoEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static EsitoEnum fromValue(String v) {
-        for (EsitoEnum b : EsitoEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static EsitoEnum fromValue(String text) {
+      for (EsitoEnum b : EsitoEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "fallite", description = "")
   private EsitoEnum esito = null;
-@XmlType(name="DettaglioEsitoEnum")
-@XmlEnum(String.class)
-public enum DettaglioEsitoEnum {
-
-@XmlEnumValue("ok") OK(String.valueOf("ok")), @XmlEnumValue("ok (presenza anomalie") OK_PRESENZA_ANOMALIE(String.valueOf("ok (presenza anomalie")), @XmlEnumValue("fault applicativo") FAULT_APPLICATIVO(String.valueOf("fault applicativo")), @XmlEnumValue("autenticazione fallita") AUTENTICAZIONE_FALLITA(String.valueOf("autenticazione fallita")), @XmlEnumValue("autorizzazione negata") AUTORIZZAZIONE_NEGATA(String.valueOf("autorizzazione negata")), @XmlEnumValue("richiesta client rifiutata") RICHIESTA_CLIENT_RIFIUTATA(String.valueOf("richiesta client rifiutata")), @XmlEnumValue("errore di connessione") ERRORE_DI_CONNESSIONE(String.valueOf("errore di connessione")), @XmlEnumValue("errore di protocollo") ERRORE_DI_PROTOCOLLO(String.valueOf("errore di protocollo")), @XmlEnumValue("violazione rate limiting") VIOLAZIONE_RATE_LIMITING(String.valueOf("violazione rate limiting")), @XmlEnumValue("violazione rate limiting warningOnly") VIOLAZIONE_RATE_LIMITING_WARNINGONLY(String.valueOf("violazione rate limiting warningOnly")), @XmlEnumValue("superamento limite richieste") SUPERAMENTO_LIMITE_RICHIESTE(String.valueOf("superamento limite richieste")), @XmlEnumValue("superamento limite richieste warningOnly") SUPERAMENTO_LIMITE_RICHIESTE_WARNINGONLY(String.valueOf("superamento limite richieste warningOnly")), @XmlEnumValue("fault pdd esterna") FAULT_PDD_ESTERNA(String.valueOf("fault pdd esterna")), @XmlEnumValue("contenuto richiesta non riconosciuto") CONTENUTO_RICHIESTA_NON_RICONOSCIUTO(String.valueOf("contenuto richiesta non riconosciuto")), @XmlEnumValue("contenuto risposta non riconosciuto") CONTENUTO_RISPOSTA_NON_RICONOSCIUTO(String.valueOf("contenuto risposta non riconosciuto")), @XmlEnumValue("connessione client interrotta") CONNESSIONE_CLIENT_INTERROTTA(String.valueOf("connessione client interrotta")), @XmlEnumValue("fault generato dalla pdd") FAULT_GENERATO_DALLA_PDD(String.valueOf("fault generato dalla pdd")), @XmlEnumValue("errore interno pdd") ERRORE_INTERNO_PDD(String.valueOf("errore interno pdd"));
-
+  public enum DettaglioEsitoEnum {
+    OK("ok"),
+    OK_PRESENZA_ANOMALIE("ok (presenza anomalie"),
+    FAULT_APPLICATIVO("fault applicativo"),
+    AUTENTICAZIONE_FALLITA("autenticazione fallita"),
+    AUTORIZZAZIONE_NEGATA("autorizzazione negata"),
+    RICHIESTA_CLIENT_RIFIUTATA("richiesta client rifiutata"),
+    ERRORE_DI_CONNESSIONE("errore di connessione"),
+    ERRORE_DI_PROTOCOLLO("errore di protocollo"),
+    VIOLAZIONE_RATE_LIMITING("violazione rate limiting"),
+    VIOLAZIONE_RATE_LIMITING_WARNINGONLY("violazione rate limiting warningOnly"),
+    SUPERAMENTO_LIMITE_RICHIESTE("superamento limite richieste"),
+    SUPERAMENTO_LIMITE_RICHIESTE_WARNINGONLY("superamento limite richieste warningOnly"),
+    FAULT_PDD_ESTERNA("fault pdd esterna"),
+    CONTENUTO_RICHIESTA_NON_RICONOSCIUTO("contenuto richiesta non riconosciuto"),
+    CONTENUTO_RISPOSTA_NON_RICONOSCIUTO("contenuto risposta non riconosciuto"),
+    CONNESSIONE_CLIENT_INTERROTTA("connessione client interrotta"),
+    FAULT_GENERATO_DALLA_PDD("fault generato dalla pdd"),
+    ERRORE_INTERNO_PDD("errore interno pdd");
 
     private String value;
 
-    DettaglioEsitoEnum (String v) {
-        this.value = v;
+    DettaglioEsitoEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static DettaglioEsitoEnum fromValue(String v) {
-        for (DettaglioEsitoEnum b : DettaglioEsitoEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static DettaglioEsitoEnum fromValue(String text) {
+      for (DettaglioEsitoEnum b : DettaglioEsitoEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "ok", description = "")
   private DettaglioEsitoEnum dettaglioEsito = null;
-@XmlType(name="ContestoEnum")
-@XmlEnum(String.class)
-public enum ContestoEnum {
-
-@XmlEnumValue("applicativo") APPLICATIVO(String.valueOf("applicativo")), @XmlEnumValue("sistema") SISTEMA(String.valueOf("sistema"));
-
+  public enum ContestoEnum {
+    APPLICATIVO("applicativo"),
+    SISTEMA("sistema");
 
     private String value;
 
-    ContestoEnum (String v) {
-        this.value = v;
+    ContestoEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ContestoEnum fromValue(String v) {
-        for (ContestoEnum b : ContestoEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ContestoEnum fromValue(String text) {
+      for (ContestoEnum b : ContestoEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "applicativo", description = "")
   private ContestoEnum contesto = null;
   
@@ -201,11 +201,12 @@ public enum ContestoEnum {
    * @return protocollo
   **/
   @JsonProperty("protocollo")
+  @Valid
   public String getProtocollo() {
     if (this.protocollo == null) {
       return null;
     }
-    return this.protocollo.value();
+    return this.protocollo.getValue();
   }
 
   public void setProtocollo(ProtocolloEnum protocollo) {
@@ -222,6 +223,7 @@ public enum ContestoEnum {
    * @return soggettoLocale
   **/
   @JsonProperty("soggettoLocale")
+  @Valid
   public String getSoggettoLocale() {
     return this.soggettoLocale;
   }
@@ -240,6 +242,7 @@ public enum ContestoEnum {
    * @return soggettoRemoto
   **/
   @JsonProperty("soggettoRemoto")
+  @Valid
   public String getSoggettoRemoto() {
     return this.soggettoRemoto;
   }
@@ -258,6 +261,7 @@ public enum ContestoEnum {
    * @return applicativo
   **/
   @JsonProperty("applicativo")
+  @Valid
   public String getApplicativo() {
     return this.applicativo;
   }
@@ -276,6 +280,7 @@ public enum ContestoEnum {
    * @return servizio
   **/
   @JsonProperty("servizio")
+  @Valid
   public String getServizio() {
     return this.servizio;
   }
@@ -294,6 +299,7 @@ public enum ContestoEnum {
    * @return azione
   **/
   @JsonProperty("azione")
+  @Valid
   public String getAzione() {
     return this.azione;
   }
@@ -312,11 +318,12 @@ public enum ContestoEnum {
    * @return tipologia
   **/
   @JsonProperty("tipologia")
+  @Valid
   public String getTipologia() {
     if (this.tipologia == null) {
       return null;
     }
-    return this.tipologia.value();
+    return this.tipologia.getValue();
   }
 
   public void setTipologia(TipologiaEnum tipologia) {
@@ -333,11 +340,12 @@ public enum ContestoEnum {
    * @return esito
   **/
   @JsonProperty("esito")
+  @Valid
   public String getEsito() {
     if (this.esito == null) {
       return null;
     }
-    return this.esito.value();
+    return this.esito.getValue();
   }
 
   public void setEsito(EsitoEnum esito) {
@@ -354,11 +362,12 @@ public enum ContestoEnum {
    * @return dettaglioEsito
   **/
   @JsonProperty("dettaglioEsito")
+  @Valid
   public String getDettaglioEsito() {
     if (this.dettaglioEsito == null) {
       return null;
     }
-    return this.dettaglioEsito.value();
+    return this.dettaglioEsito.getValue();
   }
 
   public void setDettaglioEsito(DettaglioEsitoEnum dettaglioEsito) {
@@ -375,11 +384,12 @@ public enum ContestoEnum {
    * @return contesto
   **/
   @JsonProperty("contesto")
+  @Valid
   public String getContesto() {
     if (this.contesto == null) {
       return null;
     }
-    return this.contesto.value();
+    return this.contesto.getValue();
   }
 
   public void setContesto(ContestoEnum contesto) {
@@ -396,6 +406,7 @@ public enum ContestoEnum {
    * @return evento
   **/
   @JsonProperty("evento")
+  @Valid
   public String getEvento() {
     return this.evento;
   }

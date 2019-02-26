@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpsClient  {
   
@@ -31,6 +32,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
   **/
   @JsonProperty("keystore_path")
   @NotNull
+  @Valid
  @Size(max=255)  public String getKeystorePath() {
     return this.keystorePath;
   }
@@ -50,6 +52,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
   **/
   @JsonProperty("keystore_tipo")
   @NotNull
+  @Valid
   public KeystoreEnum getKeystoreTipo() {
     return this.keystoreTipo;
   }
@@ -69,6 +72,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
   **/
   @JsonProperty("keystore_password")
   @NotNull
+  @Valid
   public String getKeystorePassword() {
     return this.keystorePassword;
   }
@@ -88,6 +92,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
   **/
   @JsonProperty("key_password")
   @NotNull
+  @Valid
   public String getKeyPassword() {
     return this.keyPassword;
   }
@@ -106,6 +111,7 @@ public class ConnettoreConfigurazioneHttpsClient  {
    * @return algoritmo
   **/
   @JsonProperty("algoritmo")
+  @Valid
  @Size(max=255)  public String getAlgoritmo() {
     return this.algoritmo;
   }

@@ -7,11 +7,11 @@ import org.openspcoop2.core.config.rs.server.model.GruppoNome;
 import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
 import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 /**
  * GovWay Config API
  *
@@ -37,7 +37,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public void addAzioni(GruppoAzioni body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -68,7 +68,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public void create(Gruppo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -110,7 +110,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public void delete(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -141,7 +141,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public void deleteAzione(String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -172,7 +172,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public ListaGruppi findAll(String nome, Integer versione, ProfiloEnum profilo, String soggetto, Integer limit, Integer offset, String azione) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -203,7 +203,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public GruppoAzioni getAzioni(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -234,7 +234,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      */
 	@Override
     public void updateNome(GruppoNome body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

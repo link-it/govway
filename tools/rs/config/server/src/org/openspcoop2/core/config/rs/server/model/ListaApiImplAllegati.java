@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ListaApiImplAllegati extends Lista {
   
@@ -19,6 +20,7 @@ public class ListaApiImplAllegati extends Lista {
   **/
   @JsonProperty("items")
   @NotNull
+  @Valid
   public List<ApiImplAllegatoItem> getItems() {
     return this.items;
   }

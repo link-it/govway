@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class BaseSoggettoItem extends BaseItem {
   
@@ -16,7 +17,8 @@ public class BaseSoggettoItem extends BaseItem {
   **/
   @JsonProperty("soggetto")
   @NotNull
-  public String getSoggetto() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggetto() {
     return this.soggetto;
   }
 

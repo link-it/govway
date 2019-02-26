@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutorizzazioneXACMLConfig extends APIImplAutorizzazioneXACMLBaseConfig {
   
@@ -16,6 +17,7 @@ public class APIImplAutorizzazioneXACMLConfig extends APIImplAutorizzazioneXACML
   **/
   @JsonProperty("policy")
   @NotNull
+  @Valid
   public byte[] getPolicy() {
     return this.policy;
   }

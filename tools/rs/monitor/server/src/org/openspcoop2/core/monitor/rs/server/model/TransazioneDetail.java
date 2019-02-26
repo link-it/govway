@@ -6,6 +6,7 @@ import org.openspcoop2.core.monitor.rs.server.model.Traccia;
 import org.openspcoop2.core.monitor.rs.server.model.TransazioneItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class TransazioneDetail  {
   
@@ -31,6 +32,7 @@ public class TransazioneDetail  {
    * @return datiGenerali
   **/
   @JsonProperty("datiGenerali")
+  @Valid
   public TransazioneItem getDatiGenerali() {
     return this.datiGenerali;
   }
@@ -49,6 +51,7 @@ public class TransazioneDetail  {
    * @return tracciaRichiesta
   **/
   @JsonProperty("tracciaRichiesta")
+  @Valid
   public Traccia getTracciaRichiesta() {
     return this.tracciaRichiesta;
   }
@@ -67,6 +70,7 @@ public class TransazioneDetail  {
    * @return tracciaRisposta
   **/
   @JsonProperty("tracciaRisposta")
+  @Valid
   public Traccia getTracciaRisposta() {
     return this.tracciaRisposta;
   }
@@ -85,6 +89,7 @@ public class TransazioneDetail  {
    * @return diagnostici
   **/
   @JsonProperty("diagnostici")
+  @Valid
   public List<Diagnostico> getDiagnostici() {
     return this.diagnostici;
   }
@@ -108,6 +113,7 @@ public class TransazioneDetail  {
    * @return faultCooperazione
   **/
   @JsonProperty("faultCooperazione")
+  @Valid
   public byte[] getFaultCooperazione() {
     return this.faultCooperazione;
   }
@@ -126,6 +132,7 @@ public class TransazioneDetail  {
    * @return faultIntegrazione
   **/
   @JsonProperty("faultIntegrazione")
+  @Valid
   public byte[] getFaultIntegrazione() {
     return this.faultIntegrazione;
   }

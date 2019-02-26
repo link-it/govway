@@ -1,0 +1,1094 @@
+---
+openapi: "3.0.0"
+info:
+  title: "GovWay Monitor API"
+  description: "Servizi per il monitoraggio di GovWay"
+  contact:
+    email: "info@link.it"
+  license:
+    name: "GPL v3.0"
+    url: "https://www.gnu.org/licenses/gpl-3.0.txt"
+  version: "1.0.0"
+servers:
+- url: "/"
+tags:
+- name: "Monitoraggio"
+  description: "Fornisce operazioni che consentono di recuperare i dettagli diagnostici\
+    \ delle transazioni e degli eventi occorsi su GovWay"
+- name: "Reportistica"
+  description: "Fornisce operazioni che consentono di recuperare i report statistici\
+    \ riguardanti le transazioni gestite su GovWay"
+paths:
+  /monitoraggio/transazioni:
+    get:
+      tags:
+      - "Monitoraggio"
+      summary: "Ricerca semplificata delle transazioni in base ai parametri di uso\
+        \ più comune"
+      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
+        \ GovWay, ricercandole in base a parametri di filtro di uso più comune"
+      operationId: "baseSearchTransaction"
+      parameters:
+      - name: "profilo"
+        in: "query"
+        description: "profilo d'interoperabilità in cui sono state gestite le transazioni\
+          \ ricercate (gw: ApiGateway, spcoop: SPCoop, sdi: Fatturazione Elettronica,\
+          \ edelivery: eDelivery)."
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "2017-07-21T17:32:28Z"
+          enum:
+          - "gw"
+          - "spcoop"
+          - "sdi"
+          - "edelivery"
+          default: "gw"
+      - name: "dataDa"
+        in: "query"
+        description: "data inizio dell'intervallo di ricerca"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          format: "date-time"
+      - name: "dataA"
+        in: "query"
+        description: "data fine dell'intervallo di ricerca"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          format: "date-time"
+      - name: "soggettoLocale"
+        in: "query"
+        description: "il soggetto locale coinvolto nella transazione"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "EnteInterno"
+      - name: "soggettoRemoto"
+        in: "query"
+        description: "il soggetto remoto coinvolto nella transazione"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "EnteEsterno"
+      - name: "servizio"
+        in: "query"
+        description: "il servizio oggetto della transazione"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "servizio"
+      - name: "azione"
+        in: "query"
+        description: "l'azione relativa al servizio oggetto della transazione"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "azione"
+      - name: "esito"
+        in: "query"
+        description: "indica come sono state gestite le transazioni (ok: completate\
+          \ con successo, error: fallite, fault: fault applicativo)"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "ok"
+          enum:
+          - "ok"
+          - "error"
+          - "fault"
+      - name: "idApplicativo"
+        in: "query"
+        description: "l'identificativo applicativo"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "123abc"
+      - name: "idMessaggio"
+        in: "query"
+        description: "l'identificativo del messaggio"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "h54d8538-77f5-44de-879b-82e858zba178x"
+      - name: "idT"
+        in: "query"
+        description: "l'identificativo della transazione"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          example: "f54d8638-79f5-45db-878a-82d858ba128e"
+      - name: "pagina"
+        in: "query"
+        description: "Numero di pagina dei risultati"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "integer"
+          format: "int32"
+          default: 1
+      - name: "risultatiPerPagina"
+        in: "query"
+        description: "Numero massimo di risultati nella risposta"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          maximum: 200
+          type: "integer"
+          format: "int32"
+          default: 25
+      - name: "ordinamento"
+        in: "query"
+        description: "csv dei campi su cui ordinare i risultati, preceduti da + o\
+          \ - per ascendente o discendente (default ascendente) per data di ingresso"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          format: "csv"
+          default: "+nome"
+      responses:
+        200:
+          description: "ricerca completata con successo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RisultatoRicercaTransazioni"
+        400:
+          description: "La richiesta inviata ha prodotto un errore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /monitoraggio/transazioni/{id}:
+    get:
+      tags:
+      - "Monitoraggio"
+      summary: "dettaglio della transazione"
+      description: "Questa operazione consente di ottenere il dettaglio di una transazione"
+      operationId: "getTransazione"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "identificativo della transazione"
+        required: true
+        style: "SIMPLE"
+        explode: false
+        schema:
+          type: "string"
+          example: "f54d8638-79f5-45db-878a-82d858ba128e"
+      responses:
+        200:
+          description: "dettaglio transazione restituito correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransazioneDetail"
+        400:
+          description: "La richiesta inviata ha prodotto un errore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        404:
+          description: "Transazione non esistente"
+  /transazioni/ricerca:
+    post:
+      tags:
+      - "Monitoraggio"
+      summary: "ricerca transazioni"
+      description: "Questa operazione consente di effettuare una ricerca nell'archivio\
+        \ delle transazioni specificando i criteri di filtro"
+      operationId: "searchTransazioni"
+      parameters:
+      - name: "pagina"
+        in: "query"
+        description: "Numero di pagina dei risultati"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "integer"
+          format: "int32"
+          default: 1
+      - name: "risultatiPerPagina"
+        in: "query"
+        description: "Numero massimo di risultati nella risposta"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          maximum: 200
+          type: "integer"
+          format: "int32"
+          default: 25
+      - name: "ordinamento"
+        in: "query"
+        description: "csv dei campi su cui ordinare i risultati, preceduti da + o\
+          \ - per ascendente o discendente (default ascendente)\n * idEntrata"
+        required: false
+        style: "FORM"
+        explode: true
+        schema:
+          type: "string"
+          format: "csv"
+          default: "+nome"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransazioneSearchFilter"
+      responses:
+        201:
+          description: "ricerca completata correttamente"
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/ListaPaginata"
+                - type: "array"
+                  items:
+                    $ref: "#/components/schemas/TransazioneItem"
+        400:
+          description: "La richiesta inviata ha prodotto un errore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /statistiche/report:
+    post:
+      tags:
+      - "Reportistica"
+      summary: "genera report statistico"
+      description: "Questa operazione consente di generare un report statistico"
+      operationId: "generaReport"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerazioneReport"
+      responses:
+        201:
+          description: "report generato correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportGrafico"
+        400:
+          description: "La richiesta inviata ha prodotto un errore"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    ReportGrafico:
+      type: "object"
+      properties:
+        titolo:
+          type: "string"
+          example: "Distribuzione Esito dei messaggi"
+        sottotitolo:
+          type: "string"
+          example: "(dal 01 maggio 2017 al 27 aprile 2018 )"
+        yAxisLabel:
+          type: "string"
+          example: "Numero Esiti"
+        categorie:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              key:
+                type: "string"
+                example: "errore"
+              label:
+                type: "string"
+                example: "Fallite"
+              colore:
+                type: "string"
+                example: "#CD4A50"
+        dati:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              datoX:
+                type: "string"
+                example: "mag/17"
+              datoY:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    datoY_singolo:
+                      type: "string"
+                      example: "0"
+                    datoY_tooltip:
+                      type: "string"
+                      example: "Ok, set/17, 0"
+    Traccia:
+      type: "object"
+      properties:
+        tipoMittente:
+          type: "string"
+          example: "PROXY"
+        nomeMittente:
+          type: "string"
+          example: "EnteInterno"
+        codicePortaMittente:
+          type: "string"
+          example: "EnteInternoPdD"
+        tipoDestinatario:
+          type: "string"
+          example: "PROXY"
+        nomeDestinatario:
+          type: "string"
+          example: "EnteEsterno"
+        codicePortaDestinatario:
+          type: "string"
+          example: "EnteEsternoPdD"
+        profilo:
+          type: "string"
+          example: "oneway"
+        collaborazione:
+          type: "string"
+          example: "idCollab"
+        tipoServizio:
+          type: "string"
+          example: "PROXY"
+        nomeServizio:
+          type: "string"
+          example: "servizio"
+        versioneServizio:
+          minimum: 1
+          type: "integer"
+          format: "int32"
+          example: 1
+        azione:
+          type: "string"
+          example: "azione"
+        idMessaggio:
+          type: "string"
+          format: "uuid"
+          example: "0998f497-e05d-420a-a6b0-ff3bb718d2c4"
+        riferimentoMessaggio:
+          type: "string"
+          format: "uuid"
+          example: "df1d0806-80f3-4c53-80b8-330999989798"
+        sorgenteTemporale:
+          type: "string"
+          example: "sincronizzato"
+        oraRegistrazione:
+          type: "string"
+          format: "date-time"
+        scadenza:
+          type: "string"
+          example: "30"
+    Diagnostico:
+      type: "object"
+      properties:
+        data:
+          type: "string"
+          format: "date-time"
+        severita:
+          type: "string"
+          example: "errorProtocol"
+          enum:
+          - "errorIntegration"
+          - "errorProtocol"
+          - "infoIntegration"
+          - "InfoProtocol"
+          - "debugLow"
+          - "debugMedium"
+          - "debugHigh"
+        funzione:
+          type: "string"
+          example: "ricezioneBuste"
+          enum:
+          - "ricezioneBuste"
+          - "ricezioneContenutiApplicativi"
+          - "inoltroBuste"
+          - "consegnaContenutiApplicativi"
+          - "imbustamento"
+          - "sbustamento"
+        messaggio:
+          type: "string"
+          example: "Generato messaggio di cooperazione di Errore con identificativo\
+            \ [0998f497-e05d-420a-a6b0-ff3bb718d2c4]"
+    TransazioneDetail:
+      type: "object"
+      properties:
+        datiGenerali:
+          $ref: "#/components/schemas/TransazioneItem"
+        tracciaRichiesta:
+          $ref: "#/components/schemas/Traccia"
+        tracciaRisposta:
+          $ref: "#/components/schemas/Traccia"
+        diagnostici:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Diagnostico"
+        faultCooperazione:
+          type: "string"
+          format: "byte"
+        faultIntegrazione:
+          type: "string"
+          format: "byte"
+    TransazioneItem:
+      required:
+      - "dataIngressoRichiesta"
+      - "id"
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          example: "f54d8638-79f5-45db-878a-82d858ba128e"
+        dataIngressoRichiesta:
+          type: "string"
+          format: "date-time"
+        dataUscitaRichiesta:
+          type: "string"
+          format: "date-time"
+        dataIngressoRisposta:
+          type: "string"
+          format: "date-time"
+        dataUscitaRisposta:
+          type: "string"
+          format: "date-time"
+        tipologia:
+          type: "string"
+          example: "fruizione"
+          enum:
+          - "fruizione"
+          - "erogazione"
+        esito:
+          type: "string"
+          example: "Errore di Protocollo"
+        fruitoreSoggetto:
+          type: "string"
+          example: "EnteInterno"
+        erogatoreSoggetto:
+          type: "string"
+          example: "EnteEsterno"
+        fruitorePdd:
+          type: "string"
+          example: "EnteInternoSPCoopIT"
+        erogatorePdd:
+          type: "string"
+          example: "EnteEsternoSPCoopIT"
+        servizio:
+          type: "string"
+          example: "Servizio1"
+        azione:
+          type: "string"
+          example: "Azione1"
+        versioneServizio:
+          minimum: 1
+          type: "integer"
+          format: "int32"
+          example: 1
+        protocollo:
+          type: "string"
+          example: "trasparente"
+          enum:
+          - "trasparente"
+          - "spcoop"
+          - "sdi"
+          - "edelivery"
+        contesto:
+          type: "string"
+          example: "applicativo"
+          enum:
+          - "applicativo"
+          - "sistema"
+        idPdd:
+          type: "string"
+          example: "OpenSPCoopEnterprisePdD"
+        soggettoPdd:
+          type: "string"
+          example: "PROXY/OpenSPCoopEnterprise"
+        latenzaServizio:
+          type: "string"
+          example: "8 ms"
+        latenzaPorta:
+          type: "string"
+          example: "12 ms"
+        latenzaTotale:
+          type: "string"
+          example: "20 ms"
+        idApplicativoRichiesta:
+          type: "string"
+          example: "AB234"
+        idApplicativoRisposta:
+          type: "string"
+          example: "141"
+        idMessaggioRichiesta:
+          type: "string"
+        idMessaggioRisposta:
+          type: "string"
+        profiloCollaborazione:
+          type: "string"
+          example: "oneway"
+          enum:
+          - "oneway"
+          - "sincrono"
+          - "asincronoAsimmetrico"
+          - "asincronoSimmetrico"
+        servizioApplicativo:
+          type: "string"
+          example: "applicativo1"
+        dimensioniIngressoRichiesta:
+          type: "string"
+        dimensioniUscitaRichiesta:
+          type: "string"
+        dimensioniIngressoRisposta:
+          type: "string"
+        dimensioniUscitaRisposta:
+          type: "string"
+        duplicatiRichiesta:
+          type: "string"
+        duplicatiRisposta:
+          type: "string"
+        eventi:
+          type: "string"
+        stato:
+          type: "string"
+        indirizzoClient:
+          type: "string"
+          example: "127.0.0.1"
+        X-Forwarded-For:
+          type: "string"
+    TransazioneSearchFilter:
+      required:
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          type: "string"
+          example: "intervalloTemporale"
+          enum:
+          - "intervalloTemporale"
+          - "identificativoApplicativo"
+          - "identificativoMessaggio"
+          - "identificativoTransazione"
+        filtro:
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              intervalloTemporale: "#/components/schemas/RicercaIntervalloTemporale"
+              identificativoApplicativo: "#/components/schemas/RicercaIdApplicativo"
+              identificativoMessaggio: "#/components/schemas/RicercaIdMessaggio"
+              identificativoTransazione: "#/components/schemas/RicercaIdTransazione"
+          oneOf:
+          - $ref: "#/components/schemas/RicercaIntervalloTemporale"
+          - $ref: "#/components/schemas/RicercaIdApplicativo"
+          - $ref: "#/components/schemas/RicercaIdMessaggio"
+          - $ref: "#/components/schemas/RicercaIdTransazione"
+    FiltroTemporale:
+      type: "object"
+      properties:
+        dataDa:
+          type: "string"
+          format: "date-time"
+        dataA:
+          type: "string"
+          format: "date-time"
+    FiltroServizio:
+      type: "object"
+      properties:
+        protocollo:
+          type: "string"
+          example: "trasparente"
+          enum:
+          - "spcoop"
+          - "trasparente"
+          - "sdi"
+          - "edelivery"
+        soggettoLocale:
+          type: "string"
+          example: "EnteInterno"
+        soggettoRemoto:
+          type: "string"
+          example: "EnteEsterno"
+        applicativo:
+          type: "string"
+          example: "applicativo1"
+        servizio:
+          type: "string"
+          example: "servizio1"
+        azione:
+          type: "string"
+          example: "azione1"
+    FiltroTransazione:
+      type: "object"
+      properties:
+        tipologia:
+          type: "string"
+          example: "fruizione"
+          enum:
+          - "fruzione"
+          - "erogazione"
+        esito:
+          type: "string"
+          example: "fallite"
+          enum:
+          - "fallite"
+          - "fault applicativo"
+          - "completate con successo"
+        dettaglioEsito:
+          type: "string"
+          example: "ok"
+          enum:
+          - "ok"
+          - "ok (presenza anomalie"
+          - "fault applicativo"
+          - "autenticazione fallita"
+          - "autorizzazione negata"
+          - "richiesta client rifiutata"
+          - "errore di connessione"
+          - "errore di protocollo"
+          - "violazione rate limiting"
+          - "violazione rate limiting warningOnly"
+          - "superamento limite richieste"
+          - "superamento limite richieste warningOnly"
+          - "fault pdd esterna"
+          - "contenuto richiesta non riconosciuto"
+          - "contenuto risposta non riconosciuto"
+          - "connessione client interrotta"
+          - "fault generato dalla pdd"
+          - "errore interno pdd"
+        contesto:
+          type: "string"
+          example: "applicativo"
+          enum:
+          - "applicativo"
+          - "sistema"
+        evento:
+          type: "string"
+          example: "evento1"
+    FiltroIdApplicativo:
+      type: "object"
+      properties:
+        ricercaEsatta:
+          type: "boolean"
+        caseSensitive:
+          type: "boolean"
+        idApplicativo:
+          type: "string"
+          example: "abc123"
+    FiltroIdMessaggio:
+      type: "object"
+      properties:
+        tipoMessaggio:
+          type: "string"
+          example: "richiesta"
+          enum:
+          - "richiesta"
+          - "risposta"
+        idMessaggio:
+          type: "string"
+          example: "abc456"
+    FiltroIdTransazione:
+      type: "object"
+      properties:
+        idTransazione:
+          type: "string"
+          example: "tr123"
+    RisultatoRicercaTransazioni:
+      required:
+      - "listaPaginata"
+      - "transazioni"
+      type: "object"
+      properties:
+        listaPaginata:
+          $ref: "#/components/schemas/ListaPaginata"
+        transazioni:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TransazioneItem"
+    RicercaIntervalloTemporale:
+      allOf:
+      - $ref: "#/components/schemas/FiltroTemporale"
+      - $ref: "#/components/schemas/FiltroServizio"
+      - $ref: "#/components/schemas/FiltroTransazione"
+    RicercaIdApplicativo:
+      allOf:
+      - $ref: "#/components/schemas/FiltroTemporale"
+      - $ref: "#/components/schemas/FiltroServizio"
+      - $ref: "#/components/schemas/FiltroTransazione"
+      - $ref: "#/components/schemas/FiltroIdApplicativo"
+    RicercaIdMessaggio:
+      allOf:
+      - $ref: "#/components/schemas/FiltroIdMessaggio"
+    RicercaIdTransazione:
+      allOf:
+      - $ref: "#/components/schemas/FiltroIdTransazione"
+    ListaPaginata:
+      type: "object"
+      properties:
+        numRisultati:
+          type: "integer"
+          format: "int32"
+          example: 100
+        numPagine:
+          type: "integer"
+          format: "int32"
+          example: 4
+        risultatiPerPagina:
+          type: "integer"
+          format: "int32"
+          example: 25
+        pagina:
+          type: "integer"
+          format: "int32"
+          example: 1
+        prossimiRisultati:
+          type: "string"
+          format: "integer"
+          example: "/risorsa?pagina=2"
+    GenerazioneReport:
+      type: "object"
+      properties:
+        tipoReport:
+          type: "string"
+          example: "Distribuzione Temporale"
+          enum:
+          - "Distribuzione Temporale"
+          - "Distribuzione per Esiti"
+          - "Distribuzione per Soggetto Remoto"
+          - "Distribuzione per Soggetto Locale"
+          - "Distribuzione per Servizio"
+          - "Distribuzione per Azione"
+          - "Distribuzione per Servizio Applicativo"
+          - "Distribuzione Personalizzata"
+        dataDa:
+          type: "string"
+          format: "date"
+        dataA:
+          type: "string"
+          format: "date"
+        protocollo:
+          type: "string"
+          example: "trasparente"
+          enum:
+          - "spcoop"
+          - "trasparente"
+          - "sdi"
+          - "edelivery"
+        soggettoLocale:
+          type: "string"
+          example: "EnteInterno"
+        soggettoRemoto:
+          type: "string"
+          example: "EnteEsterno"
+        servizio:
+          type: "string"
+          example: "servizio1"
+        azione:
+          type: "string"
+          example: "azione1"
+        tipologia:
+          type: "string"
+          example: "fruizione"
+          enum:
+          - "fruzione"
+          - "erogazione"
+        esito:
+          type: "string"
+          example: "fallite"
+          enum:
+          - "fallite"
+          - "fault applicativo"
+          - "completate con successo"
+        dettaglioEsito:
+          type: "string"
+          example: "ok"
+          enum:
+          - "ok"
+          - "ok (presenza anomalie"
+          - "fault applicativo"
+          - "autenticazione fallita"
+          - "autorizzazione negata"
+          - "richiesta client rifiutata"
+          - "errore di connessione"
+          - "errore di protocollo"
+          - "violazione rate limiting"
+          - "violazione rate limiting warningOnly"
+          - "superamento limite richieste"
+          - "superamento limite richieste warningOnly"
+          - "fault pdd esterna"
+          - "contenuto richiesta non riconosciuto"
+          - "contenuto risposta non riconosciuto"
+          - "connessione client interrotta"
+          - "fault generato dalla pdd"
+          - "errore interno pdd"
+        contesto:
+          type: "string"
+          example: "applicativo"
+          enum:
+          - "applicativo"
+          - "sistema"
+        tipoGrafico:
+          type: "string"
+          example: "Line"
+          enum:
+          - "Line"
+          - "Pie"
+          - "Bar"
+          - "Table"
+        unitaTempo:
+          type: "string"
+          example: "giornaliero"
+          enum:
+          - "orario"
+          - "giornaliero"
+          - "settimanale"
+          - "mensile"
+        visualizza:
+          type: "string"
+          example: "numeroTransazioni"
+          enum:
+          - "numeroTransazioni"
+          - "occupazioneBanda"
+          - "TempoMedioRisposta"
+    Problem:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          description: "An absolute URI that identifies the problem type.  When dereferenced,\n\
+            it SHOULD provide human-readable documentation for the problem type\n\
+            (e.g., using HTML).\n"
+          format: "uri"
+          example: "https://tools.ietf.org/html/rfc7231#section-6.6.4"
+          default: "about:blank"
+        title:
+          type: "string"
+          description: "A short, summary of the problem type. Written in english and\
+            \ readable\nfor engineers (usually not suited for non technical stakeholders\
+            \ and\nnot localized); example: Service Unavailable\n"
+        status:
+          maximum: 600
+          exclusiveMaximum: true
+          minimum: 100
+          type: "integer"
+          description: "The HTTP status code generated by the origin server for this\
+            \ occurrence\nof the problem.\n"
+          format: "int32"
+          example: 503
+        detail:
+          type: "string"
+          description: "A human readable explanation specific to this occurrence of\
+            \ the\nproblem.\n"
+          example: "Connection to database timed out"
+        instance:
+          type: "string"
+          description: "An absolute URI that identifies the specific occurrence of\
+            \ the problem.\nIt may or may not yield further information if dereferenced."
+          format: "uri"
+    Fault:
+      required:
+      - "codice"
+      - "descrizione"
+      properties:
+        codice:
+          type: "string"
+          description: "Codice dell'errore riscontrato"
+        descrizione:
+          type: "string"
+          description: "Descrizione dell'errore"
+        dettaglio:
+          type: "string"
+          description: "Dettagli aggiuntivi sull'errore"
+  responses:
+    400BadRequest:
+      description: "Bad Request"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    404NotFound:
+      description: "Not Found"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    429TooManyRequests:
+      description: "Too many requests"
+      headers:
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
+        Retry-After:
+          $ref: "#/components/headers/Retry-After"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    503ServiceUnavailable:
+      description: "Service Unavailable"
+      headers:
+        Retry-After:
+          $ref: "#/components/headers/Retry-After"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    default:
+      description: "Unexpected error"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    401Unauthorized:
+      description: "Non sono state fornite le credenziali necessarie"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    403Forbidden:
+      description: "Autorizzazione non concessa per l'operazione richiesta"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    409Conflict:
+      description: "Conflict (L'entità che si vuole creare risulta già esistente)"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  parameters:
+    cursor:
+      name: "cursor"
+      in: "query"
+      description: "An opaque identifier that points to the next item in the collection."
+      required: false
+      schema:
+        type: "string"
+      example: "01BX9NSMKVXXS5PSP2FATZM123"
+    fields:
+      name: "fields"
+      in: "query"
+      description: "Fields to retrieve"
+      required: false
+      schema:
+        type: "string"
+    limit:
+      name: "limit"
+      in: "query"
+      description: "How many items to return at one time (max 100)"
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+    offset:
+      name: "offset"
+      in: "query"
+      description: "The zero-ary offset index into the results"
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+        default: 0
+    q:
+      name: "q"
+      in: "query"
+      description: "Search query term"
+      required: false
+      schema:
+        type: "string"
+    sort:
+      name: "sort"
+      in: "query"
+      description: "Sorting order"
+      required: false
+      schema:
+        type: "string"
+        example: "+name"
+    Etag:
+      name: "Etag"
+      in: "header"
+      description: "The RFC7232 ETag header field in a response provides the current\
+        \ entity-\ntag for the selected resource. An entity-tag is an opaque identifier\
+        \ for\ndifferent versions of a resource over time, regardless whether multiple\n\
+        versions are valid at the same time. An entity-tag consists of an opaque\n\
+        quoted string, possibly prefixed by a weakness indicator.\n"
+      required: false
+      schema:
+        type: "string"
+      example: "W/\"xy\", \"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
+    IfMatch:
+      name: "If-Match"
+      in: "header"
+      description: "The RFC7232 If-Match header field in a request requires the server\
+        \ to\nonly operate on the resource that matches at least one of the provided\n\
+        entity-tags. This allows clients express a precondition that prevent\nthe\
+        \ method from being applied if there have been any changes to the\nresource.\n"
+      required: false
+      schema:
+        type: "string"
+      example: "\"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
+    IfNoneMatch:
+      name: "If-None-Match"
+      in: "header"
+      description: "The RFC7232 If-None-Match header field in a request requires the\
+        \ server\nto only operate on the resource if it does not match any of the\
+        \ provided\nentity-tags. If the provided entity-tag is `*`, it is required\
+        \ that the\nresource does not exist at all.\n"
+      required: false
+      schema:
+        type: "string"
+      example: "\"7da7a728-f910-11e6-942a-68f728c1ba70\", *"
+  headers:
+    X-RateLimit-Limit:
+      description: "The number of allowed requests in the current period"
+      schema:
+        type: "integer"
+        format: "int32"
+    X-RateLimit-Remaining:
+      description: "The number of remaining requests in the current period"
+      schema:
+        type: "integer"
+        format: "int32"
+    X-RateLimit-Reset:
+      description: "The number of seconds left in the current period"
+      schema:
+        type: "integer"
+        format: "int32"
+    Retry-After:
+      description: "Retry contacting the endpoint *at least* after seconds.\nSee https://tools.ietf.org/html/rfc7231#section-7.1.3"
+      schema:
+        type: "integer"
+        format: "int32"

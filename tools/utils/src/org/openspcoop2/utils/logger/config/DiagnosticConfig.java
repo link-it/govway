@@ -29,6 +29,7 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.AbstractBaseDiagnosticManagerCore;
+import org.openspcoop2.utils.logger.DiagnosticProperties;
 
 /**
  * DiagnosticConfig
@@ -39,6 +40,16 @@ import org.openspcoop2.utils.logger.AbstractBaseDiagnosticManagerCore;
  */
 public class DiagnosticConfig {
 
+	public static DiagnosticConfig newEmptyDiagnosticConfig() {
+		
+		DiagnosticConfig config = new DiagnosticConfig();
+		Properties properties = new Properties();
+		properties.put(DiagnosticProperties.EMPTY, "true");
+		config.setDiagnosticConfigProperties(properties);
+		return config;
+		
+	}
+	
 	private Boolean throwExceptionPlaceholderFailedResolution;
 	
 	private File diagnosticConfigFile;

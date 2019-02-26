@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
   
@@ -46,6 +47,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return abilitato
   **/
   @JsonProperty("abilitato")
+  @Valid
   public Boolean isAbilitato() {
     return this.abilitato;
   }
@@ -64,6 +66,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return policy
   **/
   @JsonProperty("policy")
+  @Valid
  @Size(max=255)  public String getPolicy() {
     return this.policy;
   }
@@ -82,6 +85,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return tokenOpzionale
   **/
   @JsonProperty("token_opzionale")
+  @Valid
   public Boolean isTokenOpzionale() {
     return this.tokenOpzionale;
   }
@@ -100,6 +104,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return validazioneJwt
   **/
   @JsonProperty("validazione_jwt")
+  @Valid
   public StatoFunzionalitaConWarningEnum getValidazioneJwt() {
     return this.validazioneJwt;
   }
@@ -118,6 +123,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return introspection
   **/
   @JsonProperty("introspection")
+  @Valid
   public StatoFunzionalitaConWarningEnum getIntrospection() {
     return this.introspection;
   }
@@ -136,6 +142,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return userInfo
   **/
   @JsonProperty("user_info")
+  @Valid
   public StatoFunzionalitaConWarningEnum getUserInfo() {
     return this.userInfo;
   }
@@ -154,6 +161,7 @@ public class ControlloAccessiGestioneToken extends ApiImplConfigurazioneStato {
    * @return tokenForward
   **/
   @JsonProperty("token_forward")
+  @Valid
   public Boolean isTokenForward() {
     return this.tokenForward;
   }

@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImpl extends APIBaseImpl {
   
@@ -24,6 +25,7 @@ public class APIImpl extends APIBaseImpl {
    * @return autenticazione
   **/
   @JsonProperty("autenticazione")
+  @Valid
   public APIImplAutenticazioneNew getAutenticazione() {
     return this.autenticazione;
   }
@@ -42,6 +44,7 @@ public class APIImpl extends APIBaseImpl {
    * @return autorizzazione
   **/
   @JsonProperty("autorizzazione")
+  @Valid
   public APIImplAutorizzazioneNew getAutorizzazione() {
     return this.autorizzazione;
   }
@@ -61,6 +64,7 @@ public class APIImpl extends APIBaseImpl {
   **/
   @JsonProperty("connettore")
   @NotNull
+  @Valid
   public Connettore getConnettore() {
     return this.connettore;
   }

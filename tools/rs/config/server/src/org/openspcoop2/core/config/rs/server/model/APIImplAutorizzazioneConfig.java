@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig {
   
@@ -28,6 +29,7 @@ public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig
    * @return scope
   **/
   @JsonProperty("scope")
+  @Valid
   public Boolean isScope() {
     return this.scope;
   }
@@ -46,6 +48,7 @@ public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig
    * @return scopeRichiesti
   **/
   @JsonProperty("scope_richiesti")
+  @Valid
   public AllAnyEnum getScopeRichiesti() {
     return this.scopeRichiesti;
   }
@@ -64,6 +67,7 @@ public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig
    * @return token
   **/
   @JsonProperty("token")
+  @Valid
   public Boolean isToken() {
     return this.token;
   }
@@ -82,6 +86,7 @@ public class APIImplAutorizzazioneConfig extends APIImplAutorizzazioneBaseConfig
    * @return tokenClaims
   **/
   @JsonProperty("token_claims")
+  @Valid
  @Size(max=4000)  public String getTokenClaims() {
     return this.tokenClaims;
   }

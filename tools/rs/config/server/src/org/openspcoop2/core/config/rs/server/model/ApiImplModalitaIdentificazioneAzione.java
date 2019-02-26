@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiImplModalitaIdentificazioneAzione  {
   
@@ -38,6 +39,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
   **/
   @JsonProperty("modalita")
   @NotNull
+  @Valid
   public ModalitaIdentificazioneAzioneEnum getModalita() {
     return this.modalita;
   }
@@ -56,6 +58,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
    * @return pattern
   **/
   @JsonProperty("pattern")
+  @Valid
  @Size(max=255)  public String getPattern() {
     return this.pattern;
   }
@@ -74,6 +77,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
    * @return nome
   **/
   @JsonProperty("nome")
+  @Valid
  @Size(max=255)  public String getNome() {
     return this.nome;
   }
@@ -92,6 +96,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
    * @return forceInterface
   **/
   @JsonProperty("force_interface")
+  @Valid
   public Boolean isForceInterface() {
     return this.forceInterface;
   }
@@ -110,6 +115,7 @@ public class ApiImplModalitaIdentificazioneAzione  {
    * @return azioni
   **/
   @JsonProperty("azioni")
+  @Valid
   public List<String> getAzioni() {
     return this.azioni;
   }

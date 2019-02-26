@@ -4,7 +4,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
@@ -18,7 +18,7 @@ public class ApiEnv extends Environment {
 	
 	public final boolean gestisciSoggettoReferente;
 	
-	ApiEnv(ProfiloEnum profilo, String soggetto, ServiceContext ctx) throws Exception {
+	ApiEnv(ProfiloEnum profilo, String soggetto, IContext ctx) throws Exception {
 		super(ctx.getServletRequest(), profilo, soggetto, ctx);
 		
 		if (profilo == null)

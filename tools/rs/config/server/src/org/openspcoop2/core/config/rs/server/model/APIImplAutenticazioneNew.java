@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutenticazioneNew  {
   
@@ -19,6 +20,7 @@ public class APIImplAutenticazioneNew  {
   **/
   @JsonProperty("tipo")
   @NotNull
+  @Valid
   public TipoAutenticazioneNewEnum getTipo() {
     return this.tipo;
   }
@@ -37,6 +39,7 @@ public class APIImplAutenticazioneNew  {
    * @return opzionale
   **/
   @JsonProperty("opzionale")
+  @Valid
   public Boolean isOpzionale() {
     return this.opzionale;
   }

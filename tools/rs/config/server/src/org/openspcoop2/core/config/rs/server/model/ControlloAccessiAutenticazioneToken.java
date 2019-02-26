@@ -2,6 +2,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ControlloAccessiAutenticazioneToken  {
   
@@ -39,6 +40,7 @@ public class ControlloAccessiAutenticazioneToken  {
    * @return issuer
   **/
   @JsonProperty("issuer")
+  @Valid
   public Boolean isIssuer() {
     return this.issuer;
   }
@@ -57,6 +59,7 @@ public class ControlloAccessiAutenticazioneToken  {
    * @return clientId
   **/
   @JsonProperty("client_id")
+  @Valid
   public Boolean isClientId() {
     return this.clientId;
   }
@@ -75,6 +78,7 @@ public class ControlloAccessiAutenticazioneToken  {
    * @return subject
   **/
   @JsonProperty("subject")
+  @Valid
   public Boolean isSubject() {
     return this.subject;
   }
@@ -93,6 +97,7 @@ public class ControlloAccessiAutenticazioneToken  {
    * @return username
   **/
   @JsonProperty("username")
+  @Valid
   public Boolean isUsername() {
     return this.username;
   }
@@ -111,6 +116,7 @@ public class ControlloAccessiAutenticazioneToken  {
    * @return email
   **/
   @JsonProperty("email")
+  @Valid
   public Boolean isEmail() {
     return this.email;
   }

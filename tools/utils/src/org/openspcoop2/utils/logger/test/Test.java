@@ -27,31 +27,44 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.logger.IContext;
 import org.openspcoop2.utils.logger.ILogger;
 import org.openspcoop2.utils.logger.LoggerFactory;
 import org.openspcoop2.utils.logger.beans.Attachment;
 import org.openspcoop2.utils.logger.beans.Event;
 import org.openspcoop2.utils.logger.beans.Message;
 import org.openspcoop2.utils.logger.beans.Property;
-import org.openspcoop2.utils.logger.beans.proxy.Actor;
-import org.openspcoop2.utils.logger.beans.proxy.Client;
-import org.openspcoop2.utils.logger.beans.proxy.Identifier;
-import org.openspcoop2.utils.logger.beans.proxy.Operation;
-import org.openspcoop2.utils.logger.beans.proxy.ProxyContext;
-import org.openspcoop2.utils.logger.beans.proxy.Role;
-import org.openspcoop2.utils.logger.beans.proxy.Server;
-import org.openspcoop2.utils.logger.beans.proxy.Service;
+import org.openspcoop2.utils.logger.beans.context.application.ApplicationContext;
+import org.openspcoop2.utils.logger.beans.context.application.ApplicationTransaction;
+import org.openspcoop2.utils.logger.beans.context.batch.BatchContext;
+import org.openspcoop2.utils.logger.beans.context.batch.BatchTransaction;
+import org.openspcoop2.utils.logger.beans.context.core.AbstractContext;
+import org.openspcoop2.utils.logger.beans.context.core.AbstractContextWithClient;
+import org.openspcoop2.utils.logger.beans.context.core.AbstractTransaction;
+import org.openspcoop2.utils.logger.beans.context.core.AbstractTransactionWithClient;
+import org.openspcoop2.utils.logger.beans.context.core.Actor;
+import org.openspcoop2.utils.logger.beans.context.core.ConnectionMessage;
+import org.openspcoop2.utils.logger.beans.context.core.HttpClient;
+import org.openspcoop2.utils.logger.beans.context.core.HttpServer;
+import org.openspcoop2.utils.logger.beans.context.core.Identifier;
+import org.openspcoop2.utils.logger.beans.context.core.Operation;
+import org.openspcoop2.utils.logger.beans.context.core.Role;
+import org.openspcoop2.utils.logger.beans.context.core.Service;
+import org.openspcoop2.utils.logger.beans.context.proxy.ProxyContext;
+import org.openspcoop2.utils.logger.beans.context.proxy.ProxyTransaction;
 import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 import org.openspcoop2.utils.logger.config.Log4jConfig;
 import org.openspcoop2.utils.logger.config.MultiLoggerConfig;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
 import org.openspcoop2.utils.logger.constants.MessageType;
 import org.openspcoop2.utils.logger.constants.Severity;
-import org.openspcoop2.utils.logger.constants.proxy.FlowMode;
-import org.openspcoop2.utils.logger.constants.proxy.Result;
-import org.openspcoop2.utils.logger.constants.proxy.ResultProcessing;
-import org.openspcoop2.utils.logger.constants.proxy.ServerEndpointType;
+import org.openspcoop2.utils.logger.constants.context.FlowMode;
+import org.openspcoop2.utils.logger.constants.context.Result;
+import org.openspcoop2.utils.logger.constants.context.ServerEndpointType;
+import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithBatchContext;
 import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
+import org.openspcoop2.utils.logger.log4j.Log4jLoggerWithApplicationContext;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * Test
@@ -63,6 +76,12 @@ import org.openspcoop2.utils.logger.log4j.Log4JLoggerWithProxyContext;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
+		
+		String tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = args[0];
+		}
+		
 		
 		// DIAGNOSTIC CONFIGURATION
 		DiagnosticConfig diagnosticConfig = new DiagnosticConfig();
@@ -87,7 +106,7 @@ public class Test {
 		
 		mConfig.setDiagnosticConfig(diagnosticConfig);
 		
-//		mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_LOW);
+		mConfig.setDiagnosticSeverityFilter(Severity.DEBUG_HIGH);
 //		mConfig.setEventSeverityFilter(Severity.INFO);
 		
 		mConfig.setLog4jLoggerEnabled(true);
@@ -96,15 +115,63 @@ public class Test {
 		mConfig.setDbLoggerEnabled(false);
 		//mConfig.setDatabaseConfig(dbConfig);
 		
-		LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
-				mConfig);
-		
-		//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
-		//Log4JLogger.setEventSeverity(Severity.ERROR);
 		
 		
-		ILogger logger = LoggerFactory.newLogger();		
-
+		if(tipo==null || "proxy".equalsIgnoreCase(tipo)) {
+		
+			// ** PROXY **
+			
+			System.out.println("*** Test Proxy ***");
+			
+			LoggerFactory.initialize(Log4JLoggerWithProxyContext.class.getName(),
+					mConfig);
+			
+			//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
+			//Log4JLogger.setEventSeverity(Severity.ERROR);
+			
+			test(LoggerFactory.newLogger(), "PROXY");
+			
+		}
+		
+		
+		if(tipo==null || "application".equalsIgnoreCase(tipo)) {
+		
+			// ** APPLICATION **
+			
+			System.out.println("*** Test Application ***");
+			
+			LoggerFactory.initialize(Log4jLoggerWithApplicationContext.class.getName(),
+					mConfig);
+			
+			//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
+			//Log4JLogger.setEventSeverity(Severity.ERROR);
+			
+			test(LoggerFactory.newLogger(), "APPLICATION");
+		
+		}
+		
+		
+		if(tipo==null || "batch".equalsIgnoreCase(tipo)) {
+		
+			// ** BATCH **
+			
+			System.out.println("*** Test Batch ***");
+			
+			LoggerFactory.initialize(Log4JLoggerWithBatchContext.class.getName(),
+					mConfig);
+			
+			//Log4JLogger.setDiagnosticSeverity(Severity.INFO);
+			//Log4JLogger.setEventSeverity(Severity.ERROR);
+			
+			test(LoggerFactory.newLogger(), "BATCH");
+			
+		}
+	}
+	
+	
+	private static void test(ILogger logger, String tipo) throws Exception {
+		
+		logger.log("================= "+tipo+" ===================",LowSeverity.DEBUG_HIGH);
 		
 		logger.log("Prova altro log con messaggio inserito qua",LowSeverity.DEBUG_HIGH);
 		logger.log("Prova altro log con messaggio inserito qua con function",LowSeverity.DEBUG_MEDIUM,"core");
@@ -116,21 +183,42 @@ public class Test {
 		
 		
 		
+		IContext context = logger.getContext();
+		AbstractTransaction transaction = ((AbstractContext)context).getTransaction();
 		
-		ProxyContext context = (ProxyContext) logger.getContext();
+		AbstractTransactionWithClient transactionWithClient = null;
+		AbstractContextWithClient contextWithClient = null;
 		
-		context.getTransaction().setClusterId("Cluster1");
+		ProxyContext proxyContext = null;
+		if(context instanceof ProxyContext) {
+			proxyContext = (ProxyContext) context;
+			transactionWithClient = (AbstractTransactionWithClient) transaction;
+			contextWithClient = (AbstractContextWithClient) context;
+		}
 		
-		logger.log("000003",context.getTransaction());
+		ApplicationContext applicationContext = null;
+		if(context instanceof ApplicationContext) {
+			applicationContext = (ApplicationContext) context;
+			transactionWithClient = (AbstractTransactionWithClient) transaction;
+			contextWithClient = (AbstractContextWithClient) context;
+		}
 		
+		BatchContext batchContext = null;
+		if(context instanceof BatchContext) {
+			batchContext = (BatchContext) context;
+		}
+				
+		transaction.setClusterId("Cluster1-TIPO-"+tipo);
 		
-		
+		logger.log("000003",transaction);		
 		
 		try{
 			
 			long httpRequestSize = 2345;
-			context.getRequest().setInDate(new Date());
-			context.getRequest().setInSize(httpRequestSize);
+			if(contextWithClient!=null) {
+				contextWithClient.getRequest().setDate(new Date());
+				contextWithClient.getRequest().setSize(httpRequestSize);
+			}
 		
 			// .... TODO DUMP RICHIESTA
 			boolean dump = true;
@@ -139,6 +227,7 @@ public class Test {
 				byte[] content = "<prova>CIAO</PROVA>".getBytes();
 				
 				Message message = new Message();
+				message.setIdMessage("TIPO-"+tipo);
 				message.setType(MessageType.REQUEST_IN);
 				message.setContent(content);
 				message.setContentType("text/xml");
@@ -165,19 +254,23 @@ public class Test {
 		
 			// ... TODO Processo di autenticazione ...
 	
-			Client client = new Client();
-			client.setPrincipal("C=IT,O=ComuneRoma");
-			client.setName("ServizioApplicativoAutenticato");
-			context.getTransaction().setClient(client);
+			HttpClient client = null;
+			if(transactionWithClient!=null) {
+				client = new HttpClient();
+				client.setPrincipal("C=IT,O=ComuneRoma");
+				client.setName("ServizioApplicativoAutenticato");
+				transactionWithClient.setClient(client);
+			}
 			
 			// ... TODO PRoceso di identificaizone funzione smistatore (es. PortaDlegata)
-			
-			context.getTransaction().getClient().setInvocationEndpoint("/govway/out/NomePortaDelegta?prova=si");
-			context.getTransaction().getClient().setInterfaceName("NomePortaDelegata");
+			if(transactionWithClient!=null) {
+				transactionWithClient.getClient().setInvocationEndpoint("/govway/out/NomePortaDelegta?prova=si");
+				transactionWithClient.getClient().setInterfaceName("NomePortaDelegata");
+			}
 			
 			// .... TODO DOMINIO PER CUI AGISCO
-			context.getTransaction().setDomain("GovPayFunction");
-			context.getTransaction().setRole(Role.CLIENT);
+			transaction.setDomain("GovPayFunction");
+			transaction.setRole(Role.CLIENT);
 			
 			
 			// ... TODO Identificazione attori, servizio, azione
@@ -186,46 +279,51 @@ public class Test {
 			from.setType("SPC");
 			from.setName("MinisteroFruitore");
 			from.setAddress("http://pddMinisteroFruitore");
-			context.getTransaction().setFrom(from);
+			transaction.setFrom(from);
 			
 			Actor to = new Actor();
 			to.setType("SPC");
 			to.setName("MinisteroErogatore");
 			to.setAddress("http://pddMinisteroErogatore");
-			context.getTransaction().setTo(to);
+			transaction.setTo(to);
 			
 			Service service = new Service();
 			service.setType("SPC");
 			service.setName("VariazioneAnagrafica");
 			service.setVersion(1);
-			context.getTransaction().setService(service);
+			transaction.setService(service);
 			
 			Operation operation = new Operation();
 			operation.setName("aggiornamento");
 			operation.setMode(FlowMode.INPUT_OUTPUT);
-			context.getTransaction().setOperation(operation);
+			transaction.setOperation(operation);
 		
 	
 			
-			logger.log("001002");
-			
-			
-			
+
+						
 			// .... TODO LOGICA INTERNA
 			
-			Identifier idRequest = new Identifier();
-			idRequest.setId("Prova_238231232_3232");
-			context.getRequest().setIdentifier(idRequest);
-			context.getRequest().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA");
-			
-			Property p1 = new Property("Prova","TestProva");
-			Property p2 = new Property("Prova2","TestProva2");
-			Property p3 = new Property("Prova3","TestProva3");
-			context.getRequest().addGenericProperty(p1);
-			context.getRequest().addGenericProperty(p2);
-			context.getRequest().addGenericProperty(p3);
-			
-			logger.log("002001");
+			Identifier idRequest = null;
+			if(contextWithClient!=null) {
+				
+				logger.log("001002");
+				
+				idRequest = new Identifier();
+				idRequest.setId("Prova_238231232_3232");
+				
+				contextWithClient.getRequest().setIdentifier(idRequest);
+				contextWithClient.getRequest().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA");
+
+				Property p1 = new Property("Prova","TestProva");
+				Property p2 = new Property("Prova2","TestProva2");
+				Property p3 = new Property("Prova3","TestProva3");
+				contextWithClient.getRequest().addGenericProperty(p1);
+				contextWithClient.getRequest().addGenericProperty(p2);
+				contextWithClient.getRequest().addGenericProperty(p3);
+				
+				logger.log("002001");
+			}
 			
 			Contenitore c = new Contenitore();
 			
@@ -235,6 +333,9 @@ public class Test {
 			c.setListPrimitive(listPrimitive);
 			
 			List<Property> listProperty = new ArrayList<Property>();
+			Property p1 = new Property("Prova","TestProva");
+			Property p2 = new Property("Prova2","TestProva2");
+			Property p3 = new Property("Prova3","TestProva3");
 			listProperty.add(p1);
 			listProperty.add(p2);
 			listProperty.add(p3);
@@ -269,175 +370,269 @@ public class Test {
 			logger.log("002004",c);
 
 			
+			List<String> servers = new ArrayList<>();
+			if(proxyContext!=null) {
+				servers.add("ApplicativoServer");
+			}
+			else {
+				servers.add("ApplicativoServer1");
+				servers.add("ApplicativoServer2");
+			}
 			
-			// .... TODO DUMP RICHIESTA USCITA
-			if(dump){
+			for (String serverName : servers) {
 				
-				byte[] content = "<prova>CIAO</PROVA>".getBytes();
+				String idOperation = "OperationXX";  // serve in caso di nome del server uguale per differenziare l'operazione
 				
-				Message message = new Message();
-				message.setType(MessageType.REQUEST_OUT);
-				message.setContent(content);
-				message.setContentType("text/xml");
+				// .... TODO DUMP RICHIESTA USCITA
+				if(dump){
+					
+					byte[] content = "<prova>CIAO</PROVA>".getBytes();
+					
+					Message message = new Message();
+					message.setType(MessageType.REQUEST_OUT);
+					message.setContent(content);
+					message.setContentType("text/xml");
+					message.setIdServer(serverName);
+					message.setIdOperation(idOperation);
+					if(idRequest!=null) {
+						message.setIdMessage(idRequest.getId());
+					}
+					
+					Property header1 = new Property("Transfer-Encoding","Chunked");
+					message.addHeader(header1);
+					Property header2 = new Property("WebClient","Firefox");
+					message.addHeader(header2);
+					
+					Property xpath1 = new Property("RisorsaNome","Rossi");
+					message.addResource(xpath1);
+					
+					Attachment att = new Attachment();
+					att.setContent("HELLO WORLD".getBytes());
+					att.setContentType("text/plain");
+					att.setContentId("cid:XXX");
+					message.addAttachment(att);
+					
+					logger.log(message);
+					
+				}
 				
-				Property header1 = new Property("Transfer-Encoding","Chunked");
-				message.addHeader(header1);
-				Property header2 = new Property("WebClient","Firefox");
-				message.addHeader(header2);
 				
-				Property xpath1 = new Property("RisorsaNome","Rossi");
-				message.addResource(xpath1);
+				// .... TODO INFORMAZIONI SERVER A CUI DEVO INOLTRARE IL PACCHETTO
 				
-				Attachment att = new Attachment();
-				att.setContent("HELLO WORLD".getBytes());
-				att.setContentType("text/plain");
-				att.setContentId("cid:XXX");
-				message.addAttachment(att);
+				HttpServer server = new HttpServer();
+				server.setEndpoint("http://127.0.0.1:8080/server");
+				server.setEndpointType(ServerEndpointType.HTTP.name());
+				server.setName(serverName);
+				server.setIdOperation(idOperation);
+				if(proxyContext!=null) {
+					((ProxyTransaction)transaction).setServer(server);
+				}
+				else if(applicationContext!=null) {
+					((ApplicationTransaction)transaction).addServer(server);
+				}
+				else if(batchContext!=null) {
+					((BatchTransaction)transaction).addServer(server);
+				}
 				
-				logger.log(message);
+				if(proxyContext!=null) {
+					logger.log("003001");
+				}
+				else if(applicationContext!=null) {
+					logger.log("003011", server);
+				}
+				else {
+					logger.log("003021", server);
+				}
 				
+				long httpRequestModifySize = 231232;
+				ConnectionMessage requestConnection = new ConnectionMessage();
+				requestConnection.setDate(new Date());
+				requestConnection.setSize(httpRequestModifySize);
+				requestConnection.setIdMessage("ID-SERVER-REQ");
+				server.setRequest(requestConnection);
+				
+				// .... TODO SEND E VERIFICA RISPOSTA RITORNATA
+				
+				int returnCode = 500;
+				server.setResponseStatusCode(returnCode);
+				server.setTransportRequestMethod(HttpRequestMethod.POST);
+				if(returnCode == 200){
+					if(proxyContext!=null) {
+						logger.log("003002");
+					}
+					else if(applicationContext!=null) {
+						logger.log("003012", server);
+					}
+					else {
+						logger.log("003022", server);
+					}
+				}
+				else{
+					if(proxyContext!=null) {
+						logger.log("003003");
+					}
+					else if(applicationContext!=null) {
+						logger.log("003013", server);
+					}
+					else {
+						logger.log("003023", server);
+					}
+				}
+				
+				ConnectionMessage responseConnection = new ConnectionMessage();
+				responseConnection.setDate(new Date());
+				responseConnection.setSize(httpRequestSize);
+				responseConnection.setIdMessage("ID-SERVER-RESP");
+				server.setResponse(responseConnection);
+		
+				// .... TODO DUMP IN RISPOSTA
+				if(dump){
+					
+					byte[] content = "<prova>CIAO</PROVA>".getBytes();
+					
+					Message message = new Message();
+					message.setType(MessageType.RESPONSE_IN);
+					message.setContent(content);
+					message.setContentType("text/xml");
+					message.setIdServer(serverName);
+					message.setIdOperation(idOperation);
+					
+					Property header1 = new Property("Transfer-Encoding","Chunked");
+					message.addHeader(header1);
+					Property header2 = new Property("WebClient","Firefox");
+					message.addHeader(header2);
+					
+					Property xpath1 = new Property("RisorsaNome","Rossi");
+					message.addResource(xpath1);
+					
+					Attachment att = new Attachment();
+					att.setContent("HELLO WORLD".getBytes());
+					att.setContentType("text/plain");
+					att.setContentId("cid:XXX");
+					message.addAttachment(att);
+					
+					logger.log(message);
+				}
+				
+				Property pServer1 = new Property("Prova-"+serverName,"TestProva"+serverName);
+				Property pServer2 = new Property("Prova2"+serverName,"TestProva2"+serverName);
+				Property pServer3 = new Property("Prova3","TestProva3"+serverName); // NomeProva3 e' usato nei diagnostici
+				
+				server.addGenericProperty(pServer1);
+				server.addGenericProperty(pServer2);
+				server.addGenericProperty(pServer3);
+				
+			}
+			
+			if(proxyContext!=null) {
+				logger.log("003004");
+			}
+			else if(applicationContext!=null) {
+				logger.log("003014");
+			}
+			else {
+				logger.log("003024");
 			}
 			
 			
 			
-			// .... TODO INFORMAZIONI SERVER A CUI DEVO INOLTRARE IL PACCHETTO
-			Server server = new Server();
-			server.setEndpoint("http://127.0.0.1:8080/server");
-			server.setEndpointType(ServerEndpointType.HTTP.name());
-			server.setName("ApplicativoServer");
-			context.getTransaction().setServer(server);
-			
-			logger.log("003001");
-			
-			long httpRequestModifySize = 231232;
-			context.getRequest().setOutDate(new Date());
-			context.getRequest().setOutSize(httpRequestModifySize);
-			context.getRequest().setResultProcessing(ResultProcessing.SEND);
-			
-			// .... TODO SEND E VERIFICA RISPOSTA RITORNATA
-			
-			int returnCode = 500;
-			server.setTransportCode(returnCode+"");
-			if(returnCode == 200){
-				logger.log("003002");
-			}
-			else{
-				logger.log("003003");
-			}
 			
 			
-			context.getResponse().setInDate(new Date());
-			context.getResponse().setInSize(httpRequestSize);
-	
-			// .... TODO DUMP IN RISPOSTA
-			if(dump){
-				
-				byte[] content = "<prova>CIAO</PROVA>".getBytes();
-				
-				Message message = new Message();
-				message.setType(MessageType.RESPONSE_IN);
-				message.setContent(content);
-				message.setContentType("text/xml");
-				
-				Property header1 = new Property("Transfer-Encoding","Chunked");
-				message.addHeader(header1);
-				Property header2 = new Property("WebClient","Firefox");
-				message.addHeader(header2);
-				
-				Property xpath1 = new Property("RisorsaNome","Rossi");
-				message.addResource(xpath1);
-				
-				Attachment att = new Attachment();
-				att.setContent("HELLO WORLD".getBytes());
-				att.setContentType("text/plain");
-				att.setContentId("cid:XXX");
-				message.addAttachment(att);
-				
-				logger.log(message);
-			}
+			
 			
 			
 			
 			// .... TODO LOGICA INTERNA PER ANALISI RISPOSTA
 			
-			Identifier idResponse = new Identifier();
-			idResponse.setId("ProvaResponse_238231232_3232");
-			context.getResponse().setIdentifier(idResponse);
-			context.getResponse().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA_RISP");
-			
-			int returnCodeClient = 200;
 			boolean fault = true; // SIMULAZIONE TODO...
-			if(fault){
-				returnCodeClient = 500;
+			
+			Identifier idResponse = null;
+			if(contextWithClient!=null) {
+				idResponse = new Identifier();
+				idResponse.setId("ProvaResponse_238231232_3232");
+				contextWithClient.getResponse().setIdentifier(idResponse);
+				contextWithClient.getResponse().setCorrelationIdentifier("ID_CORRELAZIONE_APPLICATIVA_RISP");
+			
+				int returnCodeClient = 200;
+				if(fault){
+					returnCodeClient = 500;
+				}
+				
+				
+				
+				
+				// .... TODO DUMP OUT RISPOSTA
+				if(dump){
+					
+					byte[] content = "<prova>CIAO</PROVA>".getBytes();
+					
+					Message message = new Message();
+					message.setType(MessageType.RESPONSE_OUT);
+					message.setContent(content);
+					message.setContentType("text/xml");
+					
+					Property header1 = new Property("Transfer-Encoding","Chunked");
+					message.addHeader(header1);
+					Property header2 = new Property("WebClient","Firefox");
+					message.addHeader(header2);
+					
+					Property xpath1 = new Property("RisorsaNome","Rossi");
+					message.addResource(xpath1);
+					
+					Attachment att = new Attachment();
+					att.setContent("HELLO WORLD".getBytes());
+					att.setContentType("text/plain");
+					att.setContentId("cid:XXX");
+					message.addAttachment(att);
+					
+					logger.log(message);
+				}
+				
+				
+				// TODO IF FAULT
+	
+				if(fault){
+					byte[] faultRicevuto = null;
+					contextWithClient.getResponse().setFault(faultRicevuto);
+					
+				}
+				
+				((HttpClient)transactionWithClient.getClient()).setResponseStatusCode(returnCodeClient);
+				((HttpClient)transactionWithClient.getClient()).setTransportRequestMethod(HttpRequestMethod.POST);
+				((HttpClient)transactionWithClient.getClient()).setSocketClientAddress("127.0.0.1");
+				((HttpClient)transactionWithClient.getClient()).setTransportClientAddress("10.0.0.1");
+				
+				transactionWithClient.getClient().addGenericProperty(p1);
+				transactionWithClient.getClient().addGenericProperty(p2);
+				transactionWithClient.getClient().addGenericProperty(p3);
 			}
-			
-			
-			
-			
-			// .... TODO DUMP OUT RISPOSTA
-			if(dump){
 				
-				byte[] content = "<prova>CIAO</PROVA>".getBytes();
-				
-				Message message = new Message();
-				message.setType(MessageType.RESPONSE_OUT);
-				message.setContent(content);
-				message.setContentType("text/xml");
-				
-				Property header1 = new Property("Transfer-Encoding","Chunked");
-				message.addHeader(header1);
-				Property header2 = new Property("WebClient","Firefox");
-				message.addHeader(header2);
-				
-				Property xpath1 = new Property("RisorsaNome","Rossi");
-				message.addResource(xpath1);
-				
-				Attachment att = new Attachment();
-				att.setContent("HELLO WORLD".getBytes());
-				att.setContentType("text/plain");
-				att.setContentId("cid:XXX");
-				message.addAttachment(att);
-				
-				logger.log(message);
-			}
-			
-			
-			// TODO IF FAULT
-
 			if(fault){
-				byte[] faultRicevuto = null;
-				context.getResponse().setInFault(faultRicevuto);
-				
-				byte[] faultVerraInoltratoClient = null;
-				context.getResponse().setOutFault(faultVerraInoltratoClient);
-				
-			}
-			
-			context.getTransaction().getClient().setTransportResponseCode(returnCodeClient+"");
-			if(fault){
-				context.getTransaction().setResult(Result.SERVER_ERROR);
+				transaction.setResult(Result.SERVER_ERROR);
 			}
 			else{
-				context.getTransaction().setResult(Result.SUCCESS);
+				transaction.setResult(Result.SUCCESS);
 			}
 			
 			// Ritorno risposta al client su http post
-			if(fault)
-				logger.log("001004");
-			else
-				logger.log("001003");
 			
-			
-			context.getResponse().setOutDate(new Date());
-			context.getResponse().setOutSize(httpRequestSize);
-			context.getResponse().setResultProcessing(ResultProcessing.RECEIVED);
+			if(contextWithClient!=null) {
+				
+				if(fault)
+					logger.log("001004");
+				else
+					logger.log("001003");
+				
+				contextWithClient.getResponse().setDate(new Date());
+				contextWithClient.getResponse().setSize(httpRequestSize);
+			}
 			
 			logger.log();
 			
 			
 			Event event = new Event();
 			event.setDate(DateManager.getDate());
-			event.setClusterId("ClusteId");
+			event.setClusterId("ClusteId-TIPO-"+tipo);
 			event.setCode("XXX");
 			event.setSource("ModuloControllo");
 			event.setSeverity(Severity.ERROR);

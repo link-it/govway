@@ -17,11 +17,11 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -56,7 +56,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      */
 	@Override
     public void create(Applicativo body, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -130,7 +130,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      */
 	@Override
     public void delete(String nome, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -183,7 +183,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      */
 	@Override
     public ListaApplicativi findAll(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -251,7 +251,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      */
 	@Override
     public Applicativo get(String nome, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -291,7 +291,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      */
 	@Override
     public void update(Applicativo body, String nome, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

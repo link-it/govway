@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Traccia  {
   
@@ -64,6 +65,7 @@ public class Traccia  {
    * @return tipoMittente
   **/
   @JsonProperty("tipoMittente")
+  @Valid
   public String getTipoMittente() {
     return this.tipoMittente;
   }
@@ -82,6 +84,7 @@ public class Traccia  {
    * @return nomeMittente
   **/
   @JsonProperty("nomeMittente")
+  @Valid
   public String getNomeMittente() {
     return this.nomeMittente;
   }
@@ -100,6 +103,7 @@ public class Traccia  {
    * @return codicePortaMittente
   **/
   @JsonProperty("codicePortaMittente")
+  @Valid
   public String getCodicePortaMittente() {
     return this.codicePortaMittente;
   }
@@ -118,6 +122,7 @@ public class Traccia  {
    * @return tipoDestinatario
   **/
   @JsonProperty("tipoDestinatario")
+  @Valid
   public String getTipoDestinatario() {
     return this.tipoDestinatario;
   }
@@ -136,6 +141,7 @@ public class Traccia  {
    * @return nomeDestinatario
   **/
   @JsonProperty("nomeDestinatario")
+  @Valid
   public String getNomeDestinatario() {
     return this.nomeDestinatario;
   }
@@ -154,6 +160,7 @@ public class Traccia  {
    * @return codicePortaDestinatario
   **/
   @JsonProperty("codicePortaDestinatario")
+  @Valid
   public String getCodicePortaDestinatario() {
     return this.codicePortaDestinatario;
   }
@@ -172,6 +179,7 @@ public class Traccia  {
    * @return profilo
   **/
   @JsonProperty("profilo")
+  @Valid
   public String getProfilo() {
     return this.profilo;
   }
@@ -190,6 +198,7 @@ public class Traccia  {
    * @return collaborazione
   **/
   @JsonProperty("collaborazione")
+  @Valid
   public String getCollaborazione() {
     return this.collaborazione;
   }
@@ -208,6 +217,7 @@ public class Traccia  {
    * @return tipoServizio
   **/
   @JsonProperty("tipoServizio")
+  @Valid
   public String getTipoServizio() {
     return this.tipoServizio;
   }
@@ -226,6 +236,7 @@ public class Traccia  {
    * @return nomeServizio
   **/
   @JsonProperty("nomeServizio")
+  @Valid
   public String getNomeServizio() {
     return this.nomeServizio;
   }
@@ -245,6 +256,7 @@ public class Traccia  {
    * @return versioneServizio
   **/
   @JsonProperty("versioneServizio")
+  @Valid
  @Min(1)  public Integer getVersioneServizio() {
     return this.versioneServizio;
   }
@@ -263,6 +275,7 @@ public class Traccia  {
    * @return azione
   **/
   @JsonProperty("azione")
+  @Valid
   public String getAzione() {
     return this.azione;
   }
@@ -281,6 +294,7 @@ public class Traccia  {
    * @return idMessaggio
   **/
   @JsonProperty("idMessaggio")
+  @Valid
   public UUID getIdMessaggio() {
     return this.idMessaggio;
   }
@@ -299,6 +313,7 @@ public class Traccia  {
    * @return riferimentoMessaggio
   **/
   @JsonProperty("riferimentoMessaggio")
+  @Valid
   public UUID getRiferimentoMessaggio() {
     return this.riferimentoMessaggio;
   }
@@ -317,6 +332,7 @@ public class Traccia  {
    * @return sorgenteTemporale
   **/
   @JsonProperty("sorgenteTemporale")
+  @Valid
   public String getSorgenteTemporale() {
     return this.sorgenteTemporale;
   }
@@ -335,6 +351,7 @@ public class Traccia  {
    * @return oraRegistrazione
   **/
   @JsonProperty("oraRegistrazione")
+  @Valid
   public DateTime getOraRegistrazione() {
     return this.oraRegistrazione;
   }
@@ -353,6 +370,7 @@ public class Traccia  {
    * @return scadenza
   **/
   @JsonProperty("scadenza")
+  @Valid
   public String getScadenza() {
     return this.scadenza;
   }

@@ -2,6 +2,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ReportGraficoDatoY  {
   
@@ -15,6 +16,7 @@ public class ReportGraficoDatoY  {
    * @return datoYSingolo
   **/
   @JsonProperty("datoY_singolo")
+  @Valid
   public String getDatoYSingolo() {
     return this.datoYSingolo;
   }
@@ -33,6 +35,7 @@ public class ReportGraficoDatoY  {
    * @return datoYTooltip
   **/
   @JsonProperty("datoY_tooltip")
+  @Valid
   public String getDatoYTooltip() {
     return this.datoYTooltip;
   }

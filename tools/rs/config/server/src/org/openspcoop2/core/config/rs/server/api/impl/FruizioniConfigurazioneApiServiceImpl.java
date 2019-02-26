@@ -14,11 +14,11 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
 import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 /**
  * GovWay Config API
  *
@@ -44,7 +44,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void addControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -75,7 +75,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void addControlloAccessiAutorizzazioneRuoli(ControlloAccessiAutorizzazioneRuolo body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -106,7 +106,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void addControlloAccessiAutorizzazioneScope(ControlloAccessiAutorizzazioneScope body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -137,7 +137,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void deleteControlloAccessiAutorizzazionePuntualeApplicativi(String erogatore, String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -168,7 +168,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void deleteControlloAccessiAutorizzazioneRuoli(String erogatore, String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -199,7 +199,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void deleteControlloAccessiAutorizzazioneScope(String erogatore, String nome, Integer versione, String scopeAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -230,7 +230,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public byte[] downloadControlloAccessiAutorizzazioneXacmlPolicy(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -261,7 +261,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiAutenticazione getControlloAccessiAutenticazione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -292,7 +292,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiAutorizzazioneView getControlloAccessiAutorizzazione(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -323,7 +323,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiAutorizzazioneApplicativi getControlloAccessiAutorizzazionePuntualeApplicativi(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -354,7 +354,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiAutorizzazioneRuoli getControlloAccessiAutorizzazioneRuoli(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -385,7 +385,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiAutorizzazioneScopes getControlloAccessiAutorizzazioneScope(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -416,7 +416,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ControlloAccessiGestioneToken getControlloAccessiGestioneToken(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -447,7 +447,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public GestioneCors getGestioneCORS(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -478,7 +478,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public ApiImplStato getStato(String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -509,7 +509,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void updateControlloAccessiAutenticazione(ControlloAccessiAutenticazione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -540,7 +540,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void updateControlloAccessiAutorizzazione(ControlloAccessiAutorizzazione body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -571,7 +571,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void updateControlloAccessiGestioneToken(ControlloAccessiGestioneToken body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -602,7 +602,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void updateGestioneCORS(GestioneCors body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -633,7 +633,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
      */
 	@Override
     public void updateStato(ApiImplStato body, String erogatore, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

@@ -255,44 +255,7 @@
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
 				</antcall>
-												
-				<!-- org.openspcoop2.utils.jaxb -->
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxb" />
-				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxb"/>
-					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxb"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
-					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxb"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
-					<param name="dist" value="${dist_utils}"/>
-					<param name="build" value="${build_utils}"/>
-				</antcall>
 
-				<!-- org.openspcoop2.utils.jaxrs -->
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.fault" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl.authentication.entrypoint" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl.authentication.handler" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl.authentication.preauth.filter" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl.authentication.preauth.role" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs.impl.authentication.provider" />
-				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxrs"/>
-					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxrs"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
-					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxrs"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
-					<param name="dist" value="${dist_utils}"/>
-					<param name="build" value="${build_utils}"/>
-				</antcall>
-				
 				<!-- org.openspcoop2.utils.jdbc -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jdbc" />
 				<antcall target="compile_src_openspcoop2">
@@ -399,6 +362,92 @@
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.digest"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+
+				<!-- org.openspcoop2.utils.logger -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context.core" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context.core.searc" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context.proxy" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context.application" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.context.batch" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.config" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.constants" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.constants.context" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.log4j" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans.test" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/logger"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-logger"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test/*.properties"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/logger"/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.logger"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+				
+				<!-- org.openspcoop2.utils.jaxb -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxb" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxb"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxb"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxb"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+
+				<!-- org.openspcoop2.utils.jaxrs -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.jaxrs" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/jaxrs"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-jaxrs"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.jaxrs"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
+					<param name="dist" value="${dist_utils}"/>
+					<param name="build" value="${build_utils}"/>
+				</antcall>
+
+				<!-- org.openspcoop2.utils.service -->
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.entrypoint" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.entrypoint.jaxrs" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.handler" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.handler.jaxrs" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.preauth.filter" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.preauth.role" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authentication.provider" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.authorization" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context.server" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.context.dump" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.fault" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.fault.jaxrs" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.service.logger" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/service"/>
+					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-service"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.service"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
@@ -530,26 +579,7 @@
 					<param name="dist" value="${dist_utils}"/>
 					<param name="build" value="${build_utils}"/>
 				</antcall>
-								
-				<!-- org.openspcoop2.utils.logger -->
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.beans,org.openspcoop2.utils.logger.beans.proxy" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.constants,org.openspcoop2.utils.logger.constants.proxy" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.log4j" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.logger.test" />
-				<antcall target="compile_src_openspcoop2">
-					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
-					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/logger"/>
-					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-logger"/>
-					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="test/*.properties"/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/logger"/>
-					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.logger"/>
-					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="utils"/>
-					<param name="dist" value="${dist_utils}"/>
-					<param name="build" value="${build_utils}"/>
-				</antcall>
-				
+
 				<!-- org.openspcoop2.utils.datasource -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.datasource" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.datasource.test" />

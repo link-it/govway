@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class FruizioneViewItem extends ApiImplViewItem {
   
@@ -16,7 +17,8 @@ public class FruizioneViewItem extends ApiImplViewItem {
   **/
   @JsonProperty("erogatore")
   @NotNull
-  public String getErogatore() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
     return this.erogatore;
   }
 

@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiImplStato  {
   
@@ -15,6 +16,7 @@ public class ApiImplStato  {
   **/
   @JsonProperty("abilitato")
   @NotNull
+  @Valid
   public Boolean isAbilitato() {
     return this.abilitato;
   }

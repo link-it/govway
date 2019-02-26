@@ -10,9 +10,9 @@ ATTENZIONE: Eseguire l'installazione in modalita' release incrementa il Minor Ve
 
 Installazione dei jar in modalita' SNAPSHOT:
 
-sh openspcoop2_jars_installer.sh [true]
+sh openspcoop2_jars_installer.sh hostnameMvnDeployLink [true]
 
 Installazione dei jar in modalita' RELEASE:
 
-sh openspcoop2_jars_installer.sh false
+sh openspcoop2_jars_installer.sh hostnameMvnDeployLink false
 

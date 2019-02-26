@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiImplItem extends BaseSoggettoItem {
   
@@ -42,7 +43,8 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("api_nome")
   @NotNull
-  public String getApiNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApiNome() {
     return this.apiNome;
   }
 
@@ -61,6 +63,7 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("api_versione")
   @NotNull
+  @Valid
   public Integer getApiVersione() {
     return this.apiVersione;
   }
@@ -79,7 +82,8 @@ public class ApiImplItem extends BaseSoggettoItem {
    * @return apiSoapServizio
   **/
   @JsonProperty("api_soap_servizio")
-  public String getApiSoapServizio() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApiSoapServizio() {
     return this.apiSoapServizio;
   }
 
@@ -97,7 +101,8 @@ public class ApiImplItem extends BaseSoggettoItem {
    * @return tipoServizio
   **/
   @JsonProperty("tipo_servizio")
-  public String getTipoServizio() {
+  @Valid
+ @Size(max=20)  public String getTipoServizio() {
     return this.tipoServizio;
   }
 
@@ -116,7 +121,8 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("nome")
   @NotNull
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -135,6 +141,7 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("versione")
   @NotNull
+  @Valid
   public Integer getVersione() {
     return this.versione;
   }
@@ -153,6 +160,7 @@ public class ApiImplItem extends BaseSoggettoItem {
    * @return apiTipo
   **/
   @JsonProperty("api_tipo")
+  @Valid
   public TipoApiEnum getApiTipo() {
     return this.apiTipo;
   }
@@ -172,6 +180,7 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("stato")
   @NotNull
+  @Valid
   public StatoApiEnum getStato() {
     return this.stato;
   }
@@ -191,6 +200,7 @@ public class ApiImplItem extends BaseSoggettoItem {
   **/
   @JsonProperty("stato_descrizione")
   @NotNull
+  @Valid
   public String getStatoDescrizione() {
     return this.statoDescrizione;
   }

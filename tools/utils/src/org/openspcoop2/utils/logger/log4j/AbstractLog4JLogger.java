@@ -352,6 +352,21 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 			out.append(" \n");
 		}
 		
+		if(message.getIdMessage()!=null){
+			out.append("IdMessage:"+message.getIdMessage());
+			out.append(" \n");
+		}
+		
+		if(message.getIdServer()!=null){
+			out.append("IdServer:"+message.getIdServer());
+			out.append(" \n");
+		}
+		
+		if(message.getIdOperation()!=null){
+			out.append("IdOperation:"+message.getIdOperation());
+			out.append(" \n");
+		}
+		
 		if(message.getType()!=null){
 			out.append("Type:"+message.getType().name());
 			out.append(" \n");

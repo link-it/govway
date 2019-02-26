@@ -2,81 +2,83 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.joda.time.DateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class Diagnostico  {
   
   @Schema(description = "")
   private DateTime data = null;
-@XmlType(name="SeveritaEnum")
-@XmlEnum(String.class)
-public enum SeveritaEnum {
-
-@XmlEnumValue("errorIntegration") ERRORINTEGRATION(String.valueOf("errorIntegration")), @XmlEnumValue("errorProtocol") ERRORPROTOCOL(String.valueOf("errorProtocol")), @XmlEnumValue("infoIntegration") INFOINTEGRATION(String.valueOf("infoIntegration")), @XmlEnumValue("InfoProtocol") INFOPROTOCOL(String.valueOf("InfoProtocol")), @XmlEnumValue("debugLow") DEBUGLOW(String.valueOf("debugLow")), @XmlEnumValue("debugMedium") DEBUGMEDIUM(String.valueOf("debugMedium")), @XmlEnumValue("debugHigh") DEBUGHIGH(String.valueOf("debugHigh"));
-
+  public enum SeveritaEnum {
+    ERRORINTEGRATION("errorIntegration"),
+    ERRORPROTOCOL("errorProtocol"),
+    INFOINTEGRATION("infoIntegration"),
+    INFOPROTOCOL("InfoProtocol"),
+    DEBUGLOW("debugLow"),
+    DEBUGMEDIUM("debugMedium"),
+    DEBUGHIGH("debugHigh");
 
     private String value;
 
-    SeveritaEnum (String v) {
-        this.value = v;
+    SeveritaEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static SeveritaEnum fromValue(String v) {
-        for (SeveritaEnum b : SeveritaEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static SeveritaEnum fromValue(String text) {
+      for (SeveritaEnum b : SeveritaEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "errorProtocol", description = "")
   private SeveritaEnum severita = null;
-@XmlType(name="FunzioneEnum")
-@XmlEnum(String.class)
-public enum FunzioneEnum {
-
-@XmlEnumValue("ricezioneBuste") RICEZIONEBUSTE(String.valueOf("ricezioneBuste")), @XmlEnumValue("ricezioneContenutiApplicativi") RICEZIONECONTENUTIAPPLICATIVI(String.valueOf("ricezioneContenutiApplicativi")), @XmlEnumValue("inoltroBuste") INOLTROBUSTE(String.valueOf("inoltroBuste")), @XmlEnumValue("consegnaContenutiApplicativi") CONSEGNACONTENUTIAPPLICATIVI(String.valueOf("consegnaContenutiApplicativi")), @XmlEnumValue("imbustamento") IMBUSTAMENTO(String.valueOf("imbustamento")), @XmlEnumValue("sbustamento") SBUSTAMENTO(String.valueOf("sbustamento"));
-
+  public enum FunzioneEnum {
+    RICEZIONEBUSTE("ricezioneBuste"),
+    RICEZIONECONTENUTIAPPLICATIVI("ricezioneContenutiApplicativi"),
+    INOLTROBUSTE("inoltroBuste"),
+    CONSEGNACONTENUTIAPPLICATIVI("consegnaContenutiApplicativi"),
+    IMBUSTAMENTO("imbustamento"),
+    SBUSTAMENTO("sbustamento");
 
     private String value;
 
-    FunzioneEnum (String v) {
-        this.value = v;
+    FunzioneEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static FunzioneEnum fromValue(String v) {
-        for (FunzioneEnum b : FunzioneEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static FunzioneEnum fromValue(String text) {
+      for (FunzioneEnum b : FunzioneEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "ricezioneBuste", description = "")
   private FunzioneEnum funzione = null;
   
@@ -87,6 +89,7 @@ public enum FunzioneEnum {
    * @return data
   **/
   @JsonProperty("data")
+  @Valid
   public DateTime getData() {
     return this.data;
   }
@@ -105,11 +108,12 @@ public enum FunzioneEnum {
    * @return severita
   **/
   @JsonProperty("severita")
+  @Valid
   public String getSeverita() {
     if (this.severita == null) {
       return null;
     }
-    return this.severita.value();
+    return this.severita.getValue();
   }
 
   public void setSeverita(SeveritaEnum severita) {
@@ -126,11 +130,12 @@ public enum FunzioneEnum {
    * @return funzione
   **/
   @JsonProperty("funzione")
+  @Valid
   public String getFunzione() {
     if (this.funzione == null) {
       return null;
     }
-    return this.funzione.value();
+    return this.funzione.getValue();
   }
 
   public void setFunzione(FunzioneEnum funzione) {
@@ -147,6 +152,7 @@ public enum FunzioneEnum {
    * @return messaggio
   **/
   @JsonProperty("messaggio")
+  @Valid
   public String getMessaggio() {
     return this.messaggio;
   }

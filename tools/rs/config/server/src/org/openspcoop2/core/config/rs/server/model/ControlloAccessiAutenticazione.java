@@ -5,6 +5,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
   
@@ -18,6 +19,7 @@ public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
    * @return autenticazione
   **/
   @JsonProperty("autenticazione")
+  @Valid
   public APIImplAutenticazione getAutenticazione() {
     return this.autenticazione;
   }
@@ -36,6 +38,7 @@ public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
    * @return token
   **/
   @JsonProperty("token")
+  @Valid
   public ControlloAccessiAutenticazioneToken getToken() {
     return this.token;
   }

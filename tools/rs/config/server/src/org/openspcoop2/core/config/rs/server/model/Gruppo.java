@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Gruppo extends GruppoBase {
   
@@ -20,6 +21,7 @@ public class Gruppo extends GruppoBase {
   **/
   @JsonProperty("modalita")
   @NotNull
+  @Valid
   public ModalitaConfigurazioneGruppoEnum getModalita() {
     return this.modalita;
   }
@@ -38,6 +40,7 @@ public class Gruppo extends GruppoBase {
    * @return configurazione
   **/
   @JsonProperty("configurazione")
+  @Valid
   public Object getConfigurazione() {
     return this.configurazione;
   }

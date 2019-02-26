@@ -3,6 +3,7 @@ package org.openspcoop2.core.config.rs.server.model;
 import org.openspcoop2.core.config.rs.server.model.ApiBase;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Api extends ApiBase {
   
@@ -13,6 +14,7 @@ public class Api extends ApiBase {
    * @return interfaccia
   **/
   @JsonProperty("interfaccia")
+  @Valid
   public byte[] getInterfaccia() {
     return this.interfaccia;
   }

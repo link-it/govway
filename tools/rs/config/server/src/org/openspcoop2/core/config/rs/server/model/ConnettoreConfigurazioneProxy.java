@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ConnettoreConfigurazioneProxy  {
   
@@ -24,6 +25,7 @@ public class ConnettoreConfigurazioneProxy  {
   **/
   @JsonProperty("hostname")
   @NotNull
+  @Valid
  @Size(max=255)  public String getHostname() {
     return this.hostname;
   }
@@ -45,6 +47,7 @@ public class ConnettoreConfigurazioneProxy  {
   **/
   @JsonProperty("porta")
   @NotNull
+  @Valid
  @Min(1) @Max(65535)  public Integer getPorta() {
     return this.porta;
   }
@@ -63,6 +66,7 @@ public class ConnettoreConfigurazioneProxy  {
    * @return username
   **/
   @JsonProperty("username")
+  @Valid
  @Size(max=255)  public String getUsername() {
     return this.username;
   }
@@ -81,6 +85,7 @@ public class ConnettoreConfigurazioneProxy  {
    * @return password
   **/
   @JsonProperty("password")
+  @Valid
   public String getPassword() {
     return this.password;
   }

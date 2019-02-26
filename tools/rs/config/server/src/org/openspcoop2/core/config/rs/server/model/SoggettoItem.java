@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class SoggettoItem extends BaseItem {
   
@@ -23,7 +24,8 @@ public class SoggettoItem extends BaseItem {
   **/
   @JsonProperty("nome")
   @NotNull
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -42,6 +44,7 @@ public class SoggettoItem extends BaseItem {
   **/
   @JsonProperty("dominio")
   @NotNull
+  @Valid
   public DominioEnum getDominio() {
     return this.dominio;
   }
@@ -61,6 +64,7 @@ public class SoggettoItem extends BaseItem {
    * @return countRuoli
   **/
   @JsonProperty("count_ruoli")
+  @Valid
  @Min(0)  public Integer getCountRuoli() {
     return this.countRuoli;
   }

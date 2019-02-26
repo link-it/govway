@@ -12,6 +12,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.ApiViewItem;
+import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApi;
 import org.openspcoop2.core.config.rs.server.model.ListaApiAllegati;
@@ -266,7 +267,7 @@ public interface ApiApi  {
     @Produces({ "application/_*", "text/_*", "application/problem+json" })
     @Operation(summary = "Restituisce l'allegato di una API", tags={ "api" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Allegato dell'API restituito con successo", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Allegato dell'API restituito con successo", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -287,7 +288,7 @@ public interface ApiApi  {
     @Produces({ "application/_*", "text/_*", "application/problem+json" })
     @Operation(summary = "Restituisce l'interfaccia di una API", tags={ "api" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Interfaccia dell'API restituita con successo", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Interfaccia dell'API restituita con successo", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

@@ -9,12 +9,15 @@
         http://www.springframework.org/schema/security/spring-security.xsd">
       
 	<!-- entry point per l'httpbasic per gestire il contenuto della response nel caso id utenza non autorizzata. -->
-	<b:bean id="basicAuthenticationEntryPoint" class="org.openspcoop2.utils.jaxrs.impl.authentication.entrypoint.BasicAuthenticationEntryPoint" >
+	<b:bean id="basicAuthenticationEntryPoint" class="org.openspcoop2.utils.service.authentication.entrypoint.jaxrs.BasicAuthenticationEntryPoint" >
 		<b:property name="realname" value="GovWay API Config"/>
 	</b:bean>
 
 	<!-- Password Encoder (in chiaro) -->
 	<b:bean id ="passwordEncoder" class = "org.springframework.security.crypto.password.NoOpPasswordEncoder" factory-method = "getInstance" />
+
+	<!-- Implementazione custom di un authenticationProvider per gestire l'autenticazione degli utenti registrati su wildfly -->
+        <!-- <b:bean id="wildflyApplicationAuthenticationProvider" class="org.openspcoop2.utils.jaxrs.impl.authentication.provider.WildflyApplicationAuthenticationProvider" /> -->
 
 	<!-- Abilito gestione della sicurezza tramite annotazioni nel codice Java -->
 	<global-method-security
@@ -23,11 +26,10 @@
 
 	<!-- Definisco il sistema di autenticazione, nel nostro caso utilizziamo una sorgente degli utenti basata su file di proprietà -->
         <authentication-manager alias="authenticationManager">
+		<!-- <authentication-provider ref="wildflyApplicationAuthenticationProvider"/> -->
 		<authentication-provider >
 		    <password-encoder ref="passwordEncoder"/>
 		    <user-service properties="classpath:rs-api-config.users.properties">
-			<!--  <user name="user1"  password="123456"  authorities="ROLE_USER,ROLE1"  /> -->
-			<!--  <user name="user2"  password="123456"  authorities="ROLE_USER,ROLE2" /> -->
 		    </user-service>
 		</authentication-provider>
 	</authentication-manager>

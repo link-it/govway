@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class RisultatoRicercaTransazioni  {
   
@@ -22,6 +23,7 @@ public class RisultatoRicercaTransazioni  {
   **/
   @JsonProperty("listaPaginata")
   @NotNull
+  @Valid
   public ListaPaginata getListaPaginata() {
     return this.listaPaginata;
   }
@@ -41,6 +43,7 @@ public class RisultatoRicercaTransazioni  {
   **/
   @JsonProperty("transazioni")
   @NotNull
+  @Valid
   public List<TransazioneItem> getTransazioni() {
     return this.transazioni;
   }

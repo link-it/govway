@@ -53,6 +53,7 @@ public class DiagnosticProperties {
 		return staticInstance;
 	}
 	
+	public static final String EMPTY = "empty";
 	
 	private static final String PREFIX_FUNCTION = "function.";
 	private static final String PREFIX_DIAGNOSTIC = "diagnostic.";
@@ -151,6 +152,10 @@ public class DiagnosticProperties {
 
 	
 	private void init() throws UtilsException{
+		
+		if(this.diagnosticProperties.containsKey(EMPTY)){
+			return;
+		}
 		
 		// default function
 		if(this.diagnosticProperties.containsKey(DEFAULT_FUNCTION)==false){

@@ -1,44 +1,43 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class FiltroServizio  {
-@XmlType(name="ProtocolloEnum")
-@XmlEnum(String.class)
-public enum ProtocolloEnum {
-
-@XmlEnumValue("spcoop") SPCOOP(String.valueOf("spcoop")), @XmlEnumValue("trasparente") TRASPARENTE(String.valueOf("trasparente")), @XmlEnumValue("sdi") SDI(String.valueOf("sdi")), @XmlEnumValue("edelivery") EDELIVERY(String.valueOf("edelivery"));
-
+  public enum ProtocolloEnum {
+    SPCOOP("spcoop"),
+    TRASPARENTE("trasparente"),
+    SDI("sdi"),
+    EDELIVERY("edelivery");
 
     private String value;
 
-    ProtocolloEnum (String v) {
-        this.value = v;
+    ProtocolloEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ProtocolloEnum fromValue(String v) {
-        for (ProtocolloEnum b : ProtocolloEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ProtocolloEnum fromValue(String text) {
+      for (ProtocolloEnum b : ProtocolloEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "trasparente", description = "")
   private ProtocolloEnum protocollo = null;
   
@@ -61,11 +60,12 @@ public enum ProtocolloEnum {
    * @return protocollo
   **/
   @JsonProperty("protocollo")
+  @Valid
   public String getProtocollo() {
     if (this.protocollo == null) {
       return null;
     }
-    return this.protocollo.value();
+    return this.protocollo.getValue();
   }
 
   public void setProtocollo(ProtocolloEnum protocollo) {
@@ -82,6 +82,7 @@ public enum ProtocolloEnum {
    * @return soggettoLocale
   **/
   @JsonProperty("soggettoLocale")
+  @Valid
   public String getSoggettoLocale() {
     return this.soggettoLocale;
   }
@@ -100,6 +101,7 @@ public enum ProtocolloEnum {
    * @return soggettoRemoto
   **/
   @JsonProperty("soggettoRemoto")
+  @Valid
   public String getSoggettoRemoto() {
     return this.soggettoRemoto;
   }
@@ -118,6 +120,7 @@ public enum ProtocolloEnum {
    * @return applicativo
   **/
   @JsonProperty("applicativo")
+  @Valid
   public String getApplicativo() {
     return this.applicativo;
   }
@@ -136,6 +139,7 @@ public enum ProtocolloEnum {
    * @return servizio
   **/
   @JsonProperty("servizio")
+  @Valid
   public String getServizio() {
     return this.servizio;
   }
@@ -154,6 +158,7 @@ public enum ProtocolloEnum {
    * @return azione
   **/
   @JsonProperty("azione")
+  @Valid
   public String getAzione() {
     return this.azione;
   }

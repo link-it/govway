@@ -5102,7 +5102,7 @@ components:
             - nome
           properties:
             nome:
-              $ref: 'govway_rs-api_commons.yaml#/components/schemas/NCName'
+              $ref: 'govway_rs-api_commons.yaml#/components/schemas/NCName'            
             ruoli:
               type: array
               items:

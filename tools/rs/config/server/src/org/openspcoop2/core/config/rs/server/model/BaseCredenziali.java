@@ -3,6 +3,7 @@ package org.openspcoop2.core.config.rs.server.model;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class BaseCredenziali  {
   
@@ -16,6 +17,7 @@ public class BaseCredenziali  {
    * @return modalitaAccesso
   **/
   @JsonProperty("modalita_accesso")
+  @Valid
   public ModalitaAccessoEnum getModalitaAccesso() {
     return this.modalitaAccesso;
   }
@@ -34,6 +36,7 @@ public class BaseCredenziali  {
    * @return credenziali
   **/
   @JsonProperty("credenziali")
+  @Valid
   public Object getCredenziali() {
     return this.credenziali;
   }

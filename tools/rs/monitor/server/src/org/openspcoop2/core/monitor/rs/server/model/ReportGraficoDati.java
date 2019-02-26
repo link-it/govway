@@ -4,6 +4,7 @@ import java.util.List;
 import org.openspcoop2.core.monitor.rs.server.model.ReportGraficoDatoY;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ReportGraficoDati  {
   
@@ -17,6 +18,7 @@ public class ReportGraficoDati  {
    * @return datoX
   **/
   @JsonProperty("datoX")
+  @Valid
   public String getDatoX() {
     return this.datoX;
   }
@@ -35,6 +37,7 @@ public class ReportGraficoDati  {
    * @return datoY
   **/
   @JsonProperty("datoY")
+  @Valid
   public List<ReportGraficoDatoY> getDatoY() {
     return this.datoY;
   }

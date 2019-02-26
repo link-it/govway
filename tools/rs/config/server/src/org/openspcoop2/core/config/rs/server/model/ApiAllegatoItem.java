@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiAllegatoItem  {
   
@@ -19,6 +20,7 @@ public class ApiAllegatoItem  {
   **/
   @JsonProperty("ruolo")
   @NotNull
+  @Valid
   public RuoloAllegatoAPI getRuolo() {
     return this.ruolo;
   }
@@ -38,6 +40,7 @@ public class ApiAllegatoItem  {
   **/
   @JsonProperty("allegato")
   @NotNull
+  @Valid
   public Object getAllegato() {
     return this.allegato;
   }

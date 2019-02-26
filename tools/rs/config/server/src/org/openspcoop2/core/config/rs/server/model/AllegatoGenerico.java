@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class AllegatoGenerico  {
   
@@ -18,7 +19,8 @@ public class AllegatoGenerico  {
   **/
   @JsonProperty("nome")
   @NotNull
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -37,6 +39,7 @@ public class AllegatoGenerico  {
   **/
   @JsonProperty("documento")
   @NotNull
+  @Valid
   public byte[] getDocumento() {
     return this.documento;
   }

@@ -16,12 +16,12 @@ import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 /**
  * GovWay Config API
  *
@@ -47,7 +47,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void create(Object body, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -90,7 +90,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void createAllegato(ApiImplAllegato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -121,7 +121,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void delete(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -152,7 +152,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void deleteAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -183,7 +183,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public byte[] downloadAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -214,7 +214,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ListaErogazioni findAll(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, TipoApiEnum tipoApi) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -245,7 +245,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ListaApiImplAllegati findAllAllegati(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -276,7 +276,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ErogazioneViewItem get(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -311,7 +311,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ApiImplVersioneApiView getAPI(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -342,7 +342,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ApiImplAllegato getAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -373,7 +373,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public Connettore getConnettore(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -404,7 +404,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ApiImplInformazioniGeneraliView getInformazioniGenerali(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -435,7 +435,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public ApiImplUrlInvocazioneView getUrlInvocazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -466,7 +466,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void updateAPI(ApiImplVersioneApi body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -498,7 +498,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void updateAllegato(ApiImplAllegato body, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -529,7 +529,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void updateConnettore(Connettore body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -560,7 +560,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void updateInformazioniGenerali(ApiImplInformazioniGenerali body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -591,7 +591,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
      */
 	@Override
     public void updateUrlInvocazione(Object body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

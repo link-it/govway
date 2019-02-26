@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiImplViewItem extends ApiImplItem {
   
@@ -22,6 +23,7 @@ public class ApiImplViewItem extends ApiImplItem {
   **/
   @JsonProperty("url_invocazione")
   @NotNull
+  @Valid
   public String getUrlInvocazione() {
     return this.urlInvocazione;
   }
@@ -41,6 +43,7 @@ public class ApiImplViewItem extends ApiImplItem {
   **/
   @JsonProperty("connettore")
   @NotNull
+  @Valid
   public String getConnettore() {
     return this.connettore;
   }
@@ -60,6 +63,7 @@ public class ApiImplViewItem extends ApiImplItem {
   **/
   @JsonProperty("gestione_cors")
   @NotNull
+  @Valid
   public String getGestioneCors() {
     return this.gestioneCors;
   }

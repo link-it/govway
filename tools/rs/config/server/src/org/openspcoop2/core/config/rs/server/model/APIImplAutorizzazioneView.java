@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutorizzazioneView  {
   
@@ -19,6 +20,7 @@ public class APIImplAutorizzazioneView  {
   **/
   @JsonProperty("tipo")
   @NotNull
+  @Valid
   public TipoAutorizzazioneEnum getTipo() {
     return this.tipo;
   }
@@ -37,6 +39,7 @@ public class APIImplAutorizzazioneView  {
    * @return configurazione
   **/
   @JsonProperty("configurazione")
+  @Valid
   public Object getConfigurazione() {
     return this.configurazione;
   }

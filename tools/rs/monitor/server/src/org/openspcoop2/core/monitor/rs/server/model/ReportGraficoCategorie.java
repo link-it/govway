@@ -2,6 +2,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ReportGraficoCategorie  {
   
@@ -18,6 +19,7 @@ public class ReportGraficoCategorie  {
    * @return key
   **/
   @JsonProperty("key")
+  @Valid
   public String getKey() {
     return this.key;
   }
@@ -36,6 +38,7 @@ public class ReportGraficoCategorie  {
    * @return label
   **/
   @JsonProperty("label")
+  @Valid
   public String getLabel() {
     return this.label;
   }
@@ -54,6 +57,7 @@ public class ReportGraficoCategorie  {
    * @return colore
   **/
   @JsonProperty("colore")
+  @Valid
   public String getColore() {
     return this.colore;
   }

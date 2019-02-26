@@ -8,7 +8,7 @@ import org.openspcoop2.core.config.rs.server.model.RuoloItem;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 
 public class RuoliApiHelper {
@@ -52,7 +52,7 @@ public class RuoliApiHelper {
 		}
 	}
 	
-	public static final HttpRequestWrapper overrideRuoloParams(Ruolo body, ServiceContext context) {
+	public static final HttpRequestWrapper overrideRuoloParams(Ruolo body, IContext context) {
 		HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
 		
 		wrap.overrideParameter(RuoliCostanti.PARAMETRO_RUOLO_DESCRIZIONE, body.getDescrizione());

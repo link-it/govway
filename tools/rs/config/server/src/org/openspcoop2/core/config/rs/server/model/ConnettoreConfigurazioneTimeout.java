@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ConnettoreConfigurazioneTimeout  {
   
@@ -30,6 +31,7 @@ public class ConnettoreConfigurazioneTimeout  {
   **/
   @JsonProperty("connection_timeout")
   @NotNull
+  @Valid
   public Integer getConnectionTimeout() {
     return this.connectionTimeout;
   }
@@ -49,6 +51,7 @@ public class ConnettoreConfigurazioneTimeout  {
   **/
   @JsonProperty("connection_read_timeout")
   @NotNull
+  @Valid
   public Integer getConnectionReadTimeout() {
     return this.connectionReadTimeout;
   }
@@ -68,6 +71,7 @@ public class ConnettoreConfigurazioneTimeout  {
   **/
   @JsonProperty("tempo_medio_risposta")
   @NotNull
+  @Valid
   public Integer getTempoMedioRisposta() {
     return this.tempoMedioRisposta;
   }

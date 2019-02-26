@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Environment;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCore;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeHelper;
 
@@ -13,7 +13,7 @@ public class ScopeEnv extends Environment {
 	public final ScopeCore scopeCore;
 	public final ScopeHelper scopeHelper; 
 	
-	public ScopeEnv(HttpServletRequest req, ServiceContext context) throws UtilsException, Exception {
+	public ScopeEnv(HttpServletRequest req, IContext context) throws UtilsException, Exception {
 		super(req,null,null,context);
 
 		this.scopeCore = new ScopeCore(this.stationCore);

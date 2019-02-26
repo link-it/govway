@@ -4,6 +4,7 @@ import org.openspcoop2.core.config.rs.server.model.AllAnyEnum;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class APIImplAutorizzazioneBaseConfig  {
   
@@ -23,6 +24,7 @@ public class APIImplAutorizzazioneBaseConfig  {
    * @return puntuale
   **/
   @JsonProperty("puntuale")
+  @Valid
   public Boolean isPuntuale() {
     return this.puntuale;
   }
@@ -41,6 +43,7 @@ public class APIImplAutorizzazioneBaseConfig  {
    * @return ruoli
   **/
   @JsonProperty("ruoli")
+  @Valid
   public Boolean isRuoli() {
     return this.ruoli;
   }
@@ -59,6 +62,7 @@ public class APIImplAutorizzazioneBaseConfig  {
    * @return ruoliFonte
   **/
   @JsonProperty("ruoli_fonte")
+  @Valid
   public FonteEnum getRuoliFonte() {
     return this.ruoliFonte;
   }
@@ -77,6 +81,7 @@ public class APIImplAutorizzazioneBaseConfig  {
    * @return ruoliRichiesti
   **/
   @JsonProperty("ruoli_richiesti")
+  @Valid
   public AllAnyEnum getRuoliRichiesti() {
     return this.ruoliRichiesti;
   }

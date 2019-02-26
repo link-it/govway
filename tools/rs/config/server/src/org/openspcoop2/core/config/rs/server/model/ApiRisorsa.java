@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiRisorsa  {
   
@@ -31,6 +32,7 @@ public class ApiRisorsa  {
   **/
   @JsonProperty("http_method")
   @NotNull
+  @Valid
   public HttpMethodEnum getHttpMethod() {
     return this.httpMethod;
   }
@@ -50,6 +52,7 @@ public class ApiRisorsa  {
   **/
   @JsonProperty("path")
   @NotNull
+  @Valid
  @Size(max=255)  public String getPath() {
     return this.path;
   }
@@ -68,7 +71,8 @@ public class ApiRisorsa  {
    * @return nome
   **/
   @JsonProperty("nome")
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -86,6 +90,7 @@ public class ApiRisorsa  {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
+  @Valid
  @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
@@ -104,6 +109,7 @@ public class ApiRisorsa  {
    * @return idCollaborazione
   **/
   @JsonProperty("id_collaborazione")
+  @Valid
   public Boolean isIdCollaborazione() {
     return this.idCollaborazione;
   }
@@ -122,6 +128,7 @@ public class ApiRisorsa  {
    * @return riferimentoIdRichiesta
   **/
   @JsonProperty("riferimento_id_richiesta")
+  @Valid
   public Boolean isRiferimentoIdRichiesta() {
     return this.riferimentoIdRichiesta;
   }

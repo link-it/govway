@@ -2,6 +2,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class FiltroIdTransazione  {
   
@@ -12,6 +13,7 @@ public class FiltroIdTransazione  {
    * @return idTransazione
   **/
   @JsonProperty("idTransazione")
+  @Valid
   public String getIdTransazione() {
     return this.idTransazione;
   }

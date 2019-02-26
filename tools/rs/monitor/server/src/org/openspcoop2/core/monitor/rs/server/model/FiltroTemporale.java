@@ -3,6 +3,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 import org.joda.time.DateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class FiltroTemporale  {
   
@@ -16,6 +17,7 @@ public class FiltroTemporale  {
    * @return dataDa
   **/
   @JsonProperty("dataDa")
+  @Valid
   public DateTime getDataDa() {
     return this.dataDa;
   }
@@ -34,6 +36,7 @@ public class FiltroTemporale  {
    * @return dataA
   **/
   @JsonProperty("dataA")
+  @Valid
   public DateTime getDataA() {
     return this.dataA;
   }

@@ -2,6 +2,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class FiltroIdApplicativo  {
   
@@ -18,7 +19,8 @@ public class FiltroIdApplicativo  {
    * @return ricercaEsatta
   **/
   @JsonProperty("ricercaEsatta")
-  public Boolean isisRicercaEsatta() {
+  @Valid
+  public Boolean isRicercaEsatta() {
     return this.ricercaEsatta;
   }
 
@@ -36,7 +38,8 @@ public class FiltroIdApplicativo  {
    * @return caseSensitive
   **/
   @JsonProperty("caseSensitive")
-  public Boolean isisCaseSensitive() {
+  @Valid
+  public Boolean isCaseSensitive() {
     return this.caseSensitive;
   }
 
@@ -54,6 +57,7 @@ public class FiltroIdApplicativo  {
    * @return idApplicativo
   **/
   @JsonProperty("idApplicativo")
+  @Valid
   public String getIdApplicativo() {
     return this.idApplicativo;
   }

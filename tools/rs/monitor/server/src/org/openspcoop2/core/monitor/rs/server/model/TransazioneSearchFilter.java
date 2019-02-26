@@ -3,44 +3,43 @@ package org.openspcoop2.core.monitor.rs.server.model;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class TransazioneSearchFilter  {
-@XmlType(name="TipoEnum")
-@XmlEnum(String.class)
-public enum TipoEnum {
-
-@XmlEnumValue("intervalloTemporale") INTERVALLOTEMPORALE(String.valueOf("intervalloTemporale")), @XmlEnumValue("identificativoApplicativo") IDENTIFICATIVOAPPLICATIVO(String.valueOf("identificativoApplicativo")), @XmlEnumValue("identificativoMessaggio") IDENTIFICATIVOMESSAGGIO(String.valueOf("identificativoMessaggio")), @XmlEnumValue("identificativoTransazione") IDENTIFICATIVOTRANSAZIONE(String.valueOf("identificativoTransazione"));
-
+  public enum TipoEnum {
+    INTERVALLOTEMPORALE("intervalloTemporale"),
+    IDENTIFICATIVOAPPLICATIVO("identificativoApplicativo"),
+    IDENTIFICATIVOMESSAGGIO("identificativoMessaggio"),
+    IDENTIFICATIVOTRANSAZIONE("identificativoTransazione");
 
     private String value;
 
-    TipoEnum (String v) {
-        this.value = v;
+    TipoEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static TipoEnum fromValue(String v) {
-        for (TipoEnum b : TipoEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static TipoEnum fromValue(String text) {
+      for (TipoEnum b : TipoEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "intervalloTemporale", required = true, description = "")
   private TipoEnum tipo = null;
   
@@ -52,11 +51,12 @@ public enum TipoEnum {
   **/
   @JsonProperty("tipo")
   @NotNull
+  @Valid
   public String getTipo() {
     if (this.tipo == null) {
       return null;
     }
-    return this.tipo.value();
+    return this.tipo.getValue();
   }
 
   public void setTipo(TipoEnum tipo) {
@@ -73,6 +73,7 @@ public enum TipoEnum {
    * @return filtro
   **/
   @JsonProperty("filtro")
+  @Valid
   public Object getFiltro() {
     return this.filtro;
   }

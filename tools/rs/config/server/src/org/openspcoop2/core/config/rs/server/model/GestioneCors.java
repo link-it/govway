@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class GestioneCors  {
   
@@ -23,6 +24,7 @@ public class GestioneCors  {
   **/
   @JsonProperty("ridefinito")
   @NotNull
+  @Valid
   public Boolean isRidefinito() {
     return this.ridefinito;
   }
@@ -41,6 +43,7 @@ public class GestioneCors  {
    * @return tipo
   **/
   @JsonProperty("tipo")
+  @Valid
   public TipoGestioneCorsEnum getTipo() {
     return this.tipo;
   }
@@ -59,6 +62,7 @@ public class GestioneCors  {
    * @return accessControl
   **/
   @JsonProperty("access_control")
+  @Valid
   public GestioneCorsAccessControl getAccessControl() {
     return this.accessControl;
   }

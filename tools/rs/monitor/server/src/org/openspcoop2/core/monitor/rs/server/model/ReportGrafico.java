@@ -5,6 +5,7 @@ import org.openspcoop2.core.monitor.rs.server.model.ReportGraficoCategorie;
 import org.openspcoop2.core.monitor.rs.server.model.ReportGraficoDati;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ReportGrafico  {
   
@@ -27,6 +28,7 @@ public class ReportGrafico  {
    * @return titolo
   **/
   @JsonProperty("titolo")
+  @Valid
   public String getTitolo() {
     return this.titolo;
   }
@@ -45,6 +47,7 @@ public class ReportGrafico  {
    * @return sottotitolo
   **/
   @JsonProperty("sottotitolo")
+  @Valid
   public String getSottotitolo() {
     return this.sottotitolo;
   }
@@ -63,6 +66,7 @@ public class ReportGrafico  {
    * @return yAxisLabel
   **/
   @JsonProperty("yAxisLabel")
+  @Valid
   public String getYAxisLabel() {
     return this.yAxisLabel;
   }
@@ -81,6 +85,7 @@ public class ReportGrafico  {
    * @return categorie
   **/
   @JsonProperty("categorie")
+  @Valid
   public List<ReportGraficoCategorie> getCategorie() {
     return this.categorie;
   }
@@ -104,6 +109,7 @@ public class ReportGrafico  {
    * @return dati
   **/
   @JsonProperty("dati")
+  @Valid
   public List<ReportGraficoDati> getDati() {
     return this.dati;
   }

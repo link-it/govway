@@ -1,20 +1,16 @@
 package org.openspcoop2.core.monitor.rs.server.api;
 
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-
-import org.openspcoop2.core.monitor.rs.server.model.Fault;
 import org.openspcoop2.core.monitor.rs.server.model.GenerazioneReport;
+import org.openspcoop2.core.monitor.rs.server.model.Problem;
 import org.openspcoop2.core.monitor.rs.server.model.ReportGrafico;
 
+import javax.ws.rs.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 
 /**
  * GovWay Monitor API
@@ -38,6 +34,6 @@ public interface ReportisticaApi  {
     @Operation(summary = "genera report statistico", tags={ "Reportistica" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "report generato correttamente", content = @Content(schema = @Schema(implementation = ReportGrafico.class))),
-        @ApiResponse(responseCode = "400", description = "La richiesta inviata ha prodotto un errore", content = @Content(schema = @Schema(implementation = Fault.class))) })
+        @ApiResponse(responseCode = "400", description = "La richiesta inviata ha prodotto un errore", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public ReportGrafico generaReport(@Valid GenerazioneReport body);
 }

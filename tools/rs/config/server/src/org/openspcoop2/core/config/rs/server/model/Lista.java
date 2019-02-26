@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Lista  {
   
@@ -54,6 +55,7 @@ public class Lista  {
   **/
   @JsonProperty("limit")
   @NotNull
+  @Valid
   public Integer getLimit() {
     return this.limit;
   }
@@ -73,6 +75,7 @@ public class Lista  {
   **/
   @JsonProperty("offset")
   @NotNull
+  @Valid
   public Long getOffset() {
     return this.offset;
   }
@@ -93,6 +96,7 @@ public class Lista  {
   **/
   @JsonProperty("total")
   @NotNull
+  @Valid
  @Min(0L)  public Long getTotal() {
     return this.total;
   }
@@ -111,6 +115,7 @@ public class Lista  {
    * @return first
   **/
   @JsonProperty("first")
+  @Valid
   public String getFirst() {
     return this.first;
   }
@@ -129,6 +134,7 @@ public class Lista  {
    * @return next
   **/
   @JsonProperty("next")
+  @Valid
   public String getNext() {
     return this.next;
   }
@@ -147,6 +153,7 @@ public class Lista  {
    * @return prev
   **/
   @JsonProperty("prev")
+  @Valid
   public String getPrev() {
     return this.prev;
   }
@@ -165,6 +172,7 @@ public class Lista  {
    * @return last
   **/
   @JsonProperty("last")
+  @Valid
   public String getLast() {
     return this.last;
   }

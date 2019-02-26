@@ -8,6 +8,7 @@ import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApi;
 import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
 import org.openspcoop2.core.config.rs.server.model.Connettore;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
+import java.io.File;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.Problem;
@@ -129,7 +130,7 @@ public interface ErogazioniApi  {
     @Produces({ "application/_*", "text/_*", "application/problem+json" })
     @Operation(summary = "Restituisce l'allegato di una erogazione", tags={ "erogazioni" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Allegato dell'erogazione restituito con successo", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Allegato dell'erogazione restituito con successo", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

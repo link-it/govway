@@ -50,6 +50,12 @@ public class Message implements Serializable {
 	
 	private String idTransaction;
 	
+	private String idMessage;
+	
+	private String idOperation;
+	
+	private String idServer;
+	
 	private List<Attachment> attachments = new ArrayList<Attachment>();
 	
 	private List<String> _headers_position = new ArrayList<String>();
@@ -219,5 +225,29 @@ public class Message implements Serializable {
 
 	public void setIdTransaction(String idTransaction) {
 		this.idTransaction = idTransaction;
+	}
+	
+	public String getIdMessage() {
+		return this.idMessage;
+	}
+
+	public void setIdMessage(String idMessage) {
+		this.idMessage = idMessage;
+	}
+
+	public String getIdServer() {
+		return this.idServer;
+	}
+
+	public void setIdServer(String idServer) {
+		this.idServer = idServer;
+	}
+	
+	public String getIdOperation() {
+		return this.idOperation;
+	}
+
+	public void setIdOperation(String idOperation) {
+		this.idOperation = idOperation;
 	}
 }

@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class GruppoItem extends GruppoBase {
   
@@ -16,6 +17,7 @@ public class GruppoItem extends GruppoBase {
   **/
   @JsonProperty("predefinito")
   @NotNull
+  @Valid
   public Boolean isPredefinito() {
     return this.predefinito;
   }

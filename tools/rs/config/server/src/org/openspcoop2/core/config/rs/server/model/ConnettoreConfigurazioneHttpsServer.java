@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpsServer  {
   
@@ -25,6 +26,7 @@ public class ConnettoreConfigurazioneHttpsServer  {
   **/
   @JsonProperty("truststore_path")
   @NotNull
+  @Valid
  @Size(max=255)  public String getTruststorePath() {
     return this.truststorePath;
   }
@@ -44,6 +46,7 @@ public class ConnettoreConfigurazioneHttpsServer  {
   **/
   @JsonProperty("truststore_tipo")
   @NotNull
+  @Valid
   public KeystoreEnum getTruststoreTipo() {
     return this.truststoreTipo;
   }
@@ -63,6 +66,7 @@ public class ConnettoreConfigurazioneHttpsServer  {
   **/
   @JsonProperty("truststore_password")
   @NotNull
+  @Valid
   public String getTruststorePassword() {
     return this.truststorePassword;
   }
@@ -81,6 +85,7 @@ public class ConnettoreConfigurazioneHttpsServer  {
    * @return algoritmo
   **/
   @JsonProperty("algoritmo")
+  @Valid
  @Size(max=255)  public String getAlgoritmo() {
     return this.algoritmo;
   }

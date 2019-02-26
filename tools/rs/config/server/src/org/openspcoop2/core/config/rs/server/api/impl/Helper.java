@@ -23,7 +23,7 @@ import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;

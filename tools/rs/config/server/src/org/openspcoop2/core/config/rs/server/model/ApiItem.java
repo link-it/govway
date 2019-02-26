@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiItem extends BaseSoggettoItem {
   
@@ -38,6 +39,7 @@ public class ApiItem extends BaseSoggettoItem {
    * @return referente
   **/
   @JsonProperty("referente")
+  @Valid
   public String getReferente() {
     return this.referente;
   }
@@ -57,6 +59,7 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("tipo")
   @NotNull
+  @Valid
   public TipoApiEnum getTipo() {
     return this.tipo;
   }
@@ -76,7 +79,8 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("nome")
   @NotNull
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -94,6 +98,7 @@ public class ApiItem extends BaseSoggettoItem {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
+  @Valid
  @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
@@ -113,6 +118,7 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("versione")
   @NotNull
+  @Valid
   public Integer getVersione() {
     return this.versione;
   }
@@ -132,6 +138,7 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("formato")
   @NotNull
+  @Valid
   public Object getFormato() {
     return this.formato;
   }
@@ -151,6 +158,7 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("stato")
   @NotNull
+  @Valid
   public StatoApiEnum getStato() {
     return this.stato;
   }
@@ -170,6 +178,7 @@ public class ApiItem extends BaseSoggettoItem {
   **/
   @JsonProperty("stato_descrizione")
   @NotNull
+  @Valid
   public String getStatoDescrizione() {
     return this.statoDescrizione;
   }

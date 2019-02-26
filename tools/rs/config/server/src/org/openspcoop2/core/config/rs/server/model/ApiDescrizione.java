@@ -4,6 +4,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ApiDescrizione  {
   
@@ -15,6 +16,7 @@ public class ApiDescrizione  {
   **/
   @JsonProperty("descrizione")
   @NotNull
+  @Valid
  @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }

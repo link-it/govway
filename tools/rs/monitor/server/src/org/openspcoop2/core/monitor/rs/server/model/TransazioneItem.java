@@ -5,10 +5,11 @@ import org.joda.time.DateTime;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class TransazioneItem  {
   
@@ -26,38 +27,34 @@ public class TransazioneItem  {
   
   @Schema(description = "")
   private DateTime dataUscitaRisposta = null;
-@XmlType(name="TipologiaEnum")
-@XmlEnum(String.class)
-public enum TipologiaEnum {
-
-@XmlEnumValue("fruizione") FRUIZIONE(String.valueOf("fruizione")), @XmlEnumValue("erogazione") EROGAZIONE(String.valueOf("erogazione"));
-
+  public enum TipologiaEnum {
+    FRUIZIONE("fruizione"),
+    EROGAZIONE("erogazione");
 
     private String value;
 
-    TipologiaEnum (String v) {
-        this.value = v;
+    TipologiaEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static TipologiaEnum fromValue(String v) {
-        for (TipologiaEnum b : TipologiaEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static TipologiaEnum fromValue(String text) {
+      for (TipologiaEnum b : TipologiaEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "fruizione", description = "")
   private TipologiaEnum tipologia = null;
   
@@ -84,72 +81,66 @@ public enum TipologiaEnum {
   
   @Schema(example = "1", description = "")
   private Integer versioneServizio = null;
-@XmlType(name="ProtocolloEnum")
-@XmlEnum(String.class)
-public enum ProtocolloEnum {
-
-@XmlEnumValue("trasparente") TRASPARENTE(String.valueOf("trasparente")), @XmlEnumValue("spcoop") SPCOOP(String.valueOf("spcoop")), @XmlEnumValue("sdi") SDI(String.valueOf("sdi")), @XmlEnumValue("edelivery") EDELIVERY(String.valueOf("edelivery"));
-
+  public enum ProtocolloEnum {
+    TRASPARENTE("trasparente"),
+    SPCOOP("spcoop"),
+    SDI("sdi"),
+    EDELIVERY("edelivery");
 
     private String value;
 
-    ProtocolloEnum (String v) {
-        this.value = v;
+    ProtocolloEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ProtocolloEnum fromValue(String v) {
-        for (ProtocolloEnum b : ProtocolloEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ProtocolloEnum fromValue(String text) {
+      for (ProtocolloEnum b : ProtocolloEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "trasparente", description = "")
   private ProtocolloEnum protocollo = null;
-@XmlType(name="ContestoEnum")
-@XmlEnum(String.class)
-public enum ContestoEnum {
-
-@XmlEnumValue("applicativo") APPLICATIVO(String.valueOf("applicativo")), @XmlEnumValue("sistema") SISTEMA(String.valueOf("sistema"));
-
+  public enum ContestoEnum {
+    APPLICATIVO("applicativo"),
+    SISTEMA("sistema");
 
     private String value;
 
-    ContestoEnum (String v) {
-        this.value = v;
+    ContestoEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ContestoEnum fromValue(String v) {
-        for (ContestoEnum b : ContestoEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ContestoEnum fromValue(String text) {
+      for (ContestoEnum b : ContestoEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "applicativo", description = "")
   private ContestoEnum contesto = null;
   
@@ -179,38 +170,36 @@ public enum ContestoEnum {
   
   @Schema(description = "")
   private String idMessaggioRisposta = null;
-@XmlType(name="ProfiloCollaborazioneEnum")
-@XmlEnum(String.class)
-public enum ProfiloCollaborazioneEnum {
-
-@XmlEnumValue("oneway") ONEWAY(String.valueOf("oneway")), @XmlEnumValue("sincrono") SINCRONO(String.valueOf("sincrono")), @XmlEnumValue("asincronoAsimmetrico") ASINCRONOASIMMETRICO(String.valueOf("asincronoAsimmetrico")), @XmlEnumValue("asincronoSimmetrico") ASINCRONOSIMMETRICO(String.valueOf("asincronoSimmetrico"));
-
+  public enum ProfiloCollaborazioneEnum {
+    ONEWAY("oneway"),
+    SINCRONO("sincrono"),
+    ASINCRONOASIMMETRICO("asincronoAsimmetrico"),
+    ASINCRONOSIMMETRICO("asincronoSimmetrico");
 
     private String value;
 
-    ProfiloCollaborazioneEnum (String v) {
-        this.value = v;
+    ProfiloCollaborazioneEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static ProfiloCollaborazioneEnum fromValue(String v) {
-        for (ProfiloCollaborazioneEnum b : ProfiloCollaborazioneEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static ProfiloCollaborazioneEnum fromValue(String text) {
+      for (ProfiloCollaborazioneEnum b : ProfiloCollaborazioneEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "oneway", description = "")
   private ProfiloCollaborazioneEnum profiloCollaborazione = null;
   
@@ -252,6 +241,7 @@ public enum ProfiloCollaborazioneEnum {
   **/
   @JsonProperty("id")
   @NotNull
+  @Valid
   public UUID getId() {
     return this.id;
   }
@@ -271,6 +261,7 @@ public enum ProfiloCollaborazioneEnum {
   **/
   @JsonProperty("dataIngressoRichiesta")
   @NotNull
+  @Valid
   public DateTime getDataIngressoRichiesta() {
     return this.dataIngressoRichiesta;
   }
@@ -289,6 +280,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dataUscitaRichiesta
   **/
   @JsonProperty("dataUscitaRichiesta")
+  @Valid
   public DateTime getDataUscitaRichiesta() {
     return this.dataUscitaRichiesta;
   }
@@ -307,6 +299,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dataIngressoRisposta
   **/
   @JsonProperty("dataIngressoRisposta")
+  @Valid
   public DateTime getDataIngressoRisposta() {
     return this.dataIngressoRisposta;
   }
@@ -325,6 +318,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dataUscitaRisposta
   **/
   @JsonProperty("dataUscitaRisposta")
+  @Valid
   public DateTime getDataUscitaRisposta() {
     return this.dataUscitaRisposta;
   }
@@ -343,11 +337,12 @@ public enum ProfiloCollaborazioneEnum {
    * @return tipologia
   **/
   @JsonProperty("tipologia")
+  @Valid
   public String getTipologia() {
     if (this.tipologia == null) {
       return null;
     }
-    return this.tipologia.value();
+    return this.tipologia.getValue();
   }
 
   public void setTipologia(TipologiaEnum tipologia) {
@@ -364,6 +359,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return esito
   **/
   @JsonProperty("esito")
+  @Valid
   public String getEsito() {
     return this.esito;
   }
@@ -382,6 +378,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return fruitoreSoggetto
   **/
   @JsonProperty("fruitoreSoggetto")
+  @Valid
   public String getFruitoreSoggetto() {
     return this.fruitoreSoggetto;
   }
@@ -400,6 +397,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return erogatoreSoggetto
   **/
   @JsonProperty("erogatoreSoggetto")
+  @Valid
   public String getErogatoreSoggetto() {
     return this.erogatoreSoggetto;
   }
@@ -418,6 +416,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return fruitorePdd
   **/
   @JsonProperty("fruitorePdd")
+  @Valid
   public String getFruitorePdd() {
     return this.fruitorePdd;
   }
@@ -436,6 +435,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return erogatorePdd
   **/
   @JsonProperty("erogatorePdd")
+  @Valid
   public String getErogatorePdd() {
     return this.erogatorePdd;
   }
@@ -454,6 +454,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return servizio
   **/
   @JsonProperty("servizio")
+  @Valid
   public String getServizio() {
     return this.servizio;
   }
@@ -472,6 +473,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return azione
   **/
   @JsonProperty("azione")
+  @Valid
   public String getAzione() {
     return this.azione;
   }
@@ -491,6 +493,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return versioneServizio
   **/
   @JsonProperty("versioneServizio")
+  @Valid
  @Min(1)  public Integer getVersioneServizio() {
     return this.versioneServizio;
   }
@@ -509,11 +512,12 @@ public enum ProfiloCollaborazioneEnum {
    * @return protocollo
   **/
   @JsonProperty("protocollo")
+  @Valid
   public String getProtocollo() {
     if (this.protocollo == null) {
       return null;
     }
-    return this.protocollo.value();
+    return this.protocollo.getValue();
   }
 
   public void setProtocollo(ProtocolloEnum protocollo) {
@@ -530,11 +534,12 @@ public enum ProfiloCollaborazioneEnum {
    * @return contesto
   **/
   @JsonProperty("contesto")
+  @Valid
   public String getContesto() {
     if (this.contesto == null) {
       return null;
     }
-    return this.contesto.value();
+    return this.contesto.getValue();
   }
 
   public void setContesto(ContestoEnum contesto) {
@@ -551,6 +556,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return idPdd
   **/
   @JsonProperty("idPdd")
+  @Valid
   public String getIdPdd() {
     return this.idPdd;
   }
@@ -569,6 +575,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return soggettoPdd
   **/
   @JsonProperty("soggettoPdd")
+  @Valid
   public String getSoggettoPdd() {
     return this.soggettoPdd;
   }
@@ -587,6 +594,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return latenzaServizio
   **/
   @JsonProperty("latenzaServizio")
+  @Valid
   public String getLatenzaServizio() {
     return this.latenzaServizio;
   }
@@ -605,6 +613,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return latenzaPorta
   **/
   @JsonProperty("latenzaPorta")
+  @Valid
   public String getLatenzaPorta() {
     return this.latenzaPorta;
   }
@@ -623,6 +632,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return latenzaTotale
   **/
   @JsonProperty("latenzaTotale")
+  @Valid
   public String getLatenzaTotale() {
     return this.latenzaTotale;
   }
@@ -641,6 +651,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return idApplicativoRichiesta
   **/
   @JsonProperty("idApplicativoRichiesta")
+  @Valid
   public String getIdApplicativoRichiesta() {
     return this.idApplicativoRichiesta;
   }
@@ -659,6 +670,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return idApplicativoRisposta
   **/
   @JsonProperty("idApplicativoRisposta")
+  @Valid
   public String getIdApplicativoRisposta() {
     return this.idApplicativoRisposta;
   }
@@ -677,6 +689,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return idMessaggioRichiesta
   **/
   @JsonProperty("idMessaggioRichiesta")
+  @Valid
   public String getIdMessaggioRichiesta() {
     return this.idMessaggioRichiesta;
   }
@@ -695,6 +708,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return idMessaggioRisposta
   **/
   @JsonProperty("idMessaggioRisposta")
+  @Valid
   public String getIdMessaggioRisposta() {
     return this.idMessaggioRisposta;
   }
@@ -713,11 +727,12 @@ public enum ProfiloCollaborazioneEnum {
    * @return profiloCollaborazione
   **/
   @JsonProperty("profiloCollaborazione")
+  @Valid
   public String getProfiloCollaborazione() {
     if (this.profiloCollaborazione == null) {
       return null;
     }
-    return this.profiloCollaborazione.value();
+    return this.profiloCollaborazione.getValue();
   }
 
   public void setProfiloCollaborazione(ProfiloCollaborazioneEnum profiloCollaborazione) {
@@ -734,6 +749,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return servizioApplicativo
   **/
   @JsonProperty("servizioApplicativo")
+  @Valid
   public String getServizioApplicativo() {
     return this.servizioApplicativo;
   }
@@ -752,6 +768,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dimensioniIngressoRichiesta
   **/
   @JsonProperty("dimensioniIngressoRichiesta")
+  @Valid
   public String getDimensioniIngressoRichiesta() {
     return this.dimensioniIngressoRichiesta;
   }
@@ -770,6 +787,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dimensioniUscitaRichiesta
   **/
   @JsonProperty("dimensioniUscitaRichiesta")
+  @Valid
   public String getDimensioniUscitaRichiesta() {
     return this.dimensioniUscitaRichiesta;
   }
@@ -788,6 +806,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dimensioniIngressoRisposta
   **/
   @JsonProperty("dimensioniIngressoRisposta")
+  @Valid
   public String getDimensioniIngressoRisposta() {
     return this.dimensioniIngressoRisposta;
   }
@@ -806,6 +825,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return dimensioniUscitaRisposta
   **/
   @JsonProperty("dimensioniUscitaRisposta")
+  @Valid
   public String getDimensioniUscitaRisposta() {
     return this.dimensioniUscitaRisposta;
   }
@@ -824,6 +844,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return duplicatiRichiesta
   **/
   @JsonProperty("duplicatiRichiesta")
+  @Valid
   public String getDuplicatiRichiesta() {
     return this.duplicatiRichiesta;
   }
@@ -842,6 +863,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return duplicatiRisposta
   **/
   @JsonProperty("duplicatiRisposta")
+  @Valid
   public String getDuplicatiRisposta() {
     return this.duplicatiRisposta;
   }
@@ -860,6 +882,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return eventi
   **/
   @JsonProperty("eventi")
+  @Valid
   public String getEventi() {
     return this.eventi;
   }
@@ -878,6 +901,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return stato
   **/
   @JsonProperty("stato")
+  @Valid
   public String getStato() {
     return this.stato;
   }
@@ -896,6 +920,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return indirizzoClient
   **/
   @JsonProperty("indirizzoClient")
+  @Valid
   public String getIndirizzoClient() {
     return this.indirizzoClient;
   }
@@ -914,6 +939,7 @@ public enum ProfiloCollaborazioneEnum {
    * @return xForwardedFor
   **/
   @JsonProperty("X-Forwarded-For")
+  @Valid
   public String getXForwardedFor() {
     return this.xForwardedFor;
   }

@@ -1,44 +1,41 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.Valid;
 
 public class FiltroIdMessaggio  {
-@XmlType(name="TipoMessaggioEnum")
-@XmlEnum(String.class)
-public enum TipoMessaggioEnum {
-
-@XmlEnumValue("richiesta") RICHIESTA(String.valueOf("richiesta")), @XmlEnumValue("risposta") RISPOSTA(String.valueOf("risposta"));
-
+  public enum TipoMessaggioEnum {
+    RICHIESTA("richiesta"),
+    RISPOSTA("risposta");
 
     private String value;
 
-    TipoMessaggioEnum (String v) {
-        this.value = v;
+    TipoMessaggioEnum(String value) {
+      this.value = value;
     }
-
-    public String value() {
-        return this.value;
+    @JsonValue
+    public String getValue() {
+      return this.value;
     }
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+      return String.valueOf(this.value);
     }
-
-    public static TipoMessaggioEnum fromValue(String v) {
-        for (TipoMessaggioEnum b : TipoMessaggioEnum.values()) {
-            if (String.valueOf(b.value).equals(v)) {
-                return b;
-            }
+    @JsonCreator
+    public static TipoMessaggioEnum fromValue(String text) {
+      for (TipoMessaggioEnum b : TipoMessaggioEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
         }
-        return null;
+      }
+      return null;
     }
-}
-  
+  }  
   @Schema(example = "richiesta", description = "")
   private TipoMessaggioEnum tipoMessaggio = null;
   
@@ -49,11 +46,12 @@ public enum TipoMessaggioEnum {
    * @return tipoMessaggio
   **/
   @JsonProperty("tipoMessaggio")
+  @Valid
   public String getTipoMessaggio() {
     if (this.tipoMessaggio == null) {
       return null;
     }
-    return this.tipoMessaggio.value();
+    return this.tipoMessaggio.getValue();
   }
 
   public void setTipoMessaggio(TipoMessaggioEnum tipoMessaggio) {
@@ -70,6 +68,7 @@ public enum TipoMessaggioEnum {
    * @return idMessaggio
   **/
   @JsonProperty("idMessaggio")
+  @Valid
   public String getIdMessaggio() {
     return this.idMessaggio;
   }

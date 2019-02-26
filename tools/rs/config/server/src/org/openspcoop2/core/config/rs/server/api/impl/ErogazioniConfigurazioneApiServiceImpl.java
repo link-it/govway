@@ -17,11 +17,11 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
 import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
-import org.openspcoop2.utils.jaxrs.fault.FaultCode;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationConfig;
-import org.openspcoop2.utils.jaxrs.impl.AuthorizationManager;
-import org.openspcoop2.utils.jaxrs.impl.BaseImpl;
-import org.openspcoop2.utils.jaxrs.impl.ServiceContext;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 /**
  * GovWay Config API
  *
@@ -47,7 +47,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void addControlloAccessiAutorizzazionePuntualeApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -78,7 +78,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void addControlloAccessiAutorizzazionePuntualeSoggetti(ControlloAccessiAutorizzazioneSoggetto body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -109,7 +109,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void addControlloAccessiAutorizzazioneRuoli(ControlloAccessiAutorizzazioneRuolo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -140,7 +140,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void addControlloAccessiAutorizzazioneScope(ControlloAccessiAutorizzazioneScope body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -171,7 +171,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void deleteControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -202,7 +202,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void deleteControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, String soggettoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -233,7 +233,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void deleteControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, String ruoloAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -264,7 +264,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void deleteControlloAccessiAutorizzazioneScope(String nome, Integer versione, String scopeAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -295,7 +295,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public byte[] downloadControlloAccessiAutorizzazioneXacmlPolicy(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -326,7 +326,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutenticazione getControlloAccessiAutenticazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -357,7 +357,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutorizzazioneView getControlloAccessiAutorizzazione(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -388,7 +388,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutorizzazioneApplicativi getControlloAccessiAutorizzazionePuntualeApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -419,7 +419,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutorizzazioneSoggetti getControlloAccessiAutorizzazionePuntualeSoggetti(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -450,7 +450,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutorizzazioneRuoli getControlloAccessiAutorizzazioneRuoli(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -481,7 +481,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiAutorizzazioneScopes getControlloAccessiAutorizzazioneScope(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -512,7 +512,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ControlloAccessiGestioneToken getControlloAccessiGestioneToken(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -543,7 +543,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public GestioneCors getGestioneCORS(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -574,7 +574,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public ApiImplStato getStato(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -605,7 +605,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void updateControlloAccessiAutenticazione(ControlloAccessiAutenticazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -639,7 +639,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void updateControlloAccessiAutorizzazione(ControlloAccessiAutorizzazione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -671,7 +671,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void updateControlloAccessiGestioneToken(ControlloAccessiGestioneToken body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -704,7 +704,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void updateGestioneCORS(GestioneCors body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
@@ -735,7 +735,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      */
 	@Override
     public void updateStato(ApiImplStato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo) {
-		ServiceContext context = this.getContext();
+		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 

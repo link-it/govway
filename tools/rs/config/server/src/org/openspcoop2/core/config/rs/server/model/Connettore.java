@@ -8,6 +8,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Connettore  {
   
@@ -31,6 +32,7 @@ public class Connettore  {
   **/
   @JsonProperty("endpoint")
   @NotNull
+  @Valid
   public String getEndpoint() {
     return this.endpoint;
   }
@@ -49,6 +51,7 @@ public class Connettore  {
    * @return autenticazioneHttp
   **/
   @JsonProperty("autenticazione_http")
+  @Valid
   public AuthenticationHttpBasic getAutenticazioneHttp() {
     return this.autenticazioneHttp;
   }
@@ -67,6 +70,7 @@ public class Connettore  {
    * @return autenticazioneHttps
   **/
   @JsonProperty("autenticazione_https")
+  @Valid
   public ConnettoreConfigurazioneHttps getAutenticazioneHttps() {
     return this.autenticazioneHttps;
   }
@@ -85,6 +89,7 @@ public class Connettore  {
    * @return proxy
   **/
   @JsonProperty("proxy")
+  @Valid
   public ConnettoreConfigurazioneProxy getProxy() {
     return this.proxy;
   }
@@ -103,6 +108,7 @@ public class Connettore  {
    * @return tempiRisposta
   **/
   @JsonProperty("tempi_risposta")
+  @Valid
   public ConnettoreConfigurazioneTimeout getTempiRisposta() {
     return this.tempiRisposta;
   }

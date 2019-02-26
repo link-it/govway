@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class GestioneCorsAccessControl  {
   
@@ -29,6 +30,7 @@ public class GestioneCorsAccessControl  {
   **/
   @JsonProperty("all_allow_origins")
   @NotNull
+  @Valid
   public Boolean isAllAllowOrigins() {
     return this.allAllowOrigins;
   }
@@ -47,6 +49,7 @@ public class GestioneCorsAccessControl  {
    * @return allowOrigins
   **/
   @JsonProperty("allow_origins")
+  @Valid
   public List<String> getAllowOrigins() {
     return this.allowOrigins;
   }
@@ -70,6 +73,7 @@ public class GestioneCorsAccessControl  {
    * @return allowHeaders
   **/
   @JsonProperty("allow_headers")
+  @Valid
   public List<String> getAllowHeaders() {
     return this.allowHeaders;
   }
@@ -93,6 +97,7 @@ public class GestioneCorsAccessControl  {
    * @return allowMethods
   **/
   @JsonProperty("allow_methods")
+  @Valid
   public List<HttpMethodEnum> getAllowMethods() {
     return this.allowMethods;
   }
@@ -116,6 +121,7 @@ public class GestioneCorsAccessControl  {
    * @return allowCredentials
   **/
   @JsonProperty("allow_credentials")
+  @Valid
   public Boolean isAllowCredentials() {
     return this.allowCredentials;
   }

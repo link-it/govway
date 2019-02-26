@@ -6,6 +6,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneScopes  {
   
@@ -17,6 +18,7 @@ public class ControlloAccessiAutorizzazioneScopes  {
   **/
   @JsonProperty("scope")
   @NotNull
+  @Valid
   public List<String> getScope() {
     return this.scope;
   }

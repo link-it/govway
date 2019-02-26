@@ -146,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+                $ref: 'teamdigitale-components.yaml#/components/schemas/Problem'
   '/monitoraggio/transazioni/{id}':
     get:
       tags:
@@ -174,7 +174,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+                $ref: 'teamdigitale-components.yaml#/components/schemas/Problem'
         '404':
           description: Transazione non esistente
   /transazioni/ricerca:
@@ -234,7 +234,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+                $ref: 'teamdigitale-components.yaml#/components/schemas/Problem'
   /statistiche/report:
     post:
       tags:
@@ -259,7 +259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_rs-api_fault.yaml#/components/schemas/Fault'
+                $ref: 'teamdigitale-components.yaml#/components/schemas/Problem'
 components:
   schemas:
     ReportGrafico:

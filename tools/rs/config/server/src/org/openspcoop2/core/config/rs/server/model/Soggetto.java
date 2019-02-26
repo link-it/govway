@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
 
 public class Soggetto extends BaseCredenziali {
   
@@ -27,7 +28,8 @@ public class Soggetto extends BaseCredenziali {
   **/
   @JsonProperty("nome")
   @NotNull
-  public String getNome() {
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getNome() {
     return this.nome;
   }
 
@@ -45,6 +47,7 @@ public class Soggetto extends BaseCredenziali {
    * @return dominio
   **/
   @JsonProperty("dominio")
+  @Valid
   public DominioEnum getDominio() {
     return this.dominio;
   }
@@ -63,6 +66,7 @@ public class Soggetto extends BaseCredenziali {
    * @return descrizione
   **/
   @JsonProperty("descrizione")
+  @Valid
  @Size(max=255)  public String getDescrizione() {
     return this.descrizione;
   }
@@ -81,6 +85,7 @@ public class Soggetto extends BaseCredenziali {
    * @return ruoli
   **/
   @JsonProperty("ruoli")
+  @Valid
   public List<String> getRuoli() {
     return this.ruoli;
   }
