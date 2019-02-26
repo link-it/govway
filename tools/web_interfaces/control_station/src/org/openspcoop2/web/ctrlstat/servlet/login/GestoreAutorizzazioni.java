@@ -251,6 +251,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RESPONSE_CACHING);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA);
+		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_TRASFORMAZIONI);
 		
 		/** Permessi associati alla gestione delle porte delegate */
 		this.permessiPorteDelegate = new PermessiUtente();

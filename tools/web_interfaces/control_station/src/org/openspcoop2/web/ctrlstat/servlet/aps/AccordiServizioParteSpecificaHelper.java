@@ -3759,6 +3759,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaMTOM) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MTOM);
 				}
+				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI);
 				if(visualizzaCorrelazione) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRACCIAMENTO);
 				}
@@ -4076,6 +4077,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
+					
+					// trasformazioni
+					// trasformazioni
+					de = new DataElement();
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
+					if(contaListe) {
+						Search searchPolicy = new Search(true);
+						List<TrasformazioneRegola> listaTrasformazioni = this.porteDelegateCore.porteDelegateTrasformazioniList(pdAssociata.getId(), searchPolicy);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) listaTrasformazioni.size()); 
+					}
+					else {
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					de.allineaTdAlCentro();
+					e.addElement(de);
 	
 					// Correlazione applicativa
 					if(visualizzaCorrelazione) {

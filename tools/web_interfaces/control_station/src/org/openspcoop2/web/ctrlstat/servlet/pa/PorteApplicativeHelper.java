@@ -4309,6 +4309,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						return false;
 					}
 				}
+				
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
+					}
+				}
 			
 				if(StringUtils.isNotEmpty(statusMinS)) {
 					try {
@@ -4388,8 +4395,6 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		}
 	}
 	
-	
-	// Prepara la lista di soggetti associati alla pa
 	public void preparePorteAppTrasformazioniRegolaList(String nomePorta, ISearch ricerca, List<TrasformazioneRegola> lista) throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate

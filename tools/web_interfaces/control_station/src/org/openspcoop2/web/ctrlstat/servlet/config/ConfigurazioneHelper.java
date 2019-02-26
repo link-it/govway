@@ -2032,6 +2032,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 				}
 				
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
+					}
+				}
+				
 				if(StringUtils.isNotEmpty(statusMinS)) {
 					try {
 						statusMin = Integer.parseInt(statusMinS);

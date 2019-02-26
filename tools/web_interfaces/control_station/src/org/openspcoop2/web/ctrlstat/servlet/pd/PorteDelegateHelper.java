@@ -46,6 +46,12 @@ import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRisposta;
+import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -3451,7 +3457,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(asps.getIdAccordo());
 					ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(as.getServiceBinding());
 					String labelConfigurazione = gestioneConfigurazioni ? ErogazioniCostanti.LABEL_ASPS_GESTIONE_CONFIGURAZIONI : 
-						(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE);
+						(gestioneGruppi ? MessageFormat.format(ErogazioniCostanti.LABEL_ASPS_GESTIONE_GRUPPI_CON_PARAMETRO, this.getLabelAzioni(serviceBinding)) : AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_DELEGATE);
 					
 					lstParam.add(new Parameter(labelConfigurazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_PORTE_DELEGATE_LIST ,
 							pIdFruizione,pIdServizio,pIdSoggettoFruitore, pTipoSoggettoFruitore, pNomeSoggettoFruitore));
@@ -3883,105 +3889,883 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 	}
 	
 	// Controlla i dati del registro
-		public boolean responseCachingConfigurazioneRegolaCheckData(TipoOperazione tipoOp, long idPorta) throws Exception {
+	public boolean responseCachingConfigurazioneRegolaCheckData(TipoOperazione tipoOp, long idPorta) throws Exception {
 
-			try{
+		try{
+			
+			String returnCode = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+			String statusMinS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
+			String statusMaxS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
+			String faultS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
+			String cacheSecondsS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
+			
+			Integer statusMin = null;
+			Integer statusMax = null;
+			Integer cacheSeconds = null;
+			boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
+			
+			if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
 				
-				String returnCode = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
-				String statusMinS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
-				String statusMaxS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
-				String faultS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
-				String cacheSecondsS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS);
-				
-				Integer statusMin = null;
-				Integer statusMax = null;
-				Integer cacheSeconds = null;
-				boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
-				
-				if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
-					
-					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-						if(StringUtils.isEmpty(statusMinS)) {
-							this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
-							return false;
-						}
-					}
-					
-					if(StringUtils.isNotEmpty(statusMinS)) {
-						try {
-							statusMin = Integer.parseInt(statusMinS);
-							
-							if(statusMin < 1) {
-								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-							if(statusMin > 999) {
-								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-								return false;
-							}
-							
-							// return code esatto, ho salvato lo stesso valore nel campo return code;
-							if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
-								statusMax = statusMin;
-						}catch(Exception e) {
-							this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
-							return false;
-						}
-					}
-					
-					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
-						if(StringUtils.isNotEmpty(statusMaxS)) {
-							try {
-								statusMax = Integer.parseInt(statusMaxS);
-								
-								if(statusMax < 1) {
-									this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-									return false;
-								}
-								if(statusMax > 999) {
-									this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-									return false;
-								}
-							}catch(Exception e) {
-								this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
-								return false;
-							}
-						}
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+					if(StringUtils.isEmpty(statusMinS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
 					}
 				}
 				
-				if(StringUtils.isNotEmpty(cacheSecondsS)) {
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isEmpty(statusMinS) || StringUtils.isEmpty(statusMaxS)) {
+						this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
+						return false;
+					}
+				}
+				
+				if(StringUtils.isNotEmpty(statusMinS)) {
 					try {
-						cacheSeconds = Integer.parseInt(cacheSecondsS);
+						statusMin = Integer.parseInt(statusMinS);
 						
-						if(cacheSeconds < 1) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+						if(statusMin < 1) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
 							return false;
 						}
+						if(statusMin > 999) {
+							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+							return false;
+						}
+						
+						// return code esatto, ho salvato lo stesso valore nel campo return code;
+						if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+							statusMax = statusMin;
 					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
+						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
 						return false;
 					}
 				}
 				
-				
-
-				// Se tipoOp = add, controllo che il registro non sia gia' stato
-				// registrata
-				if (tipoOp.equals(TipoOperazione.ADD)) {
-					boolean giaRegistrato = this.porteDelegateCore.existsResponseCachingConfigurazioneRegola(idPorta,statusMin, statusMax, fault, cacheSeconds);
-
-					if (giaRegistrato) {
-						this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Response Caching con in parametri indicati.");
-						return false;
+				if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+					if(StringUtils.isNotEmpty(statusMaxS)) {
+						try {
+							statusMax = Integer.parseInt(statusMaxS);
+							
+							if(statusMax < 1) {
+								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+							if(statusMax > 999) {
+								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+						}catch(Exception e) {
+							this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
+							return false;
+						}
 					}
 				}
-
-				return true;
-
-			} catch (Exception e) {
-				this.log.error("Exception: " + e.getMessage(), e);
-				throw new Exception(e);
 			}
+			
+			if(StringUtils.isNotEmpty(cacheSecondsS)) {
+				try {
+					cacheSeconds = Integer.parseInt(cacheSecondsS);
+					
+					if(cacheSeconds < 1) {
+						this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+						return false;
+					}
+				}catch(Exception e) {
+					this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_CACHE_TIMEOUT_SECONDS + " non &egrave; valido.");
+					return false;
+				}
+			}
+			
+			
+
+			// Se tipoOp = add, controllo che il registro non sia gia' stato
+			// registrata
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean giaRegistrato = this.porteDelegateCore.existsResponseCachingConfigurazioneRegola(idPorta,statusMin, statusMax, fault, cacheSeconds);
+
+				if (giaRegistrato) {
+					this.pd.setMessage("&Egrave; gi&agrave; presente una Regola di Response Caching con in parametri indicati.");
+					return false;
+				}
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
 		}
+	}
+		
+	public void preparePorteDelegateTrasformazioniRegolaList(String nomePorta, ISearch ricerca, List<TrasformazioneRegola> lista) throws Exception {
+		try {
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			
+
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI, 
+					pId, pIdSoggetto, pIdAsps, pIdFrizione);
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+			
+			// Prendo il nome e il tipo del servizio
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(asps.getIdAccordo()); 
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_AZIONI,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_PATTERN,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_APPLICABILITA_CT};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegola> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegola regola = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Azioni
+					DataElement de = new DataElement();
+					de.setIdToRemove(regola.getId() + "");
+					
+					TrasformazioneRegolaApplicabilitaRichiesta applicabilita = regola.getApplicabilita();
+					
+					List<String> listaAzioni = applicabilita != null ? applicabilita.getAzioneList() : null;
+					String nomiAzioni = "";
+					if((listaAzioni != null && listaAzioni.size() > 0) && azioni.size()>0) {
+						
+						StringBuffer sb = new StringBuffer();
+						Iterator<String> itAz = azioni.keySet().iterator();
+						while (itAz.hasNext()) {
+							String idAzione = (String) itAz.next();
+							if(listaAzioni.contains(idAzione)) {
+								if(sb.length() >0)
+									sb.append(", ");
+								
+								sb.append(azioni.get(idAzione));
+							}
+						}
+						nomiAzioni = sb.toString();
+					}
+					
+					if(StringUtils.isEmpty(nomiAzioni))
+						nomiAzioni = CostantiControlStation.LABEL_QUALSIASI;
+					
+					de.setValue(nomiAzioni);
+					de.setToolTip(nomiAzioni);
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFrizione, pNomePorta, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, regola.getId() + "")
+							);
+					e.addElement(de);
+					
+					// Pattern
+					de = new DataElement();
+					de.setValue((applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;");
+					e.addElement(de);
+					
+					
+					// Content-type
+					
+					String ct = "";
+					List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
+					if(contentTypeList != null && contentTypeList.size() > 0) {
+						StringBuffer sb = new StringBuffer();
+						for (String string : contentTypeList) {
+							if(sb.length() >0)
+								sb.append(", ");
+							
+							sb.append(string);
+						}
+						ct =sb.toString();
+					}
+					
+					if(StringUtils.isEmpty(ct))
+						ct = "&nbsp;";
+					
+					
+					de = new DataElement();
+					de.setValue(ct);
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteDelegateTrasformazioniRispostaList(String nomePorta,  long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaRisposta> lista) throws Exception {
+		try {
+			
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
+			
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+			
+			Trasformazioni trasformazioni = myPD.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+			
+			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			
+			String labelPag = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
+			
+			lstParam.add(new Parameter(labelPag,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_STATUS,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_PATTERN,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_APPLICABILITA_CT};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaRisposta> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaRisposta risposta = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Status Code
+					DataElement de = new DataElement();
+					de.setIdToRemove(risposta.getId() + "");
+					
+					TrasformazioneRegolaApplicabilitaRisposta applicabilita = risposta.getApplicabilita();
+					
+					Integer statusMin = applicabilita != null ? applicabilita.getReturnCodeMin() : null;
+					Integer statusMax = applicabilita != null ? applicabilita.getReturnCodeMax() : null;
+					
+					// se e' stato salvato il valore 0 lo tratto come null
+					if(statusMin != null && statusMin.intValue() <= 0) {
+						statusMin = null;
+					}
+					
+					if(statusMax != null && statusMax.intValue() <= 0) {
+						statusMax = null;
+					}
+					
+					String statusValue = null;
+					// Intervallo
+					if(statusMin != null && statusMax != null) {
+						if(statusMax.longValue() == statusMin.longValue()) // esatto
+							statusValue = statusMin + "";
+						else 
+							statusValue = "[" + statusMin + " - " + statusMax + "]";
+					} else if(statusMin != null && statusMax == null) { // definito solo l'estremo inferiore
+						statusValue = "&gt;" + statusMin;
+					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
+						statusValue = "&lt;" + statusMax;
+					} else { //entrambi null 
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+					}
+					
+					de.setValue(statusValue);
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, risposta.getId() + "")
+							);
+					e.addElement(de);
+					
+					// Pattern
+					de = new DataElement();
+					de.setValue((applicabilita != null && applicabilita.getPattern() != null) ? applicabilita.getPattern() + "" : "&nbsp;");
+					e.addElement(de);
+					
+					
+					// Content-type
+					String ct = "";
+					List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
+					if(contentTypeList != null && contentTypeList.size() > 0) {
+						StringBuffer sb = new StringBuffer();
+						for (String string : contentTypeList) {
+							if(sb.length() >0)
+								sb.append(", ");
+							
+							sb.append(string);
+						}
+						ct =sb.toString();
+					}
+					
+					if(StringUtils.isEmpty(ct))
+						ct = "&nbsp;";
+					
+					
+					de = new DataElement();
+					de.setValue(ct);
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteDelegateTrasformazioniRispostaHeaderList(String nomePorta,  long idTrasformazione, long idTrasformazioneRisposta,  ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			Parameter pIdTrasformazioneRisposta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA, idTrasformazioneRisposta + "");
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,pIdTrasformazioneRisposta);
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+			
+			Trasformazioni trasformazioni = myPD.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			TrasformazioneRegolaRisposta oldRisposta = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+			
+			for (int j = 0; j < oldRegola.sizeRispostaList(); j++) {
+				TrasformazioneRegolaRisposta risposta = oldRegola.getRisposta(j);
+				if (risposta.getId().longValue() == idTrasformazioneRisposta) {
+					oldRisposta = risposta;
+					break;
+				}
+			}
+			
+			// TODO
+			String nomeRisposta = "Modifica Risposta"; // oldRisposta.getApplicabilita().getNome();
+			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			
+			List<Parameter> parametriInvocazioneServletTrasformazioniRisposta = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRisposta.add(pId);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdFruizione);
+			parametriInvocazioneServletTrasformazioniRisposta.add(pIdTrasformazione);
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE,PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_LIST,parametriInvocazioneServletTrasformazioniRisposta));
+			
+			lstParam.add(new Parameter(nomeRisposta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,pIdTrasformazioneRisposta));
+			
+			String labelPag = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADERS;
+			
+			lstParam.add(new Parameter(labelPag,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_NOME,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_TIPO,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaParametro parametro = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Nome
+					DataElement de = new DataElement();
+					de.setIdToRemove(parametro.getId() + "");
+					de.setValue(parametro.getNome());
+					
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTA_HEADER_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,
+							pIdTrasformazioneRisposta,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RISPOSTA_HEADER, parametro.getId() + "")
+							);
+					e.addElement(de);
+					
+					// Tipo
+					de = new DataElement();
+					de.setValue(parametro.getConversioneTipo().getValue());
+					e.addElement(de);
+					
+					// Valore
+					de = new DataElement();
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteDelegateTrasformazioniRichiestaHeaderList(String nomePorta,  long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+			
+			Trasformazioni trasformazioni = myPD.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+			
+			// TODO
+			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdFruizione);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdTrasformazione);
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,parametriInvocazioneServletTrasformazioniRichiesta));
+			
+			String labelPag = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADERS;
+			
+			lstParam.add(new Parameter(labelPag,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_NOME,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_TIPO,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_VALORE};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaParametro parametro = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Nome
+					DataElement de = new DataElement();
+					de.setIdToRemove(parametro.getId() + "");
+					de.setValue(parametro.getNome());
+					
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_HEADER_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RICHIESTA_HEADER, parametro.getId() + "")
+							);
+					e.addElement(de);
+					
+					// Tipo
+					de = new DataElement();
+					de.setValue(parametro.getConversioneTipo().getValue());
+					e.addElement(de);
+					
+					// Valore
+					de = new DataElement();
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteDelegateTrasformazioniRichiestaUrlParameterList(String nomePorta,  long idTrasformazione, ISearch ricerca, List<TrasformazioneRegolaParametro> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFruizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdTrasformazione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE, idTrasformazione+"");
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione);
+
+			int idLista = Liste.PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			this.pd.setSearchDescription("");
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome());
+			
+			Trasformazioni trasformazioni = myPD.getTrasformazioni();
+			TrasformazioneRegola oldRegola = null;
+			for (TrasformazioneRegola reg : trasformazioni.getRegolaList()) {
+				if(reg.getId().longValue() == idTrasformazione) {
+					oldRegola = reg;
+					break;
+				}
+			}
+			
+			// TODO
+			String nomeTrasformazione = "Modifica Trasformazione" ; // oldRegola.getApplicabilita().getNome();
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI,
+						PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI,
+						myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione));
+			
+			
+			lstParam.add(new Parameter(nomeTrasformazione, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_CHANGE, 
+					pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione));
+			
+			List<Parameter> parametriInvocazioneServletTrasformazioniRichiesta = new ArrayList<Parameter>();
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pId);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdSoggetto);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdAsps);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdFruizione);
+			parametriInvocazioneServletTrasformazioniRichiesta.add(pIdTrasformazione);
+			
+			lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,
+					PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA,parametriInvocazioneServletTrasformazioniRichiesta));
+			
+			String labelPag = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRI;
+			
+			lstParam.add(new Parameter(labelPag,null));
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// setto le label delle colonne
+			String[] labels = { PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO,
+					PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_VALORE};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<TrasformazioneRegolaParametro> it = lista.iterator();
+				while (it.hasNext()) {
+					TrasformazioneRegolaParametro parametro = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					
+					// Nome
+					DataElement de = new DataElement();
+					de.setIdToRemove(parametro.getId() + "");
+					de.setValue(parametro.getNome());
+					
+					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_CHANGE, 
+							pId, pIdSoggetto, pIdAsps, pIdFruizione, pIdTrasformazione,
+							new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_TRASFORMAZIONE_RICHIESTA_PARAMETRO, parametro.getId() + "")
+							);
+					e.addElement(de);
+					
+					// Tipo
+					de = new DataElement();
+					de.setValue(parametro.getConversioneTipo().getValue());
+					e.addElement(de);
+					
+					// Valore
+					de = new DataElement();
+					de.setValue(StringUtils.isNotEmpty(parametro.getValore()) ? parametro.getValore() :  "&nbsp;" );
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 }
