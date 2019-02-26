@@ -40,14 +40,26 @@ public class TestSwagger2 {
 
 	public static void main(String[] args) throws Exception {
 
-		URI jsonUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.json").toURI();
-		URI yamlUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.yaml").toURI();
-		String baseUri = "http://petstore.swagger.io/v2";
-
-		Test.test(jsonUri,"json", ApiFormats.SWAGGER_2, baseUri);
+		String tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = args[0];
+		}
 		
-		System.out.println("\n\n\n==============================================================");
-		Test.test(yamlUri,"yaml", ApiFormats.SWAGGER_2, baseUri);
+		String baseUri = "http://petstore.swagger.io/v2";
+		
+		if(tipo==null || "json".equalsIgnoreCase(tipo)) {
+			URI jsonUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.json").toURI();
+			Test.test(jsonUri,"json", ApiFormats.SWAGGER_2, baseUri);
+		}
+		
+		if(tipo==null) {
+			System.out.println("\n\n\n==============================================================");
+		}
+		
+		if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
+			URI yamlUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.yaml").toURI();
+			Test.test(yamlUri,"yaml", ApiFormats.SWAGGER_2, baseUri);
+		}
 
 	}
 

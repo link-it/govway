@@ -240,6 +240,7 @@
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
+			<include name="testsuite/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
 		</fileset>
 	</path>
@@ -261,6 +262,7 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
+			<param name="buildUtilsTest" value="true"/>
 		</antcall>
 		
 		<antcall target="build_openspcoop2_all" >
@@ -270,6 +272,8 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
+			<param name="buildUtilsTest" value="true"/>
+			<param name="buildPddTest" value="true"/>
 		</antcall>
 				
 		<antcall target="compile_spcoop_plugin" >

@@ -43,30 +43,65 @@ public class RFC2047Utilities {
 		String string_iso_8859_1 = "für psychisch";
 		String string_us_ascii = "fur psychisch";
 		
-		System.out.println("IS ["+string_iso_8859_1+"] in CHARSET ISO_8859_1 ?: "+isAllCharactersInCharset(string_iso_8859_1, Charset.ISO_8859_1));
-		System.out.println("IS ["+string_iso_8859_1+"] in CHARSET US_ASCII ?: "+isAllCharactersInCharset(string_iso_8859_1, Charset.US_ASCII));
-		System.out.println("IS ["+string_us_ascii+"] in CHARSET ISO_8859_1 ?: "+isAllCharactersInCharset(string_us_ascii, Charset.ISO_8859_1));
-		System.out.println("IS ["+string_us_ascii+"] in CHARSET US_ASCII ?: "+isAllCharactersInCharset(string_us_ascii, Charset.US_ASCII));
+		boolean v = isAllCharactersInCharset(string_iso_8859_1, Charset.ISO_8859_1);
+		System.out.println("IS ["+string_iso_8859_1+"] in CHARSET ISO_8859_1 ?: "+v);
+		if(!v) {
+			throw new Exception("Riscontrato valore diverso da quello atteso");
+		}
+		
+		v = isAllCharactersInCharset(string_iso_8859_1, Charset.US_ASCII);
+		System.out.println("IS ["+string_iso_8859_1+"] in CHARSET US_ASCII ?: "+v);
+		if(v) {
+			throw new Exception("Riscontrato valore diverso da quello atteso");
+		}
+		
+		v = isAllCharactersInCharset(string_us_ascii, Charset.ISO_8859_1);
+		System.out.println("IS ["+string_us_ascii+"] in CHARSET ISO_8859_1 ?: "+v);
+		if(!v) {
+			throw new Exception("Riscontrato valore diverso da quello atteso");
+		}
+		
+		v = isAllCharactersInCharset(string_us_ascii, Charset.US_ASCII);
+		System.out.println("IS ["+string_us_ascii+"] in CHARSET US_ASCII ?: "+v);
+		if(!v) {
+			throw new Exception("Riscontrato valore diverso da quello atteso");
+		}
 		
 		System.out.println("\n*** RFC2047 ISO_8859_1 B ***");
 		String var_RFC2047_ISO_8859_1_B = encode(string_iso_8859_1, Charset.ISO_8859_1, RFC2047Encoding.B);
 		System.out.println("["+string_iso_8859_1+"] encoded in RFC2047("+Charset.ISO_8859_1+","+RFC2047Encoding.B+"): "+var_RFC2047_ISO_8859_1_B);
-		System.out.println("Decode: "+decode(var_RFC2047_ISO_8859_1_B));
+		String decode = decode(var_RFC2047_ISO_8859_1_B);
+		System.out.println("Decode: "+decode);
+		if(!string_iso_8859_1.equals(decode)) {
+			throw new Exception("Valore decodificato diverso dal sorgente");
+		}
 		
 		System.out.println("\n*** RFC2047 ISO_8859_1 Q ***");
 		String var_RFC2047_ISO_8859_1_Q = encode(string_iso_8859_1, Charset.ISO_8859_1, RFC2047Encoding.Q);
 		System.out.println("["+string_iso_8859_1+"] encoded in RFC2047("+Charset.ISO_8859_1+","+RFC2047Encoding.Q+"): "+var_RFC2047_ISO_8859_1_Q);
-		System.out.println("Decode: "+decode(var_RFC2047_ISO_8859_1_Q));
+		decode = decode(var_RFC2047_ISO_8859_1_Q);
+		System.out.println("Decode: "+decode);
+		if(!string_iso_8859_1.equals(decode)) {
+			throw new Exception("Valore decodificato diverso dal sorgente");
+		}
 		
 		System.out.println("\n*** RFC2047 US_ASCII B ***");
 		String var_RFC2047_US_ASCII_B = encode(string_iso_8859_1, Charset.US_ASCII, RFC2047Encoding.B);
 		System.out.println("["+string_iso_8859_1+"] encoded in RFC2047("+Charset.US_ASCII+","+RFC2047Encoding.B+"): "+var_RFC2047_US_ASCII_B);
-		System.out.println("Decode: "+decode(var_RFC2047_US_ASCII_B));
+		decode = decode(var_RFC2047_US_ASCII_B);
+		System.out.println("Decode: "+decode);
+		if(!string_iso_8859_1.equals(decode)) {
+			throw new Exception("Valore decodificato diverso dal sorgente");
+		}
 		
 		System.out.println("\n*** RFC2047 US_ASCII Q ***");
 		String var_RFC2047_US_ASCII_Q = encode(string_iso_8859_1, Charset.US_ASCII, RFC2047Encoding.Q);
 		System.out.println("["+string_iso_8859_1+"] encoded in RFC2047("+Charset.US_ASCII+","+RFC2047Encoding.Q+"): "+var_RFC2047_US_ASCII_Q);
-		System.out.println("Decode: "+decode(var_RFC2047_US_ASCII_Q));
+		decode = decode(var_RFC2047_US_ASCII_Q);
+		System.out.println("Decode: "+decode);
+		if(!string_iso_8859_1.equals(decode)) {
+			throw new Exception("Valore decodificato diverso dal sorgente");
+		}
 	}
 	
 	public static String encode(String value,Charset charset,RFC2047Encoding encoding) throws UtilsException{

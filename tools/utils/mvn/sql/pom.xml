@@ -14,6 +14,10 @@
 	</parent>
 
 	<properties>
+		<!-- testsuite (config) -->
+		<testsuite.haltOnFailure>true</testsuite.haltOnFailure>
+		<testsuite.output>../../../../testsuite-result/utils-sql</testsuite.output>
+		<testsuite.showStackFrames>true</testsuite.showStackFrames>
 		<testsuite.utils.sql.testIdle>true</testsuite.utils.sql.testIdle>
 	</properties>
 
@@ -30,7 +34,6 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -62,12 +65,7 @@
 						<configuration>
 							<target>
 								<property name="rootDir" location="../../../../" />
-								<path id="classpath_run_dist" >
-									<fileset dir="${rootDir}/dist" >
-										<include name="*.jar"/>
-									</fileset>
-								</path>
-								<path id="classpath_run_lib" >
+								<path id="classpath_run" >
 									<pathelement path="../../src"/>
 									<pathelement path="../../deploy/properties"/>
 									<fileset dir="${rootDir}/lib" >
@@ -80,101 +78,39 @@
 									<fileset dir="../../lib" >
 										<include name="*.jar"/>
 									</fileset>
+									<fileset dir="${rootDir}/dist" >
+										<include name="*.jar"/>
+									</fileset>
 								</path>
 
 								<taskdef resource="net/sf/antcontrib/antlib.xml"
-									classpathref="classpath_run_lib" />
+									classpathref="classpath_run" />
+								<taskdef classpathref="classpath_run"
+								     name="testng"
+								     classname="org.testng.TestNGAntTask"/>
 
-								<echo message="Run test 'Semaphore' ..."/>
-								<java classname="org.openspcoop2.utils.semaphore.ClientTest" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-									<arg value="${testsuite.utils.sql.testIdle}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'Semaphore' ok"/>
+								<delete dir="build_testunits"/>
+								<unzip dest="build_testunits">
+									<fileset dir="${rootDir}/dist">
+										<include name="openspcoop2_utils-test_*.jar"/>
+									</fileset>
+								</unzip>
 
-								<echo message="Run test 'Serial Id Generator' ..."/>
-								<java classname="org.openspcoop2.utils.id.serial.ClientTest" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'Serial Id Generator' ok"/>
+								<echo message="Avvio TestSuite (gruppo: utils.sql) (haltOnFailure:${testsuite.haltOnFailure})" />
+								<testng classpathref="classpath_run"
+									outputdir="${testsuite.output}"
+									haltonfailure="${testsuite.haltOnFailure}" groups="utils.sql">
+									<classfileset dir="build_testunits" includes="**/*.class"/>
+									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+									<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
+									<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
+                        						<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />
+                        						<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
+	                       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
+									<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+								</testng>
 
-								<echo message="Run test 'JDBC Adapter' ..."/>
-								<java classname="org.openspcoop2.utils.jdbc.TestJDBCAdapter" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'JDBC Adapter' ok"/>
-
-								<echo message="Run test 'Key Generator' ..."/>
-								<java classname="org.openspcoop2.utils.jdbc.TestKeyGenerator" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'Key Generator' ok"/>
-
-								<echo message="Run test 'Sql Generator' ..."/>
-								<java classname="org.openspcoop2.utils.sql.ClientTest" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'Sql Generator' ok"/>
-
-								<echo message="Run test 'Sonde' ..."/>
-								<java classname="org.openspcoop2.utils.sonde.ClientTest" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'Sonde' ok"/>
+								<delete dir="build_testunits"/>
 
 							</target>
 						</configuration>
@@ -208,7 +144,6 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-
 		</plugins>
 	</build>
 

@@ -13,6 +13,14 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
+	<properties>
+		<!-- testsuite (config) -->
+		<testsuite.haltOnFailure>true</testsuite.haltOnFailure>
+		<testsuite.output>../../../testsuite-result/pdd-sql</testsuite.output>
+		<testsuite.showStackFrames>true</testsuite.showStackFrames>
+		<testsuite.utils.sql.testIdle>true</testsuite.utils.sql.testIdle>
+	</properties>
+
 	<dependencies>
 
 		<dependency>
@@ -58,12 +66,7 @@
 						<configuration>
 							<target>
 								<property name="rootDir" location="../../../" />
-								<path id="classpath_run_dist" >
-									<fileset dir="${rootDir}/dist" >
-										<include name="*.jar"/>
-									</fileset>
-								</path>
-								<path id="classpath_run_lib" >
+								<path id="classpath_run" >
 									<pathelement path="../../src"/>
 									<pathelement path="../../deploy/properties"/>
 									<fileset dir="${rootDir}/lib" >
@@ -76,26 +79,39 @@
 									<fileset dir="../../lib" >
 										<include name="*.jar"/>
 									</fileset>
+									<fileset dir="${rootDir}/dist" >
+										<include name="*.jar"/>
+									</fileset>
 								</path>
 
 								<taskdef resource="net/sf/antcontrib/antlib.xml"
-									classpathref="classpath_run_lib" />
+									classpathref="classpath_run" />
+								<taskdef classpathref="classpath_run"
+								     name="testng"
+								     classname="org.testng.TestNGAntTask"/>
 
-								<echo message="Run test 'GestoreRepositoryBuste' ..."/>
-								<java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" 
-									fork="true" failonerror="true">
-									<arg value="${testsuite.utils.sql.tipoDatabase}" />
-									<arg value="${testsuite.utils.sql.connectionUrl}" />
-                        						<arg value="${testsuite.utils.sql.username}" />
-                        						<arg value="${testsuite.utils.sql.password}" />
-	                       						<arg value="${testsuite.utils.sql.driverJdbc}" />
-                        						<classpath>
-										<path refid="classpath_run_lib" />
-										<path refid="classpath_run_dist" />
-									</classpath>
-								</java>
-								<echo message="Run test 'GestoreRepositoryBuste' ok"/>
+								<delete dir="build_testunits"/>
+								<unzip dest="build_testunits">
+									<fileset dir="${rootDir}/dist">
+										<include name="openspcoop2_pdd-test_*.jar"/>
+									</fileset>
+								</unzip>
 
+								<echo message="Avvio TestSuite (gruppo: pdd.sql) (haltOnFailure:${testsuite.haltOnFailure})" />
+								<testng classpathref="classpath_run"
+									outputdir="${testsuite.output}"
+									haltonfailure="${testsuite.haltOnFailure}" groups="pdd.sql">
+									<classfileset dir="build_testunits" includes="**/*.class"/>
+									<jvmarg value="-Dtestng.show.stack.frames=${testsuite.showStackFrames}" />
+									<jvmarg value="-DtipoDatabase=${testsuite.utils.sql.tipoDatabase}" />
+									<jvmarg value="-DconnectionUrl=${testsuite.utils.sql.connectionUrl}" />
+                        						<jvmarg value="-Dusername=${testsuite.utils.sql.username}" />
+                        						<jvmarg value="-Dpassword=${testsuite.utils.sql.password}" />
+	                       						<jvmarg value="-DdriverJdbc=${testsuite.utils.sql.driverJdbc}" />
+									<jvmarg value="-DtestIdle=${testsuite.utils.sql.testIdle}" />
+								</testng>
+
+								<delete dir="build_testunits"/>
 							</target>
 						</configuration>
 						<goals>

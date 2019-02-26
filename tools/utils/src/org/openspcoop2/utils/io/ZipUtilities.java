@@ -72,6 +72,7 @@ public class ZipUtilities {
 		}
 		else {
 			System.out.println("DIVERSO");
+			throw new Exception("Diverso!");
 		}
 		
 		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 

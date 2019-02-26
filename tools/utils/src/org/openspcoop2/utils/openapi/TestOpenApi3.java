@@ -40,14 +40,26 @@ public class TestOpenApi3 {
 
 	public static void main(String[] args) throws Exception {
 
-		URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
-		URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
+		String tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = args[0];
+		}
+		
 		String baseUri = "http://petstore.swagger.io/api";
 
-		Test.test(jsonUri,"json", ApiFormats.OPEN_API_3, baseUri);
+		if(tipo==null || "json".equalsIgnoreCase(tipo)) {
+			URI jsonUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.json").toURI();
+			Test.test(jsonUri,"json", ApiFormats.OPEN_API_3, baseUri);
+		}
 		
-		System.out.println("\n\n\n==============================================================");
-		Test.test(yamlUri,"yaml", ApiFormats.OPEN_API_3, baseUri);
+		if(tipo==null) {
+			System.out.println("\n\n\n==============================================================");
+		}
+		
+		if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
+			URI yamlUri = TestOpenApi3.class.getResource("/org/openspcoop2/utils/openapi/testOpenAPI_3.0.yaml").toURI();
+			Test.test(yamlUri,"yaml", ApiFormats.OPEN_API_3, baseUri);
+		}
 
 	}
 

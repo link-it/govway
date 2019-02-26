@@ -50,27 +50,49 @@ public class CompressorUtilities {
 
 	public static void main(String [] args) throws Exception{
 		
+		CompressorType tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = CompressorType.valueOf(args[0]);
+		}
+		
 		String test = "<prova xmlns=\"www.test.it\">PROVA</prova>";
 		byte[]testB = test.getBytes();
 		
-		System.out.println("\n\n=== DEFLATER ===");
-		byte [] compress = compress(testB, CompressorType.DEFLATER);
-		System.out.println("Compresso, dimensione: "+compress.length);
-		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.DEFLATER)));
+		if(tipo==null || CompressorType.DEFLATER.equals(tipo)) {
+			System.out.println("\n\n=== DEFLATER ===");
+			byte [] compress = compress(testB, CompressorType.DEFLATER);
+			System.out.println("Compresso, dimensione: "+compress.length);
+			System.out.println("Compresso, in stringa: "+new String(compress));
+			String decompresso = new String(decompress(compress, CompressorType.DEFLATER));
+			System.out.println("De-Compresso, in stringa: "+decompresso);
+			if(!decompresso.equals(test)) {
+				throw new Exception("Informazione decompressa non uguale al sorgente");
+			}
+		}
 		
-		System.out.println("\n\n=== GZIP ===");
-		compress = compress(testB, CompressorType.GZIP);
-		System.out.println("Compresso, dimensione: "+compress.length);
-		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.GZIP)));
-		
-		System.out.println("\n\n=== ZIP ===");
-		compress = compress(testB, CompressorType.ZIP);
-		System.out.println("Compresso, dimensione: "+compress.length);
-		System.out.println("Compresso, in stringa: "+new String(compress));
-		System.out.println("De-Compresso, in stringa: "+new String(decompress(compress, CompressorType.ZIP)));
-		
+		if(tipo==null || CompressorType.GZIP.equals(tipo)) {
+			System.out.println("\n\n=== GZIP ===");
+			byte [] compress = compress(testB, CompressorType.GZIP);
+			System.out.println("Compresso, dimensione: "+compress.length);
+			System.out.println("Compresso, in stringa: "+new String(compress));
+			String decompresso = new String(decompress(compress, CompressorType.GZIP));
+			System.out.println("De-Compresso, in stringa: "+decompresso);
+			if(!decompresso.equals(test)) {
+				throw new Exception("Informazione decompressa non uguale al sorgente");
+			}
+		}
+			
+		if(tipo==null || CompressorType.ZIP.equals(tipo)) {
+			System.out.println("\n\n=== ZIP ===");
+			byte [] compress = compress(testB, CompressorType.ZIP);
+			System.out.println("Compresso, dimensione: "+compress.length);
+			System.out.println("Compresso, in stringa: "+new String(compress));
+			String decompresso = new String(decompress(compress, CompressorType.ZIP));
+			System.out.println("De-Compresso, in stringa: "+decompresso);
+			if(!decompresso.equals(test)) {
+				throw new Exception("Informazione decompressa non uguale al sorgente");
+			}
+		}
 	}
 	
     public static byte[] compress(byte[] content, CompressorType type) throws UtilsException {

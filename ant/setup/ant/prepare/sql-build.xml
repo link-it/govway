@@ -17,35 +17,7 @@
 			</then>
 		</if>
 			
-		<!-- Postgresql -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="postgresql" />
-		</antcall>
-		
-		<!-- Mysql -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="mysql" />
-		</antcall>
-		
-		<!-- Oracle -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="oracle" />
-		</antcall>
-								
-		<!-- Hsql -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="hsql" />
-		</antcall>
-				
-		<!-- SQLServer -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="sqlserver" />
-		</antcall>
-		
-		<!-- DB2 -->
-		<antcall target="_buildSQL" >
-			<param name="TIPO_DB" value="db2" />
-		</antcall>
+		<foreach list="${database_version}" param="TIPO_DB" target="_buildSQL" />
 	
 	</target>
 	

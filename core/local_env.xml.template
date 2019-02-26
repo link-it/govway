@@ -29,6 +29,7 @@
 	<property name="buildProtocolEngine" value="true" />
 	<property name="buildMonitorEngine" value="true" />
 	<property name="buildPdd" value="true" />
+	<property name="buildPddTest" value="false" />
 
 	<!-- Dipendenze di compilazione -->
 	<property name="utils" location="../tools/utils"/>

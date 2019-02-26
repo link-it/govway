@@ -43,26 +43,43 @@ public class TestSwagger2 {
 
 	public static void main(String[] args) throws Exception {
 
-		URI jsonUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.json").toURI();
-		URI yamlUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.yaml").toURI();
+		String tipo = null;
+		if(args!=null && args.length>0) {
+			tipo = args[0];
+		}
+		
 		String baseUri = "http://petstore.swagger.io/v2";
 		
-		ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
-				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
-		ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
-				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
+		if(tipo==null || "json".equalsIgnoreCase(tipo)) {
 		
-		ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
-				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
-		ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
-				Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
+			URI jsonUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.json").toURI();
+			
+			ApiSchema apiSchemaJson = new ApiSchema("test_import.json", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
+			ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
+			Test.testValidation(jsonUri, baseUri, "json", ApiFormats.SWAGGER_2, 
+					apiSchemaJson, apiSchemaJson2);
+			
+		}
 		
-		Test.testValidation(jsonUri, baseUri, "json", ApiFormats.SWAGGER_2, 
-				apiSchemaJson, apiSchemaJson2);
+		if(tipo==null) {
+			System.out.println("\n\n\n==============================================================");
+		}
 		
-		System.out.println("\n\n\n==============================================================");
-		Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.SWAGGER_2, 
-				apiSchemaYaml, apiSchemaYaml2);
+		if(tipo==null || "yaml".equalsIgnoreCase(tipo)) {
+		
+			URI yamlUri = TestSwagger2.class.getResource("/org/openspcoop2/utils/openapi/testSwagger_2.0.yaml").toURI();
+
+			ApiSchema apiSchemaYaml = new ApiSchema("test_import.yaml", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.yaml")), ApiSchemaType.YAML);
+			ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
+					Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
+			
+			Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.SWAGGER_2, 
+					apiSchemaYaml, apiSchemaYaml2);
+			
+		}
 
 	}
 

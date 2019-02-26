@@ -5,6 +5,20 @@
                <registro nome="RegistroXML" tipo="xml" location="/etc/govway/registroServizi.xml" />
           </accesso-registro>
 
+	  <accesso-configurazione>
+		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-configurazione>
+	  <accesso-dati-autorizzazione>
+		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-dati-autorizzazione>
+	  <accesso-dati-autenticazione>
+		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-dati-autenticazione>
+	  <accesso-dati-gestione-token>
+		<cache dimensione="10000" algoritmo="lru" item-life-second="7200"/>
+	  </accesso-dati-gestione-token>
+
+
           <!-- Configurazione dell'engine per la validazione delle buste eGov -->
           <validazione-buste stato="abilitato" controllo="rigido" 
                                      profiloCollaborazione="abilitato" 
@@ -93,3 +107,4 @@
 
      </configurazione>
 </openspcoop2>
+
