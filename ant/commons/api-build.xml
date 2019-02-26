@@ -65,7 +65,7 @@
 						<![CDATA[<h1>API OpenSPCoop2 [${compile_src_openspcoop2.API_NAME}]</h1>]]>
 					</doctitle>
 					<bottom>
-						<![CDATA[<i>Copyright 2005-2018 Link.it srl, http://link.it.</i>]]>
+						<![CDATA[<i>Copyright 2005-2019 Link.it srl, http://link.it.</i>]]>
 					</bottom>
 <!--
 					Non funziona da java 9

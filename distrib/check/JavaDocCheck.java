@@ -1,10 +1,39 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 import java.io.*;
 
+/**
+ * JavaDocCheck
+ *
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
 public class JavaDocCheck {
     
     public static final String AUTORE_CHECK = "@author";
     public static final String AUTORE_CHECK2 = "$Author";
-    public static final String AUTORE_VALORE = "$Author$";
+    //public static final String AUTORE_VALORE = "$Author$";
     public static final String AUTORE_VALORE2 = "Author: $";
     public static final String AUTORE_VALORE3 = "Author:$";
 
@@ -124,6 +153,8 @@ public class JavaDocCheck {
 			jumpCheck = true;
 		else if( f.getAbsolutePath().indexOf("tools/web_interfaces/control_station/deploy/index.html")!=-1 )
 			jumpCheck = true;
+		else if( f.getAbsolutePath().contains("distrib/check/") )
+			jumpCheck = true;
 
 		String TODO = "tools/rs/config/server/src/org/openspcoop2/core/config/rs/server";
 		String TODO2 = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
@@ -166,10 +197,10 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK2+" non presente (manca l'informazione sull'ultimo autore che ha modificato il file)");
                     }
 		    // check valore autore
-		    if(byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_VALORE)>=0){
-			fileNonValidi.add(f.getAbsolutePath());
-                        dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE+"]");
-		    }
+		   // if(byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_VALORE)>=0){
+		//	fileNonValidi.add(f.getAbsolutePath());
+                 //       dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE+"]");
+		   // }
 		    if(byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_VALORE2)>=0){
                         fileNonValidi.add(f.getAbsolutePath());
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE2+"]");

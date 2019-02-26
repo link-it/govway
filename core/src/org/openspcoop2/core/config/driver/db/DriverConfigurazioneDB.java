@@ -4,7 +4,7 @@
  *
  * from the Link.it OpenSPCoop project codebase
  * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -3432,8 +3432,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm = con.prepareStatement(sqlQuery);
 				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
-				stm.setString(2, aUser);
-				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), aUser));
+				stm.setString(2, principal);
+				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), principal));
 
 				break;
 				

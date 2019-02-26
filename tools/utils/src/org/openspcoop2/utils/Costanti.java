@@ -4,7 +4,7 @@
  *
  * from the Link.it OpenSPCoop project codebase
  * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -46,7 +46,7 @@ public class Costanti {
     /** Details */
     public static final String OPENSPCOOP2_DETAILS = "www.govway.org";
     /** Copyright */
-	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2018 Link.it srl";
+	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2019 Link.it srl";
 	 /** License */
 	public final static String OPENSPCOOP2_LICENSE = "This program is free software: you can redistribute it and/or modify\n"+
 	"it under the terms of the GNU General Public License version 3, as published by\n"+
