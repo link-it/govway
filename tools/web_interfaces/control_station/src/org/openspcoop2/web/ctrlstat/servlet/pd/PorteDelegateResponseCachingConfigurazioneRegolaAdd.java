@@ -41,7 +41,9 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -99,6 +101,10 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String nomePorta = portaDelegata.getNome();
 			
+			String returnCode = porteDelegateHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
+			if(returnCode == null)
+				returnCode = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
+			
 			String statusMin = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
 			if(statusMin == null)
 				statusMin = "";
@@ -111,6 +117,16 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 				cacheSeconds = "";
 			
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			
+			// se ho modificato il soggetto ricalcolo il servizio e il service binding
+			if (postBackElementName != null) {
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE)) {
+					statusMin = "";
+					statusMax = "";
+				}
+			}
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
@@ -151,7 +167,7 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, statusMin, statusMax, fault, cacheSeconds, dati);
+				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 
@@ -172,7 +188,7 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, statusMin, statusMax, fault, cacheSeconds, dati);
+				dati = porteDelegateHelper.addResponseCachingConfigurazioneRegola(TipoOperazione.ADD, returnCode, statusMin, statusMax, fault, cacheSeconds, dati);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
 
@@ -185,8 +201,18 @@ public final class PorteDelegateResponseCachingConfigurazioneRegolaAdd extends A
 
 			// salvataggio regola
 			ResponseCachingConfigurazioneRegola regola = new ResponseCachingConfigurazioneRegola();
-			regola.setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
-			regola.setReturnCodeMax(StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null);
+		
+			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+				regola.setReturnCodeMin(null);
+				regola.setReturnCodeMax(null);
+			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+				regola.setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+				regola.setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+			} else { // intervallo
+				regola.setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+				regola.setReturnCodeMax(StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null);
+			}
+			
 			regola.setFault(ServletUtils.isCheckBoxEnabled(fault)); 
 			regola.setCacheTimeoutSeconds(StringUtils.isNotEmpty(cacheSeconds) ? Integer.parseInt(cacheSeconds) : null);
 			

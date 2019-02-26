@@ -19,8 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.util.ArrayList;
@@ -36,8 +34,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.ResponseCachingConfigurazione;
-import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -49,14 +47,14 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
- * PorteApplicativeResponseCachingConfigurazioneRegolaDel
+ * PorteApplicativeTrasformazioniDel
  * 
  * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
  */
-public final class PorteApplicativeResponseCachingConfigurazioneRegolaDel extends Action {
+public class PorteApplicativeTrasformazioniDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -96,16 +94,16 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaDel extend
 
 			// Prendo l'accesso registro
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
-			ResponseCachingConfigurazione configurazione =  portaApplicativa.getResponseCaching();
+			Trasformazioni trasformazioni = portaApplicativa.getTrasformazioni();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				id = Long.parseLong(idsToRemove.get(i));
 
-				for (int j = 0; j < configurazione.sizeRegolaList(); j++) {
-					ResponseCachingConfigurazioneRegola regola = configurazione.getRegola(j);
+				for (int j = 0; j < trasformazioni.sizeRegolaList(); j++) {
+					TrasformazioneRegola regola = trasformazioni.getRegola(j);
 					if (regola.getId().longValue() == id.longValue()) {
-						configurazione.removeRegola(j);
+						trasformazioni.removeRegola(j);
 					}
 				}
 			}
@@ -117,23 +115,24 @@ public final class PorteApplicativeResponseCachingConfigurazioneRegolaDel extend
 			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-			int idLista = Liste.PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA;
-
+			
+			int idLista = Liste.PORTE_APPLICATIVE_TRASFORMAZIONI; 
+			
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-
-			List<ResponseCachingConfigurazioneRegola> lista = porteApplicativeCore.getResponseCachingConfigurazioneRegolaList(Long.parseLong(idPorta), ricerca); 
-
-			porteApplicativeHelper.prepareResponseCachingConfigurazioneRegolaList(nomePorta, ricerca, lista);
+			
+			List<TrasformazioneRegola> lista = porteApplicativeCore.porteAppTrasformazioniList(Long.parseLong(idPorta), ricerca);
+			
+			porteApplicativeHelper.preparePorteAppTrasformazioniRegolaList(nomePorta, ricerca, lista);
 						
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForward (mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA,
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI,
 					ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA, ForwardParams.DEL());
-		}
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI, ForwardParams.DEL());
+		} 
 	}
+
 }

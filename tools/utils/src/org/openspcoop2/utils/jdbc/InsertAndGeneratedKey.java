@@ -107,7 +107,12 @@ public class InsertAndGeneratedKey {
 							num = ((Double) objects[i].getValue()).intValue();
 						}
 					}
-					stmt.setInt(indexJDBC, num);
+					if(num!=null) {
+						stmt.setInt(indexJDBC, num);
+					}
+					else {
+						stmt.setNull(indexJDBC, java.sql.Types.INTEGER);
+					}
 					break;
 				case LONG:
 					Long numLong = null;
@@ -122,7 +127,12 @@ public class InsertAndGeneratedKey {
 							numLong = ((Double) objects[i].getValue()).longValue();
 						}
 					}
-					stmt.setLong(indexJDBC, numLong);
+					if(numLong!=null) {
+						stmt.setLong(indexJDBC,numLong);
+					}
+					else {
+						stmt.setNull(indexJDBC, java.sql.Types.BIGINT);
+					}
 					break;
 				case STRING:
 					String s = null;

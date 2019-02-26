@@ -82,6 +82,7 @@ import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -3845,13 +3846,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					String statusValue = null;
 					// Intervallo
 					if(statusMin != null && statusMax != null) {
-						statusValue = "[" + statusMin + " - " + statusMax + "]";
+						if(statusMax.longValue() == statusMin.longValue()) // esatto
+							statusValue = statusMin + "";
+						else 
+							statusValue = "[" + statusMin + " - " + statusMax + "]";
 					} else if(statusMin != null && statusMax == null) { // definito solo l'estremo inferiore
 						statusValue = "&gt;" + statusMin;
 					} else if(statusMin == null && statusMax != null) { // definito solo l'estremo superiore
 						statusValue = "&lt;" + statusMax;
 					} else { //entrambi null 
-						statusValue = CostantiControlStation.LABEL_QUALSIASI;
+						statusValue = CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI;
 					}
 					
 					de.setValue(statusValue);
@@ -3883,6 +3887,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			try{
 				
+				String returnCode = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE);
 				String statusMinS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN);
 				String statusMaxS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX);
 				String faultS = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_FAULT);
@@ -3892,39 +3897,56 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				Integer statusMax = null;
 				Integer cacheSeconds = null;
 				boolean fault = ServletUtils.isCheckBoxEnabled(faultS);
-				if(StringUtils.isNotEmpty(statusMinS)) {
-					try {
-						statusMin = Integer.parseInt(statusMinS);
-						
-						if(statusMin < 1) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-						if(statusMin > 999) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
-							return false;
-						}
-					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
-						return false;
-					}
-				}
 				
-				if(StringUtils.isNotEmpty(statusMaxS)) {
-					try {
-						statusMax = Integer.parseInt(statusMaxS);
-						
-						if(statusMax < 1) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+				if(!returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
+					
+					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
+						if(StringUtils.isEmpty(statusMinS)) {
+							this.pd.setMessage("Il campo "+ ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE + " &egrave; obbligatorio.");
 							return false;
 						}
-						if(statusMax > 999) {
-							this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+					}
+					
+					if(StringUtils.isNotEmpty(statusMinS)) {
+						try {
+							statusMin = Integer.parseInt(statusMinS);
+							
+							if(statusMin < 1) {
+								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+							if(statusMin > 999) {
+								this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+							
+							// return code esatto, ho salvato lo stesso valore nel campo return code;
+							if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO))
+								statusMax = statusMin;
+						}catch(Exception e) {
+							this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MIN + " non &egrave; valido.");
 							return false;
 						}
-					}catch(Exception e) {
-						this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
-						return false;
+					}
+					
+					if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_INTERVALLO)) {
+						if(StringUtils.isNotEmpty(statusMaxS)) {
+							try {
+								statusMax = Integer.parseInt(statusMaxS);
+								
+								if(statusMax < 1) {
+									this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+									return false;
+								}
+								if(statusMax > 999) {
+									this.pd.setMessage("Il valore inserito nel campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+									return false;
+								}
+							}catch(Exception e) {
+								this.pd.setMessage("Il formato del campo "+ PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_MAX + " non &egrave; valido.");
+								return false;
+							}
+						}
 					}
 				}
 				

@@ -65,6 +65,21 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	}
 
 
+	public boolean isTemplateRequired() {
+		return TipoTrasformazione.TEMPLATE.equals(this) 
+				|| 
+				TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this);
+//				|| 
+//				TipoTrasformazione.XSLT.equals(this);
+	}
+	
+	public boolean isContentTypeEnabled() {
+		return !TipoTrasformazione.EMPTY.equals(this);
+	}
+	
+	public boolean isTrasformazioneProtocolloEnabled() {
+		return !TipoTrasformazione.EMPTY.equals(this);
+	}
 	
 	@Override
 	public String toString(){

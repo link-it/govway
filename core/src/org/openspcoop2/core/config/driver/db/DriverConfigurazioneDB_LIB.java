@@ -9503,6 +9503,7 @@ public class DriverConfigurazioneDB_LIB {
 									(regola.getRichiesta().getTrasformazioneSoap()!=null && regola.getRichiesta().getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null)
 							) ) {
 						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addUpdateTable(tableName);
 						if(regola.getRichiesta().getConversioneTemplate()!=null ) {
 							sqlQueryObject.addUpdateField("req_conversione_template", "?");
 						}
@@ -9582,7 +9583,7 @@ public class DriverConfigurazioneDB_LIB {
 						}
 					}
 					
-					if(regola.sizeRispostaList()<0) {
+					if(regola.sizeRispostaList()>0) {
 						
 						for (TrasformazioneRegolaRisposta regolaRisposta : regola.getRispostaList()) {
 							
@@ -9650,6 +9651,7 @@ public class DriverConfigurazioneDB_LIB {
 											(regolaRisposta.getTrasformazioneSoap()!=null && regolaRisposta.getTrasformazioneSoap().getEnvelopeBodyConversioneTemplate()!=null)
 								 ) {
 								ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+								sqlQueryObject.addUpdateTable(tableName);
 								if(regolaRisposta.getConversioneTemplate()!=null ) {
 									sqlQueryObject.addUpdateField("conversione_template", "?");
 								}
@@ -9689,7 +9691,7 @@ public class DriverConfigurazioneDB_LIB {
 									String updateQuery = sqlQueryObject.createSQLInsert();
 									updateStmt = con.prepareStatement(updateQuery);
 									int index = 1;
-									updateStmt.setLong(index++, idtrasformazione);
+									updateStmt.setLong(index++, idtrasformazioneRisposta);
 									updateStmt.setString(index++, getValue(parametro.getConversioneTipo()));
 									updateStmt.setString(index++, parametro.getNome());
 									updateStmt.setString(index++, parametro.getValore());
@@ -9725,9 +9727,14 @@ public class DriverConfigurazioneDB_LIB {
 					break;
 				}
 				
+				String tableName = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI;
+				String tableNameHeader = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_HEADER;
+				String tableNameUrl = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_URL;
+				String tableNameRisposte = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE;
+				String tableNameRisposteHeader = portaDelegata ? CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER : CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER;
 				List<Long> idTrasformazioneList = new ArrayList<>();
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+				sqlQueryObject.addFromTable(tableName);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -9748,7 +9755,7 @@ public class DriverConfigurazioneDB_LIB {
 				for (Long idTrasformazione : idTrasformazioneList) {
 					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_HEADER);
+					sqlQueryObject.addDeleteTable(tableNameHeader);
 					sqlQueryObject.addWhereCondition("id_trasformazione=?");
 					sqlQueryObject.setANDLogicOperator(true);
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -9758,7 +9765,7 @@ public class DriverConfigurazioneDB_LIB {
 					updateStmt.close();
 					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_URL);
+					sqlQueryObject.addDeleteTable(tableNameUrl);
 					sqlQueryObject.addWhereCondition("id_trasformazione=?");
 					sqlQueryObject.setANDLogicOperator(true);
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -9769,7 +9776,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 					List<Long> idTrasformazioneRisposteList = new ArrayList<>();
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+					sqlQueryObject.addFromTable(tableNameRisposte);
 					sqlQueryObject.addSelectField("id");
 					sqlQueryObject.addWhereCondition("id_trasformazione=?");
 					sqlQueryObject.setANDLogicOperator(true);
@@ -9783,12 +9790,12 @@ public class DriverConfigurazioneDB_LIB {
 					rs.close();
 					updateStmt.close();
 					
-					if(idTrasformazioneRisposteList.size()<0) {
+					if(idTrasformazioneRisposteList.size()>0) {
 						
 						for (Long idTrasformazioneRisposta : idTrasformazioneRisposteList) {
 							
 							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-							sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER);
+							sqlQueryObject.addDeleteTable(tableNameRisposteHeader);
 							sqlQueryObject.addWhereCondition("id_transform_risp=?");
 							sqlQueryObject.setANDLogicOperator(true);
 							updateQuery = sqlQueryObject.createSQLDelete();
@@ -9802,7 +9809,7 @@ public class DriverConfigurazioneDB_LIB {
 					}
 					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-					sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE);
+					sqlQueryObject.addDeleteTable(tableNameRisposte);
 					sqlQueryObject.addWhereCondition("id_trasformazione=?");
 					sqlQueryObject.setANDLogicOperator(true);
 					updateQuery = sqlQueryObject.createSQLDelete();
@@ -9814,7 +9821,7 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+				sqlQueryObject.addDeleteTable(tableName);
 				sqlQueryObject.addWhereCondition("id_porta=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLDelete();
@@ -9926,7 +9933,7 @@ public class DriverConfigurazioneDB_LIB {
 				richiesta.setConversioneTipo(rs.getString("req_conversione_tipo"));
 				IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDB);
 				richiesta.setConversioneTemplate(jdbcAdapter.getBinaryData(rs, "req_conversione_template"));
-				richiesta.setContentType("req_content_type");
+				richiesta.setContentType(rs.getString("req_content_type"));
 				
 				int trasformazione_rest = rs.getInt("rest_transformation");
 				if(CostantiDB.TRUE == trasformazione_rest) {
@@ -10000,6 +10007,7 @@ public class DriverConfigurazioneDB_LIB {
 					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
+					parametro.setId(rs.getLong("id"));
 					regola.getRichiesta().addHeader(parametro);
 				}
 				
@@ -10026,6 +10034,7 @@ public class DriverConfigurazioneDB_LIB {
 					parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 					parametro.setNome(rs.getString("nome"));
 					parametro.setValore(rs.getString("valore"));
+					parametro.setId(rs.getLong("id"));
 					regola.getRichiesta().addParametroUrl(parametro);
 				}
 				
@@ -10162,6 +10171,7 @@ public class DriverConfigurazioneDB_LIB {
 						parametro.setConversioneTipo(getEnumTrasformazioneRegolaParametroTipoAzione(rs.getString("tipo")));
 						parametro.setNome(rs.getString("nome"));
 						parametro.setValore(rs.getString("valore"));
+						parametro.setId(rs.getLong("id"));
 						risposta.addHeader(parametro);
 					}
 					

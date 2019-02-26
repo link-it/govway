@@ -2039,7 +2039,152 @@
             <forward name="porteApplicativeResponseCachingConfigurazioneRegolaDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeResponseCachingConfigurazioneRegolaError" path="/jsplib/info.jsp"/>
         </action>
+        
+        
+   		<!--  Porte Applicative (Trasformazioni) -->
+
+        <action path="/porteApplicativeTrasformazioniAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniError" path="/jsplib/info.jsp"/>
+        </action>
+        
+       	<!-- Porte Applicative (Trasformazioni Richiesta) -->
     
+    	<action path="/porteApplicativeTrasformazioniRichiesta" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiesta"
+            scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Trasformazioni Richiesta Header) -->
+
+        <action path="/porteApplicativeTrasformazioniRichiestaHeaderAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaHeaderAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaHeaderList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaHeaderList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaHeaderChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaHeaderChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaHeaderDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaHeaderDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Trasformazioni Richiesta Url Parameter) -->
+
+        <action path="/porteApplicativeTrasformazioniRichiestaUrlParameterAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaUrlParameterAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaUrlParameterList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaUrlParameterList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaUrlParameterChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaUrlParameterChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRichiestaUrlParameterDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRichiestaUrlParameterDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRichiestaUrlParameterError" path="/jsplib/info.jsp"/>
+        </action>
+    
+    	<!--  Porte Applicative (Trasformazioni Risposta) -->
+
+        <action path="/porteApplicativeTrasformazioniRispostaAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Trasformazioni Risposta Header) -->
+
+        <action path="/porteApplicativeTrasformazioniRispostaHeaderAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaHeaderAdd" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaHeaderList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaHeaderList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaHeaderChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaHeaderChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeTrasformazioniRispostaHeaderDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeTrasformazioniRispostaHeaderDel" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeTrasformazioniRispostaHeaderError" path="/jsplib/info.jsp"/>
+        </action>
     
     	<!--  Configurazione (Generale) -->
     	

@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -2339,6 +2340,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(showConnettoreLink) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 				}
+				
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI);
 				listaLabel.add(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_VALIDAZIONE_CONTENUTI);
@@ -2349,6 +2351,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				if(visualizzaMTOM) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 				}
+				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI);
 				if(visualizzaCorrelazione) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_TRACCIAMENTO);
 				}
@@ -2636,6 +2639,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.allineaTdAlCentro();
 						e.addElement(de);
 					}
+					
+					// trasformazioni
+					de = new DataElement();
+					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, pIdSogg, pIdPorta, pIdAsps);
+					if(contaListe) {
+						Search searchPolicy = new Search(true);
+						List<TrasformazioneRegola> listaTrasformazioni = this.porteApplicativeCore.porteAppTrasformazioniList(paAssociata.getId(), searchPolicy);
+						ServletUtils.setDataElementVisualizzaLabel(de, (long) listaTrasformazioni.size() );
+					}
+					else {
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					}
+					de.allineaTdAlCentro();
+					e.addElement(de);
 					
 					// correlazione applicativa
 					if(visualizzaCorrelazione) {
