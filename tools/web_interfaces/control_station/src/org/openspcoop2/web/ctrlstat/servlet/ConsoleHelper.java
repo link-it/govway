@@ -8098,14 +8098,14 @@ public class ConsoleHelper {
 	
 	public Vector<DataElement> addTrasformazioneRispostaToDatiOpAdd(Vector<DataElement> dati, String idTrasformazione, String returnCode, String statusMin, String statusMax, String pattern, String contentType) {
 		return addTrasformazioneRispostaToDati(TipoOperazione.ADD, dati, idTrasformazione, null, returnCode, statusMin, statusMax, pattern, contentType, null, null, 0,
-				false,false,false,null,null,null,null,false,null,null,null);
+				false,false,false,null,null,null,null,null,false,null,null,null);
 	}
 	
 	public Vector<DataElement> addTrasformazioneRispostaToDati(TipoOperazione tipoOP, Vector<DataElement> dati, String idTrasformazione, String idTrasformazioneRisposta, String returnCode, String statusMin, String statusMax, String pattern, String contentType,
 			String servletTrasformazioniRispostaHeadersList, List<Parameter> parametriInvocazioneServletTrasformazioniRispostaHeaders, int numeroTrasformazioniRispostaHeaders,
 			boolean trasformazioneContenutoRichiestaAbilitato, boolean trasformazioneRichiestaRestAbilitato,
 			boolean trasformazioneContenutoRispostaAbilitato, org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneContenutoRispostaTipo, 
-			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaContentType, 
+			BinaryParameter trasformazioneContenutoRispostaTemplate, String trasformazioneContenutoRispostaContentType, String trasformazioneContenutoRispostaReturnCode,
 			ServiceBinding serviceBindingMessage, 
 			boolean trasformazioneRispostaSoapAbilitato, String trasformazioneRispostaSoapEnvelope,  
 			org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione trasformazioneRispostaSoapEnvelopeTipo, BinaryParameter trasformazioneRispostaSoapEnvelopeTemplate
@@ -8297,6 +8297,17 @@ public class ConsoleHelper {
 					}   
 					dati.addElement(de);
 				}
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+				de.setValue(trasformazioneContenutoRispostaReturnCode);
+				de.setType(DataElementType.NUMBER);
+				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+				de.setMinValue(1);
+				de.setMaxValue(999);
+				de.setSize(getSize());
+				de.reloadMinValue(false);
+				dati.addElement(de);
 				
 				if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato) {
 					// sezione trasformazione SOAP
@@ -8594,7 +8605,27 @@ public class ConsoleHelper {
 						}
 					}
 					
-					String trasformazioneRichiestaContentType = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
+					String trasformazioneRichiestaContentType = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
+					
+					String trasformazioneRispostaReturnCode = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+					
+					if(StringUtils.isNotEmpty(trasformazioneRispostaReturnCode)) {
+						try {
+							int returnCodeEsatto = Integer.parseInt(trasformazioneRispostaReturnCode);
+							
+							if(returnCodeEsatto < 1) {
+								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+							if(returnCodeEsatto > 999) {
+								this.pd.setMessage("Il valore inserito nel campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido, sono ammessi valori compresi tra 1 e 999.");
+								return false;
+							}
+						}catch(Exception e) {
+							this.pd.setMessage("Il formato del campo "+ CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE + " non &egrave; valido.");
+							return false;
+						}
+					}
 					
 					if(trasformazioneContenutoRispostaTipo.isTrasformazioneProtocolloEnabled() && trasformazioneRichiestaRestAbilitato) {
 					

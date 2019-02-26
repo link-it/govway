@@ -124,6 +124,8 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 						org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 			BinaryParameter trasformazioneContenutoRispostaTemplate = porteApplicativeHelper.getBinaryParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_TEMPLATE);
 			String trasformazioneContenutoRispostaContentType = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
+			String trasformazioneContenutoRispostaReturnCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_RETURN_CODE);
+			
 			String trasformazioneRispostaSoapAbilitatoS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_TRANSFORMATION); 
 			boolean trasformazioneRispostaSoapAbilitato = trasformazioneRispostaSoapAbilitatoS != null ? ServletUtils.isCheckBoxEnabled(trasformazioneRispostaSoapAbilitatoS) : false;
 			String trasformazioneRispostaSoapEnvelope = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_SOAP_ENVELOPE);
@@ -189,6 +191,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTA_CONVERSIONE_ENABLED)) {
 					trasformazioneContenutoRispostaTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 					trasformazioneContenutoRispostaContentType = "";
+					trasformazioneContenutoRispostaReturnCode = "";
 					trasformazioneRispostaSoapAbilitato = false;
 					trasformazioneRispostaSoapEnvelope = CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_DISABILITATO;
 					trasformazioneRispostaSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
@@ -319,6 +322,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 							org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.toEnumConstant(oldRisposta.getConversioneTipo()) : org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 					trasformazioneContenutoRispostaTemplate.setValue(oldRisposta.getConversioneTemplate());
 					trasformazioneContenutoRispostaContentType = StringUtils.isNotEmpty(oldRisposta.getContentType()) ? oldRisposta.getContentType() : "";
+					trasformazioneContenutoRispostaReturnCode = oldRisposta.getReturnCode() != null ? oldRisposta.getReturnCode() + "" : "";
 					
 					if(oldRisposta.getTrasformazioneSoap() == null) {
 						trasformazioneRispostaSoapAbilitato = false;
@@ -347,7 +351,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, 
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
-						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, 
+						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode, 
 						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -389,7 +393,7 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 				dati = porteApplicativeHelper.addTrasformazioneRispostaToDati(TipoOperazione.CHANGE, dati, idTrasformazioneS, idTrasformazioneRispostaS, 
 						returnCode, statusMin, statusMax, pattern, contentType, servletTrasformazioniRispostaHeadersList, parametriInvocazioneServletTrasformazioniRispostaHeaders, numeroTrasformazioniRispostaHeaders, 
 						trasformazioneContenutoRichiestaAbilitato, trasformazioneRichiestaRestAbilitato, 
-						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, 
+						trasformazioneContenutoRispostaAbilitato, trasformazioneContenutoRispostaTipo, trasformazioneContenutoRispostaTemplate, trasformazioneContenutoRispostaContentType, trasformazioneContenutoRispostaReturnCode,
 						serviceBindingMessage, trasformazioneRispostaSoapAbilitato, trasformazioneRispostaSoapEnvelope, trasformazioneRispostaSoapEnvelopeTipo, trasformazioneRispostaSoapEnvelopeTemplate);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -410,89 +414,91 @@ public class PorteApplicativeTrasformazioniRispostaChange extends Action {
 				}
 			}
 			
-			TrasformazioneRegolaRisposta rispostaDaAggiorare = null;
+			TrasformazioneRegolaRisposta rispostaDaAggiornare = null;
 			for (int j = 0; j < regola.sizeRispostaList(); j++) {
 				TrasformazioneRegolaRisposta risposta = regola.getRisposta(j);
 				if (risposta.getId().longValue() == idTrasformazioneRisposta) {
-					rispostaDaAggiorare = risposta;
+					rispostaDaAggiornare = risposta;
 					break;
 				}
 			}
 			
-			if(rispostaDaAggiorare.getApplicabilita() == null)
-				rispostaDaAggiorare.setApplicabilita(new TrasformazioneRegolaApplicabilitaRisposta());
+			if(rispostaDaAggiornare.getApplicabilita() == null)
+				rispostaDaAggiornare.setApplicabilita(new TrasformazioneRegolaApplicabilitaRisposta());
 
 			if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_QUALSIASI)) {
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMin(null);
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMax(null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMin(null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMax(null);
 			} else if(returnCode.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_CONFIGURAZIONE_REGOLA_RETURN_CODE_ESATTO)) {
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMax(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
 			} else { // intervallo
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
-				rispostaDaAggiorare.getApplicabilita().setReturnCodeMax(StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMin(StringUtils.isNotEmpty(statusMin) ? Integer.parseInt(statusMin) : null);
+				rispostaDaAggiornare.getApplicabilita().setReturnCodeMax(StringUtils.isNotEmpty(statusMax) ? Integer.parseInt(statusMax) : null);
 			}
 			
-			rispostaDaAggiorare.getApplicabilita().setPattern(pattern);
-			rispostaDaAggiorare.getApplicabilita().getContentTypeList().clear();
+			rispostaDaAggiornare.getApplicabilita().setPattern(pattern);
+			rispostaDaAggiornare.getApplicabilita().getContentTypeList().clear();
 			if(contentType != null) {
-				rispostaDaAggiorare.getApplicabilita().getContentTypeList().addAll(Arrays.asList(contentType.split(",")));
+				rispostaDaAggiornare.getApplicabilita().getContentTypeList().addAll(Arrays.asList(contentType.split(",")));
 			}
 			
-			rispostaDaAggiorare.setConversione(trasformazioneContenutoRispostaAbilitato);
+			rispostaDaAggiornare.setConversione(trasformazioneContenutoRispostaAbilitato);
 			
 			if(trasformazioneContenutoRispostaAbilitato) {
 				if(trasformazioneContenutoRispostaTipo.isTemplateRequired()) {
 					// 	se e' stato aggiornato il template lo sovrascrivo
 					if(trasformazioneContenutoRispostaTemplate.getValue() != null && trasformazioneContenutoRispostaTemplate.getValue().length  > 0)
-						rispostaDaAggiorare.setConversioneTemplate(trasformazioneContenutoRispostaTemplate.getValue());
+						rispostaDaAggiornare.setConversioneTemplate(trasformazioneContenutoRispostaTemplate.getValue());
 				}else {
-					rispostaDaAggiorare.setConversioneTemplate(null);
+					rispostaDaAggiornare.setConversioneTemplate(null);
 				}
-				rispostaDaAggiorare.setContentType(trasformazioneContenutoRispostaContentType);
+				rispostaDaAggiornare.setContentType(trasformazioneContenutoRispostaContentType);
+				rispostaDaAggiornare.setReturnCode(StringUtils.isNotEmpty(trasformazioneContenutoRispostaReturnCode) ? Integer.parseInt(trasformazioneContenutoRispostaReturnCode) : null);
 				
-				rispostaDaAggiorare.setConversioneTipo(trasformazioneContenutoRispostaTipo.getValue());
+				rispostaDaAggiornare.setConversioneTipo(trasformazioneContenutoRispostaTipo.getValue());
 				
 				if(trasformazioneRispostaSoapAbilitato) {
-					if(rispostaDaAggiorare.getTrasformazioneSoap() == null)
-						rispostaDaAggiorare.setTrasformazioneSoap(new TrasformazioneSoapRisposta());
+					if(rispostaDaAggiornare.getTrasformazioneSoap() == null)
+						rispostaDaAggiornare.setTrasformazioneSoap(new TrasformazioneSoapRisposta());
 					
 					// ct null se trasformazione soap abilitata
-					rispostaDaAggiorare.setContentType(null);
+					rispostaDaAggiornare.setContentType(null);
 					
 					if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_ATTACHMENT)) { // attachment
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelope(true);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeAsAttachment(true);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelope(true);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeAsAttachment(true);
 						
 						if(trasformazioneRispostaSoapEnvelopeTipo.isTemplateRequired()) {
 							// 	se e' stato aggiornato il template lo sovrascrivo
 							if(trasformazioneRispostaSoapEnvelopeTemplate.getValue() != null && trasformazioneRispostaSoapEnvelopeTemplate.getValue().length  > 0)
-								rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(trasformazioneRispostaSoapEnvelopeTemplate.getValue());
+								rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(trasformazioneRispostaSoapEnvelopeTemplate.getValue());
 						} else {
-							rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
+							rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
 						}
 						
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(trasformazioneRispostaSoapEnvelopeTipo.getValue());
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(trasformazioneRispostaSoapEnvelopeTipo.getValue());
 					} else if(trasformazioneRispostaSoapEnvelope.equals(CostantiControlStation.VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_AS_BODY)) { // body
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelope(true);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeAsAttachment(false);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(null);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelope(true);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeAsAttachment(false);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(null);
 					} else  { // disabilitato
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelope(false);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeAsAttachment(false);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
-						rispostaDaAggiorare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(null);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelope(false);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeAsAttachment(false);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTemplate(null);
+						rispostaDaAggiornare.getTrasformazioneSoap().setEnvelopeBodyConversioneTipo(null);
 					}
 						
 				} else {
-					rispostaDaAggiorare.setTrasformazioneSoap(null);
+					rispostaDaAggiornare.setTrasformazioneSoap(null);
 				}
 			} else {
-				rispostaDaAggiorare.setConversioneTemplate(null);
-				rispostaDaAggiorare.setContentType(null);
-				rispostaDaAggiorare.setConversioneTipo(null);
-				rispostaDaAggiorare.setTrasformazioneSoap(null);
+				rispostaDaAggiornare.setConversioneTemplate(null);
+				rispostaDaAggiornare.setContentType(null);
+				rispostaDaAggiornare.setReturnCode(null);
+				rispostaDaAggiornare.setConversioneTipo(null);
+				rispostaDaAggiornare.setTrasformazioneSoap(null);
 			}
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
