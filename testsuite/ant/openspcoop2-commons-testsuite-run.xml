@@ -14,7 +14,8 @@
 	</taskdef>
 	
 
-	<var name="testngShowStackFrames" value="true"/>
+	<property name="testngShowStackFrames" value="true"/>
+	<property name="testngXmx" value="-Xmx512m"/>
 	
 	
 	<!--  ************* RUN TESTSUITE FUNZIONALITA PdD **************** -->
@@ -41,6 +42,7 @@
             haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+			<jvmarg value="${testngXmx}" />
 		</testng>
 		<if>
 			<not>
@@ -54,6 +56,7 @@
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+					<jvmarg value="${testngXmx}" />
 				</testng>
 			</then>
 		</if>
@@ -87,6 +90,7 @@
              haltonfailure="${testHaltOnFailure}" groups="${group}">
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+			<jvmarg value="${testngXmx}" />
 		</testng>
 		<if>
 			<not>
@@ -100,6 +104,7 @@
 		            haltonfailure="${testHaltOnFailure}" groups="RisorseEsterne">
 					<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 					<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
+					<jvmarg value="${testngXmx}" />
 				</testng>
 			</then>
 		</if>

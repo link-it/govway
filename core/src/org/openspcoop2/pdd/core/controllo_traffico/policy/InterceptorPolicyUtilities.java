@@ -133,10 +133,14 @@ public class InterceptorPolicyUtilities {
 				soggettoErogatoreTipo = soggettoErogatore.getTipo();
 				soggettoErogatoreNome = soggettoErogatore.getNome();
 			}
+			int versione = 1;
+			if(context.getProtocollo().getVersioneServizio()!=null) {
+				versione = context.getProtocollo().getVersioneServizio();
+			}
 			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
 					context.getProtocollo().getServizio(),
 					soggettoErogatoreTipo, soggettoErogatoreNome, 
-					context.getProtocollo().getVersioneServizio()); 
+					versione); 
 			idServizio.setAzione(context.getProtocollo().getAzione());
 			datiTransazione.setIdServizio(idServizio);
 			

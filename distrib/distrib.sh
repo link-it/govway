@@ -200,7 +200,11 @@ fi
 
 cd ${WORK_DIR}/
 
-export ANT_OPTS="-Xmx1024m -XX:MaxMetaspaceSize=1024m"
+if [ -z ${ANT_OPTS} ]
+then
+	export ANT_OPTS="-Xmx1024m -XX:MaxMetaspaceSize=1024m"
+fi
+echo "ANT_OPTS: ${ANT_OPTS}"
 
 infoPrintln "Comincio produzione distribuzione binaria"
 cd ${WORKING_COPY}/ant/setup
