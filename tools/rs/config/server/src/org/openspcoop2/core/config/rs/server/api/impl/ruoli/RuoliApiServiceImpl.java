@@ -1,14 +1,36 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.ruoli;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.rs.server.api.RuoliApi;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
@@ -23,11 +45,13 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
 /**
- * GovWay Config API
- *
- * <p>Servizi per la configurazione di GovWay
- *
+ * RuoliApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 
@@ -46,38 +70,37 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
      *
      */
 	@Override
-    public void create(Ruolo body) {
+    public void createRuolo(Ruolo body) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
                         
 			Ruolo ruolo = body;
-
-			if (ruolo == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body corretto.");
-
-			HttpRequestWrapper wrap = RuoliApiHelper.overrideRuoloParams(ruolo, context);		
-			RuoliEnv rEnv = new RuoliEnv(wrap,context);
+					
+			RuoliEnv env = new RuoliEnv(context.getServletRequest(),context);
+			RuoliApiHelper.overrideRuoloParams(ruolo, env.requestWrapper);
 			
 			org.openspcoop2.core.registry.Ruolo regRuolo = null;
 			try {
-				regRuolo = RuoliApiHelper.apiRuoloToRuoloRegistro(ruolo, rEnv.userLogin);
+				regRuolo = RuoliApiHelper.apiRuoloToRuoloRegistro(ruolo, env.userLogin);
 			} catch (Exception e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
 			}
 			
-			if(rEnv.ruoliCore.existsRuolo(ruolo.getNome())){
+			if(env.ruoliCore.existsRuolo(ruolo.getNome())){
 				throw FaultCode.CONFLITTO.toException("Un ruolo con nome '" + ruolo.getNome() + "' risulta già stato registrato");
 			}
 			
-			if (!rEnv.ruoliHelper.ruoloCheckData(TipoOperazione.ADD, null)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(rEnv.pd.getMessage());
+			if (!env.ruoliHelper.ruoloCheckData(TipoOperazione.ADD, null)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			rEnv.ruoliCore.performCreateOperation(rEnv.userLogin, false, regRuolo);			
+			env.ruoliCore.performCreateOperation(env.userLogin, false, regRuolo);			
         
 			context.getLogger().info("Invocazione completata con successo");
         
@@ -100,7 +123,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
      *
      */
 	@Override
-    public void delete(String nome) {
+    public void deleteRuolo(String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -108,23 +131,22 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-
 			String userLogin = context.getAuthentication().getName();
-			RuoliEnv rEnv = new RuoliEnv(wrap,context);
+			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(),context);
 						
-			org.openspcoop2.core.registry.Ruolo regRuolo = null;
-			try {
-				regRuolo = rEnv.ruoliCore.getRuolo(nome);
-			}catch (Exception e) {
-				throw FaultCode.NOT_FOUND.toException("Nessun ruolo corrisponde al nome indicato");
+			final org.openspcoop2.core.registry.Ruolo regRuolo = Helper.evalnull( () -> rEnv.ruoliCore.getRuolo(nome) );
+			
+			if ( regRuolo != null ) {
+				StringBuffer inUsoMessage = new StringBuffer();
+				RuoliUtilities.deleteRuolo(regRuolo, userLogin, rEnv.ruoliCore, rEnv.ruoliHelper, inUsoMessage, System.lineSeparator());
+				
+				if (inUsoMessage.length() > 0) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
-			RuoliUtilities.deleteRuolo(regRuolo, userLogin, rEnv.ruoliCore, rEnv.ruoliHelper, inUsoMessage, "\n");
-			
-			if (inUsoMessage.length() > 0) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
+			if (rEnv.delete_404 && regRuolo == null) {
+				throw FaultCode.NOT_FOUND.toException("Nessun ruolo corrisponde al nome indicato");
 			}
 	
 			context.getLogger().info("Invocazione completata con successo");
@@ -146,7 +168,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
      *
      */
 	@Override
-    public ListaRuoli findAll(String q, Integer limit, Integer offset, FonteEnum fonte, ContestoEnum contesto) {
+    public ListaRuoli findAllRuoli(String q, Integer limit, Integer offset, FonteEnum fonte, ContestoEnum contesto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -154,17 +176,15 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			RuoliEnv rEnv = new RuoliEnv(wrap, context);
+			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(), context);
 						
 			int idLista = Liste.RUOLI;
 			Search ricerca =  Helper.setupRicercaPaginata(q, limit, offset, idLista);
 			
 			if (fonte != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA, RuoliApiHelper.apiFonteToRegistroTipologia(fonte).toString());
+				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_TIPOLOGIA, Enums.apiFonteToRegistroTipologia(fonte).toString());
 			if (contesto != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_CONTESTO, RuoliApiHelper.apiContestoToRegistroContesto(contesto).toString());
+				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_CONTESTO, Enums.apiContestoToRegistroContesto(contesto).toString());
 
 
 			List<org.openspcoop2.core.registry.Ruolo> lista = new ArrayList<>();
@@ -175,7 +195,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			}			
 			
 			
-			if (lista.size() == 0) {
+			if ( rEnv.findall_404 && lista.isEmpty() ) {
 				throw FaultCode.NOT_FOUND.toException("Nessun ruolo corrisponde ai criteri di ricerca specificati");
 			}
 			
@@ -212,7 +232,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
      *
      */
 	@Override
-    public Ruolo get(String nome) {
+    public Ruolo getRuolo(String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -251,7 +271,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
      *
      */
 	@Override
-    public void update(Ruolo body, String nome) {
+    public void updateRuolo(Ruolo body, String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -259,24 +279,22 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			if (body == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body corretto");
-                        
-			HttpRequestWrapper wrap = RuoliApiHelper.overrideRuoloParams(body, context);
-		
-			RuoliEnv rEnv = new RuoliEnv(wrap, context);
+			Helper.throwIfNull(body);
+                        		
+			RuoliEnv rEnv = new RuoliEnv(context.getServletRequest(), context);
+			RuoliApiHelper.overrideRuoloParams(body, rEnv.requestWrapper);
 			
 			org.openspcoop2.core.registry.Ruolo oldRuolo = null;
 			try {
 				oldRuolo = rEnv.ruoliCore.getRuolo(nome); 
 			} catch (Exception e) {}
-			if (oldRuolo == null) throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessun ruolo da aggiornare corrisponde al nome: " + nome);
+			if (oldRuolo == null) throw FaultCode.NOT_FOUND.toException("Nessun ruolo da aggiornare corrisponde al nome: " + nome);
 			
 			org.openspcoop2.core.registry.Ruolo ruoloNEW = RuoliApiHelper.apiRuoloToRuoloRegistro(body, rEnv.userLogin);
 			ruoloNEW.setOldIDRuoloForUpdate(new IDRuolo(oldRuolo.getNome()));	// Qui nella versione della controlstation parte dal nuovo nome assumendo che siano identici.
 			
 			if (!rEnv.ruoliHelper.ruoloCheckData(TipoOperazione.CHANGE, oldRuolo)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(rEnv.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(rEnv.pd.getMessage()));
 			}
 
 			List<Object> listOggettiDaAggiornare = new ArrayList<>();

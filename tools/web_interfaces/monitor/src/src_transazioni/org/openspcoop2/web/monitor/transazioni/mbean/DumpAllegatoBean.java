@@ -24,14 +24,13 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-
 import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
+import org.slf4j.Logger;
 
 
 /****

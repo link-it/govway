@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.ArrayList;
@@ -16,6 +37,9 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
   
   @Schema(required = true, description = "")
   private Integer apiVersione = null;
+  
+  @Schema(description = "")
+  private String apiReferente = null;
   
   @Schema(description = "")
   private String apiSoapServizio = null;
@@ -62,6 +86,25 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
 
   public ApiImplVersioneApiView apiVersione(Integer apiVersione) {
     this.apiVersione = apiVersione;
+    return this;
+  }
+
+ /**
+   * Get apiReferente
+   * @return apiReferente
+  **/
+  @JsonProperty("api_referente")
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getApiReferente() {
+    return this.apiReferente;
+  }
+
+  public void setApiReferente(String apiReferente) {
+    this.apiReferente = apiReferente;
+  }
+
+  public ApiImplVersioneApiView apiReferente(String apiReferente) {
+    this.apiReferente = apiReferente;
     return this;
   }
 
@@ -136,6 +179,7 @@ public class ApiImplVersioneApiView extends BaseSoggettoItem {
     sb.append("    ").append(ApiImplVersioneApiView.toIndentedString(super.toString())).append("\n");
     sb.append("    apiNome: ").append(ApiImplVersioneApiView.toIndentedString(this.apiNome)).append("\n");
     sb.append("    apiVersione: ").append(ApiImplVersioneApiView.toIndentedString(this.apiVersione)).append("\n");
+    sb.append("    apiReferente: ").append(ApiImplVersioneApiView.toIndentedString(this.apiReferente)).append("\n");
     sb.append("    apiSoapServizio: ").append(ApiImplVersioneApiView.toIndentedString(this.apiSoapServizio)).append("\n");
     sb.append("    tipoServizio: ").append(ApiImplVersioneApiView.toIndentedString(this.tipoServizio)).append("\n");
     sb.append("    versioni: ").append(ApiImplVersioneApiView.toIndentedString(this.versioni)).append("\n");

@@ -1,0 +1,10 @@
+{
+    "stato": "ridefinito",
+    "abilitato": true,
+    "cache_timeout_seconds": 240,
+    "max_response_size": true,
+    "max_response_size_kb": 1024,
+    "hash_request_uri": true,
+    "hash_headers": false,
+    "hash_payload": true
+}

@@ -21,14 +21,6 @@
  */
 package org.openspcoop2.web.monitor.transazioni.datamodel;
 
-import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
-import org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean;
-import org.openspcoop2.web.monitor.transazioni.mbean.MsgDiagnosticoBean;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -39,12 +31,19 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BeanUtils;
+import org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean;
+import org.openspcoop2.web.monitor.transazioni.mbean.MsgDiagnosticoBean;
+import org.slf4j.Logger;
 
 /**
  * DiagnosticiDM

@@ -1,0 +1,1286 @@
+openapi: 3.0.0
+components:
+  parameters:
+   
+    # Dati Identificativi nel path
+    id_nome_gruppo:
+      name: nome_gruppo
+      in: path
+      description: Nome del Gruppo di azioni o risorse
+      required: true
+      schema:
+        type: string
+        maxLength: 255
+    id_soggetto_autorizzato:
+      name: soggetto_autorizzato
+      in: path
+      description: Nome del soggetto autorizzato
+      required: true
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+    id_applicativo_autorizzato:
+      name: applicativo_autorizzato
+      in: path
+      description: Nome dell'applicativo autorizzato
+      required: true
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    id_ruolo_autorizzato:
+      name: ruolo_autorizzato
+      in: path
+      description: Nome del ruolo autorizzato
+      required: true
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    id_scope_autorizzato:
+      name: scope_autorizzato
+      in: path
+      description: Nome dello scope autorizzato
+      required: true
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+
+    # Dati Identificativi nella query
+    gruppo:
+      name: gruppo
+      in: query
+      description: Nome del Gruppo di azioni o risorse
+      required: false
+      schema:
+        type: string
+        maxLength: 255
+         
+    # Ricerche
+    tipo_api:
+      name: tipo_api
+      in: query
+      description: Indica il tipo di API
+      required: false
+      example: 'rest'
+      schema:
+        $ref: '#/components/schemas/TipoApiEnum'
+    dominio:
+      name: dominio
+      in: query
+      description: Indica il dominio di un soggetto
+      required: false
+      example: 'esterno'
+      schema:
+        $ref: '#/components/schemas/DominioEnum'
+    ruolo:
+      name: ruolo
+      in: query
+      description: Identifica un ruolo
+      required: false
+      example: 'AccessoSolaLettura'
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    fonte:
+      name: fonte
+      in: query
+      description: Indica la fonte di un oggetto
+      required: false
+      example: 'esterna'
+      schema:
+        $ref: '#/components/schemas/FonteEnum'
+    contesto:
+      name: contesto
+      in: query
+      description: Indica il contesto di utilizzo di un oggetto
+      required: false
+      example: 'erogazione'
+      schema:
+        $ref: '#/components/schemas/ContestoEnum'
+    http_method:
+      name: http_method
+      in: query
+      description: Indica il tipo di http method
+      required: false
+      example: 'PUT'
+      schema:
+        $ref: '#/components/schemas/HttpMethodEnum'
+    azione:
+      name: azione
+      in: query
+      description: Identifica un azione o risorsa
+      required: false
+      example: 'Azione1'
+      schema:
+        $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        
+  schemas:
+ 
+    # Base: Stato
+    StatoApiDescrizione:
+      type: string
+      example: 'Nessuna risorsa definita nella API'
+      
+    # Base: API
+    ApiBase:
+      type: object
+      required:
+        - tipo
+        - nome
+        - versione
+        - formato
+      properties:
+        referente:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+        tipo:
+          $ref: '#/components/schemas/TipoApiEnum'
+        nome:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        descrizione:
+          type: string
+          maxLength: 255
+          example: 'descrizione API'
+        versione:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+        formato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/FormatoSoapEnum'
+            - $ref: '#/components/schemas/FormatoRestEnum'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'soap': '#/components/schemas/FormatoSoapEnum'
+              'rest': '#/components/schemas/FormatoRestEnum'
+          example:
+            formato: 'OpenApi3.0' 
+      
+    # Base: Allegato
+    AllegatoGenerico:
+      type: object
+      required:
+        - nome
+        - documento
+      properties:
+        nome:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        documento:
+          type: string
+          format: byte
+    AllegatoSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenerico'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+    AllegatoSpecificaSicurezza:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenerico'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+    AllegatoSpecificaLivelloServizio:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenerico'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'     
+
+    AllegatoGenericoItem:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    AllegatoSpecificaSemiformaleItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenericoItem'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+    AllegatoSpecificaSicurezzaItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenericoItem'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+    AllegatoSpecificaLivelloServizioItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoGenericoItem'
+        - type: object
+          required:
+          - tipo
+          properties:
+            tipo:
+              $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'              
+
+    # Base: Credenziali
+    AuthenticationHttpBasic:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          example: 'user'
+        password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+    AuthenticationHttps:
+      type: object
+      required:
+        - subject
+      properties:
+        subject: 
+          type: string
+          maxLength: 255
+          example: 'cn=esterno'
+    AuthenticationPrincipal:
+      type: object
+      required:
+       - userid
+      properties:
+        userid:
+          type: string
+          maxLength: 255
+          example: 'idEsterno'
+    BaseCredenziali:
+      type: object
+      properties:
+        modalita_accesso:
+          $ref: '#/components/schemas/ModalitaAccessoEnum'
+        credenziali:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AuthenticationHttpBasic'
+            - $ref: '#/components/schemas/AuthenticationHttps'
+            - $ref: '#/components/schemas/AuthenticationPrincipal'
+          discriminator:
+            propertyName: modalita_accesso
+            mapping:
+              'http-basic': '#/components/schemas/AuthenticationHttpBasic'
+              'https': '#/components/schemas/AuthenticationHttps'
+              'principal': '#/components/schemas/AuthenticationPrincipal'
+          example:
+            username: 'user'
+            password: 'pwd'
+
+    # Base: Connettore            
+    ConnettoreConfigurazioneHttps:
+      type: object
+      required: 
+        - tipologia
+        - server
+      properties:
+        tipologia:
+          $ref: '#/components/schemas/SslTipologiaEnum'
+        hostname_verifier:
+          type: boolean
+          example: false
+          default: true
+        server:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttpsServer'
+        client: 
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttpsClient'
+    ConnettoreConfigurazioneHttpsServer:
+      type: object
+      required: 
+        - truststore_path
+        - truststore_tipo
+        - truststore_password
+      properties:
+        truststore_path:
+          type: string
+          maxLength: 255
+          example: '/path/to/truststore'
+        truststore_tipo:
+          $ref: '#/components/schemas/KeystoreEnum'
+        truststore_password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+        algoritmo:
+          type: string
+          maxLength: 255
+          example: 'PKIX'
+          default: 'PKIX'
+    ConnettoreConfigurazioneHttpsClient:
+      type: object
+      required: 
+        - keystore_path
+        - keystore_tipo
+        - keystore_password
+        - key_password
+      properties:
+        keystore_path:
+          type: string
+          maxLength: 255
+          example: '/path/to/keystore'
+        keystore_tipo:
+          $ref: '#/components/schemas/KeystoreEnum'
+        keystore_password:
+          type: string
+          format: password
+          maxLength: 255
+          example: 'pwd'
+        key_password:
+          type: string
+          format: password
+          maxLength: 255
+          description: password della chiave privata
+          example: 'pwd'
+        algoritmo:
+          type: string
+          maxLength: 255
+          example: 'SunX509'
+          default: 'SunX509'
+    ConnettoreConfigurazioneProxy:
+      type: object
+      required: 
+        - hostname
+        - porta
+      properties:
+        hostname:
+          type: string
+          format: hostname
+          maxLength: 255
+          example: 'proxy.ente.it'
+        porta:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 65535
+          example: 8080
+        username:
+          type: string
+          maxLength: 255
+          example: 'user'
+        password:
+          type: string
+          maxLength: 255
+          format: password
+          example: 'pwd'
+    ConnettoreConfigurazioneTimeout:
+      type: object
+      required: 
+        - connection_timeout
+        - connection_read_timeout
+        - tempo_medio_risposta
+      properties:
+        connection_timeout:
+          type: integer
+          format: int32
+          example: 10000
+          description: tempo massimo (in millisecondi) per instaurare una connessione
+        connection_read_timeout:
+          type: integer
+          format: int32
+          example: 150000
+          description: tempo massimo (in millisecondi) per ricevere una risposta
+        tempo_medio_risposta:
+          type: integer
+          format: int32
+          example: 10000
+          description: tempo medio (in millisecondi) atteso per ricevere una risposta
+    Connettore:
+      type: object
+      required: 
+        - endpoint
+      properties:
+        endpoint:
+          type: string
+          format: url
+          example: 'http://ente.it/servizio'
+        autenticazione_http:
+          $ref: '#/components/schemas/AuthenticationHttpBasic'
+        autenticazione_https:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneHttps'
+        proxy:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneProxy'
+        tempi_risposta:
+          $ref: '#/components/schemas/ConnettoreConfigurazioneTimeout'
+          
+    # Base: Erogazione/Fruizione
+
+    APIImplTipoServizio:
+      type: string
+      maxLength: 20
+      
+    APIBaseImpl:
+      type: object
+      required:
+        - api_nome
+        - api_versione
+      properties:
+        api_nome:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        api_versione:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+        api_referente:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+        api_soap_servizio:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        tipo_servizio:
+          $ref: '#/components/schemas/APIImplTipoServizio'
+          
+    APIImpl:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/APIBaseImpl'
+        - type: object
+          required:
+            - connettore
+          properties:
+            autenticazione:
+              $ref: '#/components/schemas/APIImplAutenticazioneNew'
+            autorizzazione:
+              $ref: '#/components/schemas/APIImplAutorizzazioneNew'
+            connettore:
+              $ref: '#/components/schemas/Connettore'
+ 
+    APIImplAutenticazioneNew:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutenticazioneNewEnum'
+        opzionale:
+          type: boolean
+          default: false
+          example: false 
+    APIImplAutenticazione:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
+        opzionale:
+          type: boolean
+          default: false
+          example: false
+        nome:
+          description: nome autenticazione 'custom', set tipo='custom'
+          type: string
+          maxLength: 255
+          
+    APIImplAutorizzazioneNew:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneNewEnum'
+        configurazione:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/APIImplAutorizzazioneConfigNew'
+            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfigNew'
+              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
+    APIImplAutorizzazioneView:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
+        configurazione:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
+            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
+            - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfig'
+              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
+              'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
+    APIImplAutorizzazione:
+      type: object
+      required:
+        - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
+        configurazione:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
+            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
+            - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
+          discriminator:
+            propertyName: tipo
+            mapping:
+              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfig'
+              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
+              'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
+    APIImplAutorizzazioneBaseConfig:
+      type: object
+      properties:
+        puntuale:
+          type: boolean
+          default: true
+          example: false
+        ruoli:
+          type: boolean
+          default: false
+          example: false
+        ruoli_fonte:
+          $ref: '#/components/schemas/FonteEnum' 
+        ruoli_richiesti:
+          $ref: '#/components/schemas/AllAnyEnum'           
+    APIImplAutorizzazioneConfigNew:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/APIImplAutorizzazioneBaseConfig'
+        - type: object
+          properties:
+            soggetto:
+              $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+            ruolo:
+              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    APIImplAutorizzazioneConfig:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/APIImplAutorizzazioneBaseConfig'
+        - type: object
+          properties:
+            scope:
+              type: boolean
+              default: false
+              example: false
+            scope_richiesti:
+              $ref: '#/components/schemas/AllAnyEnum' 
+            token:
+              type: boolean
+              default: false
+              example: false
+            token_claims:
+              description: Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola
+              type: string
+              maxLength: 4000              
+    APIImplAutorizzazioneXACMLBaseConfig:
+      type: object
+      required:
+        - ruoli_fonte
+      properties:
+        ruoli_fonte:
+          $ref: '#/components/schemas/FonteEnum' 
+    APIImplAutorizzazioneXACMLConfig:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLBaseConfig'
+        - type: object
+          required:
+            - policy
+          properties:
+            policy:
+              type: string
+              format: byte
+    APIImplAutorizzazioneCustom:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+          maxLength: 255   
+
+    ApiImplItem:
+      type: object
+      allOf:
+        - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+        - $ref: '#/components/schemas/APIBaseImpl'
+        - type: object
+          required:
+            - nome
+            - versione
+            - stato
+            - stato_descrizione
+          properties:
+            nome:
+              $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+            versione:
+              $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+            api_tipo:
+              $ref: '#/components/schemas/TipoApiEnum'
+            stato:
+              $ref: '#/components/schemas/StatoApiEnum'
+            stato_descrizione:
+              $ref: '#/components/schemas/StatoApiDescrizione'    
+                 
+    ApiImplViewItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplItem'
+        - type: object
+          required:
+            - url_invocazione
+            - connettore
+            - gestione_cors
+          properties:
+            url_invocazione:
+              type: string
+              format: url
+            connettore:
+              type: string    
+            gestione_cors:
+              type: string 
+          
+    ApiImplInformazioniGenerali:
+      type: object
+      required:
+        - nome
+      properties:
+        tipo:
+          $ref: '#/components/schemas/APIImplTipoServizio'
+        nome:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+        api_soap_servizio:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+    ApiImplInformazioniGeneraliView:
+      type: object
+      allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseItem'
+          - $ref: '#/components/schemas/ApiImplInformazioniGenerali'
+  
+    ApiImplVersioneApi:
+      type: object
+      required:
+        - api_versione
+      properties:
+        api_versione:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+    ApiImplVersioneApiView:
+      type: object
+      allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/BaseSoggettoItem'
+          - $ref: '#/components/schemas/APIBaseImpl'
+          - type: object
+            required:
+              - versioni
+            properties:
+              versioni:
+                type: array
+                items:
+                  $ref: 'govway_rs-api_core.yaml#/components/schemas/Versione'
+                example: [1, 2, 3] 
+
+    ApiImplModalitaIdentificazioneAzione:
+      type: object
+      required:
+        - modalita
+      properties:
+        modalita:
+          $ref: '#/components/schemas/ModalitaIdentificazioneAzioneEnum'
+        pattern:
+            description: XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'
+            type: string
+            maxLength: 255 
+        nome:
+            description: Nome dell'header http nel caso di modalità 'header-based'
+            type: string
+            maxLength: 255 
+        force_interface:
+            description: Indicazione se oltre alla modalità indicata per individuare l'azione viene usata comunque la modalità 'interface-based'
+            type: boolean
+            default: true 
+    ApiImplUrlInvocazione:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/ApiImplModalitaIdentificazioneAzione'
+    ApiImplUrlInvocazioneView:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/ApiImplModalitaIdentificazioneAzione'      
+          - type: object
+            required:
+              - url_invocazione
+            properties:
+               url_invocazione:
+                  type: string
+                  format: url
+               azioni:
+                  type: array
+                  items:
+                    $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+                  example: ['az1', 'az2', 'az3']
+
+    ApiImplAllegato:
+      type: object
+      required:
+        - ruolo
+        - allegato
+      properties:
+        ruolo:
+          $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AllegatoGenerico'
+            - $ref: '#/components/schemas/AllegatoSpecificaSemiformale'
+            - $ref: '#/components/schemas/AllegatoSpecificaSicurezza'
+            - $ref: '#/components/schemas/AllegatoSpecificaLivelloServizio'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/AllegatoGenerico'
+              'specificaSemiFormale': '#/components/schemas/AllegatoSpecificaSemiformale'
+              'specificaSicurezza': '#/components/schemas/AllegatoSpecificaSicurezza'
+              'specificaLivelloServizio': '#/components/schemas/AllegatoSpecificaLivelloServizio'
+    ApiImplAllegatoItem:
+      type: object
+      required:
+        - ruolo
+        - allegato
+      properties:
+        ruolo:
+          $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/AllegatoGenericoItem'
+            - $ref: '#/components/schemas/AllegatoSpecificaSemiformaleItem'
+            - $ref: '#/components/schemas/AllegatoSpecificaSicurezzaItem'
+            - $ref: '#/components/schemas/AllegatoSpecificaLivelloServizioItem'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/AllegatoGenericoItem'
+              'specificaSemiFormale': '#/components/schemas/AllegatoSpecificaSemiformaleItem'
+              'specificaSicurezza': '#/components/schemas/AllegatoSpecificaSicurezzaItem'
+              'specificaLivelloServizio': '#/components/schemas/AllegatoSpecificaLivelloServizioItem'
+    ListaApiImplAllegati:
+       type: object
+       allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiImplAllegatoItem'
+
+    # Base: Gruppi Erogazione/Fruizione
+
+    GruppoNome:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+          maxLength: 255
+    GruppoAzioni:
+      type: object
+      required:
+        - azioni
+      properties:
+        azioni:
+          type: array
+          items:
+            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          example: ['az1', 'az2', 'az3']
+    GruppoBase:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/GruppoNome'      
+          - $ref: '#/components/schemas/GruppoAzioni'
+    Gruppo:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/GruppoBase'      
+          - type: object
+            required:
+              - modalita
+            properties:
+              modalita:
+                $ref: '#/components/schemas/ModalitaConfigurazioneGruppoEnum'
+              configurazione:
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/GruppoEreditaConfigurazione'
+                  - $ref: '#/components/schemas/GruppoNuovaConfigurazione'
+                discriminator:
+                  propertyName: modalita
+                  mapping:
+                    'eredita': '#/components/schemas/GruppoEreditaConfigurazione'
+                    'nuova': '#/components/schemas/GruppoNuovaConfigurazione'
+    GruppoEreditaConfigurazione:
+      type: object
+      required:
+        - nome
+      properties:
+        nome:
+          type: string
+          maxLength: 255 
+    GruppoNuovaConfigurazione:
+      type: object
+      required:
+        - autenticazione
+      properties:
+        autenticazione:
+          $ref: '#/components/schemas/APIImplAutenticazioneNew'             
+    GruppoItem:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/GruppoBase'      
+          - type: object
+            required:
+              - predefinito
+            properties:
+              predefinito:
+                type: boolean
+    ListaGruppi:
+       type: object
+       allOf:
+          - $ref: 'govway_rs-api_core.yaml#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GruppoItem' 
+
+    # Base: Configurazioni Erogazione/Fruizione
+
+    GestioneCorsAccessControl:
+      type: object
+      required:
+        - all_allow_origins
+      properties:
+        all_allow_origins:
+          type: boolean
+          default: true
+        allow_origins:
+          type: array
+          items:
+            type: string
+            maxLength: 255
+        allow_headers:
+          type: array
+          items:
+            type: string
+            maxLength: 255 
+        allow_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/HttpMethodEnum'   
+        allow_credentials:
+          type: boolean
+          default: false
+    GestioneCors:
+      type: object
+      required:
+        - ridefinito
+      properties:
+        ridefinito:
+          type: boolean
+          default: false
+        tipo:
+          $ref: '#/components/schemas/TipoGestioneCorsEnum' 
+        access_control:
+          $ref: '#/components/schemas/GestioneCorsAccessControl'
+ 
+    ApiImplStato:
+       type: object
+       required:
+          - abilitato
+       properties:
+          abilitato:
+            type: boolean
+
+    # --- Stato impostato a ridefinito come default per supportare in futuro la possibilità di indicare usa default o meno.
+    ApiImplConfigurazioneStato:
+      type: object
+      required:
+        - ridefinito
+      properties:
+        ridefinito:
+          description: funzionalità non supportata al momento, indicare sempre 'true'.
+          type: boolean
+          default: true
+
+    ControlloAccessiGestioneToken:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            properties:
+              abilitato:
+                description: indica se la gestione del token è abilitata o meno
+                type: boolean
+              policy:
+                description: identificativo della Policy da utilizzare per la gestione del token
+                type: string
+                maxLength: 255
+              token_opzionale:
+                description: indica se la presenza del token è obbligatoria o opzionale
+                type: boolean
+                default: false
+              validazione_jwt:
+                $ref: '#/components/schemas/StatoFunzionalitaConWarningEnum'
+              introspection:
+                $ref: '#/components/schemas/StatoFunzionalitaConWarningEnum'
+              user_info:
+                $ref: '#/components/schemas/StatoFunzionalitaConWarningEnum'                
+              token_forward:
+                description: indica se il forward del token, nelle modalità descritte nella policy, è attivo o meno
+                type: boolean
+                default: true   
+                           
+    ControlloAccessiAutenticazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            properties:
+              autenticazione:
+                $ref: '#/components/schemas/APIImplAutenticazione'
+              token:
+                $ref: '#/components/schemas/ControlloAccessiAutenticazioneToken'
+    ControlloAccessiAutenticazioneToken:
+      type: object
+      properties:          
+        issuer:
+          description: indica se nel token deve essere obbligatoriamente presente l'issuer
+          type: boolean
+          default: false
+        client_id:
+          description: indica se nel token deve essere obbligatoriamente presente l'identificativo dell'applicazione
+          type: boolean
+          default: false
+        subject:
+          description: indica se nel token deve essere obbligatoriamente presente il subject (identificativo utente codificato)
+          type: boolean
+          default: false
+        username:
+          description: indica se nel token deve essere obbligatoriamente presente l'utente (identificativo utente 'human-readable')
+          type: boolean
+          default: false
+        email:
+          description: indica se nel token deve essere obbligatoriamente presente l'email dell'utente
+          type: boolean
+          default: false   
+
+    ControlloAccessiAutorizzazioneView:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            properties:
+              autorizzazione:
+                $ref: '#/components/schemas/APIImplAutorizzazioneView'
+    ControlloAccessiAutorizzazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            properties:
+              autorizzazione:
+                $ref: '#/components/schemas/APIImplAutorizzazione'
+    ControlloAccessiAutorizzazioneSoggetti:
+      type: object
+      required:
+        - soggetti
+      properties:
+        soggetti:
+          type: array
+          items:
+            $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+          example: ['Ente1', 'Ente2', 'Ente3'] 
+    ControlloAccessiAutorizzazioneSoggetto:
+      type: object
+      required:
+        - soggetto
+      properties:
+        soggetto:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/SimpleName'
+    ControlloAccessiAutorizzazioneApplicativi:
+      type: object
+      required:
+        - applicativi
+      properties:
+        applicativi:
+          type: array
+          items:
+            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          example: ['Applicativo1', 'Applicativo2', 'Applicativo3']
+    ControlloAccessiAutorizzazioneApplicativo:
+      type: object
+      required:
+        - applicativo
+      properties:
+        applicativo:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'     
+    ControlloAccessiAutorizzazioneRuoli:
+      type: object
+      required:
+        - ruoli
+      properties:
+        ruoli:
+          type: array
+          items:
+            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          example: ['Ruolo1', 'Ruolo2', 'Ruolo3']
+    ControlloAccessiAutorizzazioneRuolo:
+      type: object
+      required:
+        - ruolo
+      properties:
+        ruolo:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName' 
+    ControlloAccessiAutorizzazioneScopes:
+      type: object
+      required:
+        - scope
+      properties:
+        scope:
+          type: array
+          items:
+            $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'
+          example: ['Scope1', 'Scope2', 'Scope3']
+    ControlloAccessiAutorizzazioneScope:
+      type: object
+      required:
+        - scope
+      properties:
+        scope:
+          $ref: 'govway_rs-api_core.yaml#/components/schemas/NCName'     
+
+    Validazione:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            - tipo
+            properties:
+              stato:
+                $ref: '#/components/schemas/StatoFunzionalitaConWarningEnum'
+              tipo:
+                $ref: '#/components/schemas/TipoValidazioneEnum'
+              mtom:
+                type: boolean
+                default: false
+                example: false
+                
+    CachingRisposta:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            properties:
+              stato:
+                $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+              abilitato:
+                type: boolean
+              cache_timeout_seconds:
+                type: integer
+                format: int32
+              max_response_size:
+                type: boolean
+              max_response_size_kb:
+                type: integer
+                format: int64
+              hash_request_uri:
+                type: boolean
+                default: true
+              hash_headers:
+                type: boolean
+                default: true
+              hash_payload:
+                type: boolean
+                default: true
+
+    RegistrazioneMessaggi:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/ApiImplConfigurazioneStato'
+          - type: object
+            required:
+            - stato
+            properties:
+              stato:
+                $ref: '#/components/schemas/StatoDefaultRidefinitoEnum'
+              richiesta:
+                $ref: '#/components/schemas/RegistrazioneMessaggiConfigurazione'
+              risposta:
+                $ref: '#/components/schemas/RegistrazioneMessaggiConfigurazione'
+    RegistrazioneMessaggiConfigurazione:
+      type: object
+      required:
+        - abilitato
+      properties:
+        abilitato:
+          type: boolean
+        ingresso:
+          $ref: '#/components/schemas/RegistrazioneMessaggiConfigurazioneRegola'
+        uscita:
+          $ref: '#/components/schemas/RegistrazioneMessaggiConfigurazioneRegola'
+    RegistrazioneMessaggiConfigurazioneRegola:
+      type: object
+      required:
+        - headers
+        - body
+        - attachments
+      properties:
+        headers:
+          type: boolean
+        body:
+          type: boolean
+        attachments:
+          type: boolean
+          
+    # Base: Enumeration
+    FormatoSoapEnum:
+      type: string
+      enum: ['Wsdl1.1']
+      default: 'Wsdl1.1'
+    FormatoRestEnum:
+      type: string
+      enum: ['Wadl', 'Swagger2.0','OpenApi3.0']
+      default: 'OpenApi3.0'
+    TipoApiEnum:
+      type: string
+      enum: ['soap', 'rest']
+      example: 'rest'
+    StatoApiEnum:
+      type: string
+      enum: ['ok', 'warn','error']
+    DominioEnum:
+      type: string
+      enum: ['interno', 'esterno']
+      example: 'esterno'
+    ModalitaAccessoEnum:
+      type: string
+      enum: ['http-basic', 'https', 'principal']
+      example: 'http-basic'
+    ContestoEnum:
+      type: string
+      enum: ['qualsiasi', 'erogazione', 'fruizione']
+      example: 'qualsiasi'
+      default: 'qualsiasi'
+    FonteEnum:
+      type: string
+      enum: ['qualsiasi', 'registro', 'esterna']
+      example: 'qualsiasi'
+      default: 'qualsiasi'
+    RuoloAllegatoAPI:
+      type: string
+      enum: ['allegato', 'specificaSemiFormale']
+      default: allegato
+      example: 'specificaSemiFormale'
+    RuoloAllegatoAPIImpl:
+      type: string
+      enum: ['allegato', 'specificaSemiFormale', 'specificaSicurezza', 'specificaLivelloServizio' ]
+      default: allegato
+      example: 'specificaSemiFormale'
+    TipoSpecificaSemiformaleEnum:
+      type: string
+      enum: ['UML', 'HTML', 'XSD', 'XML', 'JSON', 'YAML', 'Linguaggio Naturale']
+      example: 'XML'
+    TipoSpecificaSicurezzaEnum:
+      type: string
+      enum: ['WS-Policy', 'XACML-Policy', 'Linguaggio Naturale']
+      example: 'XACML-Policy'      
+    TipoSpecificaLivelloServizioEnum:
+      type: string
+      enum: ['WS-Agreement', 'WSLA']
+      example: 'WSLA'
+    HttpMethodEnum:
+      type: string
+      enum: ['Qualsiasi', 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE', 'PATCH', 'LINK', 'UNLINK']
+      example: 'POST'
+    ProfiloCollaborazioneEnum:
+      type: string
+      enum: ['oneway', 'sincrono', 'asincronoSimmetrico', 'asincronoAsimmetrico']
+      example: 'sincrono'
+    SslTipologiaEnum:
+      type: string
+      enum: ['SSLv2Hello', 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2']
+      example: 'TLSv1.2'
+      default: 'TLSv1.2'
+    KeystoreEnum:
+      type: string
+      enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
+      example: 'jks' 
+    TipoAutenticazioneNewEnum:
+      type: string
+      enum: ['disabilitato', 'http-basic', 'https', 'principal']
+      example: 'http-basic'
+    TipoAutenticazioneEnum:
+      type: string
+      enum: ['disabilitato', 'http-basic', 'https', 'principal', 'custom']
+      example: 'http-basic' 
+    TipoAutorizzazioneNewEnum:
+      type: string
+      enum: ['disabilitato', 'abilitato', 'xacml-Policy']
+      example: 'abilitato'
+    TipoAutorizzazioneEnum:
+      type: string
+      enum: ['disabilitato', 'abilitato', 'xacml-Policy', 'custom']
+      example: 'abilitato'
+    AllAnyEnum:
+      type: string
+      enum: ['all', 'any']
+      example: 'all'
+      default: 'all'    
+    ModalitaIdentificazioneAzioneEnum:
+      type: string
+      enum: ['content-based', 'header-based', 'input-based', 'interface-based', 'soap-action-based', 'url-based']
+      example: 'interface-based'   
+    TipoGestioneCorsEnum:
+      type: string
+      enum: ['disabilitato', 'gateway', 'applicativo']
+      example: 'gateway'
+    ModalitaConfigurazioneGruppoEnum:
+      type: string
+      enum: ['eredita', 'nuova']
+      example: 'eredita'
+    StatoFunzionalitaConWarningEnum:
+      type: string
+      enum: ['abilitato', 'disabilitato', 'warningOnly']
+      example: 'abilitato'
+    TipoValidazioneEnum:
+      type: string
+      enum: ['interface', 'xsd']
+      example: 'interface'
+    StatoDefaultRidefinitoEnum:
+      type: string
+      enum: ['default', 'ridefinito']
+      example: 'ridefinito'

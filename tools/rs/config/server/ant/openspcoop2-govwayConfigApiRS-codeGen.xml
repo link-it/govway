@@ -31,7 +31,6 @@
 		<mkdir dir="${src_govwayConfigApiRS}/schemi/merge/tmp"/>
 		<copy todir="${src_govwayConfigApiRS}/schemi/merge/tmp">
 			<fileset dir="${src_govwayConfigApiRS}/schemi">
-				<exclude name="daEliminare.yaml"/>
 				<include name="*.yaml"/>
 			</fileset>
 		</copy>

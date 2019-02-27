@@ -1,14 +1,33 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.AllegatoGenerico;
@@ -25,12 +44,10 @@ import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
-import org.openspcoop2.core.config.rs.server.model.ProfiloCollaborazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
+import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
@@ -49,100 +66,26 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.archive.APIUtils;
+import org.openspcoop2.protocol.information_missing.constants.StatoType;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
-import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 
-
-
+/**
+ * ApiApiHelper
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
 public class ApiApiHelper {
-	
-	
-	public static final Map<TipoApiEnum,ServiceBinding> serviceBindingFromTipo = new HashMap<TipoApiEnum,ServiceBinding>();
-	static {
-		serviceBindingFromTipo.put(TipoApiEnum.REST, ServiceBinding.REST);
-		serviceBindingFromTipo.put(TipoApiEnum.SOAP, ServiceBinding.SOAP);
-	}
-	
-	
-	public static final Map<FormatoSoapEnum,FormatoSpecifica> formatoSpecificaFromSoap = new HashMap<FormatoSoapEnum,FormatoSpecifica>();
-	static {
-		formatoSpecificaFromSoap.put(FormatoSoapEnum._1, FormatoSpecifica.WSDL_11);
-	}
-	
-	public static final Map<FormatoSpecifica,FormatoSoapEnum> formatoSoapFromSpecifica = new HashMap<FormatoSpecifica,FormatoSoapEnum>();
-	static {
-		formatoSpecificaFromSoap.forEach( (soapenum, fspec) -> formatoSoapFromSpecifica.put(fspec,soapenum) );
-	}
-	
-	
-	public static final Map<FormatoRestEnum,FormatoSpecifica> formatoSpecificaFromRest = new HashMap<FormatoRestEnum,FormatoSpecifica>();
-	static {
-		formatoSpecificaFromRest.put(FormatoRestEnum.OPENAPI3_0, FormatoSpecifica.OPEN_API_3);
-		formatoSpecificaFromRest.put(FormatoRestEnum.SWAGGER2_0, FormatoSpecifica.SWAGGER_2);
-		formatoSpecificaFromRest.put(FormatoRestEnum.WADL, FormatoSpecifica.WADL);
-	}
-	
-	
-	public static final Map<FormatoSpecifica,FormatoRestEnum> formatoRestFromSpecifica = new HashMap<FormatoSpecifica,FormatoRestEnum>();
-	static {
-		formatoSpecificaFromRest.forEach( (fr, fs) -> formatoRestFromSpecifica.put(fs, fr));
-	}
-		
-
-	public static final Map<FormatoSpecifica,InterfaceType> interfaceTypeFromFormatoSpecifica = new HashMap<FormatoSpecifica,InterfaceType>();
-	static {
-		interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.OPEN_API_3, InterfaceType.OPEN_API_3);
-		interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.SWAGGER_2, InterfaceType.SWAGGER_2);
-		interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.WADL, InterfaceType.WADL);
-		interfaceTypeFromFormatoSpecifica.put(FormatoSpecifica.WSDL_11, InterfaceType.WSDL_11);
-	}
-	
-	
-	public static final Map<RuoloAllegatoAPI,RuoliDocumento> ruoliDocumentoFromApi = new HashMap<RuoloAllegatoAPI,RuoliDocumento>();
-	static {
-		ruoliDocumentoFromApi.put(RuoloAllegatoAPI.ALLEGATO, RuoliDocumento.allegato);
-		ruoliDocumentoFromApi.put(RuoloAllegatoAPI.SPECIFICASEMIFORMALE, RuoliDocumento.specificaSemiformale);
-	}
-	
-	public static final Map<RuoliDocumento,RuoloAllegatoAPI> ruoliApiFromDocumento = new HashMap<RuoliDocumento,RuoloAllegatoAPI>();
-	static {
-		ruoliDocumentoFromApi.forEach( (ra,rd) -> ruoliApiFromDocumento.put(rd, ra));
-	}
-
-
-	public static final Map<TipoSpecificaSemiformaleEnum,TipiDocumentoSemiformale> tipoDocumentoSemiFormaleFromSpecifica = new HashMap<TipoSpecificaSemiformaleEnum,TipiDocumentoSemiformale>();
-	static {
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.HTML, TipiDocumentoSemiformale.HTML);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.JSON, TipiDocumentoSemiformale.JSON);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.LINGUAGGIO_NATURALE, TipiDocumentoSemiformale.LINGUAGGIO_NATURALE);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.UML, TipiDocumentoSemiformale.UML);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.XML, TipiDocumentoSemiformale.XML);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.XSD, TipiDocumentoSemiformale.XSD);
-		tipoDocumentoSemiFormaleFromSpecifica.put(TipoSpecificaSemiformaleEnum.YAML, TipiDocumentoSemiformale.YAML);
-	}
-	
-	
-	public static final Map<ProfiloCollaborazioneEnum,ProfiloCollaborazione> profiloCollaborazioneFromApiEnum = new HashMap<ProfiloCollaborazioneEnum,ProfiloCollaborazione>();
-	static {
-		profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.ASINCRONOASIMMETRICO, ProfiloCollaborazione.ASINCRONO_ASIMMETRICO);
-		profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.ASINCRONOSIMMETRICO, ProfiloCollaborazione.ASINCRONO_SIMMETRICO);
-		profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.ONEWAY, ProfiloCollaborazione.ONEWAY);
-		profiloCollaborazioneFromApiEnum.put(ProfiloCollaborazioneEnum.SINCRONO, ProfiloCollaborazione.SINCRONO);
-	}
-	
-	public static final Map<ProfiloCollaborazione,ProfiloCollaborazioneEnum> profiloCollaborazioneApiFromRegistro = new HashMap<ProfiloCollaborazione,ProfiloCollaborazioneEnum>();
-	static {
-		profiloCollaborazioneFromApiEnum.forEach( (a,r) -> profiloCollaborazioneApiFromRegistro.put(r, a));
-	}
 	
 	
 	public static final AccordoServizioParteComune accordoApiToRegistro(Api body, ApiEnv env) throws Exception {
@@ -150,23 +93,46 @@ public class ApiApiHelper {
 		
 		as.setNome(body.getNome());
 		as.setDescrizione(body.getDescrizione());
-		as.setProfiloCollaborazione(ProfiloCollaborazione.SINCRONO);	// AUDIT.
+		as.setProfiloCollaborazione(ProfiloCollaborazione.SINCRONO);
 	
 		// Quando sono in SPCoopSoap Specifico di tutti i vari wsdl\wsbl solo il wsdlserv, ovvero  AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE
 		// Quando invece sono in modalità ApiGateway e passo una OpenApi, imposto il wsdlconcettuale
 		String interfaccia = body.getInterfaccia() != null ? new String(body.getInterfaccia()) : null;
+
+		// defaults
+		if (env.profilo != ProfiloEnum.APIGATEWAY) {
+			
+			if (body.getTipo() == null)
+				body.setTipo(TipoApiEnum.SOAP);			
+		}
+		
+		if ( env.profilo == ProfiloEnum.APIGATEWAY ) {
+			if ( body.getTipo() == null )
+				body.setTipo(TipoApiEnum.REST);
+		
+		}
+		
+		if ( body.getTipo() == null )	// Questo non può mai accadere, lo tengo perchè in futuro il codice sopra potrà cambiare.
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un tipo per la Api");
 		
 		switch (body.getTipo()) {
 		case REST:
 			as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
-			as.setFormatoSpecifica( formatoSpecificaFromRest.get((FormatoRestEnum) body.getFormato())); 
+			as.setFormatoSpecifica( Helper.evalorElse( () -> 
+				Enums.formatoSpecificaFromRest.get((FormatoRestEnum) body.getFormato()),
+				FormatoSpecifica.OPEN_API_3
+				)); 
 			break;
 		case SOAP: 
-			as.setFormatoSpecifica( formatoSpecificaFromSoap.get((FormatoSoapEnum) body.getFormato()));
+		
+			as.setFormatoSpecifica( Helper.evalorElse( 
+					() -> Enums.formatoSpecificaFromSoap.get((FormatoSoapEnum) body.getFormato() ), 
+					FormatoSpecifica.WSDL_11 
+				));
 			as.setByteWsdlLogicoErogatore(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);	// Da commenti e audit, WSDL solo logico ed erogatore
 		}
 		
-		as.setServiceBinding(env.apcCore.fromMessageServiceBinding(ApiApiHelper.serviceBindingFromTipo.get(body.getTipo())));
+		as.setServiceBinding(env.apcCore.fromMessageServiceBinding(Enums.serviceBindingFromTipo.get(body.getTipo())));
 		
 		boolean facilityUnicoWSDL_interfacciaStandard = false;
 		if(as.getByteWsdlLogicoErogatore()!=null && as.getByteWsdlLogicoFruitore()==null && as.getByteWsdlConcettuale()==null){
@@ -187,7 +153,7 @@ public class ApiApiHelper {
 		as.setIdRiferimentoRichiesta(StatoFunzionalita.DISABILITATO);
 		as.setUtilizzoSenzaAzione(true);	// Default a true.
 		as.setPrivato(false);	// Da Audit è false.
-		as.setStatoPackage("finale");	// Come da Audit
+		as.setStatoPackage(StatoType.FINALE.getValue());	// Come da Audit
 		
 		if (body.getVersione() != null)
 			as.setVersione(body.getVersione());
@@ -215,7 +181,7 @@ public class ApiApiHelper {
 		
 		// Automapping
 		ServerProperties properties = ServerProperties.getInstance();
-		InterfaceType interfaceType = interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica());
+		InterfaceType interfaceType = Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica());
 
 		AccordiServizioParteComuneUtilities.mapppingAutomaticoInterfaccia(
 				as,
@@ -231,51 +197,24 @@ public class ApiApiHelper {
 	}
 	
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final <T> T fromMap(Map<String,String> mapObject, Class<T> toClass) throws InstantiationException, IllegalAccessException {
-		T ret = toClass.newInstance();
-		
-		mapObject.forEach( (k, v) -> {
-			
-				try {
-					Class<?> descr;
-					descr = PropertyUtils.getPropertyType(ret, k);
-										
-					if ( descr == (new byte[0]).getClass() ) {					
-						BeanUtils.setProperty(ret, k, Base64Utilities.decode(v.getBytes()));
-					}
-					else if ( descr == String.class ) {
-						BeanUtils.setProperty(ret, k, v);
-					}
-					else if ( descr.isEnum() ) {
-						BeanUtils.setProperty(ret, k, Enum.valueOf( (Class<Enum>) descr, v));
-					}
-				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-					throw new RuntimeException(e); 	//TODO: log
-				}
-		});
-		
-		return ret;
-	}
-	
 	public static final Documento apiAllegatoToDocumento(ApiAllegato body, AccordoServizioParteComune as, ApiEnv env) throws InstantiationException, IllegalAccessException {
 		
 		Documento documento = new Documento();
 		documento.setIdProprietarioDocumento(as.getId());
-		documento.setRuolo(ApiApiHelper.ruoliDocumentoFromApi.get(body.getRuolo()).toString());
+		documento.setRuolo(Enums.ruoliDocumentoFromApi.get(body.getRuolo()).toString());
 		
 		switch (body.getRuolo()) {
 		case ALLEGATO:
-			@SuppressWarnings("unchecked") AllegatoGenerico ag = fromMap((Map<String,String>) body.getAllegato(), AllegatoGenerico.class);
+			@SuppressWarnings("unchecked") AllegatoGenerico ag = Helper.fromMap((Map<String,Object>) body.getAllegato(), AllegatoGenerico.class);
 			documento.setByteContenuto(ag.getDocumento());
 			documento.setFile(ag.getNome());
 			documento.setTipo(ag.getNome().substring( ag.getNome().lastIndexOf('.')+1, ag.getNome().length()));
 			break;
 		case SPECIFICASEMIFORMALE:
-			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = fromMap( (Map<String,String>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
+			@SuppressWarnings("unchecked") AllegatoSpecificaSemiformale ass = Helper.fromMap( (Map<String,Object>) body.getAllegato(), AllegatoSpecificaSemiformale.class);
 			documento.setByteContenuto(ass.getDocumento());
 			documento.setFile(ass.getNome());	
-			documento.setTipo(ApiApiHelper.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString());
+			documento.setTipo(Enums.tipoDocumentoSemiFormaleFromSpecifica.get(ass.getTipo()).toString());
 			break;
 		}
 
@@ -286,7 +225,7 @@ public class ApiApiHelper {
 	public static final ApiAllegato documentoToApiAllegato(Documento d) {
 		ApiAllegato ret = new ApiAllegato();
 		
-		ret.setRuolo(ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
+		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
 		AllegatoGenerico ag = null;
 		
 		switch (ret.getRuolo()) {
@@ -311,7 +250,7 @@ public class ApiApiHelper {
 	public static final ApiAllegatoItem documentoToApiAllegatoItem(Documento d) {
 		ApiAllegatoItem ret = new ApiAllegatoItem();
 		
-		ret.setRuolo(ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
+		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
 		AllegatoGenericoItem ag = null;
 		
 		switch (ret.getRuolo()) {
@@ -347,7 +286,7 @@ public class ApiApiHelper {
 		pt.setIdCollaborazione(Helper.boolToStatoFunzionalita(body.isIdCollaborazione()));
 		pt.setIdRiferimentoRichiesta(Helper.boolToStatoFunzionalita(body.isRiferimentoIdRichiesta()));
 		pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
-		pt.setProfiloCollaborazione(ApiApiHelper.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()));			
+		pt.setProfiloCollaborazione(Enums.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()));			
 	}
 	
 	
@@ -359,7 +298,7 @@ public class ApiApiHelper {
 			to_update.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 			to_update.setIdCollaborazione(Helper.boolToStatoFunzionalita(azione.isIdCollaborazione()));
 			to_update.setIdRiferimentoRichiesta(Helper.boolToStatoFunzionalita(azione.isRiferimentoIdRichiesta()));
-			to_update.setProfiloCollaborazione(ApiApiHelper.profiloCollaborazioneFromApiEnum.get(azione.getProfiloCollaborazione()));
+			to_update.setProfiloCollaborazione(Enums.profiloCollaborazioneFromApiEnum.get(azione.getProfiloCollaborazione()));
 		}
 		else {
 			to_update.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
@@ -402,7 +341,7 @@ public class ApiApiHelper {
 		ret.setNome(op.getNome());
 		ret.setIdCollaborazione(op.getIdCollaborazione() == StatoFunzionalita.ABILITATO ? true : false);
 		ret.setRiferimentoIdRichiesta(op.getIdRiferimentoRichiesta() == StatoFunzionalita.ABILITATO ? true : false);
-		ret.setProfiloCollaborazione(profiloCollaborazioneApiFromRegistro.get(op.getProfiloCollaborazione()));
+		ret.setProfiloCollaborazione(Enums.profiloCollaborazioneApiFromRegistro.get(op.getProfiloCollaborazione()));
 		ret.setProfiloRidefinito(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(op.getProfAzione()) ? true : false);
 	
 		return ret;
@@ -431,7 +370,7 @@ public class ApiApiHelper {
 		ret.setDescrizione(pt.getDescrizione());
 		ret.setIdCollaborazione(Helper.statoFunzionalitaToBool(pt.getIdCollaborazione()));
 		ret.setRiferimentoIdRichiesta(Helper.statoFunzionalitaToBool(pt.getIdRiferimentoRichiesta()));
-		ret.setProfiloCollaborazione(ApiApiHelper.profiloCollaborazioneApiFromRegistro.get(pt.getProfiloCollaborazione()));
+		ret.setProfiloCollaborazione(Enums.profiloCollaborazioneApiFromRegistro.get(pt.getProfiloCollaborazione()));
 		
 		return ret;
 	}
@@ -511,7 +450,7 @@ public class ApiApiHelper {
 		ret.setDescrizione(api.getDescrizione());
 		ret.setFormato(api.getFormato());
 		ret.setNome(api.getNome());
-		ret.setProfilo(env.profilo);
+		ret.setProfilo(env.profilo);	// TODO: Continua da qui e prendi il profilo relativo al tip del soggetto referente dell'as
 		ret.setSoggetto(api.getReferente());
 		ret.setTipo(api.getTipo());
 		ret.setVersione(api.getVersione());
@@ -585,12 +524,12 @@ public class ApiApiHelper {
 		switch (as.getServiceBinding()) {
 		case REST:
 			ret.setTipo(TipoApiEnum.REST);
-			ret.setFormato(formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
 			ret.setInterfaccia(as.getByteWsdlConcettuale());
 			break;
 		case SOAP:
 			ret.setTipo(TipoApiEnum.SOAP);
-			ret.setFormato(formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
 			ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 			break;
 		}
@@ -607,23 +546,11 @@ public class ApiApiHelper {
 		if (body.getTipo() == TipoApiEnum.REST) body.setFormato(FormatoRestEnum.fromValue((String) body.getFormato()));
 		if (body.getTipo() == TipoApiEnum.SOAP) body.setFormato(FormatoSoapEnum.fromValue((String) body.getFormato()));
 	}
-	
-	
-	public static final IDAccordo buildIdAccordo(String nome, int versione, ApiEnv env) throws DriverRegistroServiziException {
-		IDSoggetto idSoggetto = new IDSoggetto();
-		idSoggetto.setNome(env.idSoggetto.getNome());
-		idSoggetto.setTipo(env.idSoggetto.getTipo());
 		
-		return IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggetto, versione);
-	}
 	
-	
-	public static final AccordoServizioParteComune getAccordo(String nome, int versione, ApiEnv env)  {
-		try {
-			return env.apcCore.getAccordoServizio(buildIdAccordo(nome,versione,env));
-		} catch (Exception e ) {
-			return null;
-		}
+	// Versione "deprecata" in favore di quella più generica nell'Helper
+	public static final AccordoServizioParteComune getAccordo(String nome, Integer versione, ApiEnv env) throws CoreException {
+		return Helper.getAccordo(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
 	}
 
 }

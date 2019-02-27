@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api;
 
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
@@ -54,7 +75,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void create(@Valid Fruizione body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createFruizione(@Valid Fruizione body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Creazione di un allegato nella fruizione di API
@@ -76,7 +97,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createAllegato(@Valid ApiImplAllegato body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createFruizioneAllegato(@Valid ApiImplAllegato body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elimina una fruizione di api
@@ -97,7 +118,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void delete(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteFruizione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elimina un allegato dalla fruizione
@@ -118,7 +139,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteFruizioneAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce l&#x27;allegato di una fruizione
@@ -139,28 +160,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public byte[] downloadAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
-
-    /**
-     * Ricerca fruizioni di api
-     *
-     * Elenca le fruizioni di API
-     *
-     */
-    @GET
-    @Path("/fruizioni")
-    @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Ricerca fruizioni di api", tags={ "fruizioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Ricerca eseguita correttamente", content = @Content(schema = @Schema(implementation = ListaFruizioni.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaFruizioni findAll(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
+    public byte[] downloadFruizioneAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elenco allegati di una fruizione di API
@@ -181,7 +181,28 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiImplAllegati findAllAllegati(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public ListaApiImplAllegati findAllFruizioneAllegati(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+
+    /**
+     * Ricerca fruizioni di api
+     *
+     * Elenca le fruizioni di API
+     *
+     */
+    @GET
+    @Path("/fruizioni")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Ricerca fruizioni di api", tags={ "fruizioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Ricerca eseguita correttamente", content = @Content(schema = @Schema(implementation = ListaFruizioni.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaFruizioni findAllFruizioni(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
 
     /**
      * Restituisce i dettagli di una fruizione di API
@@ -202,7 +223,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public FruizioneViewItem get(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public FruizioneViewItem getFruizione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce le informazioni sull&#x27;API implementata dalla fruizione
@@ -223,7 +244,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplVersioneApiView getAPI(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplVersioneApiView getFruizioneAPI(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce il dettaglio di un allegato della fruizione
@@ -244,7 +265,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplAllegato getAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplAllegato getFruizioneAllegato(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce le informazioni su connettore associato alla fruizione
@@ -265,7 +286,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Connettore getConnettore(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public Connettore getFruizioneConnettore(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce le informazioni generali di una fruizione di API
@@ -286,7 +307,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplInformazioniGeneraliView getInformazioniGenerali(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplInformazioniGeneraliView getFruizioneInformazioniGenerali(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce le informazioni sull&#x27;url di invocazione necessaria ad invocare la fruizione
@@ -307,7 +328,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplUrlInvocazioneView getUrlInvocazione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplUrlInvocazioneView getFruizioneUrlInvocazione(@PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare la versione dell&#x27;API implementata dalla fruizione
@@ -329,7 +350,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAPI(@Valid ApiImplVersioneApi body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateFruizioneAPI(@Valid ApiImplVersioneApi body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Modifica i dati di un allegato della fruizione
@@ -351,7 +372,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAllegato(@Valid ApiImplAllegato body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateFruizioneAllegato(@Valid ApiImplAllegato body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare la configurazione del connettore associato alla fruizione
@@ -373,7 +394,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateConnettore(@Valid Connettore body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateFruizioneConnettore(@Valid Connettore body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare le informazioni generali di una fruizione di API
@@ -395,7 +416,7 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateInformazioniGenerali(@Valid ApiImplInformazioniGenerali body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateFruizioneInformazioniGenerali(@Valid ApiImplInformazioniGenerali body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare la configurazione utilizzata per identificare l&#x27;azione invocata dell&#x27;API implementata dalla fruizione
@@ -417,5 +438,5 @@ public interface FruizioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateUrlInvocazione(@Valid Object body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateFruizioneUrlInvocazione(@Valid Object body, @PathParam("erogatore") String erogatore, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 }

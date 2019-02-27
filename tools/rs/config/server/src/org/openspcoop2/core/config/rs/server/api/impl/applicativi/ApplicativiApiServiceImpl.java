@@ -1,9 +1,29 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.commons.Filtri;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.ApplicativiApi;
@@ -15,7 +35,6 @@ import org.openspcoop2.core.config.rs.server.model.ListaApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -28,11 +47,13 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiGeneralInfo;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
 /**
- * GovWay Config API
- *
- * <p>Servizi per la configurazione di GovWay
- *
+ * ApplicativiApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiApi {
 
@@ -40,22 +61,18 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 		super(org.slf4j.LoggerFactory.getLogger(ApplicativiApiServiceImpl.class));
 	}
 	
-	
-	// TODO: TOASK Tutte le implementazioni dell'API applicativi utilizzano la stessa
-	// configurazione di autenticazione? Posso in futuro fare una superclasse?
-	
 	private AuthorizationConfig getAuthorizationConfig() throws Exception{
 		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
 	}
 
     /**
-     * Creazione di un applicativo
+     * Creazione di un oapplicativo
      *
      * Questa operazione consente di creare un applicativo associato ad un soggetto interno
      *
      */
 	@Override
-    public void create(Applicativo body, ProfiloEnum profilo, String soggetto) {
+    public void createApplicativo(Applicativo body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -63,8 +80,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
-			if (body == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+			Helper.throwIfNull(body);
                 
 			Applicativo applicativo = body;
 			try{
@@ -79,7 +95,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			ServizioApplicativo sa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, env.idSoggetto.getNome(), env.stationCore);
 						
 			if ( ApplicativiApiHelper.isApplicativoDuplicato(sa, env.saCore) ) {
-				throw FaultCode.CONFLITTO.toException( //TODO Cambiare codice errore in CONFLITTO
+				throw FaultCode.CONFLITTO.toException(
 						"Il Servizio Applicativo " + sa.getNome() + " è già stato registrato per il soggetto scelto."
 				);
 			}
@@ -93,7 +109,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					env.saCore, env.saHelper, env.userLogin, true, 
 					soggettoMultitenantSelezionato.toString());
 						
- 
+
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè gli applicativi sono sempre fruitori
 
 			if (! env.saHelper.servizioApplicativoCheckData(
@@ -104,7 +120,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					sa.getTipologiaErogazione(),
 					listExtendedConnettore, null
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 				
 			env.saCore.performCreateOperation(env.userLogin, false, sa);
@@ -129,7 +145,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      *
      */
 	@Override
-    public void delete(String nome, ProfiloEnum profilo, String soggetto) {
+    public void deleteApplicativo(String nome, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -148,19 +164,22 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.NOT_FOUND.toException("Soggetto non trovato.");
 			}
 			
-			
+			idServizioApplicativo.setNome(nome);
 			try {
-				idServizioApplicativo.setNome(nome);
 				sa = env.saCore.getServizioApplicativo(idServizioApplicativo);
 			} catch (Exception e) {
-				throw FaultCode.NOT_FOUND.toException("Servizio applicativo con nome: " + nome + " non trovato.");
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
-			ServiziApplicativiUtilities.deleteServizioApplicativo(sa, context.getAuthentication().getName(), env.saCore, env.saHelper, inUsoMessage, "\n");
-			
-			if (inUsoMessage.length() > 0) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
+			if (sa != null) { 
+				StringBuffer inUsoMessage = new StringBuffer();
+				ServiziApplicativiUtilities.deleteServizioApplicativo(sa, context.getAuthentication().getName(), env.saCore, env.saHelper, inUsoMessage, "\n");
+				
+				if (inUsoMessage.length() > 0) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
+				
+			} else if (env.delete_404) {
+				throw FaultCode.NOT_FOUND.toException("Servizio applicativo con nome: " + nome + " non trovato.");
 			}
 			
 			context.getLogger().info("Invocazione completata con successo");     
@@ -182,7 +201,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      *
      */
 	@Override
-    public ListaApplicativi findAll(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo) {
+    public ListaApplicativi findAllApplicativi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, String ruolo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -194,32 +213,10 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			int idLista = Liste.SERVIZIO_APPLICATIVO;
 
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+							
+			List<ServizioApplicativo> saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
 			
-			if (profilo != null) {
-				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, Helper.tipoProtocolloFromProfilo.get(profilo));
-			}
-			
-			// Recupero tutti i soggetti che soddisfano i criteri di ricerca, in più, controllo che
-			// il nome del soggetto dei serviziApplicativi ottenuti rispetti il criterio di ricerca.
-			List<ServizioApplicativo> saLista = new ArrayList<ServizioApplicativo>();
-			try {
-				saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
-			} catch (Exception e) {	}
-			
-			if (soggetto != null && soggetto.length() > 0) {
-				try {
-					FiltroRicercaSoggetti filtro = new FiltroRicercaSoggetti();
-					filtro.setNome(soggetto);
-					List<IDSoggetto> soggettiFiltrati = env.soggettiCore.getAllIdSoggettiRegistro(filtro);
-					
-					saLista.removeIf( s -> !soggettiFiltrati.contains(new IDSoggetto(s.getTipoSoggettoProprietario(),s.getNomeSoggettoProprietario())) );
-				} catch (Exception e) {
-					saLista.clear();
-					throw FaultCode.NOT_FOUND.toException("Il nome soggetto impostato nei criteri di ricerca non esiste");
-				}
-			}
-
 			final ListaApplicativi ret = Helper.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
 					offset, 
@@ -231,7 +228,8 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			saLista.forEach( sa -> ret.addItemsItem(ApplicativiApiHelper.servizioApplicativoToApplicativoItem(sa)));	
 		
 			context.getLogger().info("Invocazione completata con successo");
-			return ret;
+			
+			return Helper.returnOrNotFound(ret);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
 			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
@@ -250,7 +248,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      *
      */
 	@Override
-    public Applicativo get(String nome, ProfiloEnum profilo, String soggetto) {
+    public Applicativo getApplicativo(String nome, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -290,7 +288,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
      * Questa operazione consente di aggiornare i dati di un applicativo identificato dal nome e dal soggetto di riferimento
      */
 	@Override
-    public void update(Applicativo body, String nome, ProfiloEnum profilo, String soggetto) {
+    public void updateApplicativo(Applicativo body, String nome, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -298,8 +296,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
-			if (body == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
+			Helper.throwIfNull(body);
 			
 			Applicativo applicativo = body;
 			try{
@@ -308,26 +305,20 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 			
-			final HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			final ApplicativiEnv env = new ApplicativiEnv(wrap, profilo, soggetto, context);
+			final ApplicativiEnv env = new ApplicativiEnv(context.getServletRequest(), profilo, soggetto, context);
 			soggetto = env.idSoggetto.getNome();
 			
-			ServizioApplicativo oldSa = null;
-			try {
-				oldSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
-			} catch (Exception e) {	}
-			
-			if (oldSa == null)
-				throw FaultCode.NOT_FOUND.toException("Nessun applicativo corrispondente al nome e soggetto indicati trovato.");
+			final ServizioApplicativo oldSa = Helper.supplyOrNotFound( () -> ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore), "Servizio Applicativo");
 			
 			final ServizioApplicativo tmpSa = ApplicativiApiHelper.applicativoToServizioApplicativo(applicativo, env.tipo_protocollo, soggetto, env.stationCore);
-			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, soggetto, env.tipo_protocollo, env.saCore);
+			final ServizioApplicativo newSa = ApplicativiApiHelper.getServizioApplicativo(nome, env.idSoggetto.getNome(), env.tipo_protocollo, env.saCore);
 			
 			newSa.setNome(tmpSa.getNome());
 			newSa.setIdSoggetto(tmpSa.getIdSoggetto());
 			newSa.setNomeSoggettoProprietario(tmpSa.getNomeSoggettoProprietario());
 			newSa.setTipoSoggettoProprietario(tmpSa.getTipoSoggettoProprietario());		
 			newSa.getInvocazionePorta().setCredenzialiList(tmpSa.getInvocazionePorta().getCredenzialiList());
+			newSa.getInvocazionePorta().setRuoli(tmpSa.getInvocazionePorta().getRuoli());
 			
 			if (!oldSa.getNome().equals(newSa.getNome())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile modificare il nome del servizio applicativo");
@@ -341,18 +332,18 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			
 			List<ExtendedConnettore> listExtendedConnettore = null;	// Non serve alla checkData perchè da Api, gli applicativi sono sempre fruitori
 			
-			ApplicativiApiHelper.overrideSAParameters(wrap, newSa);
-			wrap.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
+			ApplicativiApiHelper.overrideSAParameters(env.requestWrapper, newSa);
+			env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO, env.tipo_protocollo);
 			
 			if (! env.saHelper.servizioApplicativoCheckData(
 					TipoOperazione.CHANGE,
 					null,
-					oldSa.getId(),
+					oldSa.getIdSoggetto(),
 					newSa.getTipologiaFruizione(),
 					newSa.getTipologiaErogazione(),
 					listExtendedConnettore, null
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			env.saCore.performUpdateOperation(env.userLogin, false, newSa);

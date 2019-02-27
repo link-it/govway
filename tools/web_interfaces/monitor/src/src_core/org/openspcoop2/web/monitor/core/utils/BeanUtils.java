@@ -21,13 +21,10 @@
  */
 package org.openspcoop2.web.monitor.core.utils;
 
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
 /****
@@ -58,86 +55,7 @@ public class BeanUtils {
 	public static void copy(Object oggettoDestinazione,
 			Object oggettoOriginale, List<BlackListElement> metodiEsclusi) {
 
-		//check esistenza oggetti da copiare.
-		if (oggettoDestinazione == null || oggettoOriginale == null) {
-			BeanUtils.log.debug("Parametri non validi.");
-			return;
-		}
-
-		// elenco dei metodi passati null, lo inizializzo.
-		if (metodiEsclusi == null) {
-			metodiEsclusi = new ArrayList<BlackListElement>(0);
-		}
-
-		BeanUtils.log.debug(" Copia delle properties dell'oggetto di classe["
-				+ oggettoOriginale.getClass().getName()
-				+ "] all'interno dell'oggetto ["
-				+ oggettoDestinazione.getClass().getName() + "]");
-
-		// 1. prelevo l'oggetto Class dei due oggetti da manipolare.
-		Class<?> oggettoOriginaleClass = oggettoOriginale.getClass();
-		Class<?> oggettoDestinazioneClass = oggettoDestinazione.getClass();
-		try {
-			// 2. scorro i metodi a disposizione nell'oggetto destinazione.
-			for (Method oggettoDestinazioneMethod : oggettoDestinazioneClass
-					.getMethods()) {
-				String setterName = oggettoDestinazioneMethod.getName();
-
-				//BeanUtils.log.debug("Metodo analizzato: " + setterName);
-
-				// il metodo da invocare e' un setter, con un solo parametro.
-				if (setterName.startsWith("set")
-						&& oggettoDestinazioneMethod.getParameterTypes().length == 1) {
-					// controllo di corrispondenza del tipo di parametro
-					BlackListElement ble = new BlackListElement(setterName,
-							oggettoDestinazioneMethod.getParameterTypes());
-					if (!metodiEsclusi.contains(ble)) {
-						String getPrefix = "get";
-
-						// caso particolare: i getter che restituiscono boolean
-						// o Boolean hanno il nome che inizia per 'is'
-						if (oggettoDestinazioneMethod.getParameterTypes()[0]
-								.equals(Boolean.class)
-								|| oggettoDestinazioneMethod
-										.getParameterTypes()[0]
-										.equals(boolean.class)) {
-							getPrefix = "is";
-						}
-
-						// calcolo il nome del metodo getter corrispondente nell'oggetto origine;
-						String getterName = getPrefix
-								+ setterName.substring(setterName
-										.lastIndexOf("set") + 3);
-				//		BeanUtils.log.debug("Nome Getter: " + getterName);
-						
-						// prelevo il metodo getter.
-						Method oggettoOriginaleMethod = oggettoOriginaleClass
-								.getMethod(getterName);
-
-						// invoco il getter nell'oggetto origine per ottenere il valore da settare nell'oggetto destinazione.
-						if (oggettoOriginaleMethod != null) {
-							Object retObj = oggettoOriginaleMethod.invoke(
-									oggettoOriginale);
-
-							// prelevo il valore e lo utilizzo come parametro del metodo setter. 
-							if (retObj != null) {
-								oggettoDestinazioneMethod.invoke(
-										oggettoDestinazione, retObj);
-							}
-						}
-					}
-				}
-			}
-		} catch (IllegalAccessException e) {
-			BeanUtils.log.error("Errore: Illegal Access Exception! ", e);
-		} catch (SecurityException e) {
-			BeanUtils.log.error("Errore: Security Exception! ", e);
-		} catch (NoSuchMethodException e) {
-			BeanUtils.log.error("Errore: No such method Exception! ", e);
-		} catch (IllegalArgumentException e) {
-			BeanUtils.log.error("Errore: Illegal Argument Exception! ", e);
-		} catch (InvocationTargetException e) {
-			BeanUtils.log.error("Errore: Invocation Target Exception! ", e);
-		}
+		org.openspcoop2.utils.beans.BeanUtils.copy(log, oggettoDestinazione, oggettoOriginale, metodiEsclusi);
+		
 	}
 }

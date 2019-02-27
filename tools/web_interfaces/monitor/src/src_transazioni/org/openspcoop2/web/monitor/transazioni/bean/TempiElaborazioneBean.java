@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneFunzionalita;
+import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
 
 /**     
  * TempiElaborazioneBean

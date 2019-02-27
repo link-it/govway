@@ -1,0 +1,13 @@
+{
+    "ridefinito": true,
+    "tipo": "gateway",
+    "access_control": {
+        "all_allow_origins": true,
+        "allow_headers": [ "Authorization", "Content-Type", "SOAPAction"  ],
+        "allow_methods": [ "POST", "GET", "PUT", "UNLINK"],
+        "allow_credentials": true
+        
+        
+    }
+    
+}

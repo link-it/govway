@@ -21,9 +21,6 @@
  */
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
-import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -36,6 +33,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 
 /****
  * 

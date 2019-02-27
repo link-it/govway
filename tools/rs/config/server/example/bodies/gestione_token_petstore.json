@@ -1,0 +1,8 @@
+{
+    "abilitato": true,
+    "policy": "Google",
+    "token_opzionale": true,
+    "validazione_jwt": "warningOnly",
+    "introspection": "disabilitato",
+    "user_info": "abilitato"
+}

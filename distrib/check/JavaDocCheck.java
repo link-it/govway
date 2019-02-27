@@ -155,17 +155,17 @@ public class JavaDocCheck {
 			jumpCheck = true;
 		else if( f.getAbsolutePath().contains("distrib/check/") )
 			jumpCheck = true;
+		else if( f.getAbsolutePath().indexOf("tools/rs/config/server/src/org/openspcoop2/core/config/rs/server/model")!= -1 )
+			jumpCheck = true;
+		else if( f.getAbsolutePath().indexOf("tools/rs/config/server/src/org/openspcoop2/core/config/rs/server/api")!= -1 && !f.getAbsolutePath().contains("/impl/"))
+			jumpCheck = true;
 
-		String TODO = "tools/rs/config/server/src/org/openspcoop2/core/config/rs/server";
-		String TODO2 = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
+		String TODO = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
 		if(!printTODO){		
-			System.out.println("TODO: Eliminare controllo per RS Server");
+			System.out.println("TODO: Eliminare controllo per RS Monitor Server");
 			printTODO = true;		
 		}
 		if(!jumpCheck && f.getAbsolutePath().indexOf(TODO)!=-1){
-			jumpCheck = true;
-		}
-		if(!jumpCheck && f.getAbsolutePath().indexOf(TODO2)!=-1){
 			jumpCheck = true;
 		}
 

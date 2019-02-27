@@ -17,7 +17,7 @@
 	<b:bean id ="passwordEncoder" class = "org.springframework.security.crypto.password.NoOpPasswordEncoder" factory-method = "getInstance" />
 
 	<!-- Implementazione custom di un authenticationProvider per gestire l'autenticazione degli utenti registrati su wildfly -->
-        <!-- <b:bean id="wildflyApplicationAuthenticationProvider" class="org.openspcoop2.utils.jaxrs.impl.authentication.provider.WildflyApplicationAuthenticationProvider" /> -->
+        <!-- <b:bean id="wildflyApplicationAuthenticationProvider" class="org.openspcoop2.utils.service.authentication.provider.WildflyApplicationAuthenticationProvider" /> -->
 
 	<!-- Abilito gestione della sicurezza tramite annotazioni nel codice Java -->
 	<global-method-security

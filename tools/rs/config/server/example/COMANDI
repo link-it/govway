@@ -5,231 +5,674 @@ UTILIZZO GENERALE:
 ESEMPIO:
 	"./findall soggetti limit=1 offset=4"
 
-=========================================================
-APPLICATIVI
+============================================================
+					
+						APPLICATIVI
+
+============================================================
 	+ CREATE: 
-		
-		./add applicativi bodies/applicativo.json
+./add applicativi bodies/applicativo.json		
+./add applicativi bodies/applicativo_https.json	
 
-	+ DELETE: 
-		
-		./rem applicativi/Applicativo
-	
 	+ FIND:
-
-		./findall applicativi
+./get applicativi	
 
 	+ GET:
-
-		./get applicativi/Applicativo
-
-	+ UPDATE:
-		./update soggetti/SoggettoJson1 bodies/soggetto2.json
-
-
-=========================================================
-RUOLI
-	+ CREATE: 
-		
-		./add ruoli bodies/ruolo1.json
-
-
-	+ DELETE: 
-		./rem ruoli/RuoloJson1   
-	
-	+ FIND:
-
-		./findall ruoli
-
-	+ GET:
-
-		./get ruoli/RuoloJson1
+./get applicativi/ApplicativoJson	
 
 	+ UPDATE:
-		./update ruoli/RuoloJson1 bodies/ruolo2.json
-
-
-=========================================================
-SCOPE
-	+ CREATE: 
-		
-		./add scope bodies/scope.json
-
-	+ DELETE: 
-		
-		./rem scope/ScopeJson1
-	
-	+ FIND:
-
-		./findall scope
-
-	+ GET:
-		
-		./get scope/Scope1
-
-	+ UPDATE:
-		./update scope/ScopeJson1 bodies/scope1.json
-
-
-=========================================================
-SOGGETTI
-
-	+ CREATE: 
-		
-		./add soggetti bodies/soggetto1.json
-
-	+ DELETE: 
-		
-		./rem soggetti/SoggettoJson1
-	
-	+ FIND:
-
-		./findall soggetti
-
-	+ GET:
-
-		./get soggetti/SoggettoJson1
-
-	+ UPDATE:
-	
-		./update soggetti/SoggettoJson1 bodies/soggetto2.json
-
-
-	
-
-=========================================================
-API
-	+ CREATE: 
-
-		./add api bodies/api.json
-
-	+ DELETE: 
-
-		./rem api/PetStore/1 	
-	
-	+ FIND:
-
-		./findall api
-
-	+ GET:
-
-		./get api/PetStore/1
-
-		./get api/PetStore/1/interfaccia
-
-		./get api/PetStore/1/interfaccia/download
-
-	+ UPDATE:
-
-		./update api/PetStore/1/interfaccia bodies/interfaccia_petstore.json
-		
-		./update api/PetStore/1/informazioni bodies/api_info_generali.json
-
-		./update api/PetStore/1/descrizione bodies/api_descrizione.json
-
-=========================================================
-ALLEGATI
-
-	+ CREATE
-
-		./add api/PetStore/1/allegati bodies/allegato.json
-
-	+ DELETE
-
-		./rem api/PetStore/1/allegati/AllegatoJson1.txt
-	
-	+ FINDALL
-
-		./findall api/PetStore/1/allegati
-
-	+ GET
-
-		./get api/PetStore/1/allegati/AllegatoJson1.txt
-	
-		./get api/PetStore/1/allegati/AllegatoJson1.txt/download
-
-	+ UPDATE
-
-		./update api/PetStore/1/allegati/AllegatoJson1.txt  bodies/allegato_specificasemiformale.json	
-		
-
-
-=========================================================
-
-
-SERVIZI
-
-	+ CREATE: 
-		
-		./add api/ApiDemoSoap/2/servizi bodies/servizio.json
-
+./update applicativi/ApplicativoJson bodies/applicativo_update.json
 
 	+ DELETE: 		
+./rem applicativi/ApplicativoJson	
+	
 
-		./rem api/ApiDemoSoap/2/servizi/ServizioJson
 
-		
+
+============================================================
+					
+					  	  RUOLI
+
+============================================================
+	+ CREATE: 		
+./add ruoli bodies/ruolo1.json
+
 	+ FIND:
-
-		./findall api/ApiDemoSoap/2/servizi
+./get ruoli
 
 	+ GET:
+./get ruoli/RuoloJson1
 
-		./get api/ApiDemoSoap/2/servizi/ServizioJson
+	+ UPDATE:
+./update ruoli/RuoloJson1 bodies/ruolo2.json
+	
+	+ DELETE: 
+./rem ruoli/RuoloJson1
+	
+	
+
+============================================================
+			
+						  SCOPE
+
+============================================================
+	+ CREATE:
+./add scope bodies/scope.json
+	
+	+ FIND:
+./get scope
+
+	+ GET:
+./get scope/ScopeJson1
+
+	+ UPDATE:
+./update scope/ScopeJson1 bodies/scope1.json
+
+	+ DELETE: 	
+./rem scope/ScopeJson2
+	
+
+
+
+============================================================
+						
+						SOGGETTI
+
+============================================================
+	+ CREATE: 
+./add soggetti bodies/soggetto.json
+./add soggetti bodies/soggetto1.json profilo=SPCoop
+
+	+ FIND:
+./findall soggetti
+
+	+ GET:
+./get soggetti/SoggettoJson
+
+	+ UPDATE:
+./update soggetti/SoggettoJson1 bodies/soggetto2.json
+
+	+ DELETE: 
+./rem soggetti/SoggettoJson2
+	
+
+============================================================
+
+						  API
+
+============================================================
+	+ CREATE: 
+./add api bodies/api.json
+./add api bodies/api_spcoop.json profilo=SPCoop
+
+	+ FIND:
+./findall api
+
+	+ GET:
+./get api/PetStore/1
+./get api/PetStore/1/interfaccia
+./get api/PetStore/1/interfaccia/download
+
+./get api/RegistroServizi/1 profilo=SPCoop soggetto=SoggettoJson1
+./get api/RegistroServizi/1/interfaccia profilo=SPCoop soggetto=SoggettoJson1
+./get api/RegistroServizi/1/interfaccia/download profilo=SPCoop soggetto=SoggettoJson1
 
 	+ UPDATE:
 
-		./update api/ApiDemoSoap/2/servizi/ServizioJson bodies/servizio1.json
+./update api/PetStore/1/interfaccia bodies/interfaccia_petstore.json
+./update api/PetStore/1/informazioni bodies/api_info_generali.json
+./update api/PetStore/1/descrizione bodies/api_descrizione.json
+
+	+ DELETE: 
+./rem api/NomeInfoJson/5   
+
+Nota: Riaggiungere la api.json per avere una api da utilizzare nelle chiamate successive.
+	
+
+============================================================
+
+						  ALLEGATI
+
+============================================================
+	+ CREATE
+./add api/PetStore/1/allegati bodies/allegato.json
+
+	+ FINDALL
+./get api/PetStore/1/allegati
+
+	+ GET
+./get api/PetStore/1/allegati/AllegatoJson1.txt
+	
+./get api/PetStore/1/allegati/AllegatoJson1.txt/download
+
+	+ UPDATE
+./update api/PetStore/1/allegati/AllegatoJson1.txt  bodies/allegato_specificasemiformale.json	
+
+	+ DELETE
+./rem api/PetStore/1/allegati/AllegatoJson1.txt
+	
+		
+
+
+=========================================================
+
+						SERVIZI
+
+=========================================================
+
+	+ CREATE: 		
+./add api/RegistroServizi/1/servizi bodies/servizio.json profilo=SPCoop soggetto=SoggettoJson1
+		
+	+ FIND:
+./get api/RegistroServizi/1/servizi profilo=SPCoop soggetto=SoggettoJson1
+
+	+ GET:
+./get api/RegistroServizi/1/servizi/ServizioJson profilo=SPCoop soggetto=SoggettoJson1
+
+	+ UPDATE:
+./update api/RegistroServizi/1/servizi/ServizioJson bodies/servizio1.json profilo=SPCoop soggetto=SoggettoJson1
+
+	+ DELETE: 		
+./rem api/RegistroServizi/1/servizi/ServizioJson1 profilo=SPCoop soggetto=SoggettoJson1
 				
 
 
 =========================================================
-AZIONI
-	+ CREATE: 
-		
-		./add api/ApiDemoSoap/2/servizi/ServizioJson/azioni bodies/azione.json
+						
+						AZIONI
 
-	+ DELETE: 
-		
-		./rem api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson
-		
+=========================================================
+	+ CREATE: 		
+./add api/RegistroServizi/1/servizi/ServizioJson/azioni bodies/azione.json profilo=SPCoop soggetto=SoggettoJson1
+
 	+ FIND:
-		
-		./findall api/ApiDemoSoap/2/servizi/ServizioJson/azioni		
+./get api/RegistroServizi/1/servizi/ServizioJson/azioni	profilo=SPCoop soggetto=SoggettoJson1
 
 	+ GET:
-		
-		./get api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson
+./get api/RegistroServizi/1/servizi/ServizioJson/azioni/AzioneJson profilo=SPCoop soggetto=SoggettoJson1
 
 	+ UPDATE:
+./update api/RegistroServizi/1/servizi/ServizioJson/azioni/AzioneJson bodies/azione1.json profilo=SPCoop soggetto=SoggettoJson1
 
-		./update api/ApiDemoSoap/2/servizi/ServizioJson/azioni/AzioneJson bodies/azione1.json
+	+ DELETE: 		
+./rem api/RegistroServizi/1/servizi/ServizioJson/azioni/AzioneJson profilo=SPCoop soggetto=SoggettoJson1
 
 
 =========================================================
-RISORSE
-
+					
+						RISORSE
+					
+=========================================================
 	+ CREATE: 
-		
-		./add api/ApiRest/1/risorse bodies/risorsa.json
-
-	+ DELETE: 
-		
-		./rem api/ApiRest/1/risorse/RisorsaJson
+./add api/PetStore/1/risorse bodies/risorsa.json
 
 	+ FIND:
-		
-		./findall api/ApiRest/1/risorse limit=1	
+./get api/PetStore/1/risorse limit=1
 
 	+ GET:
-
-		./get api/ApiRest/1/risorse/RisorsaJson
+./get api/PetStore/1/risorse/RisorsaJson
 
 	+ UPDATE:
+./update api/PetStore/1/risorse/RisorsaJson bodies/risorsa1.json
 
-		./update api/ApiRest/1/risorse/RisorsaJson bodies/risorsa1.json
+	+ DELETE: 
+./rem api/PetStore/1/risorse/RisorsaJson
 
 
+
+============================================================
+						
+						EROGAZIONI
+
+============================================================					
+
+	+ CREATE
+./add erogazioni bodies/erogazione_petstore.json
+
+	+ UPDATE VERSIONE
+./update erogazioni/PetStore/2/api bodies/ApiVersione3.json
+
+
+	+ GET CONNETTORE
+./get erogazioni/PetStore/2/connettore
+
+
+	+ UPDATE CONNETTORE
+./update erogazioni/PetStore/2/connettore bodies/connettore_erogazione_petstore.json
+
+
+	+ GET INFORMAZIONI GENERALI
+./get erogazioni/PetStore/2/informazioni
+
+	+ UPDATE INFO GENERALI
+./update erogazioni/PetStore/2/informazioni bodies/informazioni_generali_petstore.json
 
 
 	
+	+ UPDATE URL INVOCAZIONE
+./update erogazioni/PetStore/2/url-invocazione bodies/erogazione_petstore_url_invocazione.json
+
+
+	+ GET URL INVOCAZIONE
+./get erogazioni/PetStore/2/url-invocazione
+
+
+	+ DELETE
+./rem erogazioni/PetStore/2
+
+	+ GET
+./get erogazioni/PetStore/2
+
+	+ FINDALL	
+./get erogazioni	
+
+
+	+ GET INTERFACCIA API
+./get erogazioni/PetStore/2/api
+
+
+
+
+
+============================================================
+					ALLEGATI EROGAZIONI
+============================================================
+
+	+ CREATE
+./add erogazioni/PetStore/2/allegati bodies/allegato.json
+
+	+ UPDATE
+./update erogazioni/PetStore/2/allegati/AllegatoJson1.txt  bodies/allegato2.json  
+
+	+ DOWNLOAD
+./get erogazioni/PetStore/2/allegati/AllegatoJson1.txt/download
+	
+	+ FINDALL
+./get erogazioni/PetStore/2/allegati
+
+	+ GET
+./get erogazioni/PetStore/2/allegati/AllegatoJson1.txt
+
+	+ DELETE
+./rem erogazioni/PetStore/2/allegati/AllegatoJson1.txt
+
+
+
+
+			
+============================================================
+					GRUPPI EROGAZIONI
+============================================================
+
+	+ CREATE
+./add erogazioni/PetStore/2/gruppi bodies/gruppo_petstore.json
+
+	+ ADD AZIONE
+./add erogazioni/PetStore/2/gruppi/GruppoJson/azioni bodies/gruppo_azioni_petstore.json
+
+	+ DELETE AZIONE
+./rem erogazioni/PetStore/2/gruppi/GruppoJson/azioni/POST_pet
+
+	+ UPDATE NOME GRUPPO
+./update erogazioni/PetStore/2/gruppi/GruppoJson bodies/gruppo_nome.json
+
+	+ DELETE
+./rem erogazioni/PetStore/2/gruppi/GruppoNomeRidefinito
+
+	+ FINDALL GRUPPI
+./get erogazioni/PetStore/2/gruppi
+
+	+ GET AZIONI
+./get erogazioni/PetStore/2/gruppi/GruppoJson
+
+	
+
+
+			
+============================================================
+				EROGAZIONI CONFIGURAZIONE
+============================================================
+
+
+	+ UPDATE GESTIONE TOKEN
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/gestione-token bodies/gestione_token_petstore.json gruppo=GruppoJson
+
+	+ GET GESTIONE TOKEN
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/gestione-token gruppo=GruppoJson
+
+
+	+ UPDATE AUTENTICAZIONE
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json gruppo=GruppoJson
+
+	+ GET AUTENTICAZIONE
+./get  erogazioni/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
+
+	
+
+
+	+ UPDATE AUTORIZZAZIONE
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione.json gruppo=GruppoJson
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione_XacmlPolicy.json gruppo=GruppoJson
+./update  erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione_Custom.json gruppo=GruppoJson
+
+
+	+ GET AUTORIZZAZIONE
+./get  erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione gruppo=GruppoJson
+
+
+	+ DOWNLOAD XACML POLICY
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy gruppo=GruppoJson
+
+
+
+	+ UPDATE GESTIONE CORS
+./update  erogazioni/PetStore/2/configurazioni/gestione-cors bodies/gestione_cors_petstore.json
+
+	+ GET GESTIONE CORS
+./get  erogazioni/PetStore/2/configurazioni/gestione-cors
+
+
+
+	+ UPDATE REGISTRAZIONE MESSAGGI
+./update erogazioni/PetStore/2/configurazioni/registrazione-messaggi bodies/registrazione_messaggi.json gruppo=GruppoJson
+
+	+ GET REGISTRAZIONE MESSAGGI
+./get erogazioni/PetStore/2/configurazioni/registrazione-messaggi gruppo=GruppoJson
+
+
+
+	+ ABILITA/DISABILITA CONFIGURAZIONE STATO
+./update erogazioni/PetStore/2/configurazioni/stato bodies/apiImplStatoDisabilitato.json gruppo=GruppoJson
+./update erogazioni/PetStore/2/configurazioni/stato bodies/apiImplStatoAbilitato.json gruppo=GruppoJson
+
+	+ GET/STATO
+./get erogazioni/PetStore/2/configurazioni/stato gruppo=GruppoJson
+
+
+
+	+ UPDATE VALIDAZIONE
+./update erogazioni/PetStore/2/configurazioni/validazione bodies/configurazione_validazione.json gruppo=GruppoJson
+
+	GET VALIDAZIONE
+./get erogazioni/PetStore/2/configurazioni/validazione gruppo=GruppoJson
+
+
+
+	+ ADD SOGGETTO AUTORIZZAZIONE PUNTUALE
+./add erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/soggetti bodies/ControlloAccessiAutorizzazioneSoggetto.json gruppo=GruppoJson
+
+	+ DELETE SOGGETTO AUTORIZZAZIONE PUNTUALE
+./rem erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/soggetti/SoggettoJson gruppo=GruppoJson
+
+
+
+	+ ADD APPLICATIVO AUTORIZZAZIONE PUNTUALE
+./add erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi bodies/ControlloAccessiAutorizzazioneApplicativo.json gruppo=GruppoJson
+
+	+ GET APPLICATIVI AUTORIZZAZIONE PUNTUALE
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi gruppo=GruppoJson
+
+	+ DELETE APPLICATIVO AUTORIZZAZIONE PUNTUALE
+./rem erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi/ApplicativoJsonHttps gruppo=GruppoJson
+
+
+
+	+ ADD RUOLO AUTORIZZAZIONE
+./add erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli bodies/ControlloAccessiAutorizzazioneRuolo.json gruppo=GruppoJson
+
+	+ GET RUOLI AUTORIZZAZIONE
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli gruppo=GruppoJson
+
+	+ DELETE RUOLO AUTORIZZAZIONE
+./rem erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli/RuoloJson1 gruppo=GruppoJson
+
+
+Prima di fare gli scope correggo tutte le findall e delete.
+
+	+ ADD SCOPE AUTORIZZAZIONE
+./add erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope bodies/ControlloAccessiAutorizzazioneScope.json  gruppo=GruppoJson
+
+	+ GET SCOPES AUTORIZZAZIONE
+./get erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope  gruppo=GruppoJson
+
+	+ DELETE SCOPE AUTORIZZAZIONE
+./rem erogazioni/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope/ScopeJson1  gruppo=GruppoJson
+
+
+
+
+	+ UPDATE CACHING RISPOSTA
+./update erogazioni/PetStore/2/configurazioni/caching-risposta bodies/cacheRisposta.json gruppo=GruppoJson
+
+	+ GET CACHING RISPOSTA
+./get erogazioni/PetStore/2/configurazioni/caching-risposta gruppo=GruppoJson
+
+
+
+
+========================================================
+					FRUIZIONI
+========================================================
+
+	+ CREATE
+./add fruizioni bodies/fruizione_petstore.json
+
+	+ UPDATE VERSIONE
+./update fruizioni/ComuneDiPisa/PetStore/2/api bodies/ApiVersione3.json
+
+
+
+	+ UPDATE CONNETTORE
+./update fruizioni/ComuneDiPisa/PetStore/2/connettore bodies/connettore_erogazione_petstore.json
+
+	+ GET CONNETTORE
+./get fruizioni/ComuneDiPisa/PetStore/2/connettore
+
+
+
+	+ UPDATE INFO GENERALI
+./update fruizioni/ComuneDiPisa/PetStore/2/informazioni bodies/informazioni_generali_petstore.json
+
+( A questo punto bisogna rieseguire la create per poter andare avanti con i comandi di sotto.)
+
+	+ GET INFORMAZIONI GENERALI
+./get fruizioni/ComuneDiPisa/PetStore/2/informazioni
+
+
+	+ UPDATE URL INVOCAZIONE
+./update fruizioni/ComuneDiPisa/PetStore/2/url-invocazione bodies/fruizione_petstore_url_invocazione.json
+
+
+	+ GET URL INVOCAZIONE
+./get  fruizioni/ComuneDiPisa/PetStore/2/url-invocazione
+
+
+	+ GET
+./get fruizioni/ComuneDiPisa/PetStore/2
+
+
+	+ FINDALL 
+./get fruizioni
+
+
+	+ GET API
+./get fruizioni/ComuneDiPisa/PetStore/2/api
+
+
+
+	+ DELETE
+./rem fruizioni/ComuneDiPisa/PetStore/2
+
+
+
+
+============================================================
+					ALLEGATI FRUIZIONI
+============================================================
+
+	+ CREATE
+./add fruizioni/ComuneDiPisa/PetStore/2/allegati bodies/allegato_specificasemiformale.json
+
+	+ UPDATE
+./update fruizioni/ComuneDiPisa/PetStore/2/allegati/AllegatoJsonSpecSemiformale1.uml bodies/allegato2.json  
+	
+	+ DOWNLOAD
+./get fruizioni/ComuneDiPisa/PetStore/2/allegati/AllegatoJsonSpecSemiformale1.uml/download
+
+	+ GET
+./get fruizioni/ComuneDiPisa/PetStore/2/allegati/AllegatoJsonSpecSemiformale1.uml
+
+	+ FINDALL 
+./get fruizioni/ComuneDiPisa/PetStore/2/allegati
+
+	+ DELETE
+./rem fruizioni/ComuneDiPisa/PetStore/2/allegati/AllegatoJsonSpecSemiformale1.uml
+
+
+
+
+============================================================
+					GRUPPI FRUIZIONI
+============================================================
+
+	+ CREATE
+./add fruizioni/ComuneDiPisa/PetStore/2/gruppi bodies/gruppo_petstore.json
+
+	+ ADD AZIONE
+./add fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson/azioni bodies/gruppo_azioni_petstore.json
+
+	+ DELETE AZIONE
+./rem fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson/azioni/POST_user
+
+	+ UPDATE NOME GRUPPO
+./update fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson bodies/gruppo_nome.json
+
+	+ FINDALL GRUPPI
+./get fruizioni/ComuneDiPisa/PetStore/2/gruppi
+
+	+ GET AZIONI
+./get fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson
+
+	+ DELETE
+./rem fruizioni/ComuneDiPisa/PetStore/2/gruppi/GruppoJson
+
+========================================================
+
+				FRUIZIONI CONFIGURAZIONE
+
+========================================================
+
+
+	+ UPDATE GESTIONE TOKEN
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/gestione-token  bodies/gestione_token_petstore.json  gruppo=GruppoJson
+
+	+ GET GESTIONE TOKEN
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/gestione-token gruppo=GruppoJson
+
+
+
+	+ UPDATE AUTENTICAZIONE
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione bodies/ControlloAccessiAutenticazione.json gruppo=GruppoJson
+
+	+ GET AUTENTICAZIONE
+./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autenticazione gruppo=GruppoJson
+
+
+	+ UPDATE AUTORIZZAZIONE
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione.json gruppo=GruppoJson
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione_XacmlPolicy.json gruppo=GruppoJson
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione bodies/ControlloAccessiAutorizzazione_Custom.json gruppo=GruppoJson
+
+	+ GET AUTORIZZAZIONE
+./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione gruppo=GruppoJson
+
+	+ DOWNLOAD XACML POLICY
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/download-xacml-policy gruppo=GruppoJson
+
+
+
+
+	+ UPDATE GESTIONE CORS
+./update  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/gestione-cors bodies/gestione_cors_petstore.json
+
+	+ GET GESTIONE CORS
+./get  fruizioni/ComuneDiPisa/PetStore/2/configurazioni/gestione-cors
+
+
+
+	+ UPDATE REGISTRAZIONE MESSAGGI
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/registrazione-messaggi bodies/registrazione_messaggi.json gruppo=GruppoJson
+
+	+ GET REGISTRAZIONE MESSAGGI
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/registrazione-messaggi gruppo=GruppoJson
+
+
+
+	+ ABILITA/DISABILITA CONFIGURAZIONE STATO
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/stato bodies/apiImplStatoDisabilitato.json gruppo=GruppoJson
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/stato bodies/apiImplStatoAbilitato.json gruppo=GruppoJson
+
+	+ GET STATO
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/stato gruppo=GruppoJson
+
+
+
+	+ UPDATE VALIDAZIONE
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/validazione bodies/configurazione_validazione.json gruppo=GruppoJson
+
+	+ GET VALIDAZIONE
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/validazione gruppo=GruppoJson
+
+
+
+
+
+	+ ADD APPLICATIVO AUTORIZZAZIONE PUNTUALE
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi bodies/ControlloAccessiAutorizzazioneApplicativo.json gruppo=GruppoJson
+
+	+ DELETE APPLICATIVO AUTORIZZAZIONE PUNTUALE
+./rem fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi/ApplicativoJsonHttps gruppo=GruppoJson
+
+	+ GET APPLICATIVO AUTORIZZAZIONE PUNTUALE
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/applicativi gruppo=GruppoJson
+
+
+
+	+ ADD RUOLO AUTORIZZAZIONE
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli bodies/ControlloAccessiAutorizzazioneRuolo.json
+
+	+ DELETE RUOLO AUTORIZZAZIONE
+./rem fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli/RuoloJson1
+
+	+ GET RUOLI AUTORIZZAZIONE
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/ruoli
+
+
+
+
+	+ ADD SCOPE AUTORIZZAZIONE
+./add fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope bodies/ControlloAccessiAutorizzazioneScope.json
+
+	+ DELETE SCOPE AUTORIZZAZIONE
+./rem fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope/ScopeJson1
+
+	+ GET SCOPES AUTORIZZAZIONE
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/controllo-accessi/autorizzazione/scope
+
+
+
+
+
+	+ GET CACHING RISPOSTA
+./get fruizioni/ComuneDiPisa/PetStore/2/configurazioni/caching-risposta gruppo=GruppoJson
+
+
+	+ UPDATE CACHING RISPOSTA
+./update fruizioni/ComuneDiPisa/PetStore/2/configurazioni/caching-risposta bodies/cacheRisposta.json gruppo=GruppoJson
+
+
+
+
+
+TODO: Cambia la creazione del soggetto nel soggetto che sarà poi l'erogatore delle fruizioni.
+

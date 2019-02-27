@@ -1,13 +1,36 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.ApiApi;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Api;
@@ -62,11 +85,13 @@ import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviHelper;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
 /**
- * GovWay Config API
- *
- * <p>Servizi per la configurazione di GovWay
- *
+ * ApiApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
@@ -79,13 +104,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	}
 
     /**
-     * Creazione di un&#x27;API
+     * Creazione di un'API
      *
      * Questa operazione consente di creare una API
      *
      */
 	@Override
-    public void create(Api body, ProfiloEnum profilo, String soggetto) {
+    public void createApi(Api body, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -96,7 +121,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (body == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
 			
-			ApiApiHelper.correggiDeserializzazione(body); // TODO: Fare i controlli sulla coppia tipo/formato?
+			ApiApiHelper.correggiDeserializzazione(body); 
 				
 			if (body.getReferente() == null || "".equals(body.getReferente().trim())) {
 				body.setReferente(soggetto);
@@ -126,7 +151,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine()),
 					"",		// scadenza
 					"0",	// Id intero del servizio applicativo
-					as.getSoggettoReferente().getNome(),
+					as.getSoggettoReferente().getId().toString(), // IDSoggetto?
 					as.getVersione().toString(),
 					null,	// accordoCooperazione
 					false,	// visibilitaAccordoServizio
@@ -140,10 +165,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null,	// backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()),
 					null,	// messageType 
-					ApiApiHelper.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
 					env.gestisciSoggettoReferente)) {
 				
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			env.apcCore.performCreateOperation(env.userLogin, false, as);
@@ -166,7 +191,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void createAllegato(ApiAllegato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createApiAllegato(ApiAllegato body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			
@@ -179,7 +204,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body non presente");
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto,context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			AccordoServizioParteComune as = Helper.getAccordo(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);
 			
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api corrisponde ai parametri indicati");
@@ -196,10 +221,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ArchiviCore archiviCore = new ArchiviCore(env.stationCore);
 			WrapperFormFile filewrap = new WrapperFormFile(documento.getFile(), documento.getByteContenuto());
 			
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			wrap.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, documento.getRuolo());
+			env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, documento.getRuolo());
 			
-			ArchiviHelper archiviHelper = new ArchiviHelper(env.stationCore, wrap, env.pd, wrap.getSession());
+			ArchiviHelper archiviHelper = new ArchiviHelper(env.stationCore, env.requestWrapper, env.pd, env.requestWrapper.getSession());
 			
 			boolean documentoUnivocoIndipendentementeTipo = true;
 			if (archiviCore.existsDocumento(documento,ProprietariDocumento.accordoServizio,documentoUnivocoIndipendentementeTipo)){
@@ -213,7 +237,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					ProprietariDocumento.accordoServizio, 
 					env.protocolFactory
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			env.apcCore.performUpdateOperation(env.userLogin, false, as);
@@ -231,13 +255,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Creazione di un&#x27;azione di una API
+     * Creazione di un'azione di una API
      *
      * Questa operazione consente di aggiungere una azione al servizio della API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void createAzione(ApiAzione body, String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
+    public void createApiAzione(ApiAzione body, String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		//body.
 		try {
@@ -284,14 +308,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					newOp.getScadenza() != null ? newOp.getScadenza() : "",
 					"-", 				// Servizio Correlato
 					"-",				// Azione Correlata
-					ApiApiHelper.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), 
+					Enums.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), 
 					"0", 	//styleOp
 					"",		//soapActionOp,
 					"literal",	//useOp,
 					null,	//opTypeOp, 
 					""		//nsWSDLOp
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			
@@ -322,7 +346,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void createRisorsa(ApiRisorsa body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createApiRisorsa(ApiRisorsa body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -368,7 +392,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newRes.getConsegnaInOrdine()), 	//consordaz,
 					""		//scadenzaaz
 				))  {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			as.addResource(newRes);
@@ -401,7 +425,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void createServizio(ApiServizio body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void createApiServizio(ApiServizio body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -437,7 +461,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPT.getConsegnaInOrdine()), 
 					newPT.getScadenza()
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			as.addPortType(newPT);
 		
@@ -456,13 +480,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Elimina un&#x27;api
+     * Elimina un'api
      *
      * Questa operazione consente di eliminare un API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void delete(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void deleteApi(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -473,15 +497,17 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome,versione,env);
 			
-			if (as == null)
+			if (as != null) {
+				StringBuffer inUsoMessage = new StringBuffer(); 
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore, env.apcHelper, 
+						inUsoMessage, "\n");
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));				
+			}
+			
+			if ( env.delete_404 && as == null )
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
 			
-			StringBuffer inUsoMessage = new StringBuffer(); 
-			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore, env.apcHelper, 
-					inUsoMessage, "\n");
-			if (inUsoMessage.length() > 0)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
-        
 			context.getLogger().info("Invocazione completata con successo");
      
 		}
@@ -498,11 +524,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     /**
      * Elimina un allegato di una API
      *
-     * Questa operazione consente di eliminare un&#x27;allegato della API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'allegato della API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void deleteAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void deleteApiAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -511,27 +537,25 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
+			final AccordoServizioParteComune as = Helper.supplyOrNotFound( () -> ApiApiHelper.getAccordo(nome, versione, env), "API");
+			final Documento toDel = Helper.evalnull(
+					() -> env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio)
+	
+				);
 			
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			if (toDel != null) {
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(
+						as, 
+						env.userLogin, 
+						env.apcCore, 
+						env.apcHelper, 
+						Arrays.asList(toDel.getId())
+					);
+			}
 			
-			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Api non trovata");
-			
-			Documento toDel = null;
-			try {
-				toDel = env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio);
-			} catch (Exception e) {	}
-
-			if (toDel == null)
+			if ( env.delete_404 && toDel == null)
 				throw FaultCode.NOT_FOUND.toException("Allegato con nome " + nomeAllegato + " non presente per il servizio applicativo scelto."); 
 			
-			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneAllegati(
-					as, 
-					env.userLogin, 
-					env.apcCore, 
-					env.apcHelper, 
-					Arrays.asList(toDel.getId())
-				);
 			
 			context.getLogger().info("Invocazione completata con successo");
 		}
@@ -546,13 +570,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Elimina un&#x27;azione del servizio di una API
+     * Elimina un'azione del servizio di una API
      *
-     * Questa operazione consente di eliminare un&#x27;azione del servizio della API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'azione del servizio della API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void deleteAzione(String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+    public void deleteApiAzione(String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -561,10 +585,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");   
 			
 			ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
-			
-			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Api non trovata");
+			AccordoServizioParteComune as = Helper.supplyOrNotFound(
+					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					"API"
+				);
 			
 			PortType pt = null;
 			for (int i = 0; i < as.sizePortTypeList(); i++) {
@@ -576,33 +600,43 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (pt == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun Servizio registrato sulla api con nome " + nomeServizio);
 			
-			final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
+			if ( Helper.findFirst(pt.getAzioneList(), op -> op.getNome().equals(nomeAzione)).isPresent() ) {
+				final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
 
-			List<IDServizio> idServiziWithPortType = null;
-			try{
-				IDPortType idPT = new IDPortType();
-				idPT.setNome(pt.getNome());
-				idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
-				idServiziWithPortType = apsCore.getIdServiziWithPortType(idPT);
-			}catch(DriverRegistroServiziNotFound dNotF){}
+				List<IDServizio> idServiziWithPortType = null;
+				try{
+					IDPortType idPT = new IDPortType();
+					idPT.setNome(pt.getNome());
+					idPT.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as));
+					idServiziWithPortType = apsCore.getIdServiziWithPortType(idPT);
+				}catch(DriverRegistroServiziNotFound dNotF){}
+				
+				
+				
+				StringBuffer inUsoMessage = new StringBuffer();
+	                      
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(
+						as,
+						env.userLogin,
+						env.apcCore,
+						env.apcHelper,
+						inUsoMessage, 
+						"\n", 
+						pt, 
+						idServiziWithPortType, 
+						Arrays.asList(nomeAzione)
+					);
+				
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				
+			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
-                      
-			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(
-					as,
-					env.userLogin,
-					env.apcCore,
-					env.apcHelper,
-					inUsoMessage, 
-					"\n", 
-					pt, 
-					idServiziWithPortType, 
-					Arrays.asList(nomeAzione)
-				);
+			else if ( env.delete_404 ) {
+				throw FaultCode.NOT_FOUND.toException("Azione " + nomeAzione + " non registrata sul servizio " + nomeServizio );
+			}
 			
-			if (inUsoMessage.length() > 0)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
-        
+			        
 			context.getLogger().info("Invocazione completata con successo");
         
 		}
@@ -623,7 +657,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void deleteRisorsa(String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
+    public void deleteApiRisorsa(String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -632,24 +666,29 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
 			final AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(env.apcCore);
-
-			if (as == null)
-				throw FaultCode.NOT_FOUND.toException("Api non trovata");
-            
-			List<IDServizio> idServiziWithAccordo = null;
-			try{
-				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as),true);
-			}catch(DriverRegistroServiziNotFound dNotF){}
-			
-			final StringBuffer inUsoMessage = new StringBuffer();
-			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, env.userLogin, env.apcCore, env.apcHelper, 
-					inUsoMessage, "\n", idServiziWithAccordo, Arrays.asList(nomeRisorsa));
-			
-			if (inUsoMessage.length() > 0)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
-       
+			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
+					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					"API"
+				);
+        
+			if ( Helper.findFirst(as.getResourceList(), res -> res.getNome().equals(nomeRisorsa)).isPresent() ) {
+				
+				List<IDServizio> idServiziWithAccordo = Helper.evalnull(
+						() -> apsCore.getIdServiziWithAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as),true)
+					);
+				
+				StringBuffer inUsoMessage = new StringBuffer();
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, env.userLogin, env.apcCore, env.apcHelper, 
+						inUsoMessage, "\n", idServiziWithAccordo, Arrays.asList(nomeRisorsa));
+				
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				
+			} else if ( env.delete_404 ) {
+				throw FaultCode.NOT_FOUND.toException("Risorsa " + nomeRisorsa + " non associata alla API ");
+			}
+	       
         
 			context.getLogger().info("Invocazione completata con successo");     
 		}
@@ -670,7 +709,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void deleteServizio(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
+    public void deleteApiServizio(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -679,22 +718,29 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
-			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
+			final AccordoServizioParteComune as = Helper.supplyOrNotFound(
+					() -> ApiApiHelper.getAccordo(nome, versione, env),
+					"API"
+				);
 			
-			if ( as == null )
-				throw FaultCode.NOT_FOUND.toException("Api non trovata");
-			
-			final IDPortType idPT = new IDPortType();
-			idPT.setIdAccordo(env.idAccordoFactory.getIDAccordoFromAccordo(as));
-			
-			final StringBuffer inUsoMessage = new StringBuffer();
-			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, env.userLogin, env.apcCore, env.apcHelper, 
-					inUsoMessage, "\n", idPT, Arrays.asList(nomeServizio));
-			
-			if ( inUsoMessage.length() > 0 ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
+			if ( Helper.findFirst(as.getPortTypeList(), pt -> pt.getNome().equals(nomeServizio)).isPresent() ) {
+				
+				final IDPortType idPT = new IDPortType();
+				idPT.setIdAccordo(env.idAccordoFactory.getIDAccordoFromAccordo(as));
+				
+				final StringBuffer inUsoMessage = new StringBuffer();
+				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, env.userLogin, env.apcCore, env.apcHelper, 
+						inUsoMessage, "\n", idPT, Arrays.asList(nomeServizio));
+				
+				if ( inUsoMessage.length() > 0 ) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
+				
+			} else if (env.delete_404) {
+				throw FaultCode.NOT_FOUND.toException("Servizio " + nomeServizio + " non associato alla API");
 			}
-			
+				
+		
 			context.getLogger().info("Invocazione completata con successo");
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -708,13 +754,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
 	
 	/**
-     * Restituisce l&#x27;allegato di una API
+     * Restituisce l'allegato di una API
      *
-     * Questa operazione consente di ottenere l&#x27;allegato di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'allegato di una API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public byte[] downloadAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public byte[] downloadApiAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -761,13 +807,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 	
 	  
     /**
-     * Restituisce l&#x27;interfaccia di una API
+     * Restituisce l'interfaccia di una API
      *
-     * Questa operazione consente di ottenere l&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'interfaccia di una API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public byte[] downloadInterfaccia(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public byte[] downloadApiInterfaccia(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			//ApiInterfacciaView a = new ApiInterfacciaView();
@@ -813,7 +859,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ListaApi findAll(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, TipoApiEnum tipoApi) {
+    public ListaApi findAllApi(ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, TipoApiEnum tipoApi) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -824,14 +870,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			
 			final int idLista = Liste.ACCORDI;
-			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			final Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
-			if ( profilo != null )	// TODO: Forse non serve ne profilo ne soggetto.
-				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, Helper.tipoProtocolloFromProfilo.get(profilo));
 			if ( tipoApi != null )
-				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, ApiApiHelper.serviceBindingFromTipo.get(tipoApi).toString());
-			if ( !StringUtils.isEmpty(soggetto))
-				ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, soggetto);
+				ricerca.addFilter(idLista, Filtri.FILTRO_SERVICE_BINDING, Enums.serviceBindingFromTipo.get(tipoApi).toString());
 			
 			final String tipoAccordo = "apc"; // Dal debug.
 			final List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(env.apcCore, env.userLogin, ricerca, tipoAccordo);
@@ -842,6 +884,9 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					ricerca.getNumEntries(idLista), 
 					ListaApi.class
 				); 
+			
+			if ( env.findall_404 && lista.isEmpty() )
+				throw FaultCode.NOT_FOUND.toException("Nessuna Api corrisponde ai criteri di ricerca");
 			
 			lista.forEach( as -> 
 				ret.addItemsItem( ApiApiHelper.apiToItem(ApiApiHelper.accordoSpcRegistroToApi(as, env.soggettiCore), as,  env) )
@@ -868,7 +913,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ListaApiAllegati findAllAllegati(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
+    public ListaApiAllegati findAllApiAllegati(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -883,17 +928,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
 			
 			int idLista = Liste.ACCORDI_ALLEGATI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
-			
-			if ( profilo != null )	//TODO: Forse il profilo non serve, già l'accordo ce l'ha collegato.
-				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, Helper.tipoProtocolloFromProfilo.get(profilo));
-			
-			if ( !StringUtils.isEmpty(soggetto))
-				ricerca.addFilter(idLista, Filtri.FILTRO_SOGGETTO, soggetto);
-			
+			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+
 			List<Documento> docsRegistro = env.apcCore.accordiAllegatiList(as.getId().intValue(), ricerca);
 			
-			if (docsRegistro.size() == 0)
+			if ( docsRegistro.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");
 			
 			final ListaApiAllegati ret = Helper.costruisciListaPaginata(
@@ -927,7 +966,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ListaApiAzioni findAllAzioni(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
+    public ListaApiAzioni findAllApiAzioni(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -943,7 +982,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				throw FaultCode.NOT_FOUND.toException("Api non trovata");
 			
 			int idLista = Liste.ACCORDI_PORTTYPE_AZIONI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			Search ricerca = Helper.setupRicercaPaginata( q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo );
 			
 			PortType pt = as.getPortTypeList().stream()
 					.filter( p -> nomeServizio.equals(p.getNome()))
@@ -955,7 +994,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			List<Operation> azioniServizio = env.apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
 			
-			if (azioniServizio.size() == 0)
+			if ( azioniServizio.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessua azione dell'Api specificata corrisponde ai criteri di ricerca");
 			
 			final ListaApiAzioni ret = Helper.costruisciListaPaginata(
@@ -989,7 +1028,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ListaApiRisorse findAllRisorse(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, HttpMethodEnum httpMethod) {
+    public ListaApiRisorse findAllApiRisorse(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset, HttpMethodEnum httpMethod) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1006,7 +1045,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
         
 			int idLista = Liste.ACCORDI_API_RESOURCES;
 			
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			Search ricerca = Helper.setupRicercaPaginata( q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo );
 			
 			if (httpMethod != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_HTTP_METHOD, httpMethod.toString());
@@ -1020,7 +1059,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				); 
 			List<Resource> risorse = env.apcCore.accordiResourceList(as.getId().intValue(), ricerca);
 			
-			if (risorse.size() == 0)
+			if ( risorse.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");
 			
 			risorse.forEach( r -> ret.addItemsItem(ApiApiHelper.risorsaRegistroToApi(r)));
@@ -1046,7 +1085,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ListaApiServizi findAllServizi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
+    public ListaApiServizi findAllApiServizi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String q, Integer limit, Integer offset) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1062,7 +1101,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
         
 			int idLista = Liste.ACCORDI_PORTTYPE;
 			
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			Search ricerca = Helper.setupRicercaPaginata( q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo );
 			
 			final ListaApiServizi ret = Helper.costruisciListaPaginata(
 					context.getServletRequest().getRequestURI(),
@@ -1073,7 +1112,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				); 
 			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);
 			
-			if (servizi.size() == 0)
+			if ( servizi.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");
 			
 			servizi.forEach( s -> ret.addItemsItem(ApiApiHelper.servizioRegistroToApi(s)));
@@ -1098,7 +1137,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiViewItem get(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiViewItem getApi(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1145,7 +1184,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiAllegato getAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public ApiAllegato getApiAllegato(String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1191,13 +1230,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Restituisce il dettaglio di un&#x27;azione di un  servizio della API
+     * Restituisce il dettaglio di un'azione di un  servizio della API
      *
-     * Questa operazione consente di ottenere il dettaglio di un&#x27;azione nel servizio della API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere il dettaglio di un'azione nel servizio della API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public ApiAzione getAzione(String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+    public ApiAzione getApiAzione(String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1249,7 +1288,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiDescrizione getDescrizione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiDescrizione getApiDescrizione(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1287,7 +1326,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiInformazioniGeneraliView getInformazioniGenerali(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiInformazioniGeneraliView getApiInformazioniGenerali(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1322,13 +1361,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Restituisce l&#x27;interfaccia di una API
+     * Restituisce l'interfaccia di una API
      *
-     * Questa operazione consente di ottenere l&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'interfaccia di una API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public ApiInterfacciaView getInterfaccia(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiInterfacciaView getApiInterfaccia(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1353,11 +1392,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			switch (ret.getTipo()) {
 			case REST:
-				ret.setFormato(ApiApiHelper.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
 				ret.setInterfaccia(as.getByteWsdlConcettuale());
 				break;
 			case SOAP:
-				ret.setFormato(ApiApiHelper.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
 				ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 				break;
 			default:
@@ -1379,13 +1418,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Restituisce il nome del soggetto referente dell&#x27;api
+     * Restituisce il nome del soggetto referente dell'api
      *
-     * Questa operazione consente di ottenere il nome del soggetto referente dell&#x27;API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere il nome del soggetto referente dell'API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public ApiReferenteView getReferente(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public ApiReferenteView getApiReferente(String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1424,7 +1463,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiRisorsa getRisorsa(String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
+    public ApiRisorsa getApiRisorsa(String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1468,7 +1507,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public ApiServizio getServizio(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
+    public ApiServizio getApiServizio(String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1512,7 +1551,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void updateAllegato(ApiAllegato body, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
+    public void updateApiAllegato(ApiAllegato body, String nome, Integer versione, String nomeAllegato, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1529,14 +1568,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (as == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api registrata con nome " + nome + " e versione " + versione);
 		
-			Documento oldDoc = null;
-			
-			try {
-				oldDoc = env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio);
-			} catch (Exception e) {	}
-			
-			if (oldDoc == null)
-				throw FaultCode.NOT_FOUND.toException("Nessun allegato con di nome " + nomeAllegato + " trovato per la API scelta.");
+			final Documento oldDoc = Helper.supplyOrNotFound(
+					() -> env.archiviCore.getDocumento(nomeAllegato, null, null, as.getId(), false, ProprietariDocumento.accordoServizio)
+					, "Allegato con nome " + nomeAllegato + " per la API scelta."
+				);
+
 			
 			final Documento newDoc = ApiApiHelper.apiAllegatoToDocumento(body, as, env);
 			newDoc.setId(oldDoc.getId());
@@ -1545,10 +1581,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare il ruolo di un allegato");
 		
 			WrapperFormFile filewrap = new WrapperFormFile(newDoc.getFile(), newDoc.getByteContenuto());
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			wrap.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, newDoc.getRuolo());
+			
+			env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, newDoc.getRuolo());
 		
-			ArchiviHelper archiviHelper = new ArchiviHelper(env.stationCore, wrap, env.pd, wrap.getSession());	
+			ArchiviHelper archiviHelper = new ArchiviHelper(env.stationCore, env.requestWrapper, env.pd, env.requestWrapper.getSession());	
 			
 			if (! archiviHelper.accordiAllegatiCheckData(
 					TipoOperazione.CHANGE,
@@ -1557,7 +1593,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					ProprietariDocumento.accordoServizio, 
 					env.protocolFactory
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 
 			AccordiServizioParteComuneUtilities.updateAccordoServizioParteComuneAllegati(as, oldDoc, newDoc);
@@ -1577,13 +1613,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Modifica i dati di un&#x27;azione nel servizio di una API
+     * Modifica i dati di un'azione nel servizio di una API
      *
-     * Questa operazione consente di aggiornare i dettagli di un&#x27;azione della API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare i dettagli di un'azione della API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void updateAzione(ApiAzione body, String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+    public void updateApiAzione(ApiAzione body, String nome, Integer versione, String nomeServizio, String nomeAzione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1635,14 +1671,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					newOp.getScadenza() != null ? newOp.getScadenza() : "", 				// Scadenza operazione
 					"-", 				// Servizio Correlato
 					"-",				// Azione Correlata
-					ApiApiHelper.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), 
+					Enums.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), 
 					"0", 	//styleOp
 					"",		//soapActionOp,
 					"literal",	//useOp,
 					null,	//opTypeOp, 
 					""		//nsWSDLOp
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			
@@ -1678,7 +1714,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void updateDescrizione(ApiDescrizione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateApiDescrizione(ApiDescrizione body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1746,10 +1782,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null,	//backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()),
 					null,	//MessageType 
-					ApiApiHelper.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
 					env.gestisciSoggettoReferente)) {
 				
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
                         
       
@@ -1758,7 +1794,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			// Sono i Servizi e le Azioni ad avere un profilo di collaborazione
 			
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = Arrays.asList(as);			
+			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));			
 			
  			// Questa roba non serve qui perchè la updateDescrizione non cambia il nome e quindi nemmeno l'ID.
  			IDAccordo idNEW = env.idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -1787,7 +1823,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void updateInformazioniGenerali(ApiInformazioniGenerali body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateApiInformazioniGenerali(ApiInformazioniGenerali body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1795,9 +1831,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                         
-			if ( body == null ) 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
-				
+			Helper.throwIfNull(body);
+			
 			final ApiEnv env = new ApiEnv(profilo, soggetto, context);
 			final AccordoServizioParteComune as = ApiApiHelper.getAccordo(nome, versione, env);
 			
@@ -1848,14 +1883,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null,	//backToStato
 					env.apcCore.toMessageServiceBinding(as.getServiceBinding()),
 					null,	//MessageType 
-					ApiApiHelper.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
+					Enums.interfaceTypeFromFormatoSpecifica.get(as.getFormatoSpecifica()),
 					env.gestisciSoggettoReferente)) {
 				
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
                    			
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
-			List<Object> operazioniList = Arrays.asList(as);			
+			List<Object> operazioniList = new ArrayList<Object>(Arrays.asList(as));			
 			
  			IDAccordo idNEW = env.idAccordoFactory.getIDAccordoFromAccordo(as);
 			if(idNEW.equals(oldIdAccordo)==false){
@@ -1876,13 +1911,13 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
     }
     
     /**
-     * Consente di modificare l&#x27;interfaccia di una API
+     * Consente di modificare l'interfaccia di una API
      *
-     * Questa operazione consente di aggiornare l&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare l'interfaccia di una API identificata dal nome e dalla versione
      *
      */
 	@Override
-    public void updateInterfaccia(ApiInterfaccia body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+    public void updateApiInterfaccia(ApiInterfaccia body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1905,7 +1940,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
 						
 			if (! env.apcHelper.accordiWSDLCheckData(env.pd, tipoWsdl, wsdl, as, validazioneDocumenti, env.tipo_protocollo) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			final boolean facilityUnicoWSDL_interfacciaStandard = as.getServiceBinding() == ServiceBinding.SOAP; 
@@ -1946,7 +1981,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void updateRisorsa(ApiRisorsa body, String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
+    public void updateApiRisorsa(ApiRisorsa body, String nome, Integer versione, String nomeRisorsa, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1998,7 +2033,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newRes.getConsegnaInOrdine()), 	//consordaz,
 					newRes.getScadenza() != null ? newRes.getScadenza() : ""
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			as.addResource(newRes);
@@ -2030,7 +2065,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
      *
      */
 	@Override
-    public void updateServizio(ApiServizio body, String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
+    public void updateApiServizio(ApiServizio body, String nome, Integer versione, String nomeServizio, ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");    
@@ -2067,7 +2102,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPt.getConsegnaInOrdine()),
 					newPt.getScadenza() != null ? newPt.getScadenza() : ""
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			as.addPortType(newPt);

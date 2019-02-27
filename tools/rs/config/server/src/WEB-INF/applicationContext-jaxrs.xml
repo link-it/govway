@@ -70,22 +70,9 @@
 	<b:bean id="dumpReceivedMessageToFileSystemInterceptor" class="org.openspcoop2.utils.service.logger.DumpReceivedMessageToFileSystemInterceptor"/>
 	<b:bean id="dumpSendMessageToFileSystemInterceptor" class="org.openspcoop2.utils.service.logger.DumpSendMessageToFileSystemInterceptor"/>
 
-	<!-- JAX-RS Service Impl -->
-	<b:bean id="apiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.api.ApiApiServiceImpl"/>
-	<b:bean id="soggettiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.soggetti.SoggettiApiServiceImpl"/>
-	<b:bean id="applicativiApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiServiceImpl"/>
-	<b:bean id="ruoliApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.ruoli.RuoliApiServiceImpl"/>
-	<b:bean id="scopeApiImpl" class="org.openspcoop2.core.config.rs.server.api.impl.scope.ScopeApiServiceImpl"/>
-
 	<!-- Context -->
-	<b:bean id="contextConfig" class="org.openspcoop2.utils.service.context.ContextConfig">
-		<b:property name="emitTransaction" value="true"/>
-		<b:property name="clusterId" value="POLI-WS"/>
-		<b:property name="serviceType" value="govway"/>
-		<b:property name="serviceVersion" value="1"/>
-		<b:property name="dump" value="true"/>
-	</b:bean>
-	<b:bean id="customContextFactory" class="org.openspcoop2.utils.service.context.ExampleCustomContextFactory"/>
+	<b:bean id="contextConfig" class="org.openspcoop2.core.config.rs.server.config.ContextConfig"/>
+	<!--  <b:bean id="customContextFactory" class="org.openspcoop2.utils.service.context.ExampleCustomContextFactory"/> -->
 	<b:bean id="context" class="org.openspcoop2.utils.service.context.ContextFeature">
 		<!-- <b:property name="contextFactory" >
 			<b:ref bean="customContextFactory"/>
@@ -95,32 +82,31 @@
 		</b:property>
 	</b:bean>
 
-	<!-- Client 
-	<b:bean id="clientContext" class="org.openspcoop2.utils.service.context.server.ServerInfoContextFeature"/>
-
-	<b:bean id="clientContext2Config" class="org.openspcoop2.utils.service.context.server.ServerConfig">
-		<b:property name="serverId" value="SERVER2"/>
-		<b:property name="dump" value="true"/>
-	</b:bean>
-	<b:bean id="clientContext2" class="org.openspcoop2.utils.service.context.server.ServerInfoContextFeature">
-		<b:property name="serverConfig" >
-			<b:ref bean="clientContext2Config"/>
-		</b:property>
-	</b:bean>
- -->
-
-	<!-- Dump 
-	<b:bean id="dumpConfig" class="org.openspcoop2.utils.service.context.DumpConfig">
-		<b:property name="role" value="SERVER"/>
-	</b:bean>
-	<b:bean id="dump" class="org.openspcoop2.utils.service.context.DumpFeature">
-		<b:property name="dumpConfig" >
-			<b:ref bean="dumpConfig"/>
-		</b:property>
-	</b:bean>
--->
-
+	<!-- JAX-RS Service Impl -->
+	<b:bean id="apiApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.api.ApiApiServiceImpl"/>
+	<b:bean id="soggettiApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.soggetti.SoggettiApiServiceImpl"/>
+	<b:bean id="applicativiApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.applicativi.ApplicativiApiServiceImpl"/>
+	<b:bean id="ruoliApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.ruoli.RuoliApiServiceImpl"/>
+	<b:bean id="scopeApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.scope.ScopeApiServiceImpl"/>
+	<b:bean id="erogazioniApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiServiceImpl"/>
+	<b:bean id="erogazioniGruppiApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.erogazioni.gruppi.ErogazioniGruppiApiServiceImpl"/>
+	<b:bean id="erogazioniConfigurazioneApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfigurazioneApiServiceImpl"/>
+	<b:bean id="fruizioniApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.fruizioni.FruizioniApiServiceImpl"/>
+	<b:bean id="fruizioniGruppiApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.fruizioni.gruppi.FruizioniGruppiApiServiceImpl"/>
+	<b:bean id="fruizioniConfigurazioneApiImpl" 
+		class="org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfigurazioneApiServiceImpl"/>
 	
+
 
 
 	<!-- CXF Configuration -->
@@ -147,6 +133,12 @@
 			<ref bean="applicativiApiImpl" />
 			<ref bean="ruoliApiImpl" />
 			<ref bean="scopeApiImpl" />
+			<ref bean="erogazioniApiImpl"/>
+			<ref bean="fruizioniApiImpl"/>
+			<ref bean="erogazioniGruppiApiImpl"/>
+			<ref bean="fruizioniGruppiApiImpl" />
+			<ref bean="erogazioniConfigurazioneApiImpl" />
+			<ref bean="fruizioniConfigurazioneApiImpl" />
 		</jaxrs:serviceBeans>  
 		<jaxrs:providers>
 			<ref bean="parameterConverter" />
@@ -160,10 +152,6 @@
 			<ref bean="openApiFeature" />
 			<ref bean="commonValidationFeature" />
 			<ref bean="context" />
-			<!-- <ref bean="clientContext" /> -->
-			<!-- <ref bean="clientContext2" /> -->
-			<!-- <ref bean="dump" /> -->
-			<!-- <ref bean="logging" /> -->
 		</jaxrs:features>
 	</jaxrs:server>
 	

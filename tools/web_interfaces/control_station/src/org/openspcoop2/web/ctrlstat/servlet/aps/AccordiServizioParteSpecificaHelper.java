@@ -3060,7 +3060,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		}
 	}
 	
-	protected boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		// verifico se tutte le azioni sono definite in regole specifiche
 		boolean all = true;
 		if(azioni!=null && azioni.size()>0) {
@@ -3177,7 +3177,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		return l;
 	}
 	
-	protected boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public boolean allActionsRedefinedMappingFruizione(List<String> azioni, List<MappingFruizionePortaDelegata> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		// verifico se tutte le azioni sono definite in regole specifiche
 		boolean all = true;
 		if(azioni!=null && azioni.size()>0) {

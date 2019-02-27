@@ -184,8 +184,15 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "validazioneDocumenti"));
 	}
 	
+	public boolean isDelete404() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "delete_404"));
+	}
 	
+	public boolean isFindall404() throws UtilsException {
+		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
+	}
 	
+
 	
 	
 	public String getSoggettoDefault(String protocollo) throws UtilsException {
@@ -195,5 +202,18 @@ public class ServerProperties  {
 		}
 		return this.readProperty(true, "soggetto");
 	}
+
+
+	public org.openspcoop2.utils.service.context.ContextConfig getContextConfig() throws UtilsException {
+		org.openspcoop2.utils.service.context.ContextConfig config = new org.openspcoop2.utils.service.context.ContextConfig();
+		config.setClusterId(this.readProperty(false, "clusterId"));
+		config.setDump(Boolean.parseBoolean(this.readProperty(true, "dump")));
+		config.setEmitTransaction(Boolean.parseBoolean(this.readProperty(true, "transaction")));
+		config.setServiceType(this.readProperty(false, "service.type"));
+		config.setServiceName(this.readProperty(false, "service.name"));
+		config.setServiceVersion(Integer.parseInt(this.readProperty(false, "service.version")));
+		return config;
+	}
+	
 
 }

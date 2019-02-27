@@ -32,6 +32,7 @@ import javax.servlet.ServletContextListener;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -146,6 +147,14 @@ public class Startup implements ServletContextListener {
 				throw new RuntimeException(e.getMessage(),e);
 			}
 			Startup.log.info("Inizializzazione ExtendedInfoManager effettuata con successo");
+			
+			Startup.log.info("Inizializzazione Connettori in corso...");
+			try{
+				Connettori.initialize(log, true, confDir, ServerProperties.getInstance().getProtocolloDefault());
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione Connettori effettuata con successo");
 			
 			Startup.initializedResources = true;
 			

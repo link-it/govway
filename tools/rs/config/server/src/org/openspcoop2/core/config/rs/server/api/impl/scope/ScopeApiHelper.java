@@ -1,29 +1,41 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.scope;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
-import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.Scope;
 import org.openspcoop2.core.config.rs.server.model.ScopeItem;
-import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 
+/**
+ * ScopeApiHelper
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
 public class ScopeApiHelper {
 	
-	public static final Map<ContestoEnum,ScopeContesto> apiContestoToRegistroContesto = new HashMap<>();
-	static {
-		apiContestoToRegistroContesto.put(ContestoEnum.EROGAZIONE,ScopeContesto.PORTA_APPLICATIVA);
-		apiContestoToRegistroContesto.put(ContestoEnum.FRUIZIONE,ScopeContesto.PORTA_DELEGATA);
-		apiContestoToRegistroContesto.put(ContestoEnum.QUALSIASI,ScopeContesto.QUALSIASI);
-	}
 	
-	public static final Map<ScopeContesto,ContestoEnum> registroContestoToApiContesto = new HashMap<>();
-	static {
-		apiContestoToRegistroContesto.forEach( (ac,rc) -> registroContestoToApiContesto.put(rc, ac));
-	}
 	
 
 	public static final org.openspcoop2.core.registry.Scope apiScopeToRegistroScope(Scope s, String userLogin) {
@@ -33,7 +45,7 @@ public class ScopeApiHelper {
 		if (s.getIdentificativoEsterno() != null)
 			ret.setNomeEsterno(s.getIdentificativoEsterno().trim());
 		
-		ret.setContestoUtilizzo(apiContestoToRegistroContesto.get(s.getContesto()));
+		ret.setContestoUtilizzo(Enums.apiContestoToRegistroContesto.get(s.getContesto()));
 		ret.setDescrizione(s.getDescrizione());
 		ret.setSuperUser(userLogin);
 		
@@ -42,27 +54,25 @@ public class ScopeApiHelper {
 	
 	public static final ScopeItem registroScopeToScopeItem(org.openspcoop2.core.registry.Scope scope) {
 		ScopeItem ret = new ScopeItem();
-		ret.setContesto(registroContestoToApiContesto.get(scope.getContestoUtilizzo()));
+		ret.setContesto(Enums.registroContestoToApiContesto.get(scope.getContestoUtilizzo()));
 		ret.setNome(scope.getNome());
 		return ret;
 	}
 	
 	public static final Scope registroScopeToScope(org.openspcoop2.core.registry.Scope scope) {
 		Scope ret = new Scope();
-		ret.setContesto(registroContestoToApiContesto.get(scope.getContestoUtilizzo()));
+		ret.setContesto(Enums.registroContestoToApiContesto.get(scope.getContestoUtilizzo()));
 		ret.setNome(scope.getNome());
 		ret.setDescrizione(scope.getDescrizione());
 		ret.setIdentificativoEsterno(scope.getNomeEsterno());
 		return ret;
 	}
 	
-	public static final HttpRequestWrapper ovverrideParameters(HttpServletRequest req, Scope scope) {
-		HttpRequestWrapper wrap = new HttpRequestWrapper(req);
+	public static final void ovverrideParameters(HttpRequestWrapper wrap, Scope scope) {
 
 		wrap.overrideParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME, scope.getNome());
 		wrap.overrideParameter(ScopeCostanti.PARAMETRO_SCOPE_DESCRIZIONE, scope.getDescrizione());
 		wrap.overrideParameter(ScopeCostanti.PARAMETRO_SCOPE_NOME_ESTERNO, scope.getIdentificativoEsterno());
 		
-		return wrap;
 	}
 }

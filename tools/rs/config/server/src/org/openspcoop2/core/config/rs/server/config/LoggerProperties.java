@@ -108,7 +108,6 @@ public class LoggerProperties {
 
 		// DIAGNOSTIC CONFIGURATION
 		DiagnosticConfig diagnosticConfig = DiagnosticConfig.newEmptyDiagnosticConfig();
-//		diagnosticConfig.setDiagnosticConfigProperties(new Properties()); // empty
 		diagnosticConfig.setThrowExceptionPlaceholderFailedResolution(true);
 				
 				

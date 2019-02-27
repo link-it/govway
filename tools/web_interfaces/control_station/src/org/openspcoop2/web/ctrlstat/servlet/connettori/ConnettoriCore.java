@@ -48,6 +48,9 @@ public class ConnettoriCore extends ControlStationCore {
 	public ConnettoriCore() throws Exception {
 		super();
 	}
+	public ConnettoriCore(boolean initForApi, String confDir, String protocolloDefault) throws Exception {
+		super(initForApi, confDir, protocolloDefault);
+	}
 	public ConnettoriCore(ControlStationCore core) throws Exception {
 		super(core);
 	}

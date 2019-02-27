@@ -1,0 +1,13 @@
+{
+    "autenticazione": {
+        "tipo": "http-basic",
+        "opzionale": false
+    },
+
+    "token": {
+        "issuer": true,
+        "username": true,
+        "subject": true
+        
+    }
+}

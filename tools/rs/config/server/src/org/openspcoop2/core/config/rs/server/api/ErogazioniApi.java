@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api;
 
 import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
@@ -34,7 +55,7 @@ import javax.validation.Valid;
 public interface ErogazioniApi  {
 
     /**
-     * Creazione di un&#x27;erogazione di API
+     * Creazione di un'erogazione di API
      *
      * Questa operazione consente di creare una erogazione di API
      *
@@ -53,12 +74,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void create(@Valid Object body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createErogazione(@Valid Object body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Creazione di un allegato nell&#x27;erogazione di API
+     * Creazione di un allegato nell'erogazione di API
      *
-     * Questa operazione consente di aggiungere un allegato all&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiungere un allegato all'erogazione di API identificata dal nome e dalla versione
      *
      */
     @POST
@@ -75,12 +96,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createAllegato(@Valid ApiImplAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createErogazioneAllegato(@Valid ApiImplAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Elimina un&#x27;erogazione di api
+     * Elimina un'erogazione di api
      *
-     * Questa operazione consente di eliminare un&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'erogazione di API identificata dal nome e dalla versione
      *
      */
     @DELETE
@@ -96,12 +117,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void delete(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteErogazione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Elimina un allegato dall&#x27;erogazione
+     * Elimina un allegato dall'erogazione
      *
-     * Questa operazione consente di eliminare un&#x27;allegato dell&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'allegato dell'erogazione di API identificata dal nome e dalla versione
      *
      */
     @DELETE
@@ -117,12 +138,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteErogazioneAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce l&#x27;allegato di una erogazione
+     * Restituisce l'allegato di una erogazione
      *
-     * Questa operazione consente di ottenere l&#x27;allegato di un&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'allegato di un'erogazione di API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -138,7 +159,28 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public byte[] downloadAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public byte[] downloadErogazioneAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+
+    /**
+     * Elenco allegati di un'erogazione di API
+     *
+     * Questa operazione consente di ottenere gli allegati di un'erogazione di API identificata dal nome e dalla versione
+     *
+     */
+    @GET
+    @Path("/erogazioni/{nome}/{versione}/allegati")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "Elenco allegati di un'erogazione di API", tags={ "erogazioni" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Ricerca eseguita correttamente", content = @Content(schema = @Schema(implementation = ListaApiImplAllegati.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public ListaApiImplAllegati findAllErogazioneAllegati(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
 
     /**
      * Ricerca erogazioni di api
@@ -159,31 +201,10 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaErogazioni findAll(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
+    public ListaErogazioni findAllErogazioni(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
 
     /**
-     * Elenco allegati di un&#x27;erogazione di API
-     *
-     * Questa operazione consente di ottenere gli allegati di un&#x27;erogazione di API identificata dal nome e dalla versione
-     *
-     */
-    @GET
-    @Path("/erogazioni/{nome}/{versione}/allegati")
-    @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Elenco allegati di un'erogazione di API", tags={ "erogazioni" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Ricerca eseguita correttamente", content = @Content(schema = @Schema(implementation = ListaApiImplAllegati.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
-        @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiImplAllegati findAllAllegati(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
-
-    /**
-     * Restituisce i dettagli di un&#x27;erogazione di API
+     * Restituisce i dettagli di un'erogazione di API
      *
      * Questa operazione consente di ottenere i dettagli di una erogazione di API identificata dal nome e dalla versione
      *
@@ -201,12 +222,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ErogazioneViewItem get(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ErogazioneViewItem getErogazione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce le informazioni sull&#x27;API implementata dall&#x27;erogazione
+     * Restituisce le informazioni sull'API implementata dall'erogazione
      *
-     * Questa operazione consente di ottenere le informazioni sull&#x27;API implementata dall&#x27;erogazione identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere le informazioni sull'API implementata dall'erogazione identificata dal nome e dalla versione
      *
      */
     @GET
@@ -222,12 +243,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplVersioneApiView getAPI(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplVersioneApiView getErogazioneAPI(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce il dettaglio di un allegato dell&#x27;erogazione
+     * Restituisce il dettaglio di un allegato dell'erogazione
      *
-     * Questa operazione consente di ottenere il dettaglio di un allegato dell&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere il dettaglio di un allegato dell'erogazione di API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -243,12 +264,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplAllegato getAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplAllegato getErogazioneAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce le informazioni su connettore associato all&#x27;erogazione
+     * Restituisce le informazioni su connettore associato all'erogazione
      *
-     * Questa operazione consente di ottenere le informazioni sul connettore associato all&#x27;erogazione identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere le informazioni sul connettore associato all'erogazione identificata dal nome e dalla versione
      *
      */
     @GET
@@ -264,12 +285,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public Connettore getConnettore(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public Connettore getErogazioneConnettore(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce le informazioni generali di un&#x27;erogazione di API
+     * Restituisce le informazioni generali di un'erogazione di API
      *
-     * Questa operazione consente di ottenere le informazioni generali di un&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere le informazioni generali di un'erogazione di API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -285,12 +306,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplInformazioniGeneraliView getInformazioniGenerali(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplInformazioniGeneraliView getErogazioneInformazioniGenerali(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce le informazioni sull&#x27;url di invocazione necessaria ad invocare l&#x27;erogazione
+     * Restituisce le informazioni sull'url di invocazione necessaria ad invocare l'erogazione
      *
-     * Questa operazione consente di ottenere le informazioni sull&#x27;url di invocazione necessaria ad invocare l&#x27;erogazione identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere le informazioni sull'url di invocazione necessaria ad invocare l'erogazione identificata dal nome e dalla versione
      *
      */
     @GET
@@ -306,12 +327,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiImplUrlInvocazioneView getUrlInvocazione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiImplUrlInvocazioneView getErogazioneUrlInvocazione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Consente di modificare la versione dell&#x27;API implementata dall&#x27;erogazione
+     * Consente di modificare la versione dell'API implementata dall'erogazione
      *
-     * Questa operazione consente di aggiornare la versione dell&#x27;API implementata dall&#x27;erogazione identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare la versione dell'API implementata dall'erogazione identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -328,12 +349,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAPI(@Valid ApiImplVersioneApi body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateErogazioneAPI(@Valid ApiImplVersioneApi body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Modifica i dati di un allegato dell&#x27;erogazione
+     * Modifica i dati di un allegato dell'erogazione
      *
-     * Questa operazione consente di aggiornare i dettagli di un allegato dell&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare i dettagli di un allegato dell'erogazione di API identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -350,12 +371,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAllegato(@Valid ApiImplAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateErogazioneAllegato(@Valid ApiImplAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Consente di modificare la configurazione del connettore associato all&#x27;erogazione
+     * Consente di modificare la configurazione del connettore associato all'erogazione
      *
-     * Questa operazione consente di aggiornare la configurazione del connettore associato all&#x27;erogazione identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare la configurazione del connettore associato all'erogazione identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -372,12 +393,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateConnettore(@Valid Connettore body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateErogazioneConnettore(@Valid Connettore body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Consente di modificare le informazioni generali di un&#x27;erogazione di API
+     * Consente di modificare le informazioni generali di un'erogazione di API
      *
-     * Questa operazione consente di aggiornare le informazioni generali di un&#x27;erogazione di API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare le informazioni generali di un'erogazione di API identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -394,12 +415,12 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateInformazioniGenerali(@Valid ApiImplInformazioniGenerali body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateErogazioneInformazioniGenerali(@Valid ApiImplInformazioniGenerali body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Consente di modificare la configurazione utilizzata per identificare l&#x27;azione invocata dell&#x27;API implementata dall&#x27;erogazione
+     * Consente di modificare la configurazione utilizzata per identificare l'azione invocata dell'API implementata dall'erogazione
      *
-     * Questa operazione consente di aggiornare la configurazione utilizzata dal Gateway per identificare l&#x27;azione invocata
+     * Questa operazione consente di aggiornare la configurazione utilizzata dal Gateway per identificare l'azione invocata
      *
      */
     @PUT
@@ -416,5 +437,5 @@ public interface ErogazioniApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateUrlInvocazione(@Valid Object body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateErogazioneUrlInvocazione(@Valid Object body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 }

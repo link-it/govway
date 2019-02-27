@@ -1,12 +1,33 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.SoggettiApi;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaSoggetti;
@@ -25,10 +46,11 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 
 /**
- * GovWay Config API
- *
- * <p>Servizi per la configurazione di GovWay
- *
+ * SoggettiApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 
@@ -47,7 +69,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public void create(Soggetto body, ProfiloEnum profilo) {
+    public void createSoggetto(Soggetto body, ProfiloEnum profilo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -66,9 +88,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 			
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			SoggettiApiHelper.overrideAuthParams(soggetto, wrap);
-			SoggettiEnv env = new SoggettiEnv(wrap,  profilo, context);
+			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(),  profilo, context);
+			SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
+			
 			org.openspcoop2.core.registry.Soggetto soggettoRegistro = SoggettiApiHelper.soggettoApiToRegistro(soggetto, env);
 			
 			IDSoggetto idSogg = new IDSoggetto();
@@ -92,7 +114,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					null, false, soggettoRegistro.getDescrizione());
 			
 			if (!isOk)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 	
 			// Dal debug isRouter è sempre false.
 			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(soggettoRegistro,false);
@@ -121,7 +143,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public void delete(String nome, ProfiloEnum profilo) {
+    public void deleteSoggetto(String nome, ProfiloEnum profilo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -135,32 +157,28 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
 			IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto, nome);
 			
-			org.openspcoop2.core.registry.Soggetto soggettoRegistro = null;
-			org.openspcoop2.core.config.Soggetto soggettoConfig = null;
+			org.openspcoop2.core.registry.Soggetto soggettoRegistro = Helper.evalnull(() -> env.soggettiCore.getSoggettoRegistro(idSogg) );
+			org.openspcoop2.core.config.Soggetto soggettoConfig = Helper.evalnull(() -> env.soggettiCore.getSoggetto(soggettoRegistro.getId() ));
 			
-			try {
-				soggettoRegistro = env.soggettiCore.getSoggettoRegistro(idSogg);
-				soggettoConfig = env.soggettiCore.getSoggetto(soggettoRegistro.getId());
-			} catch (Exception e) { }
-			
-			if (soggettoRegistro == null || soggettoConfig == null)
-				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde al nome e il profilo indicati");
-			
-			StringBuffer inUsoMessage = new StringBuffer();
-			SoggettiUtilities.deleteSoggetto(
-					soggettoRegistro,
-					soggettoConfig,
-					env.userLogin,
-					env.soggettiCore,
-					env.soggettiHelper, 
-					inUsoMessage,
-					"\n"
-				);
-			
+			if  ( soggettoRegistro != null && soggettoConfig != null ) {
 
-			if (inUsoMessage.length() > 0)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
-        
+				StringBuffer inUsoMessage = new StringBuffer();
+				SoggettiUtilities.deleteSoggetto(
+						soggettoRegistro,
+						soggettoConfig,
+						env.userLogin,
+						env.soggettiCore,
+						env.soggettiHelper, 
+						inUsoMessage,
+						"\n"
+					);
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.escapeHtml(inUsoMessage.toString()));
+			}
+			else if (env.delete_404) {
+				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde al nome e il profilo indicati");
+			}
+			        
 			context.getLogger().info("Invocazione completata con successo");     
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
@@ -180,7 +198,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public ListaSoggetti findAll(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo) {
+    public ListaSoggetti findAllSoggetti(ProfiloEnum profilo, String q, Integer limit, Integer offset, DominioEnum dominio, String ruolo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -190,17 +208,16 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);                        
 			int idLista = Liste.SOGGETTI;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
 			
-			if (profilo != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_PROTOCOLLO, Helper.tipoProtocolloFromProfilo.get(profilo));
 			if (dominio != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, dominio.toString());
 			if (ruolo != null && ruolo.trim().length() > 0)
 				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO, ruolo.trim());
 			
 			List<org.openspcoop2.core.registry.Soggetto> soggetti = env.soggettiCore.soggettiRegistroList(null, ricerca);
-			if (soggetti.size() == 0)
+			
+			if ( soggetti.size() == 0 && env.findall_404 )
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde ai criteri di ricerca specificati");
 			
 			final ListaSoggetti ret = Helper.costruisciListaPaginata(
@@ -237,7 +254,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public Soggetto get(String nome, ProfiloEnum profilo) {
+    public Soggetto getSoggetto(String nome, ProfiloEnum profilo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -247,14 +264,10 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);			
 			IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
-			org.openspcoop2.core.registry.Soggetto soggettoReg = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
-			Soggetto soggettoApi = null;
-			try {
-				soggettoApi = SoggettiApiHelper.soggettoRegistroToApi(soggettoReg, env.pddCore,env.soggettiCore);
-			} catch (Exception e) {
-				
-			}
+			org.openspcoop2.core.registry.Soggetto soggettoReg = Helper.supplyOrNotFound( () -> env.soggettiCore.getSoggettoRegistro(idSogg), "Soggetto " + idSogg.toString() );
+			
+			Soggetto soggettoApi = Helper.supplyOrNotFound( () -> SoggettiApiHelper.soggettoRegistroToApi(soggettoReg, env.pddCore,env.soggettiCore), "Soggetto " + idSogg.toString());
 			
 			if (soggettoApi == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());
@@ -281,7 +294,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      *
      */
 	@Override
-    public void update(Soggetto body, String nome, ProfiloEnum profilo) {
+    public void updateSoggetto(Soggetto body, String nome, ProfiloEnum profilo) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -299,12 +312,10 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}catch(Throwable e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
+
+			final SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);
+			SoggettiApiHelper.overrideAuthParams(soggetto, env.requestWrapper);
 			
-			HttpRequestWrapper wrap = new HttpRequestWrapper(context.getServletRequest());
-			SoggettiApiHelper.overrideAuthParams(soggetto, wrap);
-			
-			final SoggettiEnv env = new SoggettiEnv(wrap, profilo, context);
-	
 			final IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
 			org.openspcoop2.core.registry.Soggetto oldSoggetto = null; 
 			try {
@@ -333,7 +344,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				);
 			
 			if (!isOk)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			
 			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(newSoggetto,false);
 			newSoggetto.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));

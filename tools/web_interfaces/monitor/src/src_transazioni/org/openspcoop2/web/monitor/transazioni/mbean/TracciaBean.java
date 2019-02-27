@@ -21,19 +21,18 @@
  */
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BeanUtils;
+import org.slf4j.Logger;
 
 
 /*****

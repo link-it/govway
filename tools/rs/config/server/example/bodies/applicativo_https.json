@@ -1,0 +1,8 @@
+{
+ 	"nome": "ApplicativoJsonHttps",
+   	"modalita_accesso": "https",
+   	"credenziali": {
+       		"subject": "cn=gabibbo"
+	},
+	"ruoli": [ "RuoloDemo" ]
+}

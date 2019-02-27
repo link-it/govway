@@ -117,7 +117,13 @@ public class ServletUtils {
 
 
 	/* ------ CHECKBOX ---- */
-
+	
+	public static String boolToCheckBoxStatus(Boolean value) {
+		if (value == null) value = false;
+		
+		return value ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+	}
+	
 	public static boolean isCheckBoxEnabled(String value){
 		return Costanti.CHECK_BOX_ENABLED.equals(value) || 
 				Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(value) || 

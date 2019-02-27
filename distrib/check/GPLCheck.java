@@ -101,10 +101,9 @@ public class GPLCheck {
 					}
 					fis.close();
 
-					String TODO = "tools/rs/config/server/src/org/openspcoop2/core/config/rs/server";
-					String TODO2 = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
+					String TODO = "tools/rs/monitor/server/src/org/openspcoop2/core/monitor/rs/server";
 					if(!printTODO){		
-						System.out.println("TODO: Eliminare controllo per RS Server");
+						System.out.println("TODO: Eliminare controllo per RS Monitor Server");
 						printTODO = true;		
 					}
 
@@ -127,8 +126,7 @@ public class GPLCheck {
 					    !f.getAbsolutePath().endsWith("example/pdd/client/PD_Invoker/fatturaPA/esempi_altro/Fatturazione elettronica PA - Documentazione Sistema di Interscambio.htm") &&
 					    !f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/Costanti.java")  &&
 					    !f.getAbsolutePath().contains("distrib/check/")  &&
-					    !f.getAbsolutePath().contains(TODO) &&  
-					    !f.getAbsolutePath().contains(TODO2)
+					    !f.getAbsolutePath().contains(TODO)
                                             ){
 						
 						for(int i=0; i<GPL_CHECK.length; i++){

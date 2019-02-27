@@ -1,0 +1,24 @@
+{
+	"stato": "ridefinito",
+
+	"richiesta": {
+		"abilitato": true,
+	
+		"ingresso": {
+			"headers": true,
+			"body": true,
+			"attachments": false
+		},
+
+		"uscita": {
+			"headers": false,
+			"body": false,
+			"attachments": true
+		}
+
+	},
+
+	"risposta": {
+		"abilitato": false
+	}
+}

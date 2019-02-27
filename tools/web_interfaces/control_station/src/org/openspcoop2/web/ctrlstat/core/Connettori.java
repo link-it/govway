@@ -45,6 +45,9 @@ public class Connettori {
 	private static final List<String> lista = new ArrayList<String>();
 
 	public static void initialize(Logger log) throws Exception {
+		initialize(log, false, null, null);
+	}
+	public static void initialize(Logger log, boolean initForApi, String confDir, String protocolloDefault) throws Exception {
 		/**
 		 * Aggiungo i connettori di default e quelli che leggo nel db
 		 */
@@ -56,7 +59,7 @@ public class Connettori {
 
 		// aggiungo i connettori presenti nel db
 		try{
-			Connettori.readConnettoriFromDB();
+			Connettori.readConnettoriFromDB(initForApi, confDir, protocolloDefault);
 		}catch(Exception e){
 			log.error("Caricamento connettori non riuscito",e);
 			throw new Exception(e.getMessage(),e);
@@ -73,9 +76,14 @@ public class Connettori {
 		return Connettori.lista.contains(nome);
 	}
 
-	private static boolean readConnettoriFromDB() throws Exception {
+	private static boolean readConnettoriFromDB(boolean initForApi, String confDir, String protocolloDefault) throws Exception {
 		try {
-			ConnettoriCore core = new ConnettoriCore();
+			ConnettoriCore core = null;
+			if(initForApi) {
+				core = new ConnettoriCore(initForApi, confDir, protocolloDefault);
+			}else {
+				core = new ConnettoriCore();
+			}
 			List<String> tmpConnettori = core.connettoriList();
 			Iterator<String> it = tmpConnettori.iterator();
 			while (it.hasNext())

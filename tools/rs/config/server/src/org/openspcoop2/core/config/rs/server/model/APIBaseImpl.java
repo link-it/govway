@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.model;
 
 import javax.validation.constraints.*;
@@ -13,6 +34,9 @@ public class APIBaseImpl  {
   
   @Schema(required = true, description = "")
   private Integer apiVersione = null;
+  
+  @Schema(description = "")
+  private String apiReferente = null;
   
   @Schema(description = "")
   private String apiSoapServizio = null;
@@ -56,6 +80,25 @@ public class APIBaseImpl  {
 
   public APIBaseImpl apiVersione(Integer apiVersione) {
     this.apiVersione = apiVersione;
+    return this;
+  }
+
+ /**
+   * Get apiReferente
+   * @return apiReferente
+  **/
+  @JsonProperty("api_referente")
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getApiReferente() {
+    return this.apiReferente;
+  }
+
+  public void setApiReferente(String apiReferente) {
+    this.apiReferente = apiReferente;
+  }
+
+  public APIBaseImpl apiReferente(String apiReferente) {
+    this.apiReferente = apiReferente;
     return this;
   }
 
@@ -105,6 +148,7 @@ public class APIBaseImpl  {
     
     sb.append("    apiNome: ").append(APIBaseImpl.toIndentedString(this.apiNome)).append("\n");
     sb.append("    apiVersione: ").append(APIBaseImpl.toIndentedString(this.apiVersione)).append("\n");
+    sb.append("    apiReferente: ").append(APIBaseImpl.toIndentedString(this.apiReferente)).append("\n");
     sb.append("    apiSoapServizio: ").append(APIBaseImpl.toIndentedString(this.apiSoapServizio)).append("\n");
     sb.append("    tipoServizio: ").append(APIBaseImpl.toIndentedString(this.tipoServizio)).append("\n");
     sb.append("}");

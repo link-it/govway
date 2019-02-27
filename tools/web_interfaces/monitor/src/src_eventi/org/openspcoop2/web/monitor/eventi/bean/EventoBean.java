@@ -21,14 +21,14 @@
  */
 package org.openspcoop2.web.monitor.eventi.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
+import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
-import org.openspcoop2.web.monitor.core.utils.BlackListElement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * EventoBean

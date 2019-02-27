@@ -1,0 +1,570 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.openspcoop2.core.config.rs.server.api.impl.erogazioni.gruppi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.rs.server.api.ErogazioniGruppiApi;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
+import org.openspcoop2.core.config.rs.server.api.impl.Helper;
+import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
+import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
+import org.openspcoop2.core.config.rs.server.config.ServerProperties;
+import org.openspcoop2.core.config.rs.server.model.Gruppo;
+import org.openspcoop2.core.config.rs.server.model.GruppoAzioni;
+import org.openspcoop2.core.config.rs.server.model.GruppoItem;
+import org.openspcoop2.core.config.rs.server.model.GruppoNome;
+import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
+import org.openspcoop2.core.config.rs.server.model.ListaGruppi;
+import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
+import org.openspcoop2.core.config.rs.server.model.ProfiloEnum;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.utils.service.BaseImpl;
+import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeMappingInfo;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeUtilities;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
+/**
+ * ErogazioniGruppiApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
+ */
+public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements ErogazioniGruppiApi {
+
+	public ErogazioniGruppiApiServiceImpl(){
+		super(org.slf4j.LoggerFactory.getLogger(ErogazioniGruppiApiServiceImpl.class));
+	}
+
+	private AuthorizationConfig getAuthorizationConfig() throws Exception{
+		return new AuthorizationConfig(ServerProperties.getInstance().getProperties());
+	}
+
+    /**
+     * Aggiunta di azioni o risorse dell'API al gruppo
+     *
+     * Questa operazione consente di aggiungere azioni o risorse dell'API al gruppo
+     *
+     */
+	@Override
+    public void addErogazioneGruppoAzioni(GruppoAzioni body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+
+			context.getLogger().info("Invocazione in corso ...");
+			
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
+						
+			List<String> azioniOccupate = ErogazioniApiHelper.getAzioniOccupateErogazione(idAsps, env.apsCore, env.paCore);
+						
+			for (String azione : body.getAzioni()) {
+				if(azioniOccupate.contains(azione)) {
+					throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));			
+				}
+			}
+			
+			env.requestWrapper.overrideParameterValues(CostantiControlStation.PARAMETRO_AZIONI, body.getAzioni().toArray(new String[0]));
+		
+			if (!env.paHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			// aggiungo azione nel db
+			for(String azione: body.getAzioni()) {
+				pa.getAzione().addAzioneDelegata(azione);
+			}
+
+			env.paCore.performUpdateOperation(env.userLogin, false, pa);
+
+			context.getLogger().info("Invocazione completata con successo");        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Creazione di un gruppo di azioni o risorse dell'API erogata
+     *
+     * Questa operazione consente di creare un gruppo di azioni o risorse dell'API erogata
+     *
+     */
+	@Override
+    public void createErogazioneGruppo(Gruppo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+			
+			Helper.throwIfNull(body);
+
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			
+			final GruppoNuovaConfigurazione gnuovaconf = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+			
+			if (body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA) {
+				// TODO: MailAndrea Non so quale Mapping scegliere perchè il nome del gruppo può esssere duplicato
+				// Qui devo recuperare il mapping erogazione\portaapplicativa relativo al gruppo padre.
+				// Ho bisogno del campo "nome" di un mapping. Recupero tutti i mapping
+				//final GruppoEreditaConfigurazione g = null;
+				throw FaultCode.ERRORE_INTERNO.toException("Non so come recuperare il mappingErogazionePortaApplicativa.");
+			}
+			
+			// TODO: mailandrea, il primo parametro di getMappingInfo è il nome del mapping che mi collega alla porta applicativa\gruppo dalla quale ereditare.
+			// Da REST, geredita.getNome() è il nome del gruppo da cui ereditare giusto? Ma io ho bisognod del nome del mapping, perchè il sistema consente più gruppi con lo stesso nome.
+			final AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(null, asps, env.apsCore);
+			final MappingErogazionePortaApplicativa mappingSelezionato = mappingInfo.getMappingSelezionato();
+			final MappingErogazionePortaApplicativa mappingDefault = mappingInfo.getMappingDefault();
+			final List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
+			
+			if ( mappingDefault == null )
+				throw FaultCode.NOT_FOUND.toException("Nessuna erogazione trovata");
+			if ( mappingSelezionato == null )
+				throw FaultCode.NOT_FOUND.toException("Gruppo con nome " + body.getNome() + " non trovato");
+					
+			for (String azioneTmp : body.getAzioni()) {
+				if(azioniOccupate.contains(azioneTmp)) {
+					throw FaultCode.CONFLITTO.toException(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE);
+				}
+			}
+			
+			if (!env.apsHelper.configurazioneErogazioneCheckData(
+					TipoOperazione.ADD, 
+					nome, 
+					body.getNome(), 
+					body.getAzioni().toArray(new String[0]),
+					asps, 
+					azioniOccupate,
+					body.getModalita().toString(),					// modeCreazione
+					null,											// Come da codice console,
+					env.isSupportatoAutenticazioneSoggetti,
+					mappingInfo
+				)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			// MailAndrea: Modificato anche accordiserviziopartespecificautilities: dovevo agganciare il core per creare il saCore
+			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(
+					mappingDefault,
+					mappingSelezionato,
+					nome,
+					body.getNome(),
+					body.getAzioni().toArray(new String[0]),
+					body.getModalita().toString(),
+					body.getModalita().toString(),
+					null,							// endpointtype,
+					null,							// tipoconn,
+					null,							// autenticazioneHttp,	// RECHECK
+					null,							// connettoreDebug,
+					null,							// url,
+					null,							// nomeCodaJms,
+					null,							// tipoJms, 
+					null,							// initcont, 
+					null,							// urlpgk, 
+					null,							// provurl, 
+					null,							// connfact, 
+					null,							// tipoSendas, 
+					null,							// user, 	RECHECK
+					null,							// password, RECHECK
+					null,							// httpsurl, 
+					null,							// httpstipologia, 
+					false,							// httpshostverify,
+					null,							// httpspath, 
+					null,							// httpstipo, 
+					null,							// httpspwd,
+					null,							// httpsalgoritmo, 
+					false,							// httpsstato,
+					null,							// httpskeystore,
+					null,							// httpspwdprivatekeytrust, 
+					null,							// httpspathkey,
+					null,							// httpstipokey, 
+					null,							// httpspwdkey,
+					null,							// httpspwdprivatekey, 
+					null,							// httpsalgoritmokey,
+					null,							// proxy_enabled, 
+					null,							// proxy_hostname, 
+					null,							// proxy_port, 
+					null,							// proxy_username, 
+					null,							// proxy_password,
+					null,							// tempiRisposta_enabled, 
+					null,							// tempiRisposta_connectionTimeout,
+					null,							// tempiRisposta_readTimeout, 
+					null,							// tempiRisposta_tempoMedioRisposta,
+					"no",							// opzioniAvanzate,
+					null,							// transfer_mode, 
+					null,							// transfer_mode_chunk_size, 
+					null,							// redirect_mode, 
+					null,							// redirect_max_hop,
+					null,							// requestOutputFileName,
+					null,							// requestOutputFileNameHeaders,
+					null,							// requestOutputParentDirCreateIfNotExists,
+					null,							// requestOutputOverwriteIfExists,
+					null,							// responseInputMode,
+					null,							// responseInputFileName,
+					null,							// responseInputFileNameHeaders, 
+					null,							// responseInputDeleteAfterRead, 
+					null,							// responseInputWaitTime,
+					null,							// listExtendedConnettore
+	        		Helper.evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(gnuovaconf.getAutenticazione().getTipo()).toString() ),		// erogazioneAutenticazione
+	        		Helper.evalnull( () -> gnuovaconf.getAutenticazione().isOpzionale()  ? "yes" : "no" ), 	// erogazioneAutenticazioneOpzionale
+					"disabilitato",					// erogazioneAutorizzazione, Come da debug. 
+					null,							// erogazioneAutorizzazioneAutenticati, 
+					null,							// erogazioneAutorizzazioneRuoli, 
+					null,							// erogazioneAutorizzazioneRuoliTipologia, 
+					null,							// erogazioneAutorizzazioneRuoliMatch,
+					null,							// nomeSA, 
+					null,							// erogazioneRuolo, 
+					null,							// erogazioneSoggettoAutenticato, 
+					null,							// autorizzazione_tokenOptions,
+					null,							// autorizzazioneScope,
+					null,							// scope, 
+					null,							// autorizzazioneScopeMatch,
+					null,							// allegatoXacmlPolicy,
+					"disabilitato",					// gestioneToken, Come da debug. 
+					null,							// gestioneTokenPolicy,  
+					null,							// gestioneTokenOpzionale,  
+					null,							// gestioneTokenValidazioneInput, 
+					null,							// gestioneTokenIntrospection, 
+					null,							// gestioneTokenUserInfo, 
+					null,							// gestioneTokenTokenForward,
+					null,							// autenticazioneTokenIssuer, 
+					null,							// autenticazioneTokenClientId,
+					null,							// autenticazioneTokenSubject, 
+					null,							// autenticazioneTokenUsername, 
+					null,							// autenticazioneTokenEMail,
+					asps, 
+					env.tipo_protocollo, 
+					env.userLogin,
+					env.apsCore,
+					env.apsHelper
+				);
+
+		        
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Elimina il gruppo identificato dal nome
+     *
+     * Questa operazione consente di eliminare il gruppo identificato dal nome
+     *
+     */
+	@Override
+    public void deleteErogazioneGruppo(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
+			
+			final IDPortaApplicativa idPortaApplicativa = ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore);
+				
+			if (env.delete_404 && idPortaApplicativa == null) 
+				throw FaultCode.NOT_FOUND.toException("Gruppo con nome " + nomeGruppo + "non trovato per l'erogazione scelta");
+
+			else if ( idPortaApplicativa != null) {
+		
+				StringBuffer inUsoMessage = new StringBuffer();
+				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaPorteApplicative(idPortaApplicativa, idAsps, env.userLogin, env.apsCore, env.apsHelper, inUsoMessage);
+				
+				if (inUsoMessage.length() > 0) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
+			}
+			context.getLogger().info("Invocazione completata con successo");
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Elimina l'azione o la risorsa dell'API associata al gruppo
+     *
+     * Questa operazione consente di eliminare l'azione o la risorsa dell'API associate al gruppo
+     *
+     */
+	@Override
+    public void deleteErogazioneGruppoAzione(String nome, Integer versione, String nomeGruppo, String nomeAzione, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
+			
+			if ( Helper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
+				StringBuffer inUsoMessage = new StringBuffer();
+				
+				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
+				
+				if (inUsoMessage.length() > 0)
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				
+			} else if ( env.delete_404 ) {
+				throw FaultCode.NOT_FOUND.toException("Azione " + nomeAzione + " non presente nel gruppo " + nomeGruppo);
+			}
+			                        		
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Ricerca i gruppi in cui sono stati classificate le azioni o le risorse dell'API
+     *
+     * Elenca i gruppi in cui sono stati classificate le azioni o le risorse dell'API
+     *
+     */
+	@Override
+    public ListaGruppi findAllErogazioneGruppi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, Integer limit, Integer offset, String azione) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			final int idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
+			
+			final Search ricerca = Helper.setupRicercaPaginata(null, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
+			
+			if (!StringUtils.isEmpty(azione))
+				ricerca.addFilter(idLista, Filtri.FILTRO_AZIONE, azione);
+			
+			List<MappingErogazionePortaApplicativa> mappings = env.apsCore.mappingServiziPorteAppList(idAsps, ricerca);
+			
+			if ( env.findall_404 && mappings.isEmpty() ) {
+				throw FaultCode.NOT_FOUND.toException("Nessuna porta associata al servizio: " + idAsps.toString());
+			}
+			
+			ListaGruppi ret = Helper.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
+			
+			for (MappingErogazionePortaApplicativa m : mappings) {
+				final PortaApplicativa pd = env.paCore.getPortaApplicativa(m.getIdPortaApplicativa());
+				
+				GruppoItem g = new GruppoItem();
+				g.setAzioni(pd.getAzione().getAzioneDelegataList());
+				g.setNome(m.getDescrizione());
+				g.setPredefinito(m.isDefault());
+				
+				ret.addItemsItem(g);			
+			}
+                       
+        
+			context.getLogger().info("Invocazione completata con successo");
+        	return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Restituisce azioni/risorse associate al gruppo identificato dal nome
+     *
+     * Questa operazione consente di ottenere le azioni associate al gruppo identificato dal nome
+     *
+     */
+	@Override
+    public GruppoAzioni getErogazioneGruppoAzioni(String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps), asps.getId());
+			
+			final IDPortaApplicativa idPa = Helper.supplyOrNotFound( 
+					() -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore)
+					, "Gruppo per l'erogazione scelta"
+				);
+			
+			final PortaApplicativa pa = Helper.supplyOrNotFound( 
+					() -> env.paCore.getPortaApplicativa(idPa)
+					, "Gruppo per l'erogazione scelta"
+				);
+			
+			GruppoAzioni ret = new GruppoAzioni();
+			ret.setAzioni(pa.getAzione().getAzioneDelegataList());
+			context.getLogger().info("Invocazione completata con successo");
+			
+			return ret;
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+    /**
+     * Consente di modificare il nome del gruppo
+     *
+     * Questa operazione consente di aggiornare il nome di un gruppo
+     *
+     */
+	@Override
+    public void updateErogazioneGruppoNome(GruppoNome body, String nome, Integer versione, String nomeGruppo, ProfiloEnum profilo, String soggetto) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+			
+			Helper.throwIfNull(body);
+                        
+			// PorteApplicativeConfigurazioneChange
+			final ErogazioniEnv env = new ErogazioniEnv(context.getServletRequest(), profilo, soggetto, context);
+			final AccordoServizioParteSpecifica asps = Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
+			final IdServizio idAsps = new IdServizio(env.idServizioFactory.getIDServizioFromAccordo(asps),asps.getId());
+			final List<MappingErogazionePortaApplicativa> listaMapping = env.apsCore.mappingServiziPorteAppList(idAsps,idAsps.getId(), null);
+			final List<String> mappingUtilizzati = ErogazioniApiHelper.getDescrizioniMappingPA(listaMapping);
+			
+			Helper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(nomeGruppo, idAsps, env.apsCore), "Gruppo per l'erogazione scelta");
+			
+			if (mappingUtilizzati.stream().filter( m -> m.equalsIgnoreCase(body.getNome())).findFirst().isPresent()) {
+				throw FaultCode.CONFLITTO.toException(CostantiControlStation.MESSAGGIO_ERRORE_NOME_GRUPPO_GIA_PRESENTE);
+			}
+			
+			if (! env.paHelper.configurazioneCambiaNomeCheck(TipoOperazione.OTHER, body.getNome(), mappingUtilizzati,false)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			}
+			
+			final MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = AccordiServizioParteSpecificaUtilities.getMappingPA_filterByDescription(
+					 listaMapping, 
+					 nomeGruppo
+					);
+			
+			mappingErogazionePortaApplicativa.setDescrizione(body.getNome());
+			
+			env.paCore.aggiornaDescrizioneMappingErogazionePortaApplicativa( mappingErogazionePortaApplicativa );
+								
+			context.getLogger().info("Invocazione completata con successo");
+        
+     
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+    
+}
+

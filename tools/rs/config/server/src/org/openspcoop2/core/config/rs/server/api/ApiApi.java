@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api;
 
 import org.openspcoop2.core.config.rs.server.model.Api;
@@ -42,7 +63,7 @@ import javax.validation.Valid;
 public interface ApiApi  {
 
     /**
-     * Creazione di un&#x27;API
+     * Creazione di un'API
      *
      * Questa operazione consente di creare una API
      *
@@ -61,7 +82,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void create(@Valid Api body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createApi(@Valid Api body, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Creazione di un allegato di una API
@@ -83,10 +104,10 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createAllegato(@Valid ApiAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createApiAllegato(@Valid ApiAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Creazione di un&#x27;azione di una API
+     * Creazione di un'azione di una API
      *
      * Questa operazione consente di aggiungere una azione al servizio della API identificata dal nome e dalla versione
      *
@@ -105,7 +126,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createAzione(@Valid ApiAzione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createApiAzione(@Valid ApiAzione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Creazione di una risorsa di una API
@@ -127,7 +148,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createRisorsa(@Valid ApiRisorsa body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createApiRisorsa(@Valid ApiRisorsa body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Creazione di un servizio di una API
@@ -149,10 +170,10 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void createServizio(@Valid ApiServizio body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void createApiServizio(@Valid ApiServizio body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Elimina un&#x27;api
+     * Elimina un'api
      *
      * Questa operazione consente di eliminare un API identificata dal nome e dalla versione
      *
@@ -170,12 +191,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void delete(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteApi(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elimina un allegato di una API
      *
-     * Questa operazione consente di eliminare un&#x27;allegato della API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'allegato della API identificata dal nome e dalla versione
      *
      */
     @DELETE
@@ -191,12 +212,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteApiAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Elimina un&#x27;azione del servizio di una API
+     * Elimina un'azione del servizio di una API
      *
-     * Questa operazione consente di eliminare un&#x27;azione del servizio della API identificata dal nome e dalla versione
+     * Questa operazione consente di eliminare un'azione del servizio della API identificata dal nome e dalla versione
      *
      */
     @DELETE
@@ -212,7 +233,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteAzione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteApiAzione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elimina una risorsa di una API
@@ -233,7 +254,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteRisorsa(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteApiRisorsa(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Elimina un servizio di una API
@@ -254,12 +275,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteServizio(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void deleteApiServizio(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce l&#x27;allegato di una API
+     * Restituisce l'allegato di una API
      *
-     * Questa operazione consente di ottenere l&#x27;allegato di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'allegato di una API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -275,12 +296,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public byte[] downloadAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public byte[] downloadApiAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce l&#x27;interfaccia di una API
+     * Restituisce l'interfaccia di una API
      *
-     * Questa operazione consente di ottenere l&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere l'interfaccia di una API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -296,7 +317,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public byte[] downloadInterfaccia(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public byte[] downloadApiInterfaccia(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Ricerca api
@@ -317,7 +338,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApi findAll(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
+    public ListaApi findAllApi(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("tipo_api") TipoApiEnum tipoApi);
 
     /**
      * Elenco allegati di una API
@@ -338,7 +359,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiAllegati findAllAllegati(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public ListaApiAllegati findAllApiAllegati(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
 
     /**
      * Elenco servizi di una API
@@ -359,7 +380,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiAzioni findAllAzioni(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public ListaApiAzioni findAllApiAzioni(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
 
     /**
      * Elenco risorse di una API
@@ -380,7 +401,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiRisorse findAllRisorse(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("http_method") HttpMethodEnum httpMethod);
+    public ListaApiRisorse findAllApiRisorse(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("http_method") HttpMethodEnum httpMethod);
 
     /**
      * Elenco servizi di una API
@@ -401,7 +422,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaApiServizi findAllServizi(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
+    public ListaApiServizi findAllApiServizi(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset);
 
     /**
      * Restituisce i dettagli di una API
@@ -422,7 +443,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiViewItem get(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiViewItem getApi(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce il dettaglio di un allegato di una API
@@ -443,12 +464,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiAllegato getAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiAllegato getApiAllegato(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce il dettaglio di un&#x27;azione di un  servizio della API
+     * Restituisce il dettaglio di un'azione di un  servizio della API
      *
-     * Questa operazione consente di ottenere il dettaglio di un&#x27;azione nel servizio della API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere il dettaglio di un'azione nel servizio della API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -464,7 +485,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiAzione getAzione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiAzione getApiAzione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce la descrizione di una API
@@ -485,7 +506,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiDescrizione getDescrizione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiDescrizione getApiDescrizione(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce le informazioni generali di una API
@@ -506,12 +527,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiInformazioniGeneraliView getInformazioniGenerali(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiInformazioniGeneraliView getApiInformazioniGenerali(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce i dettagli dell&#x27;interfaccia di una API
+     * Restituisce i dettagli dell'interfaccia di una API
      *
-     * Questa operazione consente di ottenere i dettagli dell&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere i dettagli dell'interfaccia di una API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -527,12 +548,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiInterfacciaView getInterfaccia(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiInterfacciaView getApiInterfaccia(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Restituisce il nome del soggetto referente dell&#x27;api
+     * Restituisce il nome del soggetto referente dell'api
      *
-     * Questa operazione consente di ottenere il nome del soggetto referente dell&#x27;API identificata dal nome e dalla versione
+     * Questa operazione consente di ottenere il nome del soggetto referente dell'API identificata dal nome e dalla versione
      *
      */
     @GET
@@ -548,7 +569,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiReferenteView getReferente(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiReferenteView getApiReferente(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce il dettaglio di una risorsa di una API
@@ -569,7 +590,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiRisorsa getRisorsa(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiRisorsa getApiRisorsa(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Restituisce il dettaglio di un servizio di una API
@@ -590,7 +611,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ApiServizio getServizio(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public ApiServizio getApiServizio(@PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Modifica i dati di un allegato di una API
@@ -612,12 +633,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAllegato(@Valid ApiAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiAllegato(@Valid ApiAllegato body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_allegato") String nomeAllegato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Modifica i dati di un&#x27;azione nel servizio di una API
+     * Modifica i dati di un'azione nel servizio di una API
      *
-     * Questa operazione consente di aggiornare i dettagli di un&#x27;azione della API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare i dettagli di un'azione della API identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -634,7 +655,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateAzione(@Valid ApiAzione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiAzione(@Valid ApiAzione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @PathParam("nome_azione") String nomeAzione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare la descrizione di una API
@@ -656,7 +677,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateDescrizione(@Valid ApiDescrizione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiDescrizione(@Valid ApiDescrizione body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Consente di modificare le informazioni generali di una API
@@ -678,12 +699,12 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateInformazioniGenerali(@Valid ApiInformazioniGenerali body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiInformazioniGenerali(@Valid ApiInformazioniGenerali body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
-     * Consente di modificare l&#x27;interfaccia di una API
+     * Consente di modificare l'interfaccia di una API
      *
-     * Questa operazione consente di aggiornare l&#x27;interfaccia di una API identificata dal nome e dalla versione
+     * Questa operazione consente di aggiornare l'interfaccia di una API identificata dal nome e dalla versione
      *
      */
     @PUT
@@ -700,7 +721,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateInterfaccia(@Valid ApiInterfaccia body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiInterfaccia(@Valid ApiInterfaccia body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Modifica i dati di una risorsa di una API
@@ -722,7 +743,7 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateRisorsa(@Valid ApiRisorsa body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiRisorsa(@Valid ApiRisorsa body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_risorsa") String nomeRisorsa, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 
     /**
      * Modifica i dati di un servizio di una API
@@ -744,5 +765,5 @@ public interface ApiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void updateServizio(@Valid ApiServizio body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
+    public void updateApiServizio(@Valid ApiServizio body, @PathParam("nome") String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("nome_servizio") String nomeServizio, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") String soggetto);
 }

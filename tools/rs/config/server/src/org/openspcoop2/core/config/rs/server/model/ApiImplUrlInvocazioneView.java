@@ -1,5 +1,27 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.config.rs.server.model.ApiImplModalitaIdentificazioneAzione;
 import javax.validation.constraints.*;
 
@@ -11,6 +33,9 @@ public class ApiImplUrlInvocazioneView extends ApiImplModalitaIdentificazioneAzi
   
   @Schema(required = true, description = "")
   private String urlInvocazione = null;
+  
+  @Schema(example = "[\"az1\",\"az2\",\"az3\"]", description = "")
+  private List<String> azioni = null;
  /**
    * Get urlInvocazione
    * @return urlInvocazione
@@ -31,6 +56,30 @@ public class ApiImplUrlInvocazioneView extends ApiImplModalitaIdentificazioneAzi
     return this;
   }
 
+ /**
+   * Get azioni
+   * @return azioni
+  **/
+  @JsonProperty("azioni")
+  @Valid
+  public List<String> getAzioni() {
+    return this.azioni;
+  }
+
+  public void setAzioni(List<String> azioni) {
+    this.azioni = azioni;
+  }
+
+  public ApiImplUrlInvocazioneView azioni(List<String> azioni) {
+    this.azioni = azioni;
+    return this;
+  }
+
+  public ApiImplUrlInvocazioneView addAzioniItem(String azioniItem) {
+    this.azioni.add(azioniItem);
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -38,6 +87,7 @@ public class ApiImplUrlInvocazioneView extends ApiImplModalitaIdentificazioneAzi
     sb.append("class ApiImplUrlInvocazioneView {\n");
     sb.append("    ").append(ApiImplUrlInvocazioneView.toIndentedString(super.toString())).append("\n");
     sb.append("    urlInvocazione: ").append(ApiImplUrlInvocazioneView.toIndentedString(this.urlInvocazione)).append("\n");
+    sb.append("    azioni: ").append(ApiImplUrlInvocazioneView.toIndentedString(this.azioni)).append("\n");
     sb.append("}");
     return sb.toString();
   }

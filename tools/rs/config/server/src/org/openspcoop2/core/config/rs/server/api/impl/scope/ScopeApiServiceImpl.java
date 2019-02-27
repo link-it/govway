@@ -1,13 +1,35 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.config.rs.server.api.impl.scope;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.ScopeApi;
+import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.core.config.rs.server.api.impl.HttpRequestWrapper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaScope;
@@ -21,11 +43,13 @@ import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeUtilities;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+
 /**
- * GovWay Config API
- *
- * <p>Servizi per la configurazione di GovWay
- *
+ * ScopeApiServiceImpl
+ * 
+ * @author $Author$
+ * @version $Rev$, $Date$
+ * 
  */
 public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 
@@ -44,7 +68,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      *
      */
 	@Override
-    public void create(Scope body) {
+    public void createScope(Scope body) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -52,31 +76,22 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");  
 			
-			if(context.getServletResponse()!=null) {
-				System.out.println("SERVLET RESPONSE NOT NULL");
-			}
-			else {
-				System.out.println("SERVLET RESPONSE NULL");
-			}
+			Helper.throwIfNull(body);
 			
-			if (body == null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body mancante.");
-			}
+			ScopeEnv env = new ScopeEnv(context.getServletRequest(),context);
+			ScopeApiHelper.ovverrideParameters(env.requestWrapper, body);
 			
-			HttpRequestWrapper wrap = ScopeApiHelper.ovverrideParameters(context.getServletRequest(), body);
-			ScopeEnv sEnv = new ScopeEnv(wrap,context);
+			org.openspcoop2.core.registry.Scope regScope = ScopeApiHelper.apiScopeToRegistroScope(body, env.userLogin);
 			
-			org.openspcoop2.core.registry.Scope regScope = ScopeApiHelper.apiScopeToRegistroScope(body, sEnv.userLogin);
-			
-			if(sEnv.scopeCore.existsScope(regScope.getNome())) {
+			if(env.scopeCore.existsScope(regScope.getNome())) {
 				throw FaultCode.CONFLITTO.toException("Un scope con nome '" + regScope.getNome() + "' risulta già registrato");
 			}
 			
-			if (!sEnv.scopeHelper.scopeCheckData(TipoOperazione.ADD, null)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(sEnv.pd.getMessage());
+			if (!env.scopeHelper.scopeCheckData(TipoOperazione.ADD, null)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
-			sEnv.scopeCore.performCreateOperation(sEnv.userLogin, false, regScope);
+			env.scopeCore.performCreateOperation(env.userLogin, false, regScope);
 
 			context.getLogger().info("Invocazione completata con successo");
 		}
@@ -97,7 +112,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      *
      */
 	@Override
-    public void delete(String nome) {
+    public void deleteScope(String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -107,21 +122,21 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			
 			ScopeEnv sEnv = new ScopeEnv(context.getServletRequest(),context);
 			
-			org.openspcoop2.core.registry.Scope scope = null;
-			try {
-				scope = sEnv.scopeCore.getScope(nome);
-			} catch (Exception e) {}
+			final org.openspcoop2.core.registry.Scope scope = Helper.evalnull( () -> sEnv.scopeCore.getScope(nome) );
 			
-			if (scope == null) {
+			if ( scope != null ) {
+				StringBuffer inUsoMessage = new StringBuffer();
+				ScopeUtilities.deleteScope(scope, sEnv.userLogin, sEnv.scopeCore, sEnv.scopeHelper, inUsoMessage, "\n");
+				
+				if (inUsoMessage.length() > 0) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+				}
+			}
+			
+			if ( scope == null && sEnv.delete_404 ) {
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope da eliminare corrisponde al nome: " + nome);
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
-			ScopeUtilities.deleteScope(scope, sEnv.userLogin, sEnv.scopeCore, sEnv.scopeHelper, inUsoMessage, "\n");
-			
-			if (inUsoMessage.length() > 0) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(inUsoMessage.toString());
-			}
 			                          
 			context.getLogger().info("Invocazione completata con successo");
 		}
@@ -142,7 +157,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      *
      */
 	@Override
-    public ListaScope findAll(String q, Integer limit, Integer offset, ContestoEnum contesto) {
+    public ListaScope findAllScope(String q, Integer limit, Integer offset, ContestoEnum contesto) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -153,13 +168,14 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			ScopeEnv env = new ScopeEnv(context.getServletRequest(), context);
 			
 			int idLista = Liste.SCOPE;
-			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);	
+			Search ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista);
+			
 			
 			if (contesto != null)
-				ricerca.addFilter(idLista, Filtri.FILTRO_SCOPE_CONTESTO, ScopeApiHelper.apiContestoToRegistroContesto.get(contesto).toString());
+				ricerca.addFilter(idLista, Filtri.FILTRO_SCOPE_CONTESTO, Enums.apiContestoToRegistroContesto.get(contesto).toString());
 						
 			List<org.openspcoop2.core.registry.Scope> scopes = env.scopeCore.scopeList(null, ricerca);
-			if (scopes.size() == 0) {
+			if ( env.findall_404 && scopes.isEmpty() ) {
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope corrisponde ai criteri di ricerca specificati");
 			}
 		
@@ -195,7 +211,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      *
      */
 	@Override
-    public Scope get(String nome) {
+    public Scope getScope(String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -234,7 +250,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
      *
      */
 	@Override
-    public void update(Scope body, String nome) {
+    public void updateScope(Scope body, String nome) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -242,25 +258,20 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
             
-			if (body == null)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Body mancante");
+			Helper.throwIfNull(body);
 			
-			HttpRequestWrapper wrap = ScopeApiHelper.ovverrideParameters(context.getServletRequest(), body);
-			ScopeEnv env = new ScopeEnv(wrap, context);
+			ScopeEnv env = new ScopeEnv(context.getServletRequest(), context);
+			ScopeApiHelper.ovverrideParameters(env.requestWrapper, body);
 			
 			org.openspcoop2.core.registry.Scope scopeNEW = ScopeApiHelper.apiScopeToRegistroScope(body, env.userLogin);
-			org.openspcoop2.core.registry.Scope scopeOLD = null;
-			
-			try {
-				scopeOLD = env.scopeCore.getScope(nome); 
-			} catch (Exception e) {}
-			
+			org.openspcoop2.core.registry.Scope scopeOLD = Helper.evalnull( () -> env.scopeCore.getScope(nome));
+						
 			// Chiedere ad andrea se il detail lo vuole privato o meno.
 			if (scopeOLD == null)
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope corrisponde al nome " + nome);
 			
 			if (!env.scopeHelper.scopeCheckData(TipoOperazione.CHANGE, scopeOLD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.pd.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			}
 			
 			scopeNEW.setOldIDScopeForUpdate(new IDScope(nome));

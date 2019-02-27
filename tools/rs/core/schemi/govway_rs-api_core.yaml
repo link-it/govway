@@ -1,0 +1,168 @@
+openapi: 3.0.0
+components:
+  parameters:
+  
+    # Selezione Modalita e Soggetto del Dominio
+    profilo:
+      name: profilo
+      in: query
+      description: |-
+            Indica la modalità operativa del Gateway, a scelta tra:
+              * APIGateway;
+              * SPCoop;
+              * FatturaPA;
+              * eDelivery.
+      required: false
+      example: APIGateway
+      schema:
+        $ref: '#/components/schemas/ProfiloEnum'
+    soggetto:
+      name: soggetto
+      in: query
+      description: Indica il Soggetto di dominio interno indirizzato dall'operazione.
+      required: false
+      example: ENTE
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+        
+    # Dati Identificativi nel path
+    id_simple_name:
+      name: nome
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+    id_ncname:
+      name: nome
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_versione:
+      name: versione
+      in: path
+      description: Versione che insieme al nome rappresente l'identificativo univoco
+      required: true
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+    id_nome_allegato:
+      name: nome_allegato
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_risorsa:
+      name: nome_risorsa
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_servizio:
+      name: nome_servizio
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_nome_azione:
+      name: nome_azione
+      in: path
+      description: Nome identificativo
+      required: true
+      schema:
+        $ref: '#/components/schemas/NCName'
+    id_erogatore:
+      name: erogatore
+      in: path
+      description: Nome identificativo dell'erogatore
+      required: true
+      schema:
+        $ref: '#/components/schemas/SimpleName'
+        
+  schemas:
+ 
+    # Base: Tipo di identificativi
+    SimpleName:
+      type: string
+      pattern: ^[0-9A-Za-z]+$
+      maxLength: 255
+      description: Formato solo da caratteri e cifre
+    NCName:
+      type: string
+      pattern: ^[_A-Za-z][\\-\\._A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.' 
+         
+    # Base: Modalita e Soggetto del Dominio
+    BaseItem:
+      type: object
+      required:
+        - profilo
+      properties:
+        profilo:
+          $ref: '#/components/schemas/ProfiloEnum'
+    BaseSoggettoItem:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseItem'
+        - type: object
+          required:
+            - soggetto
+          properties:
+            soggetto: 
+              $ref: '#/components/schemas/SimpleName'
+
+    # Base: Versione
+    Versione:
+      type: integer
+      format: int32
+      minimum: 1
+      default: 1
+      example: 1
+         
+    # Base: Lista ritornata
+    Lista:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+      properties:          
+        limit:
+          description: How many items to return at one time
+          type: integer
+          format: int32
+        offset:
+          description: The zero-ary offset index into the results
+          type: integer
+          format: int64
+        total:
+          description: Number of items matching the filter criteria
+          type: integer
+          format: int64
+          minimum: 0  
+        first:
+          description: Link to first result page. Null if you are already on first page.
+          type: string     
+        next:
+          description: Link to next result page. Null if you are on last page.
+          type: string 
+        prev:
+          description: Link to previous result page. Null if you are on first page.
+          type: string   
+        last:
+          description: Link to last result page. Null if you are already on last page.
+          type: string
+          
+          
+    # Base: Enumeration
+    ProfiloEnum:
+      type: string
+      enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+      default: APIGateway
