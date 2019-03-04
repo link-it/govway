@@ -993,7 +993,32 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
-	
+	/**
+	 * Ritorna Socket utilizzato per la ricezione della risposta nel profilo Asincrono Simmetrico, modalita sincrona (portTypes)
+	 *
+	 */
+	public int getSocketAsincronoSimmetrico_modalitaSincrona_portTypes(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.asincronoSimmetrico.modalitaSincrona.portTypes.socket").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.asincronoSimmetrico.modalitaSincrona.portTypes.socket':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	/**
+	 * Ritorna Socket utilizzato per la ricezione della risposta nel profilo Asincrono Simmetrico, modalita asincrona (portTypes)
+	 *
+	 */
+	public int getSocketAsincronoSimmetrico_modalitaAsincrona_portTypes(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.asincronoSimmetrico.modalitaAsincrona.portTypes.socket").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.asincronoSimmetrico.modalitaAsincrona.portTypes.socket':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
 	
 	
 	

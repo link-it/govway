@@ -4166,6 +4166,26 @@
                 </connettore>
             </risposta-asincrona>
         </servizio-applicativo>
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaSincrona_portTypes" >
+            <invocazione-porta >
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaSincrona_portTypes" password="123456" />
+            </invocazione-porta>
+            <risposta-asincrona get-message="abilitato" >
+                <connettore tipo="http" nome="tracer">
+                    <property nome="location" valore="http://localhost:65007/" />
+                </connettore>
+            </risposta-asincrona> 
+        </servizio-applicativo>
+        <servizio-applicativo nome="ProfiloAsincrono_richiestaAsincrona_portTypes" >
+            <invocazione-porta >
+                <credenziali tipo="basic" user="profiloAsincrono_richiestaAsincrona_portTypes" password="123456" />
+            </invocazione-porta>
+            <risposta-asincrona get-message="abilitato" >
+                <connettore tipo="http" nome="tracer">
+                    <property nome="location" valore="http://localhost:65008/" />
+                </connettore>
+            </risposta-asincrona>
+        </servizio-applicativo>
 
 	<!-- Servizi Applicativi che possiedono una consegna asincrona per il mittente -->
 	<servizio-applicativo nome="fruitoreSerializeAndReturnFileAsync" >

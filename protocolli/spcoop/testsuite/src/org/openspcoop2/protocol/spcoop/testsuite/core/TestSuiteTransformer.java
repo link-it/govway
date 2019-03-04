@@ -31,7 +31,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
-import org.openspcoop2.protocol.spcoop.testsuite.units.SOAPMessageScorretti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -75,7 +74,7 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 		
 		if(testMethod!=null){
 			
-			if(SOAPMessageScorretti.class.getName().equals(testMethod.getDeclaringClass().getName())){
+			if(org.openspcoop2.protocol.spcoop.testsuite.units.messaggi_malformati.SOAPMessageScorretti.class.getName().equals(testMethod.getDeclaringClass().getName())){
 				annotation.setSequential(true);
 			}
 			
